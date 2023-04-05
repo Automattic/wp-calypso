@@ -8,6 +8,7 @@ import RootChild from '../root-child';
 import {
 	bindWindowListeners,
 	unbindWindowListeners,
+	onViewportChange,
 	suggested as suggestPosition,
 	constrainLeft,
 	offset,
@@ -58,6 +59,9 @@ class PopoverInner extends Component {
 	};
 
 	componentDidMount() {
+		// make sure to set the viewport when mounting, because it might have been changed between two mounts of this
+		// component, e.g. when the viewport is changed while the popover is hidden
+		onViewportChange();
 		this.bindListeners();
 		this.setPosition();
 		this.show();

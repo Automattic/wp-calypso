@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
 import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
@@ -11,6 +13,13 @@ import { useHasSiteAccess } from '../use-has-site-access';
 
 const addStagingSiteBtnName = 'Add staging site';
 const manageStagingBtnName = 'Manage staging site';
+const INITIAL_STATE = {
+	sites: {
+		items: {},
+	},
+};
+const mockStore = configureStore();
+const store = mockStore( INITIAL_STATE );
 
 const mockUseDispatch = jest.fn();
 jest.mock( 'react-redux', () => ( {
@@ -133,7 +142,11 @@ describe( 'StagingSiteCard component', () => {
 		} );
 		useCheckStagingSiteStatus.mockReturnValue( 'complete' );
 
-		render( <StagingSiteCard { ...defaultProps } /> );
+		render(
+			<Provider store={ store }>
+				<StagingSiteCard { ...defaultProps } />
+			</Provider>
+		);
 
 		expect( screen.getByText( manageStagingBtnName ) ).toBeVisible();
 	} );
@@ -144,14 +157,22 @@ describe( 'StagingSiteCard component', () => {
 			isLoading: false,
 		} );
 
-		const { rerender } = render( <StagingSiteCard { ...defaultProps } /> );
+		const { rerender } = render(
+			<Provider store={ store }>
+				<StagingSiteCard { ...defaultProps } />
+			</Provider>
+		);
 
 		expect( screen.queryByTestId( 'transferring-staging-content' ) ).not.toBeInTheDocument();
 		useAddStagingSiteMutation.mockReturnValueOnce( {
 			addStagingSite: jest.fn(),
 			isLoading: true,
 		} );
-		rerender( <StagingSiteCard { ...defaultProps } /> );
+		rerender(
+			<Provider store={ store }>
+				<StagingSiteCard { ...defaultProps } />
+			</Provider>
+		);
 		await waitFor( () =>
 			expect( screen.getByTestId( 'transferring-staging-content' ) ).toBeVisible()
 		);

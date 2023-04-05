@@ -1,27 +1,64 @@
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, useState, useRef } from 'react';
+import throttle from 'lodash/throttle';
+import { useMemo, useState, useRef, useEffect } from 'react';
 import UplotReact from 'uplot-react';
 import type uPlot from 'uplot';
 
 import './style.scss';
 
+const DEFAULT_DIMENSIONS = {
+	height: 300,
+	width: 1224,
+};
+
+const THROTTLE_DURATION = 400; // in ms
 interface UplotChartProps {
 	data: uPlot.AlignedData;
 	options?: Partial< uPlot.Options >;
+}
+
+function useResize(
+	uplotRef: React.RefObject< uPlot >,
+	containerRef: React.RefObject< HTMLDivElement >
+) {
+	useEffect( () => {
+		if ( ! uplotRef.current || ! containerRef.current ) {
+			return;
+		}
+
+		const resizeChart = throttle( () => {
+			// Repeat the check since resize can happen much later than event registration.
+			if ( ! uplotRef.current || ! containerRef.current ) {
+				return;
+			}
+
+			// Only update width, not height.
+			uplotRef.current.setSize( {
+				height: uplotRef.current.height,
+				width: containerRef.current.clientWidth,
+			} );
+		}, THROTTLE_DURATION );
+		resizeChart();
+		window.addEventListener( 'resize', resizeChart );
+
+		// Cleanup on unmount.
+		return () => window.removeEventListener( 'resize', resizeChart );
+	}, [ uplotRef, containerRef ] );
 }
 
 // NOTE: Do not include this component in the package entry bundle!
 // Doing so will unnecessarily bloat the package bundle size.
 export default function UplotChart( { data, options: propOptions }: UplotChartProps ) {
 	const translate = useTranslate();
-	const uplotRef = useRef< uPlot | null >( null );
+	const uplot = useRef< uPlot | null >( null );
+	const uplotContainer = useRef( null );
+
 	const [ options ] = useState< uPlot.Options >(
 		useMemo(
 			() => ( {
 				class: 'calypso-uplot-chart',
-				height: 300,
+				...DEFAULT_DIMENSIONS,
 				padding: [ 16, 8, 16, 8 ],
-				width: 1224, // TODO: Use container width here.
 				axes: [
 					{
 						// x-axis
@@ -76,15 +113,15 @@ export default function UplotChart( { data, options: propOptions }: UplotChartPr
 		)
 	);
 
-	// TODO: Make chart responsive.
+	useResize( uplot, uplotContainer );
 
 	return (
-		<UplotReact
-			options={ options }
-			data={ data }
-			onCreate={ ( chart ) => {
-				uplotRef.current = chart;
-			} }
-		/>
+		<div className="calypso-uplot-chart-container" ref={ uplotContainer }>
+			<UplotReact
+				data={ data }
+				onCreate={ ( chart ) => ( uplot.current = chart ) }
+				options={ options }
+			/>
+		</div>
 	);
 }

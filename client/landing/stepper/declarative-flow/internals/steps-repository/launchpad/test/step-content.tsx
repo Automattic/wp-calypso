@@ -97,10 +97,8 @@ describe( 'StepContent', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
 			expect( screen.getByText( 'Newsletter' ) ).toBeInTheDocument();
-			expect( screen.getByText( "You're all set to start publishing" ) ).toBeInTheDocument();
-			expect(
-				screen.getByText( 'Why not welcome your readers with your first post?' )
-			).toBeInTheDocument();
+			expect( screen.getByText( "Your newsletter's ready!" ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Now it’s time to let your readers know.' ) ).toBeInTheDocument();
 		} );
 
 		it( 'renders correct sidebar tasks', () => {
@@ -110,7 +108,7 @@ describe( 'StepContent', () => {
 			expect( screen.getByText( 'Choose a Plan' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Add Subscribers' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Confirm Email (Check Your Inbox)' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Write your first post' } ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Start writing' } ) ).toBeInTheDocument();
 		} );
 
 		it( 'renders correct status for each task', () => {
@@ -123,7 +121,7 @@ describe( 'StepContent', () => {
 				.getByText( 'Confirm Email (Check Your Inbox)' )
 				.closest( 'li' );
 			const firstPostListItem = screen
-				.getByRole( 'button', { name: 'Write your first post' } )
+				.getByRole( 'button', { name: 'Start writing' } )
 				.closest( 'li' );
 
 			expect( personalizeListItem ).toHaveClass( 'completed' );

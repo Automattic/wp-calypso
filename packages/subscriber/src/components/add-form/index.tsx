@@ -10,13 +10,14 @@ import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import emailValidator from 'email-validator';
 import { useTranslate } from 'i18n-calypso';
-import React, {
+import {
 	ChangeEvent,
 	FormEvent,
 	FunctionComponent,
 	useState,
 	useEffect,
 	useRef,
+	useCallback,
 } from 'react';
 import { useActiveJobRecognition } from '../../hooks/use-active-job-recognition';
 import { useInProgressState } from '../../hooks/use-in-progress-state';
@@ -39,6 +40,10 @@ interface Props {
 	recordTracksEvent?: RecordTrackEvents;
 	onSkipBtnClick?: () => void;
 	onImportFinished?: () => void;
+	onChangeIsImportValid?: ( isValid: boolean ) => void;
+	titleText?: string;
+	subtitleText?: string;
+	emailPlaceholders?: string[];
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -61,6 +66,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		manualListEmailInviting,
 		recordTracksEvent,
 		onImportFinished,
+		onChangeIsImportValid,
+		titleText,
+		subtitleText,
+		emailPlaceholders,
 	} = props;
 
 	const {
@@ -74,7 +83,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	 * ↓ Fields
 	 */
 	const emailControlMaxNum = 6;
-	const emailControlPlaceholder = [
+	const emailControlPlaceholder = emailPlaceholders ?? [
 		translate( 'sibling@example.com' ),
 		translate( 'parents@example.com' ),
 		translate( 'friend@example.com' ),
@@ -102,6 +111,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		} )
 	);
 
+	const getValidEmails = useCallback( () => {
+		return isValidEmails.map( ( x, i ) => x && emails[ i ] ).filter( ( x ) => !! x ) as string[];
+	}, [ isValidEmails, emails ] );
+
 	/**
 	 * ↓ Effects
 	 */
@@ -117,12 +130,22 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	useEffect( () => {
 		prevInProgress.current = inProgress;
 	}, [ inProgress ] );
+
 	useEffect( () => {
 		prevSubmitAttemptCount.current = submitAttemptCount;
 	}, [ submitAttemptCount ] );
+
 	useEffect( () => {
 		setIsSubmitBtnReady( isSubmitButtonReady() );
 	}, [ isValidEmails, selectedFile, allowEmptyFormSubmit, submitBtnAlwaysEnable ] );
+
+	useEffect( () => {
+		if ( !! getValidEmails().length || ( isSelectedFileValid && selectedFile ) ) {
+			onChangeIsImportValid && onChangeIsImportValid( true );
+		} else {
+			onChangeIsImportValid && onChangeIsImportValid( false );
+		}
+	}, [ getValidEmails, isSelectedFileValid, selectedFile, onChangeIsImportValid ] );
 
 	useRecordAddFormEvents( recordTracksEvent, flowName );
 
@@ -171,10 +194,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		const _isDirtyEmails = Array.from( isDirtyEmails );
 		_isDirtyEmails[ index ] = !! value;
 		setIsDirtyEmails( _isDirtyEmails );
-	}
-
-	function getValidEmails(): string[] {
-		return isValidEmails.map( ( x, i ) => x && emails[ i ] ).filter( ( x ) => !! x ) as string[];
 	}
 
 	function isValidExtension( fileName: string ) {
@@ -285,7 +304,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	function renderFileValidationMsg() {
 		return (
 			! isSelectedFileValid && (
-				<FormInputValidation isError={ true } text="">
+				<FormInputValidation className="is-file-validation" isError={ true } text="">
 					{ createInterpolateElement(
 						translate(
 							'Sorry, you can only upload CSV files right now. Most providers will let you export this from your settings. <uploadBtn>Select another file</uploadBtn>'
@@ -332,7 +351,7 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 						sprintf(
 							/* translators: the first string variable shows CTA button name */
 							translate(
-								'By clicking "%s", you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>'
+								'By clicking "%s", you represent that you\'ve obtained the appropriate consent to email each person. <Button>Learn more</Button>.'
 							),
 							submitBtnName
 						),
@@ -353,28 +372,41 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	function renderImportCsvLabel() {
 		const ariaLabelMsg = isSiteOnFreePlan
-			? translate(
-					'Or bring your mailing list up to 100 emails from other newsletter services by uploading a CSV file.'
+			? translate( 'Or upload a CSV file of up to 100 emails from your existing list. Learn more.' )
+			: translate( 'Or upload a CSV file of emails from your existing list. Learn more.' );
+
+		const interpolateElement = {
+			uploadBtn: formFileUploadElement,
+			Button: createElement( Button, {
+				isLink: true,
+				target: '__blank',
+				rel: 'noreferrer',
+				href: localizeUrl(
+					'https://wordpress.com/support/launch-a-newsletter/import-subscribers-to-a-newsletter/'
+				),
+			} ),
+		};
+
+		const labelText = isSiteOnFreePlan
+			? createInterpolateElement(
+					translate(
+						'Or <uploadBtn>upload a CSV file</uploadBtn> of up to 100 emails from your existing list. <Button>Learn more</Button>.'
+					),
+					interpolateElement
 			  )
-			: translate(
-					'Or bring your mailing list from other newsletter services by uploading a CSV file.'
+			: createInterpolateElement(
+					translate(
+						'Or <uploadBtn>upload a CSV file</uploadBtn> of emails from your existing list. <Button>Learn more</Button>.'
+					),
+					interpolateElement
 			  );
 
 		return (
 			isSelectedFileValid &&
 			! selectedFile && (
-				<label aria-label={ ariaLabelMsg }>
-					{ createInterpolateElement(
-						isSiteOnFreePlan
-							? translate(
-									'Or bring your mailing list up to 100 emails from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
-							  )
-							: translate(
-									'Or bring your mailing list from other newsletter services by <uploadBtn>uploading a CSV file.</uploadBtn>'
-							  ),
-						{ uploadBtn: formFileUploadElement }
-					) }
-				</label>
+				<p aria-label={ ariaLabelMsg } className="add-subscriber__form--disclaimer">
+					{ labelText }
+				</p>
 			)
 		);
 	}
@@ -408,14 +440,11 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 	function renderFollowerNoticeLabel() {
 		return (
-			isSelectedFileValid &&
-			! selectedFile && (
-				<label>
-					{ translate(
-						"If you enter an email address that has a WordPress.com account, they'll become a follower."
-					) }
-				</label>
-			)
+			<p className="add-subscriber__form--disclaimer">
+				{ translate(
+					"If you enter an email address that has a WordPress.com account, they'll become a follower."
+				) }
+			</p>
 		);
 	}
 
@@ -423,12 +452,15 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		<div className="add-subscriber">
 			{ ( showTitle || showSubtitle ) && (
 				<div className="add-subscriber__title-container">
-					{ showTitle && <Title>{ translate( 'Let’s add your first subscribers' ) }</Title> }
+					{ showTitle && (
+						<Title>{ titleText ?? translate( 'Let’s add your first subscribers' ) }</Title>
+					) }
 					{ showSubtitle && (
 						<SubTitle>
-							{ translate(
-								'Your subscribers will receive an email notification whenever you publish a new post.'
-							) }
+							{ subtitleText ??
+								translate(
+									'Your subscribers will receive an email notification whenever you publish a new post.'
+								) }
 						</SubTitle>
 					) }
 				</div>
