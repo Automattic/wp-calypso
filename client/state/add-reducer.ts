@@ -28,7 +28,8 @@ export function clear(): void {
 export const addReducerToStore =
 	< T extends Reducer & OptionalStorageKey >(
 		store: Store & WithAddReducer,
-		getStoredState?: GetStoredState
+		getStoredState?: GetStoredState,
+		updateOnly?: boolean
 	) =>
 	( key: string[], reducer: T ): void => {
 		const storageKey: string | undefined = reducer.storageKey;
@@ -44,7 +45,9 @@ export const addReducerToStore =
 		}
 
 		if ( ! init ) {
-			store.addReducer( key, reducer );
+			if ( ! updateOnly ) {
+				store.addReducer( key, reducer );
+			}
 
 			if ( storageKey && getStoredState ) {
 				const storedState = getStoredState( reducer, storageKey );

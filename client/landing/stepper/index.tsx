@@ -23,7 +23,7 @@ import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
-import { createQueryClient } from 'calypso/state/query-client';
+import { createQueryClient, hydrateBrowserState } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { requestSites } from 'calypso/state/sites/actions';
@@ -79,7 +79,6 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 	}
 
 	user && receiveCurrentUser( user as UserStore.CurrentUser );
-
 	return <FlowRenderer flow={ flow } />;
 };
 interface AppWindow extends Window {
@@ -104,19 +103,27 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	const user = ( await initializeCurrentUser() ) as unknown;
-	const userId = ( user as CurrentUser ).ID;
-
-	const queryClient = await createQueryClient( userId );
-
-	initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
-
-	const initialState = getInitialState( initialReducer, userId );
+	const queryClient = await createQueryClient();
+	const initialState = getInitialState( initialReducer, undefined );
 	const reduxStore = createReduxStore( initialState, initialReducer );
-	setStore( reduxStore, getStateFromCache( userId ) );
-	setupLocale( user, reduxStore );
 
-	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+	initializeCurrentUser().then( ( user: unknown ) => {
+		const userId = ( user as CurrentUser ).ID;
+
+		hydrateBrowserState( queryClient, userId );
+
+		initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
+		//const userInitialState = getInitialState( initialReducer, userId );
+		//TODO: Like in add-reducer.ts, we should  store.dispatch( { type: APPLY_STORED_STATE for the new userInitialState,
+		// maybe combining it with the getStateFromCache( userId ) ??
+		setStore( reduxStore, getStateFromCache( userId ), true );
+
+		user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+		setupLocale( user, reduxStore );
+	} );
+
+	setStore( reduxStore, getStateFromCache( undefined ) );
+	setupLocale( false, reduxStore );
 
 	setupErrorLogger( reduxStore );
 
@@ -129,7 +136,8 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowSwitch user={ user as UserStore.CurrentUser } flow={ flow } />
+						<FlowSwitch user={ null } flow={ flow } />
+						{ /* <FlowSwitch user={ user as UserStore.CurrentUser } flow={ flow } /> */ }
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }

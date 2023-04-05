@@ -11,13 +11,17 @@ type QueueEntry = [ string[], Reducer ];
 let currentAddReducer: ReturnType< typeof addReducerToStore > | undefined;
 const reducerRegistrationQueue: QueueEntry[] = [];
 
-export function setStore( store: Store & WithAddReducer, getStoredState?: GetStoredState ): void {
+export function setStore(
+	store: Store & WithAddReducer,
+	getStoredState?: GetStoredState,
+	updateOnly?: boolean
+): void {
 	// Clear any previously added reducers when replacing an existing store.
 	if ( currentAddReducer ) {
 		clearReducers();
 	}
 
-	currentAddReducer = addReducerToStore( store, getStoredState );
+	currentAddReducer = addReducerToStore( store, getStoredState, updateOnly );
 
 	// Synchronously add all pending reducers.
 	// These include reducers registered to previous stores, since their code has
