@@ -36,7 +36,6 @@ import ScreenCategoryList from './screen-category-list';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenMain from './screen-main';
-import ScreenPatternList from './screen-pattern-list';
 import ScreenSection from './screen-section';
 import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
@@ -525,26 +524,17 @@ const PatternAssembler = ( {
 					/>
 				</NavigatorScreen>
 				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION_PATTERNS }>
-					{ isEnabled( 'pattern-assembler/categories' ) ? (
-						<ScreenCategoryList
-							categories={ categories }
-							sectionsMapByCategory={ sectionsMapByCategory }
-							onDoneClick={ () => onDoneClick( 'section' ) }
-							replacePatternMode={ sectionPosition !== null }
-							selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
-							onSelect={ onSelect }
-							wrapperRef={ wrapperRef }
-							onTogglePatternPanelList={ setIsPatternPanelListOpen }
-							recordTracksEvent={ recordTracksEvent }
-						/>
-					) : (
-						<ScreenPatternList
-							selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
-							onSelect={ ( selectedPattern ) => onSelect( 'section', selectedPattern, null ) }
-							onBack={ () => onPatternSelectorBack( 'section' ) }
-							onDoneClick={ () => onDoneClick( 'section' ) }
-						/>
-					) }
+					<ScreenCategoryList
+						categories={ categories }
+						sectionsMapByCategory={ sectionsMapByCategory }
+						onDoneClick={ () => onDoneClick( 'section' ) }
+						replacePatternMode={ sectionPosition !== null }
+						selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
+						onSelect={ onSelect }
+						wrapperRef={ wrapperRef }
+						onTogglePatternPanelList={ setIsPatternPanelListOpen }
+						recordTracksEvent={ recordTracksEvent }
+					/>
 				</NavigatorScreen>
 
 				{ isEnabledColorAndFonts && (
