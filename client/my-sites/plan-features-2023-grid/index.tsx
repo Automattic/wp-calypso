@@ -99,6 +99,7 @@ import { PlanComparisonGrid } from './plan-comparison-grid';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
+import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 type PlanRowOptions = {
@@ -998,7 +999,7 @@ export class PlanFeatures2023Grid extends Component<
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 const ConnectedPlanFeatures2023Grid = connect(
-	( state, ownProps: PlanFeatures2023GridProps ) => {
+	( state: IAppState, ownProps: PlanFeatures2023GridProps ) => {
 		const { placeholder, plans, isLandingPage, visiblePlans, isInSignup, siteId } = ownProps;
 		const canUserPurchasePlan =
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
@@ -1036,7 +1037,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			);
 
 			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
-			const isMonthlyObj = { isMonthly: showMonthlyPrice };
+			const isMonthlyObj = { returnMonthly: showMonthlyPrice };
 
 			const discountPrice = siteId
 				? getPlanDiscountedRawPrice( state, siteId, plan, isMonthlyObj )
