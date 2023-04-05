@@ -1,9 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import {
-	__experimentalItemGroup as ItemGroup,
-	__experimentalHStack as HStack,
-} from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { NavigationButtonAsItem } from './navigator-buttons';
@@ -50,58 +47,52 @@ const ScreenMain = ( {
 			<div className="screen-container__body screen-container__body--align-sides">
 				<HStack direction="column" alignment="top" spacing="4">
 					<NavigatorItemGroup title={ translate( 'Layout' ) }>
-						<ItemGroup>
-							<NavigationButtonAsItem
-								path="/header"
-								icon={ header }
-								aria-label={ translate( 'Header' ) }
-								onClick={ () => onSelect( 'header' ) }
-							>
-								<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
-							</NavigationButtonAsItem>
-							<NavigationButtonAsItem
-								path="/section"
-								icon={ layout }
-								aria-label={ translate( 'Sections' ) }
-								onClick={ () => onSelect( 'section' ) }
-							>
-								<span className="pattern-layout__list-item-text">{ translate( 'Sections' ) }</span>
-							</NavigationButtonAsItem>
-							<NavigationButtonAsItem
-								path="/footer"
-								icon={ footer }
-								aria-label={ translate( 'Footer' ) }
-								onClick={ () => onSelect( 'footer' ) }
-							>
-								<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
-							</NavigationButtonAsItem>
-						</ItemGroup>
+						<NavigationButtonAsItem
+							path="/header"
+							icon={ header }
+							aria-label={ translate( 'Header' ) }
+							onClick={ () => onSelect( 'header' ) }
+						>
+							<span className="pattern-layout__list-item-text">{ translate( 'Header' ) }</span>
+						</NavigationButtonAsItem>
+						<NavigationButtonAsItem
+							path="/section"
+							icon={ layout }
+							aria-label={ translate( 'Sections' ) }
+							onClick={ () => onSelect( 'section' ) }
+						>
+							<span className="pattern-layout__list-item-text">{ translate( 'Sections' ) }</span>
+						</NavigationButtonAsItem>
+						<NavigationButtonAsItem
+							path="/footer"
+							icon={ footer }
+							aria-label={ translate( 'Footer' ) }
+							onClick={ () => onSelect( 'footer' ) }
+						>
+							<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
+						</NavigationButtonAsItem>
 					</NavigatorItemGroup>
 					<NavigatorItemGroup title={ translate( 'Style' ) }>
-						<ItemGroup>
-							{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
-								<>
-									<NavigationButtonAsItem
-										path="/color-palettes"
-										icon={ color }
-										aria-label={ translate( 'Colors' ) }
-										onClick={ () => onSelect( 'color-palettes' ) }
-									>
-										<span className="pattern-layout__list-item-text">
-											{ translate( 'Colors' ) }
-										</span>
-									</NavigationButtonAsItem>
-									<NavigationButtonAsItem
-										path="/font-pairings"
-										icon={ typography }
-										aria-label={ translate( 'Fonts' ) }
-										onClick={ () => onSelect( 'font-pairings' ) }
-									>
-										<span className="pattern-layout__list-item-text">{ translate( 'Fonts' ) }</span>
-									</NavigationButtonAsItem>
-								</>
-							) }
-						</ItemGroup>
+						{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
+							<>
+								<NavigationButtonAsItem
+									path="/color-palettes"
+									icon={ color }
+									aria-label={ translate( 'Colors' ) }
+									onClick={ () => onSelect( 'color-palettes' ) }
+								>
+									<span className="pattern-layout__list-item-text">{ translate( 'Colors' ) }</span>
+								</NavigationButtonAsItem>
+								<NavigationButtonAsItem
+									path="/font-pairings"
+									icon={ typography }
+									aria-label={ translate( 'Fonts' ) }
+									onClick={ () => onSelect( 'font-pairings' ) }
+								>
+									<span className="pattern-layout__list-item-text">{ translate( 'Fonts' ) }</span>
+								</NavigationButtonAsItem>
+							</>
+						) }
 					</NavigatorItemGroup>
 				</HStack>
 			</div>

@@ -1,4 +1,7 @@
-import { __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalItemGroup as ItemGroup,
+} from '@wordpress/components';
 import './style.scss';
 
 type Props = {
@@ -11,7 +14,7 @@ export const NavigatorItemGroup = ( { children, title }: Props ) => {
 		<section>
 			<HStack direction="column" alignment="top" spacing="0">
 				<h3 className="pattern-layout__label">{ title }</h3>
-				{ children }
+				<ItemGroup>{ children }</ItemGroup>
 			</HStack>
 		</section>
 	);
