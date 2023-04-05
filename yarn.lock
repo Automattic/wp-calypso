@@ -498,6 +498,7 @@ __metadata:
     "@automattic/format-currency": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
+    "@remix-run/router": ^1.5.0
     "@types/validator": ^13.7.1
     "@wordpress/api-fetch": ^6.19.0
     "@wordpress/data-controls": ^2.22.0
@@ -4752,7 +4753,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.5.0":
+"@remix-run/router@npm:1.5.0, @remix-run/router@npm:^1.5.0":
   version: 1.5.0
   resolution: "@remix-run/router@npm:1.5.0"
   checksum: 63c3695df0470943213f8144183501bbb6a8176671f2ed4547ffa1852f79fd71054b4b4a715795e9e250198991d9e6e121b3fcab9c27df37871dcdfbc8de83a1
