@@ -95,6 +95,7 @@ export default function useAddProductsFromUrl( {
 			// renewals prepared. This is because if a renewal was requested by URL
 			// and was invalid, we don't want them to see what may have been in their
 			// cart previously to avoid the appearance that the URL succeeded.
+			debug( 'clearing the cart due to a renewal request with no products' );
 			cartPromises.push( replaceProductsInCart( [] ) );
 		}
 		if ( productsForCart.length > 0 ) {
