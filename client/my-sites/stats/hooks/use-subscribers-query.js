@@ -1,4 +1,5 @@
 import { useQuery } from 'react-query';
+// import wpcom from 'calypso/lib/wp';
 
 const mockData = {
 	items: [
@@ -49,18 +50,18 @@ function querySubscribers() {
 		setTimeout( () => resolve( mockData ), 3000 );
 	} );
 
-	// return <wpcom endpoint>.req
+	// return wpcom.req
 	// 	.get( {
-	// 		apiNamespace: '?',
-	// 		path: '/abc123',
+	// 		apiNamespace: 'rest/v1.1',
+	// 		path: `/sites/${ siteId }/stats/subscribers?unit=${ period }&quantity=${ quantity }`,
 	// 	} )
 	// 	.then( ( data ) => {
-	// 		// magic
+	// 		return data;
 	// 	} );
 }
 
 function selectSubscribers( api ) {
-	return api.items.map( ( item ) => {
+	return api?.items?.map( ( item ) => {
 		return {
 			date: item.date,
 			unit: item.unit,
@@ -75,9 +76,13 @@ function selectSubscribers( api ) {
 	} )?.[ 0 ];
 }
 
-export default function useSubscribersQuery( siteId ) {
+export default function useSubscribersQuery( siteId, period, quantity ) {
 	// TODO: Account for other query parameters before release.
-	return useQuery( [ 'stats', 'subscribers', siteId ], querySubscribers, {
-		select: selectSubscribers,
-	} );
+	return useQuery(
+		[ 'stats', 'subscribers', siteId, period, quantity ],
+		() => querySubscribers( siteId, period, quantity ),
+		{
+			select: selectSubscribers,
+		}
+	);
 }

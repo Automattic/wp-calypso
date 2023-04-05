@@ -8,6 +8,7 @@ import {
 	p2RedirectToHubPlans,
 	stagingSiteNotSupportedRedirect,
 } from 'calypso/my-sites/controller';
+import { redirectIfInvalidInterval } from 'calypso/my-sites/plans/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 import { jetpackStoragePlans } from 'calypso/my-sites/plans/jetpack-plans/jetpack-storage-plans';
 import { jetpackUpsell } from 'calypso/my-sites/plans/jetpack-plans/jetpack-upsell';
@@ -102,6 +103,7 @@ export default function () {
 	trackedPage(
 		'/plans/:intervalType?/:site',
 		...commonHandlers,
+		redirectIfInvalidInterval,
 		p2RedirectToHubPlans,
 		navigation,
 		plans
