@@ -7,9 +7,9 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { Card } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
-import { useState, useRef, FC } from 'react';
+import { useState, useRef, FC, useEffect } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
-import { MemoryRouter, Navigate, useLocation } from 'react-router-dom';
+import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
@@ -33,12 +33,15 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 };
 
 const RedirectAssigned = ( { status }: { status?: string } ) => {
+	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const assigned = status === 'assigned';
 
-	if ( assigned && ! pathname.startsWith( '/inline-chat' ) ) {
-		return <Navigate to="/inline-chat?session=continued" />;
-	}
+	useEffect( () => {
+		if ( assigned && ! pathname.startsWith( '/inline-chat' ) ) {
+			navigate( '/inline-chat?session=continued', { replace: true } );
+		}
+	}, [ assigned, navigate, pathname ] );
 
 	return null;
 };
