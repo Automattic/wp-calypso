@@ -1,0 +1,115 @@
+.stats-widget-highlights {
+	padding: 16px;
+
+	box-shadow: 0 4px 40px rgba(0, 0, 0, 0.08);
+	border-radius: 4px;
+
+	color: var(--studio-gray-100);
+	background: var(--studio-white);
+
+	.stats-widget-highlights__header {
+		display: flex;
+		justify-content: space-between;
+
+		span {
+			font-weight: 500;
+			font-size: $font-body-large;
+			line-height: 26px;
+		}
+
+		a {
+			cursor: pointer;
+			padding: 4px 8px;
+			appearance: none;
+			text-align: center;
+			min-width: 129px;
+
+			color: var(--studio-white);
+			background: var(--studio-black);
+			font-size: $font-body-extra-small;
+			font-weight: 600;
+			text-decoration: none;
+
+			border: 1px solid var(--studio-black);
+			border-radius: 4px;
+
+			&:hover {
+				color: var(--studio-black);
+				background: var(--studio-white);
+			}
+
+			&:visited {
+				color: var(--studio-white);
+				background: var(--studio-black);
+			}
+		}
+
+	}
+
+	.stats-widget-highlights__body {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: space-evenly;
+
+		margin-top: 16px;
+	}
+
+	.stats-widget-highlights__column {
+		flex: 1 1 auto;
+		width: calc(50% - 20px);
+
+		padding-left: 8px;
+
+		&:not(:first-child) {
+			padding-left: 24px;
+		}
+	}
+
+	.stats-widget-highlights-card__title {
+		font-weight: 500;
+		font-size: $font-body;
+	}
+
+	.stats-widget-highlights-card__list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+
+		li p {
+			margin-top: $font-body;
+			margin-bottom: 0;
+
+			font-weight: 500;
+			font-size: $font-body-small;
+			line-height: 20px;
+
+			width: 100%;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+		}
+
+		li span {
+			letter-spacing: -0.24px;
+			font-weight: 400;
+			color: var(--studio-gray-60);
+		}
+	}
+
+	.stats-widget-highlights-card__view-all {
+		margin-top: 24px;
+
+		font-weight: 600;
+		font-size: $font-body-small;
+		line-height: 20px;
+		letter-spacing: -0.24px;
+
+		a {
+			color: var(--studio-gray-100);
+
+			&:visited {
+				color: var(--studio-gray-100);
+			}
+		}
+	}
+}

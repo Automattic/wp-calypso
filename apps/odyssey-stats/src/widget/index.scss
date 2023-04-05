@@ -1,3 +1,7 @@
 @import "../styles/theme.scss";
 @import "../styles/wp-admin.scss";
 @import "../styles/typography.scss";
+
+.stats-widget-content > * {
+	margin-top: 24px;
+}
