@@ -349,12 +349,18 @@ export class UserStep extends Component {
 			return;
 		}
 
+		const query = initialContext?.query || {};
+		if ( typeof window !== 'undefined' && window.sessionStorage.getItem( 'signup_redirect_to' ) ) {
+			query.redirect_to = window.sessionStorage.getItem( 'signup_redirect_to' );
+			window.sessionStorage.removeItem( 'signup_redirect_to' );
+		}
+
 		this.submit( {
 			service,
 			access_token,
 			id_token,
 			userData,
-			queryArgs: initialContext?.query || {},
+			queryArgs: query,
 		} );
 	};
 

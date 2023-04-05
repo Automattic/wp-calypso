@@ -23,6 +23,7 @@ class SocialSignupForm extends Component {
 		socialServiceResponse: PropTypes.object,
 		disableTosText: PropTypes.bool,
 		flowName: PropTypes.string,
+		redirectToAfterLoginUrl: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -86,11 +87,17 @@ class SocialSignupForm extends Component {
 			: `${ origin }/start/user`;
 	};
 
+	trackLoginAndRememberRedirect = ( service ) => {
+		this.trackSocialSignup( service );
+
+		if ( this.props.redirectToAfterLoginUrl && typeof window !== 'undefined' ) {
+			window.sessionStorage.setItem( 'signup_redirect_to', this.props.redirectToAfterLoginUrl );
+		}
+	};
+
 	render() {
 		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
 		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
-
-		const params = new URLSearchParams( window.location.search );
 
 		return (
 			// Note: we allow social sign-in on the Desktop app, but not social sign-up. Existing config flags do
@@ -110,7 +117,7 @@ class SocialSignupForm extends Component {
 							responseHandler={ this.handleGoogleResponse }
 							uxMode={ uxMode }
 							redirectUri={ this.getRedirectUri( 'google' ) }
-							onClick={ () => this.trackSocialSignup( 'google' ) }
+							onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
 							socialServiceResponse={
 								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 							}
@@ -123,15 +130,14 @@ class SocialSignupForm extends Component {
 							responseHandler={ this.handleAppleResponse }
 							uxMode={ uxModeApple }
 							redirectUri={ this.getRedirectUri( 'apple' ) }
-							onClick={ () => this.trackSocialSignup( 'apple' ) }
+							onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
 							socialServiceResponse={
 								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 							}
 							originalUrlPath={
-								// Set the original URL path for wpcc flow so that we can redirect the user back to /start/wpcc after Apple callback.
-								isWpccFlow( this.props.flowName )
-									? window.location.pathname
-									: params.get( 'redirect_to' )
+								// Since the signup form is only ever called from the user step, currently, we can rely on window.location.pathname
+								// to return back to the user step, which then allows us to continue on with the flow once the submitSignupStep action is called within the user step.
+								window?.location?.pathname
 							}
 							// Attach the query string to the state so we can pass it back to the server to show the correct UI.
 							// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.
