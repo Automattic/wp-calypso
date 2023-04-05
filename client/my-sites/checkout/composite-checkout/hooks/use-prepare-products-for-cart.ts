@@ -13,12 +13,14 @@ import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
 interface PreparedProductsForCart {
+	addingRenewals: boolean;
 	productsForCart: RequestCartProduct[];
 	isLoading: boolean;
 	error: string | null;
 }
 
-const initialPreparedProductsState = {
+const initialPreparedProductsState: PreparedProductsForCart = {
+	addingRenewals: false,
 	isLoading: true,
 	productsForCart: [],
 	error: null,
@@ -142,6 +144,7 @@ export default function usePrepareProductsForCart( {
 type PreparedProductsAction =
 	| { type: 'PRODUCTS_ADD'; products: RequestCartProduct[] }
 	| { type: 'RENEWALS_ADD'; products: RequestCartProduct[] }
+	| { type: 'RENEWALS_ADD_ERROR'; message: string }
 	| { type: 'PRODUCTS_ADD_ERROR'; message: string };
 
 function preparedProductsReducer(
@@ -150,17 +153,25 @@ function preparedProductsReducer(
 ): PreparedProductsForCart {
 	switch ( action.type ) {
 		case 'RENEWALS_ADD':
-		// fall through
+			if ( ! state.isLoading ) {
+				return state;
+			}
+			return { ...state, productsForCart: action.products, isLoading: false, addingRenewals: true };
 		case 'PRODUCTS_ADD':
 			if ( ! state.isLoading ) {
 				return state;
 			}
 			return { ...state, productsForCart: action.products, isLoading: false };
-		case 'PRODUCTS_ADD_ERROR':
+		case 'RENEWALS_ADD_ERROR':
 			if ( ! state.isLoading ) {
 				return state;
 			}
 			return { ...state, isLoading: false, error: action.message };
+		case 'PRODUCTS_ADD_ERROR':
+			if ( ! state.isLoading ) {
+				return state;
+			}
+			return { ...state, isLoading: false, error: action.message, addingRenewals: true };
 		default:
 			return state;
 	}
@@ -296,11 +307,10 @@ function useAddRenewalItems( {
 		if ( ! isThereASite && ! isGiftPurchase ) {
 			debug( 'creating renewal products failed because there is no site', productAlias );
 			dispatch( {
-				type: 'PRODUCTS_ADD_ERROR',
-				message: String(
-					translate(
-						'This renewal is invalid. Please verify that you are logged into the correct account for the product you want to renew.'
-					)
+				type: 'RENEWALS_ADD_ERROR',
+				message: translate(
+					'This renewal is invalid. Please verify that you are logged into the correct account for the product you want to renew.',
+					{ textOnly: true }
 				),
 			} );
 			return;
@@ -324,7 +334,7 @@ function useAddRenewalItems( {
 		if ( productsForCart.length < 1 ) {
 			debug( 'creating renewal products failed', productAlias );
 			dispatch( {
-				type: 'PRODUCTS_ADD_ERROR',
+				type: 'RENEWALS_ADD_ERROR',
 				message: String(
 					translate(
 						"I tried and failed to create products matching the identifier '%(productAlias)s'",
