@@ -14,29 +14,21 @@ const patternCategoriesOrder = [
 const useCategoriesOrder = ( categories: Category[] ) => {
 	return useMemo(
 		() =>
-			categories.sort( ( { name: currentName }, { name: nextName } ) => {
-				// The pattern categories should be ordered as follows:
-				// 1. The categories from `patternCategoriesOrder` in that specific order should be at the top.
-				// 2. The rest categories should be at the bottom without any re-ordering.
-				// 3. Any tailored order by intent?
-				if (
-					! [ currentName, nextName ].some( ( categoryName ) =>
-						patternCategoriesOrder.includes( categoryName )
-					)
-				) {
-					return 0;
+			categories.sort( ( { name: aName }, { name: bName } ) => {
+				if ( aName && bName ) {
+					// Sort categories according to `patternCategoriesOrder`.
+					let aIndex = patternCategoriesOrder.indexOf( aName );
+					let bIndex = patternCategoriesOrder.indexOf( bName );
+					// All other categories should come after that.
+					if ( aIndex < 0 ) {
+						aIndex = patternCategoriesOrder.length;
+					}
+					if ( bIndex < 0 ) {
+						bIndex = patternCategoriesOrder.length;
+					}
+					return aIndex - bIndex;
 				}
-				if (
-					[ currentName, nextName ].every( ( categoryName ) =>
-						patternCategoriesOrder.includes( categoryName )
-					)
-				) {
-					return (
-						patternCategoriesOrder.indexOf( currentName ) -
-						patternCategoriesOrder.indexOf( nextName )
-					);
-				}
-				return patternCategoriesOrder.includes( currentName ) ? -1 : 1;
+				return 0;
 			} ),
 		[ categories ]
 	);

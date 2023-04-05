@@ -4,20 +4,19 @@ import './pattern-list-panel.scss';
 
 type PatternListPanelProps = {
 	onSelect: ( selectedPattern: Pattern | null ) => void;
-	patterns: Pattern[];
 	selectedPattern: Pattern | null;
 	categories: Category[];
 	selectedCategory: string | null;
-	sectionsMapByCategory: { [ key: string ]: Pattern[] };
+	patternsMapByCategory: { [ key: string ]: Pattern[] };
 };
 
 const PatternListPanel = ( {
 	onSelect,
 	selectedPattern,
 	selectedCategory,
-	sectionsMapByCategory,
+	patternsMapByCategory,
 }: PatternListPanelProps ) => {
-	const categoryPatterns = selectedCategory ? sectionsMapByCategory[ selectedCategory ] : [];
+	const categoryPatterns = selectedCategory ? patternsMapByCategory[ selectedCategory ] : [];
 
 	if ( ! selectedCategory ) {
 		return null;

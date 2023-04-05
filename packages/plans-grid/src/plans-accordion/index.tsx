@@ -1,3 +1,4 @@
+import { WPCOMFeatures } from '@automattic/data-stores';
 import { Button, SVG, Path } from '@wordpress/components';
 import { useSelect } from '@wordpress/data';
 import { Icon } from '@wordpress/icons';
@@ -7,15 +8,9 @@ import * as React from 'react';
 import { useSupportedPlans } from '../hooks';
 import PlanItem from '../plans-accordion-item';
 import PlanItemPlaceholder from '../plans-accordion-item/plans-item-placeholder';
-import { PLANS_STORE, WPCOM_FEATURES_STORE } from '../stores';
+import { PLANS_STORE } from '../stores';
 import type { DisabledPlansMap } from '../plans-table/types';
-import type {
-	DomainSuggestions,
-	Plans,
-	PlansSelect,
-	WPCOMFeatures,
-	WpcomFeaturesSelect,
-} from '@automattic/data-stores';
+import type { DomainSuggestions, Plans, PlansSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -67,10 +62,7 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 		[ locale ]
 	);
 	const recommendedPlanSlug = useSelect(
-		( select ) =>
-			( select( WPCOM_FEATURES_STORE ) as WpcomFeaturesSelect ).getRecommendedPlanSlug(
-				selectedFeatures
-			),
+		( select ) => select( WPCOMFeatures.store ).getRecommendedPlanSlug( selectedFeatures ),
 		[ selectedFeatures ]
 	);
 
