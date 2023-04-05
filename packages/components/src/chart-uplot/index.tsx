@@ -51,14 +51,18 @@ interface UplotChartProps {
 	legendContainer?: React.RefObject< HTMLDivElement >;
 }
 
-export default function UplotChart( { data, options: propOptions }: UplotChartProps ) {
+export default function UplotChart( {
+	data,
+	options: propOptions,
+	legendContainer,
+}: UplotChartProps ) {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
 
 	const [ options ] = useState< uPlot.Options >(
-		useMemo(
-			() => ( {
+		useMemo( () => {
+			const defaultOptions: uPlot.Options = {
 				class: 'calypso-uplot-chart',
 				...DEFAULT_DIMENSIONS,
 				padding: [ 16, 8, 16, 8 ],
@@ -109,11 +113,19 @@ export default function UplotChart( { data, options: propOptions }: UplotChartPr
 				],
 				legend: {
 					isolate: true,
+					mount: ( self: uPlot, el: HTMLElement ) => {
+						// If legendContainer is defined, move the legend into it.
+						if ( legendContainer?.current ) {
+							legendContainer?.current.append( el );
+						}
+					},
 				},
+			};
+			return {
+				...defaultOptions,
 				...( typeof propOptions === 'object' ? propOptions : {} ),
-			} ),
-			[ propOptions, translate ]
-		)
+			};
+		}, [ legendContainer, propOptions, translate ] )
 	);
 
 	useResize( uplot, uplotContainer );
