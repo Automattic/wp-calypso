@@ -93,8 +93,8 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	hasSitePlans?: boolean;
 	product: MinimalRequestCartProduct | undefined;
 	productDisplayCost?: string | null;
-	planRawPrice?: number;
-	planDiscountedRawPrice?: number;
+	planRawPrice?: number | null;
+	planDiscountedRawPrice?: number | null;
 	isLoggedIn?: boolean;
 	siteSlug?: string | null;
 	selectedSiteId: string | number | undefined | null;
@@ -402,10 +402,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				? this.props.paymentMethodsState.paymentMethods[ 0 ]
 				: undefined;
 		if ( this.isEligibleForOneClickUpsell( buttonAction ) && productToAdd && storedCard ) {
-			if ( ! storedCard ) {
-				return;
-			}
-
+			debug( 'accept upsell allows one-click, has a product, and a stored card' );
 			this.setState( {
 				showPurchaseModal: true,
 			} );
@@ -447,10 +444,14 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			}
 			return;
 		}
+		debug(
+			'accept upsell either does does not allow one-click, does not have a product, or does not have a stored card'
+		);
 
 		// Professional Email needs to add the locally built cartItem to the cart,
 		// as we need to handle validation failures before redirecting to checkout.
 		if ( PROFESSIONAL_EMAIL_UPSELL === upsellType && productToAdd ) {
+			debug( 'accept upsell preparing for email upsell' );
 			// If we don't have an existing destination, calculate the thank you destination for
 			// the original cart contents, and only store it if the cart update succeeds.
 			const destinationFromCookie = retrieveSignupDestination();
@@ -461,8 +462,9 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			this.props.shoppingCartManager
 				.replaceProductsInCart( [ productToAdd ] )
 				.then( ( newCart ) => {
-					if ( newCart.messages ) {
-						if ( newCart.messages.errors ) {
+					if ( newCart.messages?.errors ) {
+						if ( newCart.messages.errors.length > 0 ) {
+							debug( 'email upsell failed with a cart error in the cart response' );
 							// Stay on the page to let CartMessages show the relevant error.
 							return;
 						}
@@ -475,8 +477,9 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 					debug( 'redirecting because we have professional email' );
 					page( '/checkout/' + siteSlug );
 				} )
-				.catch( () => {
+				.catch( ( error ) => {
 					// Nothing needs to be done here. CartMessages will display the error to the user.
+					debug( 'email upsell failed with a cart error', error );
 				} );
 			return;
 		}
@@ -602,10 +605,10 @@ export default connect(
 			props.upgradeItem ?? ''
 		);
 		const annualDiscountPrice = getPlanDiscountedRawPrice( state, selectedSiteId ?? 0, planSlug, {
-			isMonthly: false,
+			returnMonthly: false,
 		} );
 		const annualPrice = getSitePlanRawPrice( state, selectedSiteId ?? 0, planSlug, {
-			isMonthly: false,
+			returnMonthly: false,
 		} );
 
 		const currentPlanTerm = getCurrentPlanTerm( state, selectedSiteId ?? 0 ) ?? TERM_MONTHLY;

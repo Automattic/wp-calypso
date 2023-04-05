@@ -13,10 +13,13 @@ import type { SiteDetails } from '@automattic/data-stores';
 import './style.scss';
 
 interface TranslatedStrings {
+	titleLabel?: string;
 	titlePlaceholder?: string;
 	titleMissing?: string;
+	taglineLabel?: string;
 	taglinePlaceholder?: string;
 	iconPlaceholder?: string;
+	buttonText?: string;
 }
 interface SetupFormProps {
 	site: SiteDetails | null;
@@ -83,7 +86,7 @@ const SetupForm = ( {
 			/>
 			<FormFieldset>
 				<TextControl
-					label={ __( 'Site name' ) }
+					label={ translatedText?.titleLabel || __( 'Site name' ) }
 					name="setup-form-input-name"
 					id="setup-form-input-name"
 					value={ siteTitle }
@@ -101,7 +104,9 @@ const SetupForm = ( {
 				) }
 			</FormFieldset>
 			<FormFieldset>
-				<FormLabel htmlFor="setup-form-input-description">{ __( 'Brief description' ) }</FormLabel>
+				<FormLabel htmlFor="setup-form-input-description">
+					{ translatedText?.taglineLabel || __( 'Brief description' ) }
+				</FormLabel>
 				<ForwardedAutoresizingFormTextarea
 					name="setup-form-input-description"
 					id="setup-form-input-description"
@@ -115,7 +120,7 @@ const SetupForm = ( {
 			</FormFieldset>
 			{ children }
 			<Button className="setup-form__submit" disabled={ isLoading } type="submit">
-				{ isLoading ? __( 'Loading' ) : __( 'Continue' ) }
+				{ isLoading ? __( 'Loading' ) : translatedText?.buttonText ?? __( 'Continue' ) }
 			</Button>
 			{ isSubmitError && (
 				<FormInputValidation
