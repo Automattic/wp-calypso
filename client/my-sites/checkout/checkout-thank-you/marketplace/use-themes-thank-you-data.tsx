@@ -37,10 +37,12 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 
 	const themesSection: ThankYouSectionProps = {
 		sectionKey: 'theme_information',
-		nextSteps: themesList.map( ( theme ) => ( {
-			stepKey: `theme_information_${ theme?.id }`,
-			stepSection: <ThankYouThemeSection theme={ theme } />,
-		} ) ),
+		nextSteps: themesList
+			.filter( ( theme ) => theme )
+			.map( ( theme ) => ( {
+				stepKey: `theme_information_${ theme.id }`,
+				stepSection: <ThankYouThemeSection theme={ theme } />,
+			} ) ),
 	};
 
 	const goBackSection = (
