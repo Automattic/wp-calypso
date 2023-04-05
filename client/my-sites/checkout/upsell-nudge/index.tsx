@@ -494,8 +494,13 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		const { product, siteSlug, upsellType } = this.props;
 		const { cartItem } = this.state;
 
-		if ( ! product || ( upsellType === PROFESSIONAL_EMAIL_UPSELL && ! cartItem ) ) {
+		if ( ! product && upsellType !== PROFESSIONAL_EMAIL_UPSELL ) {
 			debug( 'not eligible for one-click upsell because no product exists' );
+			return false;
+		}
+
+		if ( upsellType === PROFESSIONAL_EMAIL_UPSELL && ! cartItem ) {
+			debug( 'not eligible for one-click upsell because no email product exists' );
 			return false;
 		}
 
