@@ -1,6 +1,8 @@
 import { LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { LaunchpadFlowTaskList, Task } from './types';
 
+export const DOMAIN_UPSELL = 'domain_upsell';
+
 export const tasks: Task[] = [
 	{
 		id: 'setup_newsletter',
@@ -88,7 +90,7 @@ export const tasks: Task[] = [
 		disabled: true,
 	},
 	{
-		id: 'domain_upsell',
+		id: DOMAIN_UPSELL,
 		completed: false,
 		disabled: false,
 	},
@@ -132,7 +134,7 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	free: [
 		'setup_free',
 		'design_selected',
-		'domain_upsell',
+		DOMAIN_UPSELL,
 		'first_post_published',
 		'design_edited',
 		'site_launched',
