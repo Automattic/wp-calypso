@@ -25,6 +25,7 @@ import {
 	mockGetVatInfoEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockLogStashEndpoint,
+	mockStoredPaymentMethodsEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
@@ -58,6 +59,7 @@ describe( 'CheckoutMain', () => {
 		( isMarketplaceProduct as jest.Mock ).mockImplementation( () => false );
 		( isJetpackSite as jest.Mock ).mockImplementation( () => false );
 
+		mockStoredPaymentMethodsEndpoint( [] );
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();
 		mockGetVatInfoEndpoint( {} );
