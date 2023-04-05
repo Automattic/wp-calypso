@@ -74,7 +74,7 @@ const PatternListRenderer = ( {
 					onSelect={ () => onSelect( null ) }
 				/>
 			) }
-			{ patterns.map( ( pattern, index ) => (
+			{ patterns?.map( ( pattern, index ) => (
 				<PatternListItem
 					key={ `${ index }-${ pattern.ID }` }
 					pattern={ pattern }
