@@ -37,6 +37,8 @@ export const itemsSchema = {
 					isWPCOMDomain: { type: 'boolean' },
 					manualTransferRequired: { type: 'boolean' },
 					name: { type: 'string' },
+					nominetDomainSuspended: { type: 'boolean' },
+					nominetPendingContactVerificationRequest: { type: 'boolean' },
 					owner: { type: 'string', optional: true },
 					partnerDomain: { type: 'boolean' },
 					pendingRegistration: { type: 'boolean' },
