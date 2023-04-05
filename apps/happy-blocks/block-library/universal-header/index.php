@@ -7,16 +7,18 @@
  * @package happy-blocks
  */
 
-/**
- * Find the URL of the asset file from happy-blocks.
- *
- * @param file $file The file name.
- */
-function happy_blocks_get_asset( $file ) {
-	return array(
-		'path'    => "https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-library/universal-header/build/$file",
-		'version' => filemtime( __DIR__ . "/build/$file" ),
-	);
+if ( ! function_exists( 'happy_blocks_get_asset' ) ) {
+	/**
+	 * Find the URL of the asset file from happy-blocks.
+	 *
+	 * @param file $file The file name.
+	 */
+	function happy_blocks_get_asset( $file ) {
+		return array(
+			'path'    => "https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-library/universal-header/build/$file",
+			'version' => filemtime( __DIR__ . "/build/$file" ),
+		);
+	}
 }
 
 $js  = happy_blocks_get_asset( 'view.js' );
