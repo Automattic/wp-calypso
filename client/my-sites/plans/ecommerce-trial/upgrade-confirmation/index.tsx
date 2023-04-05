@@ -4,9 +4,11 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConfirmationTask from './confirmation-task';
 import { getConfirmationTasks } from './confirmation-tasks';
+import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
@@ -23,7 +25,14 @@ const TrialUpgradeConfirmation = () => {
 		wooAdminUrl: selectedSite?.URL ? selectedSite.URL + '/wp-admin/admin.php?page=wc-admin' : '',
 	};
 
-	const currentPlanName = selectedSite?.plan?.product_name_short ?? '';
+	const isFetchingSitePlan = useSelector( ( state: AppState ) => {
+		if ( ! selectedSite?.ID ) {
+			return false;
+		}
+		return isRequestingSitePlans( state, selectedSite.ID );
+	} );
+
+	const currentPlanName = isFetchingSitePlan ? '' : selectedSite?.plan?.product_name_short ?? '';
 
 	return (
 		<>
