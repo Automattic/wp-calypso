@@ -11,7 +11,7 @@ import useSiteChecklist from './use-site-checklist';
  */
 const useSiteChecklistTask = (
 	siteId: string,
-	taskId: typeof CHECKLIST_KNOWN_TASKS[ keyof typeof CHECKLIST_KNOWN_TASKS ]
+	taskId: ( typeof CHECKLIST_KNOWN_TASKS )[ keyof typeof CHECKLIST_KNOWN_TASKS ]
 ): Task | undefined => {
 	const siteChecklist = useSiteChecklist( siteId );
 	const task = useMemo(

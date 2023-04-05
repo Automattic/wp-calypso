@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
@@ -36,6 +37,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
+	emailManagementAddEmailForwards,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
 	emailManagementInbox,
@@ -60,15 +62,22 @@ import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progre
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSite, getSiteId, getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	getSite,
+	getSiteId,
+	getSiteOption,
+	getSitePlanSlug,
+	getSiteSlug,
+} from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-
 /*
  * @FIXME Shorthand, but I might get rid of this.
  */
@@ -196,6 +205,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		domainManagementTransferOut,
 		domainManagementTransferToOtherSite,
 		emailManagement,
+		emailManagementAddEmailForwards,
 		emailManagementAddGSuiteUsers,
 		emailManagementForwarding,
 		emailManagementInbox,
@@ -281,6 +291,30 @@ function onSelectedSiteAvailable( context ) {
 	if ( isMigrationInProgress && ! startsWith( context.pathname, '/migrate/' ) ) {
 		page.redirect( `/migrate/${ selectedSite.slug }` );
 		return false;
+	}
+
+	// If we had an eCommerce trial, and the user doesn't have an active paid plan,
+	// redirect to
+	if ( wasEcommerceTrialSite( state, selectedSite.ID ) ) {
+		// Use getSitePlanSlug() as it ignores expired plans.
+		const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
+
+		if ( [ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug ) ) {
+			const permittedPathPrefixes = [
+				'/checkout/',
+				'/domains/',
+				'/email/',
+				'/plans/my-plan/trial-expired/',
+				'/purchases/',
+			];
+
+			if ( ! permittedPathPrefixes.some( ( prefix ) => context.pathname.startsWith( prefix ) ) ) {
+				page.redirect( `/plans/my-plan/trial-expired/${ selectedSite.slug }` );
+				return false;
+			}
+
+			context.hideLeftNavigation = true;
+		}
 	}
 
 	const primaryDomain = getPrimaryDomainBySiteId( state, selectedSite.ID );
@@ -416,9 +450,16 @@ export function noSite( context, next ) {
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
+	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 
-	if ( ! isDomainOnlyFlow && ! isJetpackCheckoutFlow && ! isGiftCheckoutFlow && hasSite ) {
+	if (
+		! isDomainOnlyFlow &&
+		! isJetpackCheckoutFlow &&
+		! isAkismetCheckoutFlow &&
+		! isGiftCheckoutFlow &&
+		hasSite
+	) {
 		siteSelection( context, next );
 		return;
 	}
@@ -513,9 +554,23 @@ export function siteSelection( context, next ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
-		if ( onSelectedSiteAvailable( context ) ) {
-			next();
-		}
+
+		const currentPlanSlug = getSitePlanSlug( getState(), siteId );
+		const shouldUpdateStateAfterUpgrade =
+			context.pathname.startsWith( '/plans/my-plan/trial-upgraded/' ) &&
+			[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug );
+
+		// This will fetch the site and update the state after the plan is upgraded if the site is on the trial-upgraded flow.
+		const promise = shouldUpdateStateAfterUpgrade
+			? dispatch( requestSite( siteId ) ).catch( () => {
+					return null;
+			  } )
+			: Promise.resolve();
+		promise.then( () => {
+			if ( onSelectedSiteAvailable( context ) ) {
+				next();
+			}
+		} );
 	} else {
 		// Fetch the site by siteFragment and then try to select again
 		dispatch( requestSite( siteFragment ) )
@@ -593,7 +648,9 @@ export function redirectToPrimary( context, primarySiteSlug ) {
 
 export function navigation( context, next ) {
 	// Render the My Sites navigation in #secondary
-	context.secondary = createNavigation( context );
+	if ( ! context.hideLeftNavigation ) {
+		context.secondary = createNavigation( context );
+	}
 	next();
 }
 
@@ -631,6 +688,25 @@ export function redirectWithoutSite( redirectPath ) {
 
 		return next();
 	};
+}
+
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by staging sites.
+ *
+ * @param {Object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function stagingSiteNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if ( selectedSite && isSiteWpcomStaging( store.getState(), selectedSite.ID ) ) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
 }
 
 /**

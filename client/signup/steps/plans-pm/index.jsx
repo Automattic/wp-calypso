@@ -33,7 +33,7 @@ export class PlansStepPM extends Component {
 		);
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
 
-		loadExperimentAssignment( 'paid_media_signup_2023_03_biannual_toggle_hide_free' ).then(
+		loadExperimentAssignment( 'paid_media_signup_2023_03_legacy_free_presentation' ).then(
 			( experimentName ) => {
 				this.setState( { experiment: experimentName } );
 				this.setState( { experimentIsLoading: false } );
@@ -100,7 +100,7 @@ export class PlansStepPM extends Component {
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />
 		);
 
-		if ( this.state.experiment?.variationName === 'treatment' ) {
+		if ( this.state.experiment?.variationName === 'treatment' && this.props.hideFreePlan ) {
 			if ( this.state.isDesktop ) {
 				return translate( "Pick one that's right for you and unlock features that help you grow." );
 			}

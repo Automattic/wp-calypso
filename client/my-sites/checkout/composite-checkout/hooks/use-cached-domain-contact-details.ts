@@ -9,6 +9,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import useCountryList from './use-country-list';
 import type {
 	PossiblyCompleteDomainContactDetails,
@@ -51,7 +52,7 @@ function useCachedContactDetailsForCheckoutForm(
 			? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode )
 			: false;
 
-	const checkoutStoreActions = useDispatch( 'wpcom-checkout' );
+	const checkoutStoreActions = useDispatch( CHECKOUT_STORE );
 	if ( ! checkoutStoreActions?.loadDomainContactDetailsFromCache ) {
 		throw new Error(
 			'useCachedContactDetailsForCheckoutForm must be run after the checkout data store has been initialized'
@@ -110,7 +111,7 @@ function useCachedContactDetailsForCheckoutForm(
 				setShouldShowContactDetailsValidationErrors( true );
 				setComplete( true );
 			} )
-			.catch( ( error ) => {
+			.catch( ( error: Error ) => {
 				setShouldShowContactDetailsValidationErrors( true );
 				isMounted.current && setComplete( true );
 				// eslint-disable-next-line no-console

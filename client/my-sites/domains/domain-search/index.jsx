@@ -409,7 +409,7 @@ export default connect(
 			isDomainUpsell:
 				!! getCurrentQueryArguments( state )?.domainAndPlanPackage &&
 				!! getCurrentQueryArguments( state )?.domain,
-			isSiteOnFreePlan: isFreePlanProduct( site.plan ),
+			isSiteOnFreePlan: site && isFreePlanProduct( site.plan ),
 		};
 	},
 	{

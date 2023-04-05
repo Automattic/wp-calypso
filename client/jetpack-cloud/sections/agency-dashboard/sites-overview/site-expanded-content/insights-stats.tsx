@@ -7,9 +7,11 @@ import type { SiteStats } from '../types';
 
 interface Props {
 	stats: SiteStats;
+	siteUrlWithScheme: string;
+	trackEvent: ( eventName: string ) => void;
 }
 
-export default function InsightsStats( { stats }: Props ) {
+export default function InsightsStats( { stats, siteUrlWithScheme, trackEvent }: Props ) {
 	const translate = useTranslate();
 
 	const data = {
@@ -35,7 +37,7 @@ export default function InsightsStats( { stats }: Props ) {
 		const trendIcon = getTrendIcon( trend );
 		return (
 			<span
-				className={ classNames( 'site-expanded-content__card-content-count', {
+				className={ classNames( 'site-expanded-content__card-content-score', {
 					'is-up': trend === 'up',
 					'is-down': trend === 'down',
 				} ) }
@@ -52,31 +54,39 @@ export default function InsightsStats( { stats }: Props ) {
 		);
 	};
 
+	const href = `${ siteUrlWithScheme }/wp-admin/admin.php?page=stats`;
+
 	return (
 		<ExpandedCard header={ translate( '7 days insights stats' ) }>
 			<div className="site-expanded-content__card-content-container">
 				<div className="site-expanded-content__card-content">
 					<div className="site-expanded-content__card-content-column">
-						<div className="site-expanded-content__card-content-count">
+						<div className="site-expanded-content__card-content-score">
 							<ShortenedNumber value={ data.visitors } />
 							{ getTrendContent( data.visitorsTrend, data.visitorsChange ) }
 						</div>
-						<div className="site-expanded-content__card-content-count-title">
+						<div className="site-expanded-content__card-content-score-title">
 							{ translate( 'Visitors' ) }
 						</div>
 					</div>
 					<div className="site-expanded-content__card-content-column">
-						<div className="site-expanded-content__card-content-count">
+						<div className="site-expanded-content__card-content-score">
 							<ShortenedNumber value={ data.views } />
 							{ getTrendContent( data.viewsTrend, data.viewsChange ) }
 						</div>
-						<div className="site-expanded-content__card-content-count-title">
+						<div className="site-expanded-content__card-content-score-title">
 							{ translate( 'Views' ) }
 						</div>
 					</div>
 				</div>
 				<div className="site-expanded-content__card-footer">
-					<Button className="site-expanded-content__card-button" compact>
+					<Button
+						href={ href }
+						target="_blank"
+						onClick={ () => trackEvent( 'expandable_block_see_all_stats_click' ) }
+						className="site-expanded-content__card-button"
+						compact
+					>
 						{ translate( 'See all stats' ) }
 					</Button>
 				</div>

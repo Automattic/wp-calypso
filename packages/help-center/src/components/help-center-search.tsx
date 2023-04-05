@@ -15,6 +15,7 @@ import HelpCenterSearchResults from './help-center-search-results';
 import './help-center-search.scss';
 import './help-center-launchpad.scss';
 import { SibylArticles } from './help-center-sibyl-articles';
+import type { SiteSelect } from '@automattic/data-stores';
 
 export const HelpCenterSearch = () => {
 	const history = useHistory();
@@ -25,7 +26,10 @@ export const HelpCenterSearch = () => {
 	const [ searchQuery, setSearchQuery ] = useState( query || '' );
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const site = useSelect( ( select ) => siteId && select( SITE_STORE ).getSite( siteId ) );
+	const site = useSelect(
+		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ),
+		[ siteId ]
+	);
 	let launchpadEnabled = site && site?.options.launchpad_screen === 'full';
 
 	if ( ! launchpadEnabled ) {

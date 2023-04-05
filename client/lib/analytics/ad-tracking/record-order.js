@@ -20,6 +20,7 @@ import {
 	Ga4PropertyGtag,
 } from './google-analytics-4';
 import { loadTrackingScripts } from './load-tracking-scripts';
+import { initWooGTMContainer, isWooExpressUpgrade, loadWooGTMContainer } from './woo';
 
 // Ensure setup has run.
 import './setup';
@@ -29,9 +30,10 @@ import './setup';
  *
  * @param {Object} cart - cart as `ResponseCart` object
  * @param {number} orderId - the order id
+ * @param {string?} sitePlanSlug - product plan slug
  * @returns {void}
  */
-export async function recordOrder( cart, orderId ) {
+export async function recordOrder( cart, orderId, sitePlanSlug ) {
 	await refreshCountryCodeCookieGdpr();
 
 	await loadTrackingScripts();
@@ -58,6 +60,7 @@ export async function recordOrder( cart, orderId ) {
 	recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInWooGTM( cart, orderId, sitePlanSlug );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -577,6 +580,57 @@ function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
 		Ga4PropertyGtag.WPCOM
 	);
 	debug( 'recordOrderInWPcomGA4: Record WPcom Purchase in GA4' );
+}
+
+/**
+ * Sends a purchase event to Google Tag Manager for eligible Woo Express upgrades.
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart
+ * @param {string} orderId
+ * @param {string?} sitePlanSlug
+ * @returns {void}
+ */
+function recordOrderInWooGTM( cart, orderId, sitePlanSlug ) {
+	if ( ! isWooExpressUpgrade( cart, sitePlanSlug ) ) {
+		return;
+	}
+
+	loadWooGTMContainer()
+		.then( () => initWooGTMContainer() )
+		.then( () => {
+			debug(
+				`recordOrderInWooGTM: Initialized GTM container ${ TRACKING_IDS.wooGoogleTagManagerId }`
+			);
+
+			// We ensure that we can track with GTM
+			if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
+				return;
+			}
+
+			const purchaseEventMeta = {
+				event: 'purchase',
+				ecommerce: {
+					coupon: cart.coupon?.toString() ?? '',
+					transaction_id: orderId,
+					currency: 'USD',
+					items: cart.products.map( ( { product_id, product_name, cost, volume } ) => ( {
+						id: product_id.toString(),
+						name: product_name.toString(),
+						quantity: parseInt( volume ),
+						price: costToUSD( cost, cart.currency ) ?? 0,
+						billing_term: cart.billing?.interval_unit,
+					} ) ),
+					value: costToUSD( cart.total_cost_integer / 100, cart.currency ),
+				},
+			};
+
+			window.dataLayer.push( purchaseEventMeta );
+
+			debug( `recordOrderInWooGTM: Record Woo GTM purchase`, purchaseEventMeta );
+		} )
+		.catch( ( error ) => {
+			debug( 'recordOrderInWooGTM: Error loading GTM container', error );
+		} );
 }
 
 /**

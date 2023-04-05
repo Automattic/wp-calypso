@@ -10,7 +10,7 @@ import type {
 	CustomTagLinesMap,
 	DisabledPlansMap,
 } from './types';
-import type { DomainSuggestions, Plans } from '@automattic/data-stores';
+import type { DomainSuggestions, Plans, PlansSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -47,7 +47,10 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 
 	const [ allPlansExpanded, setAllPlansExpanded ] = useState( defaultAllPlansExpanded );
 
-	const getPlanProduct = useSelect( ( select ) => select( PLANS_STORE ).getPlanProduct );
+	const getPlanProduct = useSelect(
+		( select ) => ( select( PLANS_STORE ) as PlansSelect ).getPlanProduct,
+		[]
+	);
 
 	return (
 		<div className="plans-table">

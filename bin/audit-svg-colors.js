@@ -161,23 +161,27 @@ SVG_FILES_TO_PROCESS.forEach( ( imagePath ) => {
 		return;
 	}
 
+	// There are SVG files where stroke value is 'null'.
+	// Added the filter before map() to ensure 'null' strings are filtered out.
 	REPLACEMENT_RULES.push( {
 		file: imagePath,
 		preset: targetPreset,
-		rules: colorValuesToReplace.map( ( value ) => {
-			const replacementValue = findClosestColor( value, targetValues );
-			const replacementName = findPaletteColorName( replacementValue );
+		rules: colorValuesToReplace
+			.filter( ( val ) => val !== 'null' )
+			.map( ( value ) => {
+				const replacementValue = findClosestColor( value, targetValues );
+				const replacementName = findPaletteColorName( replacementValue );
 
-			return {
-				from: {
-					value,
-				},
-				to: {
-					value: replacementValue,
-					name: replacementName,
-				},
-			};
-		} ),
+				return {
+					from: {
+						value,
+					},
+					to: {
+						value: replacementValue,
+						name: replacementName,
+					},
+				};
+			} ),
 	} );
 } );
 

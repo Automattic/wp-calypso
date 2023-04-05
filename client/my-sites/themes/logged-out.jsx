@@ -7,7 +7,7 @@ import ThemeShowcase from './theme-showcase';
 const ConnectedThemeShowcase = connectOptions( ThemeShowcase );
 
 export default ( props ) => (
-	<Main fullWidthLayout className="themes">
+	<Main fullWidthLayout isLoggedOut className="themes">
 		<BodySectionCssClass
 			bodyClass={ [
 				...( isEnabled( 'themes/showcase-i4/details-and-preview' )

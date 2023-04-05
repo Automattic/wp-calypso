@@ -272,13 +272,13 @@ body.get-apps__body {
 }
 
 .get-apps__desktop-button.button {
-	margin: 46px 0 15px;
+	margin: 25px 10px 25px 0;
 	font-weight: 500;
 	padding: 10px 24px;
 	width: fit-content;
 	max-width: 366px;
 	min-width: 110px;
-	display: block;
+	display: inline-block;
 	font-size: rem(18px); //typography-exception;
 
 	&:visited {

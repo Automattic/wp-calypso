@@ -1,4 +1,4 @@
-import config from '@automattic/calypso-config';
+import { LINK_IN_BIO_DOMAIN_FLOW } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
@@ -22,6 +22,11 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 
 	'link-in-bio': () =>
 		import( /* webpackChunkName: "link-in-bio-flow" */ '../declarative-flow/link-in-bio' ),
+
+	[ LINK_IN_BIO_DOMAIN_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "link-in-bio-flow-domain" */ '../declarative-flow/link-in-bio-domain'
+		),
 
 	'link-in-bio-tld': () =>
 		import( /* webpackChunkName: "link-in-bio-tld-flow" */ '../declarative-flow/link-in-bio-tld' ),
@@ -59,16 +64,16 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	'update-design': () =>
 		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/update-design' ),
 
+	'domain-upsell': () =>
+		import( /* webpackChunkName: "update-design-flow" */ '../declarative-flow/domain-upsell' ),
+
 	build: () => import( /* webpackChunkName: "build-flow" */ '../declarative-flow/build' ),
 	write: () => import( /* webpackChunkName: "write-flow" */ '../declarative-flow/write' ),
+
+	sensei: () => import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' ),
 };
 
 availableFlows[ 'plugin-bundle' ] = () =>
 	import( /* webpackChunkName: "plugin-bundle-flow" */ '../declarative-flow/plugin-bundle-flow' );
-
-if ( config.isEnabled( 'sensei/onboarding' ) ) {
-	availableFlows[ 'sensei' ] = () =>
-		import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' );
-}
 
 export default availableFlows;

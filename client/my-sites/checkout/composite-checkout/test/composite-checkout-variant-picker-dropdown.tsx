@@ -5,6 +5,7 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { dispatch } from '@wordpress/data';
 import nock from 'nock';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -13,6 +14,7 @@ import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import CheckoutMain from '../components/checkout-main';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import {
 	siteId,
 	domainProduct,
@@ -52,6 +54,7 @@ describe( 'CheckoutMain with a variant picker', () => {
 	let MyCheckout;
 
 	beforeEach( () => {
+		dispatch( CHECKOUT_STORE ).reset();
 		jest.clearAllMocks();
 		getPlansBySiteId.mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),

@@ -13,6 +13,10 @@ const SitesOverviewContext = createContext< SitesOverviewContextInterface >( {
 	setSelectedSites: () => {
 		return undefined;
 	},
+	sort: {
+		field: 'url',
+		direction: 'asc',
+	},
 } );
 
 export default SitesOverviewContext;

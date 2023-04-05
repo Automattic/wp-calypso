@@ -3,7 +3,6 @@
  */
 import {
 	envVariables,
-	DataHelper,
 	MediaHelper,
 	EditorPage,
 	TestFile,
@@ -23,7 +22,11 @@ const features = envToFeatureKey( {
 	COBLOCKS_EDGE: envVariables.TEST_ON_ATOMIC || envVariables.COBLOCKS_EDGE,
 } );
 
-describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), () => {
+/**
+ * This spec requires the following:
+ * 	- theme: a non-block-based theme (eg. Twenty-Twenty One)
+ */
+describe( 'CoBlocks: Extensions: Cover Styles', function () {
 	const accountName = getTestAccountByFeature( features );
 
 	let page: Page;
@@ -64,6 +67,11 @@ describe( DataHelper.createSuiteTitle( 'CoBlocks: Extensions: Cover Styles' ), (
 
 	it( 'Open settings sidebar', async function () {
 		await editorPage.openSettings();
+	} );
+
+	it( 'Click on the Styles button', async () => {
+		const stylesButton = await editorWindowLocator.locator( `button[aria-label="Styles"]` );
+		await stylesButton?.click();
 	} );
 
 	it.each( CoverBlock.coverStyles )( 'Verify "%s" style is available', async ( style ) => {

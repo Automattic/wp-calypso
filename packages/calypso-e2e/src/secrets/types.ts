@@ -1,7 +1,7 @@
 import { TEST_ACCOUNT_NAMES } from '.';
 
 type OtherTestSiteName = 'notifications';
-export type TestAccountName = typeof TEST_ACCOUNT_NAMES[ number ];
+export type TestAccountName = ( typeof TEST_ACCOUNT_NAMES )[ number ];
 
 interface TestAccountSites {
 	id: number;

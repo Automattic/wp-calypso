@@ -19,7 +19,7 @@ import {
 } from 'calypso/lib/purchases';
 import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { isJetpackTemporarySitePurchase } from '../../utils';
+import { isTemporarySitePurchase } from '../../utils';
 
 export class PlanBillingPeriod extends Component {
 	static propTypes = {
@@ -96,7 +96,7 @@ export class PlanBillingPeriod extends Component {
 			return;
 		}
 
-		const isJetpackTemporarySite = isJetpackTemporarySitePurchase( purchase.domain );
+		const isTemporarySite = isTemporarySitePurchase( purchase );
 
 		return (
 			<Fragment>
@@ -108,7 +108,7 @@ export class PlanBillingPeriod extends Component {
 						</Button>
 					) }
 				</FormSettingExplanation>
-				{ ! site && ! isJetpackTemporarySite && ! purchase.isLocked && (
+				{ ! site && ! isTemporarySite && ! purchase.isLocked && (
 					<FormSettingExplanation>
 						{ translate(
 							'To manage your plan, please {{supportPageLink}}reconnect{{/supportPageLink}} your site.',

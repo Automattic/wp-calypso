@@ -71,7 +71,7 @@ const StorageHelpTooltip: React.FC< OwnProps > = ( { className, bytesAvailable }
 					components: {
 						a: (
 							<a
-								href="https://jetpack.com/support/backup/#how-is-storage-usage-calculated"
+								href="https://jetpack.com/support/jetpack-vaultpress-backup-storage-and-retention/"
 								target="_blank"
 								rel="external noreferrer noopener"
 							/>

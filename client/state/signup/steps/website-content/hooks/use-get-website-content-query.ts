@@ -26,6 +26,7 @@ export function useGetWebsiteContentQuery( siteSlug: SiteSlug | undefined ) {
 					: [],
 				siteLogoUrl: data.site_logo_url,
 				genericFeedback: data.generic_feedback,
+				searchTerms: data.search_terms,
 			} ),
 			staleTime: Infinity,
 		}

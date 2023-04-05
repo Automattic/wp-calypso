@@ -17,8 +17,8 @@ export type SiteDetailsForSorting =
 const validSortKeys = [ 'lastInteractedWith', 'updatedAt', 'alphabetically' ] as const;
 const validSortOrders = [ 'asc', 'desc' ] as const;
 
-export type SitesSortKey = typeof validSortKeys[ number ];
-export type SitesSortOrder = typeof validSortOrders[ number ];
+export type SitesSortKey = ( typeof validSortKeys )[ number ];
+export type SitesSortOrder = ( typeof validSortOrders )[ number ];
 
 export const isValidSorting = ( input: {
 	sortKey: string;

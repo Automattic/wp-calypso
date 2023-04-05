@@ -185,10 +185,6 @@
 	}
 }
 
-.design-preview__style-variation-wrapper {
-	padding: 3px;
-}
-
 .design-preview__sidebar-variations {
 	display: block;
 
@@ -199,13 +195,14 @@
 		line-height: 20px;
 	}
 
-	.design-preview__sidebar-variations-grid {
+	.global-styles-variations {
 		align-items: center;
 		display: flex;
 		gap: 8px;
 
-		.design-preview__style-variation {
+		.global-styles-variations__item {
 			flex-shrink: 0;
+			padding: 3px;
 			width: 100px;
 		}
 	}
@@ -217,7 +214,7 @@
 			display: block;
 		}
 
-		.design-preview__sidebar-variations-grid {
+		.global-styles-variations {
 			box-sizing: border-box;
 			display: grid;
 			gap: 12px;
@@ -226,68 +223,11 @@
 			padding: 2px;
 			width: 100%;
 
-			.design-preview__style-variation {
+			.global-styles-variations__item {
 				box-sizing: border-box;
 				width: 100%;
 			}
 		}
-	}
-}
-
-.design-preview__style-variation {
-	cursor: pointer;
-	position: relative;
-
-	&:hover,
-	&:focus-visible,
-	&--is-selected {
-		&::after {
-			border-radius: 3px; /* stylelint-disable-line scales/radii */
-			bottom: -3px;
-			content: "";
-			display: block;
-			left: -3px;
-			pointer-events: none;
-			position: absolute;
-			right: -3px;
-			top: -3px;
-		}
-	}
-
-	&:hover,
-	&:focus-visible {
-		&::after {
-			box-shadow: 0 0 0 2px var(--studio-blue-50);
-		}
-	}
-
-	&--is-selected {
-		&::after {
-			box-shadow: 0 0 0 2px var(--studio-gray);
-		}
-	}
-
-	&:focus-visible {
-		outline: none;
-	}
-
-	.edit-site-global-styles-preview__iframe {
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
-		box-shadow: 0 0 0 1px rgb(0 0 0 / 10%);
-		border: 0;
-		display: block;
-		max-width: 100%;
-	}
-
-	.design-picker__premium-badge {
-		background-color: var(--color-neutral-80);
-		color: var(--color-neutral-0);
-		font-size: 0.75rem;
-		margin: 0;
-		padding: 2px 12px 2px 6px;
-		position: absolute;
-		top: 6px;
-		left: 6px;
 	}
 }
 
@@ -320,6 +260,17 @@
 			display: block;
 		}
 	}
+}
+
+.design-picker__premium-badge {
+	background-color: var(--color-neutral-80);
+	color: var(--color-neutral-0);
+	font-size: 0.75rem;
+	margin: 0;
+	padding: 2px 12px 2px 6px;
+	position: absolute;
+	top: 9px;
+	left: 9px;
 }
 
 .design-picker__premium-badge-tooltip.popover {

@@ -9,6 +9,7 @@ import { NonClickableItem, ClickableItem } from './menu-items';
 import './style.scss';
 
 const UniversalNavbarHeader = ( {
+	className,
 	isLoggedIn = false,
 	sectionName,
 	logoColor,
@@ -33,7 +34,7 @@ const UniversalNavbarHeader = ( {
 	);
 
 	return (
-		<div>
+		<div className={ className }>
 			<div className="x-root lpc-header-nav-wrapper">
 				<div className="lpc-header-nav-container">
 					{ /*<!-- Nav bar starts here. -->*/ }

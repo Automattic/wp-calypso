@@ -12,6 +12,7 @@ import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
+import BannerActivation from './banner-activation';
 import type { FollowersQuery } from './types';
 import type { Member } from '../types';
 
@@ -85,6 +86,8 @@ function Subscribers( props: Props ) {
 		case 'loading':
 			return (
 				<>
+					<BannerActivation />
+
 					<PeopleListSectionHeader
 						isPlaceholder={ isLoading }
 						label={ translate(
@@ -105,6 +108,7 @@ function Subscribers( props: Props ) {
 							</PopoverMenuItem>
 						</EllipsisMenu>
 					</PeopleListSectionHeader>
+
 					<Card className="people-subscribers-list">
 						{ isLoading && renderPlaceholders() }
 						<InfiniteList

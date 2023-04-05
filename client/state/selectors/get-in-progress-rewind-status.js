@@ -10,9 +10,7 @@ import getRewindState from './get-rewind-state';
  */
 export default function getInProgressRewindStatus( state, siteId, rewindId ) {
 	const maybeRewindState = getRewindState( state, siteId );
-	return maybeRewindState.state === 'active' &&
-		maybeRewindState.rewind &&
-		maybeRewindState.rewind.rewindId === rewindId
+	return maybeRewindState.rewind && maybeRewindState.rewind.rewindId === rewindId
 		? maybeRewindState.rewind.status
 		: null;
 }

@@ -58,6 +58,7 @@ import {
 	retrieveSignupDestination,
 } from 'calypso/signup/storageUtils';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
@@ -92,7 +93,7 @@ export interface PostCheckoutUrlArguments {
 	saveUrlToCookie?: SaveUrlToCookie;
 	hideNudge?: boolean;
 	isInModal?: boolean;
-	isJetpackCheckout?: boolean;
+	sitelessCheckoutType?: SitelessCheckoutType;
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
 	domains?: ResponseDomain[];
@@ -122,13 +123,13 @@ export default function getThankYouPageUrl( {
 	purchaseId,
 	feature,
 	cart,
+	sitelessCheckoutType,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	hideNudge,
 	isInModal,
-	isJetpackCheckout = false,
 	jetpackTemporarySiteId,
 	adminPageRedirect,
 	domains,
@@ -211,8 +212,12 @@ export default function getThankYouPageUrl( {
 	const receiptIdOrPlaceholder = getReceiptIdOrPlaceholder( receiptId, purchaseId );
 	debug( 'receiptIdOrPlaceholder is', receiptIdOrPlaceholder );
 
+	// Check to see if the cart is a renewal and get the first renewal item
+	const firstRenewalInCart =
+		cart && hasRenewalItem( cart ) ? getRenewalItems( cart )[ 0 ] : undefined;
+
 	// jetpack userless & siteless checkout uses a special thank you page
-	if ( isJetpackCheckout ) {
+	if ( sitelessCheckoutType === 'jetpack' ) {
 		// extract a product from the cart, in userless/siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
 
@@ -232,6 +237,19 @@ export default function getThankYouPageUrl( {
 			},
 			thankYouUrl
 		);
+	}
+
+	// Asismet site-less checkout
+	if ( sitelessCheckoutType === 'akismet' ) {
+		// extract a product from the cart, in siteless checkout there should only be one
+		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
+		// This is a renewal, return to the individual product management page for this subscription
+		if ( firstRenewalInCart ) {
+			return managePurchase( 'siteless.akismet.com', firstRenewalInCart.subscription_id );
+		}
+
+		debug( 'redirecting to siteless Akismet thank you' );
+		return `/checkout/akismet/thank-you/${ productSlug }`;
 	}
 
 	// If there is no purchase, then send the user to a generic page (not
@@ -255,8 +273,6 @@ export default function getThankYouPageUrl( {
 
 	// Manual renewals usually have a `redirectTo` but if they do not, return to
 	// the manage purchases page.
-	const firstRenewalInCart =
-		cart && hasRenewalItem( cart ) ? getRenewalItems( cart )[ 0 ] : undefined;
 	if ( siteSlug && firstRenewalInCart?.subscription_id ) {
 		const managePurchaseUrl = managePurchase( siteSlug, firstRenewalInCart.subscription_id );
 		debug(
@@ -294,7 +310,8 @@ export default function getThankYouPageUrl( {
 	const isDomainOnly =
 		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
 	if (
-		( cart?.create_new_blog || signupFlowName === 'domain' ) &&
+		( [ 'no-user', 'no-site' ].includes( String( cart?.cart_key ?? '' ) ) ||
+			signupFlowName === 'domain' ) &&
 		! isDomainOnly &&
 		urlFromCookie &&
 		receiptIdOrPlaceholder &&
@@ -523,14 +540,23 @@ function getFallbackDestination( {
 		}
 	}
 
-	const marketplaceProductSlugs =
-		cart?.products
-			?.filter( ( product ) => product?.extra?.is_marketplace_product )
-			?.map( ( product ) => product?.extra?.plugin_slug ) || [];
+	const marketplaceProducts =
+		cart?.products?.filter( ( product ) => product?.extra?.is_marketplace_product ) || [];
 
-	if ( marketplaceProductSlugs.length > 0 ) {
+	const marketplacePluginSlugs = marketplaceProducts
+		.filter( ( { extra } ) => extra.product_type === 'marketplace_plugin' )
+		.map( ( { extra } ) => extra.product_slug );
+
+	const marketplaceThemeSlugs = marketplaceProducts
+		.filter( ( { extra } ) => extra.product_type === 'marketplace_theme' )
+		.map( ( { extra } ) => extra.product_slug );
+
+	if ( marketplaceProducts.length > 0 ) {
 		debug( 'site with marketplace products' );
-		return `/marketplace/thank-you/${ marketplaceProductSlugs.join( ',' ) }/${ siteSlug }`;
+		return addQueryArgs(
+			{ plugins: marketplacePluginSlugs.join( ',' ), themes: marketplaceThemeSlugs.join( ',' ) },
+			`/marketplace/thank-you/${ siteSlug }`
+		);
 	}
 
 	debug( 'simple thank-you page' );

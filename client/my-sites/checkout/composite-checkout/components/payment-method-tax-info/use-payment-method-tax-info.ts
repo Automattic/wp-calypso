@@ -14,7 +14,10 @@ async function setTaxInfoOnServer( storedDetailsId: string, taxInfo: TaxInfo ): 
 	} );
 }
 
-export function usePaymentMethodTaxInfo( storedDetailsId: string ): {
+export function usePaymentMethodTaxInfo(
+	storedDetailsId: string,
+	{ doNotFetch }: { doNotFetch?: boolean } = {}
+): {
 	taxInfo: TaxGetInfo | undefined;
 	isLoading: boolean;
 	setTaxInfo: ( newInfo: TaxInfo ) => Promise< void >;
@@ -23,11 +26,11 @@ export function usePaymentMethodTaxInfo( storedDetailsId: string ): {
 
 	const queryKey = [ 'tax-info-is-set', storedDetailsId ];
 
-	const { data: taxInfo, isLoading } = useQuery< TaxGetInfo, Error >(
+	const { data: taxInfo, isLoading } = useQuery< TaxGetInfo, Error >( {
 		queryKey,
-		() => fetchTaxInfoFromServer( storedDetailsId ),
-		{}
-	);
+		queryFn: () => fetchTaxInfoFromServer( storedDetailsId ),
+		enabled: ! doNotFetch,
+	} );
 
 	const mutation = useMutation(
 		( mutationInputValues: TaxInfo ) => setTaxInfoOnServer( storedDetailsId, mutationInputValues ),
@@ -55,7 +58,7 @@ export function usePaymentMethodTaxInfo( storedDetailsId: string ): {
 
 	return {
 		taxInfo,
-		isLoading,
+		isLoading: doNotFetch ? false : isLoading,
 		setTaxInfo,
 	};
 }

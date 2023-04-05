@@ -171,8 +171,8 @@ const useItemPrice = (
 			if (
 				[ ...JETPACK_SOCIAL_PRODUCTS, ...JETPACK_BACKUP_T1_PRODUCTS ].includes(
 					item?.productSlug as
-						| typeof JETPACK_SOCIAL_PRODUCTS[ number ]
-						| typeof JETPACK_BACKUP_T1_PRODUCTS[ number ]
+						| ( typeof JETPACK_SOCIAL_PRODUCTS )[ number ]
+						| ( typeof JETPACK_BACKUP_T1_PRODUCTS )[ number ]
 				)
 			) {
 				discountedPrice = introductoryOfferPrices.introOfferCost || undefined;
@@ -191,7 +191,7 @@ const useItemPrice = (
 	// Jetpack CRM price won't come from the API, so we need to hard-code it for now.
 	if (
 		item &&
-		JETPACK_CRM_PRODUCTS.includes( item.productSlug as typeof JETPACK_CRM_PRODUCTS[ number ] )
+		JETPACK_CRM_PRODUCTS.includes( item.productSlug as ( typeof JETPACK_CRM_PRODUCTS )[ number ] )
 	) {
 		discountedPrice = item.displayPrice || -1;
 		originalPrice = item.displayPrice || -1;

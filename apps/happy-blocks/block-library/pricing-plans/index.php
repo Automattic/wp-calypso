@@ -59,7 +59,9 @@ function happyblocks_pricing_plans_is_author() {
 function happyblocks_pricing_plans_get_config() {
 
 	return array(
-		'features' => array(),
+		'features' => array(
+			'tracking' => apply_filters( 'happy_blocks_pricing_plans_tracking', true ),
+		),
 		'locale'   => get_user_locale(),
 	);
 }

@@ -27,9 +27,6 @@
 		box-shadow: none;
 		.search__open-icon {
 			width: 40px;
-			@include break-wide() {
-				width: 60px;
-			}
 		}
 	}
 }

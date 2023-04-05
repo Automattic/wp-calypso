@@ -1,17 +1,11 @@
-import { useTranslate } from 'i18n-calypso';
 import { useQuery } from 'react-query';
-import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
-import { errorNotice } from 'calypso/state/notices/actions';
 
 const useFetchTestConnection = (
 	isPartnerOAuthTokenLoaded: boolean,
 	isConnectionHealthy: boolean,
 	siteId: number
 ) => {
-	const translate = useTranslate();
-	const dispatch = useDispatch();
-
 	return useQuery(
 		[ 'jetpack-agency-test-connection', siteId ],
 		() =>
@@ -26,12 +20,6 @@ const useFetchTestConnection = (
 				}
 			),
 		{
-			onError: () =>
-				dispatch(
-					errorNotice(
-						translate( 'Failed to check your sites connection. Please try again later.' )
-					)
-				),
 			enabled: isPartnerOAuthTokenLoaded,
 			refetchOnWindowFocus: false,
 			// We don't want to trigger another API request to the /test-connection endpoint for a given site

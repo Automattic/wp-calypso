@@ -16,6 +16,7 @@ import {
 	redirectToDefaultWordAdsPeriod,
 	emailStats,
 	emailSummary,
+	subscribers,
 } from './controller';
 
 import './style.scss';
@@ -53,6 +54,11 @@ export default function () {
 
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
+
+	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
+		// Stat Subscribers Page (do not cofuse with people/subscribers/)
+		statsPage( '/stats/subscribers/:site', subscribers );
+	}
 
 	// Stat Site Pages
 	statsPage( `/stats/:period(${ validPeriods })/:site`, site );

@@ -1,6 +1,6 @@
 import '@automattic/calypso-polyfills';
 import accessibleFocus from '@automattic/accessible-focus';
-import { initializeAnalytics } from '@automattic/calypso-analytics';
+import { initializeAnalytics, getGenericSuperPropsGetter } from '@automattic/calypso-analytics';
 import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/current-user';
 import config from '@automattic/calypso-config';
 import { User as UserStore } from '@automattic/data-stores';
@@ -23,31 +23,21 @@ import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
-import { loadPersistedState } from 'calypso/state/persisted-state';
-import { createQueryClient, hydrateBrowserState } from 'calypso/state/query-client';
+import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { requestSites } from 'calypso/state/sites/actions';
-import { WindowLocaleEffectManager } from '../gutenboarding/components/window-locale-effect-manager';
-import { setupWpDataDebug } from '../gutenboarding/devtools';
 import { isAnchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import 'calypso/components/environment-badge/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
 import { useQuery } from './hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from './stores';
+import { setupWpDataDebug } from './utils/devtools';
+import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
 import type { Flow } from './declarative-flow/internals/types';
 
 declare const window: AppWindow;
-
-function generateGetSuperProps() {
-	return () => ( {
-		environment: process.env.NODE_ENV,
-		environment_id: config( 'env_id' ),
-		site_id_label: 'wpcom',
-		client: config( 'client_slug' ),
-	} );
-}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function initializeCalypsoUserStore( reduxStore: any, user: CurrentUser ) {
@@ -114,14 +104,12 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	await loadPersistedState();
 	const user = ( await initializeCurrentUser() ) as unknown;
 	const userId = ( user as CurrentUser ).ID;
 
-	const queryClient = createQueryClient();
-	await hydrateBrowserState( queryClient, userId );
+	const queryClient = await createQueryClient( userId );
 
-	initializeAnalytics( user, generateGetSuperProps() );
+	initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
 
 	const initialState = getInitialState( initialReducer, userId );
 	const reduxStore = createReduxStore( initialState, initialReducer );

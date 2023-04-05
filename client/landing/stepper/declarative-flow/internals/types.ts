@@ -79,6 +79,10 @@ export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
 
 export type Flow = {
 	name: string;
+	/**
+	 * If this flow extends another flow, the variant slug will be added as a class name to the root element of the flow.
+	 */
+	variantSlug?: string;
 	title?: string;
 	classnames?: string | [ string ];
 	useSteps: UseStepsHook;
@@ -94,6 +98,10 @@ export type StepProps = {
 	navigation: NavigationControls;
 	stepName: string;
 	flow: string | null;
+	/**
+	 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
+	 */
+	variantSlug?: string;
 	data?: Record< string, unknown >;
 };
 

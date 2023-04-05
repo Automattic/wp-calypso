@@ -41,21 +41,26 @@ const excludedPackages = [
 ];
 
 const excludedPackagePlugins = excludedPackages.map(
-	( package ) =>
+	// Note: apparently the word "package" is a reserved keyword here for some reason
+	( pkg ) =>
 		new webpack.NormalModuleReplacementPlugin(
-			package,
+			pkg,
 			path.resolve( __dirname, 'src/components/nothing' )
 		)
 );
 
 module.exports = {
 	bail: ! isDevelopment,
-	entry: path.join( __dirname, 'src', 'app' ),
+	entry: {
+		build: path.join( __dirname, 'src', 'app' ),
+		'widget-loader': path.join( __dirname, 'src', 'widget-loader' ),
+	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: false,
 	output: {
 		path: outputPath,
-		filename: 'build.min.js',
+		filename: '[name].min.js',
+		chunkFilename: '[contenthash].js',
 	},
 	optimization: {
 		minimize: ! isDevelopment,
@@ -122,7 +127,8 @@ module.exports = {
 			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 		} ),
 		...SassConfig.plugins( {
-			filename: 'build.min.css',
+			filename: '[name].min.css',
+			chunkFilename: '[contenthash].css',
 			minify: ! isDevelopment,
 		} ),
 		new DependencyExtractionWebpackPlugin( {

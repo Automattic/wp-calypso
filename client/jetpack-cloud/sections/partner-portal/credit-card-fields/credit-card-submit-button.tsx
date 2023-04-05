@@ -4,8 +4,10 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import { useMemo } from 'react';
+import { creditCardStore } from 'calypso/state/partner-portal/credit-card-form';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { ProcessPayment } from '@automattic/composite-checkout';
+import type { StoreState } from '@automattic/wpcom-checkout';
 import type { Stripe } from '@stripe/stripe-js';
 import type { I18n } from '@wordpress/i18n';
 import type { State } from 'calypso/state/partner-portal/credit-card-form/reducer';
@@ -28,9 +30,13 @@ export default function CreditCardSubmitButton( {
 	activeButtonText: string | undefined;
 } ) {
 	const { __ } = useI18n();
-	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
-	const useAsPrimaryPaymentMethod = useSelect( ( select ) =>
-		select( 'credit-card' ).useAsPrimaryPaymentMethod()
+	const fields: StoreState< string > = useSelect(
+		( select ) => select( creditCardStore ).getFields(),
+		[]
+	);
+	const useAsPrimaryPaymentMethod: boolean = useSelect(
+		( select ) => select( creditCardStore ).useAsPrimaryPaymentMethod(),
+		[]
 	);
 	const cardholderName = fields.cardholderName;
 	const { formStatus } = useFormStatus();

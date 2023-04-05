@@ -1,9 +1,8 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-import { Gridicon, Popover } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
+import { Popover } from '@automattic/components';
 import { hasMinContrast, hexToRgb, RGB } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
-import { Icon, color } from '@wordpress/icons';
+import { Icon, color, lock } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import {
@@ -27,6 +26,7 @@ import ColorSwatch from './color-swatch';
 interface AccentColorControlProps {
 	accentColor: AccentColor;
 	setAccentColor: Dispatch< SetStateAction< AccentColor > >;
+	labelText?: string;
 }
 
 interface ColorOption {
@@ -49,9 +49,12 @@ enum COLORS {
 	VividPurple = '#9B51E0',
 }
 
-const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControlProps ) => {
-	const { __, hasTranslation } = useI18n();
-	const locale = useLocale();
+const AccentColorControl = ( {
+	accentColor,
+	setAccentColor,
+	labelText,
+}: AccentColorControlProps ) => {
+	const { __ } = useI18n();
 	const [ customColor, setCustomColor ] = useState< AccentColor | null >( null );
 	const [ colorPickerOpen, setColorPickerOpen ] = useState< boolean >( false );
 	const accentColorRef = useRef< HTMLInputElement >( null );
@@ -161,7 +164,13 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 		const matchingOption = getMatchingOption();
 
 		if ( matchingOption?.isPremium || ( customColor && ! matchingOption ) ) {
-			return <Gridicon icon="lock" size={ 18 } className="extra-gridicon" />;
+			return (
+				<Icon
+					icon={ lock }
+					size={ 18 }
+					className={ classNames( 'extra-gridicon', 'right-positioned' ) }
+				/>
+			);
 		}
 		return null;
 	};
@@ -177,7 +186,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 				selected={ option.value === accentColor.hex }
 				secondaryIcon={
 					shouldLimitGlobalStyles && option.isPremium ? (
-						<Gridicon icon="lock" size={ 18 } className="extra-gridicon" />
+						<Icon icon={ lock } size={ 18 } className="extra-gridicon" />
 					) : null
 				}
 			>
@@ -241,11 +250,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 				</form>
 			</Popover>
 			<FormFieldset>
-				<FormLabel htmlFor="accentColor">
-					{ hasTranslation( 'Favorite color' ) || locale === 'en'
-						? __( 'Favorite color' )
-						: __( 'Accent color' ) }
-				</FormLabel>
+				<FormLabel htmlFor="accentColor">{ labelText ?? __( 'Favorite color' ) }</FormLabel>
 				<SelectDropdown
 					// @ts-expect-error SelectDropdown is defined in .jsx file and has no type definitions generated
 					ref={ accentColorRef }
@@ -257,6 +262,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 					selectedText={ getSelectedText() }
 					selectedIcon={ getSelectedIcon() }
 					selectedSecondaryIcon={ getSelectedSecondaryIcon() }
+					positionSelectedSecondaryIconOnRight={ true }
 				>
 					{ getDropdownOptions() }
 				</SelectDropdown>

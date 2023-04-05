@@ -5,7 +5,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
-import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
@@ -17,6 +16,7 @@ import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchase
 import { PurchaseListConciergeBanner } from 'calypso/me/purchases/purchases-list/purchase-list-concierge-banner';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import titles from 'calypso/me/purchases/titles';
+import { withStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
 import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import {
 	getUserPurchases,
@@ -28,7 +28,6 @@ import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-n
 import getConciergeUserBlocked from 'calypso/state/selectors/get-concierge-user-blocked';
 import getSites from 'calypso/state/selectors/get-sites';
 import { getSiteId } from 'calypso/state/sites/selectors';
-import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
 import MembershipSite from '../membership-site';
 import PurchasesSite from '../purchases-site';
 import PurchasesListHeader from './purchases-list-header';
@@ -66,7 +65,7 @@ class PurchasesList extends Component {
 	}
 
 	render() {
-		const { cards, purchases, sites, translate, subscriptions } = this.props;
+		const { purchases, sites, translate, subscriptions } = this.props;
 		let content;
 
 		if ( this.isDataLoading() ) {
@@ -88,7 +87,7 @@ class PurchasesList extends Component {
 							slug={ site.slug }
 							purchases={ site.purchases }
 							showSite={ true }
-							cards={ cards }
+							cards={ this.props.paymentMethodsState.paymentMethods }
 						/>
 					) ) }
 				</>
@@ -129,7 +128,6 @@ class PurchasesList extends Component {
 		return (
 			<Main wideLayout className="purchases-list">
 				<QueryUserPurchases />
-				<QueryStoredCards />
 				<QueryMembershipsSubscriptions />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 
@@ -163,7 +161,6 @@ PurchasesList.propTypes = {
 };
 
 export default connect( ( state ) => ( {
-	cards: getAllStoredCards( state ),
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 	isFetchingUserPurchases: isFetchingUserPurchases( state ),
 	purchases: getUserPurchases( state ),
@@ -173,4 +170,4 @@ export default connect( ( state ) => ( {
 	isUserBlocked: getConciergeUserBlocked( state ),
 	availableSessions: getAvailableConciergeSessions( state ),
 	siteId: getSiteId( state ),
-} ) )( localize( PurchasesList ) );
+} ) )( withStoredPaymentMethods( localize( PurchasesList ), { type: 'card', expired: true } ) );

@@ -15,8 +15,11 @@ export default function useCartKey(): ReturnType< typeof getCartKey > {
 		currentUrlPath.includes( '/checkout/jetpack' ) &&
 		isLoggedOutCart &&
 		( !! jetpackPurchaseToken || !! jetpackPurchaseNonce );
+	const isAkismetSitelessCheckout =
+		currentUrlPath.includes( '/checkout/akismet' ) && isLoggedOutCart;
 	const isNoSiteCart =
 		isJetpackCheckout ||
+		isAkismetSitelessCheckout ||
 		( ! isLoggedOutCart &&
 			currentUrlPath.includes( '/checkout/no-site' ) &&
 			'no-user' === searchParams.get( 'cart' ) );

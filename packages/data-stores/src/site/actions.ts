@@ -221,22 +221,30 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	function* setGlobalStyles(
 		siteIdOrSlug: number | string,
 		stylesheet: string,
-		globalStyles: GlobalStyles
+		globalStyles: GlobalStyles,
+		activatedTheme?: ActiveTheme
 	) {
-		const globalStylesId: number = yield getGlobalStylesId( siteIdOrSlug, stylesheet );
+		// only update if there settings or styles to update
+		if (
+			Object.keys( globalStyles.settings ?? {} ).length ||
+			Object.keys( globalStyles.styles ?? {} ).length
+		) {
+			const globalStylesId: number =
+				activatedTheme?.global_styles_id || ( yield getGlobalStylesId( siteIdOrSlug, stylesheet ) );
 
-		const updatedGlobalStyles: GlobalStyles = yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/global-styles/${ globalStylesId }`,
-			apiNamespace: 'wp/v2',
-			method: 'POST',
-			body: {
-				id: globalStylesId,
-				settings: globalStyles.settings ?? {},
-				styles: globalStyles.styles ?? {},
-			},
-		} );
+			const updatedGlobalStyles: GlobalStyles = yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteIdOrSlug ) }/global-styles/${ globalStylesId }`,
+				apiNamespace: 'wp/v2',
+				method: 'POST',
+				body: {
+					id: globalStylesId,
+					settings: globalStyles.settings ?? {},
+					styles: globalStyles.styles ?? {},
+				},
+			} );
 
-		return updatedGlobalStyles;
+			return updatedGlobalStyles;
+		}
 	}
 
 	function* getGlobalStylesId( siteIdOrSlug: number | string, stylesheet: string ) {
@@ -361,7 +369,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		styleVariationSlug?: string,
 		keepHomepage = true
 	) {
-		const activatedTheme: { stylesheet: string } = yield wpcomRequest( {
+		const activatedTheme: ActiveTheme = yield wpcomRequest( {
 			path: `/sites/${ siteSlug }/themes/mine`,
 			apiVersion: '1.1',
 			body: {
@@ -383,9 +391,15 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			);
 
 			if ( currentVariation ) {
-				yield setGlobalStyles( siteSlug, activatedTheme.stylesheet, currentVariation );
+				yield setGlobalStyles(
+					siteSlug,
+					activatedTheme.stylesheet,
+					currentVariation,
+					activatedTheme
+				);
 			}
 		}
+		return activatedTheme;
 	}
 
 	function createCustomHomeTemplateContent(
@@ -469,13 +483,14 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	}
 
 	function* setDesignOnSite( siteSlug: string, selectedDesign: Design, options?: DesignOptions ) {
-		yield* setThemeOnSite(
+		const theme = yield* setThemeOnSite(
 			siteSlug,
 			selectedDesign.recipe?.stylesheet?.split( '/' )[ 1 ] || selectedDesign.theme,
 			options?.styleVariation?.slug
 		);
 
-		return yield* runThemeSetupOnSite( siteSlug, selectedDesign, options );
+		yield* runThemeSetupOnSite( siteSlug, selectedDesign, options );
+		return theme;
 	}
 
 	function* createCustomTemplate(
@@ -525,10 +540,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		// We have to switch theme first. Otherwise, the unique suffix might append to
 		// the slug of newly created Home template if the current activated theme has
 		// modified Home template.
-		yield setThemeOnSite( siteSlug, theme, undefined, false );
+		const activatedTheme: ActiveTheme = yield setThemeOnSite( siteSlug, theme, undefined, false );
 
 		if ( isEnabled( 'pattern-assembler/color-and-fonts' ) && globalStyles ) {
-			yield setGlobalStyles( siteSlug, stylesheet, globalStyles );
+			yield setGlobalStyles( siteSlug, stylesheet, globalStyles, activatedTheme );
 		}
 
 		const hasHeader = !! design?.recipe?.header_pattern_ids?.length;
@@ -547,6 +562,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 			trimContent: false,
 			posts_source_site_id: sourceSiteId,
 		} );
+
+		return activatedTheme;
 	}
 
 	const setSiteSetupError = ( error: string, message: string ) => ( {

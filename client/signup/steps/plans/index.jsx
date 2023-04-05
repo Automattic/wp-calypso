@@ -1,13 +1,6 @@
 import { is2023PricingGridActivePage, getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import {
-	isLinkInBioFlow,
-	isHostingLPFlow,
-	isNewsletterOrLinkInBioFlow,
-	isSiteAssemblerFlow,
-	isTailoredSignupFlow,
-	NEWSLETTER_FLOW,
-} from '@automattic/onboarding';
+import { isHostingLPFlow, isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -144,7 +137,7 @@ export class PlansStep extends Component {
 				{ errorDisplay }
 				<PlansFeaturesMain
 					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-					showFAQ={ this.state.isDesktop && ! this.isTailoredFlow() }
+					showFAQ={ this.state.isDesktop }
 					hideFreePlan={ hideFreePlan }
 					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					isInSignup={ true }
@@ -205,7 +198,6 @@ export class PlansStep extends Component {
 	getSubHeaderText() {
 		const {
 			eligibleForProPlan,
-			flowName,
 			hideFreePlan,
 			locale,
 			translate,
@@ -216,23 +208,6 @@ export class PlansStep extends Component {
 		const freePlanButton = (
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />
 		);
-
-		if ( flowName === NEWSLETTER_FLOW ) {
-			return hideFreePlan
-				? translate( 'Unlock a powerful bundle of features for your Newsletter.' )
-				: translate(
-						`Unlock a powerful bundle of features for your Newsletter. Or {{link}}start with a free plan{{/link}}.`,
-						{ components: { link: freePlanButton } }
-				  );
-		}
-		if ( isLinkInBioFlow( flowName ) ) {
-			return hideFreePlan
-				? translate( 'Unlock a powerful bundle of features for your Link in Bio.' )
-				: translate(
-						`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
-						{ components: { link: freePlanButton } }
-				  );
-		}
 
 		if ( eligibleForProPlan ) {
 			if ( isStarterPlanEnabled() ) {
@@ -271,10 +246,6 @@ export class PlansStep extends Component {
 		return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
 			components: { link: freePlanButton },
 		} );
-	}
-
-	isTailoredFlow() {
-		return isNewsletterOrLinkInBioFlow( this.props.flowName );
 	}
 
 	shouldHideEcommercePlan() {
@@ -329,7 +300,7 @@ export class PlansStep extends Component {
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
 					headerText={ headerText }
-					shouldHideNavButtons={ this.isTailoredFlow() || isHostingLPFlow( this.props.flowName ) }
+					shouldHideNavButtons={ isHostingLPFlow( this.props.flowName ) }
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }

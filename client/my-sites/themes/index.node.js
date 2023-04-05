@@ -20,10 +20,10 @@ export default function ( router ) {
 	const langParam = getLanguageRouteParam();
 
 	const showcaseRoutes = [
-		`/${ langParam }/themes/:tier(free|premium)?`,
-		`/${ langParam }/themes/:tier(free|premium)?/filter/:filter`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium)?`,
-		`/${ langParam }/themes/:vertical?/:tier(free|premium)?/filter/:filter`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?`,
+		`/${ langParam }/themes/:tier(free|premium|marketplace)?/filter/:filter`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?`,
+		`/${ langParam }/themes/:vertical?/:tier(free|premium|marketplace)?/filter/:filter`,
 	];
 	router(
 		showcaseRoutes,
@@ -42,13 +42,16 @@ export default function ( router ) {
 	router(
 		[
 			'/themes/:site?/search/:search',
-			'/themes/:site?/type/:tier(free|premium)',
-			'/themes/:site?/search/:search/type/:tier(free|premium)',
+			'/themes/:site?/type/:tier(free|premium|marketplace)',
+			'/themes/:site?/search/:search/type/:tier(free|premium|marketplace)',
 		],
 		redirectSearchAndType
 	);
 	router(
-		[ '/themes/:site?/filter/:filter', '/themes/:site?/filter/:filter/type/:tier(free|premium)' ],
+		[
+			'/themes/:site?/filter/:filter',
+			'/themes/:site?/filter/:filter/type/:tier(free|premium|marketplace)',
+		],
 		redirectFilterAndType
 	);
 	router(

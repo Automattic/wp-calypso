@@ -7,6 +7,7 @@ import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
 import WordPressLogo from 'calypso/components/wordpress-logo';
+import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -62,6 +63,9 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const {
+		data: { checklist_statuses },
+	} = useLaunchpad( siteSlug );
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
@@ -73,7 +77,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		isEmailVerified
 	);
 
-	const enhancedTasks =
+	const enhancedTasks: Task[] | null =
 		site &&
 		getEnhancedTasks(
 			arrayOfFilteredTasks,
@@ -83,7 +87,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			globalStylesInUse && shouldLimitGlobalStyles,
 			goToStep,
 			flow,
-			isEmailVerified
+			isEmailVerified,
+			checklist_statuses
 		);
 
 	const currentTask = getTasksProgress( enhancedTasks );
@@ -168,10 +173,13 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 				</div>
 				{ isDomainSSLProcessing && (
 					<div className="launchpad__domain-notification">
-						<Gridicon className="launchpad__domain-checkmark-icon" icon="checkmark-circle" />
+						<div className="launchpad__domain-notification-icon">
+							<Gridicon className="launchpad__domain-checkmark-icon" icon="checkmark" size={ 18 } />
+						</div>
 						<p>
 							{ translate(
-								'We are currently setting up your new domain! It may take a few minutes before it is ready.'
+								'We are currently setting up your new domain!{{br/}}It may take a few minutes before it is ready.',
+								{ components: { br: <br /> } }
 							) }
 						</p>
 					</div>

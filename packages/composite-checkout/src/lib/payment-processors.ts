@@ -23,8 +23,8 @@ export function usePaymentProcessors(): Record< string, PaymentProcessorFunction
 	return paymentProcessors;
 }
 
-export function makeErrorResponse( url: string ): PaymentProcessorError {
-	return { type: PaymentProcessorResponseType.ERROR, payload: url };
+export function makeErrorResponse( errorMessage: string ): PaymentProcessorError {
+	return { type: PaymentProcessorResponseType.ERROR, payload: errorMessage };
 }
 
 export function makeSuccessResponse(

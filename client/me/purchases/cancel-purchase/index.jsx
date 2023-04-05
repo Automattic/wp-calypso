@@ -197,7 +197,7 @@ class CancelPurchase extends Component {
 
 		const { purchase, isJetpackPurchase } = this.props;
 		const purchaseName = getName( purchase );
-		const { siteName, domain: siteDomain, siteId } = purchase;
+		const { siteName, siteId } = purchase;
 
 		let heading;
 
@@ -243,7 +243,7 @@ class CancelPurchase extends Component {
 					/>
 				</Card>
 
-				<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
+				<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
 				<CompactCard className="cancel-purchase__product-information">
 					<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
 					<div className="cancel-purchase__description">{ purchaseType( purchase ) }</div>

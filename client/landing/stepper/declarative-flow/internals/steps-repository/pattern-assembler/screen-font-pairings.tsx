@@ -10,6 +10,7 @@ interface Props {
 	stylesheet: string;
 	selectedFontPairingVariation: GlobalStylesObject | null;
 	onSelect: ( fontPairingVariation: GlobalStylesObject | null ) => void;
+	onBack: () => void;
 	onDoneClick: () => void;
 }
 
@@ -18,6 +19,7 @@ const ScreenFontPairings = ( {
 	stylesheet,
 	selectedFontPairingVariation,
 	onSelect,
+	onBack,
 	onDoneClick,
 }: Props ) => {
 	const translate = useTranslate();
@@ -30,6 +32,7 @@ const ScreenFontPairings = ( {
 					'Select from our hand-picked font pairings or expanded library when you upgrade to the Premium plan or higher.'
 				) }
 				isPremium
+				onBack={ onBack }
 			/>
 			<div className="screen-container__body">
 				<FontPairingVariations
@@ -46,7 +49,7 @@ const ScreenFontPairings = ( {
 					onClick={ onDoneClick }
 					primary
 				>
-					{ translate( 'Done' ) }
+					{ translate( 'Save' ) }
 				</NavigatorBackButton>
 			</div>
 		</>

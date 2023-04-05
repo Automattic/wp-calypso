@@ -9,7 +9,7 @@ describe( 'Translations', () => {
 			it( 'provides flow specific text', () => {
 				const newsletterTranslations = getLaunchpadTranslations( 'newsletter' );
 				expect( newsletterTranslations.flowName ).toEqual( 'Newsletter' );
-				expect( newsletterTranslations.title ).toEqual( "You're all set to start publishing" );
+				expect( newsletterTranslations.title ).toEqual( "Your newsletter's ready!" );
 				expect( newsletterTranslations.launchTitle ).toBe( undefined );
 
 				const linkInBioTranslations = getLaunchpadTranslations( 'link-in-bio' );
@@ -19,8 +19,8 @@ describe( 'Translations', () => {
 
 				const freeFlowTranslations = getLaunchpadTranslations( 'free' );
 				expect( freeFlowTranslations.flowName ).toEqual( 'Free Website' );
-				expect( freeFlowTranslations.title ).toEqual( "Your new site's ready!" );
-				expect( freeFlowTranslations.launchTitle ).toEqual( "Your new site's ready!" );
+				expect( freeFlowTranslations.title ).toEqual( "Let's get ready to launch!" );
+				expect( freeFlowTranslations.launchTitle ).toEqual( "Let's get ready to launch!" );
 			} );
 		} );
 

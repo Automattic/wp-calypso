@@ -138,7 +138,7 @@
 
 .storage-usage-help-tooltip {
 
-	&__tooltip.popover {
+	&__tooltip.tooltip.popover {
 		&.is-right .popover__arrow {
 			border-right-color: #fff;
 		}
@@ -160,7 +160,7 @@
 
 			p {
 				padding-right: 24px;
-				font-size: $font-body;
+				font-size: $font-body-small;
 				color: var(--studio-gray-60);
 				margin: 0;
 			}
@@ -170,7 +170,7 @@
 			}
 
 			a {
-				font-size: $font-body;
+				font-size: $font-body-small;
 				text-decoration: underline;
 			}
 		}

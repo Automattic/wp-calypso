@@ -1,6 +1,9 @@
 import { __, sprintf } from '@wordpress/i18n';
 import moment from 'moment';
-import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
+import {
+	Campaign,
+	CampaignStats,
+} from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 
 export const campaignStatus = {
 	SCHEDULED: 'scheduled',
@@ -203,4 +206,17 @@ export const canCancelCampaign = ( status: string ) => {
 	return [ campaignStatus.SCHEDULED, campaignStatus.CREATED, campaignStatus.ACTIVE ].includes(
 		status
 	);
+};
+
+export const unifyCampaigns = ( campaigns: Campaign[], campaignsStats: CampaignStats[] ) => {
+	return campaigns.map( ( campaign ) => {
+		const campaignStats = campaignsStats.find(
+			( cs: CampaignStats ) => cs.campaign_id === campaign.campaign_id
+		);
+		return {
+			...campaign,
+			campaign_stats_loading: ! campaignsStats.length,
+			...( campaignStats ? campaignStats : {} ),
+		};
+	} );
 };

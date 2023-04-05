@@ -27,7 +27,7 @@ type SupportedMethods =
 	| 'withScope';
 interface QueueDataMethod< Method extends SupportedMethods > {
 	f: Method;
-	a: Parameters< typeof SentryApi[ Method ] >;
+	a: Parameters< ( typeof SentryApi )[ Method ] >;
 }
 
 let callQueue: Array< Readonly< QueueDataMethod< SupportedMethods > > > = [];
@@ -54,7 +54,7 @@ let state: SentryState = { state: 'initial' };
 
 function dispatchSentryMethodCall< Method extends SupportedMethods >(
 	method: Method,
-	args: Parameters< typeof SentryApi[ Method ] >
+	args: Parameters< ( typeof SentryApi )[ Method ] >
 ) {
 	const { state: status } = state;
 	if ( status === 'loaded' ) {

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-
 import {
 	getYearlyPlanByMonthly,
 	isWpComPlan,
@@ -24,6 +23,7 @@ import {
 	getPlanRawPrice,
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
+import type { IAppState } from 'calypso/state/types';
 
 export type PlanTypeSelectorProps = {
 	kind: 'interval' | 'customer';
@@ -42,6 +42,7 @@ export type PlanTypeSelectorProps = {
 	isPlansInsideStepper: boolean;
 	hideDiscountLabel: boolean;
 	redirectTo?: string | null;
+	isStepperUpgradeFlow: boolean;
 };
 
 interface PathArgs {
@@ -59,7 +60,7 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 		plan: props.selectedPlan,
 	};
 
-	if ( props.isInSignup || 'customerType' in additionalArgs ) {
+	if ( props.isInSignup || 'customerType' in additionalArgs || props.isStepperUpgradeFlow ) {
 		return addQueryArgs(
 			{
 				...defaultArgs,
@@ -263,7 +264,7 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 function useMaxDiscount( plans: string[] ): number {
 	const wpcomMonthlyPlans = ( plans || [] ).filter( isWpComPlan ).filter( isMonthly );
 	const [ maxDiscount, setMaxDiscount ] = useState( 0 );
-	const discounts = useSelector( ( state ) => {
+	const discounts = useSelector( ( state: IAppState ) => {
 		return wpcomMonthlyPlans.map( ( planSlug ) => {
 			const monthlyPlan = getPlanBySlug( state, planSlug );
 			const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( planSlug ) );

@@ -15,6 +15,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
+import type { UserSelect } from '@automattic/data-stores';
 
 const write: Flow = {
 	name: WRITE_FLOW,
@@ -82,7 +83,10 @@ const write: Flow = {
 	},
 
 	useAssertConditions(): AssertConditionResult {
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		const queryParams = new URLSearchParams( window.location.search );

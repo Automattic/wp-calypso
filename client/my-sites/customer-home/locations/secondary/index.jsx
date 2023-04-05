@@ -28,10 +28,10 @@ const Secondary = ( { cards, siteId } ) => {
 	return (
 		<>
 			{ cards.map(
-				( card ) =>
+				( card, index ) =>
 					cardComponents[ card ] &&
 					createElement( cardComponents[ card ], {
-						key: card,
+						key: card + index,
 						...( card === SECTION_BLOGGING_PROMPT
 							? { siteId: siteId, showMenu: true, viewContext: 'home' }
 							: {} ),

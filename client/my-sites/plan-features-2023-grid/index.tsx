@@ -23,6 +23,10 @@ import {
 	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
+	PLAN_BIENNIAL_PERIOD,
+	isWooExpressMediumPlan,
+	isWooExpressSmallPlan,
+	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -95,6 +99,7 @@ import { PlanComparisonGrid } from './plan-comparison-grid';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
+import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 type PlanRowOptions = {
@@ -157,6 +162,7 @@ type PlanFeatures2023GridType = PlanFeatures2023GridProps &
 
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
+	noticeDismissed: boolean;
 };
 
 type ServiceLogoProps = {
@@ -206,6 +212,8 @@ const PlanLogo: React.FunctionComponent< {
 		'is-current-plan': current,
 	} );
 
+	const shouldShowWooLogo = isEcommercePlan( planName ) && ! isWooExpressPlan( planName );
+
 	return (
 		<Container key={ planName } className={ tableItemClasses } isMobile={ isMobile }>
 			<PopularBadge
@@ -223,7 +231,7 @@ const PlanLogo: React.FunctionComponent< {
 						imgAlt="WP Cloud logo"
 					/>
 				) }
-				{ isEcommercePlan( planName ) && (
+				{ shouldShowWooLogo && (
 					<ServiceLogo
 						hoverText={ translate(
 							'Make your online store a reality with the power of WooCommerce.'
@@ -250,9 +258,14 @@ export class PlanFeatures2023Grid extends Component<
 > {
 	state = {
 		showPlansComparisonGrid: false,
+		noticeDismissed: false,
 	};
 
 	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
+
+	handleDismissNotice = () => {
+		this.setState( { noticeDismissed: true } );
+	};
 
 	componentDidMount() {
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
@@ -495,7 +508,7 @@ export class PlanFeatures2023Grid extends Component<
 		);
 
 		return planPropertiesObj.map( ( properties ) => {
-			const { currencyCode, discountPrice, planName, rawPrice } = properties;
+			const { planName, rawPrice } = properties;
 			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
 				'has-border-top': ! isReskinned,
 			} );
@@ -510,10 +523,7 @@ export class PlanFeatures2023Grid extends Component<
 				>
 					{ ! hasNoPrice && (
 						<PlanFeatures2023GridHeaderPrice
-							currencyCode={ currencyCode }
-							discountPrice={ discountPrice }
-							rawPrice={ rawPrice }
-							planName={ planName }
+							planProperties={ properties }
 							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
 							isLargeCurrency={ isLargeCurrency }
 						/>
@@ -524,16 +534,15 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderBillingTimeframe( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { translate } = this.props;
 		return planPropertiesObj.map( ( properties ) => {
 			const {
 				planConstantObj,
 				planName,
 				rawPrice,
-				rawPriceAnnual,
-				currencyCode,
+				maybeDiscountedFullTermPrice,
 				annualPricePerMonth,
 				isMonthlyPlan,
+				billingPeriod,
 			} = properties;
 
 			const classes = classNames(
@@ -545,13 +554,12 @@ export class PlanFeatures2023Grid extends Component<
 				<Container className={ classes } isMobile={ options?.isMobile } key={ planName }>
 					<PlanFeatures2023GridBillingTimeframe
 						rawPrice={ rawPrice }
-						rawPriceAnnual={ rawPriceAnnual }
-						currencyCode={ currencyCode }
+						maybeDiscountedFullTermPrice={ maybeDiscountedFullTermPrice }
 						annualPricePerMonth={ annualPricePerMonth }
 						isMonthlyPlan={ isMonthlyPlan }
 						planName={ planName }
-						translate={ translate }
 						billingTimeframe={ planConstantObj.getBillingTimeFrame() }
+						billingPeriod={ billingPeriod }
 					/>
 				</Container>
 			);
@@ -643,6 +651,7 @@ export class PlanFeatures2023Grid extends Component<
 			manageHref,
 			currentSitePlanSlug,
 			selectedSiteSlug,
+			translate,
 		} = this.props;
 
 		return planPropertiesObj.map( ( properties: PlanProperties ) => {
@@ -652,6 +661,18 @@ export class PlanFeatures2023Grid extends Component<
 				'is-top-buttons',
 				'is-bottom-aligned'
 			);
+
+			// Leaving it `undefined` makes it use the default label
+			let buttonText;
+
+			if ( isWooExpressMediumPlan( planName ) && ! isWooExpressMediumPlan( currentSitePlanSlug ) ) {
+				buttonText = translate( 'Get Performance', { textOnly: true } );
+			} else if (
+				isWooExpressSmallPlan( planName ) &&
+				! isWooExpressSmallPlan( currentSitePlanSlug )
+			) {
+				buttonText = translate( 'Get Essential', { textOnly: true } );
+			}
 
 			return (
 				<Container key={ planName } className={ classes } isMobile={ options?.isMobile }>
@@ -672,6 +693,7 @@ export class PlanFeatures2023Grid extends Component<
 						current={ current ?? false }
 						currentSitePlanSlug={ currentSitePlanSlug }
 						selectedSiteSlug={ selectedSiteSlug }
+						buttonText={ buttonText }
 					/>
 				</Container>
 			);
@@ -836,12 +858,18 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderNotice() {
-		return (
-			this.renderUpgradeDisabledNotice() ||
-			this.renderDiscountNotice() ||
-			this.renderCreditNotice() ||
-			this.renderMarketingMessage()
-		);
+		const { noticeDismissed } = this.state;
+
+		if ( ! noticeDismissed ) {
+			return (
+				this.renderUpgradeDisabledNotice() ||
+				this.renderDiscountNotice() ||
+				this.renderCreditNotice() ||
+				this.renderMarketingMessage()
+			);
+		}
+
+		return this.renderMarketingMessage();
 	}
 
 	renderMarketingMessage() {
@@ -866,13 +894,16 @@ export class PlanFeatures2023Grid extends Component<
 
 		const bannerContainer = this.getBannerContainer();
 		const activeDiscount = getDiscountByName( this.props.withDiscount );
+
 		if ( ! bannerContainer || ! activeDiscount ) {
 			return false;
 		}
+
 		return ReactDOM.createPortal(
 			<Notice
 				className="plan-features__notice-credits"
-				showDismiss={ false }
+				showDismiss={ true }
+				onDismissClick={ this.handleDismissNotice }
 				icon="info-outline"
 				status="is-success"
 			>
@@ -900,7 +931,12 @@ export class PlanFeatures2023Grid extends Component<
 			return false;
 		}
 		return ReactDOM.createPortal(
-			<Notice className="plan-features__notice" showDismiss={ false } status="is-info">
+			<Notice
+				className="plan-features__notice"
+				showDismiss={ true }
+				onDismissClick={ this.handleDismissNotice }
+				status="is-info"
+			>
 				{ translate(
 					'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
 				) }
@@ -935,7 +971,8 @@ export class PlanFeatures2023Grid extends Component<
 		return ReactDOM.createPortal(
 			<Notice
 				className="plan-features__notice-credits"
-				showDismiss={ false }
+				showDismiss={ true }
+				onDismissClick={ this.handleDismissNotice }
 				icon="info-outline"
 				status="is-success"
 			>
@@ -962,7 +999,7 @@ export class PlanFeatures2023Grid extends Component<
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 const ConnectedPlanFeatures2023Grid = connect(
-	( state, ownProps: PlanFeatures2023GridProps ) => {
+	( state: IAppState, ownProps: PlanFeatures2023GridProps ) => {
 		const { placeholder, plans, isLandingPage, visiblePlans, isInSignup, siteId } = ownProps;
 		const canUserPurchasePlan =
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
@@ -979,6 +1016,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 			const planProductId = planConstantObj.getProductId();
 			const planObject = getPlan( state, planProductId );
+			const billingPeriod = planObject?.bill_period;
 			const isMonthlyPlan = isMonthly( plan );
 			const showMonthly = ! isMonthlyPlan;
 			const relatedMonthlyPlan = showMonthly
@@ -999,7 +1037,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			);
 
 			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
-			const isMonthlyObj = { isMonthly: showMonthlyPrice };
+			const isMonthlyObj = { returnMonthly: showMonthlyPrice };
 
 			const discountPrice = siteId
 				? getPlanDiscountedRawPrice( state, siteId, plan, isMonthlyObj )
@@ -1060,9 +1098,9 @@ const ConnectedPlanFeatures2023Grid = connect(
 				);
 			}
 
-			const rawPriceAnnual =
+			const maybeDiscountedFullTermPrice =
 				null !== discountPrice
-					? discountPrice * 12
+					? discountPrice * ( PLAN_BIENNIAL_PERIOD === billingPeriod ? 24 : 12 )
 					: getPlanRawPrice( state, planProductId, false );
 
 			const tagline = planConstantObj.getPlanTagline?.() ?? '';
@@ -1076,13 +1114,13 @@ const ConnectedPlanFeatures2023Grid = connect(
 				[];
 
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
+			const isCurrentPlan = isCurrentSitePlan( state, siteId, planProductId ) ?? false;
 
 			return {
 				availableForPurchase,
 				cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ?? '' ),
 				currencyCode: getCurrentUserCurrencyCode( state ),
-				current: isCurrentSitePlan( state, siteId, planProductId ) ?? false,
-				discountPrice,
+				current: isCurrentPlan,
 				features: planFeaturesTransformed,
 				jpFeatures: jetpackFeaturesTransformed,
 				isLandingPage,
@@ -1093,13 +1131,15 @@ const ConnectedPlanFeatures2023Grid = connect(
 				product_name_short,
 				hideMonthly: false,
 				rawPrice,
-				rawPriceAnnual,
+				maybeDiscountedFullTermPrice,
 				rawPriceForMonthlyPlan,
 				relatedMonthlyPlan,
 				annualPricePerMonth,
 				isMonthlyPlan,
 				tagline,
 				storageOptions,
+				billingPeriod,
+				showMonthlyPrice,
 			};
 		} );
 

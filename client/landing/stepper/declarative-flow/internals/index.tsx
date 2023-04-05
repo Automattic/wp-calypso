@@ -22,6 +22,7 @@ import StepperLoader from './components/stepper-loader';
 import VideoPressIntroBackground from './steps-repository/intro/videopress-intro-background';
 import { AssertConditionState, Flow, StepperStep } from './types';
 import './global.scss';
+import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
 
 const kebabCase = ( value: string ) => value.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
 
@@ -46,10 +47,16 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const history = useHistory();
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
 	const ref = useQuery().get( 'ref' ) || '';
 
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
+	);
 	const progressValue = stepProgress ? stepProgress.progress / stepProgress.count : 0;
 	const [ previousProgress, setPreviousProgress ] = useState(
 		stepProgress ? stepProgress.progress : 0
@@ -78,8 +85,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		} );
 
 		const _path = path.includes( '?' ) // does path contain search params
-			? generatePath( `/${ flow.name }/${ path }` )
-			: generatePath( `/${ flow.name }/${ path }${ search }` );
+			? generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }` )
+			: generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }${ search }` );
 
 		history.push( _path, stepPaths );
 		setPreviousProgress( stepProgress?.progress ?? 0 );
@@ -88,7 +95,10 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const stepNavigation = flow.useStepNavigation( currentStepRoute, navigate );
 
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
-	const stepData = useSelect( ( select ) => select( STEPPER_INTERNAL_STORE ).getStepData() );
+	const stepData = useSelect(
+		( select ) => ( select( STEPPER_INTERNAL_STORE ) as StepperInternalSelect ).getStepData(),
+		[]
+	);
 
 	flow.useSideEffect?.( currentStepRoute, navigate );
 
@@ -135,6 +145,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			<step.component
 				navigation={ stepNavigation }
 				flow={ flow.name }
+				variantSlug={ flow.variantSlug }
 				stepName={ step.slug }
 				data={ stepData }
 			/>
@@ -169,8 +180,15 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			<Switch>
 				{ flowSteps.map( ( step ) => {
 					return (
-						<Route key={ step.slug } path={ `/${ flow.name }/${ step.slug }` }>
-							<div className={ classnames( flow.name, flow.classnames, kebabCase( step.slug ) ) }>
+						<Route key={ step.slug } path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }` }>
+							<div
+								className={ classnames(
+									flow.name,
+									flow.variantSlug,
+									flow.classnames,
+									kebabCase( step.slug )
+								) }
+							>
 								{ 'videopress' === flow.name && 'intro' === step.slug && (
 									<VideoPressIntroBackground />
 								) }
@@ -192,7 +210,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					);
 				} ) }
 				<Route>
-					<Redirect to={ `/${ flow.name }/${ stepPaths[ 0 ] }${ search }` } />
+					<Redirect to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` } />
 				</Route>
 			</Switch>
 		</Suspense>

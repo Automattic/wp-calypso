@@ -18,7 +18,6 @@ export function conversations( context, next ) {
 		<AsyncLoad
 			require="calypso/reader/conversations/stream"
 			key="conversations"
-			title="Conversations"
 			streamKey={ streamKey }
 			trackScrollPage={ scrollTracker }
 		/>
