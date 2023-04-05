@@ -115,7 +115,7 @@
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	max-height: 16px * 3.2;
+	max-height: 16px * 6.2;
 	min-width: 100%;
 
 	@include breakpoint-deprecated( "<960px" ) {

@@ -16,12 +16,14 @@ import {
 	getReaderFeedsForQuery,
 	getReaderFeedsCountForQuery,
 } from 'calypso/state/reader/feed-searches/selectors';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
 
 class SiteResults extends Component {
 	static propTypes = {
 		query: PropTypes.string,
 		sort: PropTypes.oneOf( [ SORT_BY_LAST_UPDATED, SORT_BY_RELEVANCE ] ),
 		requestFeedSearch: PropTypes.func,
+		onReceiveSearchResults: PropTypes.func,
 		searchResults: PropTypes.array,
 		searchResultsCount: PropTypes.number,
 		width: PropTypes.number.isRequired,
@@ -62,17 +64,30 @@ class SiteResults extends Component {
 }
 
 export default connect(
-	( state, ownProps ) => ( {
-		searchResults: getReaderFeedsForQuery( state, {
+	( state, ownProps ) => {
+		const searchResults = getReaderFeedsForQuery( state, {
 			query: ownProps.query,
 			excludeFollowed: false,
 			sort: ownProps.sort,
-		} ),
-		searchResultsCount: getReaderFeedsCountForQuery( state, {
-			query: ownProps.query,
-			excludeFollowed: false,
-			sort: ownProps.sort,
-		} ),
-	} ),
+		} );
+
+		// Check if searchResults has one item and if it has a feed_ID
+		if ( searchResults && searchResults.length === 1 ) {
+			let feed = searchResults[ 0 ];
+			if ( feed.feed_ID.length > 0 ) {
+				// If it has a feed_id, get the feed object from the state
+				feed = getFeed( state, feed.feed_ID );
+			}
+			ownProps.onReceiveSearchResults( feed );
+		}
+		return {
+			searchResults: searchResults,
+			searchResultsCount: getReaderFeedsCountForQuery( state, {
+				query: ownProps.query,
+				excludeFollowed: false,
+				sort: ownProps.sort,
+			} ),
+		};
+	},
 	{ requestFeedSearch }
 )( localize( withDimensions( SiteResults ) ) );

@@ -1,7 +1,7 @@
 import { CompactCard } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { trim, flatMap, some } from 'lodash';
+import { trim, flatMap } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import * as React from 'react';
@@ -25,7 +25,6 @@ import {
 	SORT_BY_LAST_UPDATED,
 } from 'calypso/state/reader/feed-searches/actions';
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
-import { commonExtensions } from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import PostResults from './post-results';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
 import SiteResults from './site-results';
@@ -55,16 +54,58 @@ class SearchStream extends React.Component {
 		streamKey: PropTypes.string,
 	};
 
+	state = {
+		feed: null,
+	};
+
+	setSearchFeed = ( feed ) => {
+		this.setState( { feed: feed } );
+	};
+
 	getTitle = ( props = this.props ) => props.query || props.translate( 'Search' );
+
+	renderFollowButton = () => {
+		const { query, translate, readerAliasedFollowFeedUrl } = this.props;
+		const showFollowByUrl = resemblesUrl( query );
+		if ( ! showFollowByUrl ) {
+			return null;
+		}
+
+		let followTitle = withoutHttp( query );
+		const feed = this.state.feed ?? null;
+		if ( feed && feed.name?.length ) {
+			followTitle = feed.name;
+		}
+
+		return (
+			<div className="search-stream__url-follow">
+				<FollowButton
+					followLabel={ translate( 'Follow %s', {
+						args: followTitle,
+						comment: '%s is the name of the site being followed. For example: "Discover"',
+					} ) }
+					followingLabel={ translate( 'Following %s', {
+						args: followTitle,
+						comment: '%s is the name of the site being followed. For example: "Discover"',
+					} ) }
+					siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
+					followSource={ SEARCH_RESULTS_URL_INPUT }
+					followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
+					followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
+				/>
+			</div>
+		);
+	};
 
 	updateQuery = ( newValue ) => {
 		this.scrollToTop();
+		// Remove whitespace from newValue and limit to 1024 characters
 		const trimmedValue = trim( newValue ).substring( 0, 1024 );
 		if (
 			( trimmedValue !== '' && trimmedValue.length > 1 && trimmedValue !== this.props.query ) ||
 			newValue === ''
 		) {
-			updateQueryArg( { q: newValue } );
+			updateQueryArg( { q: trimmedValue } );
 		}
 	};
 
@@ -97,26 +138,17 @@ class SearchStream extends React.Component {
 	handleSearchTypeSelection = ( searchType ) => updateQueryArg( { show: searchType } );
 
 	render() {
-		const { query, translate, searchType, suggestions, readerAliasedFollowFeedUrl } = this.props;
+		const { query, translate, searchType, suggestions } = this.props;
 		const sortOrder = this.props.sort;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
-		const showFollowByUrl = resemblesUrl( query );
-		const queryWithoutProtocol = withoutHttp( query );
 		const segmentedControlClass = wideDisplay
 			? 'search-stream__sort-picker is-wide'
 			: 'search-stream__sort-picker';
+		const hidePostsAndSites = this.state.feed && this.state.feed.feed_ID?.length === 0;
 
 		let searchPlaceholderText = this.props.searchPlaceholderText;
 		if ( ! searchPlaceholderText ) {
 			searchPlaceholderText = getSearchPlaceholderText();
-		}
-
-		let isPotentialFeed = false;
-		if ( showFollowByUrl ) {
-			const parsedUrl = new URL( query );
-			if ( parsedUrl ) {
-				isPotentialFeed = some( commonExtensions, ( ext ) => parsedUrl.toString().includes( ext ) );
-			}
 		}
 
 		const documentTitle = translate( '%s ‹ Reader', {
@@ -163,6 +195,7 @@ class SearchStream extends React.Component {
 						<SearchInput
 							onSearch={ this.updateQuery }
 							onSearchClose={ this.scrollToTop }
+							onSearchChange={ () => this.setState( { feed: null } ) }
 							autoFocus={ this.props.autoFocusInput }
 							delaySearch={ true }
 							delayTimeout={ 500 }
@@ -171,29 +204,7 @@ class SearchStream extends React.Component {
 							value={ query || '' }
 						/>
 					</CompactCard>
-					{ showFollowByUrl && (
-						<div className="search-stream__url-follow">
-							{ isPotentialFeed && (
-								<div>
-									<label>{ translate( 'Feed detected' ) }</label>
-								</div>
-							) }
-							<FollowButton
-								followLabel={ translate( 'Follow %s', {
-									args: queryWithoutProtocol,
-									comment: '%s is the name of the site being followed. For example: "Discover"',
-								} ) }
-								followingLabel={ translate( 'Following %s', {
-									args: queryWithoutProtocol,
-									comment: '%s is the name of the site being followed. For example: "Discover"',
-								} ) }
-								siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
-								followSource={ SEARCH_RESULTS_URL_INPUT }
-								followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
-								followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
-							/>
-						</div>
-					) }
+					{ this.renderFollowButton() }
 					{ query && (
 						<SegmentedControl compact className={ segmentedControlClass }>
 							<SegmentedControl.Item
@@ -207,7 +218,7 @@ class SearchStream extends React.Component {
 							</SegmentedControl.Item>
 						</SegmentedControl>
 					) }
-					{ query && (
+					{ ! hidePostsAndSites && query && (
 						<SearchStreamHeader
 							selected={ searchType }
 							onSelection={ this.handleSearchTypeSelection }
@@ -216,8 +227,8 @@ class SearchStream extends React.Component {
 					) }
 					{ ! query && <BlankSuggestions suggestions={ suggestionList } /> }
 				</div>
-				<SpacerDiv domTarget={ this.fixedAreaRef } />
-				{ wideDisplay && (
+				{ ! hidePostsAndSites && query && <SpacerDiv domTarget={ this.fixedAreaRef } /> }
+				{ ! hidePostsAndSites && query && wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
 							<PostResults { ...this.props } />
@@ -228,12 +239,13 @@ class SearchStream extends React.Component {
 									query={ query }
 									sort={ pickSort( sortOrder ) }
 									showLastUpdatedDate={ false }
+									onReceiveSearchResults={ this.setSearchFeed }
 								/>
 							</div>
 						) }
 					</div>
 				) }
-				{ ! wideDisplay && (
+				{ ! hidePostsAndSites && query && ! wideDisplay && (
 					<div className={ singleColumnResultsClasses }>
 						{ ( ( searchType === SEARCH_TYPES.POSTS || ! query ) && (
 							<PostResults { ...this.props } />
@@ -242,6 +254,7 @@ class SearchStream extends React.Component {
 								query={ query }
 								sort={ pickSort( sortOrder ) }
 								showLastUpdatedDate={ true }
+								onReceiveSearchResults={ this.setSearchFeed }
 							/>
 						) }
 					</div>
