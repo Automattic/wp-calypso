@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -25,6 +26,11 @@ const insights = {
 	path: '/stats/insights',
 	showIntervals: false,
 };
+const subscribers = {
+	label: translate( 'Subscribers' ),
+	path: '/stats/subscribers',
+	showIntervals: false,
+};
 const store = {
 	label: translate( 'Store' ),
 	path: '/store/stats/orders',
@@ -41,13 +47,23 @@ const googleMyBusiness = {
 	showIntervals: false,
 };
 
-export const navItems = {
-	traffic,
-	insights,
-	store,
-	wordads,
-	googleMyBusiness,
+const assembleNavItems = () => {
+	const navItems = {
+		traffic,
+		insights,
+		store,
+		wordads,
+		googleMyBusiness,
+	};
+
+	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
+		navItems.subscribers = subscribers;
+	}
+
+	return navItems;
 };
+
+export const navItems = assembleNavItems();
 
 /**
  * Define properties with translatable strings getters

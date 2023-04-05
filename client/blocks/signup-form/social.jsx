@@ -90,6 +90,8 @@ class SocialSignupForm extends Component {
 		const uxMode = this.shouldUseRedirectFlow() ? 'redirect' : 'popup';
 		const uxModeApple = config.isEnabled( 'sign-in-with-apple/redirect' ) ? 'redirect' : uxMode;
 
+		const params = new URLSearchParams( window.location.search );
+
 		return (
 			// Note: we allow social sign-in on the Desktop app, but not social sign-up. Existing config flags do
 			// not distinguish between sign-in and sign-up but instead use the catch-all `signup/social` flag.
@@ -127,7 +129,9 @@ class SocialSignupForm extends Component {
 							}
 							originalUrlPath={
 								// Set the original URL path for wpcc flow so that we can redirect the user back to /start/wpcc after Apple callback.
-								isWpccFlow( this.props.flowName ) ? window.location.pathname : null
+								isWpccFlow( this.props.flowName )
+									? window.location.pathname
+									: params.get( 'redirect_to' )
 							}
 							// Attach the query string to the state so we can pass it back to the server to show the correct UI.
 							// We need this because Apple doesn't allow to have dynamic parameters in redirect_uri.

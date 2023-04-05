@@ -107,7 +107,11 @@ export default function useCreatePaymentCompleteCallback( {
 			// created site in the Thank You page URL.
 			// TODO: It does not seem like this would be needed for Akismet, but marking to follow up
 			let jetpackTemporarySiteId;
-			if ( sitelessCheckoutType === 'jetpack' && ! siteSlug && responseCart.create_new_blog ) {
+			if (
+				sitelessCheckoutType === 'jetpack' &&
+				! siteSlug &&
+				[ 'no-user', 'no-site' ].includes( String( responseCart.cart_key ) )
+			) {
 				jetpackTemporarySiteId =
 					transactionResult.purchases && Object.keys( transactionResult.purchases ).pop();
 			}

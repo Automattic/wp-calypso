@@ -4,6 +4,10 @@ import { callApi } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
 import type { SubscriptionManagerUserSettings, EmailSettingsAPIResponse } from '../types';
 
+type MutationContext = {
+	previousSettings: SubscriptionManagerUserSettings;
+};
+
 const useUserSettingsMutation = () => {
 	const isLoggedIn = useIsLoggedIn();
 	const queryClient = useQueryClient();
@@ -29,7 +33,31 @@ const useUserSettingsMutation = () => {
 			return settings;
 		},
 		{
-			onSuccess: () => {
+			onMutate: async ( data ) => {
+				await queryClient.cancelQueries( [ 'read', 'email-settings', isLoggedIn ] );
+				const previousSettings = queryClient.getQueryData< SubscriptionManagerUserSettings >( [
+					'read',
+					'email-settings',
+					isLoggedIn,
+				] );
+
+				queryClient.setQueryData< SubscriptionManagerUserSettings >(
+					[ 'read', 'email-settings', isLoggedIn ],
+					{ ...previousSettings, ...data }
+				);
+				return { previousSettings: previousSettings };
+			},
+			onError: ( error, variables, context ) => {
+				// For some reason the TypeScript compiler doesn't like the `context` parameter in this mutation
+				// That's why we're using the `as MutationContext` cast here
+				if ( ( context as MutationContext )?.previousSettings ) {
+					queryClient.setQueryData< SubscriptionManagerUserSettings >(
+						[ 'read', 'email-settings', isLoggedIn ],
+						( context as MutationContext ).previousSettings
+					);
+				}
+			},
+			onSettled: () => {
 				queryClient.invalidateQueries( [ 'read', 'email-settings', isLoggedIn ] );
 			},
 		}

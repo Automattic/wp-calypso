@@ -3,7 +3,10 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import { useMemo } from '@wordpress/element';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteSettings } from '../settings-popover';
-import type { SiteSubscription } from '@automattic/data-stores/src/reader/types';
+import type {
+	SiteSubscription,
+	SiteSubscriptionDeliveryFrequency,
+} from '@automattic/data-stores/src/reader/types';
 
 export default function SiteRow( {
 	blog_ID,
@@ -18,7 +21,8 @@ export default function SiteRow( {
 		() => moment( date_subscribed ).format( 'LL' ),
 		[ date_subscribed, moment ]
 	);
-	const deliveryFrequency = delivery_methods?.email?.post_delivery_frequency;
+	const deliveryFrequency = delivery_methods?.email
+		?.post_delivery_frequency as SiteSubscriptionDeliveryFrequency;
 	const hostname = useMemo( () => new URL( url ).hostname, [ url ] );
 	const siteIcon = useMemo( () => {
 		if ( site_icon ) {
@@ -27,11 +31,14 @@ export default function SiteRow( {
 		return <Gridicon className="icon" icon="globe" size={ 48 } />;
 	}, [ site_icon, name ] );
 
-	const { mutate: unFollow } = SubscriptionManager.useSiteUnfollowMutation();
+	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
+		SubscriptionManager.useSiteDeliveryFrequencyMutation();
+	const { mutate: unFollow, isLoading: unfollowing } =
+		SubscriptionManager.useSiteUnfollowMutation();
 
 	return (
 		<li className="row" role="row">
-			<a href={ url } rel="noreferrer noopener" className="title-box">
+			<a href={ url } rel="noreferrer noopener" className="title-box" target="_blank">
 				<span className="title-box" role="cell">
 					{ siteIcon }
 					<span className="title-column">
@@ -47,7 +54,15 @@ export default function SiteRow( {
 				{ deliveryFrequency }
 			</span>
 			<span className="actions" role="cell">
-				<SiteSettings onUnfollow={ () => unFollow( { blog_id: blog_ID } ) } />
+				<SiteSettings
+					deliveryFrequency={ deliveryFrequency }
+					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
+						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
+					}
+					updatingFrequency={ updatingFrequency }
+					onUnfollow={ () => unFollow( { blog_id: blog_ID } ) }
+					unfollowing={ unfollowing }
+				/>
 			</span>
 		</li>
 	);

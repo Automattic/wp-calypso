@@ -655,7 +655,7 @@ PlansFeaturesMain.propTypes = {
 	hideEcommercePlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
-	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly', '2yearly' ] ),
+	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly', '2yearly', '3yearly' ] ),
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,

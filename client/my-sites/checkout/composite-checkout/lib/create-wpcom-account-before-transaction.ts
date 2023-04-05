@@ -60,7 +60,6 @@ export async function createWpcomAccountBeforeTransaction(
 			...transactionCart,
 			blog_id: siteId ? String( siteId ) : '0',
 			cart_key: ( siteId ? siteId : 'no-site' ) as CartKey,
-			create_new_blog: siteId ? false : true,
 		};
 	} );
 }

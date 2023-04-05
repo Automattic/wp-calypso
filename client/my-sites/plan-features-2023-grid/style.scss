@@ -56,6 +56,23 @@
 				}
 			}
 
+			&.is-wooexpress-medium-plan {
+				background-color: var(--color-accent);
+				color: var(--color-text-inverted);
+				font-weight: 400;
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-accent);
+				}
+			}
+
+			&.is-wooexpress-small-plan {
+				background-color: var(--color-surface);
+				color: var(--color-accent);
+				border: 1px solid  var(--color-accent);
+				font-weight: 400;
+			}
+
 			&.is-ecommerce-plan {
 				background-color: #55347d;
 				color: var(--studio-purple-0);

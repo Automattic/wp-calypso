@@ -61,6 +61,26 @@ function wpcom_should_limit_global_styles( $blog_id = 0 ) {
 }
 
 /**
+ * Get the WPCOM blog id of the current site for tracking purposes.
+ */
+function wpcom_global_styles_get_wpcom_current_blog_id() {
+	if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+		return get_current_blog_id();
+	} elseif ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+		/*
+		 * Atomic sites have the WP.com blog ID stored as a Jetpack option. This code deliberately
+		 * doesn't use `Jetpack_Options::get_option` so it works even when Jetpack has not been loaded.
+		 */
+		$jetpack_options = get_option( 'jetpack_options' );
+		if ( is_array( $jetpack_options ) && isset( $jetpack_options['id'] ) ) {
+			return (int) $jetpack_options['id'];
+		}
+	}
+
+	return null;
+}
+
+/**
  * Wrapper to test a blog sticker on both Simple and Atomic sites at once.
  *
  * @param string $blog_sticker The blog sticker.
@@ -131,8 +151,9 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		'wpcom-global-styles-editor',
 		'wpcomGlobalStyles',
 		array(
-			'assetsUrl'  => plugins_url( 'dist/', __FILE__ ),
-			'upgradeUrl' => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=advanced-design-customization",
+			'assetsUrl'   => plugins_url( 'dist/', __FILE__ ),
+			'upgradeUrl'  => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=advanced-design-customization",
+			'wpcomBlogId' => wpcom_global_styles_get_wpcom_current_blog_id(),
 		)
 	);
 	wp_enqueue_style(

@@ -9,26 +9,28 @@ type NoticeProps = {
 	children: React.ReactNode;
 	action?: React.ReactNode;
 	type?: 'success' | 'warning' | 'error';
-	onClose: () => void;
-	visible: boolean;
+	onClose?: () => void;
+	visible?: boolean;
 };
 
 const Notice = ( { children, action, type = 'success', onClose, visible = true }: NoticeProps ) => {
 	return visible ? (
 		<div className={ `subscription-management__notice subscription-management__notice--${ type }` }>
-			<a
-				className="subscription-management__notice-close"
-				href="#close"
-				onClick={ ( e ) => {
-					e.preventDefault();
-					onClose();
-				} }
-			>
-				<img
-					src={ closeIcon }
-					alt={ translate( 'Close', { context: 'Hide the notice' } ) as string }
-				/>
-			</a>
+			{ onClose && (
+				<a
+					className="subscription-management__notice-close"
+					href="#close"
+					onClick={ ( e ) => {
+						e.preventDefault();
+						onClose?.();
+					} }
+				>
+					<img
+						src={ closeIcon }
+						alt={ translate( 'Close', { context: 'Hide the notice' } ) as string }
+					/>
+				</a>
+			) }
 			<div className="subscription-management__notice-icon">
 				<img
 					src={ { success: successIcon, warning: warningIcon, error: errorIcon }[ type ] }

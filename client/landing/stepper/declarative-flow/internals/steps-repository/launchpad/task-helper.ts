@@ -118,7 +118,7 @@ export function getEnhancedTasks(
 					break;
 				case 'setup_general':
 					taskData = {
-						title: translate( 'Personalize your site' ),
+						title: translate( 'Set up your site' ),
 					};
 					break;
 				case 'design_edited':
