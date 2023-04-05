@@ -47,10 +47,11 @@ const RedirectAssigned = ( { status }: { status?: string } ) => {
 };
 
 const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) => {
-	const { show, isMinimized } = useSelect(
+	const { show, isMinimized, initialRoute } = useSelect(
 		( select ) => ( {
 			show: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
 			isMinimized: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getIsMinimized(),
+			initialRoute: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getInitialRoute(),
 		} ),
 		[]
 	);
@@ -92,7 +93,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 	}
 
 	return (
-		<MemoryRouter>
+		<MemoryRouter initialEntries={ initialRoute ? [ initialRoute ] : undefined }>
 			<RedirectAssigned status={ data?.status } />
 			<FeatureFlagProvider>
 				<OptionalDraggable

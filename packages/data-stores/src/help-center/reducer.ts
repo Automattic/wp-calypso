@@ -1,3 +1,4 @@
+import { InitialEntry } from '@remix-run/router';
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
@@ -109,6 +110,13 @@ const iframe: Reducer< HTMLIFrameElement | undefined | null, HelpCenterAction > 
 	return state;
 };
 
+const initialRoute: Reducer< InitialEntry | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_INITIAL_ROUTE' ) {
+		return action.route;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	showHelpCenter,
 	site,
@@ -121,6 +129,7 @@ const reducer = combineReducers( {
 	isMinimized,
 	unreadCount,
 	iframe,
+	initialRoute,
 } );
 
 export type State = ReturnType< typeof reducer >;

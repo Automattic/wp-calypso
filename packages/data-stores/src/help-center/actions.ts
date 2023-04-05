@@ -1,3 +1,4 @@
+import { InitialEntry } from '@remix-run/router';
 import { apiFetch } from '@wordpress/data-controls';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
@@ -107,7 +108,14 @@ export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 		site,
 	} as const );
 
+export const setInitialRoute = ( route: InitialEntry ) =>
+	( {
+		type: 'HELP_CENTER_SET_INITIAL_ROUTE',
+		route,
+	} as const );
+
 export const startHelpCenterChat = function* ( site: HelpCenterSite, message: string ) {
+	yield setInitialRoute( '/inline-chat' );
 	yield setSite( site );
 	yield setMessage( message );
 	yield setShowHelpCenter( true );
@@ -132,5 +140,6 @@ export type HelpCenterAction =
 			| typeof setIframe
 			| typeof setUnreadCount
 			| typeof setIsMinimized
+			| typeof setInitialRoute
 	  >
 	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;
