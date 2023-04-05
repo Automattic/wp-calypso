@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import Banner from 'calypso/components/banner';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-import './style.scss';
+import '../style.scss';
 
 const BackupsMadeRealtimeBanner: FunctionComponent = () => {
 	const translate = useTranslate();
