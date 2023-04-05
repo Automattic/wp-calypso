@@ -10,6 +10,10 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { ConfigData } from '@automattic/create-calypso-config';
 
+type PresalesChatResponse = {
+	is_available: boolean;
+};
+
 function usePresalesAvailabilityQuery() {
 	return useQuery(
 		'presales-availability',
@@ -20,13 +24,13 @@ function usePresalesAvailabilityQuery() {
 			};
 
 			//we are making an unauthenticated call to the API, so we need to set a couple things.
-			const response = await apiFetch( {
+			const response = await apiFetch< PresalesChatResponse >( {
 				credentials: 'same-origin',
 				mode: 'cors',
 				url: addQueryArgs( url, queryObject as Record< string, string > ),
 			} );
-			const isAvailable = await response.is_available;
-			return isAvailable;
+
+			return response.is_available;
 		},
 		{
 			meta: { persist: false },
