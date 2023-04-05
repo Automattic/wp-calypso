@@ -16,11 +16,7 @@ describe( 'ScrollToTop', () => {
 	test( 'should scroll to the top on every route changes', () => {
 		const spy = jest.spyOn( document, 'querySelector' );
 		const history = createMemoryHistory();
-		render(
-			<Router history={ history }>
-				<ScrollToTop selector=".foo" />
-			</Router>
-		);
+		render( <Router history={ history } element={ <ScrollToTop selector=".foo" /> } /> );
 
 		// Trigger a route change by pushing a new path to the router's history
 		history.push( '/foo' );
@@ -32,11 +28,7 @@ describe( 'ScrollToTop', () => {
 		const spy = jest.spyOn( window, 'scrollTo' );
 		const history = createMemoryHistory();
 
-		render(
-			<Router history={ history }>
-				<ScrollToTop />
-			</Router>
-		);
+		render( <Router history={ history } element={ <ScrollToTop /> } /> );
 
 		history.push( '/bar' );
 

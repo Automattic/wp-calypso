@@ -9,7 +9,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useState, useRef, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
-import { MemoryRouter, Navigate } from 'react-router-dom';
+import { MemoryRouter, Navigate, Route, Routes } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
@@ -82,9 +82,14 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 		return null;
 	}
 
+	console.log( data?.status );
 	return (
 		<MemoryRouter initialEntries={ history } initialIndex={ index }>
-			{ data?.status === 'assigned' && <Navigate to="/inline-chat?session=continued" /> }
+			{ data?.status === 'assigned' && (
+				<Routes>
+					<Route path="*" element={ <Navigate to="/inline-chat?session=continued" replace /> } />
+				</Routes>
+			) }
 			<HistoryRecorder />
 			<FeatureFlagProvider>
 				<OptionalDraggable
