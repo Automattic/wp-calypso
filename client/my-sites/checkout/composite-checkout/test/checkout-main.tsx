@@ -31,6 +31,8 @@ import {
 	countryList,
 	getBasicCart,
 	mockMatchMediaOnWindow,
+	mockStoredPaymentMethodsEndpoint,
+	mockGetVatInfoEndpoint,
 } from './util';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
@@ -92,8 +94,9 @@ describe( 'CheckoutMain', () => {
 			( useCartKey as jest.Mock ).mockImplementation( () =>
 				useUndefinedCartKey ? undefined : mainCartKey
 			);
+			mockStoredPaymentMethodsEndpoint( [] );
 			nock( 'https://public-api.wordpress.com' ).post( '/rest/v1.1/logstash' ).reply( 200 );
-			nock( 'https://public-api.wordpress.com' ).get( '/rest/v1.1/me/vat-info' ).reply( 200, {} );
+			mockGetVatInfoEndpoint( {} );
 			nock( 'https://public-api.wordpress.com' )
 				.get( '/rest/v1.1/me/transactions/supported-countries' )
 				.reply( 200, countryList );
