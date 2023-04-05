@@ -1,27 +1,23 @@
 @import "uplot/dist/uPlot.min.css";
 
-.calypso-uplot-chart {
-	.u-legend {
-		border-radius: 4px;
-		border: 1px solid var(--studio-gray-5);
-		color: var(--studio-gray-100);
-		padding: 1em 1.5em;
+.u-legend {
+	color: var(--studio-gray-100);
 
-		th {
-			cursor: initial;
+	// Use increased specificity to override original uPlot styles.
+	> tr.u-series > th {
+		cursor: initial;
 
-			&::after {
-				vertical-align: baseline;
-			}
-			> .u-marker {
-				// Nudge marker down to align with text.
-				margin-top: -2px;
-				// Make the marker round.
-				border-radius: 100%;
-			}
-			> .u-label {
-				vertical-align: baseline;
-			}
+		&::after {
+			vertical-align: baseline;
+		}
+		> .u-marker {
+			// Nudge marker down to align with text.
+			margin-top: -2px;
+			// Make the marker round.
+			border-radius: 100%;
+		}
+		> .u-label {
+			vertical-align: baseline;
 		}
 	}
 }
