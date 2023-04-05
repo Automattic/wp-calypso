@@ -10,6 +10,7 @@ import {
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import page from 'page';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { mockCartEndpoint } from 'calypso/my-sites/checkout/composite-checkout/test/util';
@@ -24,6 +25,8 @@ import { setStore } from 'calypso/state/redux-store';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import UpsellNudge, { BUSINESS_PLAN_UPGRADE_UPSELL, PROFESSIONAL_EMAIL_UPSELL } from '../index';
 import type { StoredPaymentMethodCard } from '../../../../lib/checkout/payment-methods';
+
+jest.mock( 'page', () => jest.fn() );
 
 const mockCountries = [ { code: 'US', has_postal_codes: true, name: 'United States' } ];
 
@@ -191,10 +194,6 @@ describe( 'UpsellNudge', () => {
 		window.scrollTo = jest.fn();
 		currentData.cards = [ card ];
 		nock( 'https://public-api.wordpress.com' )
-			.persist()
-			.get( new RegExp( '^/rest/v1.2/me/payment-methods' ) )
-			.reply( 200, () => currentData.cards );
-		nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/tax-contact-information/validate' )
 			// TODO: we should make sure the right data is being passed here
 			.reply( 200, () => ( { success: true } ) );
@@ -208,6 +207,10 @@ describe( 'UpsellNudge', () => {
 	} );
 
 	it( 'displays the business plan purchase modal when a stored card is available', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( new RegExp( '^/rest/v1.2/me/payment-methods' ) )
+			.reply( 200, () => currentData.cards );
 		const user = userEvent.setup();
 		const queryClient = new QueryClient();
 		const initialCart = getEmptyResponseCart();
@@ -239,6 +242,10 @@ describe( 'UpsellNudge', () => {
 	} );
 
 	it( 'displays the email purchase modal when a stored card is available', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( new RegExp( '^/rest/v1.2/me/payment-methods' ) )
+			.reply( 200, () => currentData.cards );
 		const user = userEvent.setup();
 		const queryClient = new QueryClient();
 		const initialCart = getEmptyResponseCart();
@@ -272,5 +279,42 @@ describe( 'UpsellNudge', () => {
 		expect( await screen.findByText( card.name ) ).toBeInTheDocument();
 		expect( await screen.findByText( `**** ${ card.card_last_4 }` ) ).toBeInTheDocument();
 		expect( await screen.findByText( 'Pay $3.50' ) ).toBeInTheDocument();
+	} );
+
+	it( 'redirects to checkout for an email upsell when no stored cards are available', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( new RegExp( '^/rest/v1.2/me/payment-methods' ) )
+			.reply( 200, () => [] );
+		const user = userEvent.setup();
+		const queryClient = new QueryClient();
+		const initialCart = getEmptyResponseCart();
+		const mockCartFunctions = mockCartEndpoint( initialCart, 'USD', 'US' );
+		const shoppingCartClient = createShoppingCartManagerClient( mockCartFunctions );
+
+		render(
+			<ReduxProvider store={ createTestReduxStore() }>
+				<QueryClientProvider client={ queryClient }>
+					<ShoppingCartProvider managerClient={ shoppingCartClient }>
+						<UpsellNudge
+							upsellType={ PROFESSIONAL_EMAIL_UPSELL }
+							upgradeItem="example.com"
+							receiptId={ 12345 }
+							siteSlugParam="example.com"
+						/>
+					</ShoppingCartProvider>
+				</QueryClientProvider>
+			</ReduxProvider>
+		);
+
+		await user.type( await screen.findByLabelText( 'Enter email address' ), 'testuser' );
+		await user.type(
+			await screen.findByLabelText( 'Set password' ),
+			'aadjhaduhaidwahdawdhakjdbakdjbw'
+		);
+		await user.click( await screen.findByText( 'Add Professional Email' ) );
+		expect(
+			screen.findByText( mockProducts[ 'wp_titan_mail_yearly' ].product_name )
+		).toNeverAppear();
+		expect( page ).toHaveBeenCalledWith( `/checkout/example.com` );
 	} );
 } );
