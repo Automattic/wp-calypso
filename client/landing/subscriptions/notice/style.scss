@@ -12,11 +12,14 @@
 		margin-bottom: 20px;
 		background: $studio-gray-0;
 
+		&-icon {
+			height: 20px;
+		}
+
 		&-content {
 			font-size: $font-body;
 			line-height: $font-title-small;
 			letter-spacing: -0.15px;
-			margin-top: -2px;
 		}
 
 		&-close {
