@@ -12,6 +12,11 @@ const useAddOnCheckoutLink = (): ( ( addOnSlug: string, quantity?: number ) => s
 	const selectedSite = useSelector( getSelectedSite );
 
 	return ( addOnSlug: string, quantity?: number ): string => {
+		// If no site is provided, return the checkout link with the add-on (will render site-selector).
+		if ( ! selectedSite ) {
+			return `/checkout/${ addOnSlug }`;
+		}
+
 		const checkoutLinkFormat = `/checkout/${ selectedSite?.slug }/${ addOnSlug }`;
 
 		if ( quantity ) {
