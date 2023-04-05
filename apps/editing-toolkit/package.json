@@ -59,6 +59,7 @@
 		"@automattic/newspack-blocks": "^1.60.0",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/page-pattern-modal": "workspace:^",
+		"@automattic/plans-grid": "workspace:^",
 		"@automattic/site-picker": "workspace:^",
 		"@automattic/tour-kit": "workspace:^",
 		"@automattic/typography": "workspace:^",
