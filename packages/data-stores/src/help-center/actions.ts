@@ -3,14 +3,7 @@ import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
-import type { Location, APIFetchOptions, HelpCenterSite } from './types';
-
-export const setRouterState = ( history: Location[], index: number ) =>
-	( {
-		type: 'HELP_CENTER_SET_ROUTER_STATE',
-		history,
-		index,
-	} as const );
+import type { APIFetchOptions, HelpCenterSite } from './types';
 
 export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
 	( {
@@ -42,13 +35,6 @@ export function* setHasSeenWhatsNewModal( value: boolean ) {
 
 	return receiveHasSeenWhatsNewModal( response.has_seen_whats_new_modal );
 }
-
-export const resetRouterState = () =>
-	( {
-		type: 'HELP_CENTER_SET_ROUTER_STATE',
-		history: undefined,
-		index: undefined,
-	} as const );
 
 export const setSite = ( site: HelpCenterSite | undefined ) =>
 	( {
@@ -122,7 +108,6 @@ export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 	} as const );
 
 export const startHelpCenterChat = function* ( site: HelpCenterSite, message: string ) {
-	yield setRouterState( [ { pathname: '/inline-chat' } ], 0 );
 	yield setSite( site );
 	yield setMessage( message );
 	yield setShowHelpCenter( true );
@@ -137,8 +122,6 @@ export type HelpCenterAction =
 	| ReturnType<
 			| typeof setSite
 			| typeof setSubject
-			| typeof setRouterState
-			| typeof resetRouterState
 			| typeof resetStore
 			| typeof receiveHasSeenWhatsNewModal
 			| typeof setMessage

@@ -9,7 +9,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import classnames from 'classnames';
 import { useState, useRef, FC } from 'react';
 import Draggable, { DraggableProps } from 'react-draggable';
-import { MemoryRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Navigate, useLocation } from 'react-router-dom';
 /**
  * Internal Dependencies
  */
@@ -19,7 +19,6 @@ import { Container } from '../types';
 import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
-import { HistoryRecorder } from './history-recorder';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
 interface OptionalDraggableProps extends Partial< DraggableProps > {
@@ -31,6 +30,17 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 		return <>{ props.children }</>;
 	}
 	return <Draggable { ...props } />;
+};
+
+const RedirectAssigned = ( { status }: { status?: string } ) => {
+	const { pathname } = useLocation();
+	const assigned = status === 'assigned';
+
+	if ( assigned && ! pathname.startsWith( '/inline-chat' ) ) {
+		return <Navigate to="/inline-chat?session=continued" />;
+	}
+
+	return null;
 };
 
 const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) => {
@@ -51,10 +61,6 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 	} );
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
 	const { data } = useHappychatAvailable( Boolean( supportAvailability?.is_user_eligible ) );
-	const { history, index } = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getRouterState(),
-		[]
-	);
 
 	const onDismiss = () => {
 		setIsVisible( false );
@@ -82,15 +88,9 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 		return null;
 	}
 
-	console.log( data?.status );
 	return (
-		<MemoryRouter initialEntries={ history } initialIndex={ index }>
-			{ data?.status === 'assigned' && (
-				<Routes>
-					<Route path="*" element={ <Navigate to="/inline-chat?session=continued" replace /> } />
-				</Routes>
-			) }
-			<HistoryRecorder />
+		<MemoryRouter>
+			<RedirectAssigned status={ data?.status } />
 			<FeatureFlagProvider>
 				<OptionalDraggable
 					draggable={ ! isMobile && ! isMinimized }
