@@ -41,13 +41,6 @@
 		<exclude-pattern>editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks</exclude-pattern>
 	</rule>
 
-	<!-- templates files get $args variable to hydrate the template -->
-	<rule ref="VariableAnalysis.CodeAnalysis.VariableAnalysis" >
-		<properties>
-			<property name="validUndefinedVariableNames" value="args"/>
-		</properties>
-	</rule>
-
 	<!-- Ignore assset files and undeployed files. -->
 	<exclude-pattern>*.asset.php</exclude-pattern>
 
