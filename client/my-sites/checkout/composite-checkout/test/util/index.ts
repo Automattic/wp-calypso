@@ -409,6 +409,7 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			total_tax_breakdown: [],
 			total_tax_integer: taxInteger,
 			next_domain_condition: '',
+			messages: { errors: [], success: [] },
 		};
 	};
 }
