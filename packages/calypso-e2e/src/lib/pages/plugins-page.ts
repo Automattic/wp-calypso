@@ -79,6 +79,9 @@ export class PluginsPage {
 	 */
 	async visit( site = '' ): Promise< void > {
 		await this.page.goto( getCalypsoURL( `plugins/${ site }` ) );
+		// This is one of the last, reliable web requests to finish on this page
+		// and is a pretty good indicator the async loading is done.
+		await this.page.waitForResponse( /\/sites\/\d+\/plugins/, { timeout: 15 * 1000 } );
 	}
 
 	/**
