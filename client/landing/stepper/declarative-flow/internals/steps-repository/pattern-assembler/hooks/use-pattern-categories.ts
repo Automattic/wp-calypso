@@ -1,21 +1,20 @@
-import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import wpcom from 'calypso/lib/wp';
+import type { Category } from '../types';
 
 const usePatternCategories = (
 	siteId: number | undefined,
-	queryOptions: UseQueryOptions = {}
-): UseQueryResult => {
-	return useQuery< any, unknown, unknown >(
+	queryOptions: UseQueryOptions< any, unknown, Category[] > = {}
+): Category[] => {
+	const { data } = useQuery< any, unknown, Category[] >(
 		[ siteId, 'block-patterns', 'categories' ],
 		() => {
-			if ( ! siteId ) {
-				return [];
+			if ( siteId ) {
+				return wpcom.req.get( {
+					path: `/sites/${ encodeURIComponent( siteId ) }/block-patterns/categories`,
+					apiNamespace: 'wp/v2',
+				} );
 			}
-
-			return wpcom.req.get( {
-				path: `/sites/${ encodeURIComponent( siteId ) }/block-patterns/categories`,
-				apiNamespace: 'wp/v2',
-			} );
 		},
 		{
 			...queryOptions,
@@ -26,6 +25,7 @@ const usePatternCategories = (
 			},
 		}
 	);
+	return data ?? [];
 };
 
 export default usePatternCategories;

@@ -39,7 +39,7 @@ import ScreenMain from './screen-main';
 import ScreenSection from './screen-section';
 import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
-import type { Pattern, Category } from './types';
+import type { Pattern } from './types';
 import type { StepProps } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import type { DesignRecipe, Design } from '@automattic/design-picker/src/types';
@@ -74,11 +74,10 @@ const PatternAssembler = ( {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
-	const allPatterns = useAllPatterns();
 
-	// Fetching the categories so they are ready when ScreenCategoryList loads
-	const categoriesQuery = usePatternCategories( site?.ID );
-	const categories = ( categoriesQuery?.data || [] ) as Category[];
+	// Fetching all patterns and categories
+	const allPatterns = useAllPatterns( site?.lang );
+	const categories = usePatternCategories( site?.ID );
 	const patternsMapByCategory = usePatternsMapByCategory( allPatterns, categories );
 	const {
 		header,
@@ -500,6 +499,7 @@ const PatternAssembler = ( {
 						onBack={ () => onPatternSelectorBack( 'header' ) }
 						onDoneClick={ () => onDoneClick( 'header' ) }
 						updateActivePatternPosition={ () => updateActivePatternPosition( -1 ) }
+						patterns={ patternsMapByCategory[ 'header' ] }
 					/>
 				</NavigatorScreen>
 
@@ -510,6 +510,7 @@ const PatternAssembler = ( {
 						onBack={ () => onPatternSelectorBack( 'footer' ) }
 						onDoneClick={ () => onDoneClick( 'footer' ) }
 						updateActivePatternPosition={ () => activateFooterPosition( !! footer ) }
+						patterns={ patternsMapByCategory[ 'footer' ] }
 					/>
 				</NavigatorScreen>
 

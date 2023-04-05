@@ -13,6 +13,7 @@ interface Props {
 	onBack: () => void;
 	onDoneClick: () => void;
 	updateActivePatternPosition: () => void;
+	patterns: Pattern[];
 }
 
 const ScreenFooter = ( {
@@ -21,9 +22,10 @@ const ScreenFooter = ( {
 	onBack,
 	onDoneClick,
 	updateActivePatternPosition,
+	patterns,
 }: Props ) => {
 	const translate = useTranslate();
-	const patterns = useFooterPatterns();
+	const footerPatterns = useFooterPatterns( patterns );
 	useEffect( () => {
 		updateActivePatternPosition();
 	}, [ updateActivePatternPosition ] );
@@ -39,7 +41,7 @@ const ScreenFooter = ( {
 			/>
 			<div className="screen-container__body">
 				<PatternSelector
-					patterns={ patterns }
+					patterns={ footerPatterns }
 					onSelect={ ( selectedPattern ) => onSelect( 'footer', selectedPattern, 'footer' ) }
 					selectedPattern={ selectedPattern }
 					emptyPatternText={ translate( 'No Footer' ) }
