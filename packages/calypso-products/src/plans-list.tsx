@@ -454,16 +454,13 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for students' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
 	getStoreAudience: () => i18n.translate( 'Best for students' ),
-	getPlanTagline: () =>
-		i18n.translate( 'Get a taste of the world’s most popular CMS & blogging software.' ),
-	getCustomTagline: ( flowName ) => {
+	getPlanTagline: ( flowName ) => {
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return i18n.translate(
 				'Start fresh or make the switch, bringing your first 100 readers with you.'
 			);
 		}
-
-		return '';
+		return i18n.translate( 'Get a taste of the world’s most popular CMS & blogging software.' );
 	},
 	getDescription: () =>
 		i18n.translate(
@@ -668,13 +665,11 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
-	getPlanTagline: () => i18n.translate( 'Create your home on the web with a custom domain name.' ),
-	getCustomTagline: ( flowName ) => {
+	getPlanTagline: ( flowName ) => {
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' );
 		}
-
-		return '';
+		return i18n.translate( 'Create your home on the web with a custom domain name.' );
 	},
 	getDescription: () =>
 		i18n.translate(
@@ -1142,15 +1137,13 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
-	getPlanTagline: () => i18n.translate( 'Build a unique website with powerful design tools.' ),
-	getCustomTagline: ( flowName ) => {
+	getPlanTagline: ( flowName ) => {
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return i18n.translate(
 				'Make it even more memorable with premium designs and style customization.'
 			);
 		}
-
-		return '';
+		return i18n.translate( 'Build a unique website with powerful design tools.' );
 	},
 	getDescription: () =>
 		i18n.translate(
@@ -1334,16 +1327,13 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
-	getPlanTagline: () =>
-		i18n.translate( 'Unlock the power of WordPress with plugins and cloud tools.' ),
-	getCustomTagline: ( flowName ) => {
+	getPlanTagline: ( flowName ) => {
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return i18n.translate(
 				'Reimagine what a newsletter can be with plugins and growth tools to help you scale.'
 			);
 		}
-
-		return '';
+		return i18n.translate( 'Unlock the power of WordPress with plugins and cloud tools.' );
 	},
 	getDescription: () =>
 		i18n.translate(
