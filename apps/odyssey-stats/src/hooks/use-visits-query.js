@@ -18,6 +18,7 @@ export default function useVisitsQuery(
 		() => queryStatsVisits( siteId, { unit, quantity, date, stat_fields: fields.join( ',' ) } ),
 		{
 			select: parseChartData,
+			staleTime: 5 * 60 * 1000,
 		}
 	);
 }
