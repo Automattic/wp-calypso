@@ -8,103 +8,101 @@ export const tasks: Task[] = [
 		id: 'setup_newsletter',
 		completed: true,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'plan_selected',
 		completed: true,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'subscribers_added',
 		completed: true,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'first_post_published',
 		completed: false,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'design_selected',
 		completed: true,
 		disabled: true,
-		taskType: 'blog',
 	},
 	{
 		id: 'setup_link_in_bio',
 		completed: true,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'links_added',
 		completed: false,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'link_in_bio_launched',
 		completed: false,
 		disabled: true,
-		taskType: 'blog',
 	},
 	{
 		id: 'videopress_setup',
 		completed: true,
-		taskType: 'blog',
 		disabled: false,
 	},
 	{
 		id: 'videopress_upload',
 		completed: false,
-		taskType: 'blog',
 		disabled: false,
 	},
 	{
 		id: 'videopress_launched',
 		completed: false,
-		taskType: 'blog',
 		disabled: true,
 	},
 	{
 		id: 'setup_free',
 		completed: true,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'setup_general',
 		completed: true,
 		disabled: true,
-		taskType: 'blog',
 	},
 	{
 		id: 'design_edited',
 		completed: false,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'site_launched',
 		completed: false,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'setup_write',
 		completed: true,
 		disabled: true,
-		taskType: 'blog',
 	},
 	{
 		id: DOMAIN_UPSELL,
 		completed: false,
 		disabled: false,
-		taskType: 'blog',
+	},
+	{
+		id: 'verify_email',
+		completed: false,
+		disabled: true,
+	},
+	{
+		id: 'stripe_account_connected',
+		completed: false,
+		disabled: false,
+	},
+	{
+		id: 'newsletter_plan_created',
+		completed: false,
+		disabled: false,
 	},
 ];
 
@@ -117,7 +115,15 @@ const linkInBioTaskList = [
 ];
 
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
-	newsletter: [ 'setup_newsletter', 'plan_selected', 'subscribers_added', 'first_post_published' ],
+	newsletter: [
+		'setup_newsletter',
+		'plan_selected',
+		'subscribers_added',
+		'verify_email',
+		'stripe_account_connected',
+		'newsletter_plan_created',
+		'first_post_published',
+	],
 	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
 	[ LINK_IN_BIO_TLD_FLOW ]: linkInBioTaskList,
 	free: [

@@ -43,7 +43,7 @@ export const Table: React.FC = () => {
 
 				const item = (
 					isFree ? { productSlug: PLAN_JETPACK_FREE } : slugToSelectorProduct( productSlug )
-				 ) as SelectorProduct;
+				) as SelectorProduct;
 
 				return (
 					<th key={ id } scope="col" className={ `product product-jetpack-${ id.toLowerCase() }` }>

@@ -54,7 +54,7 @@ export class MyHomePage {
 	}
 
 	/**
-	 * Validates the domain upsel is showing
+	 * Validates the domain upsell is showing
 	 *
 	 * @returns {Promise<void>} No return value.
 	 */
@@ -77,7 +77,6 @@ export class MyHomePage {
 	 * Click on Buy this Domain button on the domain Upsell.
 	 *
 	 * @param {string} buyDomainButton Button text to click.
-	 *
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickBuySuggestedDomain( buyDomainButton: string ): Promise< void > {

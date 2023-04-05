@@ -22,6 +22,6 @@ export function newPost( site ) {
 	return '/post' + sitePath;
 }
 
-export function createAccountUrl( { redirectTo } ) {
-	return `/start/account?redirect_to=${ redirectTo }`;
+export function createAccountUrl( { redirectTo, ref } ) {
+	return `/start/account?redirect_to=${ redirectTo }&ref=${ ref }`;
 }

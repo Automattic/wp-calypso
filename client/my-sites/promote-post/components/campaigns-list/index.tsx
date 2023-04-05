@@ -25,11 +25,15 @@ export default function CampaignsList( {
 	isError,
 	hasLocalUser,
 	campaigns,
+	expandedCampaigns,
+	setExpandedCampaigns,
 }: {
 	isLoading: boolean;
 	hasLocalUser: boolean;
 	isError: boolean;
 	campaigns: Campaign[];
+	expandedCampaigns: number[];
+	setExpandedCampaigns: ( campaigns: number[] ) => void;
 } ) {
 	const memoCampaigns = useMemo< Campaign[] >( () => campaigns || [], [ campaigns ] );
 
@@ -55,13 +59,30 @@ export default function CampaignsList( {
 		return <EmptyPromotionList type="campaigns" />;
 	}
 
+	const handleClickCampaign = ( isExpanded: boolean, campaign: Campaign ) => {
+		if ( isExpanded ) {
+			setExpandedCampaigns( [ ...expandedCampaigns, campaign.campaign_id ] );
+		} else {
+			setExpandedCampaigns( expandedCampaigns.filter( ( id ) => id !== campaign.campaign_id ) );
+		}
+	};
+
 	return (
 		<>
 			{ isEmpty && ! isError && <CampaignsEmpty /> }
 			{ ! isEmpty && ! isError && (
 				<>
 					{ memoCampaigns.map( function ( campaign ) {
-						return <CampaignItem key={ campaign.campaign_id } campaign={ campaign } />;
+						return (
+							<CampaignItem
+								key={ campaign.campaign_id }
+								campaign={ campaign }
+								expanded={ expandedCampaigns.includes( campaign.campaign_id ) }
+								onClickCampaign={ ( isExpanded: boolean ) =>
+									handleClickCampaign( isExpanded, campaign )
+								}
+							/>
+						);
 					} ) }
 					<ListEnd />
 				</>

@@ -45,6 +45,18 @@ const props = {
 };
 
 describe( 'GoogleAnalyticsForm basic tests', () => {
+	beforeAll( () => {
+		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
+			return {
+				matches: true,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(),
+				removeListener: jest.fn(),
+			};
+		} );
+	} );
+
 	test( 'simple form should not blow up and have proper CSS class', () => {
 		render( <GoogleAnalyticsSimpleForm { ...props } /> );
 		expect( screen.queryByRole( 'form', { name: /analytics/i } ) ).toBeVisible();

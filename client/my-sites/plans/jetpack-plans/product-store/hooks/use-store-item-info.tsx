@@ -7,12 +7,15 @@ import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
 	isSupersedingJetpackItem,
+	JETPACK_COMPLETE_PLANS,
+	JETPACK_SECURITY_PLANS,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import reactNodeToString from 'calypso/lib/react-node-to-string';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
@@ -130,9 +133,21 @@ export const useStoreItemInfo = ( {
 
 	const getIsIncludedInPlan = useCallback(
 		( item: SelectorProduct ) => {
+			// If user owns the Jetpack Complete Plan/bundle, then JetPack Security plan/bundle should
+			// be considered as included in the Complete plan ("Part of the current plan").
+			const siteHasCompletePlan =
+				sitePlan?.product_slug &&
+				( JETPACK_COMPLETE_PLANS as ReadonlyArray< string > ).includes( sitePlan.product_slug );
+			const itemIsSecurity = ( JETPACK_SECURITY_PLANS as ReadonlyArray< string > ).includes(
+				item.productSlug
+			);
+
+			if ( siteHasCompletePlan && itemIsSecurity ) {
+				return true;
+			}
 			return ! getIsOwned( item ) && getIsPlanFeature( item );
 		},
-		[ getIsOwned, getIsPlanFeature ]
+		[ getIsOwned, getIsPlanFeature, sitePlan ]
 	);
 
 	const getIsSuperseded = useCallback(
@@ -193,8 +208,15 @@ export const useStoreItemInfo = ( {
 					//navigate to checkout
 					return buildCheckoutURL( siteSlug || '', '' );
 				}
+				// If the product is owned or included in the current plan, return the "Manage plan/Subscription"
+				// URL (`/me/purchases/:site/:productId`)
+				if ( getIsOwned( item ) || getIsIncludedInPlan( item ) ) {
+					return createCheckoutURL?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
+				}
+				// Otherwise no URL is returned and we will end up dispatching adding product to cart on click event.
 				return '';
 			}
+
 			return createCheckoutURL?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
 		},
 
@@ -204,6 +226,8 @@ export const useStoreItemInfo = ( {
 			getIsUpgradeableToYearly,
 			getPurchase,
 			getIsProductInCart,
+			getIsOwned,
+			getIsIncludedInPlan,
 			siteSlug,
 		]
 	);
@@ -218,6 +242,15 @@ export const useStoreItemInfo = ( {
 					} );
 					return;
 				}
+				// If the product is owned or included in the current plan, we are navigating to the
+				// "Manage plan/Subscription" URL (`/me/purchases/:site/:productId`) - handled by getCheckoutURL.
+				if ( getIsOwned( item ) || getIsIncludedInPlan( item ) ) {
+					recordTracksEvent( 'calypso_pricing_manage_owned_product_click', {
+						productSlug: item.productSlug,
+					} );
+					return;
+				}
+
 				shoppingCartTracker( 'calypso_jetpack_shopping_cart_add_product', {
 					productSlug: item.productSlug,
 				} );
@@ -225,10 +258,15 @@ export const useStoreItemInfo = ( {
 				const addedToCartText = translate( 'added to cart' );
 				const productName = reactNodeToString( item.displayName );
 				dispatch( successNotice( `${ productName } ${ addedToCartText }`, { duration: 5000 } ) );
-
 				return addProductsToCart( [ { product_slug: item.productSlug } ] );
 			}
 
+			if ( item.type === 'item-type-plan' ) {
+				recordTracksEvent( 'calypso_pricing_purchase_bundle_click', {
+					productSlug: item.productSlug,
+				} );
+				return;
+			}
 			return onClickPurchase?.( item, getIsUpgradeableToYearly( item ), getPurchase( item ) );
 		},
 		[
@@ -237,10 +275,12 @@ export const useStoreItemInfo = ( {
 			getIsUpgradeableToYearly,
 			getPurchase,
 			getIsProductInCart,
+			getIsOwned,
+			getIsIncludedInPlan,
 			shoppingCartTracker,
-			addProductsToCart,
-			dispatch,
 			translate,
+			dispatch,
+			addProductsToCart,
 		]
 	);
 

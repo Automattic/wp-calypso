@@ -1,3 +1,5 @@
+import * as selectors from './selectors';
+import type { SelectFromMap } from '../mapped-types';
 import type { Action } from 'redux';
 
 export interface CurrentUser {
@@ -30,6 +32,11 @@ export interface CurrentUser {
 	 * The user's existing sites count.
 	 */
 	site_count: number;
+
+	/**
+	 * The subkey for Subscription Management
+	 */
+	subscriptionManagementSubkey?: string;
 }
 
 export interface NewUser {
@@ -77,3 +84,5 @@ export interface CreateAccountParams {
 export interface CreateAccountAction extends Action {
 	params?: CreateAccountParams;
 }
+
+export type UserSelect = SelectFromMap< typeof selectors >;

@@ -72,7 +72,10 @@ export default function useRefetchOnFocus( cartKey: CartKey | undefined ): void 
 			}
 
 			debug( 'window was refocused; refetching' );
-			manager.actions.reloadFromServer();
+			manager.actions.reloadFromServer().catch( () => {
+				// No need to do anything here. Errors will be surfaced by the cart
+				// accessors manually.
+			} );
 		}
 
 		debug( 'adding focus listeners' );

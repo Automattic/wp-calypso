@@ -17,7 +17,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 import AllTimelHighlightsSection from '../all-time-highlights-section';
 import AllTimeViewsSection from '../all-time-views-section';
 import AnnualHighlightsSection from '../annual-highlights-section';
-import LatestPostSummary from '../post-performance';
 import PostingActivity from '../post-trends';
 import Comments from '../stats-comments';
 import Followers from '../stats-followers';
@@ -31,7 +30,6 @@ const StatsInsights = ( props ) => {
 	const moduleStrings = statsStrings();
 
 	const isInsightsPageGridEnabled = config.isEnabled( 'stats/insights-page-grid' );
-	const isLatestPostReplaced = config.isEnabled( 'stats/latest-post-stats' );
 
 	const statsModuleListClass = classNames( 'stats__module-list stats__module--unified', {
 		'is-insights-page-enabled': isInsightsPageGridEnabled,
@@ -85,17 +83,12 @@ const StatsInsights = ( props ) => {
 
 						<Followers path="followers" />
 						<Reach />
-
-						{ /* Replaced by new modules on top of the page */ }
-						{ ! isLatestPostReplaced && <LatestPostSummary /> }
 					</div>
 				) : (
 					// remove all this section when cleaning 'stats/insights-page-grid'
 					<div className="stats-insights__nonperiodic has-recent">
 						<div className={ statsModuleListClass }>
 							<div className="stats__module-column">
-								{ ! isLatestPostReplaced && <LatestPostSummary /> }
-
 								<StatsModule
 									path="tags-categories"
 									moduleStrings={ moduleStrings.tags }

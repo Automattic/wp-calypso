@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import UrlSearch from 'calypso/lib/url-search';
-import { filterFollowsByQuery } from 'calypso/reader/follow-helpers';
+import { filterFollowsByIsFollowed, filterFollowsByQuery } from 'calypso/reader/follow-helpers';
 import FollowingManageSearchFollowed from 'calypso/reader/following-manage/search-followed';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
@@ -83,7 +83,8 @@ export class ReaderListFollowedSites extends Component {
 		const { sites, sitesPerPage, translate } = this.props;
 		const { sitePage, query } = this.state;
 		const searchThreshold = 15;
-		const filteredFollows = filterFollowsByQuery( query, sites );
+		let filteredFollows = filterFollowsByQuery( query, sites );
+		filteredFollows = filterFollowsByIsFollowed( filteredFollows );
 		const allSitesLoaded = sitesPerPage * sitePage >= filteredFollows.length;
 		const sitesToShow = filteredFollows.slice( 0, sitesPerPage * sitePage );
 

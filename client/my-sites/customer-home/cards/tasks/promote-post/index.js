@@ -21,6 +21,8 @@ const PromotePost = () => {
 		dispatch( recordDSPEntryPoint( 'myhome_tasks-swipeable' ) );
 	};
 
+	PromotePost.isDisabled = ! showPromotePost;
+
 	useEffect( () => {
 		loadDSPWidgetJS();
 	}, [] );

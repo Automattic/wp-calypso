@@ -178,13 +178,7 @@ class StatsSite extends Component {
 						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
 							components: {
-								learnMoreLink: (
-									<InlineSupportLink
-										supportContext="stats"
-										showIcon={ false }
-										showSupportModal={ ! isOdysseyStats }
-									/>
-								),
+								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
 							},
 						}
 					) }

@@ -5,6 +5,7 @@ import { useContext, useEffect } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import LaunchContext from '../context';
 import { SITE_STORE, LAUNCH_STORE } from '../stores';
+import type { LaunchSelect, SiteSelect } from '@automattic/data-stores';
 
 export function useTitle() {
 	const { siteId } = useContext( LaunchContext );
@@ -12,10 +13,13 @@ export function useTitle() {
 	const locale = useLocale();
 
 	const existingSiteTitle = useSelect(
-		( select ) => select( SITE_STORE ).getSiteTitle( siteId ),
+		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSiteTitle( siteId ),
 		[ siteId ]
 	);
-	const launchSiteTitle = useSelect( ( select ) => select( LAUNCH_STORE ).getSiteTitle(), [] );
+	const launchSiteTitle = useSelect(
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getSiteTitle(),
+		[]
+	);
 
 	const updateTitle = useDispatch( LAUNCH_STORE ).setSiteTitle;
 	const saveSiteTitle = useDispatch( SITE_STORE ).saveSiteTitle;

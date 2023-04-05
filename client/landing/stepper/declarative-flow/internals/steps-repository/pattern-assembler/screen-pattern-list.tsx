@@ -1,7 +1,11 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
-import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
+import {
+	__experimentalNavigatorBackButton as NavigatorBackButton,
+	__experimentalUseNavigator as useNavigator,
+} from '@wordpress/components';
+import { usePrevious } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import NavigatorHeader from './navigator-header';
 import PatternSelector from './pattern-selector';
 import { useSectionPatterns } from './patterns-data';
@@ -14,20 +18,27 @@ interface Props {
 	onDoneClick: () => void;
 }
 
-const ScreenPatternList = ( { selectedPattern, onSelect, onBack, onDoneClick }: Props ) => {
+const ScreenPatternList = ( { selectedPattern, onSelect, onDoneClick }: Props ) => {
 	const translate = useTranslate();
 	const patterns = useSectionPatterns();
-	const isSidebarRevampEnabled = isEnabled( 'pattern-assembler/sidebar-revamp' );
+	const navigator = useNavigator();
+	const prevSelectedPattern = usePrevious( selectedPattern );
+
+	useEffect( () => {
+		if ( prevSelectedPattern && ! selectedPattern ) {
+			navigator.goBack();
+		}
+	}, [ prevSelectedPattern, selectedPattern ] );
 
 	return (
 		<>
-			{ isSidebarRevampEnabled && <NavigatorHeader title={ translate( 'Add patterns' ) } /> }
+			<NavigatorHeader
+				title={ selectedPattern ? translate( 'Replace pattern' ) : translate( 'Add patterns' ) }
+			/>
 			<div className="screen-container__body">
 				<PatternSelector
-					title={ ! isSidebarRevampEnabled ? translate( 'Add sections' ) : undefined }
 					patterns={ patterns }
 					onSelect={ onSelect }
-					onBack={ onBack }
 					selectedPattern={ selectedPattern }
 				/>
 			</div>
@@ -38,7 +49,7 @@ const ScreenPatternList = ( { selectedPattern, onSelect, onBack, onDoneClick }: 
 					primary
 					onClick={ onDoneClick }
 				>
-					{ translate( 'Done' ) }
+					{ translate( 'Save' ) }
 				</NavigatorBackButton>
 			</div>
 		</>

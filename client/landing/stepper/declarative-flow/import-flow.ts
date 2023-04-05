@@ -23,6 +23,7 @@ import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import { Flow, ProvidedDependencies } from './internals/types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 const importFlow: Flow = {
 	name: IMPORT_FOCUSED_FLOW,
@@ -53,7 +54,10 @@ const importFlow: Flow = {
 		const urlQueryParams = useQuery();
 		const siteSlugParam = useSiteSlugParam();
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
-		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
 		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import' );
 
 		if ( flowProgress ) {

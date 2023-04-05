@@ -123,7 +123,7 @@ class RequestLoginEmailForm extends Component {
 
 		return (
 			<div className="magic-login__form">
-				<h1 className="magic-login__form-header">{ translate( 'Email me a login link.' ) }</h1>
+				<h1 className="magic-login__form-header">{ translate( 'Email me a login link' ) }</h1>
 				{ requestError && (
 					<Notice
 						duration={ 10000 }
@@ -166,7 +166,7 @@ class RequestLoginEmailForm extends Component {
 
 						<div className="magic-login__form-action">
 							<FormButton primary disabled={ ! submitEnabled }>
-								{ translate( 'Request Email' ) }
+								{ translate( 'Get Link' ) }
 							</FormButton>
 						</div>
 					</FormFieldset>

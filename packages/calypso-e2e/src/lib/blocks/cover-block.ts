@@ -1,7 +1,7 @@
 import { ImageBlock } from './image-block';
 
 const coverStylesArray = [ 'Default', 'Bottom Wave', 'Top Wave' ] as const;
-export type coverStyles = typeof coverStylesArray[ number ];
+export type coverStyles = ( typeof coverStylesArray )[ number ];
 
 /**
  * Represents the Cover block.

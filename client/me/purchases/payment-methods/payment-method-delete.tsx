@@ -1,35 +1,29 @@
 import { Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import {
-	isPaymentAgreement,
-	PaymentMethodSummary,
-	PaymentMethod,
-} from 'calypso/lib/checkout/payment-methods';
+import { isPaymentAgreement, PaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { deleteStoredCard } from 'calypso/state/stored-cards/actions';
-import { isDeletingStoredCard } from 'calypso/state/stored-cards/selectors';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
-import type { CalypsoDispatch, IAppState } from 'calypso/state/types';
+import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
+import type { CalypsoDispatch } from 'calypso/state/types';
 
 interface Props {
-	card: PaymentMethod;
+	card: StoredPaymentMethod;
 }
 
 const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 	const translate = useTranslate();
-	const isDeleting = useSelector( ( state: IAppState ) =>
-		isDeletingStoredCard( state, card.stored_details_id )
-	);
+	const { isDeleting, deletePaymentMethod } = useStoredPaymentMethods();
 	const reduxDispatch = useDispatch< CalypsoDispatch >();
 	const [ isDialogVisible, setIsDialogVisible ] = useState( false );
 	const closeDialog = useCallback( () => setIsDialogVisible( false ), [] );
 
 	const handleDelete = useCallback( () => {
 		closeDialog();
-		reduxDispatch( deleteStoredCard( card ) )
+		deletePaymentMethod( card.stored_details_id )
 			.then( () => {
 				if ( isPaymentAgreement( card ) ) {
 					reduxDispatch( successNotice( translate( 'Payment method deleted successfully' ) ) );
@@ -42,13 +36,21 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 			.catch( ( error: Error ) => {
 				reduxDispatch( errorNotice( error.message ) );
 			} );
-	}, [ closeDialog, card, translate, reduxDispatch ] );
+	}, [ deletePaymentMethod, closeDialog, card, translate, reduxDispatch ] );
+
+	/* translators: %s is the name of the payment method (usually the last 4 digits of the card but could be a proper name for PayPal). */
+	const deleteText = translate( 'Delete the "%s" payment method', {
+		textOnly: true,
+		args: [ 'card_last_4' in card ? card.card_last_4 : card.name ],
+	} );
 
 	const renderDeleteButton = () => {
 		const text = isDeleting ? translate( 'Deleting…' ) : translate( 'Delete this payment method' );
+		const ariaText = isDeleting ? translate( 'Deleting…' ) : deleteText;
 
 		return (
 			<Button
+				aria-label={ ariaText }
 				className="payment-method-delete__button"
 				disabled={ isDeleting }
 				onClick={ () => setIsDialogVisible( true ) }
@@ -65,8 +67,8 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 			<PaymentMethodDeleteDialog
 				paymentMethodSummary={
 					<PaymentMethodSummary
-						type={ card.card_type || card.payment_partner }
-						digits={ card.card }
+						type={ 'card_type' in card ? card.card_type : card.payment_partner }
+						digits={ 'card_last_4' in card ? card.card_last_4 : undefined }
 						email={ card.email }
 					/>
 				}

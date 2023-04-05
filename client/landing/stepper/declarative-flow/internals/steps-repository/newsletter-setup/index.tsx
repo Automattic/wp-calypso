@@ -12,6 +12,7 @@ import { useSite } from '../../../../hooks/use-site';
 import AccentColorControl, { AccentColor } from '../components/accent-color-control';
 import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 export const defaultAccentColor = {
@@ -46,7 +47,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const [ accentColor, setAccentColor ] = useState< AccentColor >( defaultAccentColor );
 	const [ base64Image, setBase64Image ] = useState< string | null >();
 	const [ selectedFile, setSelectedFile ] = useState< File | undefined >();
-	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
+	const state = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] ).getState();
 
 	useEffect( () => {
 		const { siteAccentColor, siteTitle, siteDescription, siteLogo } = state;

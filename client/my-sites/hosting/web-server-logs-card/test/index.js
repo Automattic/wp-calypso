@@ -1,11 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { translate } from 'i18n-calypso';
 import MockDate from 'mockdate';
 import moment from 'moment';
+import { reducer as ui } from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { WebServerLogsCard } from '../index.js';
 
 jest.mock( 'lodash', () => ( {
@@ -35,17 +36,9 @@ async function typeDates( start, end, apply = true ) {
 	}
 }
 
-function getWebServerLogsCardProps() {
+function getWebServerLogsCardState() {
 	return {
-		siteId: 123456,
-		siteSlug: 'example.com',
-		isAtomicSiteLogAccessEnabled: true,
-		atomicLogsDownloadStarted: () => {},
-		atomicLogsDownloadCompleted: () => {},
-		atomicLogsDownloadError: () => {},
-		successNotice: () => {},
-		errorNotice: () => {},
-		translate,
+		ui,
 	};
 }
 
@@ -79,14 +72,14 @@ describe( 'WebServerLogsCard', () => {
 	} );
 
 	test( 'Initial dates should have 1 week range.', async () => {
-		render( <WebServerLogsCard { ...getWebServerLogsCardProps() } /> );
+		renderWithProvider( <WebServerLogsCard />, { reducers: getWebServerLogsCardState() } );
 
 		expect( screen.getByLabelText( 'Date range' ) ).toHaveTextContent(
 			`${ startDate } - ${ today }`
 		);
 	} );
 	test( 'displays an error message if start date is not valid', async () => {
-		render( <WebServerLogsCard { ...getWebServerLogsCardProps() } /> );
+		renderWithProvider( <WebServerLogsCard />, { reducers: getWebServerLogsCardState() } );
 		const start = 'invalid-date';
 		const end = today;
 		const startText = 'Start date format is not valid';
@@ -99,7 +92,7 @@ describe( 'WebServerLogsCard', () => {
 	} );
 
 	test( 'displays an error message if end date is not valid', async () => {
-		render( <WebServerLogsCard { ...getWebServerLogsCardProps() } /> );
+		renderWithProvider( <WebServerLogsCard />, { reducers: getWebServerLogsCardState() } );
 		const start = startDate;
 		const end = 'invalid-date';
 		const startText = 'Date is valid';
@@ -112,7 +105,7 @@ describe( 'WebServerLogsCard', () => {
 	} );
 
 	test( 'displays an error message if start date is more than 14 days ago', async () => {
-		render( <WebServerLogsCard { ...getWebServerLogsCardProps() } /> );
+		renderWithProvider( <WebServerLogsCard />, { reducers: getWebServerLogsCardState() } );
 
 		const date14DaysAgo = moment.utc( today, format ).subtract( 2, 'week' );
 
@@ -128,7 +121,7 @@ describe( 'WebServerLogsCard', () => {
 	} );
 
 	test( 'displays an error message if start date is after end date', async () => {
-		render( <WebServerLogsCard { ...getWebServerLogsCardProps() } /> );
+		renderWithProvider( <WebServerLogsCard />, { reducers: getWebServerLogsCardState() } );
 
 		const date14DaysAfter = moment.utc( today, format ).add( 2, 'week' );
 

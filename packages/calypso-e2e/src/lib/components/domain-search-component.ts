@@ -4,6 +4,7 @@ import { reloadAndRetry } from '../../element-helper';
 const selectors = {
 	searchInput: `.search-component__input`,
 	resultItem: ( keyword: string ) => `.domain-suggestion__content:has-text("${ keyword }")`,
+	firstResultItem: `.domain-suggestion:first-child .domain-suggestion__content`,
 };
 
 /**
@@ -74,6 +75,23 @@ export class DomainSearchComponent {
 	 */
 	async selectDomain( keyword: string ): Promise< string > {
 		const targetItem = await this.page.waitForSelector( selectors.resultItem( keyword ) );
+		// Heading element inside a given result contains the full domain name string.
+		const selectedDomain = await targetItem
+			.waitForSelector( 'h3' )
+			.then( ( el ) => el.innerText() );
+
+		await Promise.all( [ this.page.waitForNavigation(), targetItem.click() ] );
+
+		return selectedDomain;
+	}
+
+	/**
+	 * Select the first domain suggestion.
+	 *
+	 * @returns {string} Domain that was selected.
+	 */
+	async selectFirstSuggestion(): Promise< string > {
+		const targetItem = await this.page.waitForSelector( selectors.firstResultItem );
 		// Heading element inside a given result contains the full domain name string.
 		const selectedDomain = await targetItem
 			.waitForSelector( 'h3' )

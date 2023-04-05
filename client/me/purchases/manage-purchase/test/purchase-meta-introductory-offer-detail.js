@@ -3,6 +3,7 @@
  */
 
 import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import PurchaseMeta from '../purchase-meta';
@@ -54,6 +55,8 @@ function createReduxStoreWithPurchase( purchase ) {
 }
 
 describe( 'PurchaseMetaIntroductoryOfferDetail', () => {
+	const queryClient = new QueryClient();
+
 	it( 'renders "after first renewal" text yearly for an intro offer with prorated renewal where next renewal is not using offer', () => {
 		const purchase = {
 			...basicPurchase,
@@ -64,14 +67,16 @@ describe( 'PurchaseMetaIntroductoryOfferDetail', () => {
 			},
 		};
 		render(
-			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect(
 			screen.getByText( 'After the first renewal, the subscription price will be $35 / year' )
@@ -89,14 +94,16 @@ describe( 'PurchaseMetaIntroductoryOfferDetail', () => {
 			},
 		};
 		render(
-			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect(
 			screen.getByText( 'After the first renewal, the subscription price will be $35 / month' )
@@ -114,14 +121,16 @@ describe( 'PurchaseMetaIntroductoryOfferDetail', () => {
 			},
 		};
 		render(
-			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect(
 			screen.getByText( 'After the first renewal, the subscription price will be $35' )
@@ -138,14 +147,16 @@ describe( 'PurchaseMetaIntroductoryOfferDetail', () => {
 			},
 		};
 		render(
-			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( screen.queryByText( /After the first renewal/ ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /After the offer ends/ ) ).not.toBeInTheDocument();
@@ -161,14 +172,16 @@ describe( 'PurchaseMetaIntroductoryOfferDetail', () => {
 			},
 		};
 		render(
-			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect(
 			screen.getByText( 'After the offer ends, the subscription price will be $35 / year' )
@@ -186,14 +199,16 @@ describe( 'PurchaseMetaIntroductoryOfferDetail', () => {
 			},
 		};
 		render(
-			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect(
 			screen.getByText( 'After the offer ends, the subscription price will be $35 / month' )
@@ -211,14 +226,16 @@ describe( 'PurchaseMetaIntroductoryOfferDetail', () => {
 			},
 		};
 		render(
-			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect(
 			screen.getByText( 'After the offer ends, the subscription price will be $35' )
@@ -236,14 +253,16 @@ describe( 'PurchaseMetaIntroductoryOfferDetail', () => {
 			},
 		};
 		render(
-			<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ createReduxStoreWithPurchase( purchase ) }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect(
 			screen.getByText( 'After the offer ends, the subscription price will be $35' )

@@ -18,7 +18,7 @@ import './style.scss';
 class CancelAutoRenewalForm extends Component {
 	static propTypes = {
 		purchase: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object.isRequired,
+		selectedSiteId: PropTypes.number.isRequired,
 		isVisible: PropTypes.bool,
 		onClose: PropTypes.func.isRequired,
 		translate: PropTypes.func.isRequired,
@@ -72,7 +72,7 @@ class CancelAutoRenewalForm extends Component {
 	}
 
 	onSubmit = () => {
-		const { purchase, selectedSite } = this.props;
+		const { purchase, selectedSiteId } = this.props;
 		const { response } = this.state;
 
 		const surveyData = {
@@ -81,7 +81,7 @@ class CancelAutoRenewalForm extends Component {
 
 		this.props.submitSurvey(
 			'calypso-cancel-auto-renewal',
-			selectedSite.ID,
+			selectedSiteId,
 			enrichedSurveyData( surveyData, purchase )
 		);
 

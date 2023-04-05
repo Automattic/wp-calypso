@@ -5,7 +5,7 @@ import LaunchContext from '../context';
 import { PLANS_STORE, SITE_STORE } from '../stores';
 import { isPlanProduct } from '../utils';
 import type { PlanProductForFlow } from '../utils';
-import type { Plans } from '@automattic/data-stores';
+import type { Plans, PlansSelect } from '@automattic/data-stores';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 export function usePlans( billingPeriod: Plans.PlanBillingPeriod = 'ANNUALLY' ): {
@@ -18,7 +18,7 @@ export function usePlans( billingPeriod: Plans.PlanBillingPeriod = 'ANNUALLY' ):
 
 	return useSelect(
 		( select ) => {
-			const plansStore = select( PLANS_STORE );
+			const plansStore: PlansSelect = select( PLANS_STORE );
 
 			const defaultFreePlan = plansStore.getDefaultFreePlan( locale );
 			const defaultPaidPlan = plansStore.getDefaultPaidPlan( locale );

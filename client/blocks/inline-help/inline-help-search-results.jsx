@@ -142,7 +142,7 @@ function HelpSearchResults( {
 		};
 
 		return (
-			<Fragment key={ link ?? title }>
+			<Fragment key={ title ?? link }>
 				<li className="inline-help__results-item">
 					<div className="inline-help__results-cell">
 						<a

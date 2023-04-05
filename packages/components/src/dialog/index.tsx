@@ -19,7 +19,7 @@ type Props = {
 	isVisible: boolean;
 	label?: string;
 	leaveTimeout?: number;
-	onClose: ( action?: string ) => void;
+	onClose?: ( action?: string ) => void;
 	shouldCloseOnEsc?: boolean;
 	showCloseIcon?: boolean;
 };
@@ -75,7 +75,7 @@ const Dialog = ( {
 			shouldCloseOnEsc={ shouldCloseOnEsc }
 		>
 			{ showCloseIcon && (
-				<button className="dialog__action-buttons-close" onClick={ () => onClose( this ) }>
+				<button className="dialog__action-buttons-close" onClick={ () => onClose?.( this ) }>
 					<Gridicon icon="cross" size={ 24 } />
 				</button>
 			) }

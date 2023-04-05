@@ -29,6 +29,7 @@ class PlansNavigation extends Component {
 			case '/plans':
 			case '/plans/monthly':
 			case '/plans/yearly':
+			case '/plans/2yearly':
 				return 'Plans';
 
 			default:
@@ -60,7 +61,10 @@ class PlansNavigation extends Component {
 							<NavItem
 								path={ `/plans/${ site.slug }` }
 								selected={
-									path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
+									path === '/plans' ||
+									path === '/plans/monthly' ||
+									path === '/plans/yearly' ||
+									path === '/plans/2yearly'
 								}
 							>
 								{ translate( 'Plans' ) }

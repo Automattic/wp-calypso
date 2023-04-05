@@ -107,8 +107,13 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 						PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 					].includes( item.productSlug );
 
-					// Go to the checkout page for all products when they click on the 'GET' CTA, except for Jetpack Social where we open a modal.
-					const ctaHref = isSocialProduct ? `#${ item.productSlug }` : getCheckoutURL( item );
+					// Go to the checkout page for all products when they click on the 'GET' CTA,
+					// except for Jetpack Social when it isn't owned or included in an active plan,
+					// in which case we open a modal.
+					const ctaHref =
+						isSocialProduct && ! ( isOwned || isIncludedInPlanOrSuperseded )
+							? `#${ item.productSlug }`
+							: getCheckoutURL( item );
 					const onClickCta = isSocialProduct
 						? onClickMoreInfoFactory( item )
 						: getOnClickPurchase( item );

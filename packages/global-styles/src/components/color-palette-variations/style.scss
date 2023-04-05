@@ -1,29 +1,38 @@
 .color-palette-variations {
 	display: grid;
 	gap: 12px;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: repeat(3, 1fr);
 	width: 100%;
 	box-sizing: border-box;
+
+	.global-styles-variation-container__iframe {
+		max-height: 47px;
+	}
 }
 
 .global-styles-variation__item {
 	position: relative;
-	margin: 3px;
+	margin: 2px;
 	cursor: pointer;
+
+	&::after {
+		content: "";
+		display: block;
+		position: absolute;
+		top: -2px;
+		bottom: -2px;
+		left: -2px;
+		right: -2px;
+		border-radius: 3px; /* stylelint-disable-line scales/radii */
+		opacity: 0;
+		pointer-events: none;
+	}
 
 	&:hover,
 	&:focus-visible,
 	&.is-active {
 		&::after {
-			border-radius: 3px; /* stylelint-disable-line scales/radii */
-			bottom: -3px;
-			content: "";
-			display: block;
-			left: -3px;
-			pointer-events: none;
-			position: absolute;
-			right: -3px;
-			top: -3px;
+			opacity: 1;
 		}
 	}
 

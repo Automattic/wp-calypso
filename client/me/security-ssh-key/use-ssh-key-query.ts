@@ -17,7 +17,7 @@ export const SSH_KEY_FORMATS = [
 export interface SSHKeyData {
 	name: string;
 	key: string;
-	type: typeof SSH_KEY_FORMATS[ number ];
+	type: ( typeof SSH_KEY_FORMATS )[ number ];
 	sha256: string;
 	created_at: string;
 }

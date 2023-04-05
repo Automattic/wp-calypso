@@ -15,6 +15,7 @@ import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
+import SitesStagingBadge from './sites-staging-badge';
 import { ThumbnailLink } from './thumbnail-link';
 
 const SIZES_ATTR = [
@@ -76,6 +77,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	const { __ } = useI18n();
 
 	const isP2Site = site.options?.is_wpforteams_site;
+	const isStagingSite = site.is_wpcom_staging_site;
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 
 	const { ref, inView } = useInView( { triggerOnce: true } );
@@ -117,6 +119,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 
 					<div className={ badges }>
 						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
+						{ isStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 						{ getSiteLaunchStatus( site ) !== 'public' && (
 							<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
 						) }

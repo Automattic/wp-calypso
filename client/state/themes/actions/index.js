@@ -22,6 +22,7 @@ export {
 	receiveTrendingThemes,
 } from 'calypso/state/themes/actions/trending-themes';
 export { requestActiveTheme } from 'calypso/state/themes/actions/request-active-theme';
+export { setActiveTheme } from 'calypso/state/themes/actions/set-active-theme';
 export { requestTheme } from 'calypso/state/themes/actions/request-theme';
 export { requestThemeOnAtomic } from 'calypso/state/themes/actions/request-theme-on-atomic';
 export { requestThenActivate } from 'calypso/state/themes/actions/request-then-activate';

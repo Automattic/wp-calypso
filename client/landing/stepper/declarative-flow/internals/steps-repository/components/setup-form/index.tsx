@@ -3,12 +3,12 @@ import { Button, FormInputValidation } from '@automattic/components';
 import { TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { Dispatch, FormEvent, ReactChild, SetStateAction, useEffect } from 'react';
-import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 

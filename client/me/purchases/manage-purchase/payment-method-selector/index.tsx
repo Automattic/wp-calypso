@@ -12,15 +12,15 @@ import { useElements, CardNumberElement } from '@stripe/react-stripe-js';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
 import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
-import { getStoredPaymentAgreements } from 'calypso/state/stored-cards/selectors';
 import {
 	assignPayPalProcessor,
 	assignNewCardProcessor,
@@ -254,7 +254,9 @@ function onPaymentSelectComplete( {
 function CurrentPaymentMethodNotAvailableNotice( { purchase }: { purchase: Purchase } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
-	const storedPaymentAgreements = useSelector( getStoredPaymentAgreements );
+	const { paymentMethods: storedPaymentAgreements } = useStoredPaymentMethods( {
+		type: 'agreement',
+	} );
 	const noticeProps: Record< string, boolean | string | number | TranslateResult > = {
 		showDismiss: false,
 	};

@@ -30,6 +30,7 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
@@ -81,6 +82,7 @@ class Hosting extends Component {
 			hasSftpFeature,
 			isDisabled,
 			isECommerceTrial,
+			isWpcomStagingSite,
 			isTransferring,
 			requestSiteById,
 			siteId,
@@ -189,12 +191,16 @@ class Hosting extends Component {
 							<Column type="main" className="hosting__main-layout-col">
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
-								{ isStagingSiteEnabled && <StagingSiteCard disabled={ isDisabled } /> }
+								{ isStagingSiteEnabled && ! isWpcomStagingSite && (
+									<StagingSiteCard disabled={ isDisabled } />
+								) }
 								{ isGithubIntegrationEnabled && <GitHubCard /> }
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
 								<CacheCard disabled={ isDisabled } />
-								<WebServerLogsCard disabled={ isDisabled } />
+								{ ! isEnabled( 'woa-logging-moved' ) && (
+									<WebServerLogsCard disabled={ isDisabled } />
+								) }
 							</Column>
 							<Column type="sidebar">
 								<SiteBackupCard disabled={ isDisabled } />
@@ -245,6 +251,7 @@ export default connect(
 			hasSftpFeature,
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
+			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
 		};
 	},
 	{

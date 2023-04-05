@@ -35,7 +35,10 @@ import type {
 	PaymentEventCallbackArguments,
 } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
-import type { WPCOMTransactionEndpointResponse } from '@automattic/wpcom-checkout';
+import type {
+	WPCOMTransactionEndpointResponse,
+	SitelessCheckoutType,
+} from '@automattic/wpcom-checkout';
 import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
@@ -58,7 +61,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isComingFromUpsell,
 	disabledThankYouPage,
 	siteSlug,
-	isJetpackCheckout = false,
+	sitelessCheckoutType,
 	checkoutFlow,
 }: {
 	createUserAndSiteBeforeTransaction?: boolean;
@@ -70,7 +73,7 @@ export default function useCreatePaymentCompleteCallback( {
 	isComingFromUpsell?: boolean;
 	disabledThankYouPage?: boolean;
 	siteSlug: string | undefined;
-	isJetpackCheckout?: boolean;
+	sitelessCheckoutType?: SitelessCheckoutType;
 	checkoutFlow?: string;
 } ): PaymentEventCallback {
 	const cartKey = useCartKey();
@@ -79,6 +82,7 @@ export default function useCreatePaymentCompleteCallback( {
 	const siteId = useSelector( getSelectedSiteId );
 	const selectedSiteData = useSelector( getSelectedSite );
 	const adminUrl = selectedSiteData?.options?.admin_url;
+	const sitePlanSlug = selectedSiteData?.plan?.product_slug;
 	const isJetpackNotAtomic =
 		useSelector(
 			( state ) =>
@@ -101,8 +105,13 @@ export default function useCreatePaymentCompleteCallback( {
 
 			// In the case of a Jetpack product site-less purchase, we need to include the blog ID of the
 			// created site in the Thank You page URL.
+			// TODO: It does not seem like this would be needed for Akismet, but marking to follow up
 			let jetpackTemporarySiteId;
-			if ( isJetpackCheckout && ! siteSlug && responseCart.create_new_blog ) {
+			if (
+				sitelessCheckoutType === 'jetpack' &&
+				! siteSlug &&
+				[ 'no-user', 'no-site' ].includes( String( responseCart.cart_key ) )
+			) {
 				jetpackTemporarySiteId =
 					transactionResult.purchases && Object.keys( transactionResult.purchases ).pop();
 			}
@@ -115,11 +124,11 @@ export default function useCreatePaymentCompleteCallback( {
 				purchaseId,
 				feature,
 				cart: responseCart,
+				sitelessCheckoutType,
 				isJetpackNotAtomic,
 				productAliasFromUrl,
 				hideNudge: isComingFromUpsell,
 				isInModal,
-				isJetpackCheckout,
 				jetpackTemporarySiteId,
 				adminPageRedirect,
 				domains,
@@ -137,6 +146,7 @@ export default function useCreatePaymentCompleteCallback( {
 					responseCart,
 					checkoutFlow,
 					reduxDispatch,
+					sitePlanSlug,
 				} );
 			} catch ( err ) {
 				// eslint-disable-next-line no-console
@@ -211,7 +221,9 @@ export default function useCreatePaymentCompleteCallback( {
 				return;
 			}
 
-			reloadCart();
+			reloadCart().catch( () => {
+				// No need to do anything here. CartMessages will report this error to the user.
+			} );
 			redirectThroughPending( url, {
 				siteSlug,
 				orderId: transactionResult.order_id,
@@ -234,10 +246,11 @@ export default function useCreatePaymentCompleteCallback( {
 			responseCart,
 			createUserAndSiteBeforeTransaction,
 			disabledThankYouPage,
-			isJetpackCheckout,
+			sitelessCheckoutType,
 			checkoutFlow,
 			adminPageRedirect,
 			domains,
+			sitePlanSlug,
 		]
 	);
 }
@@ -249,6 +262,7 @@ function recordPaymentCompleteAnalytics( {
 	responseCart,
 	checkoutFlow,
 	reduxDispatch,
+	sitePlanSlug,
 }: {
 	paymentMethodId: string | null;
 	transactionResult: WPCOMTransactionEndpointResponse | undefined;
@@ -256,6 +270,7 @@ function recordPaymentCompleteAnalytics( {
 	responseCart: ResponseCart;
 	checkoutFlow?: string;
 	reduxDispatch: CalypsoDispatch;
+	sitePlanSlug?: string | null;
 } ) {
 	const wpcomPaymentMethod = paymentMethodId
 		? translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
@@ -276,6 +291,7 @@ function recordPaymentCompleteAnalytics( {
 		recordPurchase( {
 			cart: responseCart,
 			orderId: transactionResult?.receipt_id,
+			sitePlanSlug,
 		} );
 	} catch ( err ) {
 		// eslint-disable-next-line no-console

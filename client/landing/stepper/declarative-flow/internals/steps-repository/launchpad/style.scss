@@ -242,16 +242,17 @@
 
 .launchpad__domain-notification {
 	display: flex;
-	margin-bottom: 16px;
+	gap: 8px;
+	font-size: 0.875rem;
+	margin-bottom: 36px;
 
-	@include break-large {
-		margin-bottom: 10px;
+	&-icon {
+		padding-top: 2px;
 	}
 }
 
 .launchpad__domain-checkmark-icon {
-	flex: 0 0 36px;
-	fill: var(--studio-green-40);
+	fill: var(--studio-green-50);
 }
 
 .launchpad__domain-upgrade-badge {
@@ -349,6 +350,10 @@
 .launchpad__checklist-item[disabled]:focus {
 	background-color: transparent;
 	pointer-events: none;
+}
+
+.launchpad__checklist-item[data-task="verify_email"] {
+	color: var(--color-text);
 }
 
 .launchpad__checklist-item-checkmark-container,
@@ -657,6 +662,14 @@
 		display: none;
 	}
 
+	.launchpad__sidebar-header-flow-name {
+		display: none;
+	}
+}
+
+// Write and Build flow
+.write.launchpad,
+.build.launchpad {
 	.launchpad__sidebar-header-flow-name {
 		display: none;
 	}

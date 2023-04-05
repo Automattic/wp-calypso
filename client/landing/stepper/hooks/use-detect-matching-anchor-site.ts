@@ -4,6 +4,7 @@ import wpcom from 'calypso/lib/wp';
 import { USER_STORE } from '../stores';
 import { useAnchorFmParams } from './use-anchor-fm-params';
 import { useIsAnchorFm } from './use-is-anchor-fm';
+import type { UserSelect } from '@automattic/data-stores';
 
 interface AnchorEndpointResult {
 	location: string | false;
@@ -23,7 +24,10 @@ export default function useDetectMatchingAnchorSite(): boolean {
 		anchorFmIsNewSite,
 	} = useAnchorFmParams();
 	const isAnchorFm = useIsAnchorFm();
-	const currentUserExists = useSelect( ( select ) => !! select( USER_STORE ).getCurrentUser() );
+	const currentUserExists = useSelect(
+		( select ) => !! ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
 	const [ isLoading, setIsLoading ] = useState( !! ( isAnchorFm && currentUserExists ) );
 
 	useEffect( () => {

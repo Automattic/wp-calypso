@@ -20,6 +20,7 @@ import HelpCenterContent from './help-center-content';
 import HelpCenterFooter from './help-center-footer';
 import HelpCenterHeader from './help-center-header';
 import { HistoryRecorder } from './history-recorder';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 interface OptionalDraggableProps extends Partial< DraggableProps > {
 	draggable: boolean;
@@ -33,10 +34,13 @@ const OptionalDraggable: FC< OptionalDraggableProps > = ( { draggable, ...props 
 };
 
 const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) => {
-	const { show, isMinimized } = useSelect( ( select ) => ( {
-		show: select( HELP_CENTER_STORE ).isHelpCenterShown(),
-		isMinimized: select( HELP_CENTER_STORE ).getIsMinimized(),
-	} ) );
+	const { show, isMinimized } = useSelect(
+		( select ) => ( {
+			show: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+			isMinimized: ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getIsMinimized(),
+		} ),
+		[]
+	);
 
 	const { setIsMinimized } = useDispatch( HELP_CENTER_STORE );
 
@@ -47,8 +51,9 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden } ) =
 	} );
 	const { data: supportAvailability } = useSupportAvailability( 'CHAT' );
 	const { data } = useHappychatAvailable( Boolean( supportAvailability?.is_user_eligible ) );
-	const { history, index } = useSelect( ( select ) =>
-		select( HELP_CENTER_STORE ).getRouterState()
+	const { history, index } = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getRouterState(),
+		[]
 	);
 
 	const onDismiss = () => {

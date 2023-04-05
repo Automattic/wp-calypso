@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useLocalizeUrl } from '@automattic/i18n-utils';
+import { useLocalizeUrl, removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { UniversalNavbarHeader, UniversalNavbarFooter } from '@automattic/wpcom-template-parts';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -42,6 +42,7 @@ const LayoutLoggedOut = ( {
 	oauth2Client,
 	primary,
 	secondary,
+	headerSection,
 	sectionGroup,
 	sectionName,
 	sectionTitle,
@@ -55,6 +56,8 @@ const LayoutLoggedOut = ( {
 	const localizeUrl = useLocalizeUrl();
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const currentRoute = useSelector( getCurrentRoute );
+	const pathNameWithoutLocale =
+		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
 
 	const isCheckout = sectionName === 'checkout';
 	const isCheckoutPending = sectionName === 'checkout-pending';
@@ -69,6 +72,7 @@ const LayoutLoggedOut = ( {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
 		'focus-content': true,
+		'has-header-section': headerSection,
 		'has-no-sidebar': ! secondary,
 		'has-no-masterbar': masterbarIsHidden,
 		'is-jetpack-login': isJetpackLogin,
@@ -105,8 +109,16 @@ const LayoutLoggedOut = ( {
 		}
 	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
 		masterbar = null;
-	} else if ( [ 'plugins', 'themes', 'theme', 'reader' ].includes( sectionName ) ) {
-		masterbar = <UniversalNavbarHeader isLoggedIn={ isLoggedIn } sectionName={ sectionName } />;
+	} else if (
+		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions' ].includes( sectionName )
+	) {
+		masterbar = (
+			<UniversalNavbarHeader
+				isLoggedIn={ isLoggedIn }
+				sectionName={ sectionName }
+				{ ...( sectionName === 'subscriptions' && { variant: 'minimal' } ) }
+			/>
+		);
 	} else {
 		masterbar = (
 			<MasterbarLoggedOut
@@ -125,7 +137,10 @@ const LayoutLoggedOut = ( {
 		<div className={ classNames( 'layout', classes ) }>
 			{ 'development' === process.env.NODE_ENV && <SympathyDevWarning /> }
 			<BodySectionCssClass group={ sectionGroup } section={ sectionName } bodyClass={ bodyClass } />
-			{ masterbar }
+			<div className="layout__header-section">
+				{ masterbar }
+				{ headerSection && <div className="layout__header-section-content">{ headerSection }</div> }
+			</div>
 			{ isJetpackCloud() && (
 				<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
 			) }
@@ -149,7 +164,7 @@ const LayoutLoggedOut = ( {
 						currentRoute={ currentRoute }
 						isLoggedIn={ isLoggedIn }
 						onLanguageChange={ ( e ) => {
-							navigate( e.target.value );
+							navigate( `/${ e.target.value }/${ pathNameWithoutLocale }` );
 							window.location.reload();
 						} }
 					/>
@@ -162,7 +177,7 @@ const LayoutLoggedOut = ( {
 			{ [ 'themes', 'theme' ].includes( sectionName ) && (
 				<UniversalNavbarFooter
 					onLanguageChange={ ( e ) => {
-						navigate( e.target.value );
+						navigate( `/${ e.target.value }/${ pathNameWithoutLocale }` );
 						window.location.reload();
 					} }
 					currentRoute={ currentRoute }

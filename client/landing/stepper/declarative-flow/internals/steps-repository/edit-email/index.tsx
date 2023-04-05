@@ -14,16 +14,23 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import { ActionSection, StyledNextButton } from 'calypso/signup/steps/woocommerce-install';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 type FormFields = 'email' | 'password';
 
 const EditEmail: Step = function EditEmail( { navigation } ) {
 	const { goBack, submit } = navigation;
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
 	const { __ } = useI18n();
 	const [ errors, setErrors ] = useState( {} as Record< FormFields, string > );
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
+	);
 	const { setEditEmail } = useDispatch( ONBOARD_STORE );
 	const [ email, setEmail ] = useState( '' );
 	const [ sendError, setSendError ] = useState( '' );

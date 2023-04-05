@@ -14,7 +14,7 @@ import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { isNotAtomicJetpack, isP2Site } from 'calypso/sites-dashboard/utils';
+import { isNotAtomicJetpack, isP2Site, isStagingSite } from 'calypso/sites-dashboard/utils';
 import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -69,7 +69,12 @@ export default function DomainUpsell( { context } ) {
 
 	const shouldNotShowMyHomeUpsell = ! isProfileUpsell && ( siteDomainsLength || ! isEmailVerified );
 
-	if ( shouldNotShowUpselDismissed || shouldNotShowProfileUpsell || shouldNotShowMyHomeUpsell ) {
+	if (
+		shouldNotShowUpselDismissed ||
+		shouldNotShowProfileUpsell ||
+		shouldNotShowMyHomeUpsell ||
+		isStagingSite( selectedSite )
+	) {
 		return null;
 	}
 
@@ -89,6 +94,11 @@ export default function DomainUpsell( { context } ) {
 	);
 }
 
+const domainSuggestionOptions = {
+	vendor: 'domain-upsell',
+	include_wordpressdotcom: false,
+};
+
 export function RenderDomainUpsell( {
 	isFreePlan,
 	isMonthlyPlan,
@@ -103,18 +113,17 @@ export function RenderDomainUpsell( {
 
 	const dispatch = useDispatch();
 	const locale = useLocale();
+
+	// Note: domainSuggestionOptions must be equal by reference upon each render
+	// to avoid a render loop, since it's used to memoize a selector.
 	const { allDomainSuggestions } =
-		useDomainSuggestions( searchTerm, 3, undefined, locale, {
-			vendor: 'domain-upsell',
-		} ) || {};
+		useDomainSuggestions( searchTerm, 3, undefined, locale, domainSuggestionOptions ) || {};
 
 	const cartKey = useCartKey();
 	const shoppingCartManager = useShoppingCart( cartKey );
 
 	// Get first non-free suggested domain.
-	const domainSuggestion = allDomainSuggestions?.filter(
-		( suggestion ) => ! suggestion.is_free
-	)[ 0 ];
+	const domainSuggestion = allDomainSuggestions?.[ 0 ];
 
 	// It takes awhile to suggest a domain name. Set a default to an empty string.
 	const domainSuggestionName = domainSuggestion?.domain_name ?? '';
@@ -176,13 +185,13 @@ export function RenderDomainUpsell( {
 
 	const cardTitle =
 		! isFreePlan && ! isMonthlyPlan
-			? translate( 'You still have a free domain to claim!' )
+			? translate( 'Make your mark online with a memorable domain name' )
 			: translate( 'Own your online identity with a custom domain' );
 
 	const cardSubtitle =
 		! isFreePlan && ! isMonthlyPlan
 			? translate(
-					'Own your online identity giving your site a memorable domain name. Your plan includes one for free for one year, so you can still claim it.'
+					'Your plan includes a free domain for the first year. Stake your claim on the web with a domain name that boosts your brand.'
 			  )
 			: translate(
 					"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
@@ -209,7 +218,7 @@ export function RenderDomainUpsell( {
 					<div className="card">
 						<span>{ domainSuggestionName }</span>
 						{ domainSuggestion?.domain_name ? (
-							<div className="badge badge--success">{ translate( 'Available' ) }</div>
+							<div className="badge badge--success">{ translate( 'Recommended' ) }</div>
 						) : (
 							<div className="badge">
 								<Spinner />
@@ -220,7 +229,7 @@ export function RenderDomainUpsell( {
 
 				<div className="domain-upsell-actions">
 					<Button href={ searchLink } onClick={ getSearchClickHandler }>
-						{ translate( 'Search for a domain' ) }
+						{ translate( 'Search for another domain' ) }
 					</Button>
 					<Button primary onClick={ getCtaClickHandler } busy={ ctaIsBusy }>
 						{ translate( 'Buy this domain' ) }

@@ -9,12 +9,17 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import { LAUNCH_STORE } from '../../stores';
 import GoBackButton from '../go-back-button';
+import type { LaunchSelect } from '@automattic/data-stores';
 
 const PlanDetails: React.FunctionComponent = () => {
 	const locale = useLocale();
-	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
-	const selectedPlanProductId = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).getSelectedPlanProductId()
+	const domain = useSelect(
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getSelectedDomain(),
+		[]
+	);
+	const selectedPlanProductId = useSelect(
+		( select ) => ( select( LAUNCH_STORE ) as LaunchSelect ).getSelectedPlanProductId(),
+		[]
 	);
 
 	const history = useHistory();

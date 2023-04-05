@@ -39,6 +39,7 @@ export default function buildFallbackResponse( {
 	shouldShowAdControl = false,
 	shouldShowAMP = false,
 	shouldShowAddOns = false,
+	showSiteLogs = false,
 } = {} ) {
 	let inbox = [];
 	if ( shouldShowInbox ) {
@@ -510,6 +511,17 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/export/${ siteDomain }`,
 				},
+				...( config.isEnabled( 'woa-logging' ) && showSiteLogs
+					? [
+							{
+								parent: 'tools.php',
+								slug: 'tools-site-logs',
+								title: translate( 'Site Logs' ),
+								type: 'submenu-item',
+								url: `/site-logs/${ siteDomain }`,
+							},
+					  ]
+					: [] ),
 			],
 		},
 		{

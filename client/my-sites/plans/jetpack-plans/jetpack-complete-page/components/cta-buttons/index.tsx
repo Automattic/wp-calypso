@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'calypso/components/forms/form-button';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getJetpackAdminUrl from 'calypso/state/sites/selectors/get-jetpack-admin-url';
+import getJetpackRecommendationsUrl from 'calypso/state/selectors/get-jetpack-recommendations-url';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { buildCheckoutURL } from '../../../get-purchase-url-callback';
 
@@ -37,7 +37,7 @@ const CtaButtons = () => {
 		: `/checkout/${ PLAN_JETPACK_COMPLETE }`;
 
 	const stayFreeURL = useSelector(
-		( state ) => getJetpackAdminUrl( state, siteId ) ?? 'https://jetpack.com'
+		( state ) => getJetpackRecommendationsUrl( state ) ?? 'https://jetpack.com'
 	);
 
 	return (

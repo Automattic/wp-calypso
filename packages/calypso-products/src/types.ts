@@ -26,8 +26,8 @@ import type { ReactElement } from 'react';
 export type Feature = string;
 
 // WPCom
-export type WPComProductSlug = typeof WPCOM_PRODUCTS[ number ];
-export type WPComPlanSlug = typeof WPCOM_PLANS[ number ];
+export type WPComProductSlug = ( typeof WPCOM_PRODUCTS )[ number ];
+export type WPComPlanSlug = ( typeof WPCOM_PLANS )[ number ];
 export type WPComPurchasableItemSlug = WPComProductSlug | WPComPlanSlug;
 
 export interface WPComPlan extends Plan {
@@ -60,9 +60,9 @@ export type IncompleteWPcomPlan = Partial< WPComPlan > &
 	Pick< WPComPlan, 'group' | 'type' | 'getTitle' | 'getDescription' >;
 
 // Jetpack
-export type JetpackProductSlug = typeof JETPACK_PRODUCTS_LIST[ number ];
-export type JetpackLegacyPlanSlug = typeof JETPACK_LEGACY_PLANS[ number ];
-export type JetpackResetPlanSlug = typeof JETPACK_RESET_PLANS[ number ];
+export type JetpackProductSlug = ( typeof JETPACK_PRODUCTS_LIST )[ number ];
+export type JetpackLegacyPlanSlug = ( typeof JETPACK_LEGACY_PLANS )[ number ];
+export type JetpackResetPlanSlug = ( typeof JETPACK_RESET_PLANS )[ number ];
 export type JetpackPlanSlug =
 	| typeof PLAN_JETPACK_FREE
 	| JetpackLegacyPlanSlug
@@ -103,7 +103,7 @@ export interface JetpackPlan extends Plan {
 export type IncompleteJetpackPlan = Partial< JetpackPlan > &
 	Pick< JetpackPlan, 'group' | 'type' | 'getTitle' | 'getDescription' >;
 
-export type JetpackProductCategory = typeof JETPACK_PRODUCT_CATEGORIES[ number ];
+export type JetpackProductCategory = ( typeof JETPACK_PRODUCT_CATEGORIES )[ number ];
 
 // All
 export type ProductSlug = WPComProductSlug | JetpackProductSlug;
@@ -114,8 +114,8 @@ export interface Product {
 	product_name: TranslateResult;
 	product_slug: ProductSlug;
 	type: ProductSlug;
-	term: typeof TERMS_LIST[ number ];
-	bill_period: typeof PERIOD_LIST[ number ];
+	term: ( typeof TERMS_LIST )[ number ];
+	bill_period: ( typeof PERIOD_LIST )[ number ];
 	price_tier_list?: Array< PriceTierEntry >;
 	categories: JetpackProductCategory[];
 	getFeatures?: () => Feature[];
@@ -124,7 +124,7 @@ export interface Product {
 }
 
 export interface BillingTerm {
-	term: typeof TERMS_LIST[ number ];
+	term: ( typeof TERMS_LIST )[ number ];
 	getBillingTimeFrame: () => TranslateResult;
 }
 
@@ -178,6 +178,12 @@ export type Plan = BillingTerm & {
 	 * Context - pdgrnI-26j
 	 */
 	get2023PlanComparisonJetpackFeatureOverride?: () => Feature[];
+
+	/**
+	 * Features that are conditionally available and are to be shown in the plans comparison table.
+	 * For example: "Available with plugins"
+	 */
+	get2023PlanComparisonConditionalFeatures?: () => Feature[];
 
 	get2023PricingGridSignupStorageOptions?: () => Feature[];
 	getProductId: () => number;

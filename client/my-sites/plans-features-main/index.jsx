@@ -655,11 +655,11 @@ PlansFeaturesMain.propTypes = {
 	hideEcommercePlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
-	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly' ] ),
+	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly', '2yearly', '3yearly' ] ),
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
-
+	isStepperUpgradeFlow: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	redirectTo: PropTypes.string,
 	selectedFeature: PropTypes.string,
@@ -691,6 +691,7 @@ PlansFeaturesMain.defaultProps = {
 	planTypeSelector: 'interval',
 	isPlansInsideStepper: false,
 	busyOnUpgradeClick: false,
+	isStepperUpgradeFlow: false,
 };
 
 export default connect(
@@ -718,9 +719,11 @@ export default connect(
 		) {
 			customerType = 'business';
 		}
-		const is2023PricingGridVisible = is2023PricingGridActivePage( window );
+		const is2023PricingGridVisible =
+			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window );
 		const planTypeSelectorProps = {
 			basePlansPath: props.basePlansPath,
+			isStepperUpgradeFlow: props.isStepperUpgradeFlow,
 			isInSignup: props.isInSignup,
 			eligibleForWpcomMonthlyPlans: eligibleForWpcomMonthlyPlans,
 			isPlansInsideStepper: props.isPlansInsideStepper,
@@ -728,6 +731,7 @@ export default connect(
 			customerType: customerType,
 			hidePersonalPlan: props.hidePersonalPlan,
 			siteSlug,
+			showBiannualToggle: isEnabled( 'plans/biannual-toggle' ) && is2023PricingGridVisible,
 		};
 
 		return {

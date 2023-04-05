@@ -16,7 +16,7 @@ export const useHelpSearchQuery = (
 	const queryClient = useQueryClient();
 
 	return useQuery< SearchResult[] >(
-		[ 'help', search ],
+		[ 'help-center-search', search ],
 		() =>
 			canAccessWpcomApis()
 				? wpcomRequest( {

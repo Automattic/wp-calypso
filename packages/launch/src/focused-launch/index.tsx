@@ -9,6 +9,7 @@ import PlanDetails from './plan-details';
 import { Route as FocusedLaunchRoute } from './route';
 import Success from './success';
 import Summary from './summary';
+import type { LaunchSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -16,10 +17,11 @@ const FocusedLaunch: React.FunctionComponent = () => {
 	const { hasPaidPlan, isSiteLaunched, isSiteLaunching } = useSite();
 
 	const [ hasSelectedDomain, selectedPlanProductId ] = useSelect( ( select ) => {
-		const { planProductId } = select( LAUNCH_STORE ).getState();
+		const launchSelect: LaunchSelect = select( LAUNCH_STORE );
+		const { planProductId } = launchSelect.getState();
 
-		return [ select( LAUNCH_STORE ).hasSelectedDomainOrSubdomain(), planProductId ];
-	} );
+		return [ launchSelect.hasSelectedDomainOrSubdomain(), planProductId ];
+	}, [] );
 
 	// @TODO: extract to some hook for reusability (Eg: use-products-from-cart)
 	// If there is no selected domain, but there is a domain in cart,

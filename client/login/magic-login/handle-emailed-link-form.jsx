@@ -74,8 +74,20 @@ class HandleEmailedLinkForm extends Component {
 		}
 	}
 
+	componentDidMount() {
+		if (
+			this.props.clientId === config( 'wpcom_signup_id' ) &&
+			! this.props.isImmediateLoginAttempt &&
+			! wooDnaConfig( this.props.initialQuery ).isWooDnaFlow()
+		) {
+			this.handleSubmit();
+		}
+	}
+
 	handleSubmit = ( event ) => {
-		event.preventDefault();
+		if ( event ) {
+			event.preventDefault();
+		}
 
 		this.setState( {
 			hasSubmitted: true,
@@ -178,9 +190,9 @@ class HandleEmailedLinkForm extends Component {
 			);
 		}
 
-		const illustration =
-			'/calypso/images/illustrations/' +
-			( isWooDna ? 'illustration-woo-magic-link.svg' : 'illustration-nosites.svg' );
+		const illustration = isWooDna
+			? '/calypso/images/illustrations/illustration-woo-magic-link.svg'
+			: '';
 
 		this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
 

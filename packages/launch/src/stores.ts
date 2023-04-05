@@ -1,8 +1,6 @@
 import { Site, DomainSuggestions, Plans, Launch } from '@automattic/data-stores';
 
-// TODO: Check Site store registration discrepancies between:
-// - client/landing/gutenboarding/stores/site/index.ts
-// - apps/editing-toolkit/editing-toolkit-plugin/common/data-stores/site.ts
+// TODO: Check Site store registration discrepancies where Site.register() is used.
 const SITE_STORE = Site.register( { client_id: '', client_secret: '' } );
 
 const PLANS_STORE = Plans.register();

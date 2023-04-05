@@ -3,7 +3,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
 import { addFilter, removeFilter } from '@wordpress/hooks';
 import { __ } from '@wordpress/i18n';
-
+import { pageLayoutStore } from './store';
 import '@wordpress/nux';
 
 const INSERTING_HOOK_NAME = 'isInsertingPagePattern';
@@ -12,9 +12,19 @@ const INSERTING_HOOK_NAMESPACE = 'automattic/full-site-editing/inserting-pattern
 interface PagePatternsPluginProps {
 	patterns: PatternDefinition[];
 }
+type CoreEditorPlaceholder = {
+	getBlocks: ( ...args: unknown[] ) => Array< { name: string; clientId: string } >;
+	getEditedPostAttribute: ( ...args: unknown[] ) => unknown;
+};
+type CoreEditPostPlaceholder = {
+	isFeatureActive: ( ...args: unknown[] ) => boolean;
+};
+type CoreNuxPlaceholder = {
+	areTipsEnabled: ( ...args: unknown[] ) => boolean;
+};
 
 export function PagePatternsPlugin( props: PagePatternsPluginProps ) {
-	const { setOpenState } = useDispatch( 'automattic/starter-page-layouts' );
+	const { setOpenState } = useDispatch( pageLayoutStore );
 	const { setUsedPageOrPatternsModal } = useDispatch( 'automattic/wpcom-welcome-guide' );
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 	const { editPost } = useDispatch( 'core/editor' );
@@ -22,12 +32,14 @@ export function PagePatternsPlugin( props: PagePatternsPluginProps ) {
 	const { disableTips } = useDispatch( 'core/nux' );
 
 	const selectProps = useSelect( ( select ) => {
-		const { isOpen, isPatternPicker } = select( 'automattic/starter-page-layouts' );
+		const { isOpen, isPatternPicker } = select( pageLayoutStore );
 		return {
 			isOpen: isOpen(),
-			isWelcomeGuideActive: select( 'core/edit-post' ).isFeatureActive( 'welcomeGuide' ) as boolean, // Gutenberg 7.2.0 or higher
+			isWelcomeGuideActive: (
+				select( 'core/edit-post' ) as CoreEditPostPlaceholder
+			 ).isFeatureActive( 'welcomeGuide' ) as boolean, // Gutenberg 7.2.0 or higher
 			areTipsEnabled: select( 'core/nux' )
-				? ( select( 'core/nux' ).areTipsEnabled() as boolean )
+				? ( ( select( 'core/nux' ) as CoreNuxPlaceholder ).areTipsEnabled() as boolean )
 				: false, // Gutenberg 7.1.0 or lower
 			...( isPatternPicker() && {
 				title: __( 'Choose a Pattern', 'full-site-editing' ),
@@ -37,21 +49,22 @@ export function PagePatternsPlugin( props: PagePatternsPluginProps ) {
 				),
 			} ),
 		};
-	} );
+	}, [] );
 
 	const { getMeta, postContentBlock } = useSelect( ( select ) => {
-		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
-		const currentBlocks = select( 'core/editor' ).getBlocks();
+		const getMeta = () =>
+			( select( 'core/editor' ) as CoreEditorPlaceholder ).getEditedPostAttribute( 'meta' );
+		const currentBlocks = ( select( 'core/editor' ) as CoreEditorPlaceholder ).getBlocks();
 		return {
 			getMeta,
 			postContentBlock: currentBlocks.find( ( block ) => block.name === 'a8c/post-content' ),
 		};
-	} );
+	}, [] );
 
 	const savePatternChoice = useCallback(
 		( name: string ) => {
 			// Save selected pattern slug in meta.
-			const currentMeta = getMeta();
+			const currentMeta = getMeta() as Record< string, unknown >;
 			editPost( {
 				meta: {
 					...currentMeta,

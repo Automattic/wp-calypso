@@ -73,15 +73,19 @@ describe(
 			} );
 
 			it( 'Skip Onboarding', async function () {
+				await page.waitForURL( /setup\/site-setup\/goals/, { waitUntil: 'networkidle' } );
 				const startSiteFlow = new StartSiteFlow( page );
 				await startSiteFlow.clickButton( 'Skip to dashboard' );
 			} );
 
 			it( 'Skip Launchpad', async function () {
-				await Promise.all( [
-					page.waitForNavigation( { url: /.*\/view\/.*/, timeout: 30 * 1000 } ),
-					await page.click( 'button:text("Skip to dashboard")' ),
-				] );
+				await page.waitForURL( /launchpad/, { waitUntil: 'networkidle' } );
+				await page
+					.getByRole( 'button', { name: 'Skip to dashboard' } )
+					.click( { timeout: 20 * 1000 } );
+
+				// Launchpad redirects to `/view` when skipped.
+				await page.waitForURL( /view/ );
 			} );
 		} );
 

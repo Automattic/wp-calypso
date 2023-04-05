@@ -9,7 +9,13 @@ import PlanItem from '../plans-accordion-item';
 import PlanItemPlaceholder from '../plans-accordion-item/plans-item-placeholder';
 import { PLANS_STORE, WPCOM_FEATURES_STORE } from '../stores';
 import type { DisabledPlansMap } from '../plans-table/types';
-import type { DomainSuggestions, Plans, WPCOMFeatures } from '@automattic/data-stores';
+import type {
+	DomainSuggestions,
+	Plans,
+	PlansSelect,
+	WPCOMFeatures,
+	WpcomFeaturesSelect,
+} from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -50,19 +56,31 @@ const PlansAccordion: React.FunctionComponent< Props > = ( {
 	const placeholderPlans = [ 1, 2, 3, 4 ];
 
 	// Primary plan
-	const { popularPlan, getPlanProduct } = useSelect( ( select ) => {
-		const plansStore = select( PLANS_STORE );
-		return {
-			popularPlan: plansStore.getDefaultPaidPlan( locale ),
-			getPlanProduct: plansStore.getPlanProduct,
-		};
-	} );
-	const recommendedPlanSlug = useSelect( ( select ) =>
-		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures )
+	const { popularPlan, getPlanProduct } = useSelect(
+		( select ) => {
+			const plansStore: PlansSelect = select( PLANS_STORE );
+			return {
+				popularPlan: plansStore.getDefaultPaidPlan( locale ),
+				getPlanProduct: plansStore.getPlanProduct,
+			};
+		},
+		[ locale ]
+	);
+	const recommendedPlanSlug = useSelect(
+		( select ) =>
+			( select( WPCOM_FEATURES_STORE ) as WpcomFeaturesSelect ).getRecommendedPlanSlug(
+				selectedFeatures
+			),
+		[ selectedFeatures ]
 	);
 
-	const recommendedPlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlanByPeriodAgnosticSlug( recommendedPlanSlug, locale )
+	const recommendedPlan = useSelect(
+		( select ) =>
+			( select( PLANS_STORE ) as PlansSelect ).getPlanByPeriodAgnosticSlug(
+				recommendedPlanSlug,
+				locale
+			),
+		[ recommendedPlanSlug, locale ]
 	);
 
 	const primaryPlan = recommendedPlan || popularPlan;

@@ -105,7 +105,7 @@ export default function AnnualHighlightsSection( { siteId }: { siteId: number } 
 				titleHref={ viewMoreHref }
 				year={ year }
 				navigation={ navigation }
-				className="has-background-color"
+				className="has-odyssey-stats-bg-color"
 			/>
 		</>
 	);

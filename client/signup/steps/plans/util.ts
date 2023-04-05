@@ -10,7 +10,7 @@ export const getIntervalType = (): string => {
 	const urlParts = getUrlParts( typeof window !== 'undefined' ? window.location?.href : '' );
 	const intervalType = urlParts?.searchParams.get( 'intervalType' ) || '';
 
-	if ( [ 'yearly', 'monthly' ].includes( intervalType ) ) {
+	if ( [ 'yearly', '2yearly', 'monthly' ].includes( intervalType ) ) {
 		return intervalType;
 	}
 

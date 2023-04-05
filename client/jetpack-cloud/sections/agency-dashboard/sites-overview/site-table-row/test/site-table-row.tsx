@@ -5,6 +5,7 @@
 import { render, waitFor } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
 import nock from 'nock';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -13,6 +14,18 @@ import SiteTableRow from '../index';
 import type { SiteData } from '../../types';
 
 describe( '<SiteTableRow>', () => {
+	beforeAll( () => {
+		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
+			return {
+				matches: true,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(),
+				removeListener: jest.fn(),
+			};
+		} );
+	} );
+
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/rest/v1.1/jetpack-blogs/1234/test-connection?is_stale_connection_healthy=true' )
@@ -79,6 +92,10 @@ describe( '<SiteTableRow>', () => {
 	const props = {
 		item,
 		columns: siteColumns,
+		setExpanded: function (): void {
+			throw new Error( 'Function not implemented.' );
+		},
+		isExpanded: false,
 	};
 	const initialState = {
 		partnerPortal: {
@@ -86,24 +103,29 @@ describe( '<SiteTableRow>', () => {
 				isPartnerOAuthTokenLoaded: true,
 			},
 		},
+		sites: {
+			items: {
+				[ blogId ]: siteObj,
+			},
+		},
 	};
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
 	const queryClient = new QueryClient();
 
-	const { getByText } = render(
-		<Provider store={ store }>
-			<QueryClientProvider client={ queryClient }>
-				<table>
-					<tbody>
-						<SiteTableRow { ...props } />
-					</tbody>
-				</table>
-			</QueryClientProvider>
-		</Provider>
-	);
-
 	test( 'should render correctly and have the error message and the link to fix the issue', async () => {
+		const { getByText } = render(
+			<Provider store={ store }>
+				<QueryClientProvider client={ queryClient }>
+					<table>
+						<tbody>
+							<SiteTableRow { ...props } />
+						</tbody>
+					</table>
+				</QueryClientProvider>
+			</Provider>
+		);
+
 		await waitFor( () => {
 			expect( getByText( 'Jetpack is unable to connect to this site' ) ).toBeVisible();
 			expect( getByText( /fix now/i ) ).toBeVisible();

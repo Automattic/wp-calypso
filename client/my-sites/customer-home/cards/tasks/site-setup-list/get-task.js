@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { createInterpolateElement } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import AnimatedIcon from 'calypso/components/animated-icon';
@@ -63,32 +62,6 @@ export const getTask = (
 ) => {
 	let taskData = {};
 
-	const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
-
-	const wpAppBanner = {
-		title: translate( 'Try the WordPress app' ),
-		description: isBlogger
-			? translate( 'Write posts, check stats, and reply to comments on the go!' )
-			: translate(
-					'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
-			  ),
-	};
-
-	const jetpackAppBanner = {
-		title: translate( 'Try the Jetpack app' ),
-		subtitle: translate( 'Put your site in your pocket' ),
-		icon: (
-			<AnimatedIcon
-				icon={ `/calypso/animations/app-promo/wp-to-jp${ isRtl ? '-rtl' : '' }.json` }
-				className="site-setup-list__task-icon"
-			/>
-		),
-		description: translate(
-			'Write posts, view your stats, reply to comments, and upload media anywhere, anytime.'
-		),
-		jetpackBranding: true,
-	};
-
 	switch ( task.id ) {
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
 			taskData = {
@@ -150,7 +123,18 @@ export const getTask = (
 			break;
 		case CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:
 			taskData = {
-				...( displayJetpackAppBranding ? jetpackAppBanner : wpAppBanner ),
+				title: translate( 'Try the Jetpack app' ),
+				subtitle: translate( 'Put your site in your pocket' ),
+				icon: (
+					<AnimatedIcon
+						icon={ `/calypso/animations/app-promo/wp-to-jp${ isRtl ? '-rtl' : '' }.json` }
+						className="site-setup-list__task-icon"
+					/>
+				),
+				description: translate(
+					'Write posts, view your stats, reply to comments, and upload media anywhere, anytime.'
+				),
+				jetpackBranding: true,
 				timing: 3,
 				actionText: isBlogger
 					? translate( 'Download the app' )

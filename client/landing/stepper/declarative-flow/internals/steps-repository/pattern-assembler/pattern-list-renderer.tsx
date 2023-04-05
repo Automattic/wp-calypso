@@ -36,7 +36,7 @@ const PatternListItem = ( { pattern, className, isShown, onSelect }: PatternList
 	return (
 		<Button
 			className={ className }
-			title={ pattern.category }
+			title={ pattern.name }
 			ref={ ref }
 			onClick={ () => onSelect( pattern ) }
 		>
