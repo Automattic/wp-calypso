@@ -9,6 +9,7 @@ const DEFAULT_DIMENSIONS = {
 	width: 1224,
 };
 
+const THROTTLE_DURATION = 400; // in ms
 interface UplotChartProps {
 	data: uPlot.AlignedData;
 	options?: Partial< uPlot.Options >;
@@ -34,7 +35,7 @@ function useResize(
 				height: uplotRef.current.height,
 				width: containerRef.current.clientWidth,
 			} );
-		}, 400 );
+		}, THROTTLE_DURATION );
 		resizeChart();
 		window.addEventListener( 'resize', resizeChart );
 
