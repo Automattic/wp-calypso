@@ -1,4 +1,4 @@
-import { Gridicon, Spinner } from '@automattic/components';
+import { Gridicon, ProgressBar, Spinner } from '@automattic/components';
 import classNames from 'classnames';
 import { isEqual } from 'lodash';
 import * as React from 'react';
@@ -29,21 +29,49 @@ interface Props {
 	style?: React.CSSProperties;
 }
 
+interface State {
+	uploadProgress: number;
+}
+
 type DivProps = Omit< React.ComponentPropsWithoutRef< 'button' >, 'style' | 'onClick' >;
 
 export default class MediaLibraryListItem extends React.Component< Props & DivProps > {
+	state = {
+		uploadProgress: 0,
+	};
+
 	static defaultProps = {
 		maxImageWidth: 450,
 		selectedIndex: -1,
 	};
 
-	shouldComponentUpdate( nextProps: Props ) {
+	uploadEventListener = ( event: Event ) => {
+		const detail = ( event as CustomEvent ).detail;
+		if ( this.props.media && ( this.props.media as MediaObject ).file !== detail.fileName ) {
+			return;
+		}
+
+		this.setState( {
+			uploadProgress: detail.progress,
+		} );
+	};
+
+	componentDidMount() {
+		document.addEventListener( 'tus-upload-progress', this.uploadEventListener );
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener( 'tus-upload-progress', this.uploadEventListener );
+	}
+
+	shouldComponentUpdate( nextProps: Props, nextState: State ) {
 		return ! (
 			nextProps.media === this.props.media &&
 			nextProps.scale === this.props.scale &&
 			nextProps.maxImageWidth === this.props.maxImageWidth &&
 			nextProps.thumbnailType === this.props.thumbnailType &&
 			nextProps.selectedIndex === this.props.selectedIndex &&
+			nextState.uploadProgress === this.state.uploadProgress &&
 			isEqual( nextProps.style, this.props.style )
 		);
 	}
@@ -94,12 +122,16 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 			...otherProps
 		} = this.props;
 
+		const { uploadProgress } = this.state;
+
 		let dataAttributes = null;
+
+		const isTransient = media && ( media as MediaObject ).transient;
 
 		const classes = classNames( 'media-library__list-item', {
 			'is-placeholder': ! media,
 			'is-selected': -1 !== selectedIndex,
-			'is-transient': media && ( media as MediaObject ).transient,
+			'is-transient': isTransient,
 			'is-small': scale <= 0.125,
 		} );
 
@@ -128,9 +160,17 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 				<figure className="media-library__list-item-figure" title={ title }>
 					{ this.renderItem() }
 					{ media && ( media as MediaObject ).transient && (
-						<div className="media-library__list-item-spinner">
-							<Spinner />
-						</div>
+						<>
+							{ uploadProgress > 0 ? (
+								<div className="media-library__list-item-progress">
+									<ProgressBar value={ uploadProgress } />
+								</div>
+							) : (
+								<div className="media-library__list-item-spinner">
+									<Spinner />
+								</div>
+							) }
+						</>
 					) }
 				</figure>
 			</button>

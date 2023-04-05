@@ -98,6 +98,20 @@
 	fill: transparent;
 }
 
+.media-library__list-item-progress {
+	position: inherit;
+	z-index: z-index(".media-library__list-item", ".media-library__list-item-progress");
+
+	.progress-bar {
+		display: block;
+		border-radius: 0;
+
+		.progress-bar__progress {
+			border-radius: 0;
+		}
+	}
+}
+
 .media-library__list-item-centered {
 	position: absolute;
 	top: 50%;
