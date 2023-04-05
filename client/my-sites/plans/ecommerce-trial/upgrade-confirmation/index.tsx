@@ -32,7 +32,7 @@ const TrialUpgradeConfirmation = () => {
 			<Main wideLayout>
 				<PageViewTracker
 					path="/plans/my-plan/trial-upgraded/:site"
-					title="Plans > Ecommerce Trial Post Upgrade Actions" //Should this string be made available for translation?
+					title="Plans > Ecommerce Trial Post Upgrade Actions"
 				/>
 				<div className="trial-upgrade-confirmation__header">
 					<h1 className="trial-upgrade-confirmation__title">
