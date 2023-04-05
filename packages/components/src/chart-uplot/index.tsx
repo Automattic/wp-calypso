@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import throttle from 'lodash/throttle';
 import { useMemo, useState, useRef, useEffect } from 'react';
+import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
-import type uPlot from 'uplot';
 
 import './style.scss';
 
@@ -66,6 +66,8 @@ export default function UplotChart( {
 				class: 'calypso-uplot-chart',
 				...DEFAULT_DIMENSIONS,
 				padding: [ 16, 8, 16, 8 ],
+				// Set incoming dates as UTC.
+				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
 				axes: [
 					{
 						// x-axis
