@@ -312,9 +312,15 @@ describe( 'UpsellNudge', () => {
 			'aadjhaduhaidwahdawdhakjdbakdjbw'
 		);
 		await user.click( await screen.findByText( 'Add Professional Email' ) );
-		expect(
-			screen.findByText( mockProducts[ 'wp_titan_mail_yearly' ].product_name )
-		).toNeverAppear();
+		expect( screen.findByText( mockProducts.wp_titan_mail_monthly.product_name ) ).toNeverAppear();
 		expect( page ).toHaveBeenCalledWith( `/checkout/example.com` );
+		expect(
+			shoppingCartClient
+				.forCartKey( siteId )
+				.getState()
+				.responseCart.products.some(
+					( product ) => product.product_id === mockProducts.wp_titan_mail_monthly.product_id
+				)
+		).toBeTruthy();
 	} );
 } );
