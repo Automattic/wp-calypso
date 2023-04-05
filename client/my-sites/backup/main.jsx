@@ -27,6 +27,7 @@ import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
+import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import isRewindPoliciesInitialized from 'calypso/state/rewind/selectors/is-rewind-policies-initialized';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
@@ -187,6 +188,7 @@ function BackupStatus( {
 	const isPoliciesInitialized = useSelectedSiteSelector( isRewindPoliciesInitialized );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate();
+	const isAgency = useSelector( isAgencyUser );
 
 	const hasRealtimeBackups = useSelectedSiteSelector(
 		siteHasFeature,
@@ -228,7 +230,7 @@ function BackupStatus( {
 				{ ! needCredentials && ( ! areCredentialsInvalid || isAtomic ) && hasRealtimeBackups && (
 					<BackupsMadeRealtimeBanner />
 				) }
-				<AgenciesSurveyBanner />
+				{ isAgency && <AgenciesSurveyBanner /> }
 
 				<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
 				<BackupStorageSpace />
