@@ -1,10 +1,10 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import page from 'page';
-import DateRange from 'calypso/components/date-range';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsTab } from 'calypso/data/hosting/use-site-logs-query';
+import { useCurrentSiteGmtOffset } from '../../hooks/use-current-site-gmt-offset';
 import { useSiteLogsDownloader } from '../../hooks/use-site-logs-downloader';
+import { DateTimePicker } from './date-time-picker';
 import type { Moment } from 'moment';
 
 import './style.scss';
@@ -35,67 +35,69 @@ const SiteLogsToolbarDownloadProgress = ( {
 };
 
 type Props = {
-	onRefresh: () => void;
-	onDateTimeCommit?: ( startDate: Date, endDate: Date ) => void;
+	onDateTimeChange: ( startDateTime: Moment, endDateTime: Moment ) => void;
 	logType: SiteLogsTab;
 	startDateTime: Moment;
 	endDateTime: Moment;
 };
 
 export const SiteLogsToolbar = ( {
-	onRefresh,
-	onDateTimeCommit,
+	onDateTimeChange,
 	logType,
 	startDateTime,
 	endDateTime,
 }: Props ) => {
-	const moment = useLocalizedMoment();
 	const translate = useTranslate();
-	const { downloadLogs, state } = useSiteLogsDownloader();
+	const moment = useLocalizedMoment();
+	const { downloadLogs, state } = useSiteLogsDownloader( { roundDateRangeToWholeDays: false } );
+	const siteGmtOffset = useCurrentSiteGmtOffset();
 
 	const isDownloading = state.status === 'downloading';
 
-	const handleDateRangeCommit = ( startDate: Date, endDate: Date ) => {
-		if ( ! startDate || ! endDate ) {
+	const handleTimeRangeChange = ( newStart: Moment | null, newEnd: Moment | null ) => {
+		if (
+			( ! newStart && ! newEnd ) ||
+			( startDateTime.isSame( newStart ) && endDateTime.isSame( newEnd ) )
+		) {
 			return;
 		}
-		if ( startDateTime.isSame( startDate ) && endDateTime.isSame( endDate ) ) {
-			return;
-		}
-		const url = new URL( window.location.href );
-		const range = {
-			from: moment( startDate ).utc().unix(),
-			to: moment( endDate ).utc().unix(),
-		};
-		url.searchParams.set( 'range', JSON.stringify( range ) );
-		page.replace( url.pathname + url.search );
-		onDateTimeCommit?.( startDate, endDate );
+
+		onDateTimeChange( newStart || startDateTime, newEnd || endDateTime );
 	};
 
 	return (
 		<div className="site-logs-toolbar">
-			<DateRange
-				showTriggerClear={ false }
-				selectedStartDate={ startDateTime.toDate() }
-				selectedEndDate={ endDateTime.toDate() }
-				lastSelectableDate={ moment().toDate() }
-				dateFormat="ll @ HH:mm:ss"
-				onDateCommit={ handleDateRangeCommit }
-			/>
+			<div className="site-logs-toolbar__top-row">
+				<label htmlFor="from">{ translate( 'From' ) }</label>
+				<DateTimePicker
+					id="from"
+					value={ startDateTime }
+					onChange={ ( value ) => handleTimeRangeChange( value, null ) }
+					gmtOffset={ siteGmtOffset }
+					min={ moment.unix( 0 ) } // The UI goes weird when the unix timestamps go negative, so don't allow it
+					max={ endDateTime }
+				/>
+				<label htmlFor="to">{ translate( 'To' ) }</label>
+				<DateTimePicker
+					id="to"
+					value={ endDateTime }
+					onChange={ ( value ) => handleTimeRangeChange( null, value ) }
+					gmtOffset={ siteGmtOffset }
+					max={ moment() }
+					min={ startDateTime }
+				/>
 
-			<Button isSecondary onClick={ onRefresh } className="site-logs-toolbar__refresh">
-				{ translate( 'Refresh' ) }
-			</Button>
+				<Button
+					disabled={ isDownloading }
+					isBusy={ isDownloading }
+					isPrimary
+					onClick={ () => downloadLogs( { logType, startDateTime, endDateTime } ) }
+				>
+					{ translate( 'Download logs' ) }
+				</Button>
 
-			<Button
-				disabled={ isDownloading }
-				isBusy={ isDownloading }
-				isPrimary
-				onClick={ () => downloadLogs( { logType, startDateTime, endDateTime } ) }
-			>
-				{ translate( 'Download' ) }
-			</Button>
-			{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
+				{ isDownloading && <SiteLogsToolbarDownloadProgress { ...state } /> }
+			</div>
 		</div>
 	);
 };

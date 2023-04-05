@@ -98,3 +98,11 @@
 		color: var(--color-neutral-5);
 	}
 }
+
+.advanced-credentials.alternate .credentials-form__buttons-flex {
+	justify-content: flex-start;
+}
+
+.advanced-credentials.alternate .credentials-form__buttons-flex .button:not(:first-child) {
+	margin-left: 8px;
+}

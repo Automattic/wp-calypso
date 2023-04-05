@@ -554,9 +554,23 @@ export function siteSelection( context, next ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
-		if ( onSelectedSiteAvailable( context ) ) {
-			next();
-		}
+
+		const currentPlanSlug = getSitePlanSlug( getState(), siteId );
+		const shouldUpdateStateAfterUpgrade =
+			context.pathname.startsWith( '/plans/my-plan/trial-upgraded/' ) &&
+			[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug );
+
+		// This will fetch the site and update the state after the plan is upgraded if the site is on the trial-upgraded flow.
+		const promise = shouldUpdateStateAfterUpgrade
+			? dispatch( requestSite( siteId ) ).catch( () => {
+					return null;
+			  } )
+			: Promise.resolve();
+		promise.then( () => {
+			if ( onSelectedSiteAvailable( context ) ) {
+				next();
+			}
+		} );
 	} else {
 		// Fetch the site by siteFragment and then try to select again
 		dispatch( requestSite( siteFragment ) )

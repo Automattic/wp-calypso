@@ -329,6 +329,25 @@ import {
 	FEATURE_JETPACK_BOOST_MONTHLY,
 	FEATURE_JETPACK_SOCIAL_BASIC,
 	FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY,
+	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+	FEATURE_SELL_INTERNATIONALLY,
+	FEATURE_AUTOMATIC_SALES_TAX,
+	FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+	FEATURE_SELL_EGIFTS_AND_VOUCHERS,
+	FEATURE_EMAIL_MARKETING,
+	FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
+	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
+	FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+	FEATURE_MARKETING_AUTOMATION,
+	FEATURE_AUTOMATED_EMAIL_TRIGGERS,
+	FEATURE_CART_ABANDONMENT_EMAILS,
+	FEATURE_REFERRAL_PROGRAMS,
+	FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
+	FEATURE_LOYALTY_POINTS_PROGRAMS,
+	FEATURE_OFFER_BULK_DISCOUNTS,
+	FEATURE_RECOMMEND_ADD_ONS,
+	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
+	FEATURE_MIN_MAX_ORDER_QUANTITY,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -888,6 +907,8 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_CANCELLATION_SHIPPING_CARRIERS,
 				FEATURE_CANCELLATION_PREMIUM_DESIGN,
 				FEATURE_CANCELLATION_PLUGINS,
+				FEATURE_PREMIUM_THEMES,
+				FEATURE_SELL_INTERNATIONALLY,
 			],
 			andMore: true,
 		},
@@ -896,9 +917,53 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	getTitle: () => i18n.translate( 'Performance' ),
+	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+		FEATURE_MARKETING_AUTOMATION,
+		FEATURE_AUTOMATED_EMAIL_TRIGGERS,
+		FEATURE_CART_ABANDONMENT_EMAILS,
+		FEATURE_REFERRAL_PROGRAMS,
+		FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
+		FEATURE_LOYALTY_POINTS_PROGRAMS,
+		FEATURE_OFFER_BULK_DISCOUNTS,
+		FEATURE_RECOMMEND_ADD_ONS,
+		FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
+		FEATURE_MIN_MAX_ORDER_QUANTITY,
+	],
+	get2023PricingGridSignupStorageOptions: () => [],
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Express Performance and take advantage of its powerful marketplace features.'
+		),
+} );
+
+const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanEcommerceDetails(),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+		FEATURE_UNLIMITED_ADMINS,
+		FEATURE_200GB_STORAGE,
+		FEATURE_UNLIMITED_PRODUCTS_SERVICES,
+		FEATURE_PREMIUM_THEMES,
+		FEATURE_SELL_INTERNATIONALLY,
+		FEATURE_AUTOMATIC_SALES_TAX,
+		FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+		FEATURE_INTEGRATED_SHIPMENT_TRACKING,
+		FEATURE_REAL_TIME_ANALYTICS,
+		FEATURE_SELL_EGIFTS_AND_VOUCHERS,
+		FEATURE_EMAIL_MARKETING,
+		FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
+		FEATURE_ADVANCED_SEO_TOOLS,
+	],
+	get2023PricingGridSignupStorageOptions: () => [],
+	getTitle: () => i18n.translate( 'Essential' ),
+	getPlanTagline: () =>
+		i18n.translate( 'Everything you need to set up your store and start selling your products.' ),
+	getTagline: () =>
+		i18n.translate(
+			'Learn more about everything included with Woo Express Essential and take advantage of its powerful marketplace features.'
 		),
 } );
 
@@ -1359,15 +1424,6 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 			andMore: true,
 		},
 	} ),
-} );
-
-const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
-	...getPlanBusinessDetails(),
-	getTitle: () => i18n.translate( 'Essential' ),
-	getTagline: () =>
-		i18n.translate(
-			'Learn more about everything included with Woo Express Essential and take advantage of its powerful marketplace features.'
-		),
 } );
 
 // The following is not a real plan, we are adding it here so that
@@ -2223,7 +2279,8 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]: {
 		...getPlanWooExpressMediumDetails(),
 		...getMonthlyTimeframe(),
-		availableFor: ( plan ) => [ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
+		availableFor: ( plan ) =>
+			[ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY, PLAN_WOOEXPRESS_SMALL_MONTHLY ].includes( plan ),
 		getProductId: () => 1053,
 		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 		getPathSlug: () => 'wooexpress-medium-monthly',
@@ -2234,7 +2291,13 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		term: TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>
-			[ PLAN_FREE, PLAN_WOOEXPRESS_MEDIUM_MONTHLY, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
+			[
+				PLAN_FREE,
+				PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+				PLAN_ECOMMERCE_TRIAL_MONTHLY,
+				PLAN_WOOEXPRESS_SMALL,
+				PLAN_WOOEXPRESS_SMALL_MONTHLY,
+			].includes( plan ),
 		getProductId: () => 1055,
 		getStoreSlug: () => PLAN_WOOEXPRESS_MEDIUM,
 		getPathSlug: () => 'wooexpress-medium-yearly',

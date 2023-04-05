@@ -261,6 +261,8 @@ export const defaultDomainResponse: ResponseDomain = {
 	manualTransferRequired: false,
 	mustRemovePrivacyBeforeContactUpdate: false,
 	name: '',
+	nominetDomainSuspended: false,
+	nominetPendingContactVerificationRequest: false,
 	owner: '',
 	partnerDomain: false,
 	pendingRegistration: false,

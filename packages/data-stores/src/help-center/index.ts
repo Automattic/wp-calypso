@@ -1,6 +1,6 @@
-import { plugins, registerStore, use } from '@wordpress/data';
+import { registerStore } from '@wordpress/data';
 import { controls } from '@wordpress/data-controls';
-import persistOptions from '../one-week-persistence-config';
+import { registerPlugins } from '../plugins';
 import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
@@ -11,7 +11,7 @@ export type { State };
 let isRegistered = false;
 
 export function register(): typeof STORE_KEY {
-	use( plugins.persistence, persistOptions );
+	registerPlugins();
 
 	if ( ! isRegistered ) {
 		registerStore( STORE_KEY, {

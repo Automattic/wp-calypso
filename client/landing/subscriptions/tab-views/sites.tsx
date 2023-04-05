@@ -1,23 +1,29 @@
+import { SubscriptionManager } from '@automattic/data-stores';
+import { Spinner } from '@wordpress/components';
+import { useTranslate } from 'i18n-calypso';
+import { Notice } from '../notice';
 import SiteList from '../site-list/site-list';
 
-// Mock meanwhile we have the data endpoints ready
-const useSites = () => {
-	const sites = [];
-	for ( let i = 0; i < 10; i++ ) {
-		sites.push( {
-			id: i,
-			name: `Site ${ i }`,
-			icon: `https://www.gravatar.com/avatar/${ i }?s=96&d=mm`,
-			url: `https://site${ i }.wordpress.com`,
-			date: new Date(),
-			emailFrequency: [ 'Daily', 'Weekly', 'Immediately' ][ Math.floor( Math.random() * 3 ) ],
-		} );
-	}
-	return sites;
-};
-
 export default function SitesView() {
-	const sites = useSites();
+	const translate = useTranslate();
+	const { data: sites, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery();
+
+	if ( error ) {
+		// todo: translate when we have agreed on the error message
+		return <Notice type="error">An error occurred while fetching your subscriptions.</Notice>;
+	}
+
+	if ( isLoading ) {
+		return (
+			<div className="user-settings">
+				<Spinner />
+			</div>
+		);
+	}
+
+	if ( ! sites || ! sites.length ) {
+		return <Notice type="warning">{ translate( 'You are not subscribed to any sites.' ) }</Notice>;
+	}
 
 	return <SiteList sites={ sites } />;
 }

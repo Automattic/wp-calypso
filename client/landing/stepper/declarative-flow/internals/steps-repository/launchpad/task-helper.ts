@@ -43,6 +43,12 @@ export function getEnhancedTasks(
 
 	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
 
+	const stripeAccountConnected =
+		site?.options?.launchpad_checklist_tasks_statuses?.stripe_connected || false;
+
+	const newsletterPlanCreated =
+		site?.options?.launchpad_checklist_tasks_statuses?.newsletter_plan_created || false;
+
 	const allowUpdateDesign =
 		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
 
@@ -112,7 +118,7 @@ export function getEnhancedTasks(
 					break;
 				case 'setup_general':
 					taskData = {
-						title: translate( 'Personalize your site' ),
+						title: translate( 'Set up your site' ),
 					};
 					break;
 				case 'design_edited':
@@ -169,6 +175,17 @@ export function getEnhancedTasks(
 				case 'first_post_published':
 					taskData = {
 						title: translate( 'Write your first post' ),
+						completed: firstPostPublishedCompleted,
+						disabled: mustVerifyEmailBeforePosting || false,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign( `/post/${ siteSlug }` );
+						},
+					};
+					break;
+				case 'first_post_published_newsletter':
+					taskData = {
+						title: translate( 'Start writing' ),
 						completed: firstPostPublishedCompleted,
 						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
@@ -339,6 +356,31 @@ export function getEnhancedTasks(
 					taskData = {
 						completed: isEmailVerified,
 						title: translate( 'Confirm Email (Check Your Inbox)' ),
+					};
+					break;
+				case 'stripe_account_connected':
+					taskData = {
+						title: translate( 'Connect Stripe Account' ),
+						completed: stripeAccountConnected,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
+						},
+					};
+					break;
+				case 'newsletter_plan_created':
+					taskData = {
+						title: translate( 'Create a Paid Newsletter' ),
+						completed: newsletterPlanCreated,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							if ( newsletterPlanCreated ) {
+								return;
+							}
+							window.location.assign(
+								`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
+							);
+						},
 					};
 					break;
 			}

@@ -1,12 +1,24 @@
-// Queries
-export { useSubscriptionManagerUserSettingsQuery } from './queries/use-subscription-manager-user-settings-query';
-export { useSubscriptionManagerSubscriptionsCountQuery } from './queries/use-subscription-manager-subscriptions-count-query';
+import { useSubscriberEmailAddress } from './hooks';
+import {
+	useSiteDeliveryFrequencyMutation,
+	useSiteUnfollowMutation,
+	useUserSettingsMutation,
+} from './mutations';
+import {
+	useSiteSubscriptionsQuery,
+	useSubscriptionsCountQuery,
+	useUserSettingsQuery,
+} from './queries';
 
-// Mutations
-export { useSubscriptionManagerUserSettingsMutation } from './mutations/use-subscription-manager-user-settings-mutation';
-
-// Hooks
-export { useSubscriberEmailAddress } from './hooks';
+export const SubscriptionManager = {
+	useSiteDeliveryFrequencyMutation,
+	useSiteSubscriptionsQuery,
+	useSiteUnfollowMutation,
+	useSubscriptionsCountQuery,
+	useSubscriberEmailAddress,
+	useUserSettingsQuery,
+	useUserSettingsMutation,
+};
 
 // Types
 export type {

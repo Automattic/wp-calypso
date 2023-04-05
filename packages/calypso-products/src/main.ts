@@ -24,6 +24,10 @@ import {
 	FEATURE_JETPACK_SEARCH_MONTHLY,
 	TYPE_P2_PLUS,
 	TYPE_ENTERPRISE_GRID_WPCOM,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 } from './constants';
 import { featureGroups } from './feature-group-plan-map';
 import { PLANS_LIST } from './plans-list';
@@ -110,6 +114,14 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isBusinessPlan( planKey ) ) {
 		return 'is-business-plan';
+	}
+
+	if ( isWooExpressMediumPlan( planKey ) ) {
+		return 'is-wooexpress-medium-plan';
+	}
+
+	if ( isWooExpressSmallPlan( planKey ) ) {
+		return 'is-wooexpress-small-plan';
 	}
 
 	if ( isEcommercePlan( planKey ) ) {
@@ -304,6 +316,18 @@ export function isFreePlan( planSlug: string ): boolean {
 // This is not a real plan, but added to display Enterprise in the pricing grid.
 export function isWpcomEnterpriseGridPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_ENTERPRISE_GRID_WPCOM, group: GROUP_WPCOM } );
+}
+
+export function isWooExpressMediumPlan( planSlug: string ): boolean {
+	return [ PLAN_WOOEXPRESS_MEDIUM, PLAN_WOOEXPRESS_MEDIUM_MONTHLY ].includes( planSlug );
+}
+
+export function isWooExpressSmallPlan( planSlug: string ): boolean {
+	return [ PLAN_WOOEXPRESS_SMALL, PLAN_WOOEXPRESS_SMALL_MONTHLY ].includes( planSlug );
+}
+
+export function isWooExpressPlan( planSlug: string ): boolean {
+	return isWooExpressMediumPlan( planSlug ) || isWooExpressSmallPlan( planSlug );
 }
 
 export function isFlexiblePlan( planSlug: string ): boolean {

@@ -37,7 +37,7 @@ function getViewport() {
 	return _viewport;
 }
 
-function onViewportChange() {
+export function onViewportChange() {
 	_viewport = updateViewport();
 }
 

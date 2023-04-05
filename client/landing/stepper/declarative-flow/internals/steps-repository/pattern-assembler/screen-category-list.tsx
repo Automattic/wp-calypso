@@ -4,16 +4,16 @@ import { Icon, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoriesOrder from './hooks/use-categories-order';
 import NavigatorHeader from './navigator-header';
 import PatternListPanel from './pattern-list-panel';
-import { useSectionPatterns } from './patterns-data';
 import type { Pattern, Category } from './types';
 import './screen-category-list.scss';
 
 interface Props {
 	categories: Category[];
-	sectionsMapByCategory: { [ key: string ]: Pattern[] };
+	patternsMapByCategory: { [ key: string ]: Pattern[] };
 	onDoneClick: () => void;
 	onSelect: (
 		type: string,
@@ -28,7 +28,7 @@ interface Props {
 }
 
 const ScreenCategoryList = ( {
-	sectionsMapByCategory,
+	patternsMapByCategory,
 	categories,
 	onDoneClick,
 	replacePatternMode,
@@ -40,7 +40,6 @@ const ScreenCategoryList = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
-	const sectionPatterns = useSectionPatterns();
 	const categoriesInOrder = useCategoriesOrder( categories );
 
 	const handleFocusOutside = ( event: Event ) => {
@@ -53,7 +52,7 @@ const ScreenCategoryList = ( {
 	};
 
 	const trackEventCategoryClick = ( name: string ) => {
-		recordTracksEvent( 'calypso_signup_pattern_assembler_category_click', {
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_CATEGORY_LIST_CATEGORY_CLICK, {
 			pattern_category: name,
 		} );
 	};
@@ -89,9 +88,11 @@ const ScreenCategoryList = ( {
 			<div className="screen-container__body screen-container__body--align-sides screen-category-list__body">
 				{ categoriesInOrder.map( ( { name, label, description } ) => {
 					const isOpen = selectedCategory === name;
-					const hasPatterns = sectionsMapByCategory[ name ]?.length;
+					const hasPatterns = name && patternsMapByCategory[ name ]?.length;
+					const isHeaderCategory = name === 'header';
+					const isFooterCategory = name === 'footer';
 
-					if ( ! hasPatterns ) {
+					if ( ! hasPatterns || isHeaderCategory || isFooterCategory ) {
 						return null;
 					}
 
@@ -136,10 +137,9 @@ const ScreenCategoryList = ( {
 					onSelect( 'section', selectedPattern, selectedCategory )
 				}
 				selectedPattern={ selectedPattern }
-				patterns={ sectionPatterns }
 				selectedCategory={ selectedCategory }
 				categories={ categories }
-				sectionsMapByCategory={ sectionsMapByCategory }
+				patternsMapByCategory={ patternsMapByCategory }
 			/>
 		</div>
 	);

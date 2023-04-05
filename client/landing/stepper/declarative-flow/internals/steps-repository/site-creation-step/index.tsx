@@ -150,7 +150,9 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	}
 
 	useEffect( () => {
-		setProgress( 0.1 );
+		if ( ! isFreeFlow( flow ) ) {
+			setProgress( 0.1 );
+		}
 		if ( submit ) {
 			setPendingAction( createSite );
 			submit();

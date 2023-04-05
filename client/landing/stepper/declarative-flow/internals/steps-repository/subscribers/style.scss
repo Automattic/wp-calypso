@@ -1,10 +1,10 @@
 @import "../style";
 .subscribers {
 	.add-subscriber__title-container {
-		margin-top: 25px;
+		margin: 20px 0 40px 0 !important;
 
-		@include break-medium {
-			margin-top: 36px;
+		@include break-small {
+			margin: 36px auto 58px auto !important;
 		}
 	}
 	.step-container {
@@ -20,7 +20,6 @@
 		}
 
 		.add-subscriber .add-subscriber__title-container {
-			max-width: 376px;
 			text-align: center;
 
 			.onboarding-subtitle {
@@ -33,10 +32,25 @@
 			max-width: 368px;
 		}
 
+		.add-subscriber__form--container {
+			input {
+				&::placeholder {
+					color: var(--studio-gray-50);
+				}
+			}
+		}
+
 		.add-subscriber__form-submit-btn {
 			display: block;
 			width: 100%;
 			margin: 2rem 0;
+		}
+
+		.add-subscriber__form--container .form-input-validation.is-error.is-file-validation {
+			background-color: var(--studio-gray-0);
+			padding: 16px;
+			padding-inline-start: 3.5rem;
+			padding-inline-end: 3.25;
 		}
 	}
 }

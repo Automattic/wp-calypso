@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { Popover } from '@automattic/components';
-import { useLocale } from '@automattic/i18n-utils';
 import { hasMinContrast, hexToRgb, RGB } from '@automattic/onboarding';
 import { ColorPicker } from '@wordpress/components';
 import { Icon, color, lock } from '@wordpress/icons';
@@ -27,6 +26,7 @@ import ColorSwatch from './color-swatch';
 interface AccentColorControlProps {
 	accentColor: AccentColor;
 	setAccentColor: Dispatch< SetStateAction< AccentColor > >;
+	labelText?: string;
 }
 
 interface ColorOption {
@@ -49,9 +49,12 @@ enum COLORS {
 	VividPurple = '#9B51E0',
 }
 
-const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControlProps ) => {
-	const { __, hasTranslation } = useI18n();
-	const locale = useLocale();
+const AccentColorControl = ( {
+	accentColor,
+	setAccentColor,
+	labelText,
+}: AccentColorControlProps ) => {
+	const { __ } = useI18n();
 	const [ customColor, setCustomColor ] = useState< AccentColor | null >( null );
 	const [ colorPickerOpen, setColorPickerOpen ] = useState< boolean >( false );
 	const accentColorRef = useRef< HTMLInputElement >( null );
@@ -247,11 +250,7 @@ const AccentColorControl = ( { accentColor, setAccentColor }: AccentColorControl
 				</form>
 			</Popover>
 			<FormFieldset>
-				<FormLabel htmlFor="accentColor">
-					{ hasTranslation( 'Favorite color' ) || locale === 'en'
-						? __( 'Favorite color' )
-						: __( 'Accent color' ) }
-				</FormLabel>
+				<FormLabel htmlFor="accentColor">{ labelText ?? __( 'Favorite color' ) }</FormLabel>
 				<SelectDropdown
 					// @ts-expect-error SelectDropdown is defined in .jsx file and has no type definitions generated
 					ref={ accentColorRef }

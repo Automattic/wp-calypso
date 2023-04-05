@@ -23,6 +23,7 @@ import {
 	getPlanRawPrice,
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
+import type { IAppState } from 'calypso/state/types';
 
 export type PlanTypeSelectorProps = {
 	kind: 'interval' | 'customer';
@@ -263,7 +264,7 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 function useMaxDiscount( plans: string[] ): number {
 	const wpcomMonthlyPlans = ( plans || [] ).filter( isWpComPlan ).filter( isMonthly );
 	const [ maxDiscount, setMaxDiscount ] = useState( 0 );
-	const discounts = useSelector( ( state ) => {
+	const discounts = useSelector( ( state: IAppState ) => {
 		return wpcomMonthlyPlans.map( ( planSlug ) => {
 			const monthlyPlan = getPlanBySlug( state, planSlug );
 			const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( planSlug ) );

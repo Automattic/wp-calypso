@@ -173,10 +173,13 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 				</div>
 				{ isDomainSSLProcessing && (
 					<div className="launchpad__domain-notification">
-						<Gridicon className="launchpad__domain-checkmark-icon" icon="checkmark-circle" />
+						<div className="launchpad__domain-notification-icon">
+							<Gridicon className="launchpad__domain-checkmark-icon" icon="checkmark" size={ 18 } />
+						</div>
 						<p>
 							{ translate(
-								'We are currently setting up your new domain! It may take a few minutes before it is ready.'
+								'We are currently setting up your new domain!{{br/}}It may take a few minutes before it is ready.',
+								{ components: { br: <br /> } }
 							) }
 						</p>
 					</div>

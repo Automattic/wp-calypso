@@ -15,6 +15,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 			query,
 			primary,
 			secondary,
+			headerSection,
 			showGdprBanner,
 			cachedMarkup,
 		} = context;
@@ -35,6 +36,7 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 					currentQuery={ query }
 					primary={ primary }
 					secondary={ secondary }
+					headerSection={ headerSection }
 					redirectUri={ context.originalUrl }
 					showGdprBanner={ showGdprBanner }
 				/>

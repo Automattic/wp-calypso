@@ -35,6 +35,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const verifiedParam = useQuery().get( 'verified' );
 	const site = useSite();
 	const {
+		isError: launchpadFetchError,
 		data: { launchpad_screen: launchpadScreenOption, checklist_statuses, site_intent },
 	} = useLaunchpad( siteSlug );
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
@@ -47,6 +48,10 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
 		[]
 	);
+
+	if ( ! siteSlug || fetchingSiteError?.error || launchpadFetchError ) {
+		window.location.replace( '/home' );
+	}
 
 	if (
 		! isLoggedIn ||
@@ -66,10 +71,6 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	) {
 		saveSiteSettings( site?.ID, { launchpad_screen: 'off' } );
 		redirectToSiteHome( siteSlug, flow );
-	}
-
-	if ( ! siteSlug || fetchingSiteError?.error ) {
-		window.location.replace( '/home' );
 	}
 
 	function redirectToSiteHome( siteSlug: string | null, flow: string | null ) {

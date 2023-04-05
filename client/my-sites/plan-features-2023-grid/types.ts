@@ -13,7 +13,6 @@ export type PlanProperties = {
 		product_slug: string;
 	} | null;
 	currencyCode: string | null;
-	discountPrice: number | null;
 	features: TransformedFeatureObject[];
 	jpFeatures: TransformedFeatureObject[];
 	isLandingPage?: boolean;
@@ -33,4 +32,5 @@ export type PlanProperties = {
 	storageOptions: string[];
 	availableForPurchase: boolean;
 	current?: boolean;
+	showMonthlyPrice: boolean;
 };

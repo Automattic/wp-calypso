@@ -133,6 +133,7 @@ export const API_PLAN_PRICE_FREE: MockPricedAPIPlanFree = {
 	price: '€0',
 	formatted_price: '€0',
 	raw_price: 0,
+	raw_price_integer: 0,
 	tagline: 'Perfect for anyone creating a basic blog or site',
 	currency_code: 'EUR',
 	features_highlight: [
@@ -171,6 +172,7 @@ export const API_PLAN_PRICE_PREMIUM_ANNUALLY: MockPricedAPIPlanPaidAnnually = {
 	price: '€96',
 	formatted_price: '€96',
 	raw_price: 96,
+	raw_price_integer: 9600,
 	tagline: 'Perfect for bloggers, creatives, and other professionals',
 	currency_code: 'EUR',
 	features_highlight: [
@@ -214,6 +216,7 @@ export const API_PLAN_PRICE_PREMIUM_MONTHLY: MockPricedAPIPlanPaidMonthly = {
 	price: '€14',
 	formatted_price: '€14',
 	raw_price: 14,
+	raw_price_integer: 1400,
 	tagline: null,
 	currency_code: 'EUR',
 };

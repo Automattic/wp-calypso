@@ -4,6 +4,7 @@ import {
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { NAVIGATOR_PATHS } from './constants';
 import NavigatorHeader from './navigator-header';
 import PatternLayout from './pattern-layout';
 import type { Pattern } from './types';
@@ -27,7 +28,7 @@ const ScreenSection = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const navigator = useNavigator();
-	const goToPatternList = () => navigator.goTo( '/section/patterns' );
+	const goToPatternList = () => navigator.goTo( NAVIGATOR_PATHS.SECTION_PATTERNS );
 
 	return (
 		<>
