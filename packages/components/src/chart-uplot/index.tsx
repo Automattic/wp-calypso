@@ -1,3 +1,4 @@
+import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState, useRef } from 'react';
 import UplotReact from 'uplot-react';
 import type uPlot from 'uplot';
@@ -12,6 +13,7 @@ interface UplotChartProps {
 // NOTE: Do not include this component in the package entry bundle!
 // Doing so will unnecessarily bloat the package bundle size.
 export default function UplotChart( { data, options: propOptions }: UplotChartProps ) {
+	const translate = useTranslate();
 	const uplotRef = useRef< uPlot | null >( null );
 	const [ options ] = useState< uPlot.Options >(
 		useMemo(
@@ -52,10 +54,12 @@ export default function UplotChart( { data, options: propOptions }: UplotChartPr
 					y: false,
 				},
 				series: [
-					{},
+					{
+						label: translate( 'Date' ),
+					},
 					{
 						fill: 'rgba(48, 87, 220, 0.075)',
-						label: 'Value',
+						label: translate( 'Subscribers' ),
 						stroke: '#3057DC',
 						width: 2,
 						points: {
@@ -68,7 +72,7 @@ export default function UplotChart( { data, options: propOptions }: UplotChartPr
 				},
 				...( typeof propOptions === 'object' ? propOptions : {} ),
 			} ),
-			[ propOptions ]
+			[ propOptions, translate ]
 		)
 	);
 
