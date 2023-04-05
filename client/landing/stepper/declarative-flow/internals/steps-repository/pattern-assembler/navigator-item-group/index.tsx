@@ -13,7 +13,7 @@ export const NavigatorItemGroup = ( { children, title }: Props ) => {
 	return (
 		<section>
 			<HStack direction="column" alignment="top" spacing="0">
-				<h3 className="pattern-layout__label">{ title }</h3>
+				<h3 className="pattern-layout__navigator-item-group">{ title }</h3>
 				<ItemGroup>{ children }</ItemGroup>
 			</HStack>
 		</section>
