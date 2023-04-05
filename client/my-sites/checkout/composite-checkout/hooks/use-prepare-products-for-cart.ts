@@ -171,12 +171,12 @@ function preparedProductsReducer(
 			if ( ! state.isLoading ) {
 				return state;
 			}
-			return { ...state, isLoading: false, error: action.message };
+			return { ...state, isLoading: false, error: action.message, addingRenewals: true };
 		case 'PRODUCTS_ADD_ERROR':
 			if ( ! state.isLoading ) {
 				return state;
 			}
-			return { ...state, isLoading: false, error: action.message, addingRenewals: true };
+			return { ...state, isLoading: false, error: action.message };
 		default:
 			return state;
 	}
