@@ -17,6 +17,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getPluginPurchased } from 'calypso/lib/plugins/utils';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
@@ -54,6 +55,7 @@ import {
 	getProductsList,
 	isSaasProduct as isSaasProductSelector,
 } from 'calypso/state/products-list/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -136,6 +138,9 @@ function PluginDetails( props ) {
 	const isSaasProduct = useSelector( ( state ) =>
 		isSaasProductSelector( state, props.pluginSlug )
 	);
+
+	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	const pluginHasSubscription = getPluginPurchased( plugin, purchases )?.active;
 
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
@@ -332,6 +337,19 @@ function PluginDetails( props ) {
 						{ translate( 'I’d like to fix this now' ) }
 					</NoticeAction>
 				</Notice>
+			) }
+			{ plugin?.active && ! pluginHasSubscription && (
+				<Notice
+					icon="notice"
+					showDismiss={ false }
+					status="is-warning"
+					text={ translate(
+						'Plugin subscription not found or you have purchased the plugin outside of [WordPress.com](https://wordpress.com/). Buy a WordPress.com subscription if you want to receive updates and support.',
+						{
+							textOnly: true,
+						}
+					) }
+				></Notice>
 			) }
 			<div className="plugin-details__page">
 				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
