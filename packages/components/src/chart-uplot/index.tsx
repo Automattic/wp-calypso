@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
 import throttle from 'lodash/throttle';
 import { useMemo, useState, useRef, useEffect } from 'react';
 import uPlot from 'uplot';
@@ -102,7 +102,16 @@ export default function UplotChart( {
 				series: [
 					{
 						label: translate( 'Date' ),
-						value: '{MMM} {YYYY}',
+						value: ( self: uPlot, rawValue: number ) => {
+							if ( ! rawValue ) {
+								return '-';
+							}
+
+							return new Date( rawValue * 1000 ).toLocaleDateString( getLocaleSlug() ?? 'en', {
+								month: 'long',
+								year: 'numeric',
+							} );
+						},
 					},
 					{
 						fill: 'rgba(48, 87, 220, 0.075)',
@@ -111,6 +120,13 @@ export default function UplotChart( {
 						width: 2,
 						points: {
 							show: false,
+						},
+						value: ( self: uPlot, rawValue: number ) => {
+							if ( ! rawValue ) {
+								return '-';
+							}
+
+							return numberFormat( rawValue, 0 );
 						},
 					},
 				],
