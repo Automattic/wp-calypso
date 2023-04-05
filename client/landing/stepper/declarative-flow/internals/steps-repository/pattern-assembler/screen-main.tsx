@@ -2,8 +2,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import {
 	__experimentalItemGroup as ItemGroup,
-	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
-	__experimentalVStack as VStack,
+	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -49,7 +48,7 @@ const ScreenMain = ( {
 				hideBack
 			/>
 			<div className="screen-container__body screen-container__body--align-sides">
-				<VStack spacing="4">
+				<HStack direction="column" alignment="top" spacing="4">
 					<NavigatorItemGroup title={ translate( 'Layout' ) }>
 						<ItemGroup>
 							<NavigationButtonAsItem
@@ -104,7 +103,7 @@ const ScreenMain = ( {
 							) }
 						</ItemGroup>
 					</NavigatorItemGroup>
-				</VStack>
+				</HStack>
 			</div>
 			<div className="screen-container__footer">
 				<span className="screen-container__description">{ getDescription() }</span>
