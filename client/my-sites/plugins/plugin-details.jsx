@@ -18,6 +18,7 @@ import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getPluginPurchased } from 'calypso/lib/plugins/utils';
+import { AUTOMOMANAGED_PLUGINS, PREINSTALLED_PLUGINS } from 'calypso/my-sites/plugins/constants';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
@@ -138,10 +139,13 @@ function PluginDetails( props ) {
 	const isSaasProduct = useSelector( ( state ) =>
 		isSaasProductSelector( state, props.pluginSlug )
 	);
-
+	const isWpcomPreinstalled =
+		PREINSTALLED_PLUGINS.includes( props.pluginSlug ) ||
+		AUTOMOMANAGED_PLUGINS.includes( props.pluginSlug );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
-	const pluginHasSubscription = getPluginPurchased( plugin, purchases )?.active;
-
+	const marketplacePluginHasSubscription = !! (
+		isMarketplaceProduct && getPluginPurchased( plugin, purchases )?.active
+	);
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
 		if ( isProductListFetched && ! isMarketplaceProduct && ! isWporgPluginFetched ) {
@@ -338,13 +342,13 @@ function PluginDetails( props ) {
 					</NoticeAction>
 				</Notice>
 			) }
-			{ plugin?.active && ! pluginHasSubscription && (
+			{ plugin?.active && ! marketplacePluginHasSubscription && ! isWpcomPreinstalled && (
 				<Notice
 					icon="notice"
 					showDismiss={ false }
 					status="is-warning"
 					text={ translate(
-						'Plugin subscription not found or you have purchased the plugin outside of [WordPress.com](https://wordpress.com/). Buy a WordPress.com subscription if you want to receive updates and support.',
+						'Plugin subscription not found or you have purchased the plugin outside of WordPress.com. Purchase a WordPress.com subscription if you want to receive updates and support.',
 						{
 							textOnly: true,
 						}
