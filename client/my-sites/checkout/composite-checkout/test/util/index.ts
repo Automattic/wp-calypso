@@ -331,6 +331,42 @@ export const planLevel2Biannual: ResponseCartProduct = {
 	months_per_bill_period: 24,
 };
 
+export const professionalEmailAnnual: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'Professional Email',
+	product_slug: 'wp_titan_mail_yearly',
+	currency: 'USD',
+	extra: {
+		email_users: [],
+		new_quantity: 1,
+	},
+	meta: 'example.com',
+	product_id: 401,
+	volume: 1,
+	item_original_cost_integer: 3500,
+	item_subtotal_integer: 3500,
+	bill_period: '365',
+	months_per_bill_period: 12,
+};
+
+export const professionalEmailMonthly: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'Professional Email',
+	product_slug: 'wp_titan_mail_monthly',
+	currency: 'USD',
+	extra: {
+		email_users: [],
+		new_quantity: 1,
+	},
+	meta: 'example.com',
+	product_id: 400,
+	volume: 1,
+	item_original_cost_integer: 350,
+	item_subtotal_integer: 350,
+	bill_period: '31',
+	months_per_bill_period: 1,
+};
+
 export const fetchStripeConfiguration = async () => stripeConfiguration;
 
 export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
@@ -849,6 +885,40 @@ function convertRequestProductToResponseProduct(
 					meta: product.meta,
 					volume: 1,
 					extra: {},
+				};
+			case professionalEmailAnnual.product_slug:
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: professionalEmailAnnual.product_id,
+					product_name: professionalEmailAnnual.product_name,
+					product_slug: professionalEmailAnnual.product_slug,
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: professionalEmailAnnual.item_original_cost_integer,
+					item_subtotal_integer: professionalEmailAnnual.item_subtotal_integer,
+					bill_period: professionalEmailAnnual.bill_period,
+					months_per_bill_period: professionalEmailAnnual.months_per_bill_period,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: product.extra,
+				};
+			case professionalEmailMonthly.product_slug:
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: professionalEmailMonthly.product_id,
+					product_name: professionalEmailMonthly.product_name,
+					product_slug: professionalEmailMonthly.product_slug,
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: professionalEmailMonthly.item_original_cost_integer,
+					item_subtotal_integer: professionalEmailMonthly.item_subtotal_integer,
+					bill_period: professionalEmailMonthly.bill_period,
+					months_per_bill_period: professionalEmailMonthly.months_per_bill_period,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: product.extra,
 				};
 		}
 
