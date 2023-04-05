@@ -6,7 +6,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
-import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import useDateOffsetForSite from 'calypso/lib/jetpack/hooks/use-date-offset-for-site';
 import { urlToSlug } from 'calypso/lib/url';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import { useDashboardAddRemoveLicense } from '../../hooks';
@@ -33,8 +33,8 @@ const BackupStorageContent = ( {
 	const translate = useTranslate();
 
 	const moment = useLocalizedMoment();
-	const endDate = useDateWithOffset( moment().endOf( 'day' ) );
-	const startDate = useDateWithOffset( moment().subtract( 1, 'day' ).startOf( 'day' ) );
+	const endDate = useDateOffsetForSite( moment().endOf( 'day' ), siteId );
+	const startDate = useDateOffsetForSite( moment().subtract( 1, 'day' ).startOf( 'day' ), siteId );
 
 	const { isLoading, data } = useRewindableActivityLogQuery(
 		siteId,
@@ -50,8 +50,11 @@ const BackupStorageContent = ( {
 
 	const backup = data?.[ 0 ] ?? null;
 
-	const lastBackupDate = useDateWithOffset( backup?.activityTs );
-	const getDisplayDate = useGetDisplayDate();
+	const lastBackupDate = useDateOffsetForSite( backup?.activityTs, siteId );
+	// Ignore type checking because TypeScript is incorrectly inferring the prop type due to .js usage in use-get-display-date
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	const getDisplayDate = useGetDisplayDate( siteId );
 	const displayDate = getDisplayDate( lastBackupDate, false );
 
 	// Show plugin name only if it is a activity from a plugin

@@ -4,10 +4,6 @@
 @import "@wordpress/base-styles/z-index";
 @import "@automattic/onboarding/styles/variables";
 
-body.is-focused-launch-complete .editor-gutenberg-launch__launch-button {
-	display: none;
-}
-
 .focused-launch-container {
 	width: 100%;
 	max-width: 980px;

@@ -54,6 +54,10 @@ $max-list-width: 1300px;
 					white-space: nowrap;
 					overflow: hidden;
 					padding-right: 10px;
+
+					&:hover {
+						text-decoration: underline;
+					}
 				}
 
 				.url {
@@ -64,6 +68,10 @@ $max-list-width: 1300px;
 					text-overflow: ellipsis;
 					white-space: nowrap;
 					overflow: hidden;
+
+					&:hover {
+						text-decoration: underline;
+					}
 				}
 			}
 		}
