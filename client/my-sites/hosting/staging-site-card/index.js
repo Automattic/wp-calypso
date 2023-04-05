@@ -6,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useQueryClient } from 'react-query';
 import { connect, useDispatch } from 'react-redux';
+import SiteIcon from 'calypso/blocks/site-icon';
 import CardHeading from 'calypso/components/card-heading';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
@@ -54,6 +55,18 @@ const ExceedQuotaErrorWrapper = styled.div( {
 	marginTop: '1em',
 } );
 
+const SiteRow = styled.div( {
+	display: 'flex',
+	alignItems: 'center',
+	marginBottom: 24,
+	'.site-icon': { flexShrink: 0 },
+} );
+
+const SiteInfo = styled.div( {
+	display: 'flex',
+	flexDirection: 'column',
+	marginLeft: 10,
+} );
 export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
@@ -198,16 +211,16 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	const getManageStagingSiteContent = () => {
 		return (
 			<>
-				<p>
-					{ translate( 'Your staging site is available at {{a}}%(stagingSiteName)s{{/a}}.', {
-						args: {
-							stagingSiteName: stagingSite.url,
-						},
-						components: {
-							a: <a href={ stagingSite.url } />,
-						},
-					} ) }
-				</p>
+				<p>{ translate( 'Your staging site is available at:' ) }</p>
+				<SiteRow>
+					<SiteIcon siteId={ stagingSite.id } size={ 40 } />
+					<SiteInfo>
+						<div>{ stagingSite.name }</div>
+						<div>
+							<a href={ stagingSite.url }>{ stagingSite.url }</a>
+						</div>
+					</SiteInfo>
+				</SiteRow>
 				<ActionButtons>
 					<Button primary href={ `/home/${ urlToSlug( stagingSite.url ) }` } disabled={ disabled }>
 						<span>{ translate( 'Manage staging site' ) }</span>
