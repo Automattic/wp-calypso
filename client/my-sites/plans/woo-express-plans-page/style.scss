@@ -30,7 +30,7 @@ body.is-section-plans.is-woo-express-plan {
 		flex-wrap: wrap;
 		border-radius: 2px 2px 0 0;
 		padding: 24px 32px;
-		margin: 40px 0 0 0;
+		margin: 40px 0;
 
 		@media (max-width: $break-mobile) {
 			flex-direction: column;
