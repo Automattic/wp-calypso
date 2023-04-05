@@ -3,7 +3,11 @@
  */
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
-import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
+import {
+	ShoppingCartProvider,
+	createShoppingCartManagerClient,
+	CartKey,
+} from '@automattic/shopping-cart';
 import { render, fireEvent, screen, within, waitFor, act } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
 import nock from 'nock';
@@ -12,6 +16,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { navigate } from 'calypso/lib/navigate';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -23,6 +28,7 @@ import {
 	siteId,
 	domainProduct,
 	planWithoutDomain,
+	planWithoutDomainMonthly,
 	fetchStripeConfiguration,
 	mockSetCartEndpointWith,
 	mockGetCartEndpointWith,
@@ -46,6 +52,7 @@ jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
+jest.mock( 'calypso/state/notices/actions' );
 
 describe( 'CheckoutMain', () => {
 	let container;
@@ -57,6 +64,12 @@ describe( 'CheckoutMain', () => {
 		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
+		( errorNotice as jest.Mock ).mockImplementation( ( value ) => {
+			return {
+				type: 'errorNotice',
+				value,
+			};
+		} );
 		( hasLoadedSiteDomains as jest.Mock ).mockImplementation( () => true );
 		( getDomainsBySiteId as jest.Mock ).mockImplementation( () => [] );
 		( isMarketplaceProduct as jest.Mock ).mockImplementation( () => false );
@@ -80,17 +93,19 @@ describe( 'CheckoutMain', () => {
 			additionalProps,
 			additionalCartProps,
 			useUndefinedCartKey,
+			cartKeyOverride,
 		}: {
 			cartChanges: Partial< ResponseCart >;
 			additionalProps: Partial< Parameters< typeof CheckoutMain > >;
 			additionalCartProps: Partial< Parameters< typeof ShoppingCartProvider > >;
 			useUndefinedCartKey?: boolean;
+			cartKeyOverride?: CartKey;
 		} ) => {
 			const managerClient = createShoppingCartManagerClient( {
 				getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
 				setCart: mockSetCartEndpoint,
 			} );
-			const mainCartKey = 123456;
+			const mainCartKey = cartKeyOverride ?? 123456;
 			( useCartKey as jest.Mock ).mockImplementation( () =>
 				useUndefinedCartKey ? undefined : mainCartKey
 			);
@@ -494,6 +509,43 @@ describe( 'CheckoutMain', () => {
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
 			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 4 );
 		} );
+	} );
+
+	it( 'displays an error and empties the cart when the url has a renewal but no site', async () => {
+		const cartChanges = { products: [ planWithoutDomainMonthly ] };
+		const additionalProps = {
+			productAliasFromUrl: 'personal-bundle',
+			purchaseId: '12345',
+			siteId: 0,
+		};
+		render(
+			<MyCheckout
+				cartKeyOverride="no-site"
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>,
+			container
+		);
+		await waitFor( async () => {
+			expect( navigate ).not.toHaveBeenCalled();
+		} );
+		expect( await screen.findByText( /You have no items in your cart/ ) ).toBeInTheDocument();
+
+		// Noticing the error message is a little difficult because we are not
+		// mounting the error display components. Instead, we spy on the
+		// `errorNotice` action creator. However, `CheckoutMain` does not pass the
+		// raw error message string to the action creator; it passes an array of
+		// React components, one of which contains the string. The following code
+		// lets us verify that.
+		expect( errorNotice ).toHaveBeenCalledWith(
+			expect.arrayContaining( [
+				expect.objectContaining( {
+					props: expect.objectContaining( {
+						children: expect.stringMatching( /This renewal is invalid/ ),
+					} ),
+				} ),
+			] )
+		);
 	} );
 
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
