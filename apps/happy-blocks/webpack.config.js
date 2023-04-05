@@ -53,6 +53,10 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 						},
 					} ),
 					ifExists( {
+						from: path.resolve( blockPath, 'includes.php' ),
+						to: path.resolve( blockPath, 'build', '[name][ext]' ),
+					} ),
+					ifExists( {
 						from: path.resolve( blockPath, 'block.json' ),
 						to: path.resolve( blockPath, 'build', '[name][ext]' ),
 					} ),

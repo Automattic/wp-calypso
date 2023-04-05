@@ -617,21 +617,55 @@ body.logged-in .x-dropdown {
 
 
 .happy-blocks-search {
+	min-height: 399px;
+	position: relative;
+	padding: 0;
+
+	.header-search__input {
+		.happy-blocks-search__inside-wrapper {
+			width: 464px;
+			font-size: 1rem;
+			border: 0;
+			border-radius: 4px;
+			box-shadow:
+				0 9px 5px rgba(38, 19, 19, 0.02),
+				0 4px 4px rgba(38, 19, 19, 0.03),
+				0 1px 2px rgba(38, 19, 19, 0.03),
+				0 0 0 rgba(38, 19, 19, 0.03);
+		}
+	}
+}
+
+.happy-blocks-mini-search {
+	.header-search__input {
+		input {
+			border: 1px solid #949494;
+		}
+	}
+}
+
+.happy-blocks-mini-search,
+.happy-blocks-search {
 	// This applies to all search bars
-	.wp-block-search__inside-wrapper {
+	.happy-blocks-search__inside-wrapper {
 		width: 497px;
 		height: 50px;
+		max-width: 100%;
 		position: relative;
 		border-radius: 4px;
 		background-color: #fff;
 		box-shadow: 0 0 0 1px var(--color-neutral-5) inset;
+		display: flex;
 
 		input {
+			flex: 1;
 			padding-left: 40px;
 			background-color: transparent;
 			// Removes duplicated glass icon on mobile browsers
 			-webkit-appearance: none;
-
+			border-width: 0;
+			border-style: none;
+			border-radius: 4px;
 			&,
 			&::placeholder {
 				font-size: 1rem;
@@ -652,30 +686,14 @@ body.logged-in .x-dropdown {
 		}
 	}
 
-	min-height: 399px;
-	position: relative;
-	padding: 0;
-
 	.alignwide {
 		max-width: var(--wp--style--global--wide-size);
 		margin: 0 auto;
 	}
 
 	.header-search__input {
-		.wp-block-search__inside-wrapper {
-			width: 464px;
-			font-size: 1rem;
-			border: 0;
-			border-radius: 4px;
-			box-shadow:
-				0 9px 5px rgba(38, 19, 19, 0.02),
-				0 4px 4px rgba(38, 19, 19, 0.03),
-				0 1px 2px rgba(38, 19, 19, 0.03),
-				0 0 0 rgba(38, 19, 19, 0.03);
-
-			input {
-				padding-left: 46px;
-			}
+		input {
+			padding-left: 46px;
 		}
 	}
 

@@ -7,26 +7,6 @@
  * @package happy-blocks
  */
 
-if ( ! function_exists( 'happy_blocks_get_asset' ) ) {
-	/**
-	 * Find the URL of the asset file from happy-blocks.
-	 *
-	 * @param file $file The file name.
-	 */
-	function happy_blocks_get_asset( $file ) {
-		return array(
-			'path'    => "https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-library/universal-header/build/$file",
-			'version' => filemtime( __DIR__ . "/build/$file" ),
-		);
-	}
-}
-
-$js  = happy_blocks_get_asset( 'view.js' );
-$css = happy_blocks_get_asset( is_rtl() ? 'view.rtl.css' : 'view.css' );
-
-wp_enqueue_style( 'happy-blocks-search-style', $css['path'], array(), $css['version'] );
-wp_enqueue_script( 'happy-blocks-search-script', $js['path'], array(), $js['version'], true );
-
 ?>
 
 <div id="lpc-header-nav" class="lpc lpc-header-nav">
@@ -382,28 +362,27 @@ wp_enqueue_script( 'happy-blocks-search-script', $js['path'], array(), $js['vers
 </div>
 
 <?php if ( $args['include_search'] ) : ?>
-	<!-- wp:group {"align":"full","style":{"color":{"gradient":"linear-gradient(rgb(249, 244, 240) 100%,rgb(255, 255, 255) 0%)"}},"className":"happy-blocks-search","layout":{"type":"flex","flexWrap":"nowrap"}} -->
-	<div class="wp-block-group alignfull happy-blocks-search has-background" style="background:linear-gradient(rgb(249, 244, 240) 100%,rgb(255, 255, 255) 0%)">
-		<!-- wp:group {"align":"wide","layout":{"type":"default","wideSize":"1224px"},"className":"happy-blocks-search-container"} -->
-		<div class="wp-block-group alignwide happy-blocks-search-container">
-				<!-- wp:heading {"style":{"typography":{"fontSize":"2.75rem","lineHeight":"3.25rem"},"spacing":{"margin":{"top":"0px","bottom":"1rem"}}},"fontFamily":"recoleta"} -->
+<div class="wp-block-group alignfull happy-blocks-search has-background is-nowrap is-layout-flex wp-container-4 wp-block-group-is-layout-flex" style="background:linear-gradient(rgb(249, 244, 240) 100%,rgb(255, 255, 255) 0%)">
+		<div class="wp-block-group alignwide happy-blocks-search-container is-layout-flow wp-block-group-is-layout-flow">
 				<h2 class="wp-block-heading has-recoleta-font-family" style="margin-top:0px;margin-bottom:1rem;font-size:2.75rem;line-height:3.25rem">
 					<?php echo esc_html( $args['title'] ); ?>
 				</h2>
-				<!-- /wp:heading -->
 
-				<!-- wp:paragraph {"style":{"typography":{"fontSize":"small"},"spacing":{"margin":{"top":"0","bottom":"1rem"}}}} -->
 				<p class="has-small-font-size" style="margin-top:0px;margin-bottom:1rem;">
 					<?php echo esc_html( $args['placeholder'] ); ?>
 				</p>
-				<!-- /wp:paragraph -->
 
-				<!-- wp:group {"className":"header-search__input","layout":{"type":"flex","flexWrap":"nowrap"}} -->
-				<div class="wp-block-group header-search__input">
-					<!-- wp:search {"label":"<?php echo esc_html( $args['placeholder'] ); ?>","showLabel":false,"placeholder":"<?php echo esc_html( $args['sub_placeholder'] ); ?>","buttonText":"Search","buttonPosition":"no-button","align":"left","style":{"border":{"width":"0px","style":"none","radius":"4px"}},"fontSize":"x-small"} /-->
+				<div class="wp-block-group header-search__input is-nowrap is-layout-flex wp-container-2 wp-block-group-is-layout-flex">
+					<form role="search" method="get" action="" class="wp-block-search__no-button alignleft wp-block-search"><label for="wp-block-search__input-1" class="wp-block-search__label screen-reader-text"><?php echo esc_html( $args['placeholder'] ); ?></label><div class="happy-blocks-search__inside-wrapper"><input type="search" id="wp-block-search__input-1" class="wp-block-search__input has-x-small-font-size" name="s" value="" placeholder="<?php echo esc_html( $args['placeholder'] ); ?>"></div></form>
 				</div>
-				<!-- /wp:group -->
-
-		</div><!-- /wp:group -->
-	</div><!-- /wp:group -->
+		</div>
+	</div>
+<?php else : ?>
+<div class="happy-blocks-mini-search">
+	<div class="wp-block-group alignwide happy-blocks-search-container is-layout-flow wp-block-group-is-layout-flow">
+			<div class="wp-block-group header-search__input is-nowrap is-layout-flex wp-container-2 wp-block-group-is-layout-flex">
+				<form role="search" method="get" action="" class="wp-block-search__no-button alignleft wp-block-search"><label for="wp-block-search__input-1" class="wp-block-search__label screen-reader-text"><?php echo esc_html( $args['placeholder'] ); ?></label><div class="happy-blocks-search__inside-wrapper"><input type="search" id="wp-block-search__input-1" class="wp-block-search__input has-x-small-font-size" name="s" value="" placeholder="<?php echo esc_html( $args['placeholder'] ); ?>"></div></form>
+			</div>
+	</div>
+</div>
 <?php endif; ?>
