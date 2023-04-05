@@ -15,10 +15,6 @@ const DEFAULT_DIMENSIONS = {
 };
 
 const THROTTLE_DURATION = 400; // in ms
-interface UplotChartProps {
-	data: uPlot.AlignedData;
-	options?: Partial< uPlot.Options >;
-}
 
 function useResize(
 	uplotRef: React.RefObject< uPlot >,
@@ -47,6 +43,12 @@ function useResize(
 		// Cleanup on unmount.
 		return () => window.removeEventListener( 'resize', resizeChart );
 	}, [ uplotRef, containerRef ] );
+}
+
+interface UplotChartProps {
+	data: uPlot.AlignedData;
+	options?: Partial< uPlot.Options >;
+	legendContainer?: React.RefObject< HTMLDivElement >;
 }
 
 export default function UplotChart( { data, options: propOptions }: UplotChartProps ) {
