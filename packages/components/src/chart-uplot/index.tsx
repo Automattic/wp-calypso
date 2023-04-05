@@ -6,6 +6,9 @@ import type uPlot from 'uplot';
 
 import './style.scss';
 
+// NOTE: Do not include this component in the package entry bundle!
+// Doing so will unnecessarily bloat the package bundle size.
+
 const DEFAULT_DIMENSIONS = {
 	height: 300,
 	width: 1224,
@@ -46,8 +49,6 @@ function useResize(
 	}, [ uplotRef, containerRef ] );
 }
 
-// NOTE: Do not include this component in the package entry bundle!
-// Doing so will unnecessarily bloat the package bundle size.
 export default function UplotChart( { data, options: propOptions }: UplotChartProps ) {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
