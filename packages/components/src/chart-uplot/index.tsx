@@ -102,6 +102,7 @@ export default function UplotChart( {
 				series: [
 					{
 						label: translate( 'Date' ),
+						value: '{MMM} {YYYY}',
 					},
 					{
 						fill: 'rgba(48, 87, 220, 0.075)',
