@@ -22,6 +22,7 @@ import {
 	mockMatchMediaOnWindow,
 	mockGetVatInfoEndpoint,
 	countryList,
+	mockStoredPaymentMethodsEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -67,6 +68,7 @@ describe( 'Checkout contact step', () => {
 		nock( 'https://public-api.wordpress.com' )
 			.get( '/rest/v1.1/me/transactions/supported-countries' )
 			.reply( 200, countryList );
+		mockStoredPaymentMethodsEndpoint( [] );
 		mockGetVatInfoEndpoint( {} );
 	} );
 
@@ -171,6 +173,7 @@ describe( 'Checkout contact step', () => {
 				email: 'test@example.com',
 			};
 			nock.cleanAll();
+			mockStoredPaymentMethodsEndpoint( [] );
 			nock( 'https://public-api.wordpress.com' )
 				.persist()
 				.post( '/rest/v1.1/logstash' )
