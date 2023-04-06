@@ -38,45 +38,36 @@ const compareByName = ( objA, objB ) => {
 /**
  * pickBy function is a replacement for the Lodash ._pickby
  *
- * @param {*} obj a palette of colors
- * @param {*} fn This function returns truthy or falsy value to filter the colors
- * @returns objext with filtered color values
- * Used Object.keys() and Array.prototype.filter()to remove the keys for which fn returns a falsy value.
- * Used Array.prototype.reduce() to convert the filtered keys back to an object with the corresponding key-value pairs.
  */
-const pickBy = ( obj, fn ) =>
-	Object.keys( obj )
-		.filter( ( key ) => fn( obj[ key ], key ) )
-		.reduce( ( acc, key ) => ( ( acc[ key ] = obj[ key ] ), acc ), {} );
+const pickBy = ( palette, fn ) =>
+	Object.keys( palette ?? {} )
+		.filter( ( key ) => fn( palette[ key ], key ) )
+		.reduce( ( acc, key ) => ( ( acc[ key ] = palette[ key ] ), acc ), {} );
 
 // The subset of palette colors allowed in illustrations
-const PALETTE_ILLUSTRATION_COLORS = PALETTE?.colors
-	? pickBy( PALETTE.colors, ( colorValue, colorName ) => {
-			// Avoid using pure black
-			if ( colorValue === '#000' ) {
-				return;
-			}
-			// Avoid specific colors for illustration use
-			return ! colorName.startsWith( 'Simplenote Blue' );
-	  } )
-	: {};
+const PALETTE_ILLUSTRATION_COLORS = pickBy( PALETTE.colors, ( colorValue, colorName ) => {
+	// Avoid using pure black
+	if ( colorValue === '#000' ) {
+		return;
+	}
+	// Avoid specific colors for illustration use
+	return ! colorName.startsWith( 'Simplenote Blue' );
+} );
 
 // The subset of palette colors used in app-related images is slightly wider
 // than what we allow for in illustration use (the above)
-const PALETTE_APP_COLORS = PALETTE?.colors
-	? pickBy( PALETTE.colors, ( colorValue, colorName ) => {
-			// Avoid using pure black
-			if ( colorValue === '#000' ) {
-				return;
-			}
-			// Don’t use brand colors for any WordPress.com app images
-			return ! (
-				colorName.startsWith( 'Simplenote Blue' ) ||
-				colorName.startsWith( 'WooCommerce Purple' ) ||
-				colorName.startsWith( 'WordPress Blue' )
-			);
-	  } )
-	: {};
+const PALETTE_APP_COLORS = pickBy( PALETTE.colors, ( colorValue, colorName ) => {
+	// Avoid using pure black
+	if ( colorValue === '#000' ) {
+		return;
+	}
+	// Don’t use brand colors for any WordPress.com app images
+	return ! (
+		colorName.startsWith( 'Simplenote Blue' ) ||
+		colorName.startsWith( 'WooCommerce Purple' ) ||
+		colorName.startsWith( 'WordPress Blue' )
+	);
+} );
 
 // Making sure both sets contain only unique color values
 // (the palette defines aliases for some colors)
@@ -289,13 +280,11 @@ function findClosestColor( value, targetValues ) {
 
 function findPaletteColorName( value ) {
 	// Iterating from right to make sure color name aliases aren’t caught
-	const name = PALETTE?.colors
-		? Object.keys( PALETTE.colors )
-				.reverse()
-				.find( ( paletteColorName ) => {
-					return PALETTE.colors[ paletteColorName ] === value;
-				} )
-		: {};
+	const name = Object.keys( PALETTE.colors ?? {} )
+		.reverse()
+		.find( ( paletteColorName ) => {
+			return PALETTE.colors[ paletteColorName ] === value;
+		} );
 	return name;
 }
 
@@ -323,18 +312,14 @@ function printReplacementRules( replacementObjects ) {
 
 function formatReplacementRules( rules ) {
 	if ( rules && rules.length ) {
-		/*The native sort modifies the array in place, so we use `.concat()`
-    	to copy the array, then sort.*/
-		return rules
-			.concat()
-			.sort( sortBy() )
-			.map( ( rule ) => {
-				const valueFrom = rule.from.value.padEnd( 7 );
-				const valueTo = rule.to.value.padEnd( 7 );
+		return [ ...rules ].sort( compareByName ).map( ( rule ) => {
+			const valueFrom = rule.from.value.padEnd( 7 );
+			const valueTo = rule.to.value.padEnd( 7 );
 
-				return `${ valueFrom } → ${ valueTo } (${ rule.to.name })`;
-			} );
+			return `${ valueFrom } → ${ valueTo } (${ rule.to.name })`;
+		} );
 	}
+	return [];
 }
 
 function getReplacementPrefixSuffix( replacementObject ) {
