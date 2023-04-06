@@ -106,14 +106,14 @@ window.AppBoot = async () => {
 	initializeCurrentUser().then( ( user: unknown ) => {
 		const userId = ( user as CurrentUser ).ID;
 		const { receiveCurrentUser } = dispatch( USER_STORE );
-		user && receiveCurrentUser( user as UserStore.CurrentUser );
+		receiveCurrentUser( user as UserStore.CurrentUser );
 		hydrateBrowserState( queryClient, userId );
 
 		initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
 		const updateOnly = true;
 		setStore( reduxStore, getStateFromCache( userId ), updateOnly );
 
-		user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
+		initializeCalypsoUserStore( reduxStore, user as CurrentUser );
 		setupLocale( user, reduxStore );
 	} );
 
