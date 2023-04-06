@@ -1,7 +1,7 @@
-import { CompactCard } from '@automattic/components';
+import { CompactCard, Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { trim, flatMap } from 'lodash';
+import { trim, flatMap, some } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import * as React from 'react';
@@ -25,6 +25,7 @@ import {
 	SORT_BY_LAST_UPDATED,
 } from 'calypso/state/reader/feed-searches/actions';
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
+import { commonExtensions } from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import PostResults from './post-results';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
 import SiteResults from './site-results';
@@ -66,19 +67,47 @@ class SearchStream extends React.Component {
 
 	renderFollowButton = () => {
 		const { query, translate, readerAliasedFollowFeedUrl } = this.props;
-		const showFollowByUrl = resemblesUrl( query );
-		if ( ! showFollowByUrl ) {
+		let isPotentialFeedUrl = false;
+		if ( resemblesUrl( query ) ) {
+			const parsedUrl = new URL( query );
+			if ( parsedUrl ) {
+				isPotentialFeedUrl = some( commonExtensions, ( ext ) =>
+					parsedUrl.toString().includes( ext )
+				);
+			}
+		}
+
+		// If not a potential feed then don't show the follow button
+		if ( ! isPotentialFeedUrl ) {
 			return null;
 		}
 
+		let isNewFeed = true;
+		let isFollowing = false;
 		let followTitle = withoutHttp( query );
+
 		const feed = this.state.feed ?? null;
 		if ( feed && feed.name?.length ) {
+			isNewFeed = false;
+			isFollowing = feed.is_following;
 			followTitle = feed.name;
+		}
+
+		// If already following this feed then don't show the follow button
+		if ( isFollowing ) {
+			return null;
 		}
 
 		return (
 			<div className="search-stream__url-follow">
+				<p>
+					<Gridicon icon="info" size="16" />
+					<strong>
+						{ isNewFeed
+							? translate( 'Potential new feed found, click follow to add this feed to Reader' )
+							: translate( 'Click follow to add this feed to Reader' ) }
+					</strong>
+				</p>
 				<FollowButton
 					followLabel={ translate( 'Follow %s', {
 						args: followTitle,
