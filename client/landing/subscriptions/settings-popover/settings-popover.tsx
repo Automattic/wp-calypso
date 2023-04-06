@@ -26,7 +26,7 @@ const SettingsPopover = ( { children, className }: SettingsPopoverProps ) => {
 			</button>
 
 			<Popover
-				autoPosition
+				position="bottom left"
 				hideArrow
 				onClose={ onClose }
 				isVisible={ showPopover }

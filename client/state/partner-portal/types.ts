@@ -5,6 +5,10 @@ import {
 	LicenseSortDirection,
 	LicenseSortField,
 } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import * as creditCardSelectors from './credit-card-form/selectors';
+import type { SelectFromMap } from '@automattic/data-stores';
+
+export type CreditCardSelectors = SelectFromMap< typeof creditCardSelectors >;
 
 /**
  * Utility.

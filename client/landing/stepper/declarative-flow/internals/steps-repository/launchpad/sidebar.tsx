@@ -117,16 +117,14 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 				<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
 			</div>
 			<div className="launchpad__sidebar-content-container">
-				{ currentTask && enhancedTasks?.length && (
-					<div className="launchpad__progress-bar-container">
-						<CircularProgressBar
-							size={ 40 }
-							enableDesktopScaling
-							currentStep={ currentTask }
-							numberOfSteps={ enhancedTasks?.length }
-						/>
-					</div>
-				) }
+				<div className="launchpad__progress-bar-container">
+					<CircularProgressBar
+						size={ 40 }
+						enableDesktopScaling
+						currentStep={ currentTask }
+						numberOfSteps={ enhancedTasks?.length || null }
+					/>
+				</div>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
 				<h1 className="launchpad__sidebar-h1">
 					{ showLaunchTitle && launchTitle ? launchTitle : title }

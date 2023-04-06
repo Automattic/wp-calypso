@@ -39,7 +39,6 @@ import './style.scss';
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
-
 	const { __ } = useI18n();
 
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
@@ -146,7 +145,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			case NEWSLETTER_FLOW:
 				return createInterpolateElement(
 					__(
-						'Help your Newsletter stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
+						'Make your newsletter stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
 					),
 					decideLaterComponent
 				);
@@ -175,6 +174,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const getHeaderText = () => {
 		if ( showUseYourDomain ) {
 			return '';
+		}
+
+		if ( flow === NEWSLETTER_FLOW ) {
+			return __( 'Your domain. Your identity.' );
 		}
 
 		return __( 'Choose a domain' );

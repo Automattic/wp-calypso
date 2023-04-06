@@ -6,12 +6,9 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import { useSubheaderText } from '../hooks';
-import { Settings } from '../tab-views';
-import Sites from '../tab-views/sites';
+import { Comments, Settings, Sites } from '../tab-views';
 import { TabsSwitcher } from '../tabs-switcher';
 import './styles.scss';
-
-const CommentsView = () => <span>Comments View</span>;
 
 const SubscriptionManagementPage = () => {
 	const translate = useTranslate();
@@ -27,7 +24,7 @@ const SubscriptionManagementPage = () => {
 			{
 				label: translate( 'Comments' ),
 				path: 'comments',
-				view: CommentsView,
+				view: Comments,
 				count: counts?.comments || undefined,
 			},
 			{

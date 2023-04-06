@@ -94,7 +94,7 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/conversations',
 						apiVersion: '1.2',
-						query,
+						query: { ...query, comments_per_post: 20 },
 					},
 				},
 				{
@@ -103,7 +103,7 @@ describe( 'streams', () => {
 						method: 'GET',
 						path: '/read/conversations',
 						apiVersion: '1.2',
-						query: { ...query, index: 'a8c' },
+						query: { ...query, comments_per_post: 20, index: 'a8c' },
 					},
 				},
 				{
