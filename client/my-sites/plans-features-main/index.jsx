@@ -124,6 +124,7 @@ export class PlansFeaturesMain extends Component {
 			intervalType,
 			planTypeSelectorProps,
 			hidePlansFeatureComparison,
+			replacePaidDomainWithFreeDomain,
 		} = this.props;
 
 		const asyncProps = {
@@ -153,6 +154,7 @@ export class PlansFeaturesMain extends Component {
 			isPlansInsideStepper,
 			intervalType,
 			hidePlansFeatureComparison,
+			replacePaidDomainWithFreeDomain,
 		};
 		const asyncPlanFeatures2023Grid = (
 			<AsyncLoad
