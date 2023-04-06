@@ -40,7 +40,7 @@ function usePerMonthDescription( {
 			if ( annualPricePerMonth < rawPrice ) {
 				return translate( `Save %(discountRate)s%% by paying annually`, {
 					args: {
-						discountRate: Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice ),
+						discountRate: Math.floor( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice ),
 					},
 				} );
 			}
