@@ -9,7 +9,7 @@ interface RetentionConfirmationDialogProps {
 	disableFormSubmission?: boolean;
 	updateRetentionRequestStatus: string;
 	onConfirmationClose: () => void;
-	updateRetentionPeriod: () => void;
+	onConfirmation: () => void;
 }
 
 const RetentionConfirmationDialog: React.FC< RetentionConfirmationDialogProps > = ( {
@@ -18,7 +18,7 @@ const RetentionConfirmationDialog: React.FC< RetentionConfirmationDialogProps > 
 	disableFormSubmission,
 	updateRetentionRequestStatus,
 	onConfirmationClose,
-	updateRetentionPeriod,
+	onConfirmation,
 } ) => {
 	const translate = useTranslate();
 
@@ -29,7 +29,7 @@ const RetentionConfirmationDialog: React.FC< RetentionConfirmationDialogProps > 
 			onClose={ onConfirmationClose }
 			buttons={ [
 				<Button onClick={ onConfirmationClose }>{ translate( 'Cancel' ) }</Button>,
-				<Button onClick={ updateRetentionPeriod } primary disabled={ disableFormSubmission }>
+				<Button onClick={ onConfirmation } primary disabled={ disableFormSubmission }>
 					{ updateRetentionRequestStatus !== BACKUP_RETENTION_UPDATE_REQUEST.PENDING ? (
 						translate( 'Confirm change' )
 					) : (
