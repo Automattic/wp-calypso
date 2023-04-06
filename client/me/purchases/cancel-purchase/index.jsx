@@ -13,6 +13,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import BackupRetentionOptionOnCancelPurchase from 'calypso/components/backup-retention-management/retention-option-on-cancel-purchase';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
@@ -229,6 +230,8 @@ class CancelPurchase extends Component {
 				>
 					{ titles.cancelPurchase }
 				</HeaderCake>
+
+				<BackupRetentionOptionOnCancelPurchase purchase={ purchase } />
 
 				<Card className="cancel-purchase__card">
 					<h2>{ heading }</h2>
