@@ -65,7 +65,6 @@ export default function UplotChart( {
 			const defaultOptions: uPlot.Options = {
 				class: 'calypso-uplot-chart',
 				...DEFAULT_DIMENSIONS,
-				padding: [ 16, 16, 16, 16 ],
 				// Set incoming dates as UTC.
 				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
 				axes: [
