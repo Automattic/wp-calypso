@@ -28,3 +28,9 @@
 		font-family: $sans;
 	}
 }
+
+.is-section-plans .wooexpress-plans__grid.is-2023-pricing-grid .plan-features-2023-grid__mobile-view {
+	@media (max-width: $break-mobile) {
+		margin-top: 3em;
+	}
+}
