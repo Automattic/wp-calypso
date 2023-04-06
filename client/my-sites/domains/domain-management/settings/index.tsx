@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
@@ -394,11 +393,6 @@ const Settings = ( {
 	};
 
 	const renderContactVerificationSection = () => {
-		// TODO: Remove this when we implement the contact verification domain flag
-		if ( ! config.isEnabled( 'contact-verification-feature' ) ) {
-			return null;
-		}
-
 		if ( ! domain || ! domain.currentUserCanManage ) {
 			return null;
 		}
