@@ -5,6 +5,8 @@ import moment from 'moment';
 const debug = debugFactory( 'apps:odyssey' );
 
 const DEFAULT_LANGUAGE = 'en';
+const DEFAULT_MOMENT_LOCALE = 'en';
+const ALWAYS_LOAD_WITH_LOCALE = [ 'zh' ];
 
 const getLanguageWithoutRegionCode = ( localeSlug ) => {
 	if ( localeSlug.indexOf( '-' ) > -1 ) {
@@ -20,7 +22,7 @@ const loadMomentLocale = ( localeSlug, languageCode ) => {
 				`Encountered an error loading moment locale file for ${ localeSlug }. Falling back to language datetime format.`,
 				error
 			);
-			// Fallback to the language code.
+			// Fallback 1 to the language code.
 			localeSlug = languageCode;
 			return import( `moment/locale/${ localeSlug }` );
 		} )
@@ -29,48 +31,42 @@ const loadMomentLocale = ( localeSlug, languageCode ) => {
 				`Encountered an error loading moment locale file for ${ localeSlug }. Falling back to US datetime format.`,
 				error
 			);
-			// Fallback to US date time format.
-			localeSlug = DEFAULT_LANGUAGE;
+			// Fallback 2 to the default US date time format.
+			// Interestingly `en` here represents `en-us` locale.
+			localeSlug = DEFAULT_MOMENT_LOCALE;
 		} )
 		.then( () => moment.locale( localeSlug ) );
 };
 
-const loadLanguageFile = ( localeSlug, languageCode ) => {
-	const url = `https://widgets.wp.com/odyssey-stats/v1/languages/${ localeSlug }-v1.1.json`;
+const loadLanguageFile = ( languageFileName ) => {
+	const url = `https://widgets.wp.com/odyssey-stats/v1/languages/${ languageFileName }-v1.1.json`;
 
-	return globalThis
-		.fetch( url )
-		.then( ( response ) => {
-			if ( response.ok ) {
-				return response.json().then( ( body ) => {
-					if ( body ) {
-						i18n.setLocale( body );
-					}
-				} );
-			}
-			return Promise.reject( response );
-		} )
-		.catch( ( response ) => {
-			// Try to load the language file without the region code.
-			if ( localeSlug !== languageCode ) {
-				return loadLanguageFile( languageCode, languageCode );
-			}
-			// If we can't load the language file, throw the error.
-			return Promise.reject( response );
-		} );
+	return globalThis.fetch( url ).then( ( response ) => {
+		if ( response.ok ) {
+			return response.json().then( ( body ) => {
+				if ( body ) {
+					i18n.setLocale( body );
+				}
+			} );
+		}
+		return Promise.reject( response );
+	} );
 };
 
 export default ( localeSlug ) => {
 	const languageCode = getLanguageWithoutRegionCode( localeSlug );
-	// Load language file when the language is not English.
-	// All English is default to American English exepct for `en-gb` which is the only other English locale we support.
-	if ( languageCode !== DEFAULT_LANGUAGE || localeSlug === 'en-gb' ) {
+
+	// Load tranlation file if it's not English.
+	if ( languageCode !== DEFAULT_LANGUAGE ) {
+		const languageFileName = ALWAYS_LOAD_WITH_LOCALE.includes( languageCode )
+			? localeSlug
+			: languageCode;
 		// We don't have to wait for the language file to load before rendering the page, because i18n is using hooks to update translations.
-		loadLanguageFile( localeSlug, languageCode )
-			.then( () => debug( `Loaded locale files for ${ localeSlug } successfully.` ) )
+		loadLanguageFile( languageFileName )
+			.then( () => debug( `Loaded locale files for ${ languageCode } successfully.` ) )
 			.catch( ( error ) =>
 				debug(
-					`Encountered an error loading locale file for ${ localeSlug }. Falling back to English.`,
+					`Encountered an error loading locale file for ${ languageCode }. Falling back to English.`,
 					error
 				)
 			);

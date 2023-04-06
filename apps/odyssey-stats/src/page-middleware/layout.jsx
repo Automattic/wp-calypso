@@ -1,7 +1,6 @@
 import { QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
-import MomentProvider from 'calypso/components/localized-moment/provider';
 import { RouteProvider } from 'calypso/components/route';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
 import Layout from '../components/layout';
@@ -27,15 +26,13 @@ export const ProviderWrappedLayout = ( {
 			>
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>
-						<MomentProvider>
-							<Layout
-								primary={ primary }
-								secondary={ secondary }
-								redirectUri={ redirectUri }
-								sectionName="stats"
-								groupName="sites"
-							/>
-						</MomentProvider>
+						<Layout
+							primary={ primary }
+							secondary={ secondary }
+							redirectUri={ redirectUri }
+							sectionName="stats"
+							groupName="sites"
+						/>
 					</ReduxProvider>
 					<CalypsoReactQueryDevtools />
 				</QueryClientProvider>
