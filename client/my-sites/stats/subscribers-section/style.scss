@@ -1,21 +1,41 @@
+@import "@wordpress/base-styles/breakpoints";
+
 .subscribers-section {
 	margin: 1em 0;
 }
 
+// Add right margin in small viewports to let the y-series legend label breathe.
+.calypso-uplot-chart-container {
+	@media (max-width: $break-small) {
+		margin-right: 0.5em;
+	}
+}
+
 .subscribers-section-heading {
+	align-content: center;
 	display: flex;
 	justify-content: space-between;
-	align-content: center;
-
 	margin-bottom: 16px;
 
 	> .highlight-cards-heading {
 		margin-bottom: 0;
 	}
+
+	// Overflow legend onto its own row when below $break-xlarge.
+	@media (max-width: $break-xlarge) {
+		flex-direction: column;
+		align-items: flex-start;
+	}
 }
 
 .subscribers-section-legend {
 	display: flex;
+
+	// Nudge legend left to align with heading when below $break-xlarge.
+	@media (max-width: $break-xlarge) {
+		// Size corresponds to non-existent marker for the "Date" legend series.
+		margin-left: -8px;
+	}
 }
 
 .subscribers-section__no-data {
