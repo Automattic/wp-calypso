@@ -28,12 +28,19 @@
 		}
 	}
 
+	.step-container__content {
+		@include break-large {
+			height: 100vh;
+		}
+	}
+
 	.button.is-borderless.navigation-link {
 		color: var(--studio-gray-100);
 	}
 }
 
 .launchpad__container {
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 }
@@ -102,7 +109,7 @@
 	flex-direction: column;
 
 	@include break-large {
-		min-height: 100vh;
+		height: 100%;
 		flex-direction: row;
 	}
 }
@@ -467,7 +474,7 @@
 		}
 	}
 
-	.launchpad__-web-preview.web-preview__inner.is-visible.is-phone.is-loaded {
+	.launchpad__-web-preview.web-preview__inner.is-visible.is-phone {
 		height: 680px;
 		@include break-large {
 			height: 767px;

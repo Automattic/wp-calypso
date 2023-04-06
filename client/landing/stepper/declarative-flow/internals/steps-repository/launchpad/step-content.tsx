@@ -51,25 +51,23 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 	const iFrameURL = adminUrl ? new URL( adminUrl as string ).host : null;
 
 	return (
-		<>
+		<main className="launchpad__container">
 			<div className="launchpad__sidebar-header">
 				<WordPressLogo className="launchpad__sidebar-header-logo" size={ 24 } />
 				<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
 			</div>
-			<main className="launchpad__container">
-				<div className="launchpad__content">
-					<Sidebar
-						sidebarDomain={ sidebarDomain }
-						siteSlug={ siteSlug }
-						submit={ submit }
-						goNext={ goNext }
-						goToStep={ goToStep }
-						flow={ flow }
-					/>
-					<LaunchpadSitePreview flow={ flow } siteSlug={ iFrameURL } />
-				</div>
-			</main>
-		</>
+			<div className="launchpad__content">
+				<Sidebar
+					sidebarDomain={ sidebarDomain }
+					siteSlug={ siteSlug }
+					submit={ submit }
+					goNext={ goNext }
+					goToStep={ goToStep }
+					flow={ flow }
+				/>
+				<LaunchpadSitePreview flow={ flow } siteSlug={ iFrameURL } />
+			</div>
+		</main>
 	);
 };
 
