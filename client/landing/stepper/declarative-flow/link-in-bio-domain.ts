@@ -1,3 +1,4 @@
+import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_FLOW, LINK_IN_BIO_DOMAIN_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -17,7 +18,6 @@ import { redirect } from './internals/steps-repository/import/util';
 import Intro from './internals/steps-repository/intro';
 import LinkInBioSetup from './internals/steps-repository/link-in-bio-setup';
 import PatternsStep from './internals/steps-repository/patterns';
-import PlansStep from './internals/steps-repository/plans';
 import Processing from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import {
@@ -51,7 +51,6 @@ const linkInBioDomain: Flow = {
 		return [
 			{ slug: 'intro', component: Intro },
 			{ slug: 'linkInBioSetup', component: LinkInBioSetup },
-			{ slug: 'plans', component: PlansStep },
 			{ slug: 'patterns', component: PatternsStep },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: Processing },
@@ -60,7 +59,8 @@ const linkInBioDomain: Flow = {
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const variantSlug = this.variantSlug;
-		const { setStepProgress, setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setHideFreePlan, setDomainCartItem, setPlanCartItem } =
+			useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName, variantSlug } );
 		const { domain, provider } = useDomainParams();
 		const userIsLoggedIn = useSelect(
@@ -111,12 +111,12 @@ const linkInBioDomain: Flow = {
 						setHideFreePlan( true );
 						const domainCartItem = domainMapping( { domain } );
 						setDomainCartItem( domainCartItem );
+						setPlanCartItem( {
+							product_slug: PLAN_PERSONAL,
+						} );
 					}
-					return navigate( 'plans' );
-				}
-
-				case 'plans':
 					return navigate( 'siteCreationStep' );
+				}
 
 				case 'siteCreationStep':
 					return navigate( 'processing' );

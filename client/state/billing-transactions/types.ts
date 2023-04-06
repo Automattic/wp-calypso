@@ -12,7 +12,19 @@ export interface IndividualReceipt {
 
 export interface BillingTransaction {
 	address: string;
+
+	/**
+	 * @deprecated use amount_integer
+	 */
 	amount: string;
+
+	/**
+	 * The receipt's total in the currency's smallest unit.
+	 */
+	amount_integer: number;
+
+	currency: string;
+
 	tax_country_code: string;
 	tax_external_id?: string;
 	cc_email: string;
@@ -29,9 +41,29 @@ export interface BillingTransaction {
 	pay_part: string;
 	pay_ref: string;
 	service: string;
+
+	/**
+	 * @deprecated use subtotal_integer
+	 */
 	subtotal: string;
+
+	/**
+	 * The receipt's total before taxes in the currency's smallest unit.
+	 */
+	subtotal_integer: number;
+
 	support: string;
+
+	/**
+	 * @deprecated use tax_integer
+	 */
 	tax: string;
+
+	/**
+	 * The receipt's total taxes in the currency's smallest unit.
+	 */
+	tax_integer: number;
+
 	url: string;
 }
 
@@ -41,12 +73,52 @@ export interface BillingTransactionItem {
 	type_localized: string;
 	domain: string;
 	site_id: string;
+
+	/**
+	 * @deprecated use subtotal_integer
+	 */
 	subtotal: string;
-	tax: string;
-	amount: string;
+
+	/**
+	 * @deprecated use subtotal_integer
+	 */
 	raw_subtotal: number;
+
+	/**
+	 * The receipt item's total before taxes in the currency's smallest unit.
+	 */
+	subtotal_integer: number;
+
+	/**
+	 * @deprecated use tax_integer
+	 */
+	tax: string;
+
+	/**
+	 * @deprecated use tax_integer
+	 */
 	raw_tax: number;
+
+	/**
+	 * The receipt item's total taxes in the currency's smallest unit.
+	 */
+	tax_integer: number;
+
+	/**
+	 * @deprecated use amount_integer
+	 */
+	amount: string;
+
+	/**
+	 * @deprecated use amount_integer
+	 */
 	raw_amount: number;
+
+	/**
+	 * The receipt item's total in the currency's smallest unit.
+	 */
+	amount_integer: number;
+
 	currency: string;
 	licensed_quantity: number | null;
 	new_quantity: number | null;

@@ -32,9 +32,17 @@ const useSteps = ( flowName: string ) => {
 		case NEWSLETTER_FLOW:
 			steps = [
 				{ title: __( 'Excellent choices. Nearly there!' ) },
-				{ title: __( 'Smoothing down the stationery' ) },
-				{ title: __( 'Embossing all the envelopes' ) },
+				{
+					title: __( 'Spreading the news' ),
+				},
+				{
+					title: __( 'Folding the letters' ),
+				},
+				{
+					title: __( 'Bringing the news to the letter' ),
+				},
 			];
+
 			break;
 		default:
 			steps = [

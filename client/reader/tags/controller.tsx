@@ -22,9 +22,18 @@ export interface Tag {
 	title: string;
 }
 
+export interface AlphabeticTagsResult {
+	[ key: string ]: Tag[];
+}
+
 export const tagsListing = ( context: PageJSContext, next: () => void ) => {
 	context.headerSection = renderHeaderSection();
-	context.primary = <TagsPage trendingTags={ context.params.trendingTags } />;
+	context.primary = (
+		<TagsPage
+			trendingTags={ context.params.trendingTags }
+			alphabeticTags={ context.params.alphabeticTags }
+		/>
+	);
 	next();
 };
 
@@ -65,6 +74,35 @@ export const fetchTrendingTags = ( context: PageJSContext, next: ( e?: Error ) =
 		)
 		.then( ( trendingTags: { tags: TagResult[] } ) => {
 			context.params.trendingTags = trendingTags.tags;
+			next();
+		} )
+		.catch( ( error: Error ) => {
+			next( error );
+		} );
+};
+
+export const fetchAlphabeticTags = ( context: PageJSContext, next: ( e?: Error ) => void ) => {
+	if ( context.cachedMarkup ) {
+		debug( 'Skipping alphabetic tags data fetch' );
+		return next();
+	}
+	performanceMark( context as PartialContext, 'fetchAlphabeticTags' );
+
+	const currentUserLocale = getCurrentUserLocale( context.store.getState() );
+
+	context.queryClient
+		.fetchQuery(
+			[ 'alphabetic-tags', currentUserLocale ?? '' ],
+			() => {
+				return wpcom.req.get( '/read/tags/alphabetic', {
+					apiVersion: '1.2',
+					lang: currentUserLocale, // Note: undefined will be omitted by the query string builder.
+				} );
+			},
+			{ staleTime: 86400000 } // 24 hours
+		)
+		.then( ( alphabeticTags: AlphabeticTagsResult ) => {
+			context.params.alphabeticTags = alphabeticTags;
 			next();
 		} )
 		.catch( ( error: Error ) => {

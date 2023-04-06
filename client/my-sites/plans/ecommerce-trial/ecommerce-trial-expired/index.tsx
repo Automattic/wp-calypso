@@ -1,4 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
@@ -9,6 +10,7 @@ import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import ECommercePlanFeatures from 'calypso/my-sites/plans/components/ecommerce-plan-features';
+import { WooExpressPlans } from 'calypso/my-sites/plans/ecommerce-trial/wooexpress-plans';
 import { getExpiredTrialWooExpressMediumFeatureSets } from 'calypso/my-sites/plans/ecommerce-trial/wx-medium-features';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -50,6 +52,36 @@ const ECommerceTrialExpired = (): JSX.Element => {
 		} );
 	}, [] );
 
+	const triggerPlansGridTracksEvent = useCallback( ( planSlug: string ) => {
+		recordTracksEvent( 'calypso_wooexpress_expired_trial_upgrade_cta_clicked', {
+			location: 'plans_grid',
+			plan_slug: planSlug,
+		} );
+	}, [] );
+
+	const plansContent = isEnabled( 'plans/wooexpress-small' ) ? (
+		<WooExpressPlans
+			interval={ interval }
+			monthlyControlProps={ monthlyControlProps }
+			siteId={ siteId ?? 0 }
+			siteSlug={ siteSlug ?? '' }
+			triggerTracksEvent={ triggerPlansGridTracksEvent }
+			yearlyControlProps={ yearlyControlProps }
+		/>
+	) : (
+		<ECommercePlanFeatures
+			interval={ interval }
+			monthlyControlProps={ monthlyControlProps }
+			planFeatureSets={ expiredTrialWooExpressMediumPlanFeatureSets }
+			priceCardSubtitle={ translate(
+				'Kickstart your growth with the world’s most-trusted ecommerce platform.'
+			) }
+			siteSlug={ siteSlug }
+			triggerTracksEvent={ triggerTracksEvent }
+			yearlyControlProps={ yearlyControlProps }
+		/>
+	);
+
 	return (
 		<>
 			<QueryPlans />
@@ -82,17 +114,7 @@ const ECommerceTrialExpired = (): JSX.Element => {
 					</div>
 				</div>
 
-				<ECommercePlanFeatures
-					interval={ interval }
-					monthlyControlProps={ monthlyControlProps }
-					planFeatureSets={ expiredTrialWooExpressMediumPlanFeatureSets }
-					priceCardSubtitle={ translate(
-						'Kickstart your growth with the world’s most-trusted ecommerce platform.'
-					) }
-					siteSlug={ siteSlug }
-					triggerTracksEvent={ triggerTracksEvent }
-					yearlyControlProps={ yearlyControlProps }
-				/>
+				{ plansContent }
 			</Main>
 		</>
 	);

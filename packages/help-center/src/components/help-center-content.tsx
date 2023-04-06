@@ -7,7 +7,7 @@ import { CardBody } from '@wordpress/components';
 import { useEffect, useRef } from '@wordpress/element';
 import classnames from 'classnames';
 import { useSelector } from 'react-redux';
-import { Route, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
  * Internal Dependencies
@@ -44,24 +44,14 @@ const HelpCenterContent: React.FC = () => {
 
 	return (
 		<CardBody ref={ containerRef } className={ className }>
-			<Route exact path="/">
-				<HelpCenterSearch />
-			</Route>
-			<Route path="/post">
-				<HelpCenterEmbedResult />
-			</Route>
-			<Route path="/contact-options">
-				<HelpCenterContactPage />
-			</Route>
-			<Route path="/contact-form">
-				<HelpCenterContactForm />
-			</Route>
-			<Route path="/success">
-				<SuccessScreen />
-			</Route>
-			<Route path="/inline-chat">
-				<InlineChat />
-			</Route>
+			<Routes>
+				<Route path="/" element={ <HelpCenterSearch /> } />
+				<Route path="/post" element={ <HelpCenterEmbedResult /> } />
+				<Route path="/contact-options" element={ <HelpCenterContactPage /> } />
+				<Route path="/contact-form" element={ <HelpCenterContactForm /> } />
+				<Route path="/success" element={ <SuccessScreen /> } />
+				<Route path="/inline-chat" element={ <InlineChat /> } />
+			</Routes>
 		</CardBody>
 	);
 };

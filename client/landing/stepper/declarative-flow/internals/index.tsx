@@ -1,30 +1,22 @@
-import { ProgressBar } from '@automattic/components';
-import {
-	isNewsletterOrLinkInBioFlow,
-	isWooExpressFlow,
-	SITE_SETUP_FLOW,
-} from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow, isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import classnames from 'classnames';
 import { useEffect, useState, useCallback, Suspense } from 'react';
 import Modal from 'react-modal';
-import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
-import SignupHeader from 'calypso/signup/signup-header';
 import { ONBOARD_STORE } from '../../stores';
+import kebabCase from '../../utils/kebabCase';
 import recordStepStart from './analytics/record-step-start';
+import StepRoute from './components/step-route';
 import StepperLoader from './components/stepper-loader';
-import VideoPressIntroBackground from './steps-repository/intro/videopress-intro-background';
 import { AssertConditionState, Flow, StepperStep } from './types';
 import './global.scss';
 import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
-
-const kebabCase = ( value: string ) => value.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
 
 /**
  * This component accepts a single flow property. It does the following:
@@ -44,7 +36,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const location = useLocation();
 	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const intent = useSelect(
@@ -76,7 +68,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		return false;
 	}, [ flow, stepProgress ] );
 
-	const navigate = async ( path: string, extraData = {} ) => {
+	const _navigate = async ( path: string, extraData = {} ) => {
 		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
 		setStepData( {
 			path: path,
@@ -88,11 +80,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			? generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }` )
 			: generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }${ search }` );
 
-		history.push( _path, stepPaths );
+		navigate( _path, { state: stepPaths } );
 		setPreviousProgress( stepProgress?.progress ?? 0 );
 	};
 
-	const stepNavigation = flow.useStepNavigation( currentStepRoute, navigate );
+	const stepNavigation = flow.useStepNavigation( currentStepRoute, _navigate );
 
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
 	const stepData = useSelect(
@@ -100,7 +92,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		[]
 	);
 
-	flow.useSideEffect?.( currentStepRoute, navigate );
+	flow.useSideEffect?.( currentStepRoute, _navigate );
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
@@ -158,14 +150,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		}
 	};
 
-	const getShowWooLogo = () => {
-		if ( isWooExpressFlow( flow.name ) ) {
-			return true;
-		}
-
-		return false;
-	};
-
 	let progressBarExtraStyle: React.CSSProperties = {};
 	if ( 'videopress' === flow.name ) {
 		progressBarExtraStyle = {
@@ -177,42 +161,30 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	return (
 		<Suspense fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
-			<Switch>
-				{ flowSteps.map( ( step ) => {
-					return (
-						<Route key={ step.slug } path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }` }>
-							<div
-								className={ classnames(
-									flow.name,
-									flow.variantSlug,
-									flow.classnames,
-									kebabCase( step.slug )
-								) }
-							>
-								{ 'videopress' === flow.name && 'intro' === step.slug && (
-									<VideoPressIntroBackground />
-								) }
-								{ flow.name !== SITE_SETUP_FLOW && (
-									// The progress bar is removed from the site-setup due to its fragility.
-									// See https://github.com/Automattic/wp-calypso/pull/73653
-									<ProgressBar
-										// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-										className="flow-progress"
-										value={ progressValue * 100 }
-										total={ 100 }
-										style={ progressBarExtraStyle }
-									/>
-								) }
-								<SignupHeader pageTitle={ flow.title } showWooLogo={ getShowWooLogo() } />
-								{ renderStep( step ) }
-							</div>
-						</Route>
-					);
-				} ) }
-				<Route>
-					<Redirect to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` } />
-				</Route>
-			</Switch>
+			<Routes>
+				{ flowSteps.map( ( step ) => (
+					<Route
+						key={ step.slug }
+						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }` }
+						element={
+							<StepRoute
+								step={ step }
+								flow={ flow }
+								progressBarExtraStyle={ progressBarExtraStyle }
+								progressValue={ progressValue }
+								showWooLogo={ isWooExpressFlow( flow.name ) }
+								renderStep={ renderStep }
+							/>
+						}
+					/>
+				) ) }
+				<Route
+					path="*"
+					element={
+						<Navigate to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` } />
+					}
+				/>
+			</Routes>
 		</Suspense>
 	);
 };
