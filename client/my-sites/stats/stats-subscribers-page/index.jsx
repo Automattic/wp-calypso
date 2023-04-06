@@ -25,6 +25,7 @@ const StatsSubscribersPage = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
 
 	const isSubscribersPageEnabled = config.isEnabled( 'stats/subscribers-section' );
+	const showEmailSection = config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats;
 
 	const statsModuleListClass = classNames(
 		'stats__module-list stats__module--unified',
@@ -73,7 +74,7 @@ const StatsSubscribersPage = ( props ) => {
 						<div className={ statsModuleListClass }>
 							<Followers path="followers" />
 							<Reach />
-							{ ! isJetpack && (
+							{ showEmailSection && (
 								<StatsModule
 									additionalColumns={ {
 										header: (
