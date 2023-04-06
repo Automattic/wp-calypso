@@ -199,7 +199,8 @@ export function sortSitesByStaging< T extends SiteDetailsForSorting >( sites: T[
 
 		// Sorting is useful when dealing with multiple staging sites.
 		// The sites are already sorted by 'sortSitesByLastInteractedWith',
-		// we want to maintain that order."
+		// we want to maintain that order in case some of the staging sites are
+		// filtered out.
 		site.options?.wpcom_staging_blog_ids
 			?.sort( ( a, b ) => {
 				// If one of the two staging sites is filtered out, we should
