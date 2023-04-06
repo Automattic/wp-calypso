@@ -55,6 +55,9 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 					ifExists( {
 						from: path.resolve( blockPath, 'includes.php' ),
 						to: path.resolve( blockPath, 'build', '[name][ext]' ),
+						transform( content ) {
+							return content.toString().replace( '/build/rtl', '/rtl' ).replace( '/build', '/' );
+						},
 					} ),
 					ifExists( {
 						from: path.resolve( blockPath, 'block.json' ),
