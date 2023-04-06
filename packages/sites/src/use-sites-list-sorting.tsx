@@ -175,12 +175,12 @@ export function sortSitesByStaging< T extends SiteDetailsForSorting >( sites: T[
 
 	const visited = {} as Record< number, boolean >;
 	const sortedItems = sites.reduce< T[] >( ( acc, site ) => {
-		// We have already visit this site, so we dont need to procceed further.
+		// We have already visited this site, therefore, there is no need to proceed any further.
 		if ( visited[ site.ID ] ) {
 			return acc;
 		}
 		// Site is staging but we haven't visit its production site yet...
-		// the production site exists in the site map
+		// The production site exists in the site map, and
 		// that means that we are going to visit it later on.
 		// Don't add it to the list yet.
 		if (
@@ -192,19 +192,19 @@ export function sortSitesByStaging< T extends SiteDetailsForSorting >( sites: T[
 			return acc;
 		}
 
-		// Otherwise, add it to the list, as the production site that
-		// is associated to this staging site is filtered out, or we have a production site.
+		// If the production site associated with this staging site is filtered out,
+		// or if we have a production site, add it to the list.
 		acc.push( site );
 		visited[ site.ID ] = true;
 
-		// The sorting is useful in case we have more than one staging sites.
-		// All the sites are already sorted (by sortSitesByLastInteractedWith ),
-		// so we want to keep that order.
+		// Sorting is useful when dealing with multiple staging sites.
+		// The sites are already sorted by 'sortSitesByLastInteractedWith',
+		// we want to maintain that order."
 		site.options?.wpcom_staging_blog_ids
 			?.sort( ( a, b ) => {
-				// One of the two staging sites is filtered out.
-				// Retain the order of the other sites by moving it down
-				// to the list.
+				// If one of the two staging sites is filtered out, we should
+				// maintain the order of the remaining sites by moving it down
+				// in the list
 				if ( ! sitesById[ a ] ) {
 					return -1;
 				}

@@ -290,7 +290,7 @@ describe( 'useSitesSorting', () => {
 		expect( result.current[ 3 ].title ).toBe( 'E' );
 	} );
 
-	test( 'should not change an order of a staging site if its associated producion site is filtered out', () => {
+	test( 'should not change the order of a staging site if its associated producion site is filtered out', () => {
 		const { result } = renderHook( () =>
 			useSitesListSorting( frequentSitesWithStagingMissingProduction, {
 				sortKey: 'lastInteractedWith',
@@ -306,7 +306,7 @@ describe( 'useSitesSorting', () => {
 		expect( result.current[ 4 ].title ).toBe( 'E' );
 	} );
 
-	test( 'should move missing staging sites down to the production site list', () => {
+	test( 'should staging sites that missing, down to the production site list', () => {
 		const { result } = renderHook( () =>
 			useSitesListSorting( frequentSitesWithStagingMissing, {
 				sortKey: 'lastInteractedWith',
