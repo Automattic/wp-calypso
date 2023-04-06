@@ -23,8 +23,12 @@ const loadMomentLocale = ( localeSlug, languageCode ) => {
 				error
 			);
 			// Fallback 1 to the language code.
-			localeSlug = languageCode;
-			return import( `moment/locale/${ localeSlug }` );
+			if ( localeSlug !== languageCode ) {
+				localeSlug = languageCode;
+				return import( `moment/locale/${ localeSlug }` );
+			}
+			// Pass it to the next catch block if the language code is the same as the locale slug.
+			return Promise.reject( error );
 		} )
 		.catch( ( error ) => {
 			debug(
