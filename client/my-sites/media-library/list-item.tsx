@@ -108,6 +108,7 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 	}
 
 	render() {
+		let dataAttributes = null;
 		let title;
 		let selectedNumber;
 
@@ -123,9 +124,6 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 		} = this.props;
 
 		const { uploadProgress } = this.state;
-
-		let dataAttributes = null;
-
 		const isTransient = media && ( media as MediaObject ).transient;
 
 		const classes = classNames( 'media-library__list-item', {
@@ -159,7 +157,7 @@ export default class MediaLibraryListItem extends React.Component< Props & DivPr
 				</span>
 				<figure className="media-library__list-item-figure" title={ title }>
 					{ this.renderItem() }
-					{ media && ( media as MediaObject ).transient && (
+					{ isTransient && (
 						<>
 							{ uploadProgress > 0 ? (
 								<div className="media-library__list-item-progress">
