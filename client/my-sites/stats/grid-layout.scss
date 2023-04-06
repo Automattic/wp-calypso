@@ -31,24 +31,6 @@ $grid-vertical-gutters: 32px;
 
 .stats__module-list.stats__module--unified.subscribers-page {
 
-	&.is-jetpack {
-		@include stats-desktop-grid(
-			"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize",
-			1
-		);
-
-		@include stats-tablet-grid(
-			"followers followers followers followers publicize publicize publicize publicize",
-			1
-		);
-
-		@include stats-mobile-grid(
-			"followers followers followers followers"
-			"publicize publicize publicize publicize",
-			2
-		);
-	}
-
 	@include stats-desktop-grid(
 		"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize"
 		"emails emails emails emails emails emails emails emails emails emails emails emails",
