@@ -102,6 +102,7 @@
 	flex-direction: column;
 
 	@include break-large {
+		min-height: 100vh;
 		flex-direction: row;
 	}
 }
@@ -110,14 +111,14 @@
 
 .launchpad__sidebar {
 	max-width: 100%;
-	margin: 24px 16px 32px;
+	margin: 0 16px 32px;
 	display: flex;
 	flex-direction: column;
 
 	@include break-large {
 		max-width: 360px;
-		margin: 24px 20px 24px 24px;
-		height: 95vh;
+		margin: 0 20px 24px 24px;
+		gap: 80px;
 	}
 }
 
@@ -162,12 +163,8 @@
 
 .launchpad__sidebar-header {
 	display: flex;
-	margin-left: 8px;
-	margin-top: 4px;
-
-	@include break-large {
-		margin-left: 0;
-	}
+	padding-left: 24px;
+	padding-top: 28px;
 }
 
 .launchpad__sidebar-header-logo {
@@ -263,7 +260,7 @@
 }
 
 .launchpad__sidebar-admin-link {
-	padding: 80px 20px 10px;
+	padding-left: 20px;
 	display: none;
 
 	.button.navigation-link {
@@ -452,7 +449,7 @@
 	flex-grow: 1;
 
 	@include break-large {
-		margin: 53px 20px 20px 20px;
+		margin: 0 20px 20px 20px;
 	}
 
 	.preview-toolbar__toolbar {
