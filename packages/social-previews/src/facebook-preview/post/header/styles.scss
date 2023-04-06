@@ -1,0 +1,71 @@
+.facebook-preview__post-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	box-sizing: border-box;
+	width: 100%;
+
+	padding: 0.75rem 1rem 0.5rem;
+	min-height: 60px;
+}
+
+.facebook-preview__post-header-content {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.facebook-preview__post-header-avatar {
+	width: 40px;
+	height: 40px;
+
+	background-color: #caccd1;
+	border-radius: 50%;
+	border: solid 1px #e5e5e5;
+}
+
+.facebook-preview__post-header-name {
+	color: var(--facebook-preview-text-color);
+
+	/* stylelint-disable-next-line scales/font-sizes */
+	font-size: 0.9375rem; // 15px
+	font-weight: 600;
+	line-height: 1.33;
+}
+
+.facebook-preview__post-header-share {
+	display: flex;
+	align-items: center;
+
+	color: var(--facebook-preview-light-text-color);
+}
+
+.facebook-preview__post-header-time {
+	/* stylelint-disable-next-line scales/font-sizes */
+	font-size: 0.8125rem; // 13px
+	line-height: 1.23;
+}
+
+.facebook-preview__post-header-dot {
+	width: 0.625rem;
+
+	text-align: center;
+}
+
+.facebook-preview__post-header-more {
+	display: flex;
+	gap: 0.25rem;
+
+	margin: 0 0.625rem 0 0;
+	padding: 0;
+
+	list-style-type: none;
+
+	> li {
+		width: 0.25rem;
+		height: 0.25rem;
+
+		background-color: var(--facebook-preview-light-text-color);
+		border-radius: 50%;
+	}
+}

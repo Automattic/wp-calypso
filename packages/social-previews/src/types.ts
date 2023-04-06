@@ -7,9 +7,9 @@ import {
 export type PreviewProps = {
 	url: string;
 	title: string;
-	description: string;
-	image: string;
-	author: string;
+	description?: string;
+	customText?: string;
+	image?: string;
 	previewType:
 		| typeof AUTO_SHARED_SOCIAL_POST_PREVIEW
 		| typeof AUTO_SHARED_LINK_PREVIEW
