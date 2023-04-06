@@ -22,15 +22,13 @@ const chroma = require( 'chroma-js' );
  *
  * @returns Sorted array.
  */
-const sortBy = () => {
-	return ( objA, objB ) => {
-		if ( objA.to.name > objB.to.name ) {
-			return 1;
-		} else if ( objB.to.name > objA.to.name ) {
-			return -1;
-		}
-		return 0;
-	};
+const compareByName = ( objA, objB ) => {
+	if ( objA.to.name > objB.to.name ) {
+		return 1;
+	} else if ( objB.to.name > objA.to.name ) {
+		return -1;
+	}
+	return 0;
 };
 
 /**
