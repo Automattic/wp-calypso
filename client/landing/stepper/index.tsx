@@ -109,9 +109,6 @@ window.AppBoot = async () => {
 		hydrateBrowserState( queryClient, userId );
 
 		initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
-		//const userInitialState = getInitialState( initialReducer, userId );
-		//TODO: Like in add-reducer.ts, we should  store.dispatch( { type: APPLY_STORED_STATE for the new userInitialState,
-		// maybe combining it with the getStateFromCache( userId ) ??
 		setStore( reduxStore, getStateFromCache( userId ), true );
 
 		user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
@@ -131,7 +128,7 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
-						<FlowSwitch user={ null } flow={ flow } />
+						<FlowSwitch flow={ flow } />
 						{ /* <FlowSwitch user={ user as UserStore.CurrentUser } flow={ flow } /> */ }
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
