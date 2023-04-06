@@ -115,7 +115,11 @@ const ScreenCategoryList = ( {
 							} }
 						>
 							<span>{ label }</span>
-							<Icon icon={ chevronRight } size={ 24 } />
+							<Icon
+								className="screen-category-list__arrow-icon"
+								icon={ chevronRight }
+								size={ 24 }
+							/>
 						</Button>
 					);
 				} ) }
