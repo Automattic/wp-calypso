@@ -102,8 +102,14 @@ window.AppBoot = async () => {
 	const queryClient = await createQueryClient();
 	const initialState = getInitialState( initialReducer, undefined );
 	const reduxStore = createReduxStore( initialState, initialReducer );
+	const flowLoader = determineFlow();
+	const { default: flow } = await flowLoader();
 
-	initializeCurrentUser().then( ( user: unknown ) => {
+	const userDataPromise = new Promise( ( resolve ) => {
+		resolve( initializeCurrentUser() );
+	} );
+
+	userDataPromise.then( ( user: unknown ) => {
 		const userId = ( user as CurrentUser ).ID;
 		const { receiveCurrentUser } = dispatch( USER_STORE );
 		receiveCurrentUser( user as UserStore.CurrentUser );
@@ -121,8 +127,10 @@ window.AppBoot = async () => {
 
 	setupErrorLogger( reduxStore );
 
-	const flowLoader = determineFlow();
-	const { default: flow } = await flowLoader();
+	// Some flows are using useAssertConditions hook, which requires the user data to be loaded. Otherwise the flow redirects to login.
+	if ( flow.useAssertConditions ) {
+		await userDataPromise;
+	}
 
 	ReactDom.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
