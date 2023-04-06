@@ -25,6 +25,7 @@ const StatsSubscribersPage = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
 
 	const isSubscribersPageEnabled = config.isEnabled( 'stats/subscribers-section' );
+	const showEmailSection = config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats;
 
 	const statsModuleListClass = classNames(
 		'stats__module-list stats__module--unified',
@@ -73,28 +74,30 @@ const StatsSubscribersPage = ( props ) => {
 						<div className={ statsModuleListClass }>
 							<Followers path="followers" />
 							<Reach />
-							<StatsModule
-								additionalColumns={ {
-									header: (
-										<>
-											<span>{ translate( 'Opens' ) }</span>
-										</>
-									),
-									body: ( item ) => (
-										<>
-											<span>{ item.opens }</span>
-										</>
-									),
-								} }
-								path="emails"
-								moduleStrings={ moduleStrings.emails }
-								// period={ this.props.period }
-								// query={ query }
-								statType="statsEmailsSummary"
-								mainItemLabel={ translate( 'Latest Emails' ) }
-								metricLabel={ translate( 'Clicks' ) }
-								showSummaryLink
-							/>
+							{ showEmailSection && (
+								<StatsModule
+									additionalColumns={ {
+										header: (
+											<>
+												<span>{ translate( 'Opens' ) }</span>
+											</>
+										),
+										body: ( item ) => (
+											<>
+												<span>{ item.opens }</span>
+											</>
+										),
+									} }
+									path="emails"
+									moduleStrings={ moduleStrings.emails }
+									// period={ this.props.period }
+									// query={ query }
+									statType="statsEmailsSummary"
+									mainItemLabel={ translate( 'Latest Emails' ) }
+									metricLabel={ translate( 'Clicks' ) }
+									showSummaryLink
+								/>
+							) }
 						</div>
 					</>
 				) }
