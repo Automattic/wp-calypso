@@ -31,9 +31,8 @@ $max-list-width: 1300px;
 		}
 
 		.post {
-			display: flex;
-			flex-direction: column;
 			max-width: 403px;
+			min-width: 350px;
 			font-size: $font-body-small;
 			line-height: 20px;
 
@@ -47,6 +46,12 @@ $max-list-width: 1300px;
 				font-weight: 400;
 				color: $studio-gray-60;
 				@extend %ellipsis;
+			}
+		}
+
+		@media (max-width: $break-small) {
+			.post {
+				min-width: 0;
 			}
 		}
 
@@ -89,14 +94,25 @@ $max-list-width: 1300px;
 			}
 		}
 
+		@media (max-width: $break-small) {
+			.title-box {
+				display: none;
+			}
+		}
+
 		.title-box,
-		.site,
 		.date {
 			font-weight: 400;
 			font-size: $font-body-small;
 			line-height: 20px;
 			letter-spacing: -0.15px;
 			color: $studio-gray-60;
+		}
+
+		@media (max-width: $break-medium) {
+			.date {
+				display: none;
+			}
 		}
 
 		.actions {

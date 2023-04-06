@@ -26,8 +26,8 @@ const CommentRow = ( {
 	return (
 		<li className="row" role="row">
 			<span className="post" role="cell">
-				<span className="title">{ title }</span>
-				<span className="excerpt">{ excerpt }</span>
+				<div className="title">{ title }</div>
+				<div className="excerpt">{ excerpt }</div>
 			</span>
 			<span className="title-box" role="cell">
 				{ siteIcon }
@@ -40,7 +40,7 @@ const CommentRow = ( {
 				{ since }
 			</span>
 			<span className="actions" role="cell">
-				actions
+				...
 			</span>
 		</li>
 	);
