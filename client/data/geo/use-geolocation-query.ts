@@ -10,7 +10,7 @@ export interface GeoLocationData {
 }
 
 export const useGeoLocationQuery = () =>
-	useQuery< GeoLocationData >( 'geo', () =>
+	useQuery< GeoLocationData >( [ 'geo' ], () =>
 		globalThis
 			.fetch( 'https://public-api.wordpress.com/geo/' )
 			.then( ( response ) => response.json() )
