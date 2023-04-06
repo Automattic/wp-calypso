@@ -172,6 +172,7 @@
 		"@types/wordpress__data-controls": "^2.30.0",
 		"@wordpress/base-styles": "^4.13.0",
 		"@wordpress/components": "^22.1.0",
+		"@wordpress/core-data": "^6.8.0",
 		"@wordpress/data": "^7.6.0",
 		"@wordpress/element": "^4.20.0",
 		"@wordpress/i18n": "^4.22.0",
@@ -304,7 +305,11 @@
 		"@wordpress/base-styles": "4.13.0",
 		"@wordpress/interface@^4.8.0": "patch:@wordpress/interface@npm%3A4.8.0#./.yarn/patches/@wordpress-interface-npm-4.8.0-8a39ad37cf.patch",
 		"@wordpress/data-controls": "2.22.0",
-		"@wordpress/element": "4.20.0"
+		"@wordpress/element": "4.20.0",
+		"@wordpress/block-editor": "10.4.0",
+		"@wordpress/block-library": "7.17.0",
+		"@wordpress/components": "22.1.0",
+		"@wordpress/keyboard-shortcuts": "3.20.0"
 	},
 	"packageManager": "yarn@3.2.3",
 	"dependenciesMeta": {

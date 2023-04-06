@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import AsyncLoad from 'calypso/components/async-load';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import Stream from 'calypso/reader/stream';
@@ -8,6 +9,7 @@ function FollowingStream( { ...props } ) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<>
+			{ config.isEnabled( 'reader/editor' ) && <AsyncLoad require="calypso/reader/post-editor" /> }
 			<Stream { ...props }>
 				<FollowingIntro />
 			</Stream>

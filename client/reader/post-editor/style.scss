@@ -1,0 +1,18 @@
+.reader-post-editor {
+	margin-bottom: 80px;
+
+	.components-menu-items__item-icon {
+		// Make sure menu icons display at the intended size.
+		height: 24px;
+		width: 24px;
+	}
+}
+
+.reader-post-editor__editor {
+	margin-bottom: 12px;
+	width: 100%;
+}
+
+.reader-post-editor__publish-button {
+	float: right;
+}
