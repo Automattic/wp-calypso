@@ -30,6 +30,13 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 		} );
 	}, [] );
 
+	const triggerPlansGridTracksEvent = useCallback( ( planSlug: string ) => {
+		recordTracksEvent( 'calypso_wooexpress_plans_page_upgrade_cta_clicked', {
+			location: 'plans_grid',
+			plan_slug: planSlug,
+		} );
+	}, [] );
+
 	// WX Medium and Commerce have the same features
 	const wooExpressMediumPlanFeatureSets = useMemo( () => {
 		return getWooExpressMediumFeatureSets( { translate, interval } );
@@ -49,10 +56,12 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 	const multiPlanFeatures = (
 		<WooExpressPlans
 			siteId={ siteId }
+			siteSlug={ siteSlug }
 			interval={ interval }
 			yearlyControlProps={ { path: plansLink( '/plans', siteSlug, 'yearly', true ) } }
 			monthlyControlProps={ { path: plansLink( '/plans', siteSlug, 'monthly', true ) } }
 			showIntervalToggle={ true }
+			triggerTracksEvent={ triggerPlansGridTracksEvent }
 		/>
 	);
 
