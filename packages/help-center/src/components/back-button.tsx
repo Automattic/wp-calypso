@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
 import { Icon, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import type { FC } from 'react';
 import '../styles.scss';
 
@@ -9,12 +9,12 @@ export type Props = { onClick?: () => void; backToRoot?: boolean };
 
 export const BackButton: FC< Props > = ( { onClick, backToRoot = false } ) => {
 	const { __ } = useI18n();
-	const history = useHistory();
+	const navigate = useNavigate();
 	function defaultOnClick() {
 		if ( backToRoot ) {
-			history.push( '/' );
+			navigate( '/' );
 		} else {
-			history.goBack();
+			navigate( -1 );
 		}
 	}
 	return (

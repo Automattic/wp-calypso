@@ -1,6 +1,6 @@
 import { CardFooter } from '@wordpress/components';
 import classnames from 'classnames';
-import { Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { HelpCenterContactButton } from './help-center-contact-page';
 
 const HelpCenterFooter: React.FC = () => {
@@ -8,9 +8,9 @@ const HelpCenterFooter: React.FC = () => {
 
 	return (
 		<CardFooter className={ className }>
-			<Route path="/" exact>
-				<HelpCenterContactButton />
-			</Route>
+			<Routes>
+				<Route path="/" element={ <HelpCenterContactButton /> } />
+			</Routes>
 		</CardFooter>
 	);
 };
