@@ -4,6 +4,12 @@
 
 $max-list-width: 1300px;
 
+%ellipsis {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
 .subscription-manager__comment-list {
 	max-width: $max-list-width;
 
@@ -24,10 +30,29 @@ $max-list-width: 1300px;
 			padding-top: 0;
 		}
 
+		.post {
+			display: flex;
+			flex-direction: column;
+			max-width: 403px;
+			font-size: $font-body-small;
+			line-height: 20px;
+
+			.title {
+				font-weight: 500;
+				@extend %ellipsis;
+			}
+
+			.excerpt {
+				max-width: 350px;
+				font-weight: 400;
+				color: $studio-gray-60;
+				@extend %ellipsis;
+			}
+		}
+
 		.title-box {
 			display: flex;
 			align-items: center;
-			flex: 1.83;
 			min-width: 0;
 
 			.icon {
@@ -50,14 +75,8 @@ $max-list-width: 1300px;
 					line-height: 22px;
 					color: $studio-gray-100;
 					letter-spacing: -0.24px;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					overflow: hidden;
 					padding-right: 10px;
-
-					&:hover {
-						text-decoration: underline;
-					}
+					@extend %ellipsis;
 				}
 
 				.url {
@@ -65,13 +84,7 @@ $max-list-width: 1300px;
 					font-size: $font-body-extra-small;
 					line-height: 18px;
 					color: $studio-gray-40;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					overflow: hidden;
-
-					&:hover {
-						text-decoration: underline;
-					}
+					@extend %ellipsis;
 				}
 			}
 		}

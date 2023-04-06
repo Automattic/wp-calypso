@@ -13,7 +13,7 @@ const CommentList = ( { posts }: CommentListProps ) => {
 	return (
 		<ul className="subscription-manager__comment-list" role="table">
 			<li className="row header" role="row">
-				<span className="site" role="columnheader">
+				<span className="post" role="columnheader">
 					{ translate( 'Subscribed post' ) }
 				</span>
 				<span className="title-box" role="columnheader">
