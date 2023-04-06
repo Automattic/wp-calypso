@@ -32,19 +32,22 @@ $grid-vertical-gutters: 32px;
 .stats__module-list.stats__module--unified.subscribers-page {
 
 	@include stats-desktop-grid(
-		"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize",
-		1
+		"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize"
+		"emails emails emails emails emails emails emails emails emails emails emails emails",
+		2
 	);
 
 	@include stats-tablet-grid(
-		"followers followers followers followers publicize publicize publicize publicize",
-		1
+		"followers followers followers followers publicize publicize publicize publicize"
+		"emails emails emails emails emails emails emails emails",
+		2
 	);
 
 	@include stats-mobile-grid(
 		"followers followers followers followers"
-		"publicize publicize publicize publicize",
-		2
+		"publicize publicize publicize publicize"
+		"emails emails emails emails",
+		3
 	);
 
 	@media (max-width: 660px) {
@@ -59,6 +62,11 @@ $grid-vertical-gutters: 32px;
 	.stats__module-wrapper--publicize,
 	.list-publicize {
 		grid-area: publicize;
+	}
+
+	.stats__module-wrapper--emails,
+	.list-emails {
+		grid-area: emails;
 	}
 }
 
