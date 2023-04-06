@@ -214,27 +214,21 @@
 		white-space: nowrap;
 		overflow: hidden;
 		padding: 4px 0;
-		padding-right: 12px;
+		padding-right: 8px;
 		letter-spacing: -0.24px;
 		font-size: $font-body-small;
 	}
 
 	.launchpad__url-box-domain:hover > .launchpad__clipboard-button {
-		position: inherit;
-		top: 0;
+		opacity: 1;
 	}
 
 	.launchpad__clipboard-button:focus {
-		position: inherit;
-		top: 0;
+		opacity: 1;
 	}
 
 	.launchpad__clipboard-button {
-		padding-left: 8px;
-		padding-right: 8px;
-		position: absolute;
-		top: -1000em;
-		min-width: 34px;
+		opacity: 0;
 	}
 }
 
