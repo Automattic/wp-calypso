@@ -1,12 +1,28 @@
 import { Gridicon } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
-import { useMemo } from '@wordpress/element';
+import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteSettings } from '../settings-popover';
 import type {
 	SiteSubscription,
 	SiteSubscriptionDeliveryFrequency,
 } from '@automattic/data-stores/src/reader/types';
+
+const useDeliveryFrequencyLabel = ( deliveryFrequencyValue: SiteSubscriptionDeliveryFrequency ) => {
+	const translate = useTranslate();
+
+	const deliveryFrequencyLabels = useMemo(
+		() => ( {
+			daily: translate( 'Daily' ),
+			weekly: translate( 'Weekly' ),
+			instantly: translate( 'Instantly' ),
+		} ),
+		[ translate ]
+	);
+
+	return deliveryFrequencyLabels[ deliveryFrequencyValue ];
+};
 
 export default function SiteRow( {
 	blog_ID,
@@ -21,8 +37,6 @@ export default function SiteRow( {
 		() => moment( date_subscribed ).format( 'LL' ),
 		[ date_subscribed, moment ]
 	);
-	const deliveryFrequency = delivery_methods?.email
-		?.post_delivery_frequency as SiteSubscriptionDeliveryFrequency;
 	const hostname = useMemo( () => new URL( url ).hostname, [ url ] );
 	const siteIcon = useMemo( () => {
 		if ( site_icon ) {
@@ -30,6 +44,12 @@ export default function SiteRow( {
 		}
 		return <Gridicon className="icon" icon="globe" size={ 48 } />;
 	}, [ site_icon, name ] );
+
+	const deliveryFrequencyValue = useMemo(
+		() => delivery_methods?.email?.post_delivery_frequency as SiteSubscriptionDeliveryFrequency,
+		[ delivery_methods?.email?.post_delivery_frequency ]
+	);
+	const deliveryFrequencyLabel = useDeliveryFrequencyLabel( deliveryFrequencyValue );
 
 	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
 		SubscriptionManager.useSiteDeliveryFrequencyMutation();
@@ -51,11 +71,11 @@ export default function SiteRow( {
 				{ since }
 			</span>
 			<span className="email-frequency" role="cell">
-				{ deliveryFrequency }
+				{ deliveryFrequencyLabel }
 			</span>
 			<span className="actions" role="cell">
 				<SiteSettings
-					deliveryFrequency={ deliveryFrequency }
+					deliveryFrequency={ deliveryFrequencyValue }
 					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
 						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
 					}
