@@ -129,7 +129,6 @@ window.AppBoot = async () => {
 					<WindowLocaleEffectManager />
 					<BrowserRouter basename="setup">
 						<FlowSwitch flow={ flow } />
-						{ /* <FlowSwitch user={ user as UserStore.CurrentUser } flow={ flow } /> */ }
 						{ config.isEnabled( 'cookie-banner' ) && (
 							<AsyncLoad require="calypso/blocks/cookie-banner" placeholder={ null } />
 						) }
