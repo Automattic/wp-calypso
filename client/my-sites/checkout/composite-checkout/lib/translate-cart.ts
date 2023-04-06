@@ -74,7 +74,7 @@ export function createTransactionEndpointCartFromResponseCart( {
 		// Once the WP.com account is created, the cart key is replaced with the blog ID and sent to the
 		// /transactions endpoint. If there is no blog ID, a temporary blog is created on the backend side.
 		return {
-			blog_id: responseCart.blog_id.toString(),
+			blog_id: responseCart.blog_id,
 			cart_key: cartKey as CartKey,
 			coupon: responseCart.coupon || '',
 			temporary: false,
@@ -86,7 +86,7 @@ export function createTransactionEndpointCartFromResponseCart( {
 	}
 
 	return {
-		blog_id: siteId || '0',
+		blog_id: siteId ? parseInt( siteId ) : 0,
 		cart_key: ( siteId || 'no-site' ) as CartKey,
 		coupon: responseCart.coupon || '',
 		temporary: false,
