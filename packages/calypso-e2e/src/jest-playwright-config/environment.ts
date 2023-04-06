@@ -1,3 +1,4 @@
+import { createWriteStream, WriteStream } from 'fs';
 import fs from 'fs/promises';
 import os from 'os';
 import path from 'path';
@@ -52,6 +53,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		name: string;
 	};
 	private allure: AllureReporter | undefined;
+	private consoleLogFileStream: WriteStream | undefined;
 
 	/**
 	 * Constructs the instance of the JestEnvironmentNode.
@@ -110,7 +112,13 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		this.testArtifactsPath = await fs.mkdtemp(
 			path.join( env.ARTIFACTS_PATH, `${ this.testFilename }__${ date }-` )
 		);
-		const logFilePath = path.join( this.testArtifactsPath, `${ this.testFilename }.log` );
+		const pwLogFilePath = path.join( this.testArtifactsPath, `${ this.testFilename }.log` );
+		const consoleLogFilePath = path.join(
+			this.testArtifactsPath,
+			`${ this.testFilename }.console.log`
+		);
+
+		this.consoleLogFileStream = this.setUpConsoleLogFileStream( consoleLogFilePath );
 
 		// Start the browser.
 		const browser = await browserType.launch( {
@@ -118,7 +126,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			logger: {
 				log: async ( name: string, severity: string, message: string ) => {
 					await fs.appendFile(
-						logFilePath,
+						pwLogFilePath,
 						`${ new Date().toISOString() } ${ process.pid } ${ name } ${ severity }: ${ message }\n`
 					);
 				},
@@ -134,6 +142,38 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	}
 
 	/**
+	 *
+	 * @param filePath
+	 */
+	private setUpConsoleLogFileStream( filePath: string ): WriteStream {
+		const fileStream = createWriteStream( filePath, { flags: 'a' } );
+		fileStream.on( 'error', ( err ) => {
+			console.error( 'Unexpected error when writing to the debug <test>.console.log file: ', err );
+		} );
+
+		const originalStdoutWrite = process.stdout.write.bind( process.stdout );
+		const originalStderrWrite = process.stderr.write.bind( process.stderr );
+
+		process.on( 'exit', () => {
+			if ( ! fileStream.writableEnded ) {
+				fileStream.end();
+			}
+		} );
+
+		process.stdout.write = ( message: string | Uint8Array ) => {
+			fileStream.write( message );
+			return originalStdoutWrite( message );
+		};
+
+		process.stderr.write = ( message: string | Uint8Array ) => {
+			fileStream.write( message );
+			return originalStderrWrite( message );
+		};
+
+		return fileStream;
+	}
+
+	/**
 	 * Teardowns the environment.
 	 *
 	 * If there are any failures noted for the current suite, the teardown
@@ -143,51 +183,56 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 	 * The browser is then shut down at the end regardless of failure status.
 	 */
 	async teardown(): Promise< void > {
-		if ( ! this.global.browser ) {
-			throw new Error( 'Browser instance unavailable' );
-		}
-		const contexts = this.global.browser.contexts();
-		if ( this.failure ) {
-			let contextIndex = 1;
+		try {
+			if ( ! this.global.browser ) {
+				throw new Error( 'Browser instance unavailable' );
+			}
+			const contexts = this.global.browser.contexts();
+			if ( this.failure ) {
+				let contextIndex = 1;
 
-			const artifactFilename = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
+				const artifactFilename = `${ this.testFilename }__${ sanitizeString( this.failure.name ) }`;
 
-			for await ( const context of contexts ) {
-				let pageIndex = 1;
-				const traceFilePath = path.join(
-					this.testArtifactsPath,
-					`${ artifactFilename }__${ contextIndex }.zip`
-				);
-
-				// Traces are saved per context.
-				await context.tracing.stop( { path: traceFilePath } );
-
-				for await ( const page of context.pages() ) {
-					// Define artifact filename.
-					const mediaFilePath = path.join(
+				for await ( const context of contexts ) {
+					let pageIndex = 1;
+					const traceFilePath = path.join(
 						this.testArtifactsPath,
-						`${ artifactFilename }__${ contextIndex }-${ pageIndex }`
+						`${ artifactFilename }__${ contextIndex }.zip`
 					);
 
-					// Screenshots and video are saved per page, where numerous
-					// pages may exist within a context.
-					await page.screenshot( { path: `${ mediaFilePath }.png`, timeout: env.TIMEOUT } );
+					// Traces are saved per context.
+					await context.tracing.stop( { path: traceFilePath } );
 
-					// Close the now unnecessary page which also triggers saving
-					// of video to the disk.
-					await page.close();
-					await page.video()?.saveAs( `${ mediaFilePath }.webm` );
-					pageIndex++;
+					for await ( const page of context.pages() ) {
+						// Define artifact filename.
+						const mediaFilePath = path.join(
+							this.testArtifactsPath,
+							`${ artifactFilename }__${ contextIndex }-${ pageIndex }`
+						);
+
+						// Screenshots and video are saved per page, where numerous
+						// pages may exist within a context.
+						await page.screenshot( { path: `${ mediaFilePath }.png`, timeout: env.TIMEOUT } );
+
+						// Close the now unnecessary page which also triggers saving
+						// of video to the disk.
+						await page.close();
+						await page.video()?.saveAs( `${ mediaFilePath }.webm` );
+						pageIndex++;
+					}
+					contextIndex++;
 				}
-				contextIndex++;
+				// Print paths to captured artifacts for faster triaging.
+				console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
 			}
-			// Print paths to captured artifacts for faster triaging.
-			console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
+			// Regardless of pass/fail status, close the browser instance.
+			await this.global.browser.close();
+		} finally {
+			if ( this.consoleLogFileStream ) {
+				this.consoleLogFileStream.end();
+			}
+			await super.teardown();
 		}
-		// Regardless of pass/fail status, close the browser instance.
-		await this.global.browser.close();
-
-		await super.teardown();
 	}
 
 	/**
