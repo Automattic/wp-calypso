@@ -37,7 +37,7 @@ const store = {
 	showIntervals: true,
 };
 const wordads = {
-	label: 'Ads',
+	label: translate( 'Ads' ),
 	path: '/stats/ads',
 	showIntervals: true,
 };
@@ -77,7 +77,7 @@ Object.defineProperty( year, 'label', { get: () => translate( 'Years' ) } );
 Object.defineProperty( traffic, 'label', { get: () => translate( 'Traffic' ) } );
 Object.defineProperty( insights, 'label', { get: () => translate( 'Insights' ) } );
 Object.defineProperty( store, 'label', { get: () => translate( 'Store' ) } );
-Object.defineProperty( wordads, 'label', { get: () => 'Ads' } );
+Object.defineProperty( wordads, 'label', { get: () => translate( 'Ads' ) } );
 Object.defineProperty( googleMyBusiness, 'label', {
 	get: () => translate( 'Google My Business' ),
 } );
