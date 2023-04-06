@@ -49,6 +49,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
+import { useDispatch } from '@wordpress/data';
 import React from 'react';
 import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
 import PlanFeatures2023GridActions from '../actions';
