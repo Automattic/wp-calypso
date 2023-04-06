@@ -56,7 +56,8 @@ export default function IssueMultipleLicensesForm( {
 		) || [];
 	const products =
 		allProducts?.filter(
-			( { family_slug }: { family_slug: string } ) => family_slug !== 'jetpack-packs'
+			( { family_slug }: { family_slug: string } ) =>
+				family_slug !== 'jetpack-packs' && family_slug !== 'woocommerce-extensions'
 		) || [];
 	const woocommerceExtensions =
 		allProducts?.filter(
