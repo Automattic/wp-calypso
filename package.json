@@ -166,7 +166,6 @@
 		"@types/uuid": "^8.3.4",
 		"@types/validator": "^13.7.1",
 		"@types/webpack-env": "^1.16.3",
-		"@types/wordpress__block-library": "^2.6.1",
 		"@types/wordpress__components": "^14.0.10",
 		"@types/wordpress__data-controls": "^2.30.0",
 		"@wordpress/base-styles": "^4.13.0",

@@ -7325,13 +7325,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__block-library@npm:^2.6.1":
-  version: 2.6.1
-  resolution: "@types/wordpress__block-library@npm:2.6.1"
-  checksum: bd007e3e36990e45111a0cbbf79eec9120cef69525773247d0c72db81a3870362fadb5224372410766a14902f1453119a0d8702e09aa3b5f6028d210d949dc90
-  languageName: node
-  linkType: hard
-
 "@types/wordpress__components@npm:*, @types/wordpress__components@npm:^14.0.10":
   version: 14.0.10
   resolution: "@types/wordpress__components@npm:14.0.10"
@@ -33584,7 +33577,6 @@ fsevents@^1.2.7:
     "@types/uuid": ^8.3.4
     "@types/validator": ^13.7.1
     "@types/webpack-env": ^1.16.3
-    "@types/wordpress__block-library": ^2.6.1
     "@types/wordpress__components": ^14.0.10
     "@types/wordpress__data-controls": ^2.30.0
     "@typescript-eslint/eslint-plugin": ^5.53.0
