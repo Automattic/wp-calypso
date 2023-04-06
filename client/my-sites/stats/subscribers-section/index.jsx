@@ -99,11 +99,11 @@ export default function SubscribersSection() {
 								date={ date }
 								query={ query }
 								statsType="statsTopPosts"
-								showQueryDate
+								// showQueryDate={ false }
 							/>
 						</StatsPeriodNavigation>
+						<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
 					</StatsPeriodHeader>
-					<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
 				</div>
 			) }
 			{ ! isLoading && counts.length !== 0 && (
