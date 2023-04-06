@@ -93,8 +93,8 @@ export interface UpsellNudgeAutomaticProps extends WithShoppingCartProps {
 	hasSitePlans?: boolean;
 	product: MinimalRequestCartProduct | undefined;
 	productDisplayCost?: string | null;
-	planRawPrice?: number;
-	planDiscountedRawPrice?: number;
+	planRawPrice?: number | null;
+	planDiscountedRawPrice?: number | null;
 	isLoggedIn?: boolean;
 	siteSlug?: string | null;
 	selectedSiteId: string | number | undefined | null;
@@ -113,6 +113,7 @@ interface UpsellNudgeState {
 	cartItem: MinimalRequestCartProduct | null;
 	showPurchaseModal: boolean;
 	isContactInfoValid: boolean;
+	isValidating: boolean;
 }
 
 export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState > {
@@ -122,6 +123,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		cartItem: null,
 		showPurchaseModal: false,
 		isContactInfoValid: false,
+		isValidating: false,
 	};
 
 	componentDidMount() {
@@ -138,15 +140,20 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			return;
 		}
 		if ( this.props.paymentMethodsState.isLoading ) {
+			debug( 'not validating contact info because cards are still loading' );
 			return;
 		}
 		if ( ! this.haveCardsChanged() ) {
 			debug( 'cancelling validating contact info; cards have not changed' );
 			return;
 		}
+		if ( this.state.isValidating ) {
+			debug( 'cancelling validating contact info; validation is in-progress' );
+			return;
+		}
 		if ( this.props.paymentMethodsState.paymentMethods.length === 0 ) {
 			debug( 'not validating contact info because there are no cards' );
-			this.setState( { isContactInfoValid: false } );
+			this.setState( { isContactInfoValid: false, isValidating: false } );
 			return;
 		}
 		debug( 'validating contact info' );
@@ -169,10 +176,16 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			return isContactValidationResponseValid( validationResult );
 		};
 
+		this.setState( {
+			isContactInfoValid: false,
+			isValidating: true,
+		} );
+
 		validateContactDetails().then( ( isValid ) => {
 			debug( 'validation of contact details result is', isValid );
 			this.setState( {
 				isContactInfoValid: isValid,
+				isValidating: false,
 			} );
 		} );
 	};
@@ -205,6 +218,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			BUSINESS_PLAN_UPGRADE_UPSELL === upsellType
 				? 'business-plan-upgrade-upsell-new-design is-wide-layout'
 				: upsellType;
+
 		return (
 			<Main className={ styleClass }>
 				<QueryPaymentCountries />
@@ -277,8 +291,11 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			translate,
 			siteSlug,
 			hasSevenDayRefundPeriod,
-			isLoading,
+			isLoading: isFetchingData,
 		} = this.props;
+
+		const isLoading =
+			isFetchingData || this.props.paymentMethodsState.isLoading || this.state.isValidating;
 
 		switch ( upsellType ) {
 			case CONCIERGE_QUICKSTART_SESSION:
@@ -385,10 +402,7 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 				? this.props.paymentMethodsState.paymentMethods[ 0 ]
 				: undefined;
 		if ( this.isEligibleForOneClickUpsell( buttonAction ) && productToAdd && storedCard ) {
-			if ( ! storedCard ) {
-				return;
-			}
-
+			debug( 'accept upsell allows one-click, has a product, and a stored card' );
 			this.setState( {
 				showPurchaseModal: true,
 			} );
@@ -430,10 +444,14 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			}
 			return;
 		}
+		debug(
+			'accept upsell either does does not allow one-click, does not have a product, or does not have a stored card'
+		);
 
 		// Professional Email needs to add the locally built cartItem to the cart,
 		// as we need to handle validation failures before redirecting to checkout.
 		if ( PROFESSIONAL_EMAIL_UPSELL === upsellType && productToAdd ) {
+			debug( 'accept upsell preparing for email upsell' );
 			// If we don't have an existing destination, calculate the thank you destination for
 			// the original cart contents, and only store it if the cart update succeeds.
 			const destinationFromCookie = retrieveSignupDestination();
@@ -444,8 +462,9 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 			this.props.shoppingCartManager
 				.replaceProductsInCart( [ productToAdd ] )
 				.then( ( newCart ) => {
-					if ( newCart.messages ) {
-						if ( newCart.messages.errors ) {
+					if ( newCart.messages?.errors ) {
+						if ( newCart.messages.errors.length > 0 ) {
+							debug( 'email upsell failed with a cart error in the cart response' );
 							// Stay on the page to let CartMessages show the relevant error.
 							return;
 						}
@@ -458,8 +477,9 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 					debug( 'redirecting because we have professional email' );
 					page( '/checkout/' + siteSlug );
 				} )
-				.catch( () => {
+				.catch( ( error ) => {
 					// Nothing needs to be done here. CartMessages will display the error to the user.
+					debug( 'email upsell failed with a cart error', error );
 				} );
 			return;
 		}
@@ -474,8 +494,13 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 		const { product, siteSlug, upsellType } = this.props;
 		const { cartItem } = this.state;
 
-		if ( ! product || ( upsellType === PROFESSIONAL_EMAIL_UPSELL && ! cartItem ) ) {
+		if ( ! product && upsellType !== PROFESSIONAL_EMAIL_UPSELL ) {
 			debug( 'not eligible for one-click upsell because no product exists' );
+			return false;
+		}
+
+		if ( upsellType === PROFESSIONAL_EMAIL_UPSELL && ! cartItem ) {
+			debug( 'not eligible for one-click upsell because no email product exists' );
 			return false;
 		}
 
@@ -585,10 +610,10 @@ export default connect(
 			props.upgradeItem ?? ''
 		);
 		const annualDiscountPrice = getPlanDiscountedRawPrice( state, selectedSiteId ?? 0, planSlug, {
-			isMonthly: false,
+			returnMonthly: false,
 		} );
 		const annualPrice = getSitePlanRawPrice( state, selectedSiteId ?? 0, planSlug, {
-			isMonthly: false,
+			returnMonthly: false,
 		} );
 
 		const currentPlanTerm = getCurrentPlanTerm( state, selectedSiteId ?? 0 ) ?? TERM_MONTHLY;

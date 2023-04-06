@@ -14,28 +14,28 @@ import AsyncLoad from 'calypso/components/async-load';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import { setActiveTheme } from 'calypso/state/themes/actions';
 import { useSite } from '../../../../hooks/use-site';
 import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE, PLACEHOLDER_SITE_ID, PATTERN_TYPES } from './constants';
+import { SITE_TAGLINE, PLACEHOLDER_SITE_ID, PATTERN_TYPES, NAVIGATOR_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategories from './hooks/use-pattern-categories';
 import usePatternsMapByCategory from './hooks/use-patterns-map-by-category';
+import { usePrefetchImages } from './hooks/use-prefetch-images';
+import useRecipe from './hooks/use-recipe';
 import NavigatorListener from './navigator-listener';
 import Notices, { getNoticeContent } from './notices/notices';
 import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
-import { useAllPatterns, useSectionPatterns } from './patterns-data';
+import { useAllPatterns } from './patterns-data';
 import ScreenCategoryList from './screen-category-list';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenMain from './screen-main';
-import ScreenPatternList from './screen-pattern-list';
 import ScreenSection from './screen-section';
 import { encodePatternId } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
@@ -53,13 +53,9 @@ const PatternAssembler = ( {
 	noticeList,
 	noticeOperations,
 }: StepProps & withNotices.Props ) => {
-	const [ navigatorPath, setNavigatorPath ] = useState( '/' );
-	const [ header, setHeader ] = useState< Pattern | null >( null );
-	const [ footer, setFooter ] = useState< Pattern | null >( null );
-	const [ sections, setSections ] = useState< Pattern[] >( [] );
+	const [ navigatorPath, setNavigatorPath ] = useState( NAVIGATOR_PATHS.MAIN );
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
-	const incrementIndexRef = useRef( 0 );
 	const [ activePosition, setActivePosition ] = useState( -1 );
 	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
@@ -79,21 +75,29 @@ const PatternAssembler = ( {
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const allPatterns = useAllPatterns();
-	const sectionPatterns = useSectionPatterns();
 
 	// Fetching the categories so they are ready when ScreenCategoryList loads
 	const categoriesQuery = usePatternCategories( site?.ID );
 	const categories = ( categoriesQuery?.data || [] ) as Category[];
-	const sectionsMapByCategory = usePatternsMapByCategory( sectionPatterns, categories );
+	const patternsMapByCategory = usePatternsMapByCategory( allPatterns, categories );
+	const {
+		header,
+		footer,
+		sections,
+		colorVariation,
+		fontVariation,
+		setHeader,
+		setFooter,
+		setSections,
+		setColorVariation,
+		setFontVariation,
+		generateKey,
+		snapshotRecipe,
+	} = useRecipe( site?.ID, allPatterns, categories );
 
 	const stylesheet = selectedDesign?.recipe?.stylesheet || '';
 
 	const isEnabledColorAndFonts = isEnabled( 'pattern-assembler/color-and-fonts' );
-
-	const [ selectedColorPaletteVariation, setSelectedColorPaletteVariation ] =
-		useState< GlobalStylesObject | null >( null );
-	const [ selectedFontPairingVariation, setSelectedFontPairingVariation ] =
-		useState< GlobalStylesObject | null >( null );
 
 	const recordTracksEvent = useMemo(
 		() =>
@@ -102,34 +106,23 @@ const PatternAssembler = ( {
 				step: stepName,
 				intent,
 				stylesheet,
-				color_style_title: selectedColorPaletteVariation?.title,
-				font_style_title: selectedFontPairingVariation?.title,
+				color_variation_title: colorVariation?.title,
+				font_variation_title: fontVariation?.title,
 			} ),
-		[
-			flow,
-			stepName,
-			intent,
-			stylesheet,
-			selectedColorPaletteVariation,
-			selectedFontPairingVariation,
-		]
+		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
 	);
 
 	const selectedVariations = useMemo(
-		() =>
-			[ selectedColorPaletteVariation, selectedFontPairingVariation ].filter(
-				Boolean
-			) as GlobalStylesObject[],
-		[ selectedColorPaletteVariation, selectedFontPairingVariation ]
+		() => [ colorVariation, fontVariation ].filter( Boolean ) as GlobalStylesObject[],
+		[ colorVariation, fontVariation ]
 	);
-
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
-	const shouldUnlockGlobalStyles = shouldLimitGlobalStyles && selectedVariations.length > 0;
 
 	const syncedGlobalStylesUserConfig = useSyncGlobalStylesUserConfig(
 		selectedVariations,
 		isEnabledColorAndFonts
 	);
+
+	usePrefetchImages();
 
 	const siteInfo = {
 		title: site?.name,
@@ -179,20 +172,23 @@ const PatternAssembler = ( {
 
 	const trackEventContinue = () => {
 		const patterns = getPatterns();
+		const categories = Array.from( new Set( patterns.map( ( { category } ) => category?.name ) ) );
+
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_CLICK, {
 			pattern_types: [ header && 'header', sections.length && 'section', footer && 'footer' ]
 				.filter( Boolean )
 				.join( ',' ),
-			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
+			pattern_ids: patterns.map( ( { ID } ) => ID ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
-			pattern_categories: patterns.map( ( { category } ) => category?.name ).join( ',' ),
+			pattern_categories: categories.join( ',' ),
+			category_count: categories.length,
 			pattern_count: patterns.length,
 		} );
-		patterns.forEach( ( { id, name, category } ) => {
+		patterns.forEach( ( { ID, name, category } ) => {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
-				pattern_id: id,
+				pattern_id: ID,
 				pattern_name: name,
-				pattern_category: category?.name,
+				pattern_category: category?.slug,
 			} );
 		} );
 	};
@@ -206,9 +202,9 @@ const PatternAssembler = ( {
 			...selectedDesign,
 			recipe: {
 				...selectedDesign?.recipe,
-				header_pattern_ids: header ? [ encodePatternId( header.id ) ] : undefined,
-				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.id ) ),
-				footer_pattern_ids: footer ? [ encodePatternId( footer.id ) ] : undefined,
+				header_pattern_ids: header ? [ encodePatternId( header.ID ) ] : undefined,
+				pattern_ids: sections.filter( Boolean ).map( ( pattern ) => encodePatternId( pattern.ID ) ),
+				footer_pattern_ids: footer ? [ encodePatternId( footer.ID ) ] : undefined,
 			} as DesignRecipe,
 		} as Design );
 
@@ -231,9 +227,14 @@ const PatternAssembler = ( {
 		}
 	};
 
+	const activateFooterPosition = ( hasFooter: boolean ) => {
+		const lastPosition = hasFooter ? sections.length : sections.length - 1;
+		updateActivePatternPosition( lastPosition );
+	};
+
 	const updateFooter = ( pattern: Pattern | null ) => {
 		setFooter( pattern );
-		updateActivePatternPosition( sections.length );
+		activateFooterPosition( !! pattern );
 		if ( pattern ) {
 			if ( footer ) {
 				showNotice( 'replace', pattern );
@@ -261,12 +262,11 @@ const PatternAssembler = ( {
 	};
 
 	const addSection = ( pattern: Pattern ) => {
-		incrementIndexRef.current++;
 		setSections( [
 			...( sections as Pattern[] ),
 			{
 				...pattern,
-				key: `${ incrementIndexRef.current }-${ pattern.id }`,
+				key: generateKey( pattern ),
 			},
 		] );
 		updateActivePatternPosition( sections.length );
@@ -309,15 +309,16 @@ const PatternAssembler = ( {
 		if ( selectedPattern ) {
 			// Inject the selected pattern category or the first category
 			// because it's used in tracks and as pattern name in the list
+			const [ firstCategory ] = Object.values( selectedPattern.categories );
 			selectedPattern.category = categories.find(
-				( { name } ) => name === ( selectedCategory || selectedPattern.categories[ 0 ] )
+				( { name } ) => name === ( selectedCategory || firstCategory?.slug )
 			);
 
 			trackEventPatternSelect( {
 				patternType: type,
-				patternId: selectedPattern.id,
+				patternId: selectedPattern.ID,
 				patternName: selectedPattern.name,
-				patternCategory: selectedPattern.category?.name,
+				patternCategory: selectedPattern.category?.slug,
 			} );
 
 			if ( 'section' === type ) {
@@ -367,11 +368,17 @@ const PatternAssembler = ( {
 		submit?.();
 	};
 
-	const { openModal: openGlobalStylesUpgradeModal, ...globalStylesUpgradeModalProps } =
-		useGlobalStylesUpgradeModal( {
-			onSubmit,
-			recordTracksEvent,
-		} );
+	const {
+		isDismissed: isDismissedGlobalStylesUpgradeModal,
+		shouldUnlockGlobalStyles,
+		openModal: openGlobalStylesUpgradeModal,
+		globalStylesUpgradeModalProps,
+	} = useGlobalStylesUpgradeModal( {
+		hasSelectedColorVariation: !! colorVariation,
+		hasSelectedFontVariation: !! fontVariation,
+		onCheckout: snapshotRecipe,
+		recordTracksEvent,
+	} );
 
 	const onPatternSelectorBack = ( type: string ) => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_BACK_CLICK, {
@@ -383,16 +390,16 @@ const PatternAssembler = ( {
 		const patterns = getPatterns( type );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_SELECT_DONE_CLICK, {
 			pattern_type: type,
-			pattern_ids: patterns.map( ( { id } ) => id ).join( ',' ),
+			pattern_ids: patterns.map( ( { ID } ) => ID ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
-			pattern_categories: patterns.map( ( { category } ) => category?.name ).join( ',' ),
+			pattern_categories: patterns.map( ( { category } ) => category?.slug ).join( ',' ),
 		} );
 	};
 
 	const onContinueClick = () => {
 		trackEventContinue();
 
-		if ( shouldLimitGlobalStyles && selectedVariations.length > 0 ) {
+		if ( shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal ) {
 			openGlobalStylesUpgradeModal();
 			return;
 		}
@@ -434,10 +441,10 @@ const PatternAssembler = ( {
 
 	const onDeleteFooter = () => onSelect( 'footer', null );
 
-	const onScreenColorsSelect = ( variation: GlobalStylesObject ) => {
-		setSelectedColorPaletteVariation( variation );
+	const onScreenColorsSelect = ( variation: GlobalStylesObject | null ) => {
+		setColorVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_PREVIEW_CLICK, {
-			title: variation.title,
+			title: variation?.title,
 		} );
 	};
 
@@ -449,10 +456,10 @@ const PatternAssembler = ( {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_DONE_CLICK );
 	};
 
-	const onScreenFontsSelect = ( variation: GlobalStylesObject ) => {
-		setSelectedFontPairingVariation( variation );
+	const onScreenFontsSelect = ( variation: GlobalStylesObject | null ) => {
+		setFontVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_PREVIEW_CLICK, {
-			title: variation.title,
+			title: variation?.title,
 		} );
 	};
 
@@ -465,7 +472,8 @@ const PatternAssembler = ( {
 	};
 
 	const stepContent = (
-		<div
+		<NavigatorProvider
+			initialPath={ NAVIGATOR_PATHS.MAIN }
 			className={ classnames( 'pattern-assembler__wrapper', {
 				'pattern-assembler__pattern-panel-list--is-open': isPatternPanelListOpen,
 			} ) }
@@ -475,34 +483,37 @@ const PatternAssembler = ( {
 			{ isEnabled( 'pattern-assembler/notices' ) && (
 				<Notices noticeList={ noticeList } noticeOperations={ noticeOperations } />
 			) }
-			<NavigatorProvider className="pattern-assembler__sidebar" initialPath="/">
-				<NavigatorScreen path="/">
+			<div className="pattern-assembler__sidebar">
+				<NavigatorScreen path={ NAVIGATOR_PATHS.MAIN }>
 					<ScreenMain
 						shouldUnlockGlobalStyles={ shouldUnlockGlobalStyles }
+						isDismissedGlobalStylesUpgradeModal={ isDismissedGlobalStylesUpgradeModal }
 						onSelect={ onMainItemSelect }
 						onContinueClick={ onContinueClick }
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path="/header">
+				<NavigatorScreen path={ NAVIGATOR_PATHS.HEADER }>
 					<ScreenHeader
 						selectedPattern={ header }
 						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'header' ) }
 						onDoneClick={ () => onDoneClick( 'header' ) }
+						updateActivePatternPosition={ () => updateActivePatternPosition( -1 ) }
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path="/footer">
+				<NavigatorScreen path={ NAVIGATOR_PATHS.FOOTER }>
 					<ScreenFooter
 						selectedPattern={ footer }
 						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'footer' ) }
 						onDoneClick={ () => onDoneClick( 'footer' ) }
+						updateActivePatternPosition={ () => activateFooterPosition( !! footer ) }
 					/>
 				</NavigatorScreen>
 
-				<NavigatorScreen path="/section">
+				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION }>
 					<ScreenSection
 						patterns={ sections }
 						onAddSection={ onAddSection }
@@ -512,37 +523,28 @@ const PatternAssembler = ( {
 						onMoveDownSection={ onMoveDownSection }
 					/>
 				</NavigatorScreen>
-				<NavigatorScreen path="/section/patterns">
-					{ isEnabled( 'pattern-assembler/categories' ) ? (
-						<ScreenCategoryList
-							categories={ categories }
-							sectionsMapByCategory={ sectionsMapByCategory }
-							onDoneClick={ () => onDoneClick( 'section' ) }
-							replacePatternMode={ sectionPosition !== null }
-							selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
-							onSelect={ onSelect }
-							wrapperRef={ wrapperRef }
-							onTogglePatternPanelList={ setIsPatternPanelListOpen }
-							recordTracksEvent={ recordTracksEvent }
-						/>
-					) : (
-						<ScreenPatternList
-							selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
-							onSelect={ ( selectedPattern ) => onSelect( 'section', selectedPattern, null ) }
-							onBack={ () => onPatternSelectorBack( 'section' ) }
-							onDoneClick={ () => onDoneClick( 'section' ) }
-						/>
-					) }
+				<NavigatorScreen path={ NAVIGATOR_PATHS.SECTION_PATTERNS }>
+					<ScreenCategoryList
+						categories={ categories }
+						patternsMapByCategory={ patternsMapByCategory }
+						onDoneClick={ () => onDoneClick( 'section' ) }
+						replacePatternMode={ sectionPosition !== null }
+						selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
+						onSelect={ onSelect }
+						wrapperRef={ wrapperRef }
+						onTogglePatternPanelList={ setIsPatternPanelListOpen }
+						recordTracksEvent={ recordTracksEvent }
+					/>
 				</NavigatorScreen>
 
 				{ isEnabledColorAndFonts && (
-					<NavigatorScreen path="/color-palettes">
+					<NavigatorScreen path={ NAVIGATOR_PATHS.COLOR_PALETTES }>
 						<AsyncLoad
 							require="./screen-color-palettes"
 							placeholder={ null }
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
-							selectedColorPaletteVariation={ selectedColorPaletteVariation }
+							selectedColorPaletteVariation={ colorVariation }
 							onSelect={ onScreenColorsSelect }
 							onBack={ onScreenColorsBack }
 							onDoneClick={ onScreenColorsDone }
@@ -551,13 +553,13 @@ const PatternAssembler = ( {
 				) }
 
 				{ isEnabledColorAndFonts && (
-					<NavigatorScreen path="/font-pairings">
+					<NavigatorScreen path={ NAVIGATOR_PATHS.FONT_PAIRINGS }>
 						<AsyncLoad
 							require="./screen-font-pairings"
 							placeholder={ null }
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
-							selectedFontPairingVariation={ selectedFontPairingVariation }
+							selectedFontPairingVariation={ fontVariation }
 							onSelect={ onScreenFontsSelect }
 							onBack={ onScreenFontsBack }
 							onDoneClick={ onScreenFontsDone }
@@ -572,7 +574,7 @@ const PatternAssembler = ( {
 						wrapperRef.current?.focus();
 					} }
 				/>
-			</NavigatorProvider>
+			</div>
 			<PatternLargePreview
 				header={ header }
 				sections={ sections }
@@ -585,7 +587,7 @@ const PatternAssembler = ( {
 				onDeleteFooter={ onDeleteFooter }
 			/>
 			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />
-		</div>
+		</NavigatorProvider>
 	);
 
 	if ( ! site?.ID || ! selectedDesign ) {
@@ -596,7 +598,7 @@ const PatternAssembler = ( {
 		<StepContainer
 			className="pattern-assembler__sidebar-revamp"
 			stepName="pattern-assembler"
-			hideBack={ navigatorPath !== '/' || flow === WITH_THEME_ASSEMBLER_FLOW }
+			hideBack={ navigatorPath !== NAVIGATOR_PATHS.MAIN || flow === WITH_THEME_ASSEMBLER_FLOW }
 			goBack={ onBack }
 			goNext={ goNext }
 			isHorizontalLayout={ false }
@@ -606,14 +608,13 @@ const PatternAssembler = ( {
 				<PatternAssemblerContainer
 					siteId={ site?.ID }
 					stylesheet={ stylesheet }
-					patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.id ) ) }
+					patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ) }
 					siteInfo={ siteInfo }
 				>
 					{ stepContent }
 				</PatternAssemblerContainer>
 			}
 			recordTracksEvent={ recordTracksEvent }
-			stepSectionName={ navigatorPath !== '/' ? 'pattern-selector' : undefined }
 		/>
 	);
 };

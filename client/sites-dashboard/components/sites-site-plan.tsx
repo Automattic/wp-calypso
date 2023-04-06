@@ -1,3 +1,4 @@
+import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -32,6 +33,8 @@ const STAGING_PLAN_LABEL = 'Staging';
 
 export const SitePlan = ( { site, userId }: SitePlanProps ) => {
 	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, site.ID ) );
+	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+
 	return (
 		<SitePlanContainer>
 			{ ! isWpcomStagingSite ? (
@@ -47,6 +50,7 @@ export const SitePlan = ( { site, userId }: SitePlanProps ) => {
 								plan={ site.plan }
 								isSiteOwner={ site?.site_owner === userId }
 								checkoutUrl={ `/checkout/${ site.slug }/${ site.plan?.product_slug }` }
+								hideRenewLink={ isECommerceTrialSite }
 							/>
 						</PlanRenewNagContainer>
 					) }

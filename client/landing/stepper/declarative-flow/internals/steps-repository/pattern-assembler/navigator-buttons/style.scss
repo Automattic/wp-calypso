@@ -3,7 +3,8 @@
 .pattern-assembler {
 	.navigator-button {
 		height: 44px;
-		padding: 10px 8px;
+		padding: 0 8px;
+		margin: 0 -8px;
 		font-size: $font-body-small;
 		font-weight: 400;
 		letter-spacing: -0.15px;

@@ -131,18 +131,10 @@ export const getWooExpressMediumFeatureSets = ( {
 					subtitle: translate( 'Enable gift wrapping/messages or custom pricing.' ),
 				},
 				{
-					title: translate( 'Unlimited images', { textOnly: true } ),
-					subtitle: translate( 'Add any number of images to your product variations.' ),
-				},
-				{
 					title: translate( 'Product recommendations', { textOnly: true } ),
 					subtitle: translate(
 						'Earn more revenue with automated upsell and cross-sell product recommendations.'
 					),
-				},
-				{
-					title: translate( 'Take pre-orders', { textOnly: true } ),
-					subtitle: translate( 'Let customers order products before they’re available.' ),
 				},
 			],
 		},
@@ -240,7 +232,7 @@ export const getWooExpressMediumFeatureSets = ( {
 				{
 					title: translate( 'Simplify returns and exchanges', { textOnly: true } ),
 					subtitle: translate(
-						'Manage the RMA process, add warranties to products and let customers request/manage returns from their account.'
+						'Manage the return process, add warranties to products and let customers request/manage returns from their account.'
 					),
 				},
 			],

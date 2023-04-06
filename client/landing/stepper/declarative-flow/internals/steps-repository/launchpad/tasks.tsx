@@ -25,6 +25,11 @@ export const tasks: Task[] = [
 		disabled: false,
 	},
 	{
+		id: 'first_post_published_newsletter',
+		completed: false,
+		disabled: false,
+	},
+	{
 		id: 'design_selected',
 		completed: true,
 		disabled: true,
@@ -94,6 +99,16 @@ export const tasks: Task[] = [
 		completed: false,
 		disabled: true,
 	},
+	{
+		id: 'stripe_account_connected',
+		completed: false,
+		disabled: false,
+	},
+	{
+		id: 'newsletter_plan_created',
+		completed: false,
+		disabled: false,
+	},
 ];
 
 const linkInBioTaskList = [
@@ -110,7 +125,9 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'plan_selected',
 		'subscribers_added',
 		'verify_email',
-		'first_post_published',
+		'stripe_account_connected',
+		'newsletter_plan_created',
+		'first_post_published_newsletter',
 	],
 	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
 	[ LINK_IN_BIO_TLD_FLOW ]: linkInBioTaskList,
@@ -125,17 +142,10 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	build: [
 		'setup_general',
 		'design_selected',
-		DOMAIN_UPSELL,
 		'first_post_published',
 		'design_edited',
 		'site_launched',
 	],
-	write: [
-		'setup_write',
-		'design_selected',
-		DOMAIN_UPSELL,
-		'first_post_published',
-		'site_launched',
-	],
+	write: [ 'setup_write', 'design_selected', 'first_post_published', 'site_launched' ],
 	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
 };

@@ -5,7 +5,6 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
-import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import useStripProductsFromUrl from './use-strip-products-from-url';
 import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
@@ -84,8 +83,6 @@ export default function usePrepareProductsForCart( {
 		'and jetpackPurchaseToken',
 		jetpackPurchaseToken
 	);
-
-	useFetchProductsIfNotLoaded();
 
 	const addHandler = chooseAddHandler( {
 		isLoading: state.isLoading,
@@ -322,7 +319,15 @@ function useAddRenewalItems( {
 		}
 		debug( 'preparing renewals requested in url', productsForCart );
 		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
-	}, [ addHandler, translate, originalPurchaseId, productAlias, dispatch, isGiftPurchase ] );
+	}, [
+		addHandler,
+		translate,
+		originalPurchaseId,
+		productAlias,
+		dispatch,
+		isGiftPurchase,
+		sitelessCheckoutType,
+	] );
 }
 
 function useAddProductFromSlug( {

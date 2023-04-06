@@ -276,7 +276,7 @@ __metadata:
     mailosaur: ^8.4.0
     nock: ^12.0.3
     node-fetch: ^2.6.7
-    playwright: ^1.30
+    playwright: ^1.32
     totp-generator: ^0.0.12
     typescript: ^4.7.4
   languageName: unknown
@@ -498,11 +498,11 @@ __metadata:
     "@automattic/format-currency": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
+    "@remix-run/router": ^1.5.0
     "@types/validator": ^13.7.1
     "@wordpress/api-fetch": ^6.19.0
     "@wordpress/data-controls": ^2.22.0
     "@wordpress/deprecated": ^3.22.0
-    "@wordpress/url": ^3.23.0
     fast-json-stable-stringify: ^2.1.0
     i18n-calypso: "workspace:^"
     jest-fetch-mock: ^3.0.3
@@ -994,42 +994,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@automattic/launch@workspace:^, @automattic/launch@workspace:packages/launch":
-  version: 0.0.0-use.local
-  resolution: "@automattic/launch@workspace:packages/launch"
-  dependencies:
-    "@automattic/calypso-analytics": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/data-stores": "workspace:^"
-    "@automattic/domain-picker": "workspace:^"
-    "@automattic/i18n-utils": "workspace:^"
-    "@automattic/onboarding": "workspace:^"
-    "@automattic/plans-grid": "workspace:^"
-    "@automattic/shopping-cart": "workspace:^"
-    "@automattic/typography": "workspace:^"
-    "@testing-library/react": ^12.1.3
-    "@wordpress/base-styles": ^4.13.0
-    "@wordpress/components": ^22.1.0
-    "@wordpress/icons": ^9.13.0
-    "@wordpress/react-i18n": ^3.20.0
-    "@wordpress/url": ^3.23.0
-    classnames: ^2.3.1
-    copyfiles: ^2.3.0
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    react-router-dom: ^5.1.2
-    tslib: ^2.3.0
-    typescript: ^4.7.4
-    use-debounce: ^3.1.0
-  peerDependencies:
-    "@wordpress/data": ^7.6.0
-    "@wordpress/element": ^4.20.0
-    "@wordpress/i18n": ^4.22.0
-    reakit-utils: ^0.15.1
-    redux: ^4.1.2
-  languageName: unknown
-  linkType: soft
-
 "@automattic/load-script@workspace:^, @automattic/load-script@workspace:packages/load-script":
   version: 0.0.0-use.local
   resolution: "@automattic/load-script@workspace:packages/load-script"
@@ -1187,6 +1151,7 @@ __metadata:
     jest: ^27.2.4
     lodash: ^4.17.21
     mkdirp: ^1.0.4
+    moment: ^2.26.0
     node-fetch: ^2.6.6
     page: ^1.11.5
     path-browserify: ^1.0.1
@@ -1222,14 +1187,13 @@ __metadata:
     classnames: ^2.3.1
     copyfiles: ^2.3.0
     css-loader: ^3.6.0
-    history: ^5.1.0
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-router-dom: ^5.1.2
+    react-router-dom: ^6.10.0
     redux: ^4.1.2
     sass-loader: ^10.1.1
     style-loader: ^1.2.1
-    tslib: ^2.3.0
+    tslib: ^2.5.0
     typescript: ^4.7.4
     webpack: ^5.63.0
     wpcom-proxy-request: "workspace:^"
@@ -1556,27 +1520,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/subscription-manager@workspace:^, @automattic/subscription-manager@workspace:packages/subscription-manager":
-  version: 0.0.0-use.local
-  resolution: "@automattic/subscription-manager@workspace:packages/subscription-manager"
-  dependencies:
-    "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/data-stores": "workspace:^"
-    "@automattic/typography": "workspace:^"
-    "@automattic/wpcom-template-parts": "workspace:^"
-    i18n-calypso: "workspace:^"
-    react: ^17.0.2
-    react-router-dom: ^5.1.2
-    typescript: ^4.5.5
-  peerDependencies:
-    "@wordpress/data": ^7.6.0
-    react: ^17.0.2
-    react-dom: ^17.0.2
-    reakit-utils: ^0.15.1
-    redux: ^4.1.2
-  languageName: unknown
-  linkType: soft
-
 "@automattic/tour-kit@workspace:^, @automattic/tour-kit@workspace:packages/tour-kit":
   version: 0.0.0-use.local
   resolution: "@automattic/tour-kit@workspace:packages/tour-kit"
@@ -1759,6 +1702,7 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/calypso-url": "workspace:^"
     "@automattic/typography": "workspace:^"
     "@babel/runtime": ^7.17.2
     "@wordpress/base-styles": ^4.13.0
@@ -1835,14 +1779,11 @@ __metadata:
     "@automattic/calypso-jest": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/components": "workspace:^"
-    "@automattic/composite-checkout": "workspace:^"
     "@automattic/data-stores": "workspace:^"
-    "@automattic/domain-picker": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@automattic/launch": "workspace:^"
     "@automattic/newspack-blocks": ^1.60.0
     "@automattic/onboarding": "workspace:^"
     "@automattic/page-pattern-modal": "workspace:^"
@@ -1853,7 +1794,6 @@ __metadata:
     "@automattic/viewport": "workspace:^"
     "@automattic/whats-new": "workspace:^"
     "@babel/core": ^7.17.5
-    "@emotion/react": ^11.4.1
     "@popperjs/core": ^2.10.2
     "@sentry/browser": ^7.33.0
     "@testing-library/jest-dom": ^5.16.2
@@ -1873,7 +1813,6 @@ __metadata:
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
     "@wordpress/dom-ready": ^3.22.0
     "@wordpress/edit-post": ^6.19.0
-    "@wordpress/editor": ^12.21.0
     "@wordpress/element": ^4.20.0
     "@wordpress/env": ^4.7.0
     "@wordpress/escape-html": ^2.22.0
@@ -1891,7 +1830,6 @@ __metadata:
     "@wordpress/plugins": ^4.20.0
     "@wordpress/primitives": ^3.20.0
     "@wordpress/private-apis": ^0.9.0
-    "@wordpress/react-i18n": ^3.20.0
     "@wordpress/readable-js-assets-webpack-plugin": ^2.5.0
     "@wordpress/rich-text": ^5.20.0
     "@wordpress/scripts": ^24.6.0
@@ -4771,6 +4709,13 @@ __metadata:
   version: 1.2.1
   resolution: "@redux-saga/types@npm:1.2.1"
   checksum: 38dc478c5e20dc52511ee122d0011fc71d26266a300ed1b66ec7863c8075aa27cc1ef1ba79dcc4aac0682912e3257ff4cddc52b9be55ee873a4e8f1a1bc7ee7c
+  languageName: node
+  linkType: hard
+
+"@remix-run/router@npm:1.5.0, @remix-run/router@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@remix-run/router@npm:1.5.0"
+  checksum: 63c3695df0470943213f8144183501bbb6a8176671f2ed4547ffa1852f79fd71054b4b4a715795e9e250198991d9e6e121b3fcab9c27df37871dcdfbc8de83a1
   languageName: node
   linkType: hard
 
@@ -9500,7 +9445,7 @@ __metadata:
     keytar: ^7.7.0
     lodash: ^4.17.21
     make-dir: ^3.1.0
-    playwright: ^1.30
+    playwright: ^1.32
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
@@ -11756,7 +11701,6 @@ __metadata:
     "@automattic/social-previews": "workspace:^"
     "@automattic/state-utils": "workspace:^"
     "@automattic/subscriber": "workspace:^"
-    "@automattic/subscription-manager": "workspace:^"
     "@automattic/tree-select": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
@@ -11884,8 +11828,8 @@ __metadata:
     react-modal: ^3.14.3
     react-query: ^3.32.1
     react-redux: ^7.2.6
-    react-router: ^5.1.2
-    react-router-dom: ^5.1.2
+    react-router: ^6.10.0
+    react-router-dom: ^6.10.0
     react-test-renderer: ^17.0.2
     react-transition-group: ^4.3.0
     reakit: ^1.2.3
@@ -11907,6 +11851,8 @@ __metadata:
     tracekit: ^0.4.5
     twemoji: ^12.1.4
     ua-parser-js: ^0.7.22
+    uplot: ^1.6.24
+    uplot-react: ^1.1.4
     use-debounce: ^3.1.0
     util: ^0.12.3
     utility-types: ^3.10.0
@@ -25321,23 +25267,23 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.30.0":
-  version: 1.30.0
-  resolution: "playwright-core@npm:1.30.0"
+"playwright-core@npm:1.32.1":
+  version: 1.32.1
+  resolution: "playwright-core@npm:1.32.1"
   bin:
     playwright: cli.js
-  checksum: cad74ca8ff028f4e65336323f7eec54497e344810c2f2e9c1ffaf836dcc20eb15c073aae6c5e994eaf800b75ea0f0817ffb60ff7ecaadc59229df54779d5f429
+  checksum: 604d6eecadc274e099ceac7d55422ae29a5d9a1f9efeaab4fdd7fdc55f79dfd8ee8b9e9941ca2cb64f00003c5362a4f4571fb0ac79f875a08b30a74366528413
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.30":
-  version: 1.30.0
-  resolution: "playwright@npm:1.30.0"
+"playwright@npm:^1.32":
+  version: 1.32.1
+  resolution: "playwright@npm:1.32.1"
   dependencies:
-    playwright-core: 1.30.0
+    playwright-core: 1.32.1
   bin:
     playwright: cli.js
-  checksum: 49bbae502f45cdc7d5977d073080b6eb1aa871a14fa1aab23a23f331bdbc95bcc5a0dac00c01c4589231a8bb3fd4b7c154bfc1a47d80ea82c6aeb155275760be
+  checksum: 53a11132b833e1e7b474659b801cf77b2bdab466bf3d2a0009c46616ee70f9928bda6fa1d548e62903b21f0f80d4d26c7d69cd60f3a8415e829b652024a9db21
   languageName: node
   linkType: hard
 
@@ -27103,7 +27049,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:^5.1.2, react-router-dom@npm:^5.3.0":
+"react-router-dom@npm:^5.3.0":
   version: 5.3.4
   resolution: "react-router-dom@npm:5.3.4"
   dependencies:
@@ -27120,20 +27066,20 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:^6.0.0":
-  version: 6.0.2
-  resolution: "react-router-dom@npm:6.0.2"
+"react-router-dom@npm:^6.0.0, react-router-dom@npm:^6.10.0":
+  version: 6.10.0
+  resolution: "react-router-dom@npm:6.10.0"
   dependencies:
-    history: ^5.1.0
-    react-router: 6.0.2
+    "@remix-run/router": 1.5.0
+    react-router: 6.10.0
   peerDependencies:
     react: ">=16.8"
     react-dom: ">=16.8"
-  checksum: f34d30742631813ff5a9bff2dc20adc0ae3932c956cf5b1ecaeeb5287f41c4dcb612e2eb2a98244ee5cc6f6c6827ebc91c771ebb3beb7eca103c5e4b8d251f24
+  checksum: c62e4b4aac2067e64af632e113b8db0626b846ec88fb668e84492ceb04179a0789120844263e35dead1e13f70f6554c1a463c7c33d8feed579bf5a2a02f916f4
   languageName: node
   linkType: hard
 
-"react-router@npm:5.3.4, react-router@npm:^5.1.2":
+"react-router@npm:5.3.4":
   version: 5.3.4
   resolution: "react-router@npm:5.3.4"
   dependencies:
@@ -27152,14 +27098,14 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"react-router@npm:6.0.2, react-router@npm:^6.0.0":
-  version: 6.0.2
-  resolution: "react-router@npm:6.0.2"
+"react-router@npm:6.10.0, react-router@npm:^6.0.0, react-router@npm:^6.10.0":
+  version: 6.10.0
+  resolution: "react-router@npm:6.10.0"
   dependencies:
-    history: ^5.1.0
+    "@remix-run/router": 1.5.0
   peerDependencies:
     react: ">=16.8"
-  checksum: 60f9b079c03b6d213740cda937ba7265c2b6ce31d3e9cd9155fa64fb5b62fa5b15cfa9a487fb272809d935e4238697833d5910bb9aaed89b948c0071e3e5c399
+  checksum: 83b8d6a7d1572403b9227045148b34253d3e705dd196d5beff9be2e3c044ba1136100a6e45c219c109de7c764d548302242ab029b0df4c5536b8aaddb3b1aa57
   languageName: node
   linkType: hard
 
@@ -31720,10 +31666,10 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"tslib@npm:>=2.3.0, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.0":
-  version: 2.4.0
-  resolution: "tslib@npm:2.4.0"
-  checksum: eb19bda3ae545b03caea6a244b34593468e23d53b26bf8649fbc20fce43e9b21a71127fd6d2b9662c0fe48ee6ff668ead48fd00d3b88b2b716b1c12edae25b5d
+"tslib@npm:>=2.3.0, tslib@npm:^2.0.0, tslib@npm:^2.0.1, tslib@npm:^2.0.3, tslib@npm:^2.1.0, tslib@npm:^2.3.0, tslib@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "tslib@npm:2.5.0"
+  checksum: e32fc99cc730dd514e53c44e668d76016e738f0bcc726aad5dbd2d335cf19b87a95a9b1e4f0a9993e370f1d702b5e471cdd4acabcac428a3099d496b9af2021e
   languageName: node
   linkType: hard
 
@@ -32405,6 +32351,23 @@ fsevents@^1.2.7:
     semver-diff: ^3.1.1
     xdg-basedir: ^4.0.0
   checksum: 0dde6db5ac1e5244e1f8bf5b26895a0d53c00797ea2bdbc1302623dd1aecab5cfb88b4f324d482cbd4c8b089464383d8c83db64dec5798ec0136820e22478e47
+  languageName: node
+  linkType: hard
+
+"uplot-react@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "uplot-react@npm:1.1.4"
+  peerDependencies:
+    react: ">=16.8.6"
+    uplot: ^1.6.7
+  checksum: 58126a31ed9b16309a1fcd53289649d557c13406f606162d9fbfe824c48cdd9d0daf275fccd69303d3179582bcd93afa9f2d528a65720a8808b1eb86e7d11372
+  languageName: node
+  linkType: hard
+
+"uplot@npm:^1.6.24":
+  version: 1.6.24
+  resolution: "uplot@npm:1.6.24"
+  checksum: 90282fd1ef29440c20b2f73a038a8e5c421adafd1e896ea298739d3a8e687bfd94bbf48d8ed5b98f8dbad2c67d46a1be74f17c4c8bcf171360f216abd5d13f48
   languageName: node
   linkType: hard
 
@@ -33726,6 +33689,7 @@ fsevents@^1.2.7:
     lunr: ^2.3.8
     mixedindentlint: ^1.2.0
     mkdirp: ^1.0.4
+    moment: ^2.26.0
     ncp: ^2.0.0
     nock: ^12.0.3
     node-fetch: ^2.6.6
@@ -33800,7 +33764,7 @@ fsevents@^1.2.7:
     lodash: ^4.17.20
     mailosaur: ^8.4.0
     node-fetch: ^2.6.1
-    playwright: ^1.30
+    playwright: ^1.32
     postcss: ^8.3.11
     webpack: ^5.63.0
   languageName: unknown

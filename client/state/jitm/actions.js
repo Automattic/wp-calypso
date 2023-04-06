@@ -89,15 +89,14 @@ export const fetchJITM = ( siteId, messagePath, locale ) => ( {
  * Returns an action thunk that opens the help center from a JITM CTA
  *
  * @param {Object} payload The payload coming from the JITM CTA
- * @param {Location[]} payload.history The history to pass in, allowing users to go back to the previous page
- * @param {number} payload.index The index of where we are in the history
+ * @param {Location[]} payload.route The route to open the help center to
  * @returns {Function} The action thunk
  */
 export const openHelpCenterFromJITM =
-	( { history = {}, index = 0 } ) =>
+	( { route } ) =>
 	( dispatch ) => {
 		const HELP_CENTER_STORE = HelpCenter.register();
-		dataStoreDispatch( HELP_CENTER_STORE ).setRouterState( history, index );
+		dataStoreDispatch( HELP_CENTER_STORE ).setInitialRoute( route );
 		dataStoreDispatch( HELP_CENTER_STORE ).setShowHelpCenter( true );
 		dataStoreDispatch( HELP_CENTER_STORE ).setChatTag( 'churn_chat_prompt' );
 		dispatch( {

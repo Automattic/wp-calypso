@@ -1,6 +1,7 @@
 import { useTranslate } from 'i18n-calypso';
 import { isCountryInEu } from '../is-country-in-eu';
 import type { BillingTransaction } from 'calypso/state/billing-transactions/types';
+import type { LocalizeProps } from 'i18n-calypso';
 
 interface VatVendorInfo {
 	/**
@@ -37,7 +38,7 @@ export function getVatVendorInfo(
 	 */
 	date: string,
 
-	translate: ReturnType< typeof useTranslate >
+	translate: LocalizeProps[ 'translate' ]
 ): VatVendorInfo | undefined {
 	const automatticVatAddress = [
 		'Aut O’Mattic Ltd.',
@@ -95,7 +96,7 @@ export function getVatVendorInfo(
 	if ( country === 'JP' ) {
 		return {
 			country,
-			taxName: translate( 'VAT', { textOnly: true } ),
+			taxName: translate( 'CT', { textOnly: true } ),
 			address: automatticVatAddress,
 			vatId: '4700150101102',
 		};
@@ -113,7 +114,12 @@ export function VatVendorDetails( { transaction }: { transaction: BillingTransac
 
 	return (
 		<li>
-			<strong>{ translate( 'Vendor VAT Details' ) }</strong>
+			<strong>
+				{ translate( 'Vendor %(taxName)s Details', {
+					args: { taxName: vendorInfo.taxName },
+					comment: 'taxName is a localized tax, like VAT or GST',
+				} ) }
+			</strong>
 			<span>
 				{ vendorInfo.address.map( ( addressLine ) => (
 					<div key={ addressLine }>{ addressLine }</div>

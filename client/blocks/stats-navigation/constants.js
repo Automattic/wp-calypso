@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -25,13 +26,18 @@ const insights = {
 	path: '/stats/insights',
 	showIntervals: false,
 };
+const subscribers = {
+	label: translate( 'Subscribers' ),
+	path: '/stats/subscribers',
+	showIntervals: false,
+};
 const store = {
 	label: translate( 'Store' ),
 	path: '/store/stats/orders',
 	showIntervals: true,
 };
 const wordads = {
-	label: 'Ads',
+	label: translate( 'Ads' ),
 	path: '/stats/ads',
 	showIntervals: true,
 };
@@ -41,13 +47,23 @@ const googleMyBusiness = {
 	showIntervals: false,
 };
 
-export const navItems = {
-	traffic,
-	insights,
-	store,
-	wordads,
-	googleMyBusiness,
+const assembleNavItems = () => {
+	const navItems = {
+		traffic,
+		insights,
+		store,
+		wordads,
+		googleMyBusiness,
+	};
+
+	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
+		navItems.subscribers = subscribers;
+	}
+
+	return navItems;
 };
+
+export const navItems = assembleNavItems();
 
 /**
  * Define properties with translatable strings getters
@@ -61,7 +77,7 @@ Object.defineProperty( year, 'label', { get: () => translate( 'Years' ) } );
 Object.defineProperty( traffic, 'label', { get: () => translate( 'Traffic' ) } );
 Object.defineProperty( insights, 'label', { get: () => translate( 'Insights' ) } );
 Object.defineProperty( store, 'label', { get: () => translate( 'Store' ) } );
-Object.defineProperty( wordads, 'label', { get: () => 'Ads' } );
+Object.defineProperty( wordads, 'label', { get: () => translate( 'Ads' ) } );
 Object.defineProperty( googleMyBusiness, 'label', {
 	get: () => translate( 'Google My Business' ),
 } );

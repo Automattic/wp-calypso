@@ -5,6 +5,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
 import wpcom from 'calypso/lib/wp';
 import {
+	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
@@ -88,6 +89,8 @@ const newsletter: Flow = {
 
 			switch ( _currentStep ) {
 				case 'intro':
+					clearSignupDestinationCookie();
+
 					if ( userIsLoggedIn ) {
 						return navigate( 'newsletterSetup' );
 					}

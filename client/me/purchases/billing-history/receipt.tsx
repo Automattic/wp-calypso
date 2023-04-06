@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, CompactCard } from '@automattic/components';
+import { formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -318,7 +319,10 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 					) }
 				</td>
 				<td className={ 'billing-history__receipt-amount ' + transaction.credit }>
-					{ item.amount }
+					{ formatCurrency( item.amount_integer, item.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ) }
 					{ transaction.credit && (
 						<span className="billing-history__credit-badge">{ translate( 'Refund' ) }</span>
 					) }

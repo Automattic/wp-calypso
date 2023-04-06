@@ -53,7 +53,7 @@
 
 .backup-retention-management .retention-form {
 	&__instructions {
-		margin-bottom: 24px;
+		margin-bottom: 16px;
 		font-size: 1rem;
 		font-weight: 400;
 		line-height: 24px;
@@ -78,6 +78,32 @@
 
 	&__submit {
 		text-align: right;
+	}
+
+	&__short-retention-notice {
+		font-size: 0.75rem;
+		margin-bottom: 16px;
+		background: #f7ebec;
+		padding: 12px;
+		font-weight: 400;
+		color: var(--studio-gray-80);
+
+		a {
+			font-weight: 600;
+			text-decoration: underline;
+			color: var(--studio-gray-80);
+
+			.gridicon {
+				position: relative;
+				top: 4px;
+				height: 16px;
+				margin-left: 1px;
+			}
+		}
+
+		.highlight-days {
+			color: var(--studio-red-50);
+		}
 	}
 }
 

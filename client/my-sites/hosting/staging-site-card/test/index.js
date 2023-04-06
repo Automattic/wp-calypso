@@ -2,14 +2,24 @@
  * @jest-environment jsdom
  */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
+import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { StagingSiteCard } from '..';
 import { useHasSiteAccess } from '../use-has-site-access';
 
 const addStagingSiteBtnName = 'Add staging site';
 const manageStagingBtnName = 'Manage staging site';
+const INITIAL_STATE = {
+	sites: {
+		items: {},
+	},
+};
+const mockStore = configureStore();
+const store = mockStore( INITIAL_STATE );
 
 const mockUseDispatch = jest.fn();
 jest.mock( 'react-redux', () => ( {
@@ -38,6 +48,15 @@ jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site', ()
 		return {
 			addStagingSite: jest.fn(),
 			loading: false,
+		};
+	} ),
+} ) );
+
+jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota', () => ( {
+	__esModule: true,
+	useHasValidQuotaQuery: jest.fn( () => {
+		return {
+			data: true,
 		};
 	} ),
 } ) );
@@ -74,7 +93,6 @@ jest.mock( 'calypso/my-sites/hosting/staging-site-card/use-has-site-access', () 
 
 const defaultProps = {
 	disabled: false,
-	spaceQuotaExceededForStaging: false,
 	siteId: 1,
 	translate: ( text ) => text,
 };
@@ -124,7 +142,11 @@ describe( 'StagingSiteCard component', () => {
 		} );
 		useCheckStagingSiteStatus.mockReturnValue( 'complete' );
 
-		render( <StagingSiteCard { ...defaultProps } /> );
+		render(
+			<Provider store={ store }>
+				<StagingSiteCard { ...defaultProps } />
+			</Provider>
+		);
 
 		expect( screen.getByText( manageStagingBtnName ) ).toBeVisible();
 	} );
@@ -135,14 +157,22 @@ describe( 'StagingSiteCard component', () => {
 			isLoading: false,
 		} );
 
-		const { rerender } = render( <StagingSiteCard { ...defaultProps } /> );
+		const { rerender } = render(
+			<Provider store={ store }>
+				<StagingSiteCard { ...defaultProps } />
+			</Provider>
+		);
 
 		expect( screen.queryByTestId( 'transferring-staging-content' ) ).not.toBeInTheDocument();
 		useAddStagingSiteMutation.mockReturnValueOnce( {
 			addStagingSite: jest.fn(),
 			isLoading: true,
 		} );
-		rerender( <StagingSiteCard { ...defaultProps } /> );
+		rerender(
+			<Provider store={ store }>
+				<StagingSiteCard { ...defaultProps } />
+			</Provider>
+		);
 		await waitFor( () =>
 			expect( screen.getByTestId( 'transferring-staging-content' ) ).toBeVisible()
 		);
@@ -151,13 +181,12 @@ describe( 'StagingSiteCard component', () => {
 	it( 'shows quota exceeded error message', async () => {
 		useStagingSite.mockReturnValue( { data: [], isLoading: false } );
 
-		const { rerender } = render(
-			<StagingSiteCard { ...defaultProps } spaceQuotaExceededForStaging={ false } />
-		);
+		const { rerender } = render( <StagingSiteCard { ...defaultProps } /> );
 
 		expect( screen.queryByTestId( 'quota-message' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( addStagingSiteBtnName ) ).not.toBeDisabled();
-		rerender( <StagingSiteCard { ...defaultProps } spaceQuotaExceededForStaging={ true } /> );
+		useHasValidQuotaQuery.mockReturnValueOnce( { data: false } );
+		rerender( <StagingSiteCard { ...defaultProps } /> );
 
 		expect( screen.getByTestId( 'quota-message' ) ).toBeVisible();
 	} );

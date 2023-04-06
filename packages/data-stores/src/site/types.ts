@@ -272,7 +272,6 @@ export interface Cart {
 	credits_display: string;
 	credits_integer: number;
 	allowed_payment_methods: unknown[];
-	create_new_blog: boolean;
 	messages: Record< 'errors' | 'success', unknown >;
 }
 
@@ -462,6 +461,8 @@ export interface GlobalStyles {
 }
 
 export interface LaunchPadCheckListTasksStatuses {
+	newsletter_plan_created: boolean;
+	stripe_connected?: boolean;
 	first_post_published?: boolean;
 	links_edited?: boolean;
 	site_launched?: boolean;

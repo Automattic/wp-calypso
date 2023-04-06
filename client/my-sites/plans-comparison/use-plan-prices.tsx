@@ -7,6 +7,8 @@ import {
 import { useSelector } from 'react-redux';
 import { getPlanRawPrice, getDiscountedRawPrice } from 'calypso/state/plans/selectors';
 import type { WPComPlan } from '@automattic/calypso-products';
+import type { IAppState } from 'calypso/state/types';
+
 export interface PlanPrices {
 	price: number;
 	originalPrice?: number;
@@ -32,7 +34,7 @@ function toMonthlyPrice( plan: WPComPlan ) {
 }
 
 export default function usePlanPrices( plans: WPComPlan[] ): PlanPrices[] {
-	return useSelector( ( state ) => {
+	return useSelector( ( state: IAppState ) => {
 		return plans.map( ( plan ) => {
 			const productId = plan.getProductId();
 			const [ price, discountPrice ] = [

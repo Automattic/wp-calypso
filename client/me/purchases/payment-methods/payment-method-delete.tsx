@@ -1,5 +1,4 @@
 import { Button } from '@automattic/components';
-import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -39,15 +38,15 @@ const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 			} );
 	}, [ deletePaymentMethod, closeDialog, card, translate, reduxDispatch ] );
 
+	/* translators: %s is the name of the payment method (usually the last 4 digits of the card but could be a proper name for PayPal). */
+	const deleteText = translate( 'Delete the "%s" payment method', {
+		textOnly: true,
+		args: [ 'card_last_4' in card ? card.card_last_4 : card.name ],
+	} );
+
 	const renderDeleteButton = () => {
 		const text = isDeleting ? translate( 'Deleting…' ) : translate( 'Delete this payment method' );
-		const ariaText = isDeleting
-			? translate( 'Deleting…' )
-			: /* translators: %s is the name of the payment method (usually the last 4 digits of the card but could be a proper name for PayPal). */
-			  sprintf(
-					translate( 'Delete the "%s" payment method' ),
-					'card_last_4' in card ? card.card_last_4 : card.name
-			  );
+		const ariaText = isDeleting ? translate( 'Deleting…' ) : deleteText;
 
 		return (
 			<Button

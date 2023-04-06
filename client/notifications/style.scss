@@ -216,4 +216,22 @@ div.reader-notifications__panel {
 		}
 	}
 }
-
+@media only screen and (max-width: 783px) {
+	div.reader-notifications__panel #wpnc-panel.wpnc__main {
+		&.wpnt-open {
+			left: 0;
+			min-width: 100%;
+		}
+		.wpnc__list-view .wpnc__selected-note {
+			box-shadow: none;
+		}
+		.wpnc__note-list {
+			max-width: 400px;
+			right: 0;
+		}
+		.wpnc__single-view {
+			animation-name: wpnc__slideIn;
+			left: 0;
+		}
+	}
+}

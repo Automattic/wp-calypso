@@ -1,5 +1,5 @@
-import { Spinner, Button } from '@automattic/components';
-import { Reader } from '@automattic/data-stores';
+import { Button } from '@automattic/components';
+import { Reader, SubscriptionManager } from '@automattic/data-stores';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import { FormEvent } from 'react';
@@ -14,15 +14,14 @@ type DeliveryWindowHourType = Reader.DeliveryWindowHourType;
 
 type SubscriptionUserSettings = Partial< {
 	mail_option: EmailFormatType;
-	delivery_day: DeliveryWindowDayType; // 0-6, 0 is Sunday
-	delivery_hour: DeliveryWindowHourType; // 0-23, 0 is midnight
+	delivery_day: DeliveryWindowDayType;
+	delivery_hour: DeliveryWindowHourType;
 	blocked: boolean;
 	email: string;
 } >;
 
 type UserSettingsProps = {
 	value?: SubscriptionUserSettings;
-	loading: boolean;
 };
 
 type NoticeProps = {
@@ -30,11 +29,12 @@ type NoticeProps = {
 	message: string;
 };
 
+const DEFAULT_VALUE = {};
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- until we start using any of these props
-const UserSettings = ( { value = {}, loading }: UserSettingsProps ) => {
-	const [ formState, setFormState ] = useState< SubscriptionUserSettings >( value );
-	const { mutate, isLoading, isSuccess, error } =
-		Reader.useSubscriptionManagerUserSettingsMutation();
+const UserSettings = ( { value = DEFAULT_VALUE }: UserSettingsProps ) => {
+	const [ formState, setFormState ] = useState( value );
+	const { mutate, isLoading, isSuccess, error } = SubscriptionManager.useUserSettingsMutation();
 	const [ notice, setNotice ] = useState< NoticeProps | null >( null );
 
 	useEffect( () => {
@@ -60,14 +60,6 @@ const UserSettings = ( { value = {}, loading }: UserSettingsProps ) => {
 	const onSubmit = useCallback( () => {
 		mutate( formState );
 	}, [ formState, mutate ] );
-
-	if ( loading ) {
-		return (
-			<div className="user-settings">
-				<Spinner />
-			</div>
-		);
-	}
 
 	return (
 		<div className="user-settings">
