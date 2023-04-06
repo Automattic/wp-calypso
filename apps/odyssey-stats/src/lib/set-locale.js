@@ -8,7 +8,7 @@ const DEFAULT_LANGUAGE = 'en';
 const DEFAULT_MOMENT_LOCALE = 'en';
 const ALWAYS_LOAD_WITH_LOCALE = [ 'zh' ];
 
-const getLanguageWithoutRegionCode = ( localeSlug ) => {
+const getLanguageCodeFromLocale = ( localeSlug ) => {
 	if ( localeSlug.indexOf( '-' ) > -1 ) {
 		return localeSlug.split( '-' )[ 0 ];
 	}
@@ -58,7 +58,7 @@ const loadLanguageFile = ( languageFileName ) => {
 };
 
 export default ( localeSlug ) => {
-	const languageCode = getLanguageWithoutRegionCode( localeSlug );
+	const languageCode = getLanguageCodeFromLocale( localeSlug );
 
 	// Load tranlation file if it's not English.
 	if ( languageCode !== DEFAULT_LANGUAGE ) {
