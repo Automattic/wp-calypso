@@ -7,8 +7,8 @@ const CircularProgressBar = ( {
 	size,
 	enableDesktopScaling = false,
 }: {
-	currentStep: number | undefined;
-	numberOfSteps: number | undefined;
+	currentStep: number | null;
+	numberOfSteps: number | null;
 	size: number;
 	enableDesktopScaling?: boolean;
 } ) => {
@@ -17,11 +17,7 @@ const CircularProgressBar = ( {
 	const RADIUS = SIZE / 2 - STROKE_WIDTH / 2;
 	const FULL_ARC = 2 * Math.PI * RADIUS;
 
-	if (
-		typeof numberOfSteps === 'undefined' ||
-		typeof currentStep === 'undefined' ||
-		numberOfSteps === 0
-	) {
+	if ( currentStep === null || ! numberOfSteps ) {
 		return null;
 	}
 
