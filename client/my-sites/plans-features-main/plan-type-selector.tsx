@@ -4,6 +4,7 @@ import {
 	isWpComPlan,
 	plansLink,
 	isMonthly,
+	PLAN_ANNUAL_PERIOD,
 } from '@automattic/calypso-products';
 import { Popover } from '@automattic/components';
 import styled from '@emotion/styled';
@@ -22,7 +23,10 @@ import {
 	getPlanBySlug,
 	getPlanRawPrice,
 	getDiscountedRawPrice,
+	getPlanBillPeriod,
 } from 'calypso/state/plans/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { IAppState } from 'calypso/state/types';
 
 export type PlanTypeSelectorProps = {
@@ -143,9 +147,22 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	} );
 	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
 	const maxDiscount = useMaxDiscount( props.plans );
+	const currentPlanBillingPeriod = useSelector( ( state ) => {
+		const currentSitePlanSlug = getSitePlanSlug( state, getSelectedSiteId( state ) );
+		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
+	} );
 
-	if ( ! eligibleForWpcomMonthlyPlans ) {
-		return null;
+	if ( showBiannualToggle ) {
+		// skip showing toggle if current plan's term is higher than 1 year
+		if ( currentPlanBillingPeriod && PLAN_ANNUAL_PERIOD < currentPlanBillingPeriod ) {
+			return null;
+		}
+	}
+
+	if ( ! showBiannualToggle ) {
+		if ( ! eligibleForWpcomMonthlyPlans ) {
+			return null;
+		}
 	}
 
 	const additionalPathProps = props.redirectTo ? { redirect_to: props.redirectTo } : {};

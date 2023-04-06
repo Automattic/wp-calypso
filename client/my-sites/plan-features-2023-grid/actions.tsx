@@ -20,6 +20,7 @@ import i18n, { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 
@@ -162,6 +163,12 @@ const LoggedInPlansFeatureActionButton = ( {
 	const { setShowDomainUpsellDialog } = useDispatch( WpcomPlansUI.store );
 	const translate = useTranslate();
 	const domainFromHomeUpsellFlow = useSelector( getDomainFromHomeUpsellInQuery );
+	const currentPlanBillPeriod = useSelector( ( state ) => {
+		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
+	} );
+	const gridPlanBillPeriod = useSelector( ( state ) => {
+		return planType ? getPlanBillPeriod( state, planType ) : null;
+	} );
 
 	const showDomainUpsellDialog = useCallback( () => {
 		setShowDomainUpsellDialog( true );
@@ -203,6 +210,24 @@ const LoggedInPlansFeatureActionButton = ( {
 		);
 	}
 
+	// If the current plan is on a higher-term but lower-tier, then show a "Contact support" button.
+	if (
+		( availableForPurchase || isPlaceholder ) &&
+		currentSitePlanSlug &&
+		! current &&
+		currentSitePlanSlug !== PLAN_ECOMMERCE_TRIAL_MONTHLY &&
+		currentPlanBillPeriod &&
+		gridPlanBillPeriod &&
+		currentPlanBillPeriod > gridPlanBillPeriod
+	) {
+		return (
+			<Button className={ classes } disabled={ true }>
+				{ translate( 'Contact support', { context: 'verb' } ) }
+			</Button>
+		);
+	}
+
+	// If the current plan matches on a lower-term, then show an "Upgrade to..." button.
 	if (
 		( availableForPurchase || isPlaceholder ) &&
 		currentSitePlanSlug &&
