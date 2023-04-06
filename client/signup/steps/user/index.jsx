@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { isNewsletterFlow } from '@automattic/onboarding';
+import { isHostingLPFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -479,7 +479,7 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
-					isPasswordless={ isMobile() }
+					isPasswordless={ isMobile() || isHostingLPFlow( this.props.flowName ) }
 					queryArgs={ this.props.initialContext?.query || {} }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
