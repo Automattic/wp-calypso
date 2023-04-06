@@ -119,7 +119,9 @@
 			text-decoration: none;
 			font-weight: 500;
 			flex-grow: 1;
-
+			&:last-child {
+				flex-grow: 0;
+			}
 			&:focus {
 				border-radius: 0;
 				box-shadow: none;
@@ -131,6 +133,7 @@
 		}
 	}
 }
+
 .alphabetic-tags__table {
 	padding-bottom: 26px;
 	border-bottom: 1px solid var(--studio-gray-5);
