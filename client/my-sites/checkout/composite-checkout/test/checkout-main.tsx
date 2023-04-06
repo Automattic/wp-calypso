@@ -548,6 +548,34 @@ describe( 'CheckoutMain', () => {
 		);
 	} );
 
+	it( 'adds the product to the cart for a gift renewal', async () => {
+		const cartChanges = { products: [] };
+		const additionalProps = {
+			productAliasFromUrl: 'personal-bundle',
+			purchaseId: '12345',
+			siteId: 0,
+			siteSlug: 'no-site',
+			couponCode: null,
+			isLoggedOutCart: false,
+			isNoSiteCart: false,
+			isGiftPurchase: true,
+		};
+		render(
+			<MyCheckout
+				cartKeyOverride="no-site"
+				cartChanges={ cartChanges }
+				additionalProps={ additionalProps }
+			/>,
+			container
+		);
+		await waitFor( async () => {
+			expect( navigate ).not.toHaveBeenCalled();
+		} );
+		expect( await screen.findByText( /WordPress.com Personal/ ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'Gift' ) ).toBeInTheDocument();
+		expect( errorNotice ).not.toHaveBeenCalled();
+	} );
+
 	it( 'adds the coupon to the cart when the url has a coupon code', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		const additionalProps = {
