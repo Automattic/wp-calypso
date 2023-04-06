@@ -1,7 +1,7 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useInView } from 'calypso/lib/use-in-view';
 import EmptyPattern from './empty-pattern';
 import { encodePatternId } from './utils';
@@ -11,6 +11,7 @@ import './pattern-list-renderer.scss';
 interface PatternListItemProps {
 	pattern: Pattern;
 	className: string;
+	isFirst: boolean;
 	isShown: boolean;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
@@ -27,11 +28,23 @@ interface PatternListRendererProps {
 const PLACEHOLDER_HEIGHT = 100;
 const MAX_HEIGHT_FOR_100VH = 500;
 
-const PatternListItem = ( { pattern, className, isShown, onSelect }: PatternListItemProps ) => {
+const PatternListItem = ( {
+	pattern,
+	className,
+	isFirst,
+	isShown,
+	onSelect,
+}: PatternListItemProps ) => {
 	const [ inViewOnce, setInViewOnce ] = useState( false );
 	const ref = useInView< HTMLButtonElement >( () => setInViewOnce( true ), {
 		threshold: [ 0 ],
 	} );
+
+	useEffect( () => {
+		if ( isShown && inViewOnce && isFirst && ref.current ) {
+			ref.current.focus();
+		}
+	}, [ isShown, isFirst, ref, inViewOnce ] );
 
 	return (
 		<Button
@@ -81,6 +94,7 @@ const PatternListRenderer = ( {
 					className={ classnames( 'pattern-list-renderer__pattern-list-item', {
 						[ activeClassName ]: pattern.ID === selectedPattern?.ID,
 					} ) }
+					isFirst={ index === 0 }
 					isShown={ shownPatterns.includes( pattern ) }
 					onSelect={ onSelect }
 				/>
