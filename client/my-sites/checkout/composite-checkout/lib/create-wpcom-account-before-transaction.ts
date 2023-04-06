@@ -42,7 +42,7 @@ export async function createWpcomAccountBeforeTransaction(
 		recaptchaClientId: transactionOptions.recaptchaClientId,
 	} ).then( ( response ) => {
 		const siteIdFromResponse: number | undefined = parseInt(
-			String( response?.blog_details?.blogid ?? 0 )
+			response?.blog_details?.blogid ?? '0'
 		);
 
 		// We need to store the created site ID so that if the transaction fails,

@@ -55,7 +55,7 @@ export function createTransactionEndpointCartFromResponseCart( {
 	contactDetails,
 	responseCart,
 }: {
-	siteId: string | undefined;
+	siteId: number | undefined;
 	contactDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): RequestCart {
@@ -86,7 +86,7 @@ export function createTransactionEndpointCartFromResponseCart( {
 	}
 
 	return {
-		blog_id: siteId ? parseInt( siteId ) : 0,
+		blog_id: siteId ? siteId : 0,
 		cart_key: ( siteId || 'no-site' ) as CartKey,
 		coupon: responseCart.coupon || '',
 		temporary: false,
