@@ -3,6 +3,11 @@
 .u-legend {
 	color: var(--studio-gray-100);
 
+	// Disable rendering first u-marker, which is for "Date" and is empty.
+	> .u-series:first-child > th > .u-marker {
+		display: none;
+	}
+
 	// Use increased specificity to override original uPlot styles.
 	> tr.u-series > th {
 		cursor: initial;

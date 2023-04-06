@@ -1,4 +1,5 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/components/src/highlight-cards/variables.scss";
 
 .subscribers-section {
 	margin: 1em 0;
@@ -31,10 +32,13 @@
 .subscribers-section-legend {
 	display: flex;
 
-	// Nudge legend left to align with heading when below $break-xlarge.
-	@media (max-width: $break-xlarge) {
-		// Size corresponds to non-existent marker for the "Date" legend series.
-		margin-left: -8px;
+	@media ( max-width: $custom-mobile-breakpoint ) {
+		margin-left: $font-body-small;
+		margin-right: $font-body-small;
+
+		.u-series > th {
+			padding-left: 0;
+		}
 	}
 }
 
