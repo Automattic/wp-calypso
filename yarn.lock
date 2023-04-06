@@ -7348,27 +7348,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/wordpress__data-controls@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@types/wordpress__data-controls@npm:2.2.0"
+"@types/wordpress__data-controls@npm:^2.30.0":
+  version: 2.30.0
+  resolution: "@types/wordpress__data-controls@npm:2.30.0"
   dependencies:
-    "@types/wordpress__data": "*"
     "@wordpress/api-fetch": ^5.2.5
-  checksum: 392d3b27e262c283f5dfb0b25c9a2bdf798dfd328346356bd96d9bcbf07fcea1034a4b9d7eed64fd09f9f03f6cff88be11b8afa8a61d934e1d4271246901b972
+    "@wordpress/data": ^9.0.0
+  checksum: 4880d7ba24db391e324ea229e4bd9568e32da724085254175f3dc5e867cf811d472e64199b1defea0b082bd67753f8b19cb073e5b86e9e6d02c93692079dde40
   languageName: node
   linkType: hard
 
-"@types/wordpress__data@npm:*":
-  version: 6.0.2
-  resolution: "@types/wordpress__data@npm:6.0.2"
-  dependencies:
-    "@types/react": "*"
-    redux: ^4.1.0
-  checksum: 73d64a15d873c1a11d9fbf5bfb68201a09f9883e57ff89a99ea663ddb179964e917191268b8421fb06732db83dbc99909014cf189990f7d0a0f231d4ca0618a3
-  languageName: node
-  linkType: hard
-
-"@types/wordpress__notices@npm:noop-package@1.0.0, @types/wordpress__rich-text@npm:noop-package@1.0.0":
+"@types/wordpress__notices@npm:noop-package@1.0.0, @types/wordpress__rich-text@npm:noop-package@1.0.0, @wordpress/data@npm:noop-package@1.0.0":
   version: 1.0.0
   resolution: "noop-package@npm:1.0.0"
   checksum: f53edc897025b1c2c6d084607ec6588718ff5fc92b1549e97f87453b0404fa15acc12f3b1c7b4fa144f376b73b3bd40e3fe8da4fa89a944dfeb33343afbcf5b4
@@ -27577,7 +27567,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"redux@npm:^4.0.0, redux@npm:^4.0.4, redux@npm:^4.1.0, redux@npm:^4.1.2, redux@npm:^4.2.0":
+"redux@npm:^4.0.0, redux@npm:^4.0.4, redux@npm:^4.1.2, redux@npm:^4.2.0":
   version: 4.2.1
   resolution: "redux@npm:4.2.1"
   dependencies:
@@ -33596,7 +33586,7 @@ fsevents@^1.2.7:
     "@types/webpack-env": ^1.16.3
     "@types/wordpress__block-library": ^2.6.1
     "@types/wordpress__components": ^14.0.10
-    "@types/wordpress__data-controls": ^2.2.0
+    "@types/wordpress__data-controls": ^2.30.0
     "@typescript-eslint/eslint-plugin": ^5.53.0
     "@typescript-eslint/parser": ^5.53.0
     "@wordpress/base-styles": ^4.13.0
