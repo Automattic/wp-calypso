@@ -29,13 +29,15 @@ const CommentRow = ( {
 				<div className="title">{ title }</div>
 				<div className="excerpt">{ excerpt }</div>
 			</span>
-			<span className="title-box" role="cell">
-				{ siteIcon }
-				<span className="title-column">
-					<span className="name">{ site_title }</span>
-					<span className="url">{ hostname }</span>
+			<a href={ site_url } rel="noreferrer noopener" className="title-box" target="_blank">
+				<span className="title-box" role="cell">
+					{ siteIcon }
+					<span className="title-column">
+						<span className="name">{ site_title }</span>
+						<span className="url">{ hostname }</span>
+					</span>
 				</span>
-			</span>
+			</a>
 			<span className="date" role="cell">
 				{ since }
 			</span>

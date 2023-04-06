@@ -82,6 +82,10 @@ $max-list-width: 1300px;
 					letter-spacing: -0.24px;
 					padding-right: 10px;
 					@extend %ellipsis;
+
+					&:hover {
+						text-decoration: underline;
+					}
 				}
 
 				.url {
@@ -90,6 +94,10 @@ $max-list-width: 1300px;
 					line-height: 18px;
 					color: $studio-gray-40;
 					@extend %ellipsis;
+
+					&:hover {
+						text-decoration: underline;
+					}
 				}
 			}
 		}
