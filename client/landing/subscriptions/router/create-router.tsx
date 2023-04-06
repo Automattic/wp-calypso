@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { SubscriptionManagerPage } from './routes/subscriptions';
 import { Comments } from './routes/subscriptions/comments';
 import { Settings } from './routes/subscriptions/settings';
@@ -13,6 +13,7 @@ const createRouter = () =>
 					path: 'subscriptions/*',
 					element: <SubscriptionManagerPage />,
 					children: [
+						{ index: true, element: <Navigate to="sites" /> },
 						{ path: 'sites*', element: <Sites /> },
 						{ path: 'comments*', element: <Comments /> },
 						{ path: 'settings*', element: <Settings /> },
