@@ -10,5 +10,5 @@ export const getIframe = ( state: State ) => state.iframe;
 export const getUserDeclaredSite = ( state: State ) => state.userDeclaredSite;
 export const getUnreadCount = ( state: State ) => state.unreadCount;
 export const getIsMinimized = ( state: State ) => state.isMinimized;
-export const getRouterState = ( state: State ) => state.routerState;
 export const getHasSeenWhatsNewModal = ( state: State ) => state.hasSeenWhatsNewModal;
+export const getInitialRoute = ( state: State ) => state.initialRoute;

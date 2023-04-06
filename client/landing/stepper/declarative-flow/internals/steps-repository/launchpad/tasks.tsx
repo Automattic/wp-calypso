@@ -142,17 +142,10 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	build: [
 		'setup_general',
 		'design_selected',
-		DOMAIN_UPSELL,
 		'first_post_published',
 		'design_edited',
 		'site_launched',
 	],
-	write: [
-		'setup_write',
-		'design_selected',
-		DOMAIN_UPSELL,
-		'first_post_published',
-		'site_launched',
-	],
+	write: [ 'setup_write', 'design_selected', 'first_post_published', 'site_launched' ],
 	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
 };

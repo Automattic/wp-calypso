@@ -7,6 +7,10 @@
  * @package happy-blocks
  */
 
+if ( ! isset( $args ) ) {
+	$args = array();
+}
+
 ?>
 
 <div id="lpc-header-nav" class="lpc lpc-header-nav">
