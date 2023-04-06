@@ -1,13 +1,15 @@
 import { useTranslate } from 'i18n-calypso';
-import { TagResult } from './controller';
+import AlphabeticTags from './alphabetic-tags';
+import { TagResult, AlphabeticTagsResult } from './controller';
 import TrendingTags from './trending-tags';
 import './style.scss';
 
 interface Props {
 	trendingTags: TagResult[];
+	alphabeticTags: AlphabeticTagsResult;
 }
 
-export default function TagsPage( { trendingTags }: Props ) {
+export default function TagsPage( { trendingTags, alphabeticTags }: Props ) {
 	const translate = useTranslate();
 	return (
 		<div className="tags">
@@ -19,6 +21,7 @@ export default function TagsPage( { trendingTags }: Props ) {
 			</h4>
 			<div>
 				<TrendingTags trendingTags={ trendingTags } />
+				<AlphabeticTags alphabeticTags={ alphabeticTags } />
 			</div>
 		</div>
 	);

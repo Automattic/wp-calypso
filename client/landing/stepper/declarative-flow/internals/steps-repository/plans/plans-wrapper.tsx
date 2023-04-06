@@ -136,6 +136,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		if ( flowName === DOMAIN_UPSELL_FLOW ) {
 			return __( 'Choose your flavor of WordPress' );
 		}
+
+		if ( flowName === NEWSLETTER_FLOW ) {
+			return __( `There's a plan for you.` );
+		}
+
 		if ( isDesktop ) {
 			return headerText;
 		}

@@ -106,7 +106,6 @@
 		"onboarding/import-redirect-to-themes": true,
 		"onboarding/2023-pricing-grid": true,
 		"p2/p2-plus": true,
-		"pattern-assembler/categories": true,
 		"pattern-assembler/color-and-fonts": true,
 		"pattern-assembler/logged-out-showcase": true,
 		"pattern-assembler/inline-styles": true,
@@ -172,7 +171,9 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/staging-sites-i1": true,
-		"woa-logging": true
+		"virtual-themes/onboarding": true,
+		"woa-logging": true,
+		"woa-logging-moved": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

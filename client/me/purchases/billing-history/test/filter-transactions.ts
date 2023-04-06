@@ -1,13 +1,18 @@
 import { cloneDeep } from 'lodash';
-import { BillingTransaction } from 'calypso/state/billing-transactions/types';
+import {
+	BillingTransaction,
+	BillingTransactionItem,
+} from 'calypso/state/billing-transactions/types';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 import { filterTransactions } from '../filter-transactions';
 
 const PAGE_SIZE = 5;
 
 const mockTransaction: BillingTransaction = {
+	currency: 'USD',
 	address: '',
 	amount: '',
+	amount_integer: 0,
 	tax_country_code: '',
 	cc_email: '',
 	cc_name: '',
@@ -24,18 +29,23 @@ const mockTransaction: BillingTransaction = {
 	pay_ref: '',
 	service: '',
 	subtotal: '',
+	subtotal_integer: 0,
 	support: '',
 	tax: '',
+	tax_integer: 0,
 	url: '',
 };
 
-const mockItem = {
+const mockItem: BillingTransactionItem = {
 	id: '',
 	type: '',
 	type_localized: '',
 	domain: '',
 	site_id: '',
 	subtotal: '',
+	subtotal_integer: 0,
+	tax_integer: 0,
+	amount_integer: 0,
 	tax: '',
 	amount: '',
 	raw_subtotal: 0,
