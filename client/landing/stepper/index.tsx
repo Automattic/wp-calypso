@@ -105,8 +105,20 @@ window.AppBoot = async () => {
 	// Add accessible-focus listener.
 	accessibleFocus();
 
-	const user = ( await initializeCurrentUser() ) as unknown;
-	const userId = ( user as CurrentUser ).ID;
+	const flowLoader = determineFlow();
+	const [ flowResult, userResult ] = await Promise.allSettled( [
+		flowLoader(),
+		initializeCurrentUser(),
+	] );
+
+	if ( flowResult.status === 'rejected' ) {
+		throw flowResult.reason;
+	}
+
+	const { default: flow } = flowResult.value;
+
+	const user = ( userResult.status === 'fulfilled' ? userResult.value : null ) as unknown;
+	const userId = ( user as CurrentUser )?.ID;
 
 	const queryClient = await createQueryClient( userId );
 
@@ -120,9 +132,6 @@ window.AppBoot = async () => {
 	user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
 
 	setupErrorLogger( reduxStore );
-
-	const flowLoader = determineFlow();
-	const { default: flow } = await flowLoader();
 
 	ReactDom.render(
 		<CalypsoI18nProvider i18n={ defaultCalypsoI18n }>
