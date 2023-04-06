@@ -30,7 +30,7 @@ const StatsSubscribersPage = ( props ) => {
 			'is-odyssey-stats': isOdysseyStats,
 			'is-jetpack': isJetpack,
 		},
-		'is-insights-page-enabled'
+		'subscribers-page'
 	);
 
 	// Track the last viewed tab.

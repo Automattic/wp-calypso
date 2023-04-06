@@ -29,6 +29,38 @@ $grid-vertical-gutters: 32px;
 	}
 }
 
+.stats__module-list.stats__module--unified.subscribers-page {
+
+	@include stats-desktop-grid(
+		"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize",
+		1
+	);
+
+	@include stats-tablet-grid(
+		"followers followers followers followers publicize publicize publicize publicize",
+		1
+	);
+
+	@include stats-mobile-grid(
+		"followers followers followers followers"
+		"publicize publicize publicize publicize",
+		2
+	);
+
+	@media (max-width: 660px) {
+		padding: 0 16px;
+	}
+
+	.stats__module-wrapper--followers,
+	.list-followers {
+		grid-area: followers;
+	}
+
+	.stats__module-wrapper--publicize,
+	.list-publicize {
+		grid-area: publicize;
+	}
+}
 
 .stats__module-list.stats__module--unified.is-insights-page-enabled {
 
@@ -145,7 +177,6 @@ $grid-vertical-gutters: 32px;
 		grid-area: publicize;
 	}
 }
-
 
 .is-section-stats .stats__module-list--traffic {
 	@include stats-desktop-grid(
