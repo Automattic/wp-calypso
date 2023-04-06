@@ -1,7 +1,7 @@
-import { CompactCard, Gridicon } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { trim, flatMap, some } from 'lodash';
+import { trim, flatMap } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import * as React from 'react';
@@ -9,15 +9,12 @@ import { connect } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import SearchInput from 'calypso/components/search';
 import SegmentedControl from 'calypso/components/segmented-control';
-import { addQueryArgs, resemblesUrl, withoutHttp, addSchemeIfMissing } from 'calypso/lib/url';
+import { addQueryArgs } from 'calypso/lib/url';
 import withDimensions from 'calypso/lib/with-dimensions';
-import ReaderFollowFeedIcon from 'calypso/reader/components/icons/follow-feed-icon';
-import ReaderFollowingFeedIcon from 'calypso/reader/components/icons/following-feed-icon';
 import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import FollowButton from 'calypso/reader/follow-button';
-import { SEARCH_RESULTS_URL_INPUT } from 'calypso/reader/follow-sources';
 import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
+import SearchFollowButton from 'calypso/reader/search-stream/search-follow-button';
 import { recordAction } from 'calypso/reader/stats';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import {
@@ -25,7 +22,6 @@ import {
 	SORT_BY_LAST_UPDATED,
 } from 'calypso/state/reader/feed-searches/actions';
 import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
-import { commonExtensions } from 'calypso/state/reader/follows/selectors/get-reader-aliased-follow-feed-url';
 import PostResults from './post-results';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
 import SiteResults from './site-results';
@@ -64,67 +60,6 @@ class SearchStream extends React.Component {
 	};
 
 	getTitle = ( props = this.props ) => props.query || props.translate( 'Search' );
-
-	renderFollowButton = () => {
-		const { query, translate, readerAliasedFollowFeedUrl } = this.props;
-		let isPotentialFeedUrl = false;
-		if ( resemblesUrl( query ) ) {
-			const parsedUrl = new URL( query );
-			if ( parsedUrl ) {
-				isPotentialFeedUrl = some( commonExtensions, ( ext ) =>
-					parsedUrl.toString().includes( ext )
-				);
-			}
-		}
-
-		// If not a potential feed then don't show the follow button
-		if ( ! isPotentialFeedUrl ) {
-			return null;
-		}
-
-		let isNewFeed = true;
-		let isFollowing = false;
-		let followTitle = withoutHttp( query );
-
-		const feed = this.state.feed ?? null;
-		if ( feed && feed.name?.length ) {
-			isNewFeed = false;
-			isFollowing = feed.is_following;
-			followTitle = feed.name;
-		}
-
-		// If already following this feed then don't show the follow button
-		if ( isFollowing ) {
-			return null;
-		}
-
-		return (
-			<div className="search-stream__url-follow">
-				<p>
-					<Gridicon icon="info" size="16" />
-					<strong>
-						{ isNewFeed
-							? translate( 'Potential new feed found, click follow to add this feed to Reader' )
-							: translate( 'Click follow to add this feed to Reader' ) }
-					</strong>
-				</p>
-				<FollowButton
-					followLabel={ translate( 'Follow %s', {
-						args: followTitle,
-						comment: '%s is the name of the site being followed. For example: "Discover"',
-					} ) }
-					followingLabel={ translate( 'Following %s', {
-						args: followTitle,
-						comment: '%s is the name of the site being followed. For example: "Discover"',
-					} ) }
-					siteUrl={ addSchemeIfMissing( readerAliasedFollowFeedUrl, 'http' ) }
-					followSource={ SEARCH_RESULTS_URL_INPUT }
-					followIcon={ ReaderFollowFeedIcon( { iconSize: 20 } ) }
-					followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
-				/>
-			</div>
-		);
-	};
 
 	updateQuery = ( newValue ) => {
 		this.scrollToTop();
@@ -233,7 +168,7 @@ class SearchStream extends React.Component {
 							value={ query || '' }
 						/>
 					</CompactCard>
-					{ this.renderFollowButton() }
+					<SearchFollowButton query={ query } feed={ this.state.feed ?? null } />
 					{ query && (
 						<SegmentedControl compact className={ segmentedControlClass }>
 							<SegmentedControl.Item
