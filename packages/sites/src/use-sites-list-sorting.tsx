@@ -4,10 +4,13 @@ import { MinimumSite } from './site-type';
 
 type SiteDetailsForSortingWithOptionalUserInteractions = Pick<
 	MinimumSite,
-	'title' | 'user_interactions' | 'options'
+	'title' | 'user_interactions' | 'options' | 'is_wpcom_staging_site' | 'ID'
 >;
 
-type SiteDetailsForSortingWithUserInteractions = Pick< MinimumSite, 'title' | 'options' > &
+type SiteDetailsForSortingWithUserInteractions = Pick<
+	MinimumSite,
+	'title' | 'options' | 'is_wpcom_staging_site' | 'ID'
+> &
 	Required< Pick< MinimumSite, 'user_interactions' > >;
 
 export type SiteDetailsForSorting =
@@ -17,8 +20,8 @@ export type SiteDetailsForSorting =
 const validSortKeys = [ 'lastInteractedWith', 'updatedAt', 'alphabetically' ] as const;
 const validSortOrders = [ 'asc', 'desc' ] as const;
 
-export type SitesSortKey = ( typeof validSortKeys )[ number ];
-export type SitesSortOrder = ( typeof validSortOrders )[ number ];
+export type SitesSortKey = typeof validSortKeys[ number ];
+export type SitesSortOrder = typeof validSortOrders[ number ];
 
 export const isValidSorting = ( input: {
 	sortKey: string;
@@ -44,7 +47,7 @@ export function useSitesListSorting< T extends SiteDetailsForSorting >(
 	return useMemo( () => {
 		switch ( sortKey ) {
 			case 'lastInteractedWith':
-				return sortSitesByLastInteractedWith( allSites, sortOrder );
+				return sortSitesByStaging( sortSitesByLastInteractedWith( allSites, sortOrder ) );
 			case 'alphabetically':
 				return sortSitesAlphabetically( allSites, sortOrder );
 			case 'updatedAt':
@@ -94,6 +97,7 @@ const sortInteractedItems = ( interactedItems: SiteDetailsForSortingWithUserInte
 	};
 
 	const sortedInteractions = interactedItems.sort( ( a, b ) => {
+		// This implies that the user interactions are already sorted.
 		const mostRecentInteractionA = a.user_interactions[ 0 ];
 		const mostRecentInteractionB = b.user_interactions[ 0 ];
 
@@ -151,6 +155,73 @@ function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 	];
 
 	return sortOrder === 'desc' ? sortedItems : sortedItems.reverse();
+}
+
+export function sortSitesByStaging< T extends SiteDetailsForSorting >( sites: T[] ) {
+	type SitesByIdType = {
+		index: number;
+		site: T;
+	};
+	const sitesById = sites.reduce< Record< number, SitesByIdType > >(
+		( acc, site, currentIndex ) => {
+			acc[ site.ID ] = {
+				index: currentIndex,
+				site,
+			};
+			return acc;
+		},
+		{}
+	);
+
+	const visited = {} as Record< number, boolean >;
+	const sortedItems = sites.reduce< T[] >( ( acc, site ) => {
+		// We have already visit this site, so we dont need to procceed further.
+		if ( visited[ site.ID ] ) {
+			return acc;
+		}
+		// Site is staging but we haven't visit its production site yet...
+		// the production site exists in the site map
+		// that means that we are going to visit it later on.
+		// Don't add it to the list yet.
+		if (
+			site?.is_wpcom_staging_site &&
+			site.options?.wpcom_production_blog_id &&
+			! visited[ site.options?.wpcom_production_blog_id ] &&
+			sitesById[ site.options?.wpcom_production_blog_id ]
+		) {
+			return acc;
+		}
+
+		// Otherwise, add it to the list, as the production site that
+		// is associated to this staging site is filtered out, or we have a production site.
+		acc.push( site );
+		visited[ site.ID ] = true;
+
+		// The sorting is useful in case we have more than one staging sites.
+		// All the sites are already sorted (by sortSitesByLastInteractedWith ),
+		// so we want to keep that order.
+		site.options?.wpcom_staging_blog_ids
+			?.sort( ( a, b ) => {
+				// One of the two staging sites is filtered out.
+				// Retain the order of the other sites by moving it down
+				// to the list.
+				if ( ! sitesById[ a ] ) {
+					return -1;
+				}
+				if ( ! sitesById[ b ] ) {
+					return 1;
+				}
+				return sitesById[ a ]?.index - sitesById[ b ]?.index;
+			} )
+			.forEach( ( siteId ) => {
+				if ( sitesById[ siteId ] && ! visited[ siteId ] ) {
+					acc.push( sitesById[ siteId ].site );
+					visited[ siteId ] = true;
+				}
+			} );
+		return acc;
+	}, [] );
+	return sortedItems;
 }
 
 function sortAlphabetically< T extends SiteDetailsForSorting >(
