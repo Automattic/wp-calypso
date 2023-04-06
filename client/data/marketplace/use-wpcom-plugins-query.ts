@@ -114,16 +114,16 @@ export const useWPCOMPlugin = (
 };
 
 export const useWPCOMPlugins = ( slugs: Array< string > ): Array< UseQueryResult< any > > => {
-	return useQueries( {
-		queries: slugs.map( ( slug ) => {
+	return useQueries(
+		slugs.map( ( slug ) => {
 			const [ cacheKey, fetchFn ] = getWPCOMPluginQueryParams( slug );
 
 			return {
 				queryKey: cacheKey,
 				queryFn: fetchFn,
 			};
-		} ),
-	} );
+		} )
+	);
 };
 
 export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< any[] > ] => {
