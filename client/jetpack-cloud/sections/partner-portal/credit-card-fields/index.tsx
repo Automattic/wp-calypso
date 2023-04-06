@@ -7,23 +7,23 @@ import { useState } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import { useRecentPaymentMethodsQuery } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { creditCardStore } from 'calypso/state/partner-portal/credit-card-form';
 import CreditCardElementField from './credit-card-element-field';
 import CreditCardLoading from './credit-card-loading';
 import SetAsPrimaryPaymentMethod from './set-as-primary-payment-method';
 import type { StoreState } from '@automattic/wpcom-checkout';
 import type { StripeElementChangeEvent, StripeElementStyle } from '@stripe/stripe-js';
+import type { CreditCardSelectors } from 'calypso/state/partner-portal/types';
 import './style.scss';
 
 export default function CreditCardFields() {
 	const { __ } = useI18n();
 	const [ isStripeFullyLoaded, setIsStripeFullyLoaded ] = useState( false );
 	const fields: StoreState< string > = useSelect(
-		( select ) => select( creditCardStore ).getFields(),
+		( select ) => ( select( 'credit-card' ) as CreditCardSelectors ).getFields(),
 		[]
 	);
 	const useAsPrimaryPaymentMethod: boolean = useSelect(
-		( select ) => select( creditCardStore ).useAsPrimaryPaymentMethod(),
+		( select ) => ( select( 'credit-card' ) as CreditCardSelectors ).useAsPrimaryPaymentMethod(),
 		[]
 	);
 	const getField = ( key: string | number ) => fields[ key ] || {};
