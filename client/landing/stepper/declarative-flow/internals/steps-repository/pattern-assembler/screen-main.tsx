@@ -72,8 +72,8 @@ const ScreenMain = ( {
 							<span className="pattern-layout__list-item-text">{ translate( 'Footer' ) }</span>
 						</NavigationButtonAsItem>
 					</NavigatorItemGroup>
-					<NavigatorItemGroup title={ translate( 'Style' ) }>
-						{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
+					{ isEnabled( 'pattern-assembler/color-and-fonts' ) && (
+						<NavigatorItemGroup title={ translate( 'Style' ) }>
 							<>
 								<NavigationButtonAsItem
 									path="/color-palettes"
@@ -92,8 +92,8 @@ const ScreenMain = ( {
 									<span className="pattern-layout__list-item-text">{ translate( 'Fonts' ) }</span>
 								</NavigationButtonAsItem>
 							</>
-						) }
-					</NavigatorItemGroup>
+						</NavigatorItemGroup>
+					) }
 				</HStack>
 			</div>
 			<div className="screen-container__footer">
