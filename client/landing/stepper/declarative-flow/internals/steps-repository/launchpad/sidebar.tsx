@@ -122,7 +122,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						size={ 40 }
 						enableDesktopScaling
 						currentStep={ currentTask }
-						numberOfSteps={ enhancedTasks?.length }
+						numberOfSteps={ enhancedTasks?.length || null }
 					/>
 				</div>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
