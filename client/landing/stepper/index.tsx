@@ -5,7 +5,7 @@ import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/curr
 import config from '@automattic/calypso-config';
 import { User as UserStore } from '@automattic/data-stores';
 import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
-import { useDispatch } from '@wordpress/data';
+import { useDispatch, dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
 import { QueryClientProvider } from 'react-query';
@@ -59,11 +59,7 @@ function determineFlow() {
 /**
  * TODO: this is no longer a switch and should be removed
  */
-const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flow } > = ( {
-	user,
-	flow,
-} ) => {
-	const { receiveCurrentUser } = useDispatch( USER_STORE );
+const FlowSwitch: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const { setEcommerceFlowRecurType } = useDispatch( ONBOARD_STORE );
 
 	const recurType = useQuery().get( 'recur' );
@@ -78,7 +74,6 @@ const FlowSwitch: React.FC< { user: UserStore.CurrentUser | undefined; flow: Flo
 		}
 	}
 
-	user && receiveCurrentUser( user as UserStore.CurrentUser );
 	return <FlowRenderer flow={ flow } />;
 };
 interface AppWindow extends Window {
@@ -109,7 +104,8 @@ window.AppBoot = async () => {
 
 	initializeCurrentUser().then( ( user: unknown ) => {
 		const userId = ( user as CurrentUser ).ID;
-
+		const { receiveCurrentUser } = dispatch( USER_STORE );
+		user && receiveCurrentUser( user as UserStore.CurrentUser );
 		hydrateBrowserState( queryClient, userId );
 
 		initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
@@ -123,7 +119,6 @@ window.AppBoot = async () => {
 	} );
 
 	setStore( reduxStore, getStateFromCache( undefined ) );
-	setupLocale( false, reduxStore );
 
 	setupErrorLogger( reduxStore );
 
