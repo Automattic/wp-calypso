@@ -41,6 +41,7 @@
 		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/help-center": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
+		"@automattic/isolated-block-editor": "2.22.0",
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/language-picker": "workspace:^",
 		"@automattic/languages": "workspace:^",

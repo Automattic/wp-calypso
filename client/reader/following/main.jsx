@@ -1,3 +1,4 @@
+import IsoloatedEditor from '@automattic/isolated-block-editor';
 import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import Stream from 'calypso/reader/stream';
 import FollowingIntro from './intro';
@@ -7,6 +8,7 @@ function FollowingStream( { ...props } ) {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
+			<IsoloatedEditor settings={ {} } onSaveContent={ () => {} } onSaveBlocks={ () => {} } />
 			<FollowingIntro />
 		</Stream>
 	);
