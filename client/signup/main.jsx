@@ -308,9 +308,17 @@ class Signup extends Component {
 
 	getRecordProps() {
 		const { signupDependencies } = this.props;
+		let theme = get( signupDependencies, 'selectedDesign.theme' );
+
+		if ( ! theme && signupDependencies.themeParameter ) {
+			theme = signupDependencies.themeParameter;
+		}
+
+		const deps = this.getCurrentFlowSupportedQueryParams();
 
 		return {
-			theme: get( signupDependencies, 'selectedDesign.theme' ),
+			...deps,
+			theme,
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
 		};
@@ -592,9 +600,13 @@ class Signup extends Component {
 
 	getDependenciesInQuery = () => {
 		const queryObject = this.props.initialContext?.query ?? {};
-		const dependenciesInQuery =
-			flows.getFlow( this.props.flowName, this.props.isLoggedIn )?.providesDependenciesInQuery ??
-			[];
+
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+
+		const requiredDependenciesInQuery = flow?.providesDependenciesInQuery ?? [];
+		const optionalDependenciesInQuery = flow?.optionalDependenciesInQuery ?? [];
+
+		const dependenciesInQuery = [ ...requiredDependenciesInQuery, ...optionalDependenciesInQuery ];
 
 		const result = {};
 		for ( const dependencyKey of dependenciesInQuery ) {
