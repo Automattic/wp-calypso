@@ -4,8 +4,8 @@ import { Outlet } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import { Tabs } from '../../../components/tabs';
-import { useSubheaderText } from '../../../hooks';
+import { Tabs } from 'calypso/landing/subscriptions/components/tabs';
+import { useSubheaderText } from 'calypso/landing/subscriptions/hooks';
 import './styles.scss';
 
 const SubscriptionManagementPage = () => {
