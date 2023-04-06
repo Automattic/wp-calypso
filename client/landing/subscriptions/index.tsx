@@ -7,7 +7,7 @@ import { dispatch } from '@wordpress/data';
 import ReactDom from 'react-dom';
 import { QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import { AnyAction } from 'redux';
 import { setupLocale } from 'calypso/boot/locale';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
@@ -20,7 +20,7 @@ import { getInitialState, getStateFromCache } from 'calypso/state/initial-state'
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
-import { SubscriptionManager } from './subscription-manager';
+import { createRouter } from './router';
 import './styles.scss';
 
 const setupReduxStore = ( user: CurrentUser ) => {
@@ -49,16 +49,15 @@ window.AppBoot = async () => {
 	const queryClient = await createQueryClient( user.ID );
 	const reduxStore = setupReduxStore( user );
 	initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
+	const router = createRouter();
 
 	ReactDom.render(
 		<CalypsoI18nProvider>
 			<Provider store={ reduxStore }>
 				<QueryClientProvider client={ queryClient }>
 					<MomentProvider>
-						<BrowserRouter basename="subscriptions">
-							<WindowLocaleEffectManager />
-							<SubscriptionManager />
-						</BrowserRouter>
+						<WindowLocaleEffectManager />
+						<RouterProvider router={ router } />
 					</MomentProvider>
 				</QueryClientProvider>
 			</Provider>

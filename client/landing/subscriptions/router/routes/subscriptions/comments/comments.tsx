@@ -1,4 +1,4 @@
-import TabView from './tab-view';
+import { TabView } from '../../../../components/tab-view';
 
 const Comments = () => (
 	<TabView errorMessage="" isLoading={ false }>

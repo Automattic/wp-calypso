@@ -1,6 +1,6 @@
 import { SubscriptionManager } from '@automattic/data-stores';
-import { UserSettings } from '../user-settings';
-import TabView from './tab-view';
+import { TabView } from '../../../../components/tab-view';
+import { UserSettings } from '../../../../components/user-settings';
 
 const Settings = () => {
 	const { data: settings, isIdle, isLoading, error } = SubscriptionManager.useUserSettingsQuery();
