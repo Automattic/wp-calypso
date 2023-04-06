@@ -6,8 +6,14 @@ import {
 	WPCOM_FEATURES_PREMIUM_THEMES,
 } from '@automattic/calypso-products';
 import { Button, Card, Gridicon } from '@automattic/components';
-import { getDesignPreviewUrl, ThemePreview as ThemeWebPreview } from '@automattic/design-picker';
+import {
+	getDesignPreviewUrl,
+	getStylesColorFromVariation,
+	StyleVariationBadges,
+	ThemePreview as ThemeWebPreview,
+} from '@automattic/design-picker';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { hexToRgb } from '@automattic/onboarding';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import classNames from 'classnames';
 import { localize, getLocaleSlug } from 'i18n-calypso';
@@ -459,16 +465,14 @@ class ThemeSheet extends Component {
 		);
 
 		return (
-			<StickyPanel>
-				<div className="theme__sheet-web-preview">
-					<ThemeWebPreview
-						url={ url }
-						inlineCss={ this.getSelectedStyleVariation()?.inline_css }
-						isShowFrameBorder={ false }
-						isShowDeviceSwitcher={ false }
-					/>
-				</div>
-			</StickyPanel>
+			<div className="theme__sheet-web-preview">
+				<ThemeWebPreview
+					url={ url }
+					inlineCss={ this.getSelectedStyleVariation()?.inline_css }
+					isShowFrameBorder={ false }
+					isShowDeviceSwitcher={ false }
+				/>
+			</div>
 		);
 	};
 
@@ -566,6 +570,73 @@ class ThemeSheet extends Component {
 		);
 	};
 
+	renderHero = () => {
+		const {
+			author,
+			description,
+			isWPForTeamsSite,
+			name,
+			retired,
+			softLaunched,
+			styleVariations,
+			translate,
+		} = this.props;
+		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
+		const shouldRenderButton =
+			! retired && ! this.hasWpOrgThemeUpsellBanner() && ! isWPForTeamsSite;
+
+		return (
+			<div
+				className="theme__sheet-hero"
+				style={ { backgroundColor: this.getSelectedStyleVariationBackgroundColor() } }
+			>
+				<div className="theme__sheet-columns">
+					<div className="theme__sheet-main">
+						<div className="theme__sheet-main-info">
+							<h1 className="theme__sheet-main-info-title">
+								{ name || placeholder }
+								{ softLaunched && (
+									<span className="theme__sheet-bar-soft-launched">
+										{ translate( 'A8C Only' ) }
+									</span>
+								) }
+							</h1>
+							<div className="theme__sheet-main-info-tag">
+								{ author
+									? translate( 'by %(author)s', { args: { author: author } } )
+									: placeholder }
+							</div>
+							<div className="theme__sheet-main-info-description">{ description }</div>
+							<div className="theme__sheet-main-info-style-variations">
+								{ this.renderStyleVariationBadges() }
+							</div>
+						</div>
+						<div className="theme__sheet-main-actions">
+							{ shouldRenderButton &&
+								( this.shouldRenderUnlockStyleButton()
+									? this.renderUnlockStyleButton()
+									: this.renderButton() ) }
+							{ this.shouldRenderPreviewButton() && (
+								<Button
+									onClick={ ( e ) => {
+										this.previewAction( e, 'link' );
+									} }
+								>
+									{ translate( 'Open live demo', {
+										context: 'Individual theme live preview button',
+									} ) }
+								</Button>
+							) }
+						</div>
+					</div>
+					<div className="theme__sheet-preview">
+						{ styleVariations.length ? this.renderWebPreview() : this.renderScreenshot() }
+					</div>
+				</div>
+			</div>
+		);
+	};
+
 	renderHeader = () => {
 		const { author, isWPForTeamsSite, name, retired, softLaunched, translate } = this.props;
 		const placeholder = <span className="theme__sheet-placeholder">loading.....</span>;
@@ -618,6 +689,21 @@ class ThemeSheet extends Component {
 					description={ this.getStyleVariationDescription() }
 					selectedVariation={ this.getSelectedStyleVariation() }
 					variations={ styleVariations }
+					onClick={ this.onStyleVariationClick }
+				/>
+			)
+		);
+	};
+
+	renderStyleVariationBadges = () => {
+		const { styleVariations } = this.props;
+
+		return (
+			styleVariations.length > 0 && (
+				<StyleVariationBadges
+					maxVariationsToShow={ styleVariations.length }
+					variations={ styleVariations }
+					selectedVariation={ this.getSelectedStyleVariation() }
 					onClick={ this.onStyleVariationClick }
 				/>
 			)
@@ -979,6 +1065,17 @@ class ThemeSheet extends Component {
 		return styleVariations.find( ( variation ) => variation.slug === selectedStyleVariationSlug );
 	};
 
+	getSelectedStyleVariationBackgroundColor = () => {
+		const selectedStyleVariation = this.getSelectedStyleVariation();
+		const colors = getStylesColorFromVariation( selectedStyleVariation || {} );
+		if ( ! selectedStyleVariation || ! colors ) {
+			return null;
+		}
+
+		const { r, g, b } = hexToRgb( colors.background );
+		return `rgba( ${ r }, ${ g }, ${ b }, 0.2 )`;
+	};
+
 	goBack = () => {
 		const { backPath, locale, isLoggedIn, themeId } = this.props;
 		this.props.recordTracksEvent( 'calypso_theme_sheet_back_click', { theme_name: themeId } );
@@ -1269,6 +1366,7 @@ class ThemeSheet extends Component {
 			} );
 		}
 
+		const isNewDetailPage = config.isEnabled( 'themes/detail-i5' );
 		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const isRemoved = this.isRemoved();
 
@@ -1319,25 +1417,36 @@ class ThemeSheet extends Component {
 							this.renderButton() }
 					</HeaderCake>
 				</div>
-				<div className={ columnsClassName }>
-					{ isNewDetailsAndPreview && (
-						<div className="theme__sheet-column-header">
-							{ pageUpsellBanner }
-							{ this.renderHeader() }
+				{ isNewDetailPage ? (
+					<>
+						{ this.renderHero() }
+						<div className={ classNames( columnsClassName, 'theme__sheet-sections' ) }>
+							{ ! retired ? this.renderSectionContent( section ) : this.renderRetired() }
 						</div>
-					) }
-					<div className="theme__sheet-column-left">
-						{ ! retired && this.renderSectionContent( section ) }
-						{ retired && this.renderRetired() }
+					</>
+				) : (
+					<div className={ columnsClassName }>
+						{ isNewDetailsAndPreview && (
+							<div className="theme__sheet-column-header">
+								{ pageUpsellBanner }
+								{ this.renderHeader() }
+							</div>
+						) }
+						<div className="theme__sheet-column-left">
+							{ ! retired && this.renderSectionContent( section ) }
+							{ retired && this.renderRetired() }
+						</div>
+						{ ! isRemoved && (
+							<div className="theme__sheet-column-right">
+								{ isNewDetailsAndPreview && styleVariations.length ? (
+									<StickyPanel>{ this.renderWebPreview() }</StickyPanel>
+								) : (
+									this.renderScreenshot()
+								) }
+							</div>
+						) }
 					</div>
-					{ ! isRemoved && (
-						<div className="theme__sheet-column-right">
-							{ isNewDetailsAndPreview && styleVariations.length
-								? this.renderWebPreview()
-								: this.renderScreenshot() }
-						</div>
-					) }
-				</div>
+				) }
 				<ThemePreview belowToolbar={ previewUpsellBanner } />
 				<PremiumGlobalStylesUpgradeModal
 					checkout={ this.onPremiumGlobalStylesUpgradeModalCheckout }

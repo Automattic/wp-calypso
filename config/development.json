@@ -184,6 +184,7 @@
 		"subscription-gifting": true,
 		"subscription-management": true,
 		"themes/atomic-homepage-replace": true,
+		"themes/detail-i5": true,
 		"themes/premium": true,
 		"themes/showcase-i4/details-and-preview": true,
 		"themes/subscription-purchases": true,

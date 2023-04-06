@@ -7,6 +7,7 @@ export { default as ThemePreview } from './components/theme-preview';
 export { default as UnifiedDesignPicker } from './components/unified-design-picker';
 export { default as WooCommerceBundledBadge } from './components/woocommerce-bundled-badge';
 export { default as PatternAssemblerCta } from './components/pattern-assembler-cta';
+export { getStylesColorFromVariation } from './components/style-variation-badges/utils';
 export {
 	availableDesignsConfig,
 	getAvailableDesigns,
