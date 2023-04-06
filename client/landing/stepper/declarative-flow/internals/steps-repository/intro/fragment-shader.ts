@@ -29,11 +29,11 @@ void main() {
 	float c2 = fract(-.1 * time + 13. * distance( c_uv, vec2(0.) ));
 	c2 += rand3(vec3(c_uv, 0.)).r * .5 - .25;
 	
-	c = c + c2 - 2.*c*c2; //xor
+	c = c + c2 - 2.*c*c2; // xor
 	
 	c = step(.45, c);
 	
-	vec3 color1 = vec3(0.658823529411765, 0.854901960784314, 1);
+	vec3 color1 = vec3(0.018823529411765, 0.088039215686275, 0.596078431372549);
 	vec3 color2 = vec3(0.058823529411765, 0.098039215686275, 0.796078431372549);
 	
 	vec3 col = mix(color1, color2, c);
