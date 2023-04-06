@@ -3,10 +3,10 @@ import PlanTypeSelector, { PlanTypeSelectorProps } from './plan-type-selector';
 
 const TermExperimentPlanTypeSelector: React.FunctionComponent< {
 	isEligible: boolean;
-	selectorKind: string;
+	kind: string;
 	plans: string[];
 	planTypeSelectorProps: PlanTypeSelectorProps;
-} > = ( { isEligible, selectorKind, plans, planTypeSelectorProps } ) => (
+} > = ( { isEligible, kind, plans, planTypeSelectorProps } ) => (
 	<ProvideExperimentData name="calypso_plans_2yr_toggle" options={ { isEligible } }>
 		{ ( isLoading, experimentData ) => {
 			if ( isLoading ) {
@@ -21,9 +21,7 @@ const TermExperimentPlanTypeSelector: React.FunctionComponent< {
 					variationName === 'toggle_and_checkout' || variationName === 'toggle_only',
 			};
 
-			return (
-				<PlanTypeSelector { ...propsWithBiannualToggle } kind={ selectorKind } plans={ plans } />
-			);
+			return <PlanTypeSelector { ...propsWithBiannualToggle } kind={ kind } plans={ plans } />;
 		} }
 	</ProvideExperimentData>
 );
