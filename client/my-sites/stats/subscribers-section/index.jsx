@@ -72,38 +72,38 @@ export default function SubscribersSection() {
 	// Determines what is shown in the tooltip on hover.
 	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
 
+	// todo bring in real data for period navigation
+	const date = new Date();
+	const period = 'day';
+	const query = {};
+	const pathTemplate = '/stats/email/:statType/:period/:date/:site';
+
 	return (
 		<div className="subscribers-section">
 			<h1 className="highlight-cards-heading">Subscribers</h1>
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isLoading && counts.length === 0 && (
-				<p className="subscribers-section__no-data">No data availble for the specified period.</p>
+				<p className="subscribers-section__no-data">No data available for the specified period.</p>
 			) }
 			{ ! isLoading && (
 				<div>
 					<StatsPeriodHeader>
 						<StatsPeriodNavigation
-							// date={ date }
-							// period={ period }
-							url="/stats/email/" //todo: should have format `/stats/email/${ statType }/${ period }/${ postId }/${ slug }`
-							// maxBars={ maxBars }
+							date={ date }
+							period={ period }
+							url="/stats/email/" //todo: should have format `/stats/email/${ statType }/${ period }/${ date }/${ slug }`
 							isEmailStats
 						>
 							<DatePicker
-								// period={ period }
-								// date={ date }
-								// query={ query }
-								// statsType="statsTopPosts"
+								period={ period }
+								date={ date }
+								query={ query }
+								statsType="statsTopPosts"
 								showQueryDate
 							/>
 						</StatsPeriodNavigation>
 					</StatsPeriodHeader>
-					<Intervals
-					// selected={ period }
-					// pathTemplate={ pathTemplate }
-					// compact={ false }
-					// intervalValues={ emailIntervals }
-					/>
+					<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
 				</div>
 			) }
 			{ ! isLoading && counts.length !== 0 && (
