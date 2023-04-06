@@ -208,9 +208,3 @@ ul.plans-feature-list__item-group {
 .plans-feature-list__item-url {
 	word-break: break-all;
 }
-
-.plans-feature-list__placeholder {
-	@include onboarding-placeholder();
-	display: inline-block;
-	width: 200px;
-}
