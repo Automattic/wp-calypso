@@ -23,7 +23,7 @@ import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
-import { createQueryClient, hydrateBrowserState } from 'calypso/state/query-client';
+import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
 import { requestSites } from 'calypso/state/sites/actions';
@@ -106,10 +106,10 @@ window.AppBoot = async () => {
 		const userId = ( user as CurrentUser ).ID;
 		const { receiveCurrentUser } = dispatch( USER_STORE );
 		user && receiveCurrentUser( user as UserStore.CurrentUser );
-		hydrateBrowserState( queryClient, userId );
 
 		initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
-		setStore( reduxStore, getStateFromCache( userId ), true );
+		const updateOnly = true;
+		setStore( reduxStore, getStateFromCache( userId ), updateOnly );
 
 		user && initializeCalypsoUserStore( reduxStore, user as CurrentUser );
 		setupLocale( user, reduxStore );
