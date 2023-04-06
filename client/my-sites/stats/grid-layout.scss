@@ -29,8 +29,7 @@ $grid-vertical-gutters: 32px;
 	}
 }
 
-
-.stats__module-list.stats__module--unified.is-subscribers-page-enabled {
+.stats__module-list.stats__module--unified.subscribers-page {
 
 	&.is-jetpack {
 		@include stats-desktop-grid(

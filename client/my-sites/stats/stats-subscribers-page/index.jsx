@@ -32,7 +32,7 @@ const StatsSubscribersPage = ( props ) => {
 			'is-odyssey-stats': isOdysseyStats,
 			'is-jetpack': isJetpack,
 		},
-		'is-subscribers-page-enabled'
+		'subscribers-page'
 	);
 
 	const moduleStrings = statsStrings();
