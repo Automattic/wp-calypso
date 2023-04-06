@@ -1,8 +1,9 @@
+import CommentList from '../comment-list/comment-list';
 import TabView from './tab-view';
 
 const Comments = () => (
 	<TabView errorMessage="" isLoading={ false }>
-		<>Comments Tab</>
+		<CommentList />
 	</TabView>
 );
 
