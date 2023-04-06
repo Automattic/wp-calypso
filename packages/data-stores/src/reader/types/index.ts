@@ -61,3 +61,12 @@ export type SiteSubscription = {
 };
 
 export type SiteSubscriptionDeliveryFrequency = 'instantly' | 'daily' | 'weekly';
+
+export type PostSubscription = {
+	id: string;
+	title: string;
+	excerpt: string;
+	site_icon: string;
+	site_url: string;
+	date_subscribed: string;
+};

@@ -1,7 +1,13 @@
 import { useTranslate } from 'i18n-calypso';
+import CommentRow from './comment-row';
 import './styles.scss';
+import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
 
-const CommentList = () => {
+type CommentListProps = {
+	posts?: PostSubscription[];
+};
+
+const CommentList = ( { posts }: CommentListProps ) => {
 	const translate = useTranslate();
 
 	return (
@@ -18,6 +24,10 @@ const CommentList = () => {
 				</span>
 				<span className="actions" role="columnheader" />
 			</li>
+			{ posts &&
+				posts.map( ( post ) => (
+					<CommentRow key={ `posts.commentrow.${ post.id }` } { ...post } />
+				) ) }
 		</ul>
 	);
 };
