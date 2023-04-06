@@ -347,11 +347,14 @@ class ThemeSheet extends Component {
 	shouldRenderUnlockStyleButton() {
 		const { defaultOption, selectedStyleVariationSlug, shouldLimitGlobalStyles, styleVariations } =
 			this.props;
+		const isNonDefaultStyleVariation =
+			selectedStyleVariationSlug && selectedStyleVariationSlug !== DEFAULT_VARIATION_SLUG;
+
 		return (
 			shouldLimitGlobalStyles &&
 			defaultOption?.key === 'activate' &&
 			styleVariations.length > 0 &&
-			!! selectedStyleVariationSlug
+			isNonDefaultStyleVariation
 		);
 	}
 
