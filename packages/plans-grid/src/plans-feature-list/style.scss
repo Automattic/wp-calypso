@@ -7,14 +7,6 @@
 	@include break-small {
 		margin-top: 24px;
 	}
-
-	.plans-accordion & {
-		margin-top: 24px;
-
-		@include break-small {
-			margin-top: 36px;
-		}
-	}
 }
 
 ul.plans-feature-list__item-group {
@@ -77,10 +69,6 @@ ul.plans-feature-list__item-group {
 	margin-top: 1px;
 
 	color: var(--studio-gray-100);
-
-	.plans-accordion & {
-		color: var(--studio-green-60);
-	}
 
 	.plans-feature-list__item-content-wrapper--domain-button.is-unavailable &,
 	.plans-feature-list__item--disabled-message &,
@@ -149,22 +137,6 @@ ul.plans-feature-list__item-group {
 		&:hover,
 		&:focus {
 			color: var(--studio-blue-30);
-		}
-	}
-
-	// When it's the accordion variation, the feature button has grey text.
-	.plans-accordion
-	.plans-feature-list__item-content-wrapper--domain-button:not(.is-unavailable)
-	& {
-		color: var(--studio-gray-70);
-
-		&.is-cta {
-			color: var(--studio-gray-100);
-		}
-
-		&:hover,
-		&:focus {
-			color: var(--studio-gray-50);
 		}
 	}
 
