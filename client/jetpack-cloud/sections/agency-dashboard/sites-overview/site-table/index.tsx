@@ -85,11 +85,12 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 						</td>
 					</tr>
 				) : (
-					items.map( ( item ) => {
+					items.map( ( item, index ) => {
 						const blogId = item.site.value.blog_id;
 
 						return (
 							<SiteTableRow
+								index={ index }
 								item={ item }
 								columns={ columns }
 								key={ `table-row-${ blogId }` }

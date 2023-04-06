@@ -1,6 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
-import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,18 +14,20 @@ import SiteErrorContent from '../site-error-content';
 import SiteExpandedContent from '../site-expanded-content';
 import SitePhpVersion from '../site-expanded-content/site-php-version';
 import SiteStatusContent from '../site-status-content';
+import SiteTableExpand from '../site-table-expand';
 import type { SiteData, SiteColumns } from '../types';
 
 import './style.scss';
 
 interface Props {
+	index: number;
 	columns: SiteColumns;
 	item: SiteData;
 	setExpanded: () => void;
 	isExpanded: boolean;
 }
 
-export default function SiteTableRow( { columns, item, setExpanded, isExpanded }: Props ) {
+export default function SiteTableRow( { index, columns, item, setExpanded, isExpanded }: Props ) {
 	const dispatch = useDispatch();
 
 	const site = item.site;
@@ -124,15 +124,12 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 				</td>
 				{ /* Show expand buttons only when the feature is enabled and there is no site error. */ }
 				{ ! hasSiteError && isExpandedContentEnabled && (
-					<td
-						className={ classNames( 'site-table__actions site-table__expand-row', {
-							'site-table__td-without-border-bottom': isExpanded,
-						} ) }
-					>
-						<Button className="site-table__expandable-button" borderless onClick={ setExpanded }>
-							<Icon icon={ isExpanded ? chevronUp : chevronDown } />
-						</Button>
-					</td>
+					<SiteTableExpand
+						index={ index }
+						isExpanded={ isExpanded }
+						setExpanded={ setExpanded }
+						siteId={ site.value.blog_id }
+					/>
 				) }
 			</tr>
 			{ /* Show expanded content when expandable block is enabled. */ }
