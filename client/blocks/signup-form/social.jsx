@@ -117,7 +117,9 @@ class SocialSignupForm extends Component {
 							responseHandler={ this.handleGoogleResponse }
 							uxMode={ uxMode }
 							redirectUri={ this.getRedirectUri( 'google' ) }
-							onClick={ this.trackLoginAndRememberRedirect.bind( null, 'google' ) }
+							onClick={ () => {
+								this.trackLoginAndRememberRedirect( 'google' );
+							} }
 							socialServiceResponse={
 								this.props.socialService === 'google' ? this.props.socialServiceResponse : null
 							}
@@ -130,7 +132,9 @@ class SocialSignupForm extends Component {
 							responseHandler={ this.handleAppleResponse }
 							uxMode={ uxModeApple }
 							redirectUri={ this.getRedirectUri( 'apple' ) }
-							onClick={ this.trackLoginAndRememberRedirect.bind( null, 'apple' ) }
+							onClick={ () => {
+								this.trackLoginAndRememberRedirect( 'apple' );
+							} }
 							socialServiceResponse={
 								this.props.socialService === 'apple' ? this.props.socialServiceResponse : null
 							}
