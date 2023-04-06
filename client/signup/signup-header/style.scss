@@ -19,19 +19,6 @@
 		pointer-events: none;
 	}
 
-	.newsletter.progress-bar,
-	.link-in-bio.progress-bar,
-	.link-in-bio-tld.progress-bar,
-	.import.progress-bar,
-	.free.progress-bar {
-		position: absolute;
-		top: -8px;
-		background-color: #fff;
-
-		.progress-bar__progress {
-			border-radius: 0;
-		}
-	}
 
 	.wordpress-logo {
 		height: 180px;
