@@ -193,6 +193,7 @@
 		"to-title-case": "^1.0.0",
 		"tracekit": "^0.4.5",
 		"twemoji": "^12.1.4",
+		"twgl.js": "^5.3.0",
 		"ua-parser-js": "^0.7.22",
 		"uplot": "^1.6.24",
 		"uplot-react": "^1.1.4",

@@ -11850,6 +11850,7 @@ __metadata:
     to-title-case: ^1.0.0
     tracekit: ^0.4.5
     twemoji: ^12.1.4
+    twgl.js: ^5.3.0
     ua-parser-js: ^0.7.22
     uplot: ^1.6.24
     uplot-react: ^1.1.4
@@ -31759,6 +31760,13 @@ fsevents@^1.2.7:
     twemoji-parser: 12.1.1
     universalify: ^0.1.2
   checksum: 0c9c23962ebdccb377026c182efe94fd0e67d4be447d6599a0213df0e66a39c39596b2014a05864cad5122829ebbb02e81385eff1df32498736fb8f2c1c1451f
+  languageName: node
+  linkType: hard
+
+"twgl.js@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "twgl.js@npm:5.3.0"
+  checksum: d0288727cfa88bc56cd23308cf2fb8d0f1bb3028e1e0ba87bd2fd47dd403d383dbe270e3f64dd0a0130dca9a08379682fda3c9fc80652fd5001f5efe2beddd7d
   languageName: node
   linkType: hard
 
