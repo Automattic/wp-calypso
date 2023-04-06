@@ -384,7 +384,7 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 
 		return {
 			allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
-			blog_id: '1234',
+			blog_id: 1234,
 			cart_generated_at_timestamp: 12345,
 			cart_key: 1234,
 			coupon: requestCoupon,
