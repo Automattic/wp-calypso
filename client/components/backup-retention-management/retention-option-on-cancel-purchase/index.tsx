@@ -12,6 +12,7 @@ import getBackupRetentionUpdateRequestStatus from 'calypso/state/rewind/selector
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import RetentionConfirmationDialog from '../retention-confirmation-dialog';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
+import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 
 import './style.scss';
 
@@ -49,7 +50,7 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 	// The retention days that currently applies for this customer.
 	const currentRetentionPlan = customerRetentionPeriod || planRetentionPeriod || 0;
 	const updateRetentionPeriod = useCallback( () => {
-		dispatch( updateBackupRetention( siteId, MINIMUM_RETENTION_TO_UPDATE ) );
+		dispatch( updateBackupRetention( siteId, MINIMUM_RETENTION_TO_UPDATE as RetentionPeriod ) );
 	}, [ dispatch, siteId ] );
 
 	const handleUpdateRetention = useCallback( () => {
