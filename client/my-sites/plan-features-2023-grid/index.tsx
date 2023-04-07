@@ -134,7 +134,6 @@ type PlanFeatures2023GridProps = {
 	withDiscount: boolean;
 	discountEndDate: Date;
 	hidePlansFeatureComparison: boolean;
-	hideFreePlan: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -1012,8 +1011,7 @@ export class PlanFeatures2023Grid extends Component<
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 const ConnectedPlanFeatures2023Grid = connect(
 	( state: IAppState, ownProps: PlanFeatures2023GridProps ) => {
-		const { placeholder, plans, isLandingPage, visiblePlans, isInSignup, siteId, hideFreePlan } =
-			ownProps;
+		const { placeholder, plans, isLandingPage, visiblePlans, isInSignup, siteId } = ownProps;
 		const canUserPurchasePlan =
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
 		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
@@ -1128,11 +1126,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
 			const isCurrentPlan = isCurrentSitePlan( state, siteId, planProductId ) ?? false;
-			let isVisible = visiblePlans.indexOf( plan ) !== -1;
-
-			if ( hideFreePlan && plan === PLAN_FREE ) {
-				isVisible = false;
-			}
+			const isVisible = visiblePlans.indexOf( plan ) !== -1;
 
 			return {
 				availableForPurchase,
