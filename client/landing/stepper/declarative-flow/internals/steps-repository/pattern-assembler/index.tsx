@@ -77,6 +77,10 @@ const PatternAssembler = ( {
 
 	// Fetching all patterns and categories
 	const allPatterns = useAllPatterns( site?.lang );
+	const patternIds = useMemo(
+		() => allPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
+		[ allPatterns ]
+	);
 	const categories = usePatternCategories( site?.ID );
 	const patternsMapByCategory = usePatternsMapByCategory( allPatterns, categories );
 	const {
@@ -609,7 +613,7 @@ const PatternAssembler = ( {
 				<PatternAssemblerContainer
 					siteId={ site?.ID }
 					stylesheet={ stylesheet }
-					patternIds={ allPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ) }
+					patternIds={ patternIds }
 					siteInfo={ siteInfo }
 				>
 					{ stepContent }
