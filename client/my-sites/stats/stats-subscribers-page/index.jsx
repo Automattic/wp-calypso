@@ -17,9 +17,8 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AnnualHighlightsSection from '../annual-highlights-section';
 import Followers from '../stats-followers';
-import StatsModule from '../stats-module';
+import StatsModuleEmails from '../stats-module-emails';
 import Reach from '../stats-reach';
-import statsStrings from '../stats-strings';
 
 const StatsSubscribersPage = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
@@ -35,8 +34,6 @@ const StatsSubscribersPage = ( props ) => {
 		},
 		'subscribers-page'
 	);
-
-	const moduleStrings = statsStrings();
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -74,30 +71,7 @@ const StatsSubscribersPage = ( props ) => {
 						<div className={ statsModuleListClass }>
 							<Followers path="followers" />
 							<Reach />
-							{ showEmailSection && (
-								<StatsModule
-									additionalColumns={ {
-										header: (
-											<>
-												<span>{ translate( 'Opens' ) }</span>
-											</>
-										),
-										body: ( item ) => (
-											<>
-												<span>{ item.opens }</span>
-											</>
-										),
-									} }
-									path="emails"
-									moduleStrings={ moduleStrings.emails }
-									// period={ this.props.period }
-									// query={ query }
-									statType="statsEmailsSummary"
-									mainItemLabel={ translate( 'Latest Emails' ) }
-									metricLabel={ translate( 'Clicks' ) }
-									showSummaryLink
-								/>
-							) }
+							{ showEmailSection && <StatsModuleEmails /> }
 						</div>
 					</>
 				) }
