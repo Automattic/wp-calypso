@@ -378,22 +378,16 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 			</Button>
 		);
 	} else if ( isWooExpressPlusPlan ) {
-		const translateComponents = {
-			ExternalLink: (
+		return (
+			<Button className={ classNames( classes ) }>
 				<ExternalLinkWithTracking
 					href="https://woocommerce.com/get-in-touch/"
 					target="_blank"
 					tracksEventName="calypso_plan_step_woo_express_plus_click"
 					tracksEventProps={ { flow: flowName } }
-				/>
-			),
-		};
-
-		return (
-			<Button className={ classNames( classes ) }>
-				{ translate( '{{ExternalLink}}Get in touch{{/ExternalLink}}', {
-					components: translateComponents,
-				} ) }
+				>
+					{ translate( 'Get in touch' ) }
+				</ExternalLinkWithTracking>
 			</Button>
 		);
 	} else if ( isLaunchPage ) {
