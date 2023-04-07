@@ -9,10 +9,6 @@ const useDotcomPatterns = (
 	const { data } = useQuery< any, unknown, Pattern[] >(
 		[ lang, 'patterns' ],
 		() => {
-			if ( ! lang ) {
-				return [];
-			}
-
 			return wpcomRequest( {
 				path: `/ptk/patterns/${ lang }`,
 				method: 'GET',

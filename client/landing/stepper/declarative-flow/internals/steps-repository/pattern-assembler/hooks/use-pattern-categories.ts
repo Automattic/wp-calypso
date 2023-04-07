@@ -9,16 +9,16 @@ const usePatternCategories = (
 	const { data } = useQuery< any, unknown, Category[] >(
 		[ siteId, 'block-patterns', 'categories' ],
 		() => {
-			if ( siteId ) {
-				return wpcom.req.get( {
-					path: `/sites/${ encodeURIComponent( siteId ) }/block-patterns/categories`,
-					apiNamespace: 'wp/v2',
-				} );
-			}
+			return wpcom.req.get( {
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				path: `/sites/${ encodeURIComponent( siteId! ) }/block-patterns/categories`,
+				apiNamespace: 'wp/v2',
+			} );
 		},
 		{
 			...queryOptions,
 			staleTime: Infinity,
+			enabled: !! siteId,
 			meta: {
 				persist: false,
 				...queryOptions.meta,
