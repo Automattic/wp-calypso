@@ -6,6 +6,7 @@ import {
 	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
+import { camelToSnakeCase } from '@automattic/js-utils';
 import debugModule from 'debug';
 import {
 	clone,
@@ -322,8 +323,14 @@ class Signup extends Component {
 
 		const deps = this.getCurrentFlowSupportedQueryParams();
 
+		const snakeCaseDeps = {};
+
+		for ( const depsKey in deps ) {
+			snakeCaseDeps[ camelToSnakeCase( depsKey ) ] = deps[ depsKey ];
+		}
+
 		return {
-			...deps,
+			...snakeCaseDeps,
 			theme,
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
