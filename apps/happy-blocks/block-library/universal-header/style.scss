@@ -722,33 +722,3 @@ body.logged-in .x-dropdown {
 		font-size: 1rem;
 	}
 }
-
-/**
- * Search results box
- */
-.jetpack-instant-search__search-results-wrapper {
-	h2,
-	h3 {
-		font-family: $recoleta-font-family;
-		font-weight: 400;
-
-		svg {
-			display: none;
-		}
-
-		a {
-			font-size: 1.5rem;
-			font-weight: 500;
-		}
-	}
-
-	.jetpack-instant-search__search-results-list li + li {
-		border-top: 1px solid var(--color-neutral-5);
-		padding: 20px 0 10px;
-	}
-
-	.jetpack-instant-search__search-result-minimal-content {
-		font-size: 1rem;
-		color: var(--color-neutral-100);
-	}
-}
