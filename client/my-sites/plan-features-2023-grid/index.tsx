@@ -415,7 +415,6 @@ export class PlanFeatures2023Grid extends Component<
 
 		const topRowPlans = plansToShow.slice( 0, numberOfPlansToShowOnTop );
 		const bottomRowPlans = plansToShow.slice( numberOfPlansToShowOnTop, 6 );
-
 		const planPropertiesForTopRow = planProperties.filter( ( properties: PlanProperties ) =>
 			topRowPlans.includes( properties.planName )
 		);
