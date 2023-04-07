@@ -4,17 +4,18 @@ import { siteColumns } from '../utils';
 import BackupStorage from './backup-storage';
 import BoostSitePerformance from './boost-site-performance';
 import InsightsStats from './insights-stats';
-import type { Site } from '../types';
+import MonitorActivity from './monitor-activity';
+import type { Site, AllowedTypes } from '../types';
 
 import './style.scss';
 
 interface Props {
 	site: Site;
-	columns?: string[];
+	columns?: AllowedTypes[];
 	isSmallScreen?: boolean;
 }
 
-const defaultColumns = siteColumns.map( ( { key } ) => key );
+const defaultColumns: AllowedTypes[] = siteColumns.map( ( { key } ) => key );
 
 export default function SiteExpandedContent( {
 	site,
@@ -30,6 +31,7 @@ export default function SiteExpandedContent( {
 	const trackEvent = ( eventName: string ) => {
 		recordEvent( eventName );
 	};
+	const hasMonitor = site.monitor_settings.monitor_active;
 
 	return (
 		<div
@@ -55,6 +57,9 @@ export default function SiteExpandedContent( {
 			) }
 			{ columns.includes( 'backup' ) && stats && (
 				<BackupStorage site={ site } trackEvent={ trackEvent } />
+			) }
+			{ columns.includes( 'monitor' ) && (
+				<MonitorActivity hasMonitor={ hasMonitor } site={ site } trackEvent={ trackEvent } />
 			) }
 		</div>
 	);

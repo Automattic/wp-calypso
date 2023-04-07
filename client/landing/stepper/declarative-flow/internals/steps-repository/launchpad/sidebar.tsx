@@ -1,5 +1,6 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { useRef, useState } from '@wordpress/element';
+import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
@@ -117,16 +118,14 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 				<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
 			</div>
 			<div className="launchpad__sidebar-content-container">
-				{ currentTask && enhancedTasks?.length && (
-					<div className="launchpad__progress-bar-container">
-						<CircularProgressBar
-							size={ 40 }
-							enableDesktopScaling
-							currentStep={ currentTask }
-							numberOfSteps={ enhancedTasks?.length }
-						/>
-					</div>
-				) }
+				<div className="launchpad__progress-bar-container">
+					<CircularProgressBar
+						size={ 40 }
+						enableDesktopScaling
+						currentStep={ currentTask }
+						numberOfSteps={ enhancedTasks?.length || null }
+					/>
+				</div>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
 				<h1 className="launchpad__sidebar-h1">
 					{ showLaunchTitle && launchTitle ? launchTitle : title }
@@ -151,7 +150,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 									onMouseLeave={ () => setClipboardCopied( false ) }
 									ref={ clipboardButtonEl }
 								>
-									<Gridicon icon="clipboard" />
+									<Icon icon={ copy } size={ 18 } />
 								</ClipboardButton>
 								<Tooltip
 									context={ clipboardButtonEl.current }
