@@ -7,7 +7,7 @@ import {
 export type PreviewProps = {
 	url: string;
 	title: string;
-	description: string;
+	description?: string;
 	customText?: string;
 	image?: string;
 	previewType:

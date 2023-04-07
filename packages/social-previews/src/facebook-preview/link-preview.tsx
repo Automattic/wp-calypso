@@ -28,9 +28,11 @@ const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 				<div className="facebook-preview__body">
 					<div className="facebook-preview__url">{ baseDomain( url ) }</div>
 					<div className="facebook-preview__title">{ facebookTitle( title ) }</div>
-					<div className="facebook-preview__description">
-						{ facebookDescription( description ) }
-					</div>
+					{ description && (
+						<div className="facebook-preview__description">
+							{ facebookDescription( description ) }
+						</div>
+					) }
 					<div className="facebook-preview__info">
 						<FacebookPostIcon name="info" />
 					</div>

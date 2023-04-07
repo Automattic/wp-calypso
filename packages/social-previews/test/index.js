@@ -12,26 +12,35 @@ import {
 	SearchPreview as Search,
 } from '../src';
 
+const DEFAULT_POST_TITLE = 'Hello World';
+const DEFAULT_POST_URL = 'https://example.com/new-entry';
 const IMAGE_SRC_FIXTURE = 'https://wordpress.com/someimagehere';
 
 describe( 'Facebook previews', () => {
 	it( 'should display a (hard) truncated title', () => {
 		const { container } = render(
-			<Facebook title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral." />
+			<Facebook
+				url={ DEFAULT_POST_URL }
+				title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral."
+			/>
 		);
 
 		const titleEl = container.querySelector( '.facebook-preview__title' );
 
 		expect( titleEl ).toBeVisible();
 		expect( titleEl ).toHaveTextContent(
-			"I am the very model of a modern Major-General, I've information vegetable, anima…"
+			"I am the very model of a modern Major-General, I've information vegeta…"
 		);
-		expect( titleEl.textContent.replace( '…', '' ) ).toHaveLength( 80 );
+		expect( titleEl.textContent.replace( '…', '' ) ).toHaveLength( 70 );
 	} );
 
 	it( 'should display a (hard) truncated description', () => {
 		const { container } = render(
-			<Facebook description="I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
+			<Facebook
+				url={ DEFAULT_POST_URL }
+				title={ DEFAULT_POST_TITLE }
+				description="I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse."
+			/>
 		);
 
 		const descEl = container.querySelector( '.facebook-preview__description' );
@@ -45,7 +54,11 @@ describe( 'Facebook previews', () => {
 
 	it( 'should strip html tags from the description', () => {
 		const { container } = render(
-			<Facebook description="<p style='color:red'>I know the kings of <span>England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, <span>both</span> the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
+			<Facebook
+				url={ DEFAULT_POST_URL }
+				title={ DEFAULT_POST_TITLE }
+				description="<p style='color:red'>I know the kings of <span>England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, <span>both</span> the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse."
+			/>
 		);
 
 		const descEl = container.querySelector( '.facebook-preview__description' );
@@ -58,67 +71,36 @@ describe( 'Facebook previews', () => {
 	} );
 
 	it( 'should display image only when provided', () => {
-		const { container } = render(
-			<>
-				<Facebook type="article" />
-				<Facebook image={ IMAGE_SRC_FIXTURE } type="website" />
-			</>
+		const { container: container1 } = render(
+			<Facebook url={ DEFAULT_POST_URL } title={ DEFAULT_POST_TITLE } />
+		);
+		const { container: container2 } = render(
+			<Facebook url={ DEFAULT_POST_URL } title={ DEFAULT_POST_TITLE } image={ IMAGE_SRC_FIXTURE } />
 		);
 
 		// No image
 		expect(
-			container
-				.querySelector( '.facebook-preview__article' )
-				.querySelector( 'img[alt="Facebook Preview Thumbnail"]' )
+			container1.querySelector( 'img[alt="Facebook Preview Thumbnail"]' )
 		).not.toBeInTheDocument();
 
 		// Has image
-		const imageEl = container
-			.querySelector( '.facebook-preview__website' )
-			.querySelector( 'img[alt="Facebook Preview Thumbnail"]' );
+		const imageEl = container2.querySelector( 'img[alt="Facebook Preview Thumbnail"]' );
 
 		expect( imageEl ).toBeVisible();
 		expect( imageEl ).toHaveAttribute( 'src', IMAGE_SRC_FIXTURE );
 	} );
 
 	describe( 'Preview url display', () => {
-		it( 'should display a protocol-less url and author if provided', () => {
-			const { container } = render( <Facebook url="https://wordpress.com" author="Jane Doe" /> );
-
-			const urlEl = container.querySelector( '.facebook-preview__url' );
-
-			expect( urlEl ).toBeVisible();
-			expect( urlEl ).toHaveTextContent( 'wordpress.com | Jane Doe' );
-		} );
-
-		it( 'should display a protocol-less url only (with no separator) when author is not provided', () => {
-			const { container } = render( <Facebook url="https://wordpress.com" /> );
+		it( 'should display a protocol-less url', () => {
+			const { container } = render(
+				<Facebook url="https://wordpress.com" title={ DEFAULT_POST_TITLE } />
+			);
 
 			const urlEl = container.querySelector( '.facebook-preview__url' );
 
 			expect( urlEl ).toBeVisible();
 			expect( urlEl ).toHaveTextContent( 'wordpress.com' );
 			expect( urlEl.textContent ).not.toContain( '|' );
-		} );
-
-		it( 'should display the author only (with no separator) when a url is not provided', () => {
-			const { container } = render( <Facebook author="Jane Doe" /> );
-
-			const urlEl = container.querySelector( '.facebook-preview__url' );
-
-			expect( urlEl ).toBeVisible();
-			expect( urlEl ).toHaveTextContent( 'Jane Doe' );
-			expect( urlEl.textContent ).not.toContain( '|' );
-		} );
-	} );
-
-	describe( 'Styling hooks', () => {
-		it( 'should append a classname with the correct "type" to the root element when provided', () => {
-			const { container } = render( <Facebook type="article" /> );
-
-			const rootEl = container.querySelector( '.facebook-preview' );
-
-			expect( rootEl ).toHaveClass( 'facebook-preview__article' );
 		} );
 	} );
 } );
