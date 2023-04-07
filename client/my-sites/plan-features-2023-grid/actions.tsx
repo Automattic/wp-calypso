@@ -390,7 +390,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		};
 
 		return (
-			<Button className={ classNames( classes, 'is-ecommerce-plan' ) }>
+			<Button className={ classNames( classes ) }>
 				{ translate( '{{ExternalLink}}Get in touch{{/ExternalLink}}', {
 					components: translateComponents,
 				} ) }
