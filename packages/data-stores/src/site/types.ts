@@ -1,7 +1,7 @@
 import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
-import type { FeatureId } from '../wpcom-features';
+import type { FeatureId } from '../shared-types';
 
 export interface Dispatch {
 	dispatch: DispatchFromMap< ActionCreators >;

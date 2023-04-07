@@ -4,25 +4,30 @@ import {
 	isWpComPlan,
 	plansLink,
 	isMonthly,
+	PLAN_ANNUAL_PERIOD,
 } from '@automattic/calypso-products';
 import { Popover } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { omit } from 'lodash';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import { Primitive } from 'utility-types';
 import SegmentedControl from 'calypso/components/segmented-control';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { addQueryArgs } from 'calypso/lib/url';
 import {
 	getPlanBySlug,
 	getPlanRawPrice,
 	getDiscountedRawPrice,
+	getPlanBillPeriod,
 } from 'calypso/state/plans/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { IAppState } from 'calypso/state/types';
 
 export type PlanTypeSelectorProps = {
@@ -143,9 +148,22 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	} );
 	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
 	const maxDiscount = useMaxDiscount( props.plans );
+	const currentPlanBillingPeriod = useSelector( ( state ) => {
+		const currentSitePlanSlug = getSitePlanSlug( state, getSelectedSiteId( state ) );
+		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
+	} );
 
-	if ( ! eligibleForWpcomMonthlyPlans ) {
-		return null;
+	if ( showBiannualToggle ) {
+		// skip showing toggle if current plan's term is higher than 1 year
+		if ( currentPlanBillingPeriod && PLAN_ANNUAL_PERIOD < currentPlanBillingPeriod ) {
+			return null;
+		}
+	}
+
+	if ( ! showBiannualToggle ) {
+		if ( ! eligibleForWpcomMonthlyPlans ) {
+			return null;
+		}
 	}
 
 	const additionalPathProps = props.redirectTo ? { redirect_to: props.redirectTo } : {};
@@ -250,6 +268,12 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 	kind,
 	...props
 } ) => {
+	useEffect( () => {
+		recordTracksEvent( 'calypso_plans_plan_type_selector_view', {
+			kind,
+		} );
+	}, [] );
+
 	if ( kind === 'interval' ) {
 		return <IntervalTypeToggle { ...props } />;
 	}

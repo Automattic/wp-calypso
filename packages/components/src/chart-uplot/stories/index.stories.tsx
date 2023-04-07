@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { useRef } from 'react';
 import UplotChart from '../';
 
 export default { title: 'Chart (uPlot)' };
@@ -23,3 +24,18 @@ const SAMPLE_DATA = [
 const Variant = ( props: any ) => <UplotChart data={ SAMPLE_DATA } { ...props } />;
 
 export const Default = () => <Variant />;
+
+export const ExternalLegendMount = () => {
+	const legendRef = useRef( null );
+	const flexStyle = { display: 'flex', justifyContent: 'space-between', alignContent: 'center' };
+
+	return (
+		<>
+			<div className="header" style={ flexStyle }>
+				<h1>Some Header</h1>
+				<div className="legend" ref={ legendRef } style={ flexStyle } />
+			</div>
+			<Variant legendContainer={ legendRef } />
+		</>
+	);
+};

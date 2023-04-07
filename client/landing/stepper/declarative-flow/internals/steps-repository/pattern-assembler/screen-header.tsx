@@ -13,6 +13,7 @@ interface Props {
 	onBack: () => void;
 	onDoneClick: () => void;
 	updateActivePatternPosition: () => void;
+	patterns: Pattern[];
 }
 
 const ScreenHeader = ( {
@@ -21,9 +22,10 @@ const ScreenHeader = ( {
 	onBack,
 	onDoneClick,
 	updateActivePatternPosition,
+	patterns,
 }: Props ) => {
 	const translate = useTranslate();
-	const patterns = useHeaderPatterns();
+	const headerPatterns = useHeaderPatterns( patterns );
 	useEffect( () => {
 		updateActivePatternPosition();
 	}, [ updateActivePatternPosition ] );
@@ -39,7 +41,7 @@ const ScreenHeader = ( {
 			/>
 			<div className="screen-container__body">
 				<PatternSelector
-					patterns={ patterns }
+					patterns={ headerPatterns }
 					onSelect={ ( selectedPattern ) => onSelect( 'header', selectedPattern, 'header' ) }
 					selectedPattern={ selectedPattern }
 					emptyPatternText={ translate( 'No Header' ) }

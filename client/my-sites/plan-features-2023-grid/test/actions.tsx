@@ -31,20 +31,27 @@ jest.mock( 'i18n-calypso', () => ( {
 } ) );
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
-	useSelector: jest.fn(),
+	useSelector: jest.fn( ( selector ) => selector() ),
 	useDispatch: jest.fn(),
+} ) );
+jest.mock( 'calypso/state/plans/selectors', () => ( {
+	getPlanBillPeriod: jest.fn(),
 } ) );
 
 import {
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_BUSINESS_3_YEARS,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_PREMIUM,
+	PLAN_PREMIUM_2_YEARS,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import React from 'react';
+import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
 import PlanFeatures2023GridActions from '../actions';
 
 describe( 'PlanFeatures2023GridActions', () => {
@@ -58,6 +65,7 @@ describe( 'PlanFeatures2023GridActions', () => {
 		const upgradeToYearly = 'Upgrade to Yearly';
 		const upgradeToBiennial = 'Upgrade to Biennial';
 		const upgradeToTriennial = 'Upgrade to Triennial';
+		const contactSupport = 'Contact support';
 		const defaultProps = {
 			availableForPurchase: true,
 			canUserPurchasePlan: true,
@@ -71,6 +79,26 @@ describe( 'PlanFeatures2023GridActions', () => {
 			isWpcomEnterpriseGridPlan: false,
 			selectedSiteSlug: 'foo.wordpress.com',
 		};
+
+		test( `should render ${ contactSupport } when current plan is on a lower tier but longer term than the grid plan`, () => {
+			getPlanBillPeriod.mockImplementation( ( _state, planSlug ) =>
+				planSlug === PLAN_PREMIUM_2_YEARS ? PLAN_BIENNIAL_PERIOD : PLAN_ANNUAL_PERIOD
+			);
+
+			render(
+				<PlanFeatures2023GridActions
+					{ ...defaultProps }
+					currentSitePlanSlug={ PLAN_PREMIUM_2_YEARS }
+					planName={ PLAN_BUSINESS }
+					planType={ PLAN_BUSINESS }
+				/>
+			);
+
+			const upgradeButton = screen.getByRole( 'button', { name: contactSupport } );
+
+			expect( upgradeButton ).toBeDefined();
+			expect( upgradeButton ).toBeDisabled();
+		} );
 
 		test( `should render ${ upgrade } when current plan and grid plan do not match`, () => {
 			render(

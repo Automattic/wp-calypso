@@ -22,7 +22,13 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Browse' ), function () {
 
 	beforeAll( async () => {
 		page = await browser.newPage();
-		const testUser = getTestAccountByFeature( envToFeatureKey( envVariables ) );
+		const testUser = getTestAccountByFeature( envToFeatureKey( envVariables ), [
+			{
+				gutenberg: 'stable',
+				siteType: 'simple',
+				accountName: 'defaultUser',
+			},
+		] );
 		const testAccount = new TestAccount( testUser );
 		await testAccount.authenticate( page );
 
