@@ -610,7 +610,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	const displayedPlansProperties = useMemo(
 		() =>
 			( planProperties ?? [] ).filter(
-				( { planName } ) => ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
+				( { planName, isVisible } ) => isVisible && ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
 			),
 		[ planProperties ]
 	);
