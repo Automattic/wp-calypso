@@ -32,27 +32,27 @@ function usePerMonthDescription( {
 		planSlug: planName as PlanSlug,
 		returnMonthly: isMonthlyPlan,
 	} );
-	const planYearlyVariantPrices = usePlanPrices( {
+	const planYearlyVariantPricesPerMonth = usePlanPrices( {
 		planSlug:
 			getPlanSlugForTermVariant( planName as PlanSlug, TERM_ANNUALLY ) ?? ( '' as PlanSlug ),
 		returnMonthly: true,
 	} );
-	const maybeDiscountedPrice =
-		planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
-	// we want the raw price (discounted or not) for the yearly variant, not the site-plan discounted one
-	const yearlyVariantMaybeDiscountedPrice =
-		planYearlyVariantPrices.discountedRawPrice || planYearlyVariantPrices.rawPrice;
 
 	if ( isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
 	}
 
 	if ( isMonthlyPlan ) {
-		if ( yearlyVariantMaybeDiscountedPrice < planPrices.rawPrice ) {
+		// we want the raw price (discounted or not) for the yearly variant, not the site-plan discounted one
+		const yearlyVariantMaybeDiscountedPricePerMonth =
+			planYearlyVariantPricesPerMonth.discountedRawPrice ||
+			planYearlyVariantPricesPerMonth.rawPrice;
+
+		if ( yearlyVariantMaybeDiscountedPricePerMonth < planPrices.rawPrice ) {
 			return translate( `Save %(discountRate)s%% by paying annually`, {
 				args: {
 					discountRate: Math.round(
-						( 100 * ( planPrices.rawPrice - yearlyVariantMaybeDiscountedPrice ) ) /
+						( 100 * ( planPrices.rawPrice - yearlyVariantMaybeDiscountedPricePerMonth ) ) /
 							planPrices.rawPrice
 					),
 				},
@@ -61,6 +61,8 @@ function usePerMonthDescription( {
 	}
 
 	if ( ! isMonthlyPlan ) {
+		const maybeDiscountedPrice =
+			planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
 		const fullTermPriceText =
 			currencyCode && maybeDiscountedPrice
 				? formatCurrency( maybeDiscountedPrice, currencyCode )
@@ -79,8 +81,6 @@ function usePerMonthDescription( {
 				} );
 			}
 		}
-
-		return null;
 	}
 
 	return null;
@@ -89,8 +89,7 @@ function usePerMonthDescription( {
 const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props ) => {
 	const { planName, billingTimeframe } = props;
 	const translate = useTranslate();
-
-	const perMonthDescription = usePerMonthDescription( props ) || billingTimeframe;
+	const perMonthDescription = usePerMonthDescription( props );
 	const price = formatCurrency( 25000, 'USD' );
 
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
@@ -105,7 +104,7 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 		);
 	}
 
-	return <div>{ perMonthDescription }</div>;
+	return <div>{ perMonthDescription || billingTimeframe }</div>;
 };
 
 export default localize( PlanFeatures2023GridBillingTimeframe );
