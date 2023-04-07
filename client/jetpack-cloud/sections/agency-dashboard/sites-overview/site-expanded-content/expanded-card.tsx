@@ -54,7 +54,7 @@ export default function ExpandedCard( {
 	};
 
 	return (
-		<Card { ...props }>
+		<Card data-testid="expanded-card" { ...props }>
 			{ isEnabled ? (
 				<>
 					<div className="expanded-card__header">{ header }</div>
