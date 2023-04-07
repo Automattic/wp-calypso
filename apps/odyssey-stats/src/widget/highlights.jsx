@@ -7,14 +7,12 @@ function TopColumn( { items, viewAllUrl, viewAllText, title, className = null } 
 	const translate = useTranslate();
 	return (
 		<div className={ classNames( 'stats-widget-highlights-card', className ) }>
-			<div className="stats-widget-highlights-card__title">{ title }</div>
+			<label className="stats-widget-highlights-card__title">{ title }</label>
 			<ul className="stats-widget-highlights-card__list">
-				{ items.map( ( item ) => (
-					<li>
-						<div>
-							<p>{ item.name }</p>
-							<span>{ translate( '%(views)s Views', { args: { views: item.value } } ) }</span>
-						</div>
+				{ items.map( ( item, idx ) => (
+					<li key={ idx }>
+						<p>{ item.name }</p>
+						<span>{ translate( '%(views)s Views', { args: { views: item.value } } ) }</span>
 					</li>
 				) ) }
 			</ul>
@@ -31,7 +29,7 @@ export default function Highlights( { odysseyStatsBaseUrl } ) {
 	return (
 		<div className="stats-widget-highlights">
 			<div className="stats-widget-highlights__header">
-				<span>{ translate( '7 Day Highlights' ) }</span>
+				<label>{ translate( '7 Day Highlights' ) }</label>
 				<a href={ odysseyStatsBaseUrl }>{ translate( 'View detailed stats' ) }</a>
 			</div>
 			<div className="stats-widget-highlights__body">

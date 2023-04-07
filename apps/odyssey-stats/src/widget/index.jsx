@@ -29,7 +29,9 @@ export function init() {
 						gmtOffset={ config( 'gmt_offset' ) }
 						odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
 					/>
-					<Highlights odysseyStatsBaseUrl={ odysseyStatsBaseUrl } />
+					<div className="stats-widget-highlights-wrapper">
+						<Highlights odysseyStatsBaseUrl={ odysseyStatsBaseUrl } />
+					</div>
 				</div>
 			</QueryClientProvider>,
 			document.getElementById( 'dashboard_stats' )
