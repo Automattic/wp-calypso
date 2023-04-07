@@ -10,7 +10,7 @@ const useDotcomPatterns = (
 		[ lang, 'patterns' ],
 		() => {
 			return wpcomRequest( {
-				path: `/ptk/patterns/${ lang }`,
+				path: `/ptk/patterns/es`,
 				method: 'GET',
 				apiVersion: '1.1',
 				query: new URLSearchParams( {

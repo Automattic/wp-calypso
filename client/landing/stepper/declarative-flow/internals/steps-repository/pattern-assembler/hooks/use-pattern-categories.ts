@@ -3,15 +3,14 @@ import wpcom from 'calypso/lib/wp';
 import type { Category } from '../types';
 
 const usePatternCategories = (
-	siteId: number | undefined,
+	siteId: undefined | number = 0,
 	queryOptions: UseQueryOptions< any, unknown, Category[] > = {}
 ): Category[] => {
 	const { data } = useQuery< any, unknown, Category[] >(
 		[ siteId, 'block-patterns', 'categories' ],
 		() => {
 			return wpcom.req.get( {
-				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-				path: `/sites/${ encodeURIComponent( siteId! ) }/block-patterns/categories`,
+				path: `/sites/${ encodeURIComponent( siteId ) }/block-patterns/categories`,
 				apiNamespace: 'wp/v2',
 			} );
 		},
