@@ -499,7 +499,7 @@ const PatternAssembler = ( {
 						onBack={ () => onPatternSelectorBack( 'header' ) }
 						onDoneClick={ () => onDoneClick( 'header' ) }
 						updateActivePatternPosition={ () => updateActivePatternPosition( -1 ) }
-						patterns={ patternsMapByCategory[ 'header' ] }
+						patterns={ patternsMapByCategory[ 'header' ] || [] }
 					/>
 				</NavigatorScreen>
 
@@ -510,7 +510,7 @@ const PatternAssembler = ( {
 						onBack={ () => onPatternSelectorBack( 'footer' ) }
 						onDoneClick={ () => onDoneClick( 'footer' ) }
 						updateActivePatternPosition={ () => activateFooterPosition( !! footer ) }
-						patterns={ patternsMapByCategory[ 'footer' ] }
+						patterns={ patternsMapByCategory[ 'footer' ] || [] }
 					/>
 				</NavigatorScreen>
 
