@@ -348,8 +348,8 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 } ) => {
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
-	const highlightLabel = useHighlightLabel( planName );
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
+	const highlightLabel = useHighlightLabel( planName, flowName );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties, flowName );
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
 		'popular-plan-parent-class': highlightLabel,
 		'is-last-in-row': isLastInRow,

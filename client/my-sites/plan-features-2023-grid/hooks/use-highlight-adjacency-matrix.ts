@@ -1,4 +1,5 @@
 import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
+import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelector } from 'react-redux';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -12,15 +13,21 @@ interface HighlightAdjacencyMatrix {
 	};
 }
 
-const useHighlightIndices = ( visiblePlans: PlanProperties[] ) => {
+const useHighlightIndices = ( visiblePlans: PlanProperties[], flowName?: string ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );
 
 	return visiblePlans.reduce< number[] >( ( acc, { planName }, index ) => {
-		const isHighlight =
-			isBusinessPlan( planName ) ||
-			isPremiumPlan( planName ) ||
-			currentPlan?.productSlug === planName;
+		let isHighlight = false;
+
+		if ( flowName === NEWSLETTER_FLOW ) {
+			isHighlight = isPremiumPlan( planName ) || currentPlan?.productSlug === planName;
+		} else {
+			isHighlight =
+				isBusinessPlan( planName ) ||
+				isPremiumPlan( planName ) ||
+				currentPlan?.productSlug === planName;
+		}
 
 		if ( isHighlight ) {
 			acc.push( index );
@@ -30,8 +37,8 @@ const useHighlightIndices = ( visiblePlans: PlanProperties[] ) => {
 	}, [] );
 };
 
-const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[] ) => {
-	const highlightIndices = useHighlightIndices( visiblePlans );
+const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[], flowName?: string ) => {
+	const highlightIndices = useHighlightIndices( visiblePlans, flowName );
 	const adjacencyMatrix: HighlightAdjacencyMatrix = {};
 
 	visiblePlans.forEach( ( { planName }, index ) => {
