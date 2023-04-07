@@ -407,6 +407,7 @@ const Settings = ( {
 
 		return (
 			<Accordion
+				expanded={ true }
 				title={ translate( 'Contact verification', { textOnly: true } ) }
 				subtitle={ translate( 'Additional contact verification required for your domain', {
 					textOnly: true,
