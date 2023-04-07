@@ -1,9 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
-import { Card, Ribbon, Button, Gridicon } from '@automattic/components';
+import { Card, Button, Gridicon } from '@automattic/components';
 import {
 	PremiumBadge,
 	StyleVariationBadges,
+	ThemeCard,
 	WooCommerceBundledBadge,
 } from '@automattic/design-picker';
 import { Button as LinkButton } from '@wordpress/components';
@@ -11,7 +12,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
-import { get, isEmpty, isEqual, some } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
@@ -162,12 +163,6 @@ export class Theme extends Component {
 		this.props.onStyleVariationClick?.( this.props.theme.id, this.props.index, variation );
 	};
 
-	isBeginnerTheme() {
-		const { theme } = this.props;
-		const skillLevels = get( theme, [ 'taxonomies', 'theme_skill-level' ] );
-		return some( skillLevels, { slug: 'beginner' } );
-	}
-
 	renderPlaceholder() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -186,6 +181,35 @@ export class Theme extends Component {
 				</div>
 			);
 		}
+	}
+
+	renderScreenshot() {
+		const { index, theme } = this.props;
+		const { description, screenshot } = theme;
+		if ( ! screenshot ) {
+			return (
+				<div className="theme__no-screenshot">
+					<Gridicon icon="themes" size={ 48 } />
+				</div>
+			);
+		}
+
+		const fit = '479,360';
+		const themeImgSrc = photon( screenshot, { fit } ) || screenshot;
+		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } ) || screenshot;
+
+		// for performance testing
+		const screenshotID = index === 0 ? 'theme__firstscreenshot' : null;
+
+		return (
+			<img
+				alt={ decodeEntities( description ) }
+				className="theme__img"
+				src={ themeImgSrc }
+				srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
+				id={ screenshotID }
+			/>
+		);
 	}
 
 	onUpsellClick = () => {
@@ -539,9 +563,6 @@ export class Theme extends Component {
 		const showUpsell = ( isPremiumTheme || isExternallyManagedTheme ) && ! active;
 		const themeDescription = decodeEntities( description );
 
-		// for performance testing
-		const screenshotID = this.props.index === 0 ? 'theme__firstscreenshot' : null;
-
 		if ( this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
 		}
@@ -549,16 +570,32 @@ export class Theme extends Component {
 		const fit = '479,360';
 		const themeImgSrc = photon( screenshot, { fit } ) || screenshot;
 		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } ) || screenshot;
+
+		// for performance testing
+		const screenshotID = this.props.index === 0 ? 'theme__firstscreenshot' : null;
+
 		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
 		const bookmarkRef = this.props.bookmarkRef ? { ref: this.props.bookmarkRef } : {};
 
+		if ( theme ) {
+			return (
+				<div data-e2e-theme={ e2eThemeName }>
+					<ThemeCard
+						name={ name }
+						image={ this.renderScreenshot() }
+						imageClickUrl={ this.props.screenshotClickUrl }
+						imageActionLabel={ this.props.actionLabel }
+						styleVariations={ style_variations }
+						isActive={ active }
+						onImageClick={ this.onScreenshotClick }
+						onStyleVariationClick={ this.onStyleVariationClick }
+					/>
+				</div>
+			);
+		}
+
 		return (
 			<Card className={ themeClass } data-e2e-theme={ e2eThemeName } onClick={ this.setBookmark }>
-				{ this.isBeginnerTheme() && (
-					<Ribbon className="theme__ribbon" color="green">
-						{ translate( 'Beginner' ) }
-					</Ribbon>
-				) }
 				<div ref={ this.themeThumbnailRef } className="theme__content" { ...bookmarkRef }>
 					{ this.renderUpdateAlert() }
 					<a
