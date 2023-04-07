@@ -7,7 +7,7 @@ import {
 export type PreviewProps = {
 	url: string;
 	title: string;
-	description?: string;
+	description: string;
 	customText?: string;
 	image?: string;
 	previewType:
@@ -15,3 +15,5 @@ export type PreviewProps = {
 		| typeof AUTO_SHARED_LINK_PREVIEW
 		| typeof DEFAULT_LINK_PREVIEW;
 };
+
+export type TextFormatter = ( text: string ) => string;

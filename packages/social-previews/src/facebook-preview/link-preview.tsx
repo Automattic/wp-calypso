@@ -1,42 +1,42 @@
-import { compact } from 'lodash';
-import { firstValid, hardTruncation, shortEnough, stripHtmlTags } from '../helpers';
+import { useTranslate } from 'i18n-calypso';
+import { baseDomain, facebookTitle, facebookDescription, facebookCustomText } from './helpers';
+import FacebookPostActions from './post/actions';
+import FacebookPostHeader from './post/header';
+import FacebookPostIcon from './post/icons';
 import type { FacebookPreviewProps } from './types';
 
-const TITLE_LENGTH = 80;
-const DESCRIPTION_LENGTH = 200;
-
-const baseDomain = ( url: string ): string =>
-	url &&
-	url
-		.replace( /^[^/]+[/]*/, '' ) // strip leading protocol
-		.replace( /\/.*$/, '' ); // strip everything after the domain
-
-const facebookTitle = firstValid( shortEnough( TITLE_LENGTH ), hardTruncation( TITLE_LENGTH ) );
-
-const facebookDescription = firstValid(
-	shortEnough( DESCRIPTION_LENGTH ),
-	hardTruncation( DESCRIPTION_LENGTH )
-);
-
-const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( props ) => {
-	const { url, title, description, image, author } = props;
+const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
+	url,
+	title,
+	description,
+	image,
+	user,
+	customText,
+} ) => {
+	const translate = useTranslate();
 
 	return (
-		<div className="facebook-preview">
+		<div className="facebook-preview__post">
+			<FacebookPostHeader user={ user } />
 			<div className="facebook-preview__content">
+				{ customText && (
+					<p className="facebook-preview__custom-text">{ facebookCustomText( customText ) }</p>
+				) }
 				<div className="facebook-preview__image">
-					{ image && <img alt="Facebook Preview Thumbnail" src={ image } /> }
+					{ image && <img alt={ translate( 'Facebook Preview Thumbnail' ) } src={ image } /> }
 				</div>
 				<div className="facebook-preview__body">
-					<div className="facebook-preview__url">
-						{ compact( [ baseDomain( url ), author ] ).join( ' | ' ) }
-					</div>
-					<div className="facebook-preview__title">{ facebookTitle( title || '' ) }</div>
+					<div className="facebook-preview__url">{ baseDomain( url ) }</div>
+					<div className="facebook-preview__title">{ facebookTitle( title ) }</div>
 					<div className="facebook-preview__description">
-						{ facebookDescription( stripHtmlTags( description ) ) }
+						{ facebookDescription( description ) }
+					</div>
+					<div className="facebook-preview__info">
+						<FacebookPostIcon name="info" />
 					</div>
 				</div>
 			</div>
+			<FacebookPostActions />
 		</div>
 	);
 };
