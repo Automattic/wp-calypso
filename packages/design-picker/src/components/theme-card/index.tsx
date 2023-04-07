@@ -1,7 +1,7 @@
 import { Card } from '@automattic/components';
 import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
 import StyleVariationBadges from '../style-variation-badges';
-import { ActiveBadge } from './badges';
 import type { StyleVariation } from '../../types';
 import './style.scss';
 
@@ -10,7 +10,9 @@ interface ThemeCardProps {
 	image: React.ReactNode;
 	imageClickUrl?: string;
 	imageActionLabel?: string;
+	badge?: React.ReactNode;
 	styleVariations: StyleVariation[];
+	optionsMenu?: React.ReactNode;
 	isActive?: boolean;
 	onImageClick?: () => void;
 	onStyleVariationClick?: () => void;
@@ -21,7 +23,9 @@ const ThemeCard: React.FC< ThemeCardProps > = ( {
 	image,
 	imageClickUrl,
 	imageActionLabel,
+	badge,
 	styleVariations = [],
+	optionsMenu,
 	isActive,
 	onImageClick,
 	onStyleVariationClick,
@@ -49,7 +53,13 @@ const ThemeCard: React.FC< ThemeCardProps > = ( {
 				</a>
 				<div className={ themeInfoClasses }>
 					<h2 className="theme-card__info-title">{ name }</h2>
-					{ isActive && <ActiveBadge /> }
+					{ isActive && (
+						<span className="theme-card__info-badge theme-card__info-badge-active">
+							{ translate( 'Active', {
+								context: 'singular noun, the currently active theme',
+							} ) }
+						</span>
+					) }
 					{ ! isActive && styleVariations.length > 0 && (
 						<div className="theme-card__info-style-variations">
 							<StyleVariationBadges
@@ -59,6 +69,8 @@ const ThemeCard: React.FC< ThemeCardProps > = ( {
 							/>
 						</div>
 					) }
+					{ ! isActive && <div className="theme-card__info-pricing">{ badge }</div> }
+					{ optionsMenu }
 				</div>
 			</div>
 		</Card>

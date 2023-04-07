@@ -489,14 +489,27 @@ export class Theme extends Component {
 		const { theme } = this.props;
 
 		return (
-			<span className="theme__upsell">
+			<>
 				<TrackComponentView
 					eventName="calypso_upgrade_nudge_impression"
 					eventProperties={ { cta_name: 'theme-upsell', theme: theme.id } }
 				/>
 				{ this.getPremiumThemeBadge() }
-			</span>
+			</>
 		);
+	};
+
+	renderPricingBadge = () => {
+		const { active, isExternallyManagedTheme, isPremiumTheme, translate } = this.props;
+		if ( active ) {
+			return null;
+		}
+
+		if ( isExternallyManagedTheme || isPremiumTheme ) {
+			return this.renderUpsell();
+		}
+
+		return <span>{ translate( 'Free' ) }</span>;
 	};
 
 	renderStyleVariations = () => {
@@ -551,7 +564,7 @@ export class Theme extends Component {
 	};
 
 	render() {
-		const { active, theme, translate, isPremiumTheme, isExternallyManagedTheme } = this.props;
+		const { active, theme, translate } = this.props;
 		const { name, description, screenshot, style_variations = [] } = theme;
 		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
@@ -560,7 +573,6 @@ export class Theme extends Component {
 			'is-actionable': isActionable,
 		} );
 
-		const showUpsell = ( isPremiumTheme || isExternallyManagedTheme ) && ! active;
 		const themeDescription = decodeEntities( description );
 
 		if ( this.props.isPlaceholder ) {
@@ -585,7 +597,9 @@ export class Theme extends Component {
 						image={ this.renderScreenshot() }
 						imageClickUrl={ this.props.screenshotClickUrl }
 						imageActionLabel={ this.props.actionLabel }
+						badge={ this.renderPricingBadge() }
 						styleVariations={ style_variations }
+						optionsMenu={ this.renderMoreButton() }
 						isActive={ active }
 						onImageClick={ this.onScreenshotClick }
 						onStyleVariationClick={ this.onStyleVariationClick }
@@ -649,12 +663,7 @@ export class Theme extends Component {
 							</span>
 						) }
 						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
-						{ ! active &&
-							( showUpsell ? (
-								this.renderUpsell()
-							) : (
-								<span className="theme__info-upsell-description">{ translate( 'Free' ) }</span>
-							) ) }
+						{ this.renderPricingBadge() }
 						{ this.renderMoreButton() }
 					</div>
 				</div>
