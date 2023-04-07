@@ -1,37 +1,35 @@
-import { isJetpackBackup } from '@automattic/calypso-products';
+import { camelOrSnakeSlug } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
 import { useEffect, useState, useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch, useSelector } from 'react-redux';
-import { useQueryRewindSize } from 'calypso/components/data/query-rewind-size';
+import { productHasBackups } from 'calypso/blocks/jetpack-benefits/feature-checks';
 import ExternalLink from 'calypso/components/external-link';
+import HasRetentionCapabilitiesSwitch from 'calypso/jetpack-cloud/sections/settings/has-retention-capabilities-switch';
 import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getBackupRetentionDays from 'calypso/state/rewind/selectors/get-backup-retention-days';
 import getBackupRetentionUpdateRequestStatus from 'calypso/state/rewind/selectors/get-backup-retention-update-status';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import LoadingPlaceholder from '../loading';
 import RetentionConfirmationDialog from '../retention-confirmation-dialog';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
 import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
-
 import './style.scss';
 
 interface BackupRetentionOptionOnCancelPurchaseProps {
 	purchase: WithCamelCaseSlug | WithSnakeCaseSlug;
 }
 
-const BackupRetentionOptionOnCancelPurchase: React.FC<
-	BackupRetentionOptionOnCancelPurchaseProps
-> = ( { purchase } ) => {
+const RetentionOptionOnCancelPurchase: React.FC = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const MINIMUM_RETENTION_TO_UPDATE = 2;
+	const MINIMUM_RETENTION_TO_OFFER = 2;
 
-	const [ shortRetentionOfferCardVisible, setShortRetentionOfferCardVisible ] = useState( false );
+	const [ retentionOfferCardVisible, setRetentionOfferCardVisible ] = useState( false );
 	const [ confirmationDialogVisible, setConfirmationDialogVisible ] = useState( false );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
-	useQueryRewindSize( siteId );
 
 	// Retention period included in customer plan
 	const planRetentionPeriod = useSelector( ( state ) =>
@@ -48,9 +46,9 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 	);
 
 	// The retention days that currently applies for this customer.
-	const currentRetentionPlan = customerRetentionPeriod || planRetentionPeriod || 0;
+	const currentBackupRetention = customerRetentionPeriod || planRetentionPeriod || 0;
 	const updateRetentionPeriod = useCallback( () => {
-		dispatch( updateBackupRetention( siteId, MINIMUM_RETENTION_TO_UPDATE as RetentionPeriod ) );
+		dispatch( updateBackupRetention( siteId, MINIMUM_RETENTION_TO_OFFER as RetentionPeriod ) );
 	}, [ dispatch, siteId ] );
 
 	const handleUpdateRetention = useCallback( () => {
@@ -62,14 +60,14 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 	}, [] );
 
 	useEffect( () => {
-		if ( isJetpackBackup( purchase ) && MINIMUM_RETENTION_TO_UPDATE < currentRetentionPlan ) {
-			setShortRetentionOfferCardVisible( true );
+		if ( MINIMUM_RETENTION_TO_OFFER < currentBackupRetention ) {
+			setRetentionOfferCardVisible( true );
 		} else {
-			setShortRetentionOfferCardVisible( false );
+			setRetentionOfferCardVisible( false );
 		}
-	}, [ purchase, currentRetentionPlan ] );
+	}, [ currentBackupRetention ] );
 
-	if ( shortRetentionOfferCardVisible ) {
+	if ( retentionOfferCardVisible ) {
 		return (
 			<Card className="retention-option-on-cancel-purchase__card">
 				<h2>{ translate( 'Out of storage space? Store only two days of backups' ) }</h2>
@@ -88,7 +86,7 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 										/>
 									),
 								},
-								args: { minimumRetention: MINIMUM_RETENTION_TO_UPDATE },
+								args: { minimumRetention: MINIMUM_RETENTION_TO_OFFER },
 							}
 						) }
 					</p>
@@ -103,7 +101,7 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 				</div>
 				<RetentionConfirmationDialog
 					confirmationDialogVisible={ confirmationDialogVisible }
-					retentionSelected={ MINIMUM_RETENTION_TO_UPDATE }
+					retentionSelected={ MINIMUM_RETENTION_TO_OFFER }
 					updateRetentionRequestStatus={ updateRetentionRequestStatus }
 					onConfirmationClose={ onConfirmationClose }
 					onConfirmation={ updateRetentionPeriod }
@@ -112,6 +110,25 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 		);
 	}
 	return null;
+};
+
+const BackupRetentionOptionOnCancelPurchase: React.FC<
+	BackupRetentionOptionOnCancelPurchaseProps
+> = ( { purchase } ) => {
+	const siteId = useSelector( getSelectedSiteId ) as number;
+	// show only if the purchase being cancelled includes backups.
+	const currentPlanHasBackup = productHasBackups( camelOrSnakeSlug( purchase ) );
+
+	return (
+		currentPlanHasBackup && (
+			<HasRetentionCapabilitiesSwitch
+				siteId={ siteId }
+				trueComponent={ <RetentionOptionOnCancelPurchase /> }
+				falseComponent={ null }
+				loadingComponent={ <LoadingPlaceholder /> }
+			/>
+		)
+	);
 };
 
 export default BackupRetentionOptionOnCancelPurchase;
