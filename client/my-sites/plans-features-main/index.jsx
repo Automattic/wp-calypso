@@ -388,6 +388,14 @@ export class PlansFeaturesMain extends Component {
 			].filter( ( el ) => el );
 		}
 
+		if ( is2023PricingGridVisible ) {
+			/*
+			 * We need to pass all the plans in order to show the correct features in the plan comparison table.
+			 * Pleas use the getVisiblePlansForPlanFeatures selector to filter out the plans that should not be visible.
+			 */
+			return plans;
+		}
+
 		if ( hideFreePlan ) {
 			plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
 		}
@@ -450,12 +458,16 @@ export class PlansFeaturesMain extends Component {
 			isInMarketplace,
 			sitePlanSlug,
 			is2023PricingGridVisible,
+			hideFreePlan,
+			hidePersonalPlan,
+			hidePremiumPlan,
+			hideEcommercePlan,
 		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
 			types.filter( ( type ) => planMatches( plan, { type } ) ).length > 0;
 
-		const plans = this.isDisplayingPlansNeededForFeature()
+		let plans = this.isDisplayingPlansNeededForFeature()
 			? availablePlans.filter( ( plan ) => {
 					if ( isEcommercePlan( selectedPlan ) ) {
 						return isEcommercePlan( plan );
@@ -470,7 +482,7 @@ export class PlansFeaturesMain extends Component {
 			: availablePlans;
 
 		if ( is2023PricingGridVisible ) {
-			return plans.filter( ( plan ) =>
+			plans = plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [
 					TYPE_FREE,
 					TYPE_PERSONAL,
@@ -480,6 +492,24 @@ export class PlansFeaturesMain extends Component {
 					TYPE_ENTERPRISE_GRID_WPCOM,
 				] )
 			);
+
+			if ( hideFreePlan ) {
+				plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
+			}
+
+			if ( hidePersonalPlan ) {
+				plans = plans.filter( ( planSlug ) => ! isPersonalPlan( planSlug ) );
+			}
+
+			if ( hidePremiumPlan ) {
+				plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+			}
+
+			if ( hideEcommercePlan ) {
+				plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
+			}
+
+			return plans;
 		}
 
 		if ( plansWithScroll ) {
