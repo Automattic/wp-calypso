@@ -400,12 +400,22 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderTabletView() {
-		const { planProperties } = this.props;
-		const plansToShow = planProperties
+		const { planProperties, flowName } = this.props;
+		let plansToShow = [];
+		let numberOfPlansToShowOnTop = 3;
+
+		if ( flowName === NEWSLETTER_FLOW ) {
+			plansToShow = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+			numberOfPlansToShowOnTop = 4;
+		} else {
+			plansToShow = planProperties
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => properties.planName );
-		const topRowPlans = plansToShow.slice( 0, 3 );
-		const bottomRowPlans = plansToShow.slice( 3, 6 );
+		}
+
+		const topRowPlans = plansToShow.slice( 0, numberOfPlansToShowOnTop );
+		const bottomRowPlans = plansToShow.slice( numberOfPlansToShowOnTop, 6 );
+
 		const planPropertiesForTopRow = planProperties.filter( ( properties: PlanProperties ) =>
 			topRowPlans.includes( properties.planName )
 		);
@@ -418,9 +428,11 @@ export class PlanFeatures2023Grid extends Component<
 				<div className="plan-features-2023-grid__table-top">
 					{ this.renderTable( planPropertiesForTopRow ) }
 				</div>
-				<div className="plan-features-2023-grid__table-bottom">
-					{ this.renderTable( planPropertiesForBottomRow ) }
-				</div>
+				{ planPropertiesForBottomRow.length > 0 && (
+					<div className="plan-features-2023-grid__table-bottom">
+						{ this.renderTable( planPropertiesForBottomRow ) }
+					</div>
+				) }
 			</>
 		);
 	}
