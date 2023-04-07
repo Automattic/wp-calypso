@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
 
 import './hightlights.scss';
@@ -41,6 +42,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 		.format( 'YYYY-MM-DD' );
 
 	const { data: topPostsAndPages = [] } = useTopPostsQuery( siteId, 'day', 7, queryDate );
+	const { data: topReferrers = [] } = useReferrersQuery( siteId, 'day', 7, queryDate );
 
 	return (
 		<div className="stats-widget-highlights">
@@ -61,13 +63,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 					title={ translate( 'Top Referrers' ) }
 					viewAllUrl={ odysseyStatsBaseUrl }
 					viewAllText={ translate( 'View all referrer stats' ) }
-					items={ [
-						{ name: 'Have anything fun or interesting you’d like to share?', value: 59 },
-						{ name: 'What memorable meal have you had recently?', value: 345 },
-						{ name: 'What needs improvement?', value: 34 },
-						{ name: 'What’s happening in your life?  ', value: 346 },
-						{ name: 'How did you do on last week’s priorities?  ', value: 5673 },
-					] }
+					items={ topReferrers }
 				/>
 			</div>
 		</div>
