@@ -20,11 +20,9 @@ class UpworkBanner extends PureComponent {
 	render() {
 		const { translate, location, utmCampaign, currentPlan } = this.props;
 		const plan = currentPlan?.productSlug;
-		const builtByWpUrl = new URL( 'https://builtbywp.com/' );
+		const builtByWpUrl = new URL( 'https://wordpress.com/built-by/' );
 		builtByWpUrl.search = new URLSearchParams( {
 			utm_campaign: utmCampaign,
-			utm_medium: 'automattic_referred',
-			utm_source: 'WordPresscom',
 		} );
 
 		return (
