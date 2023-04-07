@@ -137,8 +137,11 @@ open class E2EBuildType(
 					cd test/e2e
 					mkdir temp
 
+					export DEBUG='pw:browser'
+					export DEBUG_COLORS=false
+
 					# Run suite.
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup
+					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup --no-colors
 				"""
 				dockerImage = "%docker_image_e2e%"
 				dockerRunParameters = "-u %env.UID% --shm-size=4g"
