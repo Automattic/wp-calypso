@@ -1,11 +1,10 @@
 import { UniversalNavbarHeader } from '@automattic/wpcom-template-parts';
 import { useTranslate } from 'i18n-calypso';
-import { Outlet } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import { Tabs } from '../../../components/tabs';
-import { useSubheaderText } from '../../../hooks';
+import { TabsSwitcher } from 'calypso/landing/subscriptions/components/tabs-switcher';
+import { useSubheaderText } from 'calypso/landing/subscriptions/hooks';
 import './styles.scss';
 
 const SubscriptionManagementPage = () => {
@@ -25,8 +24,7 @@ const SubscriptionManagementPage = () => {
 					subHeaderText={ useSubheaderText() }
 					align="left"
 				/>
-				<Tabs />
-				<Outlet />
+				<TabsSwitcher />
 			</Main>
 		</>
 	);

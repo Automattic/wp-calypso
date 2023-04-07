@@ -1,6 +1,6 @@
 import { SubscriptionManager } from '@automattic/data-stores';
-import { TabView } from '../../../../components/tab-view';
-import { UserSettings } from '../../../../components/user-settings';
+import { UserSettings } from 'calypso/landing/subscriptions/components/user-settings';
+import TabView from '../tab-view';
 
 const Settings = () => {
 	const { data: settings, isIdle, isLoading, error } = SubscriptionManager.useUserSettingsQuery();

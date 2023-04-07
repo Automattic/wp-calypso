@@ -1,8 +1,8 @@
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
-import { Notice } from '../../../../components/notice';
-import { SiteList } from '../../../../components/site-list';
-import { TabView } from '../../../../components/tab-view';
+import { Notice } from 'calypso/landing/subscriptions/components/notice';
+import { SiteList } from 'calypso/landing/subscriptions/components/site-list';
+import TabView from '../tab-view';
 
 const Sites = () => {
 	const translate = useTranslate();

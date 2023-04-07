@@ -7,12 +7,13 @@ import { dispatch } from '@wordpress/data';
 import ReactDom from 'react-dom';
 import { QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
-import { RouterProvider } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AnyAction } from 'redux';
 import { setupLocale } from 'calypso/boot/locale';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import MomentProvider from 'calypso/components/localized-moment/provider';
 import { WindowLocaleEffectManager } from 'calypso/landing/stepper/utils/window-locale-effect-manager';
+import { SubscriptionManagerPage } from 'calypso/landing/subscriptions/components/subscription-manager-page';
 import { initializeCurrentUser } from 'calypso/lib/user/shared-utils';
 import { createReduxStore } from 'calypso/state';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
@@ -20,7 +21,6 @@ import { getInitialState, getStateFromCache } from 'calypso/state/initial-state'
 import { createQueryClient } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
-import { createRouter } from './router';
 import './styles.scss';
 
 const setupReduxStore = ( user: CurrentUser ) => {
@@ -49,7 +49,6 @@ window.AppBoot = async () => {
 	const queryClient = await createQueryClient( user.ID );
 	const reduxStore = setupReduxStore( user );
 	initializeAnalytics( user, getGenericSuperPropsGetter( config ) );
-	const router = createRouter();
 
 	ReactDom.render(
 		<CalypsoI18nProvider>
@@ -57,7 +56,11 @@ window.AppBoot = async () => {
 				<QueryClientProvider client={ queryClient }>
 					<MomentProvider>
 						<WindowLocaleEffectManager />
-						<RouterProvider router={ router } />
+						<BrowserRouter>
+							<Routes>
+								<Route path="/subscriptions*" element={ <SubscriptionManagerPage /> } />
+							</Routes>
+						</BrowserRouter>
 					</MomentProvider>
 				</QueryClientProvider>
 			</Provider>
