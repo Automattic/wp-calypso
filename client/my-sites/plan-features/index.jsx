@@ -994,7 +994,7 @@ const ConnectedPlanFeatures = connect(
 				}
 
 				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
-				const isMonthlyObj = { isMonthly: showMonthlyPrice };
+				const isMonthlyObj = { returnMonthly: showMonthlyPrice };
 				const rawPrice = siteId
 					? getSitePlanRawPrice( state, selectedSiteId, plan, isMonthlyObj )
 					: getPlanRawPrice( state, planProductId, showMonthlyPrice );

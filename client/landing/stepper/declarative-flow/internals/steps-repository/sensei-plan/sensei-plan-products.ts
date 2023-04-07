@@ -1,9 +1,9 @@
+import { ProductsList } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
-import { PLANS_STORE } from 'calypso/landing/gutenboarding/stores/plans';
-import { PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
-import type { PlanBillingPeriod } from 'calypso/../packages/data-stores';
+import { PLANS_STORE } from 'calypso/landing/stepper/stores';
+import type { PlanBillingPeriod, PlansSelect } from '@automattic/data-stores';
 
 const SENSEI_PRO_PRODUCT_YEARLY = 'sensei_pro_yearly';
 const SENSEI_PRO_PRODUCT_MONTHLY = 'sensei_pro_monthly';
@@ -12,7 +12,7 @@ export function useSenseiProPricing( billingPeriod: PlanBillingPeriod ) {
 	return useSelect(
 		( select ) => {
 			const isYearly = billingPeriod === 'ANNUALLY';
-			const { getProductBySlug } = select( PRODUCTS_LIST_STORE );
+			const { getProductBySlug } = select( ProductsList.store );
 			const yearly = getProductBySlug( SENSEI_PRO_PRODUCT_YEARLY );
 			const monthly = getProductBySlug( SENSEI_PRO_PRODUCT_MONTHLY );
 
@@ -50,7 +50,7 @@ export function useBusinessPlanPricing( billingPeriod: PlanBillingPeriod ) {
 
 	return useSelect(
 		( select ) => {
-			const { getPlanProduct } = select( PLANS_STORE );
+			const { getPlanProduct }: PlansSelect = select( PLANS_STORE );
 			const monthly = getPlanProduct( slug, 'MONTHLY' );
 			const yearly = getPlanProduct( slug, 'ANNUALLY' );
 

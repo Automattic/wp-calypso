@@ -196,6 +196,15 @@ import {
 	FEATURE_WP_UPDATES,
 	FEATURE_MULTI_SITE,
 	FEATURE_SELL_SHIP,
+	FEATURE_SELL_INTERNATIONALLY,
+	FEATURE_AUTOMATIC_SALES_TAX,
+	FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
+	FEATURE_SELL_EGIFTS_AND_VOUCHERS,
+	FEATURE_EMAIL_MARKETING,
+	FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
+	FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+	FEATURE_MARKETING_AUTOMATION,
 	FEATURE_CUSTOM_STORE,
 	FEATURE_INVENTORY,
 	FEATURE_CHECKOUT,
@@ -219,6 +228,15 @@ import {
 	FEATURE_SITE_ACTIVITY_LOG_JP,
 	FEATURE_GLOBAL_EDGE_CACHING,
 	is2023PricingGridEnabled,
+	FEATURE_AUTOMATED_EMAIL_TRIGGERS,
+	FEATURE_CART_ABANDONMENT_EMAILS,
+	FEATURE_REFERRAL_PROGRAMS,
+	FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
+	FEATURE_LOYALTY_POINTS_PROGRAMS,
+	FEATURE_OFFER_BULK_DISCOUNTS,
+	FEATURE_RECOMMEND_ADD_ONS,
+	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
+	FEATURE_MIN_MAX_ORDER_QUANTITY,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
@@ -236,10 +254,12 @@ export type FeatureObject = {
 	getSlug: () => string;
 	getTitle: ( domainName?: string ) => TranslateResult;
 	getAlternativeTitle?: () => TranslateResult;
+	getConditionalTitle?: () => TranslateResult;
 	getHeader?: () => TranslateResult;
 	getDescription?: ( domainName?: string ) => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
+	getCompareSubtitle?: () => TranslateResult;
 	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
 	isPlan?: boolean;
 };
@@ -1047,6 +1067,8 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Ship physical products in a snap and show live rates from shipping carriers like UPS and other shipping options.'
 			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 
 	[ FEATURE_UNLIMITED_PRODUCTS_SERVICES ]: {
@@ -1835,7 +1857,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_MULTI_SITE ]: {
 		getSlug: () => FEATURE_MULTI_SITE,
-		getTitle: () => i18n.translate( 'Multi-site management' ),
+		getTitle: () => i18n.translate( 'Centralized Site Management' ),
 		getDescription: () =>
 			i18n.translate( 'Seamlessly switch between 2, 20, or 200 sites. All from one place.' ),
 	},
@@ -1843,6 +1865,119 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SELL_SHIP,
 		getTitle: () => i18n.translate( 'Sell and ship products' ),
 		getDescription: () => i18n.translate( 'Sell and ship out physical goods from your site.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_SELL_INTERNATIONALLY ]: {
+		getSlug: () => FEATURE_SELL_INTERNATIONALLY,
+		getTitle: () => i18n.translate( 'Sell internationally' ),
+	},
+	[ FEATURE_AUTOMATIC_SALES_TAX ]: {
+		getSlug: () => FEATURE_AUTOMATIC_SALES_TAX,
+		getTitle: () => i18n.translate( 'Automatic sales tax' ),
+	},
+	[ FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN ]: {
+		getSlug: () => FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+		getTitle: () => i18n.translate( 'Automated backups and security scans' ),
+	},
+	[ FEATURE_INTEGRATED_SHIPMENT_TRACKING ]: {
+		getSlug: () => FEATURE_INTEGRATED_SHIPMENT_TRACKING,
+		getTitle: () => i18n.translate( 'Integrated shipment tracking' ),
+	},
+	[ FEATURE_SELL_EGIFTS_AND_VOUCHERS ]: {
+		getSlug: () => FEATURE_SELL_EGIFTS_AND_VOUCHERS,
+		getTitle: () => i18n.translate( 'Sell and accept e-gift vouchers' ),
+	},
+	[ FEATURE_EMAIL_MARKETING ]: {
+		getSlug: () => FEATURE_EMAIL_MARKETING,
+		getTitle: () => i18n.translate( 'Email marketing built-in' ),
+	},
+	[ FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION ]: {
+		getSlug: () => FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
+		getTitle: () => i18n.translate( 'Marketplace sync and social media integrations' ),
+		getDescription: () => i18n.translate( 'Sync your store with marketplaces and social media.' ),
+	},
+	[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ]: {
+		getSlug: () => FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+		getTitle: () => i18n.translate( 'Back in stock notifications' ),
+		getDescription: () =>
+			i18n.translate( 'Notify customers when an out-of-stock item is back in stock.' ),
+	},
+	[ FEATURE_MARKETING_AUTOMATION ]: {
+		getSlug: () => FEATURE_MARKETING_AUTOMATION,
+		getTitle: () => i18n.translate( 'Marketing automation' ),
+		getDescription: () =>
+			i18n.translate(
+				'Automate marketing campaigns to send targeted and personalized messages to customers.'
+			),
+	},
+	[ FEATURE_AUTOMATED_EMAIL_TRIGGERS ]: {
+		getSlug: () => FEATURE_AUTOMATED_EMAIL_TRIGGERS,
+		getTitle: () => i18n.translate( 'Automated email triggers' ),
+		getDescription: () =>
+			i18n.translate(
+				'Set up automatic emails triggered by customer behavior, such as abandoned carts or completed purchases.'
+			),
+	},
+	[ FEATURE_CART_ABANDONMENT_EMAILS ]: {
+		getSlug: () => FEATURE_CART_ABANDONMENT_EMAILS,
+		getTitle: () => i18n.translate( 'Cart abandonment emails' ),
+		getDescription: () =>
+			i18n.translate(
+				'Send reminder emails to customers who have abandoned items in their cart to encourage them to complete their purchase.'
+			),
+	},
+	[ FEATURE_REFERRAL_PROGRAMS ]: {
+		getSlug: () => FEATURE_REFERRAL_PROGRAMS,
+		getTitle: () => i18n.translate( 'Referral programs' ),
+		getDescription: () =>
+			i18n.translate(
+				'Encourage existing customers to refer new customers by offering rewards or incentives.'
+			),
+	},
+	[ FEATURE_CUSTOMER_BIRTHDAY_EMAILS ]: {
+		getSlug: () => FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
+		getTitle: () => i18n.translate( 'Customer birthday emails' ),
+		getDescription: () =>
+			i18n.translate(
+				'Send personalized birthday emails to customers with exclusive discounts or promotions.'
+			),
+	},
+	[ FEATURE_LOYALTY_POINTS_PROGRAMS ]: {
+		getSlug: () => FEATURE_LOYALTY_POINTS_PROGRAMS,
+		getTitle: () => i18n.translate( 'Loyalty points programs' ),
+		getDescription: () =>
+			i18n.translate(
+				'Reward customers for repeat purchases or other actions with loyalty points that can be redeemed for discounts or other benefits.'
+			),
+	},
+	[ FEATURE_OFFER_BULK_DISCOUNTS ]: {
+		getSlug: () => FEATURE_OFFER_BULK_DISCOUNTS,
+		getTitle: () => i18n.translate( 'Offer bulk discounts' ),
+		getDescription: () =>
+			i18n.translate( 'Offer discounts for customers who purchase multiple items at once.' ),
+	},
+	[ FEATURE_RECOMMEND_ADD_ONS ]: {
+		getSlug: () => FEATURE_RECOMMEND_ADD_ONS,
+		getTitle: () => i18n.translate( 'Recommend add-ons' ),
+		getDescription: () =>
+			i18n.translate(
+				'Recommend additional products to customers based on their purchase history.'
+			),
+	},
+	[ FEATURE_ASSEMBLED_PRODUCTS_AND_KITS ]: {
+		getSlug: () => FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
+		getTitle: () => i18n.translate( 'Assembled products and kits' ),
+		getDescription: () =>
+			i18n.translate( 'Sell products that are assembled from multiple components.' ),
+	},
+	[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: {
+		getSlug: () => FEATURE_MIN_MAX_ORDER_QUANTITY,
+		getTitle: () => i18n.translate( 'Minimum/maximum order quantity' ),
+		getDescription: () =>
+			i18n.translate(
+				'Set minimum and maximum quantity limits for orders to prevent over-ordering or under-ordering.'
+			),
 	},
 	[ FEATURE_CUSTOM_STORE ]: {
 		getSlug: () => FEATURE_CUSTOM_STORE,
@@ -1851,12 +1986,16 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Offer customers a personalized shopping experience that they cannot find anywhere else.'
 			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins and themes' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_INVENTORY ]: {
 		getSlug: () => FEATURE_INVENTORY,
 		getTitle: () => i18n.translate( 'Inventory management' ),
 		getDescription: () =>
 			i18n.translate( 'Stay on top of your stock with inventory management tools.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CHECKOUT ]: {
 		getSlug: () => FEATURE_CHECKOUT,
@@ -1865,12 +2004,16 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Reduce cart abandonment and increase sales with a fast, low-friction checkout.'
 			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_ACCEPT_PAYMENTS_V2 ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS_V2,
 		getTitle: () => i18n.translate( 'Payments in 60+ countries' ),
 		getDescription: () =>
 			i18n.translate( 'Accept payments for goods and services, just about anywhere.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_SALES_REPORTS ]: {
 		getSlug: () => FEATURE_SALES_REPORTS,
@@ -1879,12 +2022,16 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Stay up to date on sales and identify trends with intuitive sales reports.'
 			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_EXTENSIONS ]: {
 		getSlug: () => FEATURE_EXTENSIONS,
 		getTitle: () => i18n.translate( 'Extensions marketplace' ),
 		getDescription: () =>
 			i18n.translate( 'Find and install powerful add-ons for your site, all in one place.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	// FOLLOWING ARE JETPACK FEATURES BUNDLED IN WPCOM
 	[ FEATURE_STATS_JP ]: {

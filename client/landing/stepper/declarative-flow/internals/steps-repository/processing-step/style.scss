@@ -81,3 +81,17 @@
 		margin: 0 auto;
 	}
 }
+
+.processing {
+	.signup-header {
+		.wordpress-logo {
+			position: absolute;
+			inset-inline-start: 20px;
+			inset-block-start: 20px;
+			fill: var(--color-text);
+			stroke: none;
+			transform-origin: 0 0;
+		}
+	}
+
+}

@@ -8,115 +8,96 @@ export const tasks: Task[] = [
 		id: 'setup_newsletter',
 		completed: true,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'plan_selected',
 		completed: true,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'subscribers_added',
 		completed: true,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'first_post_published',
 		completed: false,
 		disabled: false,
-		taskType: 'blog',
+	},
+	{
+		id: 'first_post_published_newsletter',
+		completed: false,
+		disabled: false,
 	},
 	{
 		id: 'design_selected',
 		completed: true,
 		disabled: true,
-		taskType: 'blog',
 	},
 	{
 		id: 'setup_link_in_bio',
 		completed: true,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'links_added',
 		completed: false,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'link_in_bio_launched',
 		completed: false,
 		disabled: true,
-		taskType: 'blog',
 	},
 	{
 		id: 'videopress_setup',
 		completed: true,
-		taskType: 'blog',
 		disabled: false,
 	},
 	{
 		id: 'videopress_upload',
 		completed: false,
-		taskType: 'blog',
 		disabled: false,
 	},
 	{
 		id: 'videopress_launched',
 		completed: false,
-		taskType: 'blog',
 		disabled: true,
-	},
-	{
-		id: 'sensei_setup',
-		completed: true,
-		taskType: 'blog',
-		disabled: true,
-	},
-	{
-		id: 'sensei_publish_first_course',
-		completed: false,
-		taskType: 'blog',
-		disabled: false,
 	},
 	{
 		id: 'setup_free',
 		completed: true,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'setup_general',
 		completed: true,
 		disabled: true,
-		taskType: 'blog',
 	},
 	{
 		id: 'design_edited',
 		completed: false,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'site_launched',
 		completed: false,
 		disabled: false,
-		taskType: 'blog',
 	},
 	{
 		id: 'setup_write',
 		completed: true,
 		disabled: true,
-		taskType: 'blog',
 	},
 	{
 		id: DOMAIN_UPSELL,
 		completed: false,
 		disabled: false,
-		taskType: 'blog',
+	},
+	{
+		id: 'verify_email',
+		completed: false,
+		disabled: true,
 	},
 ];
 
@@ -129,7 +110,14 @@ const linkInBioTaskList = [
 ];
 
 export const launchpadFlowTasks: LaunchpadFlowTaskList = {
-	newsletter: [ 'setup_newsletter', 'plan_selected', 'subscribers_added', 'first_post_published' ],
+	newsletter: [
+		'setup_newsletter',
+		'plan_selected',
+		'subscribers_added',
+		'verify_email',
+		'first_post_published_newsletter',
+		'first_post_published',
+	],
 	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
 	[ LINK_IN_BIO_TLD_FLOW ]: linkInBioTaskList,
 	free: [
@@ -143,18 +131,10 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	build: [
 		'setup_general',
 		'design_selected',
-		DOMAIN_UPSELL,
 		'first_post_published',
 		'design_edited',
 		'site_launched',
 	],
-	write: [
-		'setup_write',
-		'design_selected',
-		DOMAIN_UPSELL,
-		'first_post_published',
-		'site_launched',
-	],
+	write: [ 'setup_write', 'design_selected', 'first_post_published', 'site_launched' ],
 	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
-	sensei: [ 'sensei_setup', 'plan_selected', 'sensei_publish_first_course' ],
 };

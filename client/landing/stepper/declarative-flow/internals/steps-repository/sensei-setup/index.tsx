@@ -11,6 +11,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { ONBOARD_STORE } from '../../../../stores';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import { Title, Label, Input, Hint } from './components';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { StyleVariation } from 'calypso/../packages/design-picker/src/types';
 import type { Step } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import './style.scss';
@@ -58,8 +59,9 @@ const SenseiSetup: Step = ( { navigation } ) => {
 	const { __ } = useI18n();
 	const isDesktop = useDesktopBreakpoint();
 
-	const initialSiteTitle = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getSelectedSiteTitle()
+	const initialSiteTitle = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+		[]
 	);
 	const [ siteTitle, setSiteTitle ] = useState< string >( initialSiteTitle );
 	const [ checked, setChecked ] = useState< string >( 'green' );

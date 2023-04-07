@@ -1,9 +1,6 @@
 import assert from 'assert';
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
-
-type PluginAttributes = 'Active' | 'Autoupdate';
-type PluginState = 'on' | 'off';
 
 const selectors = {
 	// React modal buttons
@@ -36,12 +33,11 @@ const selectors = {
 	searchResultTitle: ( text: string ) => `:text('plugins for "${ text }"')`,
 
 	// Plugin view
-	pluginToggleMenu: `.plugin-details-cta__manage-plugin-menu button`,
-	pluginToggle: ( target: PluginAttributes ) =>
-		`.plugin-site-jetpack__container .components-toggle-control:has(span:text("${ target }")) span.components-form-toggle`,
-	pluginDetailButton: '.plugin-details__actions button:not([title="Toggle menu"])',
 	installButton: 'button:text("Install and activate")',
-	removeButton: 'button.plugin-remove-button__remove-button',
+	deactivateButton: 'button:text("Deactivate")',
+	activateButton: 'button:text("Activate")',
+	openRemoveMenuButton: '.plugin-details-cta__manage-plugin-menu button[title="Toggle menu"]',
+	removeButton: '.popover__menu button:has-text("Remove")',
 
 	// Category selector
 	selectedCategory: ( categoryTitle: string ) => `.categories__header:text("${ categoryTitle }")`,
@@ -49,6 +45,11 @@ const selectors = {
 	// Plugin details view
 	pluginDetailsHeaderTitle: ( section: string ) =>
 		`.plugin-details-header__name:text("${ section }")`,
+
+	// Post install
+	installedPluginCard: '.thank-you__step',
+	installedfooterCards: '.thank-you__footer',
+	manageInstalledPluginButton: 'a:has-text("Manage plugin")',
 };
 
 /**
@@ -77,7 +78,12 @@ export class PluginsPage {
 	 * @param {string} site Optional site URL.
 	 */
 	async visit( site = '' ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `plugins/${ site }` ) );
+		await Promise.all( [
+			this.page.waitForResponse( /\/sites\/\d+\/plugins/, { timeout: 20 * 1000 } ),
+			// This is one of the last, reliable web requests to finish on this page
+			// and is a pretty good indicator the async loading is done.
+			this.page.goto( getCalypsoURL( `plugins/${ site }` ) ),
+		] );
 	}
 
 	/**
@@ -270,84 +276,11 @@ export class PluginsPage {
 	/* Plugin View */
 
 	/**
-	 * Determines whether the plugin is installed on the page.
-	 *
-	 * This method determines if a plugin is installed by
-	 * navigating to the `/plugins/<name>/site` endpoint, then
-	 * counting for the instances of `removeButton`.
-	 *
-	 * If the `removeButton` count is greater than 0, then the plugin
-	 * is deemed to be active on a site and thus this method returns
-	 * true. False otherwise.
-	 *
-	 * @returns {Promise<boolean>} True if plugin is active on any site. False otherwise.
+	 * Deactivate the plugin on the current plugin page.
 	 */
-	async pluginIsInstalled(): Promise< boolean > {
-		await this.page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } );
-		const locator = this.page.locator( selectors.pluginToggle( 'Active' ) );
-		if ( ( await locator.count() ) > 0 ) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Returns whether the toggle at `locator` is toggled
-	 * in the On state.
-	 *
-	 * @returns {Promise<boolean>} True if toggle is on. False otherwise.
-	 */
-	private async isToggled( locator: Locator ): Promise< boolean > {
-		await locator.waitFor();
-
-		const classes = await locator.getAttribute( 'class' );
-		return !! classes?.includes( 'is-checked' );
-	}
-
-	/**
-	 * Returns whether plugin is activated or not.
-	 *
-	 * @returns {Promise<boolean>} True if plugin is activated. False otherwise.
-	 */
-	private async isActivated( locator: Locator ): Promise< boolean > {
-		await locator.waitFor();
-		const value = await locator.innerText();
-		return value === 'Deactivate' ? true : false;
-	}
-
-	/**
-	 * Toggles the plugin attribute.
-	 *
-	 * @param {PluginAttributes} target Target attribute to toggle.
-	 * @param {PluginState} state Desired end state of the attribute.
-	 */
-	async togglePluginAttribute( target: PluginAttributes, state: PluginState ): Promise< void > {
-		const toggleLocator = this.page.locator( selectors.pluginToggle( target ) );
-
-		const isToggled = await this.isToggled( toggleLocator );
-
-		// Only perform action if  the current state and
-		// target state differ.
-		if ( ( state === 'on' && ! isToggled ) || ( state === 'off' && isToggled ) ) {
-			await toggleLocator.click();
-		}
-	}
-
-	/**
-	 * Activate / Deactivate the plugin.
-	 *
-	 * @param {PluginState} target Target value.
-	 */
-	async setPluginAttribute( target: PluginState ): Promise< void > {
-		const toggleLocator = this.page.locator( selectors.pluginDetailButton );
-
-		const isActivated = await this.isActivated( toggleLocator );
-
-		// Only perform action if  the current state and
-		// target state differ.
-		if ( ( target === 'on' && ! isActivated ) || ( target === 'off' && isActivated ) ) {
-			await toggleLocator.click();
-		}
+	async clickDeactivatePlugin(): Promise< void > {
+		await this.page.getByRole( 'button', { name: 'Deactivate', exact: true } ).click();
+		await this.page.getByRole( 'button', { name: 'Activate', exact: true } ).waitFor();
 	}
 
 	/**
@@ -362,15 +295,48 @@ export class PluginsPage {
 	 * Clicks on the `Remove Plugin` button.
 	 */
 	async clickRemovePlugin(): Promise< void > {
-		const pluginActionsLocator = this.page.locator( selectors.pluginToggleMenu );
-		await pluginActionsLocator.click();
+		const openRemoveMenuButtonLocator = this.page.locator( selectors.openRemoveMenuButton );
+		await openRemoveMenuButtonLocator.click();
 
-		const locator = this.page.locator( selectors.removeButton );
-		await locator.click();
+		const removeButtonLocator = this.page.locator( selectors.removeButton );
+		await removeButtonLocator.click();
 		const confirmDialogButton = this.page.locator( selectors.modalButtonWithText( 'Remove' ) );
 		await Promise.all( [
 			this.page.waitForResponse( /.*delete\?.*/ ),
 			confirmDialogButton.click(),
 		] );
+	}
+
+	/**
+	 * Validates you've landed on the confirmation page post-install.
+	 *
+	 * @param {string} expectedPluginName Name of the plugin to validate.
+	 */
+	async validateConfirmationPagePostInstall( expectedPluginName?: string ): Promise< void > {
+		await this.page
+			.getByRole( 'heading', { name: "Congrats on your site's new superpowers!" } )
+			.click();
+
+		// Check for expiration text
+		await this.page.locator( selectors.installedPluginCard ).getByText( 'expire' ).waitFor();
+
+		// Check for the correct footer cards
+		await this.page.locator( selectors.installedfooterCards ).getByText( 'Keep growing' ).waitFor();
+		await this.page.locator( selectors.installedfooterCards ).getByText( 'Learn More' ).waitFor();
+
+		// Check for plugin name
+		if ( expectedPluginName ) {
+			await this.page
+				.locator( selectors.installedPluginCard )
+				.getByText( expectedPluginName )
+				.waitFor();
+		}
+	}
+
+	/**
+	 * After installing a plugin, clicks the button to manage that plugin.
+	 */
+	async clickManageInstalledPluginButton(): Promise< void > {
+		await this.page.locator( selectors.manageInstalledPluginButton ).click();
 	}
 }

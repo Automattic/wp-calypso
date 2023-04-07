@@ -1,4 +1,5 @@
 import { Button, Gridicon } from '@automattic/components';
+import { PremiumBadge } from '@automattic/design-picker';
 import {
 	__experimentalHStack as HStack,
 	__experimentalNavigatorBackButton as NavigatorBackButton,
@@ -11,10 +12,11 @@ interface Props {
 	title: string;
 	description?: string;
 	hideBack?: boolean;
+	isPremium?: boolean;
 	onBack?: () => void;
 }
 
-const NavigatorHeader = ( { title, description, hideBack, onBack }: Props ) => {
+const NavigatorHeader = ( { title, description, hideBack, isPremium, onBack }: Props ) => {
 	const translate = useTranslate();
 
 	return (
@@ -34,6 +36,7 @@ const NavigatorHeader = ( { title, description, hideBack, onBack }: Props ) => {
 						</NavigatorBackButton>
 					) }
 					<h2>{ title }</h2>
+					{ isPremium && <PremiumBadge shouldHideTooltip /> }
 				</HStack>
 				{ description && <p className="navigator-header__description">{ description }</p> }
 			</div>

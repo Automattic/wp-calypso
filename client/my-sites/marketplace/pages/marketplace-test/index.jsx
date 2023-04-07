@@ -91,14 +91,14 @@ export default function MarketplaceTest() {
 			name: 'Pay & Install Woocommerce Subscription',
 			path: `/checkout/${ selectedSiteSlug }/woocommerce_subscriptions_monthly${
 				shouldUpgrade ? ',business' : '' // or business-monthly if user has selected monthly pricing
-			}?redirect_to=/marketplace/thank-you/woocommerce-subscriptions/${ selectedSiteSlug }#step2`,
+			}`,
 		},
 		{
 			name: 'Pay & Install Yoast Premium',
-			path: `/checkout/${ selectedSiteSlug }/business,wordpress_seo_premium_monthly?redirect_to=/marketplace/thank-you/wordpress-seo-premium-monthly/${ selectedSiteSlug }#step2`,
+			path: `/checkout/${ selectedSiteSlug }/business,wordpress_seo_premium_monthly#step2`,
 		},
 		{ name: 'Install Page', path: `/marketplace/test/install/${ selectedSiteSlug }?` },
-		{ name: 'Thank You Page', path: '/marketplace/thank-you/woocommerce' },
+		{ name: 'Thank You Page', path: '/marketplace/thank-you?plugins=woocommerce' },
 		{ name: 'Domains Page', path: '/marketplace/domain' },
 	];
 

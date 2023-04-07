@@ -1,5 +1,6 @@
 import * as actions from './actions';
-import type { DispatchFromMap } from '../mapped-types';
+import * as selectors from './selectors';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 
 export interface Dispatch {
 	dispatch: DispatchFromMap< typeof actions >;
@@ -40,3 +41,5 @@ export type State = {
 export interface StatusMapping {
 	[ key: string ]: any;
 }
+
+export type TransferSelectFn = ( storeKey: string ) => SelectFromMap< typeof selectors >;

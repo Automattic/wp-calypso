@@ -37,6 +37,20 @@ body .customer-home__layout .domain-upsell__card {
 		margin-top: 8px;
 	}
 
+	&-dismiss {
+		position: absolute;
+		width: 18px;
+		height: 18px;
+		top: 16px;
+		right: 16px;
+		color: var(--color-text-subtle);
+		button {
+			cursor: pointer;
+			height: 18px;
+		}
+
+	}
+
 	.suggested-domain-name {
 		span {
 			font-size: rem(14px);

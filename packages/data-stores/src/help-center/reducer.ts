@@ -1,7 +1,8 @@
+import { InitialEntry } from '@remix-run/router';
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
-import type { Location, HelpCenterSite } from './types';
+import type { HelpCenterSite } from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
@@ -109,13 +110,9 @@ const iframe: Reducer< HTMLIFrameElement | undefined | null, HelpCenterAction > 
 	return state;
 };
 
-const routerState: Reducer< { history: Location[] | undefined; index: number | undefined } > = (
-	state = { history: undefined, index: undefined },
-	action
-) => {
-	switch ( action.type ) {
-		case 'HELP_CENTER_SET_ROUTER_STATE':
-			return { history: action.history, index: action.index };
+const initialRoute: Reducer< InitialEntry | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_INITIAL_ROUTE' ) {
+		return action.route;
 	}
 	return state;
 };
@@ -132,7 +129,7 @@ const reducer = combineReducers( {
 	isMinimized,
 	unreadCount,
 	iframe,
-	routerState,
+	initialRoute,
 } );
 
 export type State = ReturnType< typeof reducer >;

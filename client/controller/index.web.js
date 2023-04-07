@@ -35,15 +35,20 @@ export const ProviderWrappedLayout = ( {
 	currentQuery,
 	primary,
 	secondary,
+	headerSection,
 	redirectUri,
 } ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
-
 	const layout = userLoggedIn ? (
-		<Layout primary={ primary } secondary={ secondary } />
+		<Layout primary={ primary } secondary={ secondary } headerSection={ headerSection } />
 	) : (
-		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+		<LayoutLoggedOut
+			primary={ primary }
+			secondary={ secondary }
+			redirectUri={ redirectUri }
+			headerSection={ headerSection }
+		/>
 	);
 
 	return (
@@ -128,6 +133,15 @@ export function redirectLoggedOut( context, next ) {
 		loginParameters.locale = login_locale;
 	}
 
+	if (
+		'1' === context.query?.unlinked &&
+		loginParameters.redirectTo &&
+		loginParameters.redirectTo.startsWith( '/checkout/' )
+	) {
+		loginParameters.isJetpack = true;
+		loginParameters.redirectTo = 'https://wordpress.com' + loginParameters.redirectTo;
+	}
+
 	// force full page reload to avoid SSR hydration issues.
 	window.location = login( loginParameters );
 	return;
@@ -148,7 +162,7 @@ export function redirectLoggedOutToSignup( context, next ) {
 		return;
 	}
 
-	return page.redirect( createAccountUrl( { redirectTo: context.path } ) );
+	return page.redirect( createAccountUrl( { redirectTo: context.path, ref: 'reader-lp' } ) );
 }
 
 /**

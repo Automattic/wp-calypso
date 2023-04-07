@@ -12,6 +12,7 @@ interface PlanRenewProps {
 	plan: Site.SiteDetailsPlan;
 	isSiteOwner: boolean;
 	checkoutUrl: string;
+	hideRenewLink?: boolean;
 }
 
 const PlanRenewContainer = styled.div( {
@@ -49,7 +50,12 @@ const PlanRenewNoticeExpireText = styled.div( {
 	overflow: 'hidden',
 } );
 
-export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps ) => {
+export const PlanRenewNag = ( {
+	isSiteOwner,
+	plan,
+	checkoutUrl,
+	hideRenewLink,
+}: PlanRenewProps ) => {
 	const { __ } = useI18n();
 	const trackCallback = useCallback(
 		() =>
@@ -79,7 +85,7 @@ export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps
 						) }
 					</PlanRenewNoticeExpireText>
 				</PlanRenewNoticeTextContainer>
-				{ isSiteOwner && (
+				{ isSiteOwner && ! hideRenewLink && (
 					<PlanRenewLink
 						onClick={ () => {
 							recordTracksEvent( PLAN_RENEW_NAG_EVENT_NAMES.ON_CLICK, {

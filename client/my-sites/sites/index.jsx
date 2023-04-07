@@ -12,7 +12,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getSites from 'calypso/state/selectors/get-sites';
 import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
-import { getJetpackActivePlugins, isJetpackSitePred } from 'calypso/state/sites/selectors';
+import { hasJetpackActivePlugins, isJetpackSitePred } from 'calypso/state/sites/selectors';
 
 /**
  * In order to decide whether to show the site in site selector,
@@ -44,18 +44,24 @@ class Sites extends Component {
 	filterSites = ( site ) => {
 		// Filter out the sites on WPCOM that don't have full Jetpack plugin installed
 		// Such sites should work fine on Jetpack Cloud
-		if ( getJetpackActivePlugins( site ) && ! isJetpackSiteOrJetpackCloud( site ) ) {
+		if ( hasJetpackActivePlugins( site ) && ! isJetpackSiteOrJetpackCloud( site ) ) {
 			return false;
 		}
 		const path = this.props.siteBasePath;
 
 		// Domains can be managed on Simple and Atomic sites.
 		if ( /^\/domains/.test( path ) ) {
+			if ( site.is_wpcom_staging_site ) {
+				return false;
+			}
 			return ! site.jetpack || site.options.is_automated_transfer;
 		}
 
 		// If a site is Jetpack, plans are available only when it is upgradeable.
 		if ( /^\/plans/.test( path ) ) {
+			if ( site.is_wpcom_staging_site ) {
+				return false;
+			}
 			return ! site.jetpack || site.capabilities.manage_options;
 		}
 
@@ -138,6 +144,9 @@ class Sites extends Component {
 				break;
 			case 'jetpack-search':
 				path = 'Jetpack Search';
+				break;
+			case 'site-logs':
+				path = translate( 'Site Logs' );
 				break;
 		}
 

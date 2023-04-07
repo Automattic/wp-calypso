@@ -7,6 +7,11 @@ class QueryMembershipsSettings extends Component {
 	static propTypes = {
 		siteId: PropTypes.number.isRequired,
 		requestEarnings: PropTypes.func,
+		source: PropTypes.string,
+	};
+
+	static defaultProps = {
+		source: 'calypso',
 	};
 
 	request() {
@@ -18,7 +23,7 @@ class QueryMembershipsSettings extends Component {
 			return;
 		}
 
-		this.props.requestSettings( this.props.siteId );
+		this.props.requestSettings( this.props.siteId, this.props.source );
 	}
 
 	componentDidMount() {

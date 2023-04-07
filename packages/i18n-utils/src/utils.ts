@@ -249,3 +249,25 @@ export function removeLocaleFromPathLocaleInFront( path: string ): string {
 
 	return '/' + parts.join( '/' ) + queryString;
 }
+
+/**
+ * Retreive the locale slug in the start of the path, if it is present.
+ * '/en/themes' => 'en', '/themes' => 'en', '/fr/plugins' => 'fr'
+ *
+ * @param  path - original path
+ * @returns locale
+ */
+export function retrieveLocaleFromPathLocaleInFront( path: string ): string {
+	// Remove the first '/'.
+	path = path.slice( 1 );
+
+	const urlParts = getUrlParts( path );
+	const parts = getPathParts( urlParts.pathname );
+	const locale = parts.shift();
+
+	if ( locale && getLanguage( locale ) ) {
+		return locale;
+	}
+
+	return 'en';
+}

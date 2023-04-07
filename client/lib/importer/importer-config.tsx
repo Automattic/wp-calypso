@@ -265,11 +265,6 @@ function getConfig(
 		delete importerConfig.wordpress.overrideDestination;
 	}
 
-	// For Atomic and Jetpack sites, we've not implemented the Wix importer yet.
-	if ( config.isEnabled( 'importer/unified' ) && ( args.isAtomic || args.isJetpack ) ) {
-		delete importerConfig.wix;
-	}
-
 	// Filter out all importers except the WordPress ones for Atomic sites.
 	if ( ! config.isEnabled( 'importer/unified' ) && args.isAtomic ) {
 		importerConfig = { wordpress: importerConfig.wordpress };

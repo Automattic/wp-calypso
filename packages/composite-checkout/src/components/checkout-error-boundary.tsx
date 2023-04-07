@@ -20,7 +20,10 @@ export default class CheckoutErrorBoundary extends Component< CheckoutErrorBound
 
 	componentDidCatch( error: Error ): void {
 		if ( this.props.onError ) {
-			this.props.onError( error );
+			const errorContext =
+				typeof this.props.errorMessage === 'string' ? this.props.errorMessage : error.message;
+			const errorWithCause = new Error( errorContext, { cause: error } );
+			this.props.onError( errorWithCause );
 		}
 	}
 

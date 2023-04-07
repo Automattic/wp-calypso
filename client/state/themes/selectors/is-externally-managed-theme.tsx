@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 
 import 'calypso/state/themes/init';
@@ -34,5 +33,16 @@ export function isExternallyManagedTheme( state = {}, themeId: string ): boolean
 	}
 
 	const themeType: ThemeTypes = theme.theme_type;
-	return isEnabled( 'themes/third-party-premium' ) && themeType === 'managed-external';
+	return themeType === 'managed-external';
+}
+
+/**
+ * Check if any of a list of themes is externally managed.
+ *
+ * @param {Object} state Global state tree
+ * @param {string} themeIds list of theme ids
+ * @returns {boolean} True if the theme is externally managed.
+ */
+export function hasExternallyManagedThemes( state = {}, themeIds: string[] ): boolean {
+	return themeIds.some( ( themeId ) => isExternallyManagedTheme( state, themeId ) );
 }

@@ -1,4 +1,5 @@
 import './view.scss';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import domReady from '@wordpress/dom-ready';
 import { useState, render } from '@wordpress/element';
 import useI18nCalypsoTranslations from '../shared/use-i18n-calypso-translations';
@@ -31,6 +32,10 @@ function renderPricingPlansBlock( element: HTMLElement | Element ) {
 }
 
 domReady( () => {
+	recordTracksEvent( 'calypso_happyblocks_upgrade_plan_view', {
+		location: window?.location?.href,
+	} );
+
 	document
 		.querySelectorAll( '.a8c-happy-tools-pricing-plans-block-placeholder' )
 		.forEach( renderPricingPlansBlock );

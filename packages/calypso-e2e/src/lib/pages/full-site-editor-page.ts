@@ -5,7 +5,6 @@ import {
 	EditorSidebarBlockInserterComponent,
 	EditorToolbarComponent,
 	EditorWelcomeTourComponent,
-	SiteType,
 	EditorPopoverMenuComponent,
 	EditorSiteStylesComponent,
 	ColorSettings,
@@ -32,7 +31,7 @@ const selectors = {
 	editorIframe: `iframe.is-loaded[src*="${ wpAdminPath }"]`,
 	editorRoot: 'body.block-editor-page',
 	editorCanvasIframe: 'iframe[name="editor-canvas"]',
-	editorCanvasRoot: '.wp-site-blocks',
+	editorCanvasRoot: 'body.block-editor-iframe__body',
 	templateLoadingSpinner: '[aria-label="Block: Template Part"] .components-spinner',
 	closeStylesWelcomeGuideButton:
 		'[aria-label="Welcome to styles"] button[aria-label="Close dialog"]',
@@ -72,20 +71,14 @@ export class FullSiteEditorPage {
 	 * Constructs an instance of the page POM class.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Object} param0 Keyed object parameter.
-	 * @param {SiteType} param0.target Target editor type. Defaults to 'simple'.
 	 */
-	constructor( page: Page, { target = 'simple' }: { target?: SiteType } = {} ) {
+	constructor( page: Page ) {
 		this.page = page;
 
-		if ( target === 'atomic' ) {
-			// For Atomic editors, there is no iFrame - the editor is
-			// part of the page DOM and is thus accessible directly.
-			this.editor = page.locator( selectors.editorRoot );
-		} else {
-			// For Simple editors, the editor is located within an iFrame
-			// and thus it must first be extracted.
+		if ( this.shouldUseIframe() ) {
 			this.editor = page.frameLocator( selectors.editorIframe ).locator( selectors.editorRoot );
+		} else {
+			this.editor = page.locator( selectors.editorRoot );
 		}
 
 		this.editorCanvas = this.editor
@@ -123,12 +116,28 @@ export class FullSiteEditorPage {
 	/**
 	 * Visit the site editor by URL directly.
 	 *
-	 * @param {string} siteHostName Host name of the site, without scheme. (e.g. testsite.wordpress.com)
+	 * @param {string} siteHostWithProtocol Host name of the site, with protocol. (e.g. https://testsite.wordpress.com)
 	 */
-	async visit( siteHostName: string ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `site-editor/${ siteHostName }` ), {
-			timeout: 60 * 1000,
-		} );
+	async visit( siteHostWithProtocol: string ): Promise< void > {
+		let parsedUrl: URL;
+		try {
+			parsedUrl = new URL( siteHostWithProtocol );
+		} catch ( error ) {
+			throw new Error(
+				`Invalid site host URL provided: "${ siteHostWithProtocol }". Did you remember to include the protocol?`
+			);
+		}
+
+		let targetHref: string;
+		if ( this.shouldUseIframe() ) {
+			targetHref = getCalypsoURL( `/site-editor/${ parsedUrl.host }` );
+		} else {
+			parsedUrl.pathname = '/wp-admin/site-editor.php';
+			parsedUrl.searchParams.set( 'calypso_origin', envVariables.CALYPSO_BASE_URL );
+			targetHref = parsedUrl.href;
+		}
+
+		await this.page.goto( targetHref, { timeout: 60 * 1000 } );
 	}
 
 	/**
@@ -157,7 +166,10 @@ export class FullSiteEditorPage {
 			leaveWithoutSaving?: boolean;
 		} = { leaveWithoutSaving: true }
 	): Promise< void > {
-		await this.waitUntilLoaded();
+		// On mobile, we don't load the canvas right away, just the sidebar. So we don't need to wait for the canvas at this point.
+		if ( envVariables.VIEWPORT_NAME === 'desktop' ) {
+			await this.waitUntilLoaded();
+		}
 
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
 		await this.cookieBannerComponent.acceptCookie();
@@ -175,7 +187,14 @@ export class FullSiteEditorPage {
 	 * Clicks on a button with the exact name.
 	 */
 	async clickFullSiteNavigatorButton( text: string ): Promise< void > {
-		await this.editor.getByRole( 'button', { name: text, exact: true } ).click();
+		await this.fullSiteEditorNavSidebarComponent.clickNavButtonByExactText( text );
+	}
+
+	/**
+	 * Ensures the nav sidebar is at the top level ("Design")
+	 */
+	async ensureNavigationTopLevel(): Promise< void > {
+		await this.fullSiteEditorNavSidebarComponent.ensureNavigationTopLevel();
 	}
 
 	//#endregion
@@ -401,19 +420,23 @@ export class FullSiteEditorPage {
 	 */
 	async openNavSidebar(): Promise< void > {
 		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
-		const closeButton = this.editor.locator( '.edit-site-site-hub button.is-primary' );
 
-		await Promise.race( [ closeButton.waitFor(), openButton.click() ] );
+		await openButton.click();
 	}
 
 	/**
-	 * Close the navigation sidebar.
+	 * Close the navigation sidebar. To do this, you actually just click on the editor canvas! This only works on desktop.
+	 * On mobile, there is not standardized way to close the sidebar.
 	 */
 	async closeNavSidebar(): Promise< void > {
+		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
+			throw new Error(
+				'There is no standardized way to close the site editor navigation sidebar on mobile. Navigate to a template or template part instead.'
+			);
+		}
 		const openButton = this.editor.locator( 'button[aria-label="Open Navigation Sidebar"]' );
-		const closeButton = this.editor.locator( '.edit-site-site-hub button.is-primary' );
 
-		await Promise.race( [ openButton.waitFor(), closeButton.click() ] );
+		await Promise.race( [ openButton.waitFor(), this.editorCanvas.click() ] );
 	}
 
 	/**
@@ -634,6 +657,16 @@ export class FullSiteEditorPage {
 		if ( ( await toastLocator.count() ) > 0 ) {
 			await toastLocator.click();
 		}
+	}
+
+	/**
+	 * TODO: Temp check -- we will delete when we un-iframe everywhere
+	 */
+	private shouldUseIframe(): boolean {
+		// The only place we are preserving the Site Editor iFrame is Simple sites on staging/production.
+		return (
+			! envVariables.TEST_ON_ATOMIC && envVariables.CALYPSO_BASE_URL === 'https://wordpress.com'
+		);
 	}
 
 	//#endregion

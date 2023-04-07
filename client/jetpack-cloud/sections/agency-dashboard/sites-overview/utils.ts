@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
+import moment from 'moment';
 import { urlToSlug } from 'calypso/lib/url';
 import type {
 	AllowedTypes,
@@ -12,21 +13,41 @@ import type {
 	StatusTooltip,
 	RowMetaData,
 	StatsNode,
+	BoostNode,
 	BackupNode,
 	ScanNode,
 	MonitorNode,
 	SiteColumns,
+	Backup,
 } from './types';
 
 const INITIAL_UNIX_EPOCH = '1970-01-01 00:00:00';
 
 const isExpandedBlockEnabled = config.isEnabled( 'jetpack/pro-dashboard-expandable-block' );
+const isBoostEnabled = config.isEnabled( 'jetpack/pro-dashboard-jetpack-boost' );
 
-const extraColumns: SiteColumns = isExpandedBlockEnabled
+// Mapping the columns to the site data keys
+export const siteColumnKeyMap: { [ key: string ]: string } = {
+	site: 'url',
+};
+
+const boostColumn: SiteColumns = isBoostEnabled
+	? [
+			{
+				key: 'boost',
+				title: translate( 'Boost' ),
+				className: 'width-fit-content',
+				isExpandable: true,
+			},
+	  ]
+	: [];
+
+const statsColumns: SiteColumns = isExpandedBlockEnabled
 	? [
 			{
 				key: 'stats',
 				title: translate( 'Stats' ),
+				className: 'width-fit-content',
 				isExpandable: true,
 			},
 	  ]
@@ -36,16 +57,20 @@ export const siteColumns: SiteColumns = [
 	{
 		key: 'site',
 		title: translate( 'Site' ),
+		isSortable: true,
 	},
-	...extraColumns,
+	...statsColumns,
+	...boostColumn,
 	{
 		key: 'backup',
 		title: translate( 'Backup' ),
+		className: 'width-fit-content',
 		isExpandable: isExpandedBlockEnabled,
 	},
 	{
 		key: 'scan',
 		title: translate( 'Scan' ),
+		className: 'width-fit-content',
 	},
 	{
 		key: 'monitor',
@@ -56,6 +81,7 @@ export const siteColumns: SiteColumns = [
 	{
 		key: 'plugin',
 		title: translate( 'Plugins' ),
+		className: 'width-fit-content',
 	},
 ];
 
@@ -99,6 +125,10 @@ const backupEventNames: StatusEventNames = {
 		small_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_small_screen',
 		large_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_large_screen',
 	},
+	critical: {
+		small_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_small_screen',
+		large_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_large_screen',
+	},
 	warning: {
 		small_screen: 'calypso_jetpack_agency_dashboard_backup_warning_click_small_screen',
 		large_screen: 'calypso_jetpack_agency_dashboard_backup_warning_click_large_screen',
@@ -129,7 +159,7 @@ const scanEventNames: StatusEventNames = {
 	},
 };
 
-// Montitor feature status event names for large screen(>960px) and small screen(<960px)
+// Monitor feature status event names for large screen(>960px) and small screen(<960px)
 const monitorEventNames: StatusEventNames = {
 	disabled: {
 		small_screen: 'calypso_jetpack_agency_dashboard_monitor_inactive_click_small_screen',
@@ -315,10 +345,20 @@ export const getRowMetaData = (
 
 const formatStatsData = ( site: Site ) => {
 	const statsData: StatsNode = {
+		status: 'active',
 		type: 'stats',
-		data: site.site_stats,
+		value: site.site_stats,
 	};
 	return statsData;
+};
+
+const formatBoostData = ( site: Site ) => {
+	const boostData: BoostNode = {
+		status: 'active',
+		type: 'boost',
+		value: site.jetpack_boost_scores,
+	};
+	return boostData;
 };
 
 const formatBackupData = ( site: Site ) => {
@@ -392,11 +432,12 @@ const formatMonitorData = ( site: Site ) => {
 		error: false,
 		settings: site.monitor_settings,
 	};
-	const monitorStatus = site.monitor_settings.monitor_active;
-	if ( ! monitorStatus ) {
+	const { monitor_active: monitorActive, monitor_site_status: monitorStatus } =
+		site.monitor_settings;
+	if ( ! monitorActive ) {
 		monitor.status = 'disabled';
 	} else if (
-		! site.monitor_site_status &&
+		! monitorStatus &&
 		// This check is needed because monitor_site_status is false by default
 		// and we don't want to show the site down status when the site is first connected and the monitor is enabled
 		INITIAL_UNIX_EPOCH !== site.monitor_last_status_change
@@ -424,6 +465,7 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 				type: 'site',
 			},
 			stats: formatStatsData( site ),
+			boost: formatBoostData( site ),
 			backup: formatBackupData( site ),
 			scan: formatScanData( site ),
 			monitor: formatMonitorData( site ),
@@ -487,5 +529,118 @@ export const getSiteCountText = ( sites: Array< Site > ) => {
 	return translate( '%(siteCount)d sites', {
 		args: { siteCount: sites.length },
 		comment: '%(siteCount) is no of sites selected, e.g. "2 sites"',
+	} );
+};
+
+type BoostRating = 'A' | 'B' | 'C' | 'D' | 'E' | 'F';
+
+interface BoostThreshold {
+	threshold: number;
+	rating: BoostRating;
+}
+
+const BOOST_THRESHOLDS: BoostThreshold[] = [
+	{ threshold: 90, rating: 'A' },
+	{ threshold: 75, rating: 'B' },
+	{ threshold: 50, rating: 'C' },
+	{ threshold: 35, rating: 'D' },
+	{ threshold: 25, rating: 'E' },
+	{ threshold: 0, rating: 'F' },
+];
+
+export const getBoostRating = ( boostScore: number ): BoostRating => {
+	for ( const { threshold, rating } of BOOST_THRESHOLDS ) {
+		if ( boostScore > threshold ) {
+			return rating;
+		}
+	}
+	return 'F';
+};
+
+const GOOD_BOOST_SCORE_THRESHOLD = 75;
+const OKAY_BOOST_SCORE_THRESHOLD = 35;
+
+export const getBoostRatingClass = ( boostScore: number ): string => {
+	switch ( true ) {
+		case boostScore > GOOD_BOOST_SCORE_THRESHOLD:
+			return 'boost-score-good';
+		case boostScore > OKAY_BOOST_SCORE_THRESHOLD:
+			return 'boost-score-okay';
+		default:
+			return 'boost-score-bad';
+	}
+};
+
+function extractBackupTextValues( str: string ): { [ key: string ]: number } {
+	const regex = /(\d+)\s+(\w+)(s)?\b/g;
+
+	let match;
+	const result: { [ key: string ]: number } = {};
+
+	while ( ( match = regex.exec( str ) ) !== null ) {
+		const key = match[ 2 ].replace( /s$/, '' ); // remove "s" from the end of the key if present since we store plural(pages and posts) as singular(page and post)
+		result[ key ] = parseInt( match[ 1 ], 10 );
+	}
+
+	return result;
+}
+
+export const getExtractedBackupTitle = ( backup: Backup ) => {
+	const backupText = backup?.activityDescription[ 0 ]?.children[ 0 ]?.text;
+
+	if ( ! backupText ) {
+		return backup?.activityTitle;
+	}
+
+	const { post: postCount, page: pageCount } = extractBackupTextValues( backupText );
+
+	let backupTitle;
+
+	if ( postCount ) {
+		backupTitle = translate( '%(posts)d post', '%(posts)d posts', {
+			args: { posts: postCount },
+			comment: '%(posts) is the no of posts"',
+			count: postCount,
+		} );
+	}
+
+	if ( pageCount ) {
+		const pageCountText = translate( '%(pages)d page', '%(pages)d pages', {
+			args: { pages: pageCount },
+			comment: '%(pages) is the no of pages"',
+			count: pageCount,
+		} );
+		backupTitle = backupTitle ? `${ backupTitle }, ${ pageCountText }` : pageCountText;
+	}
+
+	return backupTitle;
+};
+
+export const DASHBOARD_LICENSE_TYPES: { [ key: string ]: AllowedTypes } = {
+	BACKUP: 'backup',
+};
+
+export const getMonitorDowntimeText = ( downtime: number | undefined ) => {
+	if ( ! downtime ) {
+		return translate( 'Downtime' );
+	}
+
+	const duration = moment.duration( downtime, 'minutes' );
+
+	const days = duration.days();
+	const hours = duration.hours();
+	const minutes = duration.minutes();
+
+	const formattedDays = days > 0 ? `${ days }d ` : '';
+	const formattedHours = hours > 0 ? `${ hours }h ` : '';
+	const formattedMinutes = minutes > 0 ? `${ minutes }m` : '';
+
+	const time = `${ formattedDays }${ formattedHours }${ formattedMinutes }`;
+
+	return translate( 'Downtime for %(time)s', {
+		args: {
+			time,
+		},
+		comment: '%(time) is the downtime, e.g. "2d 5h 30m", "5h 30m", "55m"',
 	} );
 };

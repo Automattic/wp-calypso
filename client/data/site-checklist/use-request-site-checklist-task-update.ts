@@ -12,7 +12,7 @@ import useSiteChecklistTask from './use-site-checklist-task';
  */
 const useRequestSiteChecklistTaskUpdate = (
 	siteId: string,
-	taskId: typeof CHECKLIST_KNOWN_TASKS[ keyof typeof CHECKLIST_KNOWN_TASKS ]
+	taskId: ( typeof CHECKLIST_KNOWN_TASKS )[ keyof typeof CHECKLIST_KNOWN_TASKS ]
 ): void => {
 	const dispatch = useDispatch();
 	const task = useSiteChecklistTask( siteId, taskId );

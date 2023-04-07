@@ -1,6 +1,7 @@
 import accessibleFocus from '@automattic/accessible-focus';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { geolocateCurrencySymbol } from '@automattic/format-currency';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import page from 'page';
@@ -39,12 +40,10 @@ import wasHappychatRecentlyActive from 'calypso/state/happychat/selectors/was-ha
 import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
 import { getHappychatAuth } from 'calypso/state/happychat/utils';
 import { getInitialState, getStateFromCache, persistOnChange } from 'calypso/state/initial-state';
-import { loadPersistedState } from 'calypso/state/persisted-state';
 import { init as pushNotificationsInit } from 'calypso/state/push-notifications/actions';
 import {
 	createQueryClient,
 	getInitialQueryState,
-	hydrateBrowserState,
 	hydrateServerState,
 } from 'calypso/state/query-client';
 import initialReducer from 'calypso/state/reducer';
@@ -421,10 +420,8 @@ function renderLayout( reduxStore, reactQueryClient ) {
 const boot = async ( currentUser, registerRoutes ) => {
 	saveOauthFlags();
 	utils();
-	await loadPersistedState();
-	const queryClient = createQueryClient();
 
-	await hydrateBrowserState( queryClient, currentUser?.ID );
+	const queryClient = await createQueryClient( currentUser?.ID );
 	const initialQueryState = getInitialQueryState();
 	hydrateServerState( queryClient, initialQueryState );
 
@@ -433,6 +430,7 @@ const boot = async ( currentUser, registerRoutes ) => {
 	setStore( reduxStore, getStateFromCache( currentUser?.ID ) );
 	onDisablePersistence( persistOnChange( reduxStore, currentUser?.ID ) );
 	setupLocale( currentUser, reduxStore );
+	geolocateCurrencySymbol();
 	configureReduxStore( currentUser, reduxStore );
 	setupMiddlewares( currentUser, reduxStore, queryClient );
 	detectHistoryNavigation.start();

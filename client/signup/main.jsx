@@ -6,11 +6,6 @@ import {
 	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import {
-	isNewsletterOrLinkInBioFlow,
-	isNewsletterFlow,
-	LINK_IN_BIO_TLD_FLOW,
-} from '@automattic/onboarding';
 import debugModule from 'debug';
 import {
 	clone,
@@ -41,6 +36,7 @@ import {
 	recordSignupProcessingScreen,
 	recordSignupPlanChange,
 } from 'calypso/lib/analytics/signup';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
@@ -49,7 +45,6 @@ import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
-import TailoredFlowProcessingScreen from 'calypso/signup/tailored-flow-processing-screen';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
@@ -124,15 +119,8 @@ function removeLoadingScreenClassNamesFromBody() {
 }
 
 function showProgressIndicator( flowName ) {
-	const DISABLED_PROGRESS_INDICATOR_FLOWS = [
-		'pressable-nux',
-		'setup-site',
-		'importer',
-		'domain',
-		LINK_IN_BIO_TLD_FLOW,
-	];
-
-	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
+	const flow = flows.getFlow( flowName );
+	return ! flow.hideProgressIndicator;
 }
 
 class Signup extends Component {
@@ -220,6 +208,11 @@ class Signup extends Component {
 				)
 			);
 		}
+
+		// preload the experiment to minimize the perceived loading time
+		if ( this.props.flowName === flows.defaultFlowName ) {
+			loadExperimentAssignment( 'calypso_plans_2yr_toggle' );
+		}
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -260,9 +253,7 @@ class Signup extends Component {
 		this.props.flowName === 'onboarding' && ! this.props.isLoggedIn && addHotJarScript();
 		this.startTrackingForBusinessSite();
 
-		if ( ! isNewsletterFlow( this.props.flowName ) ) {
-			recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
-		}
+		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
 
 		if ( ! this.state.shouldShowLoadingScreen ) {
 			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
@@ -738,10 +729,6 @@ class Signup extends Component {
 			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
 		}
 
-		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
-			return <TailoredFlowProcessingScreen flowName={ this.props.flowName } />;
-		}
-
 		if ( isReskinned ) {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
 			const hasPaidDomain = isDomainRegistration( domainItem );
@@ -856,12 +843,6 @@ class Signup extends Component {
 			return <QuerySiteDomains siteId={ this.props.siteId } />;
 		}
 	}
-
-	getPageTitle() {
-		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
-			return this.props.pageTitle;
-		}
-	}
 	render() {
 		// Prevent rendering a step if in the middle of performing a redirect or resuming progress.
 		if (
@@ -890,7 +871,6 @@ class Signup extends Component {
 								flowName: this.props.flowName,
 								stepName: this.props.stepName,
 							} }
-							pageTitle={ this.getPageTitle() }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
 							rightComponent={

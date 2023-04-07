@@ -55,7 +55,7 @@ const FontPairingVariation = ( {
 				aria-current={ isActive }
 			>
 				<div className="global-styles-variation__item-preview">
-					<FontPairingVariationPreview />
+					<FontPairingVariationPreview title={ fontPairingVariation.title } />
 				</div>
 			</div>
 		</GlobalStylesContext.Provider>

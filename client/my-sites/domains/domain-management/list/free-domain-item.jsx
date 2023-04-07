@@ -3,7 +3,7 @@
 import { Spinner } from '@automattic/components';
 import { createInterpolateElement, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, edit, home, moreVertical } from '@wordpress/icons';
+import { Icon, edit, home } from '@wordpress/icons';
 import PropTypes from 'prop-types';
 import { createElement } from 'react';
 import SiteAddressChanger from 'calypso/blocks/site-address-changer';
@@ -65,7 +65,6 @@ export default function FreeDomainItem( {
 				<EllipsisMenu
 					disabled={ disabled }
 					toggleTitle={ __( 'Free WordPress address options' ) }
-					icon={ <Icon icon={ moreVertical } size={ 28 } className="gridicon" /> }
 					popoverClassName="free-domain-item__popover"
 					position="bottom"
 				>

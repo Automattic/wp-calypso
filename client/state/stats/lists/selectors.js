@@ -21,6 +21,25 @@ export function isRequestingSiteStatsForQuery( state, siteId, statType, query ) 
 }
 
 /**
+ * Returns true if the stats request for the statType and query combo has finished, or false
+ * otherwise.
+ *
+ * @param   {Object}  state    Global state tree
+ * @param   {number}  siteId   Site ID
+ * @param   {string}  statType Type of stat
+ * @param   {Object}  query    Stats query object
+ * @returns {boolean}          Whether stats are being requested
+ */
+export function hasSiteStatsForQueryFinished( state, siteId, statType, query ) {
+	const serializedQuery = getSerializedStatsQuery( query );
+	return (
+		get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'status' ] ) ===
+			'success' ||
+		get( state.stats.lists.requests, [ siteId, statType, serializedQuery, 'status' ] ) === 'error'
+	);
+}
+
+/**
  * Returns true if the stats request for the statType and query combo has failed, or false
  * otherwise.
  *
@@ -243,16 +262,7 @@ export const getMostPopularDatetime = ( state, siteId, query ) => {
 	};
 };
 
-export const getTopPostAndPage = ( state, siteId, query ) => {
-	const data = getSiteStatsForQuery( state, siteId, 'statsTopPosts', query );
-
-	if ( ! data ) {
-		return {
-			post: null,
-			page: null,
-		};
-	}
-
+const getSortedPostsAndPages = ( data ) => {
 	const topPosts = {};
 
 	Object.values( data.days ).forEach( ( { postviews: posts } ) => {
@@ -275,6 +285,21 @@ export const getTopPostAndPage = ( state, siteId, query ) => {
 		return 0;
 	} );
 
+	return sortedTopPosts;
+};
+
+export const getTopPostAndPage = ( state, siteId, query ) => {
+	const data = getSiteStatsForQuery( state, siteId, 'statsTopPosts', query );
+
+	if ( ! data ) {
+		return {
+			post: null,
+			page: null,
+		};
+	}
+
+	const sortedTopPosts = getSortedPostsAndPages( data );
+
 	if ( ! sortedTopPosts.length ) {
 		return {
 			post: null,
@@ -286,4 +311,20 @@ export const getTopPostAndPage = ( state, siteId, query ) => {
 		post: sortedTopPosts.find( ( { type } ) => type === 'post' ),
 		page: sortedTopPosts.find( ( { type } ) => type === 'page' ),
 	};
+};
+
+export const getTopPostAndPages = ( state, siteId, query ) => {
+	const data = getSiteStatsForQuery( state, siteId, 'statsTopPosts', query );
+
+	if ( ! data ) {
+		return null;
+	}
+
+	const sortedTopPosts = getSortedPostsAndPages( data );
+
+	if ( ! sortedTopPosts.length ) {
+		return null;
+	}
+
+	return sortedTopPosts;
 };

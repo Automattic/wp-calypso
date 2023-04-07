@@ -9,6 +9,7 @@ import LoginStep from './internals/steps-repository/login';
 import PodcastTitleStep from './internals/steps-repository/podcast-title';
 import ProcessingStep from './internals/steps-repository/processing-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
+import type { SiteSelect } from '@automattic/data-stores';
 
 export function isAnchorFmFlow() {
 	const sanitizePodcast = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
@@ -32,7 +33,7 @@ const anchorFmFlow: Flow = {
 
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
-		const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
+		const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 		const siteSlugParam = useSiteSlugParam();
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {

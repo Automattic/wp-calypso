@@ -13,6 +13,10 @@ interface SearchBranchesProps {
 	selectedBranch?: string;
 }
 
+// If there are too many branches we're forcing the user to type its name because GH API
+// has no search functionality for branches.
+const SEARCH_BRANCHES_LIMIT = 30;
+
 export const SearchBranches = ( {
 	siteId,
 	connectionId,
@@ -22,20 +26,49 @@ export const SearchBranches = ( {
 }: SearchBranchesProps ) => {
 	const { __ } = useI18n();
 
-	const { data: branches, isLoading: isLoading } = useGithubBranchesQuery(
-		siteId,
-		repoName,
-		connectionId,
-		{
-			onSuccess( branches ) {
-				if ( branches.length < 30 ) {
-					onSelect( branches[ 0 ] );
-				}
-			},
-		}
-	);
+	const { data: branches, isFetching } = useGithubBranchesQuery( siteId, repoName, connectionId, {
+		onSuccess( branches ) {
+			if (
+				branches.length > 0 &&
+				branches.length < SEARCH_BRANCHES_LIMIT &&
+				( ! selectedBranch || ! branches.includes( selectedBranch ) )
+			) {
+				onSelect( branches[ 0 ] );
+			}
+		},
+	} );
 
-	if ( branches && branches.length < 30 ) {
+	if ( ! repoName || ! branches ) {
+		return (
+			<div style={ { position: 'relative' } }>
+				<FormTextInput
+					id="branch"
+					disabled
+					className="connect-branch__repository-field"
+					placeholder={ __( 'Choose a branch' ) }
+					value=""
+				/>
+				{ isFetching && <Spinner className="connect-branch__loading" /> }
+			</div>
+		);
+	}
+
+	if ( branches.length === 0 ) {
+		return (
+			<div style={ { position: 'relative' } }>
+				<FormTextInput
+					id="branch"
+					disabled
+					className="connect-branch__repository-field"
+					placeholder={ __( 'No branches found' ) }
+					value=""
+				/>
+				{ isFetching && <Spinner className="connect-branch__loading" /> }
+			</div>
+		);
+	}
+
+	if ( branches.length < SEARCH_BRANCHES_LIMIT ) {
 		return (
 			<FormSelect
 				id="branch"
@@ -57,13 +90,13 @@ export const SearchBranches = ( {
 		<div style={ { position: 'relative' } }>
 			<FormTextInput
 				id="branch"
-				disabled={ ! repoName || isLoading }
+				disabled={ isFetching }
 				className="connect-branch__repository-field"
-				placeholder={ branches ? __( 'Type a branch' ) : __( 'Choose a branch' ) }
+				placeholder={ __( 'Type a branch' ) }
 				onChange={ ( e: ChangeEvent< HTMLInputElement > ) => onSelect( e.target.value ) }
 				value={ selectedBranch }
 			/>
-			{ isLoading && <Spinner className="connect-branch__loading" /> }
+			{ isFetching && <Spinner className="connect-branch__loading" /> }
 		</div>
 	);
 };

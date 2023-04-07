@@ -1,5 +1,9 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_SFTP, FEATURE_SFTP_DATABASE } from '@automattic/calypso-products';
+import {
+	FEATURE_SFTP,
+	FEATURE_SFTP_DATABASE,
+	FEATURE_SITE_STAGING_SITES,
+} from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
@@ -30,6 +34,7 @@ import {
 } from 'calypso/state/automated-transfer/selectors';
 import { getAtomicHostingIsLoadingSftpData } from 'calypso/state/selectors/get-atomic-hosting-is-loading-sftp-data';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { requestSite } from 'calypso/state/sites/actions';
 import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
@@ -48,7 +53,6 @@ import WebServerSettingsCard from './web-server-settings-card';
 import './style.scss';
 
 const HEADING_OFFSET = 30;
-
 class Hosting extends Component {
 	state = {
 		clickOutside: false,
@@ -81,6 +85,7 @@ class Hosting extends Component {
 			hasSftpFeature,
 			isDisabled,
 			isECommerceTrial,
+			isWpcomStagingSite,
 			isTransferring,
 			requestSiteById,
 			siteId,
@@ -88,6 +93,7 @@ class Hosting extends Component {
 			translate,
 			transferState,
 			isLoadingSftpData,
+			hasStagingSitesFeature,
 		} = this.props;
 
 		const getUpgradeBanner = () => {
@@ -189,12 +195,16 @@ class Hosting extends Component {
 							<Column type="main" className="hosting__main-layout-col">
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
-								{ isStagingSiteEnabled && <StagingSiteCard disabled={ isDisabled } /> }
+								{ isStagingSiteEnabled && ! isWpcomStagingSite && hasStagingSitesFeature && (
+									<StagingSiteCard disabled={ isDisabled } />
+								) }
 								{ isGithubIntegrationEnabled && <GitHubCard /> }
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
 								<CacheCard disabled={ isDisabled } />
-								<WebServerLogsCard disabled={ isDisabled } />
+								{ ! isEnabled( 'woa-logging-moved' ) && (
+									<WebServerLogsCard disabled={ isDisabled } />
+								) }
 							</Column>
 							<Column type="sidebar">
 								<SiteBackupCard disabled={ isDisabled } />
@@ -234,6 +244,7 @@ export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
+		const hasStagingSitesFeature = siteHasFeature( state, siteId, FEATURE_SITE_STAGING_SITES );
 
 		return {
 			teams: getReaderTeams( state ),
@@ -245,6 +256,8 @@ export default connect(
 			hasSftpFeature,
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
+			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
+			hasStagingSitesFeature,
 		};
 	},
 	{

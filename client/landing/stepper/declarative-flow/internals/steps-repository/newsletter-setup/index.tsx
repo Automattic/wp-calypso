@@ -1,8 +1,5 @@
-import { useLocale } from '@automattic/i18n-utils';
 import { hexToRgb, StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
 import { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -12,6 +9,7 @@ import { useSite } from '../../../../hooks/use-site';
 import AccentColorControl, { AccentColor } from '../components/accent-color-control';
 import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 export const defaultAccentColor = {
@@ -23,18 +21,17 @@ export const defaultAccentColor = {
 const NewsletterSetup: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const translate = useTranslate();
-	const { hasTranslation } = useI18n();
-	const locale = useLocale();
 	const site = useSite();
 
 	const newsletterFormText = {
-		titlePlaceholder: translate( 'My newsletter' ),
+		titleLabel: translate( 'Give your blog a name' ),
+		titlePlaceholder: translate( 'Open Me Carefully' ),
 		titleMissing: translate( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
-		taglinePlaceholder: translate( 'Describe your Newsletter in a line or two' ),
-		iconPlaceholder:
-			hasTranslation( 'Add a logo or profile picture' ) || locale === 'en'
-				? translate( 'Add a logo or profile picture' )
-				: translate( 'Add a site icon' ),
+		taglineLabel: translate( 'Add a brief description' ),
+		taglinePlaceholder: translate( `Letters from Emily Dickinson's garden` ),
+		iconPlaceholder: translate( 'Add a site icon' ),
+		colorLabel: translate( 'Favorite color' ),
+		buttonText: translate( 'Save and continue' ),
 	};
 
 	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
@@ -46,7 +43,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const [ accentColor, setAccentColor ] = useState< AccentColor >( defaultAccentColor );
 	const [ base64Image, setBase64Image ] = useState< string | null >();
 	const [ selectedFile, setSelectedFile ] = useState< File | undefined >();
-	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
+	const state = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] ).getState();
 
 	useEffect( () => {
 		const { siteAccentColor, siteTitle, siteDescription, siteLogo } = state;
@@ -103,13 +100,9 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id="newsletter-setup-header"
-					headerText={ createInterpolateElement(
-						hasTranslation( 'Set up your<br />Newsletter' ) || locale === 'en'
-							? translate( 'Set up your<br />Newsletter' )
-							: translate( 'Personalize your<br />Newsletter' ),
-						{
-							br: <br />,
-						}
+					headerText={ translate( 'Make it yours.' ) }
+					subHeaderText={ translate(
+						'Personalize your newsletter with a name, description, and accent color that sets it apart.'
 					) }
 					align="center"
 				/>
@@ -129,7 +122,11 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					handleSubmit={ handleSubmit }
 					translatedText={ newsletterFormText }
 				>
-					<AccentColorControl accentColor={ accentColor } setAccentColor={ setAccentColor } />
+					<AccentColorControl
+						accentColor={ accentColor }
+						setAccentColor={ setAccentColor }
+						labelText={ newsletterFormText?.colorLabel }
+					/>
 				</SetupForm>
 			}
 			recordTracksEvent={ recordTracksEvent }

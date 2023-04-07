@@ -1,12 +1,11 @@
-import { plugins, use, registerStore } from '@wordpress/data';
-import persistOptions from '../one-week-persistence-config';
+import { registerStore } from '@wordpress/data';
+import { registerPlugins } from '../plugins';
 import { controls } from '../wpcom-request-controls';
 import { createActions } from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as resolvers from './resolvers';
 import * as selectors from './selectors';
-import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import type { WpcomClientCredentials } from '../shared-types';
 
 export * from './types';
@@ -16,13 +15,12 @@ export { STORE_KEY };
 let isRegistered = false;
 export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KEY {
 	if ( ! isRegistered ) {
-		use( plugins.persistence, persistOptions );
+		registerPlugins();
 
 		isRegistered = true;
-		registerStore< State >( STORE_KEY, {
+		registerStore( STORE_KEY, {
 			actions: createActions( clientCreds ),
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			controls: controls as any,
+			controls,
 			reducer,
 			resolvers,
 			selectors,
@@ -30,9 +28,4 @@ export function register( clientCreds: WpcomClientCredentials ): typeof STORE_KE
 		} );
 	}
 	return STORE_KEY;
-}
-
-declare module '@wordpress/data' {
-	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< ReturnType< typeof createActions > >;
-	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
 }

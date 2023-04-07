@@ -190,7 +190,6 @@ export const defaultTask: Task = {
 	id: 'foo_task',
 	completed: false,
 	disabled: true,
-	taskType: 'blog',
 	title: 'Foo Task',
 };
 
@@ -262,6 +261,8 @@ export const defaultDomainResponse: ResponseDomain = {
 	manualTransferRequired: false,
 	mustRemovePrivacyBeforeContactUpdate: false,
 	name: '',
+	nominetDomainSuspended: false,
+	nominetPendingContactVerificationRequest: false,
 	owner: '',
 	partnerDomain: false,
 	pendingRegistration: false,
@@ -294,3 +295,27 @@ export function buildDomainResponse( overrides ) {
 		...overrides,
 	};
 }
+
+export const MOCK_USE_QUERY_RESULT = {
+	data: undefined,
+	dataUpdatedAt: 0,
+	error: null,
+	errorUpdatedAt: 0,
+	failureCount: 0,
+	isError: false,
+	isFetched: false,
+	isFetchedAfterMount: false,
+	isFetching: false,
+	isIdle: false,
+	isLoading: false,
+	isLoadingError: false,
+	isPlaceholderData: false,
+	isPreviousData: false,
+	isRefetchError: false,
+	isRefetching: false,
+	isStale: false,
+	isSuccess: true,
+	status: 'success',
+	refetch: jest.fn(),
+	remove: jest.fn(),
+};

@@ -5,18 +5,22 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch, DefaultRootState } from 'react-redux';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
+import { useQueryTheme } from 'calypso/components/data/query-theme';
 import EmptyContent from 'calypso/components/empty-content';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import Item from 'calypso/layout/masterbar/item';
 import Masterbar from 'calypso/layout/masterbar/masterbar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useInterval } from 'calypso/lib/interval';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
 import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
+import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import { getPurchaseFlowState } from 'calypso/state/marketplace/purchase-flow/selectors';
@@ -37,7 +41,12 @@ import isPluginUploadComplete from 'calypso/state/selectors/is-plugin-upload-com
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { initiateThemeTransfer as initiateTransfer } from 'calypso/state/themes/actions';
+import {
+	activateTheme,
+	initiateThemeTransfer as initiateTransfer,
+	requestActiveTheme,
+} from 'calypso/state/themes/actions';
+import { getTheme, isThemeActive as getThemeActive } from 'calypso/state/themes/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -52,8 +61,11 @@ interface InstalledPlugin {
 	id?: number;
 }
 
-const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProps ) => {
-	const isUploadFlow = ! productSlug;
+const MarketplacePluginInstall = ( {
+	productSlug = '',
+	themeSlug = '',
+}: MarketplacePluginInstallProps ) => {
+	const isUploadFlow = ! productSlug && ! themeSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ initializeInstallFlow, setInitializeInstallFlow ] = useState( false );
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
@@ -96,11 +108,15 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		isMarketplaceProductSelector( state, productSlug )
 	);
 
+	const wpOrgTheme = useSelector( ( state ) => getTheme( state, 'wporg', themeSlug ) );
+	const isThemeActive = useSelector( ( state ) => getThemeActive( state, themeSlug, siteId ) );
+	useQueryTheme( 'wporg', themeSlug );
+
 	const { data: wpComPluginData } = useWPCOMPlugin( productSlug, {
 		enabled: isProductListFetched && isMarketplaceProduct,
 	} );
 
-	const marketplacePluginInstallationInProgress = useSelector( ( state ) => {
+	const marketplaceInstallationInProgress = useSelector( ( state ) => {
 		const { pluginInstallationStatus, productSlugInstalled, primaryDomain } = getPurchaseFlowState(
 			state as IAppState
 		);
@@ -112,7 +128,8 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		}
 		return (
 			pluginInstallationStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED &&
-			productSlugInstalled === productSlug &&
+			productSlugInstalled &&
+			[ productSlug, themeSlug ].includes( productSlugInstalled ) &&
 			primaryDomain === selectedSiteSlug
 		);
 	} );
@@ -152,12 +169,12 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 
 	// Check that the site URL and the plugin slug are the same which were selected on the plugin page
 	useEffect( () => {
-		if ( ! marketplacePluginInstallationInProgress ) {
+		if ( ! marketplaceInstallationInProgress ) {
 			waitFor( 2 ).then( () => {
-				! marketplacePluginInstallationInProgress && setNoDirectAccessError( true );
+				! marketplaceInstallationInProgress && setNoDirectAccessError( true );
 			} );
 		}
-	}, [ marketplacePluginInstallationInProgress ] );
+	}, [ marketplaceInstallationInProgress ] );
 
 	// Upload flow startup
 	useEffect( () => {
@@ -172,10 +189,10 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 	// Installing plugin flow startup
 	useEffect( () => {
 		if (
-			( marketplacePluginInstallationInProgress || directInstallationAllowed ) &&
+			( marketplaceInstallationInProgress || directInstallationAllowed ) &&
 			! isUploadFlow &&
 			! initializeInstallFlow &&
-			wporgPlugin &&
+			( wporgPlugin || wpOrgTheme ) &&
 			selectedSite
 		) {
 			const triggerInstallFlow = () => {
@@ -184,27 +201,38 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 			};
 
 			if ( selectedSite.jetpack ) {
-				// initialize plugin installing
-				dispatch( installPlugin( siteId, wporgPlugin, false ) );
+				if ( wpOrgTheme ) {
+					// initilize theme activating
+					dispatch( activateTheme( wpOrgTheme.id, siteId ) );
+				} else {
+					// initialize plugin installing
+					dispatch( installPlugin( siteId, wporgPlugin, false ) );
+				}
 
 				triggerInstallFlow();
 			} else if ( hasAtomicFeature ) {
 				// initialize atomic flow
-				setAtomicFlow( true );
-				dispatch( initiateTransfer( siteId, null, productSlug ) );
+				if ( wpOrgTheme ) {
+					dispatch( initiateAtomicTransfer( siteId, { themeSlug } ) );
+				} else {
+					setAtomicFlow( true );
+					dispatch( initiateTransfer( siteId, null, productSlug ) );
+				}
 
 				triggerInstallFlow();
 			}
 		}
 	}, [
-		marketplacePluginInstallationInProgress,
+		marketplaceInstallationInProgress,
 		directInstallationAllowed,
 		isUploadFlow,
 		initializeInstallFlow,
 		selectedSite,
 		siteId,
 		wporgPlugin,
+		wpOrgTheme,
 		productSlug,
+		themeSlug,
 		dispatch,
 		hasAtomicFeature,
 	] );
@@ -249,26 +277,78 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 		) {
 			waitFor( 1 ).then( () =>
 				page.redirect(
-					`/marketplace/thank-you/${
+					`/marketplace/thank-you/${ selectedSiteSlug }?hide-progress-bar&plugins=${
 						installedPlugin?.slug || productSlug || uploadedPluginSlug
-					}/${ selectedSiteSlug }?hide-progress-bar`
+					}`
 				)
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ pluginActive, automatedTransferStatus, atomicFlow, isUploadFlow, isAtomic ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
-	const steps = useMemo(
-		() => [
+	// Validate theme is already active
+	useEffect( () => {
+		if ( themeSlug && wpOrgTheme && isThemeActive ) {
+			waitFor( 1 ).then( () =>
+				page.redirect(
+					`/marketplace/thank-you/${ selectedSiteSlug }?themes=${ themeSlug }&hide-progress-bar`
+				)
+			);
+		}
+	}, [ themeSlug, wpOrgTheme, isThemeActive, selectedSiteSlug ] );
+
+	// Polling for theme activation status
+	useInterval(
+		() => {
+			dispatch( requestActiveTheme( siteId ) );
+		},
+		! themeSlug || currentStep === 0 || ( themeSlug && wpOrgTheme && isThemeActive ) ? null : 3000
+	);
+
+	const steps = useMemo( () => {
+		if ( themeSlug ) {
+			return [ translate( 'Setting up theme installation' ), translate( 'Activating theme' ) ];
+		}
+
+		return [
 			isUploadFlow
 				? translate( 'Uploading plugin' )
 				: translate( 'Setting up plugin installation' ),
 			translate( 'Installing plugin' ),
 			translate( 'Activating plugin' ),
-		],
-		[ isUploadFlow, translate ]
-	);
+		];
+	}, [ themeSlug, isUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
+
+	const installPluginQuestionText = translate( 'Do you want to install the plugin %(plugin)s?', {
+		args: { plugin: wporgPlugin?.name || wpComPluginData?.name },
+	} );
+	const activateThemeQuestionText = translate( 'Do you want to activate the theme %(theme)s?', {
+		args: { theme: wpOrgTheme?.name },
+	} );
+	const questionText = themeSlug ? activateThemeQuestionText : installPluginQuestionText;
+
+	const illustration = themeSlug
+		? wpOrgTheme?.screenshot
+		: wporgPlugin?.icon || wpComPluginData?.icon;
+	const pluginIllustrationWidth = 128;
+	const themeIllustrationWidth = 720;
+	const illustrationWidth = themeSlug ? themeIllustrationWidth : pluginIllustrationWidth;
+
+	const productName = themeSlug
+		? wpOrgTheme?.name || themeSlug
+		: wporgPlugin?.name || wpComPluginData?.name || productSlug;
+
+	const productPage = themeSlug
+		? `/themes/${ themeSlug }/${ selectedSite?.slug }`
+		: `/plugins/${ productSlug }/${ selectedSite?.slug }`;
+	const goToPluginPageText = translate( 'Go to the plugin page' );
+	const goToThemePageText = translate( 'Go to the theme page' );
+	const goToText = themeSlug ? goToThemePageText : goToPluginPageText;
+
+	const installPluginText = translate( 'Install and activate plugin' );
+	const activateThemeText = translate( 'Activate theme' );
+	const CTAText = themeSlug ? activateThemeText : installPluginText;
 
 	const renderError = () => {
 		// Evaluate error causes in priority order
@@ -308,37 +388,28 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 					<QueryProductsList />
 					<EmptyContent
 						className="marketplace-plugin-install__direct-install-container"
-						illustration={
-							wporgPlugin?.icon ||
-							wpComPluginData?.icon ||
-							'/calypso/images/illustrations/error.svg'
+						illustration={ illustration || '/calypso/images/illustrations/error.svg' }
+						illustrationWidth={
+							( wporgPlugin?.icon || wpComPluginData?.icon || wpOrgTheme?.screenshot ) &&
+							illustrationWidth
 						}
-						illustrationWidth={ ( wporgPlugin?.icon || wpComPluginData?.icon ) && 128 }
-						title={ wporgPlugin?.name || wpComPluginData?.name || productSlug }
-						line={ translate( 'Do you want to install the plugin %(plugin)s?', {
-							args: { plugin: wporgPlugin?.name || wpComPluginData?.name || productSlug },
-						} ) }
+						title={ productName }
+						line={ questionText }
 					>
 						{ isProductListFetched && (
 							<div className="marketplace-plugin-install__direct-install-actions">
-								<Button href={ `/plugins/${ productSlug }/${ selectedSite?.slug }` }>
-									{ translate( 'Go to the plugin page' ) }
-								</Button>
+								<Button href={ productPage }>{ goToText }</Button>
 
 								{ ! isMarketplaceProduct ? (
 									<Button primary onClick={ () => setDirectInstallationAllowed( true ) }>
-										{ translate( 'Install and activate plugin' ) }
+										{ CTAText }
 									</Button>
 								) : (
 									<Button
 										primary
 										onClick={ () =>
 											page(
-												`/checkout/${
-													selectedSite?.slug || ''
-												}/${ marketplaceProductSlug }?redirect_to=/marketplace/thank-you/${ marketplaceProductSlug }/${
-													selectedSite?.slug || ''
-												}#step2`
+												`/checkout/${ selectedSite?.slug || '' }/${ marketplaceProductSlug }?#step2`
 											)
 										}
 									>
@@ -415,6 +486,7 @@ const MarketplacePluginInstall = ( { productSlug }: MarketplacePluginInstallProp
 				path="/marketplace/:productSlug?/install/:site?"
 				title="Plugins > Installing"
 			/>
+			<QueryActiveTheme siteId={ siteId } />
 			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<Masterbar className="marketplace-plugin-install__masterbar">
 				<WordPressWordmark className="marketplace-plugin-install__wpcom-wordmark" />

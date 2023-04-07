@@ -94,15 +94,19 @@ function SshKeys( { siteId, siteSlug, username, disabled }: SshKeysProps ) {
 				{ __( 'SSH keys' ) }
 			</label>
 
-			{ keys?.map( ( sshKey ) => (
-				<SshKeyCard
-					key={ sshKey.sha256 }
-					sshKey={ sshKey }
-					deleteText={ __( 'Detach' ) }
-					siteId={ siteId }
-					disabled={ isFetchingKeys }
-				/>
-			) ) }
+			{ keys && keys.length > 0 && (
+				<div className="ssh-keys__cards-container">
+					{ keys.map( ( sshKey ) => (
+						<SshKeyCard
+							key={ sshKey.sha256 }
+							sshKey={ sshKey }
+							deleteText={ __( 'Detach' ) }
+							siteId={ siteId }
+							disabled={ isFetchingKeys }
+						/>
+					) ) }
+				</div>
+			) }
 
 			{ isLoading && <Spinner /> }
 

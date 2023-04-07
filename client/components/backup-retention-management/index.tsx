@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 import { UpsellPrice } from 'calypso/components/backup-storage-space/usage-warning/upsell';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
+import ExternalLink from 'calypso/components/external-link';
 import { addQueryArgs } from 'calypso/lib/route';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
@@ -311,6 +312,28 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 						<div className="retention-form__instructions">
 							{ translate( 'Select the number of days you would like your backups to be saved.' ) }
 						</div>
+						{ 2 === currentRetentionPlan && (
+							<div className="retention-form__short-retention-notice">
+								{ translate(
+									"You're currently saving only {{span}}%(currentRetentionPlan)d days{{/span}} of backups as a way to stay within your storage limits. You can change this by selecting a different setting below. Learn more about {{ExternalLink}}Backup Storage and Retention{{/ExternalLink}}",
+									{
+										components: {
+											ExternalLink: (
+												<ExternalLink
+													href="https://jetpack.com/support/backup/jetpack-vaultpress-backup-storage-and-retention/"
+													target="_blank"
+													rel="noopener noreferrer"
+													icon
+													size={ 14 }
+												/>
+											),
+											span: <span className="highlight-days" />,
+										},
+										args: { currentRetentionPlan },
+									}
+								) }
+							</div>
+						) }
 						<RetentionOptionsControl
 							currentRetentionPlan={ currentRetentionPlan }
 							onChange={ onRetentionSelectionChange }
@@ -319,7 +342,7 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 						/>
 						<div className="retention-form__disclaimer">
 							{ translate(
-								'*We estimate the space you need based on your current site size and the selected number of days.'
+								'*We estimate the space you need based on your current site size. If your site size increases, you may need to purchase a storage add-on.'
 							) }
 						</div>
 						{ storageUpgradeRequired && (

@@ -116,11 +116,11 @@ skipDescribeIf( envVariables.VIEWPORT_NAME === 'mobile' )(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
 			it( 'Go to site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 			} );
 

@@ -86,6 +86,7 @@ export class CommentsComponent {
 			likedStatus = commentContent.locator( ':text("Liked by"):visible' );
 		}
 
+		await this.page.getByText( comment ).scrollIntoViewIfNeeded();
 		await likeButton.click();
 		await likedStatus.waitFor();
 	}
@@ -116,6 +117,7 @@ export class CommentsComponent {
 			unlikedStatus = commentContent.locator( '.comment-not-liked > span:text-is("Like"):visible' );
 		}
 
+		await this.page.getByText( comment ).scrollIntoViewIfNeeded();
 		await unlikeButton.click();
 		await unlikedStatus.waitFor();
 	}

@@ -198,13 +198,11 @@ export class PluginInstallButton extends Component {
 		}
 
 		const buttonLink = canInstallPurchasedPlugins
-			? `/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }`
+			? `/checkout/${ selectedSite.slug }/${ product_slug }`
 			: `/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
 					billingPeriod
-			  ) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
-					selectedSite.slug
-			  }#step2`;
+			  ) },${ product_slug }#step2`;
 
 		return (
 			<span className="plugin-install-button__install embed">

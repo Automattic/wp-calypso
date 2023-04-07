@@ -427,3 +427,12 @@ $soft-launch-badge-font-size: 0.725rem;
 		border-radius: 2px;
 	}
 }
+
+.theme__info-style-variations {
+	.style-variation__badge-wrapper,
+	.style-variation__badge-more-wrapper {
+		&:focus-visible span {
+			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2), 0 0 0 2px var(--color-primary-light);
+		}
+	}
+}

@@ -1,7 +1,7 @@
 import { createSelector } from '@automattic/state-utils';
 import { get, find } from 'lodash';
 import type { PricedAPIPlan } from '@automattic/data-stores';
-import type { AppState } from 'calypso/types';
+import type { AppState, PlanSlug } from 'calypso/types';
 
 import 'calypso/state/plans/init';
 
@@ -51,4 +51,17 @@ export function getPlanSlug( state: AppState, productId: string | number ): stri
 	const plan = getPlan( state, productId );
 
 	return get( plan, 'product_slug', null );
+}
+
+/**
+ * Returns a plan bill_period. Useful for comparing plan billing periods
+ *
+ * @param {Object} state global state
+ * @param {PlanSlug} planSlug the plan slug
+ * @returns {number} plan bill_period
+ */
+export function getPlanBillPeriod( state: AppState, planSlug: PlanSlug ) {
+	const plan = getPlanBySlug( state, planSlug );
+
+	return plan?.bill_period ?? null;
 }

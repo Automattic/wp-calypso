@@ -700,7 +700,12 @@ class CancelPurchaseForm extends Component {
 				{ this.props.isVisible && (
 					<BlankCanvas className="cancel-purchase-form">
 						<BlankCanvas.Header onBackClick={ this.closeDialog }>
-							<span className="cancel-purchase-form__site-slug">{ this.getCanceledProduct() }</span>
+							{ site && (
+								<span className="cancel-purchase-form__site-slug">
+									{ this.getHeaderTitle() }
+									{ this.getCanceledProduct() }
+								</span>
+							) }
 							{ shouldShowChatButton && (
 								<PrecancellationChatButton
 									icon="chat_bubble"

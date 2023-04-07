@@ -33,11 +33,11 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 			await testAccount.authenticate( page );
 
 			editorTracksEventManager = new EditorTracksEventManager( page );
-			fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+			fullSiteEditorPage = new FullSiteEditorPage( page );
 		} );
 
 		it( 'Visit the site editor', async function () {
-			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 		} );
 
@@ -95,11 +95,11 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 			await testAccount.authenticate( page );
 
 			editorTracksEventManager = new EditorTracksEventManager( page );
-			fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+			fullSiteEditorPage = new FullSiteEditorPage( page );
 		} );
 
 		it( 'Visit the site editor', async function () {
-			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 		} );
 
@@ -165,11 +165,11 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 			await testAccount.authenticate( page );
 
 			editorTracksEventManager = new EditorTracksEventManager( page );
-			fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+			fullSiteEditorPage = new FullSiteEditorPage( page );
 		} );
 
 		it( 'Visit the site editor', async function () {
-			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 		} );
 
@@ -285,7 +285,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 			await testAccount.authenticate( page );
 
 			editorTracksEventManager = new EditorTracksEventManager( page );
-			fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+			fullSiteEditorPage = new FullSiteEditorPage( page );
 		} );
 
 		afterAll( async function () {
@@ -298,7 +298,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Global styles events' )
 		} );
 
 		it( 'Visit the site editor', async function () {
-			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+			await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 			await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
 		} );
 

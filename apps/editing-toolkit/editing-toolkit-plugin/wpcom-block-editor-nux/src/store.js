@@ -130,7 +130,7 @@ const actions = {
 	} ),
 };
 
-const selectors = {
+export const selectors = {
 	isWelcomeGuideManuallyOpened: ( state ) => state.welcomeGuideManuallyOpened,
 	isWelcomeGuideShown: ( state ) => !! state.showWelcomeGuide,
 	isWelcomeGuideStatusLoaded: ( state ) => typeof state.showWelcomeGuide !== 'undefined',

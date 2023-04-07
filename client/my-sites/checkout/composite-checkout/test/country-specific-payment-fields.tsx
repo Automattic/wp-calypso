@@ -16,6 +16,7 @@ const defaultProps: CountrySpecificPaymentFieldsProps = {
 			code: 'BR',
 			name: 'Brazil',
 			has_postal_codes: true,
+			vat_supported: false,
 		},
 	],
 	getErrorMessages: jest.fn().mockReturnValue( [] ),

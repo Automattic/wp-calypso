@@ -4,8 +4,8 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import checkEmailImage from 'calypso/assets/images/illustrations/check-email.svg';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
+import { preventWidows } from 'calypso/lib/formatting/prevent-widows';
 import { login } from 'calypso/lib/paths';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -66,8 +66,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 				<h1 className="magic-login__form-header">{ translate( 'Check your email!' ) }</h1>
 
 				<Card className="magic-login__form">
-					<img alt="" src={ checkEmailImage } className="magic-login__check-email-image" />
-					<p>{ line }</p>
+					<p>{ preventWidows( line ) }</p>
 				</Card>
 
 				<div className="magic-login__footer">
@@ -80,7 +79,7 @@ class EmailedLoginLinkSuccessfully extends Component {
 						onClick={ this.onClickBackLink }
 					>
 						<Gridicon icon="arrow-left" size={ 18 } />
-						{ translate( 'Back' ) }
+						{ translate( 'Back to login' ) }
 					</a>
 				</div>
 			</div>

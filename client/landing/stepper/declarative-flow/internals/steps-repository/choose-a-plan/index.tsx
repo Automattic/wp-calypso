@@ -5,20 +5,25 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
-import { Plans } from 'calypso/../packages/data-stores/src';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import { PlansIntervalToggle } from 'calypso/../packages/plans-grid/src';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
 import PlanItem from 'calypso/../packages/plans-grid/src/plans-table/plan-item';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useNewSiteVisibility } from 'calypso/landing/gutenboarding/hooks/use-selected-plan';
-import { PLANS_STORE } from 'calypso/landing/gutenboarding/stores/plans';
-import { USER_STORE, ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
+import { useNewSiteVisibility } from 'calypso/landing/stepper/hooks/use-selected-plan';
+import { USER_STORE, ONBOARD_STORE, PLANS_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
 import type { Step } from '../../types';
-import type { PlanSimplifiedFeature } from 'calypso/../packages/data-stores/src/plans';
+import type {
+	Plans,
+	PlansSelect,
+	PlanSimplifiedFeature,
+	OnboardSelect,
+	SiteSelect,
+	UserSelect,
+} from '@automattic/data-stores';
 
 import 'calypso/../packages/plans-grid/src/plans-grid/style.scss';
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
@@ -41,13 +46,23 @@ const ChooseAPlan: Step = function ChooseAPlan( { navigation, flow } ) {
 	const visibility = useNewSiteVisibility();
 	const { supportedPlans, maxAnnualDiscount } = useSupportedPlans( locale, billingPeriod );
 
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
-	const siteDescription = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getSelectedSiteDescription()
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
 	);
-	const getPlanProduct = useSelect( ( select ) => select( PLANS_STORE ).getPlanProduct );
-	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) );
+	const domain = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+		[]
+	);
+	const siteDescription = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteDescription(),
+		[]
+	);
+	const getPlanProduct = useSelect(
+		( select ) => ( select( PLANS_STORE ) as PlansSelect ).getPlanProduct,
+		[]
+	);
+	const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 
 	const { createVideoPressSite, setSelectedSite, setPendingAction, setProgress } =
 		useDispatch( ONBOARD_STORE );

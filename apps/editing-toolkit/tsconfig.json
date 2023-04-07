@@ -30,18 +30,16 @@
 
 		// Some type helpers from our webpack/
 		"typeRoots": [ "./typings", "./node_modules/@types", "../../node_modules/@types" ],
-		"types": [ "jest", "@emotion/react" ]
+		"types": [ "jest" ]
 	},
 	"exclude": [ "node_modules" ],
 	"references": [
 		{ "path": "../../packages/calypso-analytics" },
 		{ "path": "../../packages/composite-checkout" },
 		{ "path": "../../packages/data-stores" },
-		{ "path": "../../packages/domain-picker" },
 		{ "path": "../../packages/happychat-connection" },
 		{ "path": "../../packages/help-center" },
 		{ "path": "../../packages/i18n-utils" },
-		{ "path": "../../packages/launch" },
 		{ "path": "../../packages/onboarding" },
 		{ "path": "../../packages/plans-grid" },
 		{ "path": "../../packages/state-utils" },

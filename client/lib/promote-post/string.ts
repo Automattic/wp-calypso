@@ -91,6 +91,13 @@ const BlazePressStrings = () => {
 	translate( 'All' );
 	translate( 'Mobile devices' );
 	translate( 'Desktop devices' );
+	translate( 'Close' );
+	translate( 'Learn more' );
+	translate( 'Get started' );
+	translate( 'Pick the right audience, budget and duration' );
+	translate( 'Adjust your title to make it more engaging' );
+	translate( 'Make the most of your Blaze campaign' );
+	translate( 'Choose an eye-catching image for your ad' );
 };
 
 if ( window.BlazePress ) {

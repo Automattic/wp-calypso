@@ -266,6 +266,26 @@ describe( 'index', () => {
 		} );
 	} );
 
+	describe( '#handleRenewNowClickSiteless', () => {
+		const purchase = {
+			id: 1,
+			currencyCode: 'USD',
+			expiryDate: '2020-05-20T00:00:00+00:00',
+			productSlug: 'ak_plus_yearly_1',
+			productName: 'Akismet Plus',
+			amount: 100,
+		};
+
+		// No site
+		const siteSlug = '';
+
+		test( 'should redirect to the purchase management page with service slug URL', () => {
+			const dispatch = jest.fn();
+			handleRenewNowClick( purchase, siteSlug )( dispatch );
+			expect( page ).toHaveBeenCalledWith( '/checkout/akismet/ak_plus_yearly_1/renew/1/' );
+		} );
+	} );
+
 	describe( '#handleRenewMultiplePurchasesClick', () => {
 		const purchases = [
 			{

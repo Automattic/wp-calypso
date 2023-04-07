@@ -152,8 +152,8 @@ export function TaxInfoArea( {
 	storedDetailsId,
 	paymentPartnerProcessorId,
 }: {
-	last4: string;
-	brand: string;
+	last4?: string;
+	brand?: string;
 	storedDetailsId: string;
 	paymentPartnerProcessorId: string;
 } ) {

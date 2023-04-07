@@ -1,29 +1,72 @@
 /* eslint-disable no-restricted-imports */
 import {
-	useLocalizeUrl,
+	localizeUrl as pureLocalizeUrl,
 	removeLocaleFromPathLocaleInFront,
 	useIsEnglishLocale,
 	useLocale,
+	useLocalizeUrl,
 } from '@automattic/i18n-utils';
 import { __ } from '@wordpress/i18n';
 import SocialLogo from 'social-logos';
 import useAutomatticBrandingNoun from '../hooks/use-automattic-branding-noun';
-import { FooterProps } from '../types';
+import type { FooterProps, PureFooterProps, LanguageOptions } from '../types';
 
 import './style.scss';
 
-const UniversalNavbarFooter = ( {
-	isLoggedIn = false,
-	currentRoute,
-	additonalCompanyLinks,
-	onLanguageChange,
-}: FooterProps ) => {
-	const localizeUrl = useLocalizeUrl();
-	const locale = useLocale();
-	const isEnglishLocale = useIsEnglishLocale();
-	const pathNameWithoutLocale =
-		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
-	const automatticBranding = useAutomatticBrandingNoun();
+const defaultOnLanguageChange: React.ChangeEventHandler< HTMLSelectElement > = ( event ) => {
+	const newURL = `${ event.target.value }${ removeLocaleFromPathLocaleInFront(
+		window.location.pathname
+	) }`;
+	window.location.href = newURL;
+};
+
+const allLanguageOptions: LanguageOptions = {
+	ar: 'العربية',
+	de: 'Deutsch',
+	el: 'Ελληνικά',
+	en: 'English',
+	es: 'Español',
+	fr: 'Français',
+	he: 'עִבְרִית',
+	id: 'Bahasa Indonesia',
+	it: 'Italiano',
+	ja: '日本語',
+	ko: '한국어',
+	nl: 'Nederlands',
+	'pt-br': 'Português do Brasil',
+	ro: 'Română',
+	ru: 'Русский',
+	sv: 'Svenska',
+	tr: 'Türkçe',
+	'zh-cn': '简体中文',
+	'zh-tw': '繁體中文',
+} as const;
+
+const normalizedLocales: Record< string, keyof typeof allLanguageOptions > = {
+	'zh-Hans': 'zh-cn',
+	'zh-Hant': 'zh-tw',
+} as const;
+
+/**
+ * This component doesn't depend on any hooks or state. This makes it Gutenberg save.js friendly.
+ */
+export const PureUniversalNavbarFooter = ( {
+	isLoggedIn = typeof window !== 'undefined'
+		? document.body.classList.contains( 'logged-in' )
+		: false,
+	additionalCompanyLinks = null,
+	onLanguageChange = defaultOnLanguageChange,
+	localizeUrl = pureLocalizeUrl,
+	automatticBranding = {
+		article: __( 'An', __i18n_text_domain__ ),
+		noun: __( 'thingamajig', __i18n_text_domain__ ),
+	},
+	locale,
+	languageOptions = allLanguageOptions,
+}: PureFooterProps ) => {
+	const isEnglishLocale = locale === 'en';
+
+	const languageEntries = Object.entries( languageOptions );
 
 	return (
 		<>
@@ -226,7 +269,7 @@ const UniversalNavbarFooter = ( {
 										</span>
 									</a>
 								</li>
-								{ additonalCompanyLinks }
+								{ additionalCompanyLinks }
 							</ul>
 						</div>
 					</div>
@@ -240,66 +283,18 @@ const UniversalNavbarFooter = ( {
 									className="lp-language-picker__content"
 									title={ __( 'Change Language', __i18n_text_domain__ ) }
 									onChange={ onLanguageChange }
-									defaultValue={ currentRoute }
+									defaultValue={ `/${ locale }` }
 								>
 									<option>{ __( 'Change Language', __i18n_text_domain__ ) }</option>
-									<option lang="es" value={ `/es/${ pathNameWithoutLocale }` }>
-										Español
-									</option>
-									<option lang="pt-br" value={ `/pt-br/${ pathNameWithoutLocale }` }>
-										Português do Brasil
-									</option>
-									<option lang="de" value={ `/de/${ pathNameWithoutLocale }` }>
-										Deutsch
-									</option>
-									<option lang="fr" value={ `/fr/${ pathNameWithoutLocale }` }>
-										Français
-									</option>
-									<option lang="he" value={ `/he/${ pathNameWithoutLocale }` }>
-										עִבְרִית
-									</option>
-									<option lang="ja" value={ `/ja/${ pathNameWithoutLocale }` }>
-										日本語
-									</option>
-									<option lang="it" value={ `/it/${ pathNameWithoutLocale }` }>
-										Italiano
-									</option>
-									<option lang="nl" value={ `/nl/${ pathNameWithoutLocale }` }>
-										Nederlands
-									</option>
-									<option lang="ru" value={ `/ru/${ pathNameWithoutLocale }` }>
-										Русский
-									</option>
-									<option lang="tr" value={ `/tr/${ pathNameWithoutLocale }` }>
-										Türkçe
-									</option>
-									<option lang="id" value={ `/id/${ pathNameWithoutLocale }` }>
-										Bahasa Indonesia
-									</option>
-									<option lang="zh-cn" value={ `/zh-cn/${ pathNameWithoutLocale }` }>
-										简体中文
-									</option>
-									<option lang="zh-tw" value={ `/zh-tw/${ pathNameWithoutLocale }` }>
-										繁體中文
-									</option>
-									<option lang="ko" value={ `/ko/${ pathNameWithoutLocale }` }>
-										한국어
-									</option>
-									<option lang="ar" value={ `/ar/${ pathNameWithoutLocale }` }>
-										العربية
-									</option>
-									<option lang="sv" value={ `/sv/${ pathNameWithoutLocale }` }>
-										Svenska
-									</option>
-									<option lang="el" value={ `/el/${ pathNameWithoutLocale }` }>
-										Ελληνικά
-									</option>
-									<option lang="en" value={ `/${ pathNameWithoutLocale }` }>
-										English
-									</option>
-									<option lang="ro" value={ `/ro/${ pathNameWithoutLocale }` }>
-										Română
-									</option>
+									{ languageEntries.map( ( option ) => {
+										const locale = option[ 0 ];
+										return (
+											<option key={ locale } lang={ locale } value={ locale }>
+												{ allLanguageOptions[ locale ] ||
+													allLanguageOptions[ normalizedLocales[ locale ] ] }
+											</option>
+										);
+									} ) }
 								</select>
 							</div>
 						</div>
@@ -314,44 +309,27 @@ const UniversalNavbarFooter = ( {
 										<span className="lp-app-button__content">
 											<svg
 												className="lp-app-button__content--icon"
+												width="23"
+												viewBox="0 0 28.99 31.99"
 												xmlns="http://www.w3.org/2000/svg"
-												viewBox="0 0 23 25"
 												aria-hidden="true"
 											>
-												<defs>
-													<linearGradient id="lp-gp-a" x1="50%" x2="40%" y1="25%" y2="50%">
-														<stop offset="0%" stopColor="#00c4ff"></stop>
-														<stop offset="100%" stopColor="#00e3ff"></stop>
-													</linearGradient>
-													<linearGradient id="lp-gp-b" x1="0%" x2="100%" y1="50%" y2="50%">
-														<stop offset="0%" stopColor="#fb0"></stop>
-														<stop offset="100%" stopColor="#fd0"></stop>
-													</linearGradient>
-													<linearGradient id="lp-gp-c" x1="100%" x2="0%" y1="20%" y2="80%">
-														<stop offset="0%" stopColor="#df2454"></stop>
-														<stop offset="100%" stopColor="#ff3a44"></stop>
-													</linearGradient>
-													<linearGradient id="lp-gp-d" x1="0%" x2="100%" y1="20%" y2="80%">
-														<stop offset="0%" stopColor="#13d375"></stop>
-														<stop offset="100%" stopColor="#00f076"></stop>
-													</linearGradient>
-												</defs>
 												<path
-													fill="url(#lp-gp-a)"
-													d="M.44.38C.16.68 0 1.15 0 1.75v21.48c0 .6.16 1.07.45 1.36l.08.07 12.03-12.04v-.26L.52.32.44.38z"
-												></path>
+													d="M13.54 15.28.12 29.34a3.66 3.66 0 0 0 5.33 2.16l15.1-8.6Z"
+													fill="#ea4335"
+												/>
 												<path
-													fill="url(#lp-gp-b)"
-													d="m16.57 16.65-4.02-4.02v-.28l4.02-4.01.08.05 4.75 2.7c1.36.77 1.36 2.03 0 2.8l-4.74 2.7-.1.06z"
-												></path>
+													d="m27.11 12.89-6.53-3.74-7.35 6.45 7.38 7.28 6.48-3.7a3.54 3.54 0 0 0 1.5-4.79 3.62 3.62 0 0 0-1.5-1.5z"
+													fill="#fbbc04"
+												/>
 												<path
-													fill="url(#lp-gp-c)"
-													d="m16.66 16.6-4.1-4.1L.43 24.6c.45.48 1.19.53 2.02.07l14.2-8.08"
-												></path>
+													d="M.12 2.66a3.57 3.57 0 0 0-.12.92v24.84a3.57 3.57 0 0 0 .12.92L14 15.64Z"
+													fill="#4285f4"
+												/>
 												<path
-													fill="url(#lp-gp-d)"
-													d="M16.66 8.4 2.46.32C1.63-.15.88-.08.44.4l12.11 12.1 4.1-4.1z"
-												></path>
+													d="m13.64 16 6.94-6.85L5.5.51A3.73 3.73 0 0 0 3.63 0 3.64 3.64 0 0 0 .12 2.65Z"
+													fill="#34a853"
+												/>
 											</svg>
 											<span className="lp-app-button__content--label">
 												<span className="lp-app-button__line lp-app-button__line--top">
@@ -473,6 +451,33 @@ const UniversalNavbarFooter = ( {
 				</a>
 			</div>
 		</>
+	);
+};
+
+const UniversalNavbarFooter = ( {
+	isLoggedIn = false,
+	currentRoute,
+	additionalCompanyLinks,
+	onLanguageChange,
+}: FooterProps ) => {
+	const localizeUrl = useLocalizeUrl();
+	const locale = useLocale();
+	const isEnglishLocale = useIsEnglishLocale();
+	const pathNameWithoutLocale =
+		currentRoute && removeLocaleFromPathLocaleInFront( currentRoute ).slice( 1 );
+	const automatticBranding = useAutomatticBrandingNoun();
+
+	return (
+		<PureUniversalNavbarFooter
+			locale={ locale }
+			isEnglishLocale={ isEnglishLocale }
+			automatticBranding={ automatticBranding }
+			isLoggedIn={ isLoggedIn }
+			currentRoute={ pathNameWithoutLocale }
+			additionalCompanyLinks={ additionalCompanyLinks }
+			onLanguageChange={ onLanguageChange }
+			localizeUrl={ localizeUrl }
+		/>
 	);
 };
 

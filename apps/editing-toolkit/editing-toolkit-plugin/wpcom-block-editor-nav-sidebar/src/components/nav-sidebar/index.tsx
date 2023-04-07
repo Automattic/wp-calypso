@@ -4,7 +4,6 @@ import {
 	IsolatedEventContainer,
 	withConstrainedTabbing,
 } from '@wordpress/components';
-import { compose } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { forwardRef, useLayoutEffect, useRef, useEffect } from '@wordpress/element';
 import { applyFilters, doAction, hasAction } from '@wordpress/hooks';
@@ -16,13 +15,24 @@ import { addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { get, isEmpty, partition } from 'lodash';
 import * as React from 'react';
-import { STORE_KEY, POST_IDS_TO_EXCLUDE } from '../../constants';
+import { POST_IDS_TO_EXCLUDE } from '../../constants';
+import { store } from '../../store';
 import { Post } from '../../types';
 import CreatePage from '../create-page';
 import NavItem from '../nav-item';
 import SiteIcon from '../site-icon';
 
 import './style.scss';
+
+type CoreEditorPlaceholder = {
+	isEditedPostNew: ( ...args: unknown[] ) => boolean;
+	getCurrentPostId: ( ...args: unknown[] ) => number;
+	getCurrentPostType: ( ...args: unknown[] ) => string;
+	getEditedPostAttribute: ( ...args: unknown[] ) => unknown;
+};
+type CorePlaceholder = {
+	getEntityRecords: ( ...args: unknown[] ) => Array< unknown > | null;
+};
 
 const Button = forwardRef(
 	(
@@ -42,21 +52,25 @@ const Button = forwardRef(
 );
 
 function WpcomBlockEditorNavSidebar() {
-	const { toggleSidebar, setSidebarClosing } = useDispatch( STORE_KEY );
-	const [ isOpen, isClosing, postType, selectedItemId, siteTitle ] = useSelect( ( select ) => {
+	const { toggleSidebar, setSidebarClosing } = useDispatch( store );
+	const { isOpen, isClosing, postType, selectedItemId, siteTitle } = useSelect( ( select ) => {
 		const { getPostType, getSite } = select( 'core' ) as unknown as {
 			getPostType: ( postType: string ) => null | { slug: string };
 			getSite: () => null | { title: string };
 		};
 
-		return [
-			select( STORE_KEY ).isSidebarOpened(),
-			select( STORE_KEY ).isSidebarClosing(),
-			getPostType( select( 'core/editor' ).getCurrentPostType() ),
-			select( 'core/editor' ).getCurrentPostId(),
-			getSite()?.title,
-		];
-	} );
+		const { isSidebarOpened, isSidebarClosing } = select( store );
+
+		return {
+			isOpen: isSidebarOpened(),
+			isClosing: isSidebarClosing(),
+			postType: getPostType(
+				( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPostType()
+			),
+			selectedItemId: ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPostId(),
+			siteTitle: getSite()?.title,
+		};
+	}, [] );
 
 	const siteSlug = window?.location.host;
 
@@ -298,7 +312,7 @@ function WpcomBlockEditorNavSidebar() {
 	);
 }
 
-export default compose( [ withConstrainedTabbing ] )( WpcomBlockEditorNavSidebar );
+export default withConstrainedTabbing( WpcomBlockEditorNavSidebar );
 
 type NavItemRecord = {
 	current: Post[];
@@ -307,9 +321,18 @@ type NavItemRecord = {
 };
 function useNavItems(): NavItemRecord {
 	return useSelect( ( select ) => {
-		const { isEditedPostNew, getCurrentPostId, getCurrentPostType, getEditedPostAttribute } =
-			select( 'core/editor' );
-		const statuses = select( 'core' ).getEntityRecords( 'root', 'status', { context: 'edit' } );
+		const {
+			isEditedPostNew,
+			getCurrentPostId,
+			getCurrentPostType,
+			getEditedPostAttribute,
+		}: CoreEditorPlaceholder = select( 'core/editor' );
+		const statuses = ( select( 'core' ) as CorePlaceholder ).getEntityRecords( 'root', 'status', {
+			context: 'edit',
+		} ) as Array< {
+			show_in_list: boolean;
+			slug: string;
+		} > | null;
 
 		if ( ! statuses ) {
 			return { current: [], drafts: [], recent: [] };
@@ -321,13 +344,17 @@ function useNavItems(): NavItemRecord {
 			.join( ',' );
 		const currentPostId = getCurrentPostId();
 		const currentPostType = getCurrentPostType();
-		const items = ( select( 'core' ).getEntityRecords( 'postType', currentPostType, {
-			_fields: 'id,status,title',
-			exclude: [ currentPostId, ...POST_IDS_TO_EXCLUDE ],
-			orderby: 'modified',
-			per_page: 10,
-			status: statusFilter,
-		} ) || [] ) as Post[];
+		const items = ( ( select( 'core' ) as CorePlaceholder ).getEntityRecords(
+			'postType',
+			currentPostType,
+			{
+				_fields: 'id,status,title',
+				exclude: [ currentPostId, ...POST_IDS_TO_EXCLUDE ],
+				orderby: 'modified',
+				per_page: 10,
+				status: statusFilter,
+			}
+		) || [] ) as Post[];
 		const current = {
 			id: currentPostId,
 			status: isEditedPostNew() ? 'draft' : getEditedPostAttribute( 'status' ),
@@ -336,15 +363,15 @@ function useNavItems(): NavItemRecord {
 		const [ drafts, recent ] = partition( items, { status: 'draft' } );
 
 		return { current: [ current ], drafts, recent };
-	} );
+	}, [] );
 }
 
 function usePostStatusLabels(): Record< string, string > {
 	return useSelect( ( select ) => {
-		const items = select( 'core' ).getEntityRecords( 'root', 'status' );
-		return ( items || [] ).reduce(
+		const items = ( select( 'core' ) as CorePlaceholder ).getEntityRecords( 'root', 'status' );
+		return ( ( items || [] ) as Array< { name: string; slug: string } > ).reduce(
 			( acc, { name, slug } ) => ( slug === 'publish' ? acc : { ...acc, [ slug ]: name } ),
 			{}
 		);
-	} );
+	}, [] );
 }

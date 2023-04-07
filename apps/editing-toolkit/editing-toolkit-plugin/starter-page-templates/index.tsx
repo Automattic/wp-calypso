@@ -2,8 +2,7 @@ import { initializeTracksWithIdentity, PatternDefinition } from '@automattic/pag
 import { dispatch } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { PagePatternsPlugin } from './page-patterns-plugin';
-
-import './store';
+import { pageLayoutStore } from './store';
 import './index.scss';
 
 declare global {
@@ -29,7 +28,7 @@ if ( tracksUserData ) {
 
 // Open plugin only if we are creating new page.
 if ( screenAction === 'add' ) {
-	dispatch( 'automattic/starter-page-layouts' ).setOpenState( 'OPEN_FROM_ADD_PAGE' );
+	dispatch( pageLayoutStore ).setOpenState( 'OPEN_FROM_ADD_PAGE' );
 }
 
 // Always register ability to open from document sidebar.

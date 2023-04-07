@@ -76,7 +76,6 @@ import {
 	getThemeRequestErrors,
 	getThemeForumUrl,
 	getThemeDemoUrl,
-	getThemePreviewThemeOptions,
 	shouldShowTryAndCustomize,
 	isExternallyManagedTheme as getIsExternallyManagedTheme,
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
@@ -209,6 +208,11 @@ class ThemeSheet extends Component {
 	};
 
 	onUnlockStyleButtonClick = () => {
+		this.props.recordTracksEvent(
+			'calypso_theme_sheet_global_styles_gating_modal_show',
+			this.getPremiumGlobalStylesEventProps()
+		);
+
 		this.setState( { showUnlockStyleUpgradeModal: true } );
 	};
 
@@ -285,17 +289,6 @@ class ThemeSheet extends Component {
 		this.trackButtonClick( 'next_theme' );
 	};
 
-	renderBackButton = () => {
-		const { translate } = this.props;
-
-		return (
-			<Button className="theme__sheet-back-button" borderless onClick={ this.goBack }>
-				<Gridicon icon="chevron-left" size={ 18 } />
-				{ translate( 'Back to themes' ) }
-			</Button>
-		);
-	};
-
 	renderBar = () => {
 		const { author, name, translate, softLaunched } = this.props;
 
@@ -340,7 +333,8 @@ class ThemeSheet extends Component {
 		this.props.setThemePreviewOptions(
 			this.props.themeId,
 			this.props.defaultOption,
-			this.props.secondaryOption
+			this.props.secondaryOption,
+			this.getSelectedStyleVariation()
 		);
 		return preview.action( this.props.themeId );
 	};
@@ -351,8 +345,17 @@ class ThemeSheet extends Component {
 	}
 
 	shouldRenderUnlockStyleButton() {
-		const { selectedStyleVariationSlug, shouldLimitGlobalStyles, styleVariations } = this.props;
-		return shouldLimitGlobalStyles && styleVariations.length > 0 && !! selectedStyleVariationSlug;
+		const { defaultOption, selectedStyleVariationSlug, shouldLimitGlobalStyles, styleVariations } =
+			this.props;
+		const isNonDefaultStyleVariation =
+			selectedStyleVariationSlug && selectedStyleVariationSlug !== DEFAULT_VARIATION_SLUG;
+
+		return (
+			shouldLimitGlobalStyles &&
+			defaultOption?.key === 'activate' &&
+			styleVariations.length > 0 &&
+			isNonDefaultStyleVariation
+		);
 	}
 
 	isThemeCurrentOne() {
@@ -929,15 +932,18 @@ class ThemeSheet extends Component {
 			<Button
 				className="theme__sheet-primary-button"
 				href={
-					getUrl &&
-					( key === 'customize' ||
-						! isExternallyManagedTheme ||
-						! isLoggedIn ||
-						! config.isEnabled( 'themes/third-party-premium' ) )
+					getUrl && ( key === 'customize' || ! isExternallyManagedTheme || ! isLoggedIn )
 						? this.appendSelectedStyleVariationToUrl( getUrl( this.props.themeId ) )
 						: null
 				}
-				onClick={ this.onButtonClick }
+				onClick={ () => {
+					this.props.recordTracksEvent( 'calypso_theme_sheet_primary_button_click', {
+						theme: this.props.themeId,
+						...( key && { action: key } ),
+					} );
+
+					this.onButtonClick();
+				} }
 				primary
 				disabled={ this.isLoading() }
 				target={ isActive ? '_blank' : null }
@@ -1307,22 +1313,25 @@ class ThemeSheet extends Component {
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<AutoLoadingHomepageModal source="details" />
 				{ ! isNewDetailsAndPreview && pageUpsellBanner }
-				{ ! isNewDetailsAndPreview && (
+				<div className="theme__sheet-action-bar-container">
 					<HeaderCake
 						className="theme__sheet-action-bar"
-						backText={ translate( 'All Themes' ) }
+						backText={
+							isNewDetailsAndPreview ? translate( 'Back to themes' ) : translate( 'All Themes' )
+						}
 						onClick={ this.goBack }
+						alwaysShowBackText={ isNewDetailsAndPreview }
 					>
-						{ ! retired &&
+						{ ! isNewDetailsAndPreview &&
+							! retired &&
 							! hasWpOrgThemeUpsellBanner &&
 							! isWPForTeamsSite &&
 							this.renderButton() }
 					</HeaderCake>
-				) }
+				</div>
 				<div className={ columnsClassName }>
 					{ isNewDetailsAndPreview && (
 						<div className="theme__sheet-column-header">
-							{ this.renderBackButton() }
 							{ pageUpsellBanner }
 							{ this.renderHeader() }
 						</div>
@@ -1333,7 +1342,9 @@ class ThemeSheet extends Component {
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ styleVariations.length ? this.renderWebPreview() : this.renderScreenshot() }
+							{ isNewDetailsAndPreview && styleVariations.length
+								? this.renderWebPreview()
+								: this.renderScreenshot() }
 						</div>
 					) }
 				</div>
@@ -1361,6 +1372,7 @@ class ThemeSheet extends Component {
 		if ( this.props.error ) {
 			return <ThemeNotFoundError />;
 		}
+
 		return this.renderSheet();
 	}
 }
@@ -1444,8 +1456,10 @@ export default connect(
 		const backPath = getBackPath( state );
 		const isCurrentUserPaid = isUserPaid( state );
 		const theme = getCanonicalTheme( state, siteId, themeId );
-		const siteIdOrWpcom = siteId || 'wpcom';
-		const error = theme ? false : getThemeRequestErrors( state, themeId, siteIdOrWpcom );
+		const error = theme
+			? false
+			: getThemeRequestErrors( state, themeId, 'wpcom' ) ||
+			  getThemeRequestErrors( state, themeId, siteId );
 		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, themeId );
 
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
@@ -1463,7 +1477,6 @@ export default connect(
 		return {
 			...theme,
 			themeId,
-			themeOptions: getThemePreviewThemeOptions( state ),
 			price: getPremiumThemePrice( state, themeId, siteId ),
 			error,
 			siteId,

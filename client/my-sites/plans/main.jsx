@@ -5,8 +5,13 @@ import {
 	PLAN_FREE,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	isFreePlanProduct,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
+import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
@@ -29,7 +34,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { WPCOM_PLANS_UI_STORE } from 'calypso/my-sites/plan-features-2023-grid/store';
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import P2PlansMain from 'calypso/my-sites/plans/p2-plans-main';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
@@ -50,6 +54,7 @@ import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
+import WooExpressPlansPage from './woo-express-plans-page';
 
 import './style.scss';
 
@@ -100,7 +105,7 @@ function DescriptionMessage( { isDomainUpsell, isFreePlan, yourDomainName, siteS
 		recordTracksEvent( 'calypso_plans_page_domain_upsell_skip_click' );
 		// show Warning only on free plans.
 		isFreePlan
-			? dispatch( WPCOM_PLANS_UI_STORE ).setShowDomainUpsellDialog( true )
+			? dispatch( WpcomPlansUI.store ).setShowDomainUpsellDialog( true )
 			: page( `/checkout/${ siteSlug }` );
 	};
 
@@ -182,9 +187,11 @@ class Plans extends Component {
 
 	isInvalidPlanInterval() {
 		const { isSiteEligibleForMonthlyPlan, intervalType, selectedSite } = this.props;
-		const isWpcomMonthly = intervalType === 'monthly';
 
-		return selectedSite && isWpcomMonthly && ! isSiteEligibleForMonthlyPlan;
+		if ( 'monthly' === intervalType && selectedSite ) {
+			// This is the reason isInvalidPlanInterval even exists and the redirection isn't handled at controller level
+			return ! isSiteEligibleForMonthlyPlan;
+		}
 	}
 
 	redirectIfInvalidPlanInterval() {
@@ -225,7 +232,13 @@ class Plans extends Component {
 	};
 
 	renderPlansMain() {
-		const { currentPlan, selectedSite, isWPForTeamsSite, currentPlanIntervalType } = this.props;
+		const {
+			currentPlan,
+			selectedSite,
+			isWPForTeamsSite,
+			currentPlanIntervalType,
+			is2023PricingGridVisible,
+		} = this.props;
 
 		if ( ! this.props.plansLoaded || ! currentPlan ) {
 			// Maybe we should show a loading indicator here?
@@ -244,8 +257,7 @@ class Plans extends Component {
 			);
 		}
 
-		const hideFreePlan =
-			! is2023PricingGridActivePage( window ) || this.props.isDomainAndPlanPackageFlow;
+		const hideFreePlan = ! is2023PricingGridVisible || this.props.isDomainAndPlanPackageFlow;
 
 		const hidePlanTypeSelector =
 			this.props.domainAndPlanPackage &&
@@ -267,21 +279,60 @@ class Plans extends Component {
 				plansWithScroll={ false }
 				showTreatmentPlansReorderTest={ this.props.showTreatmentPlansReorderTest }
 				hidePlansFeatureComparison={ this.props.isDomainAndPlanPackageFlow }
+				is2023PricingGridVisible={ is2023PricingGridVisible }
 			/>
 		);
 	}
 
+	getIntervalForWooExpressPlans() {
+		const { intervalType } = this.props;
+
+		// Only accept monthly or yearly for the interval; otherwise let the component provide a default.
+		const interval =
+			intervalType === 'monthly' || intervalType === 'yearly' ? intervalType : undefined;
+
+		return interval;
+	}
+
 	renderEcommerceTrialPage() {
-		const { intervalType, selectedSite } = this.props;
+		const { selectedSite } = this.props;
 
 		if ( ! selectedSite ) {
 			return this.renderPlaceholder();
 		}
 
-		// Only accept monthly or yearly for the interval; otherwise let the component provide a default.
-		const interval =
-			intervalType === 'monthly' || intervalType === 'yearly' ? intervalType : undefined;
-		return <ECommerceTrialPlansPage interval={ interval } siteSlug={ selectedSite.slug } />;
+		const interval = this.getIntervalForWooExpressPlans();
+
+		return <ECommerceTrialPlansPage interval={ interval } site={ selectedSite } />;
+	}
+
+	renderWooExpressPlansPage() {
+		const { currentPlan, selectedSite, isSiteEligibleForMonthlyPlan } = this.props;
+
+		if ( ! selectedSite ) {
+			return this.renderPlaceholder();
+		}
+
+		const interval = this.getIntervalForWooExpressPlans();
+
+		return (
+			<WooExpressPlansPage
+				currentPlan={ currentPlan }
+				interval={ interval }
+				selectedSite={ selectedSite }
+				showIntervalToggle={ isSiteEligibleForMonthlyPlan }
+			/>
+		);
+	}
+
+	renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) {
+		if ( isEcommerceTrial ) {
+			return this.renderEcommerceTrialPage();
+		}
+		if ( isWooExpressPlan ) {
+			return this.renderWooExpressPlansPage();
+		}
+		return this.renderPlansMain();
 	}
 
 	render() {
@@ -306,6 +357,18 @@ class Plans extends Component {
 
 		const currentPlanSlug = selectedSite?.plan?.product_slug;
 		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const isWooExpressPlan = [
+			PLAN_WOOEXPRESS_MEDIUM,
+			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+			PLAN_WOOEXPRESS_SMALL,
+			PLAN_WOOEXPRESS_SMALL_MONTHLY,
+		].includes( currentPlanSlug );
+		const wooExpressSubHeaderText = translate(
+			"Discover what's available in your Woo Express plan."
+		);
+		// Use the Woo Express subheader text if the current plan has the Performance or trial plans or fallback to the default subheader text.
+		const subHeaderText = isWooExpressPlan || isEcommerceTrial ? wooExpressSubHeaderText : null;
+
 		const allDomains = isDomainAndPlanPackageFlow ? getDomainRegistrations( this.props.cart ) : [];
 		const yourDomainName = allDomains.length
 			? allDomains.slice( -1 )[ 0 ]?.meta
@@ -322,6 +385,10 @@ class Plans extends Component {
 			currentPlanIntervalType === 'monthly'
 				? translate( 'Get your domain’s first year for free' )
 				: translate( 'Choose the perfect plan' );
+
+		// Hide for WooExpress plans
+		const showPlansNavigation = ! isWooExpressPlan;
+
 		return (
 			<div>
 				{ ! isJetpackNotAtomic && <ModernizedLayout dropShadowOnHeader={ isFreePlan } /> }
@@ -334,7 +401,7 @@ class Plans extends Component {
 				{ isDomainUpsell && <DomainUpsellDialog domain={ selectedSite.slug } /> }
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && <PlansHeader /> }
+						{ ! isDomainAndPlanPackageFlow && <PlansHeader subHeaderText={ subHeaderText } /> }
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">
@@ -352,7 +419,7 @@ class Plans extends Component {
 							</>
 						) }
 						<div id="plans" className="plans plans__has-sidebar">
-							<PlansNavigation path={ this.props.context.path } />
+							{ showPlansNavigation && <PlansNavigation path={ this.props.context.path } /> }
 							<Main
 								fullWidthLayout={ is2023PricingGridVisible && ! isEcommerceTrial }
 								wideLayout={ ! is2023PricingGridVisible || isEcommerceTrial }
@@ -360,7 +427,7 @@ class Plans extends Component {
 								{ ! isDomainAndPlanPackageFlow && domainAndPlanPackage && (
 									<DomainAndPlanUpsellNotice />
 								) }
-								{ isEcommerceTrial ? this.renderEcommerceTrialPage() : this.renderPlansMain() }
+								{ this.renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) }
 								<PerformanceTrackerStop />
 							</Main>
 						</div>
@@ -377,14 +444,13 @@ class Plans extends Component {
 	}
 }
 
-const ConnectedPlans = connect( ( state ) => {
+const ConnectedPlans = connect( ( state, props ) => {
 	const selectedSiteId = getSelectedSiteId( state );
 
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
 	const currentPlanIntervalType = getIntervalTypeForTerm(
 		getPlan( currentPlan?.productSlug )?.term
 	);
-	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
 	return {
 		currentPlan,
@@ -396,7 +462,8 @@ const ConnectedPlans = connect( ( state ) => {
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
-		is2023PricingGridVisible,
+		is2023PricingGridVisible:
+			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window ),
 		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
 		isJetpackNotAtomic: isJetpackSite( state, selectedSiteId, { treatAtomicAsJetpackSite: false } ),
 		isDomainUpsell:

@@ -59,9 +59,12 @@ export function createTransactionEndpointCartFromResponseCart( {
 	contactDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): RequestCart {
-	if ( responseCart.products.some( ( product ) => product.extra.isJetpackCheckout ) ) {
+	if (
+		responseCart.products.some( ( product ) => {
+			return product.extra.isJetpackCheckout || product.extra.isAkismetSitelessCheckout;
+		} )
+	) {
 		const isUserLess = responseCart.cart_key === 'no-user';
-		const isSiteLess = responseCart.blog_id === 0;
 
 		// At this point, cart_key will be 'no-user' | blog_id | 'no-site', in that order.
 		const cartKey = isUserLess ? responseCart.cart_key : responseCart.blog_id || 'no-site';
@@ -73,7 +76,6 @@ export function createTransactionEndpointCartFromResponseCart( {
 		return {
 			blog_id: responseCart.blog_id.toString(),
 			cart_key: cartKey as CartKey,
-			create_new_blog: isSiteLess,
 			coupon: responseCart.coupon || '',
 			temporary: false,
 			products: responseCart.products.map( ( item ) =>
@@ -86,7 +88,6 @@ export function createTransactionEndpointCartFromResponseCart( {
 	return {
 		blog_id: siteId || '0',
 		cart_key: ( siteId || 'no-site' ) as CartKey,
-		create_new_blog: siteId ? false : true,
 		coupon: responseCart.coupon || '',
 		temporary: false,
 		products: responseCart.products.map( ( item ) =>

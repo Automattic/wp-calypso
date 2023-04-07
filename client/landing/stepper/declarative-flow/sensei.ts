@@ -11,6 +11,7 @@ import SenseiPlan from './internals/steps-repository/sensei-plan';
 import SenseiPurpose from './internals/steps-repository/sensei-purpose';
 import SenseiSetup from './internals/steps-repository/sensei-setup';
 import { AssertConditionState, Flow } from './internals/types';
+import type { UserSelect } from '@automattic/data-stores';
 import './internals/sensei.scss';
 
 const sensei: Flow = {
@@ -62,7 +63,10 @@ const sensei: Flow = {
 
 	useAssertConditions() {
 		const flowName = this.name;
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 		const locale = useLocale();
 		const logInUrl =
 			locale && locale !== 'en'

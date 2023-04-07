@@ -7,7 +7,9 @@ import { getSiteFragment, sectionify } from 'calypso/lib/route';
 import { navigation } from 'calypso/my-sites/controller';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
+import { isSiteOnECommerceTrial, getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ALLOWED_CATEGORIES } from './categories/use-categories';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginListComponent from './main';
@@ -135,6 +137,50 @@ export function jetpackCanUpdate( context, next ) {
 			return;
 		}
 	}
+	next();
+}
+
+function waitForState( context ) {
+	return new Promise( ( resolve ) => {
+		const unsubscribe = context.store.subscribe( () => {
+			const state = context.store.getState();
+
+			const siteId = getSelectedSiteId( state );
+			if ( ! siteId ) {
+				return;
+			}
+
+			const currentPlan = getCurrentPlan( state, siteId );
+			if ( ! currentPlan ) {
+				return;
+			}
+			unsubscribe();
+			resolve();
+		} );
+		// Trigger a `store.subscribe()` callback
+		context.store.dispatch( fetchSitePlans( getSelectedSiteId( context.store.getState() ) ) );
+	} );
+}
+
+export async function redirectTrialSites( context, next ) {
+	// If we have a site ID, we can check the user's plan.
+	const siteFragment =
+		context.params.site || context.params.site_id || getSiteFragment( context.path );
+
+	if ( siteFragment ) {
+		const { store } = context;
+		// Make sure state is populated with plan info.
+		await waitForState( context );
+		const state = store.getState();
+		const selectedSite = getSelectedSite( state );
+
+		// If the site is on an ecommerce trial, redirect to the plans page.
+		if ( isSiteOnECommerceTrial( state, selectedSite?.ID ) ) {
+			page.redirect( `/plans/${ selectedSite.slug }` );
+			return false;
+		}
+	}
+
 	next();
 }
 

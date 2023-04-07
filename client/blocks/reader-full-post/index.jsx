@@ -512,7 +512,7 @@ export class FullPostView extends Component {
 								feedIcon={ feedIcon }
 								siteName={ siteName }
 								siteUrl={ post.site_URL }
-								feedUrl={ get( feed, 'feed_URL' ) }
+								feedUrl={ get( post, 'feed_URL' ) }
 								followCount={ site && site.subscribers_count }
 								feedId={ +post.feed_ID }
 								siteId={ +post.site_ID }

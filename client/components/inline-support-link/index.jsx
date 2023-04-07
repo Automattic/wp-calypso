@@ -1,6 +1,5 @@
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { compose } from '@wordpress/compose';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -164,8 +163,7 @@ const mapDispatchToProps = ( dispatch, ownProps ) => {
 	};
 };
 
-export default compose(
-	connect( null, mapDispatchToProps ),
-	localize,
-	withRouteModal( 'support-article' )
-)( InlineSupportLink );
+export default connect(
+	null,
+	mapDispatchToProps
+)( localize( withRouteModal( 'support-article' )( InlineSupportLink ) ) );

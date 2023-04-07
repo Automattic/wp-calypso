@@ -24,17 +24,28 @@ import './app.scss';
 
 async function AppBoot() {
 	const siteId = config( 'blog_id' );
+	const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
 
 	const rootReducer = combineReducers( {
 		currentUser,
 		sites,
 	} );
 
+	let initialState = config( 'intial_state' );
+	// Fix missing user.localeSlug in `intial_state`.
+	initialState = {
+		...initialState,
+		currentUser: {
+			...initialState.currentUser,
+			user: { ...initialState.currentUser.user, localeSlug },
+		},
+	};
+
 	const queryClient = new QueryClient();
 
 	const store = createStore(
 		rootReducer,
-		config( 'intial_state' ) ?? {},
+		initialState,
 		compose(
 			consoleDispatcher,
 			addReducerEnhancer,
@@ -43,24 +54,27 @@ async function AppBoot() {
 	);
 
 	setStore( store );
-	setLocale( store.dispatch );
 	setupContextMiddleware( store, queryClient );
 
 	if ( ! window.location?.hash ) {
+		// Redirect to the default stats page.
 		window.location.hash = `#!/stats/day/${ siteId }`;
 	} else {
-		// The URL could already get broken by page.js by the appended `?page=stats`.
+		// The URL could already gets broken by page.js by the appended `?page=stats`.
 		window.location.hash = `#!${ getPathWithUpdatedQueryString(
 			{},
 			window.location.hash.substring( 2 )
 		) }`;
 	}
 
-	registerStatsPages( window.location.pathname + window.location.search );
+	// Ensure locale files are loaded before rendering.
+	setLocale( localeSlug ).then( () => {
+		registerStatsPages( window.location.pathname + window.location.search );
 
-	// HACK: getPathWithUpdatedQueryString filters duplicate query parameters added by `page.js`.
-	// It has to come after `registerStatsPages` because the duplicate string added in the function.
-	page.show( `${ getPathWithUpdatedQueryString( {}, window.location.hash.substring( 2 ) ) }` );
+		// HACK: getPathWithUpdatedQueryString filters duplicate query parameters added by `page.js`.
+		// It has to come after `registerStatsPages` because the duplicate string added in the function.
+		page.show( `${ getPathWithUpdatedQueryString( {}, window.location.hash.substring( 2 ) ) }` );
+	} );
 }
 
 AppBoot();
