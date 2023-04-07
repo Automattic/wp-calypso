@@ -497,34 +497,42 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, isLargeCurrency } = this.props;
+		const { isReskinned, is2023OnboardingPricingGrid, translate, isLargeCurrency } = this.props;
 
-		return planPropertiesObj
-			.filter( ( { isVisible } ) => isVisible )
-			.map( ( properties ) => {
-				const { planName, rawPrice } = properties;
-				const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
-					'has-border-top': ! isReskinned,
-				} );
-				const hasNoPrice = rawPrice === undefined || rawPrice === null;
+		const isLargeCurrency = planPropertiesObj.some(
+			( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
+		);
 
-				return (
-					<Container
-						scope="col"
-						key={ planName }
-						className={ classes }
-						isMobile={ options?.isMobile }
-					>
-						{ ! hasNoPrice && (
-							<PlanFeatures2023GridHeaderPrice
-								planProperties={ properties }
-								is2023OnboardingPricingGrid={ true }
-								isLargeCurrency={ isLargeCurrency }
-							/>
-						) }
-					</Container>
-				);
+		return planPropertiesObj.map( ( properties ) => {
+			const { planName, rawPrice } = properties;
+			const isWooExpressPlus = isWooExpressPlusPlan( planName );
+			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
+				'has-border-top': ! isReskinned,
 			} );
+			const hasNoPrice = rawPrice === undefined || rawPrice === null;
+
+			return (
+				<Container
+					scope="col"
+					key={ planName }
+					className={ classes }
+					isMobile={ options?.isMobile }
+				>
+					{ ! hasNoPrice && (
+						<PlanFeatures2023GridHeaderPrice
+							planProperties={ properties }
+							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+							isLargeCurrency={ isLargeCurrency }
+						/>
+					) }
+					{ isWooExpressPlus && (
+						<div className="plan-features-2023-grid__header-tagline">
+							{ translate( 'Speak to our team for a custom quote.' ) }
+						</div>
+					) }
+				</Container>
+			);
+		} );
 	}
 
 	renderBillingTimeframe( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
@@ -752,7 +760,7 @@ export class PlanFeatures2023Grid extends Component<
 		return planPropertiesObj.map( ( properties: PlanProperties ) => {
 			const { planName, product_name_short } = properties;
 			const shouldRenderEnterpriseLogos =
-				isWpcomEnterpriseGridPlan( planName ) || planName === PLAN_WOOEXPRESS_PLUS;
+				isWpcomEnterpriseGridPlan( planName ) || isWooExpressPlusPlan( planName );
 			const shouldShowFeatureTitle = ! isWpComFreePlan( planName ) && ! shouldRenderEnterpriseLogos;
 			const planShortName =
 				options?.previousProductNameShort || previousPlanShortNameFromProperties;
