@@ -2,15 +2,20 @@ import { camelOrSnakeSlug } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
 import { useEffect, useState, useCallback } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
+import page from 'page';
 import { useDispatch, useSelector } from 'react-redux';
 import { productHasBackups } from 'calypso/blocks/jetpack-benefits/feature-checks';
 import ExternalLink from 'calypso/components/external-link';
 import HasRetentionCapabilitiesSwitch from 'calypso/jetpack-cloud/sections/settings/has-retention-capabilities-switch';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { JETPACK_BACKUP_RETENTION_UPDATE_RESET } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
+import { BACKUP_RETENTION_UPDATE_REQUEST } from 'calypso/state/rewind/retention/constants';
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getBackupRetentionDays from 'calypso/state/rewind/selectors/get-backup-retention-days';
 import getBackupRetentionUpdateRequestStatus from 'calypso/state/rewind/selectors/get-backup-retention-update-status';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import LoadingPlaceholder from '../loading';
 import RetentionConfirmationDialog from '../retention-confirmation-dialog';
 import type { WithCamelCaseSlug, WithSnakeCaseSlug } from '@automattic/calypso-products';
@@ -30,6 +35,7 @@ const RetentionOptionOnCancelPurchase: React.FC = () => {
 	const [ confirmationDialogVisible, setConfirmationDialogVisible ] = useState( false );
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
+	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	// Retention period included in customer plan
 	const planRetentionPeriod = useSelector( ( state ) =>
@@ -48,6 +54,12 @@ const RetentionOptionOnCancelPurchase: React.FC = () => {
 	// The retention days that currently applies for this customer.
 	const currentBackupRetention = customerRetentionPeriod || planRetentionPeriod || 0;
 	const updateRetentionPeriod = useCallback( () => {
+		dispatch(
+			recordTracksEvent( 'calypso_jetpack_backup_storage_retention_submit_click', {
+				retention_option: MINIMUM_RETENTION_TO_OFFER,
+			} )
+		);
+
 		dispatch( updateBackupRetention( siteId, MINIMUM_RETENTION_TO_OFFER as RetentionPeriod ) );
 	}, [ dispatch, siteId ] );
 
@@ -58,6 +70,22 @@ const RetentionOptionOnCancelPurchase: React.FC = () => {
 	const onConfirmationClose = useCallback( () => {
 		setConfirmationDialogVisible( false );
 	}, [] );
+
+	useEffect( () => {
+		if (
+			updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.SUCCESS ||
+			updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.FAILED
+		) {
+			setConfirmationDialogVisible( false );
+			dispatch( {
+				type: JETPACK_BACKUP_RETENTION_UPDATE_RESET,
+				siteId,
+			} );
+			if ( updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.SUCCESS ) {
+				page.redirect( settingsPath( siteSlug ) );
+			}
+		}
+	}, [ dispatch, siteId, siteSlug, updateRetentionRequestStatus ] );
 
 	useEffect( () => {
 		if ( MINIMUM_RETENTION_TO_OFFER < currentBackupRetention ) {

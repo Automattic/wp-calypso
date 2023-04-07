@@ -10,6 +10,7 @@ import QuerySiteProducts from 'calypso/components/data/query-site-products';
 import ExternalLink from 'calypso/components/external-link';
 import { addQueryArgs } from 'calypso/lib/route';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
+import { JETPACK_BACKUP_RETENTION_UPDATE_RESET } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from 'calypso/state/rewind/retention/constants';
@@ -234,8 +235,12 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 			updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.FAILED
 		) {
 			setConfirmationDialogVisible( false );
+			dispatch( {
+				type: JETPACK_BACKUP_RETENTION_UPDATE_RESET,
+				siteId,
+			} );
 		}
-	}, [ updateRetentionRequestStatus ] );
+	}, [ dispatch, siteId, updateRetentionRequestStatus ] );
 
 	// Update retention period automatically after being redirect from checkout
 	useEffect( () => {
