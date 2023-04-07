@@ -16,7 +16,7 @@ $happy_blocks_current_tab = $args['active_tab'];
 $happy_blocks_tabs = array(
 	'learn'   => array(
 		'title' => __( 'Learn', 'happy-blocks' ),
-		'url'   => localized_wpcom_url( 'https://wordpress.com/learn' ),
+		'url'   => 'https://wordpress.com/learn',
 	),
 	'support' => array(
 		'title' => __( 'Support', 'happy-blocks' ),
