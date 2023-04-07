@@ -225,11 +225,7 @@ export class PlansStep extends Component {
 				: translate( 'The WordPress Pro plan comes with a 14-day full money back guarantee' );
 		}
 
-		if ( useEmailOnboardingSubheader ) {
-			if ( hideFreePlan ) {
-				return translate( 'Add more features to your professional website with a plan. ' );
-			}
-
+		if ( useEmailOnboardingSubheader && ! hideFreePlan ) {
 			return translate(
 				'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
 				{ components: { link: freePlanButton } }
