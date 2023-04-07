@@ -1,7 +1,9 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useMemo } from 'react';
+import useDotcomPatterns from './hooks/use-dotcom-patterns';
 import type { Pattern } from './types';
 
-const useHeaderPatterns = () => {
+const useHeaderPatterns = ( dotcomHeaderPatterns: Pattern[] ) => {
 	const header = {
 		slug: 'header',
 	};
@@ -79,10 +81,14 @@ const useHeaderPatterns = () => {
 		[]
 	);
 
+	if ( isEnabled( 'pattern-assembler/dotcompatterns' ) ) {
+		return dotcomHeaderPatterns;
+	}
+
 	return headerPatterns;
 };
 
-const useFooterPatterns = () => {
+const useFooterPatterns = ( dotcomFooterPatterns: Pattern[] ) => {
 	const footer = {
 		slug: 'footer',
 	};
@@ -195,6 +201,10 @@ const useFooterPatterns = () => {
 		],
 		[]
 	);
+
+	if ( isEnabled( 'pattern-assembler/dotcompatterns' ) ) {
+		return dotcomFooterPatterns;
+	}
 
 	return footerPatterns;
 };
@@ -574,10 +584,15 @@ const useSectionPatterns = () => {
 	return sectionPatterns;
 };
 
-const useAllPatterns = () => {
-	const headerPatterns = useHeaderPatterns();
+const useAllPatterns = ( lang: string | undefined ) => {
+	const headerPatterns = useHeaderPatterns( [] );
 	const sectionPatterns = useSectionPatterns();
-	const footerPatterns = useFooterPatterns();
+	const footerPatterns = useFooterPatterns( [] );
+	const dotcomPatterns = useDotcomPatterns( lang );
+
+	if ( isEnabled( 'pattern-assembler/dotcompatterns' ) ) {
+		return dotcomPatterns;
+	}
 
 	return [ ...headerPatterns, ...sectionPatterns, ...footerPatterns ];
 };
