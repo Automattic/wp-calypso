@@ -148,14 +148,16 @@ const BackupRetentionOptionOnCancelPurchase: React.FC<
 	const currentPlanHasBackup = productHasBackups( camelOrSnakeSlug( purchase ) );
 
 	return (
-		currentPlanHasBackup && (
-			<HasRetentionCapabilitiesSwitch
-				siteId={ siteId }
-				trueComponent={ <RetentionOptionOnCancelPurchase /> }
-				falseComponent={ null }
-				loadingComponent={ <LoadingPlaceholder /> }
-			/>
-		)
+		<>
+			{ currentPlanHasBackup && (
+				<HasRetentionCapabilitiesSwitch
+					siteId={ siteId }
+					trueComponent={ <RetentionOptionOnCancelPurchase /> }
+					falseComponent={ null }
+					loadingComponent={ <LoadingPlaceholder /> }
+				/>
+			) }
+		</>
 	);
 };
 
