@@ -62,6 +62,13 @@
 		line-height: 26px;
 	}
 
+	.stats-widget-highlights-card__empty {
+		min-height: 40px;
+		margin-top: $font-body;
+		// TODO: use a variable for this
+		color: #999;
+	}
+
 	.stats-widget-highlights-card__list {
 		list-style: none;
 		padding: 0;

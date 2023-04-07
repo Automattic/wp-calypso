@@ -30,7 +30,11 @@ export function init() {
 						odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
 					/>
 					<div className="stats-widget-highlights-wrapper">
-						<Highlights odysseyStatsBaseUrl={ odysseyStatsBaseUrl } />
+						<Highlights
+							siteId={ currentSiteId }
+							gmtOffset={ config( 'gmt_offset' ) }
+							odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
+						/>
 					</div>
 				</div>
 			</QueryClientProvider>,

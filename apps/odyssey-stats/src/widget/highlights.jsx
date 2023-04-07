@@ -1,21 +1,32 @@
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import moment from 'moment';
+import useTopPostsQuery from '../hooks/use-top-posts-query';
 
 import './hightlights.scss';
 
 function TopColumn( { items, viewAllUrl, viewAllText, title, className = null } ) {
 	const translate = useTranslate();
+	// TODO: add a placeholder state
+
 	return (
 		<div className={ classNames( 'stats-widget-highlights-card', className ) }>
 			<label className="stats-widget-highlights-card__title">{ title }</label>
-			<ul className="stats-widget-highlights-card__list">
-				{ items.map( ( item, idx ) => (
-					<li key={ idx }>
-						<p>{ item.name }</p>
-						<span>{ translate( '%(views)s Views', { args: { views: item.value } } ) }</span>
-					</li>
-				) ) }
-			</ul>
+			{ items.length === 0 && (
+				<div className="stats-widget-highlights-card__empty">
+					<span>{ translate( 'Sorry, nothing to report.' ) }</span>
+				</div>
+			) }
+			{ items.length > 0 && (
+				<ul className="stats-widget-highlights-card__list">
+					{ items.map( ( item, idx ) => (
+						<li key={ idx }>
+							<p>{ item.title }</p>
+							<span>{ translate( '%(views)s Views', { args: { views: item.views } } ) }</span>
+						</li>
+					) ) }
+				</ul>
+			) }
 			<div className="stats-widget-highlights-card__view-all">
 				<a href={ viewAllUrl }>{ viewAllText }</a>
 			</div>
@@ -23,8 +34,13 @@ function TopColumn( { items, viewAllUrl, viewAllText, title, className = null } 
 	);
 }
 
-export default function Highlights( { odysseyStatsBaseUrl } ) {
+export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } ) {
 	const translate = useTranslate();
+	const queryDate = moment()
+		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
+		.format( 'YYYY-MM-DD' );
+
+	const { data: topPostsAndPages = [] } = useTopPostsQuery( siteId, 'day', 7, queryDate );
 
 	return (
 		<div className="stats-widget-highlights">
@@ -38,13 +54,7 @@ export default function Highlights( { odysseyStatsBaseUrl } ) {
 					title={ translate( 'Top Posts & Pages' ) }
 					viewAllUrl={ odysseyStatsBaseUrl }
 					viewAllText={ translate( 'View all posts & pages stats' ) }
-					items={ [
-						{ name: 'What memorable meal have you had recently?', value: 12334235 },
-						{ name: 'What’s happening in your life?', value: 444 },
-						{ name: 'What went well? ', value: 23 },
-						{ name: 'What needs improvement?', value: 436 },
-						{ name: 'What are you looking forward to?', value: 345 },
-					] }
+					items={ topPostsAndPages }
 				/>
 				<TopColumn
 					className="stats-widget-highlights__column"
