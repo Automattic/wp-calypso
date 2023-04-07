@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	applyTestFiltersToPlansList,
 	FeatureGroup,
@@ -8,9 +7,6 @@ import {
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	getPlanFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
-	getPlanSlugForTermVariant,
-	PlanSlug,
-	TERM_BIENNIALLY,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -21,9 +17,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import PlanTypeSelector, {
-	PlanTypeSelectorProps,
-} from 'calypso/my-sites/plans-features-main/plan-type-selector';
+import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
+import TermExperimentPlanTypeSelector from 'calypso/my-sites/plans-features-main/term-experiment-plan-type-selector';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PopularBadge from './components/popular-badge';
@@ -644,12 +639,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		if ( newVisiblePlans.length !== visibleLength ) {
 			// ensures current plan is first in the list
 			newVisiblePlans.sort( ( visiblePlan ) =>
-				[
-					currentSitePlanSlug,
-					getPlanSlugForTermVariant( currentSitePlanSlug as PlanSlug, TERM_BIENNIALLY ),
-				].includes( visiblePlan )
-					? -1
-					: 1
+				[ currentSitePlanSlug ].includes( visiblePlan ) ? -1 : 1
 			);
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
 		}
@@ -764,20 +754,11 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			<PlanComparisonHeader className="wp-brand-font">
 				{ translate( 'Compare our plans and find yours' ) }
 			</PlanComparisonHeader>
-			<PlanTypeSelector
+			<TermExperimentPlanTypeSelector
+				isEligible={ true }
 				kind="interval"
 				plans={ displayedPlansProperties.map( ( { planName } ) => planName ) }
-				isInSignup={ planTypeSelectorProps.isInSignup }
-				isStepperUpgradeFlow={ planTypeSelectorProps.isStepperUpgradeFlow }
-				eligibleForWpcomMonthlyPlans={ planTypeSelectorProps.eligibleForWpcomMonthlyPlans }
-				isPlansInsideStepper={ planTypeSelectorProps.isPlansInsideStepper }
-				intervalType={ planTypeSelectorProps.intervalType }
-				customerType={ planTypeSelectorProps.customerType }
-				hidePersonalPlan={ planTypeSelectorProps.hidePersonalPlan }
-				basePlansPath={ planTypeSelectorProps.basePlansPath }
-				siteSlug={ planTypeSelectorProps.siteSlug }
-				hideDiscountLabel={ false }
-				showBiannualToggle={ config.isEnabled( 'plans/biannual-toggle' ) }
+				planTypeSelectorProps={ planTypeSelectorProps }
 			/>
 			<Grid isInSignup={ isInSignup }>
 				<PlanComparisonGridHeader

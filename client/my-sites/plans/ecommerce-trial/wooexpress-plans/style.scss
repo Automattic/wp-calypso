@@ -18,3 +18,13 @@
 		}
 	}
 }
+
+.wooexpress-plans__grid.is-2023-pricing-grid {
+	.plan-features-2023-grid__header-title {
+		font-family: $sans;
+	}
+
+	.plan-features-2023-grid__content .plan-features-2023-grid__table-item .plan-price {
+		font-family: $sans;
+	}
+}

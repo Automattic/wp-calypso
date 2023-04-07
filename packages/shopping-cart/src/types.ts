@@ -196,7 +196,6 @@ export interface RequestCart {
 	tax: RequestCartTaxData;
 	coupon: string;
 	temporary: false;
-	create_new_blog?: boolean;
 }
 
 export type RequestCartTaxData = null | {
@@ -225,7 +224,6 @@ export type MinimalRequestCartProduct = Partial< RequestCartProduct > &
 
 export interface ResponseCart< P = ResponseCartProduct > {
 	blog_id: number | string;
-	create_new_blog: boolean;
 	cart_key: CartKey;
 	products: P[];
 

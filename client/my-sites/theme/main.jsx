@@ -347,11 +347,14 @@ class ThemeSheet extends Component {
 	shouldRenderUnlockStyleButton() {
 		const { defaultOption, selectedStyleVariationSlug, shouldLimitGlobalStyles, styleVariations } =
 			this.props;
+		const isNonDefaultStyleVariation =
+			selectedStyleVariationSlug && selectedStyleVariationSlug !== DEFAULT_VARIATION_SLUG;
+
 		return (
 			shouldLimitGlobalStyles &&
 			defaultOption?.key === 'activate' &&
 			styleVariations.length > 0 &&
-			!! selectedStyleVariationSlug
+			isNonDefaultStyleVariation
 		);
 	}
 
@@ -933,7 +936,14 @@ class ThemeSheet extends Component {
 						? this.appendSelectedStyleVariationToUrl( getUrl( this.props.themeId ) )
 						: null
 				}
-				onClick={ this.onButtonClick }
+				onClick={ () => {
+					this.props.recordTracksEvent( 'calypso_theme_sheet_primary_button_click', {
+						theme: this.props.themeId,
+						...( key && { action: key } ),
+					} );
+
+					this.onButtonClick();
+				} }
 				primary
 				disabled={ this.isLoading() }
 				target={ isActive ? '_blank' : null }

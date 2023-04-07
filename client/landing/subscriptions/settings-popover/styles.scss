@@ -30,6 +30,15 @@
 		width: calc(100% - 42px);
 	}
 
+	.settings-popover__delivery-frequency-control,
+	.settings-popover__item-button {
+		&.is-loading {
+			cursor: default;
+			opacity: 0.5;
+			pointer-events: none;
+		}
+	}
+
 	.settings-popover__item-button {
 		display: flex;
 		align-items: center;

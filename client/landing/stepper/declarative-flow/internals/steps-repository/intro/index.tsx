@@ -40,11 +40,11 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return {
-				title: __( 'Sign in. Set up. Send out.' ),
+				title: __( 'The Newsletter. Elevated.' ),
 				text: __(
-					`You’re a few steps away from launching a beautiful Newsletter with everything you’ll ever need to grow your audience.`
+					'Unlimited subscribers. Beautiful design. And everything you need to grow your audience. Powered by WordPress.com.'
 				),
-				buttonText: __( 'Start building your Newsletter' ),
+				buttonText: __( 'Launch your Newsletter' ),
 			};
 		}
 

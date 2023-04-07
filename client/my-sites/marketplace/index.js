@@ -7,6 +7,7 @@ import {
 	renderMarketplaceTestPage,
 	renderMarketplaceThankYou,
 	renderPluginsInstallPage,
+	renderThemesInstallPage,
 	redirectToHome,
 	renderMarketplaceSignupSuccess,
 } from './controller';
@@ -34,6 +35,15 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	page(
+		'/marketplace/theme/:themeSlug?/install/:site?',
+		siteSelection,
+		renderThemesInstallPage,
+		makeLayout,
+		clientRender
+	);
+
 	page(
 		'/marketplace/thank-you/:site?',
 		siteSelection,

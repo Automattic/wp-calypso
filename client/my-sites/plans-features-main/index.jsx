@@ -66,8 +66,8 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import PlanTypeSelector from './plan-type-selector';
 import PlanFAQ from './plansStepFaq';
+import TermExperimentPlanTypeSelector from './term-experiment-plan-type-selector';
 import WpcomFAQ from './wpcom-faq';
 
 import './style.scss';
@@ -620,10 +620,11 @@ export class PlansFeaturesMain extends Component {
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
 				{ ! hidePlanSelector && (
-					<PlanTypeSelector
-						{ ...planTypeSelectorProps }
+					<TermExperimentPlanTypeSelector
+						isEligible={ is2023PricingGridVisible }
 						kind={ kindOfPlanTypeSelector }
 						plans={ visiblePlans }
+						planTypeSelectorProps={ planTypeSelectorProps }
 					/>
 				) }
 				{ this.renderPlansGrid() }
@@ -655,7 +656,7 @@ PlansFeaturesMain.propTypes = {
 	hideEcommercePlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
-	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly', '2yearly' ] ),
+	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly', '2yearly', '3yearly' ] ),
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
@@ -731,7 +732,6 @@ export default connect(
 			customerType: customerType,
 			hidePersonalPlan: props.hidePersonalPlan,
 			siteSlug,
-			showBiannualToggle: isEnabled( 'plans/biannual-toggle' ) && is2023PricingGridVisible,
 		};
 
 		return {

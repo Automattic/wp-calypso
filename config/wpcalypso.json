@@ -16,6 +16,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": false,
+		"block-editor/un-iframed-site-editor": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
@@ -105,8 +106,8 @@
 		"onboarding/import-redirect-to-themes": true,
 		"onboarding/2023-pricing-grid": true,
 		"p2/p2-plus": true,
-		"pattern-assembler/categories": true,
 		"pattern-assembler/color-and-fonts": true,
+		"pattern-assembler/dotcompatterns": true,
 		"pattern-assembler/logged-out-showcase": true,
 		"pattern-assembler/inline-styles": true,
 		"pattern-assembler/notices": true,
@@ -114,7 +115,7 @@
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
 		"plans/wooexpress-medium": true,
-		"plans/wooexpress-small": false,
+		"plans/wooexpress-small": true,
 		"plugins/ssr-categories": true,
 		"plugins/ssr-details": true,
 		"plugins/ssr-landing": true,
@@ -170,7 +171,10 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"woa-logging": true
+		"yolo/staging-sites-i1": true,
+		"virtual-themes/onboarding": true,
+		"woa-logging": true,
+		"woa-logging-moved": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

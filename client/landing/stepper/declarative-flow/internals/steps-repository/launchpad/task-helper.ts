@@ -118,7 +118,7 @@ export function getEnhancedTasks(
 					break;
 				case 'setup_general':
 					taskData = {
-						title: translate( 'Personalize your site' ),
+						title: translate( 'Set up your site' ),
 					};
 					break;
 				case 'design_edited':
@@ -175,6 +175,17 @@ export function getEnhancedTasks(
 				case 'first_post_published':
 					taskData = {
 						title: translate( 'Write your first post' ),
+						completed: firstPostPublishedCompleted,
+						disabled: mustVerifyEmailBeforePosting || false,
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign( `/post/${ siteSlug }` );
+						},
+					};
+					break;
+				case 'first_post_published_newsletter':
+					taskData = {
+						title: translate( 'Start writing' ),
 						completed: firstPostPublishedCompleted,
 						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {

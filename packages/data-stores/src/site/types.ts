@@ -1,7 +1,7 @@
 import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
-import type { FeatureId } from '../wpcom-features';
+import type { FeatureId } from '../shared-types';
 
 export interface Dispatch {
 	dispatch: DispatchFromMap< ActionCreators >;
@@ -272,7 +272,6 @@ export interface Cart {
 	credits_display: string;
 	credits_integer: number;
 	allowed_payment_methods: unknown[];
-	create_new_blog: boolean;
 	messages: Record< 'errors' | 'success', unknown >;
 }
 
