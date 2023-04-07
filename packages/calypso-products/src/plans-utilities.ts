@@ -85,5 +85,5 @@ export const is2023PricingGridActivePage = (
 		return isPricingGridEnabled;
 	}
 
-	return true;
+	return false;
 };
