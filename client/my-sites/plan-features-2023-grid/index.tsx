@@ -17,7 +17,6 @@ import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
 	PLAN_BIENNIAL_PERIOD,
-	PLAN_WOOEXPRESS_PLUS,
 	isWooExpressMediumPlan,
 	isWooExpressPlan,
 	PlanSlug,
@@ -795,7 +794,7 @@ export class PlanFeatures2023Grid extends Component<
 		const planProperties = planPropertiesObj.filter(
 			( properties ) =>
 				! isWpcomEnterpriseGridPlan( properties.planName ) &&
-				! ( properties.planName === PLAN_WOOEXPRESS_PLUS )
+				! isWooExpressPlusPlan( properties.planName )
 		);
 
 		return planProperties
