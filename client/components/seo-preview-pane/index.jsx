@@ -123,7 +123,6 @@ const FacebookSite = ( site, frontPageMetaDescription ) => (
 	<FacebookPreview
 		title={ site.name }
 		url={ site.URL }
-		type="website"
 		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
 		image={ largeBlavatar( site ) }
 	/>
@@ -133,10 +132,9 @@ const FacebookPost = ( site, post, frontPageMetaDescription ) => (
 	<FacebookPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
-		type="article"
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }
-		author={ get( post, 'author.name', '' ) }
+		user={ { displayName: get( post, 'author.name', '' ) } }
 	/>
 );
 
