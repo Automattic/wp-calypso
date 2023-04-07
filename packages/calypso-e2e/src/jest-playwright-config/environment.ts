@@ -53,7 +53,6 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		name: string;
 	};
 	private allure: AllureReporter | undefined;
-	private consoleLogFileStream: WriteStream | undefined;
 
 	/**
 	 * Constructs the instance of the JestEnvironmentNode.
@@ -118,7 +117,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 			`${ this.testFilename }.console.log`
 		);
 
-		this.consoleLogFileStream = this.setUpConsoleLogFileStream( consoleLogFilePath );
+		this.setUpConsoleLogFileStream( consoleLogFilePath );
 
 		// Start the browser.
 		const browser = await browserType.launch( {
@@ -155,9 +154,7 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 		const originalStderrWrite = process.stderr.write.bind( process.stderr );
 
 		process.on( 'exit', () => {
-			if ( ! fileStream.writableEnded ) {
-				fileStream.end();
-			}
+			fileStream.end();
 		} );
 
 		process.stdout.write = ( message: string | Uint8Array ) => {
@@ -212,12 +209,16 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 
 						// Screenshots and video are saved per page, where numerous
 						// pages may exist within a context.
+						console.log( 'Beginning page.screenshot()...' );
 						await page.screenshot( { path: `${ mediaFilePath }.png`, timeout: env.TIMEOUT } );
+						console.log( 'Finished page.screenshot()' );
 
 						// Close the now unnecessary page which also triggers saving
 						// of video to the disk.
+						console.log( 'Beginning page.close()...' );
 						await page.close();
 						await page.video()?.saveAs( `${ mediaFilePath }.webm` );
+						console.log( 'Finished page.close()' );
 						pageIndex++;
 					}
 					contextIndex++;
@@ -225,12 +226,9 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 				// Print paths to captured artifacts for faster triaging.
 				console.error( `Artifacts for ${ this.testFilename }: ${ this.testArtifactsPath }` );
 			}
-			// Regardless of pass/fail status, close the browser instance.
-			await this.global.browser.close();
 		} finally {
-			if ( this.consoleLogFileStream ) {
-				this.consoleLogFileStream.end();
-			}
+			// Regardless of pass/fail status, close the browser instance.
+			await this.global.browser?.close();
 			await super.teardown();
 		}
 	}
