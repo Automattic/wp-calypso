@@ -191,8 +191,8 @@ class SearchStream extends React.Component {
 					) }
 					{ ! query && <BlankSuggestions suggestions={ suggestionList } /> }
 				</div>
-				{ ! hidePostsAndSites && query && <SpacerDiv domTarget={ this.fixedAreaRef } /> }
-				{ ! hidePostsAndSites && query && wideDisplay && (
+				<SpacerDiv domTarget={ this.fixedAreaRef } />
+				{ ! hidePostsAndSites && wideDisplay && (
 					<div className={ searchStreamResultsClasses }>
 						<div className="search-stream__post-results">
 							<PostResults { ...this.props } />
@@ -209,7 +209,7 @@ class SearchStream extends React.Component {
 						) }
 					</div>
 				) }
-				{ ! hidePostsAndSites && query && ! wideDisplay && (
+				{ ! hidePostsAndSites && ! wideDisplay && (
 					<div className={ singleColumnResultsClasses }>
 						{ ( ( searchType === SEARCH_TYPES.POSTS || ! query ) && (
 							<PostResults { ...this.props } />
