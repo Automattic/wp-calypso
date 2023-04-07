@@ -173,10 +173,10 @@ export function sortSitesByStaging< T extends SiteDetailsForSorting >( sites: T[
 		{}
 	);
 
-	const visited = {} as Record< number, boolean >;
+	const visited = new Set() as Set< number >;
 	const sortedItems = sites.reduce< T[] >( ( acc, site ) => {
 		// We have already visited this site, therefore, there is no need to proceed any further.
-		if ( visited[ site.ID ] ) {
+		if ( visited.has( site.ID ) ) {
 			return acc;
 		}
 		// Site is staging but we haven't visit its production site yet...
@@ -186,7 +186,7 @@ export function sortSitesByStaging< T extends SiteDetailsForSorting >( sites: T[
 		if (
 			site?.is_wpcom_staging_site &&
 			site.options?.wpcom_production_blog_id &&
-			! visited[ site.options?.wpcom_production_blog_id ] &&
+			! visited.has( site.options?.wpcom_production_blog_id ) &&
 			sitesById[ site.options?.wpcom_production_blog_id ]
 		) {
 			return acc;
@@ -195,12 +195,24 @@ export function sortSitesByStaging< T extends SiteDetailsForSorting >( sites: T[
 		// If the production site associated with this staging site is filtered out,
 		// or if we have a production site, add it to the list.
 		acc.push( site );
-		visited[ site.ID ] = true;
+		visited.add( site.ID );
 
 		// Sorting is useful when dealing with multiple staging sites.
 		// The sites are already sorted by 'sortSitesByLastInteractedWith',
 		// we want to maintain that order in case some of the staging sites are
 		// filtered out.
+		//
+		// Example:
+		// A site has the following staging siteIds in wpcom_staging_blog_ids:
+		// [ 1, 2, 3, 4]
+		// `sortSitesByLastInteractedWith` has already sorted the above sites as follows:
+		// [3, 2] and 1,4 are filtered out.
+		//
+		// If we add them in the order they exist in wpcom_staging_blog_ids array
+		// the order would be wrong.
+		//
+		// So instead, we first sort them, and the list becomes:
+		// [3, 2, 1, 4]
 		site.options?.wpcom_staging_blog_ids
 			?.sort( ( a, b ) => {
 				// If one of the two staging sites is filtered out, we should
@@ -215,9 +227,9 @@ export function sortSitesByStaging< T extends SiteDetailsForSorting >( sites: T[
 				return sitesById[ a ]?.index - sitesById[ b ]?.index;
 			} )
 			.forEach( ( siteId ) => {
-				if ( sitesById[ siteId ] && ! visited[ siteId ] ) {
+				if ( sitesById[ siteId ] && ! visited.has( siteId ) ) {
 					acc.push( sitesById[ siteId ].site );
-					visited[ siteId ] = true;
+					visited.add( siteId );
 				}
 			} );
 		return acc;
