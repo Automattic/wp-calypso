@@ -1448,6 +1448,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/social-previews@workspace:packages/social-previews"
   dependencies:
+    "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@emotion/react": ^11.4.1
     "@testing-library/jest-dom": ^5.16.2
