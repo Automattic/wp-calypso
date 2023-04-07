@@ -65,7 +65,7 @@ function usePerMonthDescription( {
 			planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
 		const fullTermPriceText =
 			currencyCode && maybeDiscountedPrice
-				? formatCurrency( maybeDiscountedPrice, currencyCode )
+				? formatCurrency( maybeDiscountedPrice, currencyCode, { stripZeros: true } )
 				: null;
 
 		if ( fullTermPriceText ) {
