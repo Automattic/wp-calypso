@@ -47,8 +47,21 @@ $barDarkColor: var(--color-primary-60);
 		letter-spacing: -0.02em;
 	}
 
+	.chart__y-axis-marker {
+		border-color: rgba(var(--color-neutral-5-rgb), 0.5);
+	}
+
 	.chart__y-axis {
 		padding: 0 5px;
+	}
+
+	.chart__x-axis-label,
+	.chart__y-axis-label {
+		&:not(.chart__x-axis-width-spacer) {
+			font-size: $font-body-small;
+			letter-spacing: -0.02em;
+			color: var(--color-neutral-60);
+		}
 	}
 
 	.chart__bar-section-inner {
@@ -86,6 +99,11 @@ $barDarkColor: var(--color-primary-60);
 			&.is-selected + .segmented-control__item .segmented-control__link {
 				border-left-color: var(--studio-black);
 			}
+		}
+
+		.segmented-control__link {
+			color: var(--studio-gray-70);
+			font-weight: 600;
 		}
 	}
 }
