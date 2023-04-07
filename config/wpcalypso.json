@@ -171,7 +171,9 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/staging-sites-i1": true,
-		"woa-logging": true
+		"virtual-themes/onboarding": true,
+		"woa-logging": true,
+		"woa-logging-moved": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

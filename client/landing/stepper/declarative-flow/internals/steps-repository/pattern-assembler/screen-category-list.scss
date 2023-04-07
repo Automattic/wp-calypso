@@ -13,5 +13,14 @@
 			background-color: var(--studio-blue-0);
 			color: var(--studio-blue-50);
 		}
+
+	}
+}
+
+.rtl {
+	.screen-category-list__category-button {
+		.screen-category-list__arrow-icon {
+			transform: rotate(180deg);
+		}
 	}
 }

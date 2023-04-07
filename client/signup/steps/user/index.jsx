@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { isNewsletterFlow } from '@automattic/onboarding';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -225,12 +226,20 @@ export class UserStep extends Component {
 		}
 
 		if ( isReskinned && 0 === positionInFlow ) {
-			subHeaderText = translate(
-				'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
-				{
+			const { queryObject } = this.props;
+
+			if ( queryObject?.variationName && isNewsletterFlow( queryObject.variationName ) ) {
+				subHeaderText = translate( 'Already have a WordPress.com account? {{a}}Log in{{/a}}', {
 					components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
-				}
-			);
+				} );
+			} else {
+				subHeaderText = translate(
+					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+					{
+						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+					}
+				);
+			}
 		}
 
 		if ( this.props.userLoggedIn ) {
@@ -349,12 +358,18 @@ export class UserStep extends Component {
 			return;
 		}
 
+		const query = initialContext?.query || {};
+		if ( typeof window !== 'undefined' && window.sessionStorage.getItem( 'signup_redirect_to' ) ) {
+			query.redirect_to = window.sessionStorage.getItem( 'signup_redirect_to' );
+			window.sessionStorage.removeItem( 'signup_redirect_to' );
+		}
+
 		this.submit( {
 			service,
 			access_token,
 			id_token,
 			userData,
-			queryArgs: initialContext?.query || {},
+			queryArgs: query,
 		} );
 	};
 

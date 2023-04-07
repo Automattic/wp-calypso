@@ -1,27 +1,18 @@
 import { SubscriptionManager } from '@automattic/data-stores';
-import { Spinner } from '@wordpress/components';
-import { Notice } from '../notice';
 import { UserSettings } from '../user-settings';
+import TabView from './tab-view';
 
 const Settings = () => {
 	const { data: settings, isIdle, isLoading, error } = SubscriptionManager.useUserSettingsQuery();
 
-	if ( error ) {
-		// todo: translate when we have agreed on the error message
-		return (
-			<Notice type="error">An error occurred while fetching your subscription settings.</Notice>
-		);
-	}
+	// todo: translate when we have agreed on the error message
+	const errorMessage = error ? 'An error occurred while fetching your subscription settings.' : '';
 
-	if ( isIdle || isLoading ) {
-		return (
-			<div className="user-settings">
-				<Spinner />
-			</div>
-		);
-	}
-
-	return <UserSettings value={ settings } />;
+	return (
+		<TabView errorMessage={ errorMessage } isLoading={ isIdle || isLoading }>
+			<UserSettings value={ settings } />
+		</TabView>
+	);
 };
 
 export default Settings;

@@ -46,13 +46,16 @@ const SignupHeader = ( {
 
 	return (
 		<div className="signup-header" role="banner" aria-label="banner">
-			{ flowProgress && ! shouldShowLoadingScreen && showProgressBar && (
-				<ProgressBar
-					className={ variationName ? variationName : progressBar.flowName }
-					value={ flowProgress.progress }
-					total={ flowProgress.count }
-				/>
-			) }
+			{ flowProgress &&
+				! shouldShowLoadingScreen &&
+				showProgressBar &&
+				flowProgress?.progress > 0 && (
+					<ProgressBar
+						className={ variationName ? variationName : progressBar.flowName }
+						value={ flowProgress.progress }
+						total={ flowProgress.count }
+					/>
+				) }
 			{ ! showWooLogo && <WordPressLogo size={ 120 } className={ logoClasses } /> }
 			{ showWooLogo && (
 				<WooCommerceWooLogo width={ 120 } height={ 120 } className={ logoClasses } />

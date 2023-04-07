@@ -43,9 +43,16 @@ const { colors } = colorStudio;
 const jetpackColors = isJetpackCloud() ? { highlight: colors[ 'Jetpack Green 50' ] } : {};
 const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
+function convertErrorToString( error: Error ): string {
+	if ( error.cause ) {
+		return `${ error.message }; Cause: ${ error.cause }`;
+	}
+	return error.message;
+}
+
 function useLogError( message: string ): CheckoutPageErrorCallback {
 	return useCallback(
-		( errorType, errorMessage ) => {
+		( errorType, error ) => {
 			logToLogstash( {
 				feature: 'calypso_client',
 				message,
@@ -53,7 +60,7 @@ function useLogError( message: string ): CheckoutPageErrorCallback {
 				extra: {
 					env: config( 'env_id' ),
 					type: 'payment_method_selector',
-					message: String( errorMessage ),
+					message: convertErrorToString( error ),
 					errorType,
 				},
 			} );

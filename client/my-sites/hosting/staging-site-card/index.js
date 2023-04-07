@@ -299,6 +299,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	};
 
 	let stagingSiteCardContent;
+
 	if ( ! isLoadingStagingSites && loadingError ) {
 		stagingSiteCardContent = getLoadingErrorContent(
 			__(
