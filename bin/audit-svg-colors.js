@@ -18,7 +18,7 @@ const PALETTE = require( '@automattic/color-studio' );
 const chroma = require( 'chroma-js' );
 
 /**
- * Native Sort - replacement of ._sortBy Lodash function
+ * Native Sort - replacement of _.sortBy Lodash function
  *
  * @returns Sorted array.
  */
@@ -36,7 +36,7 @@ const compareByName = ( objA, objB ) => {
  */
 
 /**
- * pickBy function is a replacement for the Lodash ._pickby
+ * pickBy function is a replacement for the Lodash _.pickby
  *
  */
 const pickBy = ( palette, fn ) =>
@@ -280,11 +280,9 @@ function findClosestColor( value, targetValues ) {
 
 function findPaletteColorName( value ) {
 	// Iterating from right to make sure color name aliases aren’t caught
-	const name = Object.keys( PALETTE.colors ?? {} )
-		.reverse()
-		.find( ( paletteColorName ) => {
-			return PALETTE.colors[ paletteColorName ] === value;
-		} );
+	const name = Object.keys( PALETTE.colors ?? {} ).findLast( ( paletteColorName ) => {
+		return PALETTE.colors[ paletteColorName ] === value;
+	} );
 	return name;
 }
 
