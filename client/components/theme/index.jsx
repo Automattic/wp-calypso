@@ -597,10 +597,13 @@ export class Theme extends Component {
 						image={ this.renderScreenshot() }
 						imageClickUrl={ this.props.screenshotClickUrl }
 						imageActionLabel={ this.props.actionLabel }
+						alert={ this.renderUpdateAlert() }
 						badge={ this.renderPricingBadge() }
 						styleVariations={ style_variations }
 						optionsMenu={ this.renderMoreButton() }
 						isActive={ active }
+						isInstalling={ this.props.installing }
+						isSoftLaunched={ this.props.softLaunched }
 						onImageClick={ this.onScreenshotClick }
 						onStyleVariationClick={ this.onStyleVariationClick }
 					/>

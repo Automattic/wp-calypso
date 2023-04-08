@@ -1,7 +1,7 @@
 @import "@automattic/onboarding/styles/mixins";
 
 $theme-info-height: 48px;
-$soft-launch-badge-font-size: 0.725rem;
+$theme-info-margin-top: 16px;
 
 .theme-card {
 	background: none;
@@ -23,6 +23,11 @@ $soft-launch-badge-font-size: 0.725rem;
 			gap: 16px;
 			margin-top: 0;
 			padding: 8px 24px;
+
+			.theme__more-button,
+			.theme-card__info-options {
+				position: relative;
+			}
 		}
 
 		.theme-card__info-title {
@@ -103,9 +108,41 @@ $soft-launch-badge-font-size: 0.725rem;
 	}
 }
 
+.theme-card__installing {
+	bottom: $theme-info-height + $theme-info-margin-top;
+	background: rgba(var(--color-neutral-dark-rgb), 0.5);
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 1;
+
+	&-dot {
+		animation: dot-pulse 1.25s infinite cubic-bezier(0.66, 0, 0, 1);
+		animation-play-state: running;
+		background: var(--color-neutral-0);
+		border: none;
+		border-radius: 100%;
+		box-shadow: 0 0 0 0 rgba(168, 190, 206, 0.7);
+		display: block;
+		height: 6px;
+		left: 50%;
+		position: absolute;
+		top: 50%;
+		transform: translate3d(0, 0, 0);
+		width: 6px;
+	}
+}
+
+@keyframes dot-pulse {
+	to {
+		box-shadow: 0 0 0 15px rgba(90, 153, 220, 0);
+	}
+}
+
 .theme-card__info {
 	align-items: flex-start;
-	background: var(--color-surface);
+	background: transparent;
 	bottom: 0;
 	box-sizing: initial;
 	display: flex;
@@ -114,11 +151,18 @@ $soft-launch-badge-font-size: 0.725rem;
 	gap: 4px;
 	height: $theme-info-height;
 	left: 0;
-	margin-top: 16px;
+	margin-top: $theme-info-margin-top;
 	position: relative;
 	right: 0;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
+
+	&:not(&--has-style-variations) {
+		.theme__more-button,
+		.theme-card__info-options {
+			top: 0;
+		}
+	}
 
 	&-badge {
 		border-radius: 20px;  /* stylelint-disable-line scales/radii */
@@ -133,6 +177,23 @@ $soft-launch-badge-font-size: 0.725rem;
 			background-color: var(--color-primary-0);
 			color: var(--color-neutral-100);
 		}
+	}
+}
+
+.theme-card__info-soft-launched {
+	position: absolute;
+	top: 7px;
+	left: 7px;
+
+	&-banner {
+		background-color: var(--color-warning-20);
+		color: var(--color-warning-80);
+		font-size: 0.725rem; /* stylelint-disable-line scales/font-sizes */
+		font-weight: bold;
+		line-height: 1.2;
+		text-transform: uppercase;
+		padding: 3px 6px;
+		border-radius: 2px;
 	}
 }
 
@@ -193,5 +254,28 @@ $soft-launch-badge-font-size: 0.725rem;
 		&:focus-visible span {
 			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2), 0 0 0 2px var(--color-primary-light);
 		}
+	}
+}
+
+.theme__more-button,
+.theme-card__info-options {
+	border: 0;
+	bottom: 0;
+	display: flex;
+	flex: 0 0 auto;
+	height: 20px;
+	position: absolute;
+	right: 0;
+	transition: all 0.1s ease-in-out;
+
+	&:hover {
+		background-color: initial;
+	}
+
+	button {
+		cursor: pointer;
+		font-size: 0;
+		padding: 0;
+
 	}
 }
