@@ -1,6 +1,7 @@
 import { Card } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import StyleVariationBadges from '../style-variation-badges';
 import type { StyleVariation } from '../../types';
 import './style.scss';
@@ -36,6 +37,8 @@ const ThemeCard: React.FC< ThemeCardProps > = ( {
 	onImageClick,
 	onStyleVariationClick,
 } ) => {
+	const e2eName = useMemo( () => name.toLowerCase().replace( /\s+/g, '-' ), [ name ] );
+
 	const isActionable = imageClickUrl || onImageClick;
 	const themeClasses = classnames( 'theme-card', {
 		'theme-card--is-active': isActive,
@@ -46,7 +49,7 @@ const ThemeCard: React.FC< ThemeCardProps > = ( {
 	} );
 
 	return (
-		<Card className={ themeClasses }>
+		<Card className={ themeClasses } data-e2e-theme={ e2eName }>
 			<div className="theme-card__content">
 				{ alert && <div className="theme-card__alert">{ alert }</div> }
 				<a
