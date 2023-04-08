@@ -6,7 +6,7 @@ const selectors = {
 
 	// Main themes listing
 	items: '.card.theme',
-	excludeActiveTheme: ':not(.is-active)',
+	excludeActiveTheme: ':not(.theme--is-active)',
 
 	// Transitions
 	spinner: '.themes__content > .spinner',

@@ -463,7 +463,7 @@ class ThemeSheet extends Component {
 
 		return (
 			<StickyPanel>
-				<div className="theme__sheet-screenshot theme__sheet-web-preview">
+				<div className="theme__sheet-web-preview">
 					<ThemeWebPreview
 						url={ url }
 						inlineCss={ this.getSelectedStyleVariation()?.inline_css }
