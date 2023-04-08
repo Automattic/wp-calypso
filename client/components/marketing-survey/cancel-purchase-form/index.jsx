@@ -702,7 +702,6 @@ class CancelPurchaseForm extends Component {
 						<BlankCanvas.Header onBackClick={ this.closeDialog }>
 							{ site && (
 								<span className="cancel-purchase-form__site-slug">
-									{ this.getHeaderTitle() }
 									{ this.getCanceledProduct() }
 								</span>
 							) }
