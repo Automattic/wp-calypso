@@ -2,19 +2,19 @@
 
 exports[`Theme rendering with default display buttonContents should match snapshot 1`] = `
 <div
-  class="card theme-card theme-card--is-actionable"
+  class="card theme theme--is-actionable"
   data-e2e-theme="twenty-seventeen"
 >
   <div
-    class="theme-card__content"
+    class="theme__content"
   >
     <a
       aria-label="Twenty Seventeen"
-      class="theme-card__image"
+      class="theme__image"
       href="javascript:;"
     >
       <div
-        class="theme-card__image-label"
+        class="theme__image-label"
       />
       <img
         class="theme__img"
@@ -23,22 +23,22 @@ exports[`Theme rendering with default display buttonContents should match snapsh
       />
     </a>
     <div
-      class="theme-card__info"
+      class="theme__info"
     >
       <h2
-        class="theme-card__info-title"
+        class="theme__info-title"
       >
         Twenty Seventeen
       </h2>
       <div
-        class="theme-card__info-pricing"
+        class="theme__info-pricing"
       >
         <span>
           Free
         </span>
       </div>
       <div
-        class="theme-card__info-options"
+        class="theme__info-options"
       >
         <span
           class="theme__more-button"

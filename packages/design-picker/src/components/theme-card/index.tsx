@@ -40,48 +40,48 @@ const ThemeCard: React.FC< ThemeCardProps > = ( {
 	const e2eName = useMemo( () => name.toLowerCase().replace( /\s+/g, '-' ), [ name ] );
 
 	const isActionable = imageClickUrl || onImageClick;
-	const themeClasses = classnames( 'theme-card', {
-		'theme-card--is-active': isActive,
-		'theme-card--is-actionable': isActionable,
+	const themeClasses = classnames( 'theme', {
+		'theme--is-active': isActive,
+		'theme--is-actionable': isActionable,
 	} );
-	const themeInfoClasses = classnames( 'theme-card__info', {
-		'theme-card__info--has-style-variations': styleVariations.length > 0,
+	const themeInfoClasses = classnames( 'theme__info', {
+		'theme__info--has-style-variations': styleVariations.length > 0,
 	} );
 
 	return (
 		<Card className={ themeClasses } data-e2e-theme={ e2eName }>
-			<div className="theme-card__content">
-				{ alert && <div className="theme-card__alert">{ alert }</div> }
+			<div className="theme__content">
+				{ alert && <div className="theme__alert">{ alert }</div> }
 				<a
-					className="theme-card__image"
+					className="theme__image"
 					href={ imageClickUrl || 'javascript:;' /* fallback for a11y */ }
 					aria-label={ name }
 					onClick={ onImageClick }
 				>
-					{ isActionable && <div className="theme-card__image-label">{ imageActionLabel }</div> }
+					{ isActionable && <div className="theme__image-label">{ imageActionLabel }</div> }
 					{ image }
 				</a>
 				{ isInstalling && (
-					<div className="theme-card__installing">
-						<div className="theme-card__installing-dot" />
+					<div className="theme__installing">
+						<div className="theme__installing-dot" />
 					</div>
 				) }
 				{ isSoftLaunched && (
-					<div className="theme-card__info-soft-launched">
-						<div className="theme-card__info-soft-launched-banner">{ translate( 'A8C Only' ) }</div>
+					<div className="theme__info-soft-launched">
+						<div className="theme__info-soft-launched-banner">{ translate( 'A8C Only' ) }</div>
 					</div>
 				) }
 				<div className={ themeInfoClasses }>
-					<h2 className="theme-card__info-title">{ name }</h2>
+					<h2 className="theme__info-title">{ name }</h2>
 					{ isActive && (
-						<span className="theme-card__info-badge theme-card__info-badge-active">
+						<span className="theme__info-badge theme__info-badge-active">
 							{ translate( 'Active', {
 								context: 'singular noun, the currently active theme',
 							} ) }
 						</span>
 					) }
 					{ ! isActive && styleVariations.length > 0 && (
-						<div className="theme-card__info-style-variations">
+						<div className="theme__info-style-variations">
 							<StyleVariationBadges
 								variations={ styleVariations }
 								onMoreClick={ onStyleVariationClick }
@@ -89,8 +89,8 @@ const ThemeCard: React.FC< ThemeCardProps > = ( {
 							/>
 						</div>
 					) }
-					{ ! isActive && <div className="theme-card__info-pricing">{ badge }</div> }
-					{ optionsMenu && <div className="theme-card__info-options">{ optionsMenu }</div> }
+					{ ! isActive && <div className="theme__info-pricing">{ badge }</div> }
+					{ optionsMenu && <div className="theme__info-options">{ optionsMenu }</div> }
 				</div>
 			</div>
 		</Card>
