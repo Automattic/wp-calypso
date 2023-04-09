@@ -339,9 +339,7 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 											),
 											seo: (
 												<Button
-													href={ localizeUrl(
-														'https://wpcourses.com/course/intro-to-search-engine-optimization-seo/'
-													) }
+													href="https://wpcourses.com/course/intro-to-search-engine-optimization-seo/"
 													isLink
 												/>
 											),
