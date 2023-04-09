@@ -1,3 +1,4 @@
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -72,6 +73,7 @@ type StepProps = {
 export default function EducationalCotnentStep( { type, site, ...props }: StepProps ) {
 	const translate = useTranslate();
 	const happyChat = useHappyChat();
+	const localizeUrl = useLocalizeUrl();
 
 	switch ( type ) {
 		case 'education:loading-time':
@@ -126,7 +128,12 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 									'Read more about how to improve your site’s speed and performance {{link}}here{{/link}}.',
 									{
 										components: {
-											link: <Button href="https://wordpress.com/support/site-speed/" isLink />,
+											link: (
+												<Button
+													href={ localizeUrl( 'https://wordpress.com/support/site-speed/' ) }
+													isLink
+												/>
+											),
 										},
 									}
 								) }
@@ -180,7 +187,12 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 							{ translate( 'Read more about domains {{link}}here{{/link}}.', {
 								components: {
 									link: (
-										<Button href="https://wordpress.com/support/domains/register-domain/" isLink />
+										<Button
+											href={ localizeUrl(
+												'https://wordpress.com/support/domains/register-domain/'
+											) }
+											isLink
+										/>
 									),
 								},
 							} ) }
@@ -202,7 +214,9 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 								components: {
 									link: (
 										<Button
-											href="https://wordpress.com/support/domains/connect-existing-domain/#steps-to-connect-a-domain"
+											href={ localizeUrl(
+												'https://wordpress.com/support/domains/connect-existing-domain/#steps-to-connect-a-domain'
+											) }
 											isLink
 										/>
 									),
@@ -228,7 +242,9 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 									components: {
 										link: (
 											<Button
-												href="https://wordpress.com/support/domains/connect-existing-domain/"
+												href={ localizeUrl(
+													'https://wordpress.com/support/domains/connect-existing-domain/'
+												) }
 												isLink
 											/>
 										),
@@ -315,10 +331,17 @@ export default function EducationalCotnentStep( { type, site, ...props }: StepPr
 									'Find other tips to optimize your site for search engines {{link}}here{{/link}}. If you’re looking for a full introduction to Search Engine Optimization, you can join our {{seo}}free SEO course{{/seo}}.',
 									{
 										components: {
-											link: <Button href="https://wordpress.com/support/seo/" isLink />,
+											link: (
+												<Button
+													href={ localizeUrl( 'https://wordpress.com/support/seo/' ) }
+													isLink
+												/>
+											),
 											seo: (
 												<Button
-													href="https://wpcourses.com/course/intro-to-search-engine-optimization-seo/"
+													href={ localizeUrl(
+														'https://wpcourses.com/course/intro-to-search-engine-optimization-seo/'
+													) }
 													isLink
 												/>
 											),
