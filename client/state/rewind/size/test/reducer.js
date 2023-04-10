@@ -82,4 +82,30 @@ describe( 'rewind.size reducers', () => {
 			).toEqual( 7 );
 		} );
 	} );
+	describe( 'backupsStopped', () => {
+		it( 'should return false when there is nothing in the state', () => {
+			expect(
+				sizeReducer( undefined, { type: REWIND_SIZE_SET, size: {} } ).backupsStopped
+			).toEqual( false );
+		} );
+		it( 'should return the value when the action is REWIND_SIZE_SET', () => {
+			expect(
+				sizeReducer( undefined, { type: REWIND_SIZE_SET, size: { backupsStopped: true } } )
+					.backupsStopped
+			).toEqual( true );
+		} );
+		it( 'should return new the value when it is updated and the action is REWIND_SIZE_SET', () => {
+			expect(
+				sizeReducer(
+					{ backupsStopped: true },
+					{ type: REWIND_SIZE_SET, size: { backupsStopped: false } }
+				).backupsStopped
+			).toEqual( false );
+		} );
+		it( 'should return null when the action is not REWIND_SIZE_SET', () => {
+			expect(
+				sizeReducer( undefined, { type: JETPACK_BACKUP_RETENTION_SET } ).backupsStopped
+			).toEqual( null );
+		} );
+	} );
 } );
