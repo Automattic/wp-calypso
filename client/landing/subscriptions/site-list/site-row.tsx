@@ -63,7 +63,7 @@ export default function SiteRow( {
 				</span>
 			</a>
 			<span className="date" role="cell">
-				<TimeSince date={ date_subscribed.toDateString() } />
+				<TimeSince date={ date_subscribed.toDateString?.() ?? date_subscribed } />
 			</span>
 			<span className="email-frequency" role="cell">
 				{ deliveryFrequencyLabel }
