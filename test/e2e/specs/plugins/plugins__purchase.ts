@@ -19,9 +19,9 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Plugins: Add two plugins to the cart' ), function () {
 	const planName = 'Business';
 	const plugin1Name =
-		envVariables.VIEWPORT_NAME === 'desktop' ? 'WooCommerce Bookings' : 'WooCommerce Subscriptions';
+		envVariables.VIEWPORT_NAME === 'desktop' ? 'AutomateWoo' : 'WooCommerce Subscriptions';
 	const plugin2Name =
-		envVariables.VIEWPORT_NAME === 'desktop' ? 'WooCommerce Subscriptions' : 'WooCommerce Bookings';
+		envVariables.VIEWPORT_NAME === 'desktop' ? 'Sensei Pro' : 'WooCommerce Bookings';
 	let pluginsPage: PluginsPage;
 	let page: Page;
 	let siteURL: string;
