@@ -40,7 +40,7 @@ $theme-card-info-margin-top: 16px;
 	}
 
 	&--is-actionable {
-		.theme__image {
+		.theme-card__image {
 			cursor: pointer;
 		}
 	}
@@ -137,6 +137,68 @@ $theme-card-info-margin-top: 16px;
 @keyframes dot-pulse {
 	to {
 		box-shadow: 0 0 0 15px rgba(90, 153, 220, 0);
+	}
+}
+
+.theme-card__tooltip {
+	&.is-top,
+	&.is-top-left,
+	&.is-top-right {
+		.popover__arrow {
+			border-top-color: var(--color-neutral-60);
+			bottom: 4px;
+
+			&::before {
+				display: none;
+			}
+		}
+
+		&.is-error {
+			.popover__arrow {
+				border-top-color: var(--color-error);
+			}
+		}
+
+		&.is-warning {
+			.popover__arrow {
+				border-top-color: var(--color-warning);
+			}
+		}
+
+		&.is-success {
+			.popover__arrow {
+				border-top-color: var(--color-success);
+			}
+		}
+	}
+
+	ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		li {
+			font-size: $font-body-extra-small;
+			font-weight: 400;
+			border: 0;
+			padding: 2px 0;
+		}
+	}
+
+	.popover__arrow {
+		border-width: 6px;
+	}
+
+	.popover__inner {
+		border: 0;
+		box-shadow: none;
+		border-radius: 2px;
+		color: var(--color-text-inverted);
+		background: var(--color-neutral-60);
+		font-size: $font-body-extra-small;
+		max-width: 300px;
+		padding: 6px 10px;
+		text-align: left;
 	}
 }
 

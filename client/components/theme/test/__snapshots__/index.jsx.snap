@@ -2,7 +2,7 @@
 
 exports[`Theme rendering with default display buttonContents should match snapshot 1`] = `
 <div
-  class="card theme-card theme-card--is-actionable"
+  class="card theme-card theme-card--is-actionable is-clickable"
   data-e2e-theme="twenty-seventeen"
 >
   <div

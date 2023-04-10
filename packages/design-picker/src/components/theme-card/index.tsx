@@ -1,43 +1,54 @@
-import { Card } from '@automattic/components';
+import { Card, Popover } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { forwardRef, memo, useMemo, useRef, useState } from 'react';
 import StyleVariationBadges from '../style-variation-badges';
 import type { StyleVariation } from '../../types';
 import './style.scss';
 
 interface ThemeCardProps {
 	name: string;
+	description?: string;
 	image: React.ReactNode;
 	imageClickUrl?: string;
 	imageActionLabel?: string;
-	alert?: React.ReactNode;
+	banner?: React.ReactNode;
 	badge?: React.ReactNode;
 	styleVariations: StyleVariation[];
 	optionsMenu?: React.ReactNode;
 	isActive?: boolean;
 	isInstalling?: boolean;
+	isShowDescriptionOnImageHover?: boolean;
 	isSoftLaunched?: boolean;
+	onClick?: () => void;
 	onImageClick?: () => void;
 	onStyleVariationClick?: () => void;
 }
 
-const ThemeCard: React.FC< ThemeCardProps > = ( {
-	name,
-	image,
-	imageClickUrl,
-	imageActionLabel,
-	alert,
-	badge,
-	styleVariations = [],
-	optionsMenu,
-	isActive,
-	isInstalling,
-	isSoftLaunched,
-	onImageClick,
-	onStyleVariationClick,
-} ) => {
+const ThemeCard: React.FC< ThemeCardProps, ForwardedRef > = (
+	{
+		name,
+		description,
+		image,
+		imageClickUrl,
+		imageActionLabel,
+		banner,
+		badge,
+		styleVariations = [],
+		optionsMenu,
+		isActive,
+		isInstalling,
+		isShowDescriptionOnImageHover,
+		isSoftLaunched,
+		onClick,
+		onImageClick,
+		onStyleVariationClick,
+	},
+	ref
+) => {
 	const e2eName = useMemo( () => name.toLowerCase().replace( /\s+/g, '-' ), [ name ] );
+	const imageRef = useRef< HTMLImageElement >();
+	const [ isShowTooltip, setIsShowTooltip ] = useState( false );
 
 	const isActionable = imageClickUrl || onImageClick;
 	const themeClasses = classnames( 'theme-card', {
@@ -49,14 +60,17 @@ const ThemeCard: React.FC< ThemeCardProps > = ( {
 	} );
 
 	return (
-		<Card className={ themeClasses } data-e2e-theme={ e2eName }>
-			<div className="theme-card__content">
-				{ alert && <div className="theme-card__alert">{ alert }</div> }
+		<Card className={ themeClasses } onClick={ onClick } data-e2e-theme={ e2eName }>
+			<div ref={ ref } className="theme-card__content">
+				{ banner && <div className="theme-card__banner">{ banner }</div> }
 				<a
+					ref={ imageRef }
 					className="theme-card__image"
 					href={ imageClickUrl || 'javascript:;' /* fallback for a11y */ }
 					aria-label={ name }
 					onClick={ onImageClick }
+					onMouseEnter={ () => setIsShowTooltip( true ) }
+					onMouseLeave={ () => setIsShowTooltip( false ) }
 				>
 					{ isActionable && <div className="theme-card__image-label">{ imageActionLabel }</div> }
 					{ image }
@@ -65,6 +79,16 @@ const ThemeCard: React.FC< ThemeCardProps > = ( {
 					<div className="theme-card__installing">
 						<div className="theme-card__installing-dot" />
 					</div>
+				) }
+				{ isShowDescriptionOnImageHover && description && (
+					<Popover
+						className="theme-card__tooltip"
+						context={ imageRef.current }
+						isVisible={ isShowTooltip }
+						showDelay={ 1000 }
+					>
+						{ description }
+					</Popover>
 				) }
 				{ isSoftLaunched && (
 					<div className="theme-card__info-soft-launched">
@@ -97,4 +121,7 @@ const ThemeCard: React.FC< ThemeCardProps > = ( {
 	);
 };
 
-export default ThemeCard;
+const ForwardedRefThemeCard = forwardRef( ThemeCard );
+ForwardedRefThemeCard.displayName = 'ThemeCard';
+
+export default memo( ForwardedRefThemeCard );

@@ -592,17 +592,21 @@ export class Theme extends Component {
 		if ( theme ) {
 			return (
 				<ThemeCard
+					ref={ this.props.bookmarkRef }
 					name={ name }
+					description={ themeDescription }
 					image={ this.renderScreenshot() }
 					imageClickUrl={ this.props.screenshotClickUrl }
 					imageActionLabel={ this.props.actionLabel }
-					alert={ this.renderUpdateAlert() }
+					banner={ this.renderUpdateAlert() }
 					badge={ this.renderPricingBadge() }
 					styleVariations={ style_variations }
 					optionsMenu={ this.renderMoreButton() }
 					isActive={ active }
 					isInstalling={ this.props.installing }
 					isSoftLaunched={ this.props.softLaunched }
+					isShowDescriptionOnImageHover
+					onClick={ this.setBookmark }
 					onImageClick={ this.onScreenshotClick }
 					onStyleVariationClick={ this.onStyleVariationClick }
 				/>
