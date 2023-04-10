@@ -1,9 +1,7 @@
 import config from '@automattic/calypso-config';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { flowRight } from 'lodash';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import DomainTip from 'calypso/blocks/domain-tip';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -12,17 +10,22 @@ import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AnnualHighlightsSection from '../annual-highlights-section';
 import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
 import Reach from '../stats-reach';
 import SubscribersSection from '../subscribers-section';
 
-const StatsSubscribersPage = ( props ) => {
-	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
-
+const StatsSubscribersPage = () => {
+	const translate = useTranslate();
+	// Use hooks for Redux pulls.
+	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
+	// Run-time configuration.
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const showEmailSection = config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats;
 
 	const statsModuleListClass = classNames(
@@ -75,19 +78,4 @@ const StatsSubscribersPage = ( props ) => {
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
-StatsSubscribersPage.propTypes = {
-	translate: PropTypes.func,
-};
-
-const connectComponent = connect( ( state ) => {
-	const siteId = getSelectedSiteId( state );
-	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	return {
-		siteId,
-		siteSlug: getSelectedSiteSlug( state, siteId ),
-		isOdysseyStats,
-		isJetpack: isJetpackSite( state, siteId ),
-	};
-} );
-
-export default flowRight( connectComponent, localize )( StatsSubscribersPage );
+export default StatsSubscribersPage;
