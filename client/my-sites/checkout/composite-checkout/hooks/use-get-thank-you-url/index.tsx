@@ -62,7 +62,12 @@ export default function useGetThankYouUrl( {
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
 		debug( 'getThankYouUrl returned', url );
 
-		return url;
+		try {
+			return encodeURIComponent( url );
+		} catch ( e ) {
+			debug( 'getThankYouUrl could not be encoded', url );
+			return url;
+		}
 	}, [
 		isInModal,
 		siteSlug,
