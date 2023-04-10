@@ -82,13 +82,16 @@
 	}
 }
 
-.processing.link-in-bio-domain {
-	.wordpress-logo {
-		position: absolute;
-		inset-inline-start: 20px;
-		inset-block-start: 20px;
-		fill: var(--color-text);
-		stroke: var(--color-text);
-		transform-origin: 0 0;
+.processing {
+	.signup-header {
+		.wordpress-logo {
+			position: absolute;
+			inset-inline-start: 20px;
+			inset-block-start: 20px;
+			fill: var(--color-text);
+			stroke: none;
+			transform-origin: 0 0;
+		}
 	}
+
 }

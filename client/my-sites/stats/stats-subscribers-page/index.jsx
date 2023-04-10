@@ -17,12 +17,14 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import AnnualHighlightsSection from '../annual-highlights-section';
 import Followers from '../stats-followers';
+import StatsModuleEmails from '../stats-module-emails';
 import Reach from '../stats-reach';
 
 const StatsSubscribersPage = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
 
 	const isSubscribersPageEnabled = config.isEnabled( 'stats/subscribers-section' );
+	const showEmailSection = config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats;
 
 	const statsModuleListClass = classNames(
 		'stats__module-list stats__module--unified',
@@ -30,7 +32,7 @@ const StatsSubscribersPage = ( props ) => {
 			'is-odyssey-stats': isOdysseyStats,
 			'is-jetpack': isJetpack,
 		},
-		'is-insights-page-enabled'
+		'subscribers-page'
 	);
 
 	// Track the last viewed tab.
@@ -69,6 +71,7 @@ const StatsSubscribersPage = ( props ) => {
 						<div className={ statsModuleListClass }>
 							<Followers path="followers" />
 							<Reach />
+							{ showEmailSection && <StatsModuleEmails /> }
 						</div>
 					</>
 				) }

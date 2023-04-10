@@ -20,6 +20,10 @@ export default function ConnectDomainStepSupportInfoLink( { baseClassName, mode 
 		[ modeType.DONE ]: MAP_DOMAIN_CHANGE_NAME_SERVERS,
 	};
 
+	if ( ! supportLink[ mode ] ) {
+		return null;
+	}
+
 	const classes = classNames(
 		baseClassName + '__support-documentation',
 		baseClassName + '__info-links'

@@ -206,11 +206,13 @@ export function createExPlatClient( config: Config ): ExPlatClient {
 
 				return storedExperimentAssignment;
 			} catch ( error ) {
-				safeLogError( {
-					message: ( error as Error ).message,
-					experimentName,
-					source: 'dangerouslyGetExperimentAssignment-error',
-				} );
+				if ( config.isDevelopmentMode ) {
+					safeLogError( {
+						message: ( error as Error ).message,
+						experimentName,
+						source: 'dangerouslyGetExperimentAssignment-error',
+					} );
+				}
 				return createFallbackExperimentAssignment( experimentName );
 			}
 		},

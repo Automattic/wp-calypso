@@ -1,4 +1,5 @@
 import { useSelect } from '@wordpress/data';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -7,6 +8,7 @@ import { ResponseDomain } from 'calypso/lib/domains/types';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import LaunchpadSitePreview from './launchpad-site-preview';
 import Sidebar from './sidebar';
+import { getLaunchpadTranslations } from './translations';
 import type { SiteSelect } from '@automattic/data-stores';
 
 type StepContentProps = {
@@ -22,6 +24,7 @@ function sortByRegistrationDate( domainObjectA: ResponseDomain, domainObjectB: R
 }
 
 const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentProps ) => {
+	const { flowName } = getLaunchpadTranslations( flow );
 	const site = useSite();
 	const adminUrl = useSelect(
 		( select ) =>
@@ -49,6 +52,10 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 
 	return (
 		<main className="launchpad__container">
+			<div className="launchpad__sidebar-header">
+				<WordPressLogo className="launchpad__sidebar-header-logo" size={ 24 } />
+				<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
+			</div>
 			<div className="launchpad__content">
 				<Sidebar
 					sidebarDomain={ sidebarDomain }

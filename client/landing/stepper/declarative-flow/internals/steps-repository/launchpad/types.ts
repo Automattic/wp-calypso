@@ -29,6 +29,7 @@ export interface LaunchpadStatuses {
 	video_uploaded?: boolean;
 	publish_first_course?: boolean;
 	plan_completed?: boolean;
+	domain_upsell_deferred?: boolean;
 }
 
 export interface LaunchpadResponse {

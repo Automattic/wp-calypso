@@ -16,34 +16,56 @@ const { readFileSync } = require( 'fs' );
 const path = require( 'path' );
 const PALETTE = require( '@automattic/color-studio' );
 const chroma = require( 'chroma-js' );
-const _ = require( 'lodash' );
+
+/**
+ * Native Sort - replacement of _.sortBy Lodash function
+ *
+ * @returns Sorted array.
+ */
+const compareByName = ( objA, objB ) => {
+	if ( objA.to.name > objB.to.name ) {
+		return 1;
+	} else if ( objB.to.name > objA.to.name ) {
+		return -1;
+	}
+	return 0;
+};
 
 /**
  * Palette color subsets
  */
 
+/**
+ * pickBy function is a replacement for the Lodash _.pickby
+ *
+ */
+const pickBy = ( palette, fn ) =>
+	Object.keys( palette ?? {} )
+		.filter( ( key ) => fn( palette[ key ], key ) )
+		.reduce( ( acc, key ) => ( ( acc[ key ] = palette[ key ] ), acc ), {} );
+
 // The subset of palette colors allowed in illustrations
-const PALETTE_ILLUSTRATION_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorName ) => {
+const PALETTE_ILLUSTRATION_COLORS = pickBy( PALETTE.colors, ( colorValue, colorName ) => {
 	// Avoid using pure black
 	if ( colorValue === '#000' ) {
 		return;
 	}
 	// Avoid specific colors for illustration use
-	return ! _.startsWith( colorName, 'Simplenote Blue' );
+	return ! colorName.startsWith( 'Simplenote Blue' );
 } );
 
 // The subset of palette colors used in app-related images is slightly wider
 // than what we allow for in illustration use (the above)
-const PALETTE_APP_COLORS = _.pickBy( PALETTE.colors, ( colorValue, colorName ) => {
+const PALETTE_APP_COLORS = pickBy( PALETTE.colors, ( colorValue, colorName ) => {
 	// Avoid using pure black
 	if ( colorValue === '#000' ) {
 		return;
 	}
 	// Don’t use brand colors for any WordPress.com app images
 	return ! (
-		_.startsWith( colorName, 'Simplenote Blue' ) ||
-		_.startsWith( colorName, 'WooCommerce Purple' ) ||
-		_.startsWith( colorName, 'WordPress Blue' )
+		colorName.startsWith( 'Simplenote Blue' ) ||
+		colorName.startsWith( 'WooCommerce Purple' ) ||
+		colorName.startsWith( 'WordPress Blue' )
 	);
 } );
 
@@ -257,16 +279,10 @@ function findClosestColor( value, targetValues ) {
 }
 
 function findPaletteColorName( value ) {
-	let name;
-
 	// Iterating from right to make sure color name aliases aren’t caught
-	_.forInRight( PALETTE.colors, ( paletteValue, paletteColorName ) => {
-		if ( paletteValue === value ) {
-			name = paletteColorName;
-			return false;
-		}
+	const name = Object.keys( PALETTE.colors ?? {} ).findLast( ( paletteColorName ) => {
+		return PALETTE.colors[ paletteColorName ] === value;
 	} );
-
 	return name;
 }
 
@@ -293,12 +309,15 @@ function printReplacementRules( replacementObjects ) {
 }
 
 function formatReplacementRules( rules ) {
-	return _.sortBy( rules, 'to.name' ).map( ( rule ) => {
-		const valueFrom = rule.from.value.padEnd( 7 );
-		const valueTo = rule.to.value.padEnd( 7 );
+	if ( rules && rules.length ) {
+		return [ ...rules ].sort( compareByName ).map( ( rule ) => {
+			const valueFrom = rule.from.value.padEnd( 7 );
+			const valueTo = rule.to.value.padEnd( 7 );
 
-		return `${ valueFrom } → ${ valueTo } (${ rule.to.name })`;
-	} );
+			return `${ valueFrom } → ${ valueTo } (${ rule.to.name })`;
+		} );
+	}
+	return [];
 }
 
 function getReplacementPrefixSuffix( replacementObject ) {

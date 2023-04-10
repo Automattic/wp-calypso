@@ -111,7 +111,7 @@ export function useStoredPaymentMethods( {
 			return new Promise( ( resolve, reject ) => {
 				mutation.mutate( id, {
 					onSuccess: () => resolve(),
-					onError: ( error ) => reject( error.message ),
+					onError: ( error ) => reject( error ),
 				} );
 			} );
 		},
@@ -125,7 +125,9 @@ export function useStoredPaymentMethods( {
 			const matchingPaymentMethod = data?.find( ( method ) => method.stored_details_id === id );
 			if ( ! matchingPaymentMethod ) {
 				return Promise.reject(
-					translate( 'There was a problem deleting that payment method.', { textOnly: true } )
+					new Error(
+						translate( 'There was a problem deleting that payment method.', { textOnly: true } )
+					)
 				);
 			}
 

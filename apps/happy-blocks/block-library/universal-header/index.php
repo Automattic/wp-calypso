@@ -11,6 +11,22 @@ if ( ! isset( $args ) ) {
 	$args = array();
 }
 
+$happy_blocks_current_tab = $args['active_tab'];
+
+$happy_blocks_tabs = array(
+	'learn'   => array(
+		'title' => __( 'Learn', 'happy-blocks' ),
+		'url'   => 'https://wordpress.com/learn',
+	),
+	'support' => array(
+		'title' => __( 'Support', 'happy-blocks' ),
+		'url'   => localized_wpcom_url( 'https://wordpress.com/support' ),
+	),
+	'forums'  => array(
+		'title' => __( 'Forums', 'happy-blocks' ),
+		'url'   => localized_wpcom_url( 'https://wordpress.com/forums' ),
+	),
+)
 ?>
 
 <div id="lpc-header-nav" class="lpc lpc-header-nav">
@@ -364,29 +380,21 @@ if ( ! isset( $args ) ) {
 		</div>
 	</div>
 </div>
-
-<?php if ( $args['include_search'] ) : ?>
-<div class="wp-block-group alignfull happy-blocks-search has-background is-nowrap is-layout-flex wp-container-4 wp-block-group-is-layout-flex" style="background:linear-gradient(rgb(249, 244, 240) 100%,rgb(255, 255, 255) 0%)">
-		<div class="wp-block-group alignwide happy-blocks-search-container is-layout-flow wp-block-group-is-layout-flow">
-				<h2 class="wp-block-heading has-recoleta-font-family" style="margin-top:0px;margin-bottom:1rem;font-size:2.75rem;line-height:3.25rem">
-					<?php echo esc_html( $args['title'] ); ?>
-				</h2>
-
-				<p class="has-small-font-size" style="margin-top:0px;margin-bottom:1rem;">
-					<?php echo esc_html( $args['placeholder'] ); ?>
-				</p>
-
-				<div class="wp-block-group header-search__input is-nowrap is-layout-flex wp-container-2 wp-block-group-is-layout-flex">
-					<form role="search" method="get" action="" class="wp-block-search__no-button alignleft wp-block-search"><label for="wp-block-search__input-1" class="wp-block-search__label screen-reader-text"><?php echo esc_html( $args['placeholder'] ); ?></label><div class="happy-blocks-search__inside-wrapper"><input type="search" id="wp-block-search__input-1" class="wp-block-search__input has-x-small-font-size" name="s" value="" placeholder="<?php echo esc_html( $args['placeholder'] ); ?>"></div></form>
-				</div>
-		</div>
-	</div>
-<?php else : ?>
 <div class="happy-blocks-mini-search">
-	<div class="wp-block-group alignwide happy-blocks-search-container is-layout-flow wp-block-group-is-layout-flow">
-			<div class="wp-block-group header-search__input is-nowrap is-layout-flex wp-container-2 wp-block-group-is-layout-flex">
-				<form role="search" method="get" action="" class="wp-block-search__no-button alignleft wp-block-search"><label for="wp-block-search__input-1" class="wp-block-search__label screen-reader-text"><?php echo esc_html( $args['placeholder'] ); ?></label><div class="happy-blocks-search__inside-wrapper"><input type="search" id="wp-block-search__input-1" class="wp-block-search__input has-x-small-font-size" name="s" value="" placeholder="<?php echo esc_html( $args['placeholder'] ); ?>"></div></form>
+	<div class="happy-blocks-search-container">
+			<div class="happy-blocks-global-header__top">
+				<div class="happy-blocks-global-header__tabs">
+					<?php foreach ( $happy_blocks_tabs as $key => $happy_blocks_tab ) { ?>
+							<a href="<?php echo esc_attr( $happy_blocks_tab['url'] ); ?>" class="happy-blocks-global-header__tab<?php echo $happy_blocks_current_tab === $key ? ' active' : ''; ?>"><?php echo esc_html( $happy_blocks_tab['title'] ); ?></a>
+					<?php } ?>
+				</div>
+				<form role="search" method="get" action=""><label for="wp-block-search__input-1" class="screen-reader-text"><?php echo esc_html( $args['search_placeholder'] ); ?></label><div class="happy-blocks-search__inside-wrapper"><input type="search" id="wp-block-search__input-1" name="s" value="" placeholder="<?php echo esc_html( $args['search_placeholder'] ); ?>"></div></form>
 			</div>
+			<?php if ( $args['include_site_title'] ) : ?>
+			<div class="happy-blocks-global-header-site__title">
+				<h1><?php echo esc_html( $args['site_title'] ); ?></h1>
+				<p><?php echo esc_html( $args['site_tagline'] ); ?></p>
+			</div>
+			<?php endif; ?>
 	</div>
 </div>
-<?php endif; ?>

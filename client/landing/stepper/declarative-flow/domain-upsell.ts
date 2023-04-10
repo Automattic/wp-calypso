@@ -6,6 +6,7 @@ import {
 	addProductsToCart,
 	DOMAIN_UPSELL_FLOW,
 } from 'calypso/../packages/onboarding/src';
+import { updateLaunchpadSettings } from 'calypso/data/sites/use-launchpad';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
@@ -50,6 +51,12 @@ const domainUpsell: Flow = {
 			switch ( currentStep ) {
 				case 'domains':
 					if ( providedDependencies?.deferDomainSelection ) {
+						try {
+							await updateLaunchpadSettings( siteSlug, {
+								checklist_statuses: { domain_upsell_deferred: true },
+							} );
+						} catch ( error ) {}
+
 						return window.location.assign( returnUrl );
 					}
 					setHideFreePlan( true );
