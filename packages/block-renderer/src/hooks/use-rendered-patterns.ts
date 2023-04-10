@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import { useEffect, useState } from 'react';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { RenderedPatterns, SiteInfo } from '../types';
@@ -7,6 +8,7 @@ const PAGE_SIZE = 20;
 const fetchRenderedPatterns = (
 	siteId: number | string,
 	stylesheet: string,
+	language = 'en',
 	patternIds: string[],
 	siteInfo: SiteInfo,
 	page = 0
@@ -15,6 +17,7 @@ const fetchRenderedPatterns = (
 	const { title, tagline } = siteInfo;
 	const params = new URLSearchParams( {
 		stylesheet,
+		language,
 		pattern_ids,
 	} );
 
@@ -39,6 +42,7 @@ const useRenderedPatterns = (
 	patternIds: string[],
 	siteInfo: SiteInfo = {}
 ) => {
+	const locale = useLocale();
 	const [ renderedPatterns, setRenderedPatterns ] = useState( {} );
 
 	useEffect( () => {
@@ -52,7 +56,7 @@ const useRenderedPatterns = (
 
 		const promises = [];
 		for ( let i = 0; i < totalPage; i++ ) {
-			promises.push( fetchRenderedPatterns( siteId, stylesheet, patternIds, siteInfo, i ) );
+			promises.push( fetchRenderedPatterns( siteId, stylesheet, locale, patternIds, siteInfo, i ) );
 		}
 
 		Promise.all( promises ).then( ( pages ) => {
