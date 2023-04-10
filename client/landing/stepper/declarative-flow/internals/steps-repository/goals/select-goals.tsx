@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { Onboard } from '@automattic/data-stores';
+import { PremiumBadge } from '@automattic/design-picker';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useGoals } from './goals';
@@ -95,9 +96,7 @@ export const SelectGoals = ( { onChange, onSubmit, selectedGoals }: SelectGoalsP
 								value={ key }
 							>
 								<span className="select-goals__goal-title">{ title }</span>
-								{ isPremium && (
-									<span className="select-goals__premium-badge">{ translate( 'Premium' ) }</span>
-								) }
+								{ isPremium && <PremiumBadge shouldHideTooltip={ true } /> }
 							</SelectCard>
 					  ) ) }
 			</div>

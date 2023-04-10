@@ -64,18 +64,7 @@
 		grid-template-columns: repeat(1, 1fr);
 
 		.select-goals__goal-title {
-			margin-right: 14px;
-		}
-
-		.select-goals__premium-badge {
-			display: inline-block;
-			background: #101517;
-			color: #fff;
-			border-radius: 4px;
-			font-weight: 500;
-			font-size: 0.75rem;
-			line-height: 20px;
-			padding: 0 10px;
+			margin-inline-end: 4px;
 		}
 
 		@include break-small {
@@ -119,6 +108,8 @@
 	.select-card__label {
 		pointer-events: none;
 		user-select: none;
+		display: flex;
+		align-items: center;
 	}
 
 	&.selected {
