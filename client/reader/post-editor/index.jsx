@@ -1,4 +1,5 @@
 import IsoloatedEditor, { ToolbarSlot } from '@automattic/isolated-block-editor';
+import apiFetch from '@wordpress/api-fetch';
 import { serialize } from '@wordpress/blocks';
 import { Button } from '@wordpress/components';
 import { select, useDispatch } from '@wordpress/data';
@@ -10,6 +11,12 @@ import { MediaUpload } from '@wordpress/media-utils';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import {
+	wpcomFetchHandler,
+	wpcomFetchNormalizePath,
+	wpcomFetchAddSitePrefix,
+	wpcomFetchGutenbergNonce,
+} from './api-fetch-middleware';
 import useCreateNewPost from './use-create-new-post';
 import './style.scss';
 
@@ -42,6 +49,17 @@ function ReaderPostEditor() {
 
 		return removeFilter( 'editor.MediaUpload', 'wp-calypso/media-upload' );
 	}, [] );
+
+	useEffect( () => {
+		if ( ! primarySiteId ) {
+			return;
+		}
+
+		apiFetch.use( wpcomFetchNormalizePath );
+		apiFetch.use( wpcomFetchAddSitePrefix( primarySiteId ) );
+		apiFetch.use( wpcomFetchGutenbergNonce );
+		apiFetch.setFetchHandler( wpcomFetchHandler );
+	}, [ primarySiteId ] );
 
 	const editorSettings = {
 		iso: {
