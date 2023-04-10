@@ -21,12 +21,19 @@ import {
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
 	isWooExpressPlan,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
-import { localize, LocalizeProps, TranslateResult, useTranslate } from 'i18n-calypso';
+import {
+	localize,
+	LocalizedComponent,
+	LocalizeProps,
+	TranslateResult,
+	useTranslate,
+} from 'i18n-calypso';
 import { last } from 'lodash';
 import page from 'page';
 import { Component, createRef } from 'react';
@@ -152,7 +159,9 @@ type PlanFeatures2023GridConnectedProps = {
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
-	PlanFeatures2023GridConnectedProps & { children?: React.ReactNode };
+	PlanFeatures2023GridConnectedProps & { children?: React.ReactNode } & {
+		isLargeCurrency: boolean;
+	};
 
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
@@ -243,51 +252,6 @@ const PlanLogo: React.FunctionComponent< {
 				) }
 			</header>
 		</Container>
-	);
-};
-
-const PlanPricesRow = function ( {
-	planPropertiesObj,
-	options,
-	isReskinned,
-}: {
-	planPropertiesObj: PlanProperties[];
-	options?: PlanRowOptions;
-	isReskinned: boolean;
-} ) {
-	const isLargeCurrency = useIsLargeCurrency(
-		planPropertiesObj.map( ( properties ) => properties.planName as PlanSlug )
-	);
-
-	return (
-		<>
-			{ planPropertiesObj
-				.filter( ( { isVisible } ) => isVisible )
-				.map( ( properties ) => {
-					const { planName, rawPrice } = properties;
-					const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
-						'has-border-top': ! isReskinned,
-					} );
-					const hasNoPrice = rawPrice === undefined || rawPrice === null;
-
-					return (
-						<Container
-							scope="col"
-							key={ planName }
-							className={ classes }
-							isMobile={ options?.isMobile }
-						>
-							{ ! hasNoPrice && (
-								<PlanFeatures2023GridHeaderPrice
-									planProperties={ properties }
-									is2023OnboardingPricingGrid={ true }
-									isLargeCurrency={ isLargeCurrency }
-								/>
-							) }
-						</Container>
-					);
-				} ) }
-		</>
 	);
 };
 
@@ -535,15 +499,34 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned } = this.props;
+		const { isReskinned, is2023OnboardingPricingGrid, isLargeCurrency } = this.props;
 
-		return (
-			<PlanPricesRow
-				planPropertiesObj={ planPropertiesObj }
-				isReskinned={ isReskinned }
-				options={ options }
-			/>
-		);
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties ) => {
+				const { planName, rawPrice } = properties;
+				const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
+					'has-border-top': ! isReskinned,
+				} );
+				const hasNoPrice = rawPrice === undefined || rawPrice === null;
+
+				return (
+					<Container
+						scope="col"
+						key={ planName }
+						className={ classes }
+						isMobile={ options?.isMobile }
+					>
+						{ ! hasNoPrice && (
+							<PlanFeatures2023GridHeaderPrice
+								planProperties={ properties }
+								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+								isLargeCurrency={ isLargeCurrency }
+							/>
+						) }
+					</Container>
+				);
+			} );
 	}
 
 	renderBillingTimeframe( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
@@ -1031,6 +1014,15 @@ export class PlanFeatures2023Grid extends Component<
 	}
 }
 
+const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures2023Grid > ) => {
+	return function ( props: PlanFeatures2023GridConnectedProps ) {
+		const isLargeCurrency = useIsLargeCurrency(
+			( props.planProperties || [] ).map( ( properties ) => properties.planName as PlanSlug )
+		);
+		return <Component { ...props } isLargeCurrency={ isLargeCurrency } />;
+	};
+};
+
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 const ConnectedPlanFeatures2023Grid = connect(
 	( state: IAppState, ownProps: PlanFeatures2023GridProps ) => {
@@ -1209,7 +1201,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 	{
 		recordTracksEvent,
 	}
-)( localize( PlanFeatures2023Grid ) );
+)( withIsLargeCurrency( localize( PlanFeatures2023Grid ) ) );
 /* eslint-enable wpcalypso/redux-no-bound-selectors */
 
 const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
