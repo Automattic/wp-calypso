@@ -463,7 +463,7 @@ export class SiteSettingsFormGeneral extends Component {
 						</FormLabel>
 						<FormSettingExplanation>
 							{ translate(
-								'Your site is visible to everyone, but search engines are discouraged from indexing. Staging sites shouldn’t be indexed by search engines.'
+								'Your site is visible to everyone, but search engines are discouraged from indexing. Staging sites cannot be indexed by search engines.'
 							) }
 						</FormSettingExplanation>
 					</>
