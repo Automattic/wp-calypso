@@ -80,7 +80,6 @@ describe( 'Likes: Comment', function () {
 			async function closure( page: Page ) {
 				await page.getByText( 'Loading...' ).last().waitFor( { state: 'hidden' } );
 			}
-			// await page.reload( { waitUntil: 'networkidle' } );
 			await ElementHelper.reloadAndRetry( page, closure );
 		} );
 
@@ -104,7 +103,6 @@ describe( 'Likes: Comment', function () {
 			async function closure( page: Page ) {
 				await page.getByText( 'Loading...' ).last().waitFor( { state: 'hidden' } );
 			}
-			// await page.reload( { waitUntil: 'networkidle' } );
 			await ElementHelper.reloadAndRetry( page, closure );
 		} );
 
