@@ -158,7 +158,7 @@ jobs:
 
   wp-desktop-mac:
     macos:
-      xcode: '12.3.0'
+      xcode: '14.2.0'
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
     environment:
