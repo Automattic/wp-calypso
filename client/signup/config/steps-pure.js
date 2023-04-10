@@ -137,6 +137,24 @@ export function generateSteps( {
 			},
 		},
 
+		'user-hosting': {
+			stepName: 'user-hosting',
+			apiRequestFunction: createAccount,
+			providesToken: true,
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'plans_reorder_abtest_variation',
+				'redirect',
+			],
+			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+				isPasswordless: true,
+			},
+		},
+
 		'user-new': {
 			stepName: 'user-new',
 			apiRequestFunction: createAccount,

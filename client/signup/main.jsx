@@ -72,7 +72,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import flows from './config/flows';
-import { getStepComponent } from './config/step-components';
+import { getStepComponent, getStepModuleName } from './config/step-components';
 import steps from './config/steps';
 import { addP2SignupClassName } from './controller';
 import {
@@ -785,9 +785,12 @@ class Signup extends Component {
 			};
 		}
 
+		let stepName = getStepModuleName( this.props.stepName );
+		stepName = stepName === 'user' ? 'user' : stepName;
+
 		return (
 			<div className="signup__step" key={ stepKey }>
-				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
+				<div className={ `signup__step is-${ stepName }` }>
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }

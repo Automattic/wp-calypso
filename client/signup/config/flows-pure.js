@@ -21,7 +21,7 @@ export function generateFlows( {
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
-			steps: [ 'plans-hosting', 'user', 'domains' ],
+			steps: [ 'plans-hosting', 'user-hosting', 'domains' ],
 			destination: getHomeDestination,
 			description:
 				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
