@@ -1,6 +1,7 @@
 import {
 	JETPACK_BACKUP_RETENTION_UPDATE_ERROR,
 	JETPACK_BACKUP_RETENTION_UPDATE_SUCCESS,
+	JETPACK_BACKUP_RETENTION_UPDATE_RESET,
 } from 'calypso/state/action-types';
 import { requestSize } from '../../size/actions';
 import { updateBackupRetention } from '../actions';
@@ -20,6 +21,15 @@ describe( 'updateBackupRetentionRequestStatus', () => {
 		expect( updateBackupRetentionRequestStatus( undefined, requestSize ) ).toEqual(
 			BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED
 		);
+	} );
+
+	test( 'should return UNSUBMITTED when retention update request status is RESET', () => {
+		// lets ensure that state is not modified when passed an unrelated action.
+		expect(
+			updateBackupRetentionRequestStatus( undefined, {
+				type: JETPACK_BACKUP_RETENTION_UPDATE_RESET,
+			} )
+		).toEqual( BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED );
 	} );
 
 	test( 'should return PENDING status when retention update request action is initiated', () => {
