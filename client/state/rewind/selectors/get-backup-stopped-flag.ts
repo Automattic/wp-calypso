@@ -7,7 +7,7 @@ import type { AppState } from 'calypso/types';
  * @param siteId The site ID for which to backup status.
  * @returns true if backups are stopped false otherwise.
  */
-const getBackupStoppedFlag = ( state: AppState, siteId: number ): bool =>
+const getBackupStoppedFlag = ( state: AppState, siteId: number ): boolean =>
 	state.rewind[ siteId ]?.size?.backupsStopped ?? false;
 
 export default getBackupStoppedFlag;
