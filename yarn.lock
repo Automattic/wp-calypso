@@ -494,7 +494,6 @@ __metadata:
   resolution: "@automattic/data-stores@workspace:packages/data-stores"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/domain-utils": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
@@ -659,14 +658,6 @@ __metadata:
     react: ^17.0.2
     reakit-utils: ^0.15.1
     redux: ^4.1.2
-  languageName: unknown
-  linkType: soft
-
-"@automattic/domain-utils@workspace:^, @automattic/domain-utils@workspace:packages/domain-utils":
-  version: 0.0.0-use.local
-  resolution: "@automattic/domain-utils@workspace:packages/domain-utils"
-  dependencies:
-    typescript: ^4.7.4
   languageName: unknown
   linkType: soft
 
@@ -11627,7 +11618,6 @@ __metadata:
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
-    "@automattic/domain-utils": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/format-currency": "workspace:^"

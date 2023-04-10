@@ -31,7 +31,6 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/domain-utils": "workspace:^",
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
