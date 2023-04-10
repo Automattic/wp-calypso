@@ -11,14 +11,14 @@ const LARGE_CURRENCY_CHARS = 5;
  * of any of the plan slugs exceeds 5 characters.
  * This is primarily used for lowering the font-size of "large" display prices.
  */
-export default function useIsLargeCurrency( planSlugs: PlanSlug[] ): boolean {
+export default function useIsLargeCurrency( planSlugs: PlanSlug[], returnMonthly = true ): boolean {
 	return useSelector( ( state: IAppState ) => {
 		const siteId = getSelectedSiteId( state ) ?? null;
 		return planSlugs.some( ( planSlug ) => {
 			const { discountedRawPrice, planDiscountedRawPrice, rawPrice } = getPlanPrices( state, {
 				planSlug,
 				siteId,
-				returnMonthly: true,
+				returnMonthly,
 			} );
 			return [ rawPrice, discountedRawPrice, planDiscountedRawPrice ].some(
 				( price ) => price?.toString().length > LARGE_CURRENCY_CHARS
