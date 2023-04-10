@@ -1,4 +1,4 @@
-import { Button, Card, Dialog, Spinner } from '@automattic/components';
+import { Button, Card, Spinner } from '@automattic/components';
 import { useEffect, useState, useCallback } from '@wordpress/element';
 import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -26,6 +26,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { RETENTION_OPTIONS, STORAGE_ESTIMATION_ADDITIONAL_BUFFER } from './constants';
 import InfoTooltip from './info-tooltip';
 import LoadingPlaceholder from './loading';
+import RetentionConfirmationDialog from './retention-confirmation-dialog';
 import RetentionOptionsControl from './retention-options/retention-options-control';
 import useUpsellInfo from './use-upsell-info';
 import type { RetentionOptionInput } from './types';
@@ -366,35 +367,14 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 						<div className="retention-form__submit">
 							{ storageUpgradeRequired ? purchaseStorageButton : updateSettingsButton }
 						</div>
-						<Dialog
-							additionalClassNames="backup-retention-management retention-form__confirmation-dialog"
-							isVisible={ confirmationDialogVisible }
-							onClose={ onConfirmationClose }
-							buttons={ [
-								<Button onClick={ onConfirmationClose }>{ translate( 'Cancel' ) }</Button>,
-								<Button
-									onClick={ updateRetentionPeriod }
-									primary
-									disabled={ disableFormSubmission }
-								>
-									{ updateRetentionRequestStatus !== BACKUP_RETENTION_UPDATE_REQUEST.PENDING ? (
-										translate( 'Confirm change' )
-									) : (
-										<Spinner size={ 22 } />
-									) }
-								</Button>,
-							] }
-						>
-							<h3>{ translate( 'Update settings' ) }</h3>
-							<p>
-								{ translate(
-									'You are about to reduce the number of days your backups are being saved. Backups older than %(retentionDays)s days will be lost.',
-									{
-										args: { retentionDays: retentionSelected },
-									}
-								) }
-							</p>
-						</Dialog>
+						<RetentionConfirmationDialog
+							confirmationDialogVisible={ confirmationDialogVisible }
+							retentionSelected={ retentionSelected }
+							updateRetentionRequestStatus={ updateRetentionRequestStatus }
+							onConfirmationClose={ onConfirmationClose }
+							onConfirmation={ updateRetentionPeriod }
+							disableFormSubmission={ disableFormSubmission }
+						/>
 					</div>
 				</Card>
 			</div>
