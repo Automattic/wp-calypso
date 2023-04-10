@@ -36,12 +36,10 @@ class SearchFollowButton extends Component {
 			return null;
 		}
 
-		let isNewFeed = true;
 		let isFollowing = false;
 		let followTitle = withoutHttp( query );
 
 		if ( feed && feed.name?.length ) {
-			isNewFeed = false;
 			isFollowing = feed.is_following;
 			followTitle = feed.name;
 		}
@@ -55,11 +53,7 @@ class SearchFollowButton extends Component {
 			<div className="search-stream__url-follow">
 				<p>
 					<Gridicon icon="info" size="16" />
-					<strong>
-						{ isNewFeed
-							? translate( 'Potential new feed found, click follow to add this feed to Reader' )
-							: translate( 'Click follow to add this feed to Reader' ) }
-					</strong>
+					<strong>{ translate( 'Click below to add this site to your Reader feed:' ) }</strong>
 				</p>
 				<FollowButton
 					followLabel={ translate( 'Follow %s', {

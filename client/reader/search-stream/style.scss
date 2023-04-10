@@ -416,10 +416,20 @@
 		}
 
 		.follow-button__label {
-			color: var(--color-primary);
+			color: var(--color-link);
+			text-decoration: underline;
 
 			@include breakpoint-deprecated( "<660px" ) {
 				display: inline;
+			}
+		}
+
+		&:hover {
+			svg.reader-follow-feed path {
+				fill: var(--color-link);
+			}
+			.follow-button__label {
+				color: var(--color-link);
 			}
 		}
 
