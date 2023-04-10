@@ -116,7 +116,6 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'subscribers_added',
 		'verify_email',
 		'first_post_published_newsletter',
-		'first_post_published',
 	],
 	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
 	[ LINK_IN_BIO_TLD_FLOW ]: linkInBioTaskList,
