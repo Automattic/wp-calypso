@@ -1,12 +1,6 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
 import { Card, Button, Gridicon } from '@automattic/components';
-import {
-	PremiumBadge,
-	StyleVariationBadges,
-	ThemeCard,
-	WooCommerceBundledBadge,
-} from '@automattic/design-picker';
+import { PremiumBadge, ThemeCard, WooCommerceBundledBadge } from '@automattic/design-picker';
 import { Button as LinkButton } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
@@ -17,8 +11,6 @@ import photon from 'photon';
 import PropTypes from 'prop-types';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
-import PulsingDot from 'calypso/components/pulsing-dot';
-import Tooltip from 'calypso/components/tooltip';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -114,15 +106,9 @@ export class Theme extends Component {
 
 	prevThemeThumbnailRef = createRef( null );
 	themeThumbnailRef = createRef( null );
-	premiumPopoverRef = createRef( null );
-
-	state = {
-		descriptionTooltipVisible: false,
-	};
 
 	shouldComponentUpdate( nextProps ) {
 		const themeThumbnailRefUpdated = this.themeThumbnailRef.current !== this.themeThumbnailRef.prev;
-
 		if ( themeThumbnailRefUpdated ) {
 			this.prevThemeThumbnailRef.current = this.themeThumbnailRef.current;
 		}
@@ -144,14 +130,6 @@ export class Theme extends Component {
 		);
 	}
 
-	showDescriptionTooltip = () => {
-		this.setState( { descriptionTooltipVisible: true } );
-	};
-
-	hideDescriptionTooltip = () => {
-		this.setState( { descriptionTooltipVisible: false } );
-	};
-
 	onScreenshotClick = () => {
 		const { onScreenshotClick } = this.props;
 		if ( typeof onScreenshotClick === 'function' ) {
@@ -171,16 +149,6 @@ export class Theme extends Component {
 			</Card>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
-	}
-
-	renderInstalling() {
-		if ( this.props.installing ) {
-			return (
-				<div className="theme__installing">
-					<PulsingDot active={ true } />
-				</div>
-			);
-		}
 	}
 
 	renderScreenshot() {
@@ -512,23 +480,6 @@ export class Theme extends Component {
 		return <span>{ translate( 'Free' ) }</span>;
 	};
 
-	renderStyleVariations = () => {
-		const { theme } = this.props;
-		const { style_variations = [] } = theme;
-
-		return (
-			style_variations.length > 0 && (
-				<div className="theme__info-style-variations">
-					<StyleVariationBadges
-						variations={ style_variations }
-						onMoreClick={ this.onStyleVariationClick }
-						onClick={ this.onStyleVariationClick }
-					/>
-				</div>
-			)
-		);
-	};
-
 	renderMoreButton = () => {
 		const { active, buttonContents, index, theme, onMoreButtonClick, onMoreButtonItemClick } =
 			this.props;
@@ -549,130 +500,35 @@ export class Theme extends Component {
 		);
 	};
 
-	softLaunchedBanner = () => {
-		const { translate } = this.props;
-
-		return (
-			<>
-				{ this.props.softLaunched && (
-					<div className="theme__info-soft-launched">
-						<div className="theme__info-soft-launched-banner">{ translate( 'A8C Only' ) }</div>
-					</div>
-				) }
-			</>
-		);
-	};
-
 	render() {
-		const { active, theme, translate } = this.props;
-		const { name, description, screenshot, style_variations = [] } = theme;
-		const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
-		const isActionable = this.props.screenshotClickUrl || this.props.onScreenshotClick;
-		const themeClass = classNames( 'theme', {
-			'is-active': active,
-			'is-actionable': isActionable,
-		} );
-
+		const { theme } = this.props;
+		const { name, description, style_variations = [] } = theme;
 		const themeDescription = decodeEntities( description );
 
 		if ( this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
 		}
 
-		const fit = '479,360';
-		const themeImgSrc = photon( screenshot, { fit } ) || screenshot;
-		const themeImgSrcDoubleDpi = photon( screenshot, { fit, zoom: 2 } ) || screenshot;
-
-		// for performance testing
-		const screenshotID = this.props.index === 0 ? 'theme__firstscreenshot' : null;
-
-		const e2eThemeName = name.toLowerCase().replace( /\s+/g, '-' );
-		const bookmarkRef = this.props.bookmarkRef ? { ref: this.props.bookmarkRef } : {};
-
-		if ( theme ) {
-			return (
-				<ThemeCard
-					ref={ this.props.bookmarkRef }
-					name={ name }
-					description={ themeDescription }
-					image={ this.renderScreenshot() }
-					imageClickUrl={ this.props.screenshotClickUrl }
-					imageActionLabel={ this.props.actionLabel }
-					banner={ this.renderUpdateAlert() }
-					badge={ this.renderPricingBadge() }
-					styleVariations={ style_variations }
-					optionsMenu={ this.renderMoreButton() }
-					isActive={ active }
-					isInstalling={ this.props.installing }
-					isSoftLaunched={ this.props.softLaunched }
-					isShowDescriptionOnImageHover
-					onClick={ this.setBookmark }
-					onImageClick={ this.onScreenshotClick }
-					onStyleVariationClick={ this.onStyleVariationClick }
-				/>
-			);
-		}
-
 		return (
-			<Card className={ themeClass } data-e2e-theme={ e2eThemeName } onClick={ this.setBookmark }>
-				<div ref={ this.themeThumbnailRef } className="theme__content" { ...bookmarkRef }>
-					{ this.renderUpdateAlert() }
-					<a
-						aria-label={ name }
-						className="theme__thumbnail"
-						href={ this.props.screenshotClickUrl || 'javascript:;' /* fallback for a11y */ }
-						onClick={ this.onScreenshotClick }
-						onMouseEnter={ this.showDescriptionTooltip }
-						onMouseLeave={ this.hideDescriptionTooltip }
-					>
-						{ isActionable && (
-							<div className="theme__thumbnail-label">{ this.props.actionLabel }</div>
-						) }
-						{ this.renderInstalling() }
-						{ screenshot ? (
-							<img
-								alt={ themeDescription }
-								className="theme__img"
-								src={ themeImgSrc }
-								srcSet={ `${ themeImgSrcDoubleDpi } 2x` }
-								id={ screenshotID }
-							/>
-						) : (
-							<div className="theme__no-screenshot">
-								<Gridicon icon="themes" size={ 48 } />
-							</div>
-						) }
-					</a>
-
-					<Tooltip
-						context={ this.themeThumbnailRef.current }
-						isVisible={ this.state.descriptionTooltipVisible }
-						showDelay={ 1000 }
-					>
-						<div className="theme__tooltip">{ themeDescription }</div>
-					</Tooltip>
-
-					{ this.softLaunchedBanner() }
-
-					<div
-						className={ classNames( 'theme__info', {
-							'has-style-variations': isNewDetailsAndPreview && style_variations.length > 0,
-						} ) }
-					>
-						<h2 className="theme__info-title">{ name }</h2>
-						{ active && (
-							<span className="theme__badge-active">
-								{ translate( 'Active', {
-									context: 'singular noun, the currently active theme',
-								} ) }
-							</span>
-						) }
-						{ isNewDetailsAndPreview && ! active && this.renderStyleVariations() }
-						{ this.renderPricingBadge() }
-						{ this.renderMoreButton() }
-					</div>
-				</div>
-			</Card>
+			<ThemeCard
+				ref={ this.props.bookmarkRef }
+				name={ name }
+				description={ themeDescription }
+				image={ this.renderScreenshot() }
+				imageClickUrl={ this.props.screenshotClickUrl }
+				imageActionLabel={ this.props.actionLabel }
+				banner={ this.renderUpdateAlert() }
+				badge={ this.renderPricingBadge() }
+				styleVariations={ style_variations }
+				optionsMenu={ this.renderMoreButton() }
+				isActive={ this.props.active }
+				isInstalling={ this.props.installing }
+				isSoftLaunched={ this.props.softLaunched }
+				isShowDescriptionOnImageHover
+				onClick={ this.setBookmark }
+				onImageClick={ this.onScreenshotClick }
+				onStyleVariationClick={ this.onStyleVariationClick }
+			/>
 		);
 	}
 }
