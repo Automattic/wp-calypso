@@ -54,15 +54,35 @@ tr.site-logs-table__table-row-expanded {
 .site-logs-table__expanded-content {
 	padding-left: 30px;
 	font-size: 0.875rem;
-	tr {
-		border: none !important;
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 0.6em 1em;
+
+	// This makes the expanded content fit inside the viewport
+	// The 440px takes into account the Calypso sidebar and the necessary table padding
+	width: calc(100vw - 440px);
+
+	@media (max-width: 800px) {
+		padding-left: 16px;
+		width: calc(100vw - 80px);
+	}
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
 	}
 }
 
 .site-logs-table__expanded-content-info {
 	word-break: break-word;
 	word-wrap: break-word;
-	max-width: 70%;
 	white-space: pre-wrap;
 	display: inline-block;
+}
+
+body.is-sidebar-collapsed .site-logs-table__expanded-content {
+	width: calc(100vw - 200px);
+
+	@media (max-width: 800px) {
+		width: calc(100vw - 80px);
+	}
 }
