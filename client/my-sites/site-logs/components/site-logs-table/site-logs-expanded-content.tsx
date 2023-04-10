@@ -1,4 +1,6 @@
+import { Fragment } from '@wordpress/element';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
+
 import './style.scss';
 
 interface Props {
@@ -9,16 +11,16 @@ export default function SiteLogsExpandedContent( { log }: Props ) {
 	return (
 		<div className="site-logs-table__expanded-content">
 			{ Object.keys( log ).map( ( key ) => (
-				<tr key={ key }>
-					<td>
+				<Fragment key={ key }>
+					<div>
 						<strong>{ key }</strong>
-					</td>
-					<td>
+					</div>
+					<div>
 						<div className="site-logs-table__expanded-content-info">
 							{ renderCell( key, log[ key ] ) }
 						</div>
-					</td>
-				</tr>
+					</div>
+				</Fragment>
 			) ) }
 		</div>
 	);
