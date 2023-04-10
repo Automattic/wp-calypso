@@ -476,7 +476,7 @@ describe( 'ExPlatClient.loadExperimentAssignment multiple-use', () => {
 
 describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 	it( 'should log and return fallback when given an invalid name', () => {
-		const mockedConfig = createMockedConfig();
+		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
 		const firstNow = Date.now();
 		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
@@ -501,7 +501,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 	} );
 
 	it( `should log and return fallback when the matching experiment hasn't loaded yet`, () => {
-		const mockedConfig = createMockedConfig();
+		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
 		const firstNow = Date.now();
 		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
@@ -527,7 +527,7 @@ describe( 'ExPlatClient.dangerouslyGetExperimentAssignment', () => {
 
 	it( `should log and return fallback when the matching experiment hasn't loaded yet but is currently loading`, async () => {
 		jest.useFakeTimers();
-		const mockedConfig = createMockedConfig();
+		const mockedConfig = createMockedConfig( { isDevelopmentMode: true } );
 		const client = createExPlatClient( mockedConfig );
 		const firstNow = Date.now();
 		spiedMonotonicNow.mockImplementationOnce( () => firstNow );
