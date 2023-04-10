@@ -65,9 +65,7 @@ const StatsSubscribersPage = ( props ) => {
 								vendor={ getSuggestionsVendor() }
 							/>
 						) }
-						{ config.isEnabled( 'stats/subscribers-section' ) && (
-							<SubscribersSection siteId={ siteId } />
-						) }
+						{ isSubscribersPageEnabled && <SubscribersSection siteId={ siteId } /> }
 						<div className={ statsModuleListClass }>
 							<Followers path="followers" />
 							<Reach />
