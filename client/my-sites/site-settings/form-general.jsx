@@ -343,6 +343,7 @@ export class SiteSettingsFormGeneral extends Component {
 			fields,
 			isAtomicAndEditingToolkitDeactivated,
 			isRequestingSettings,
+			isWpcomStagingSite,
 			isWPForTeamsSite,
 			eventTracker,
 			siteIsJetpack,
@@ -414,7 +415,7 @@ export class SiteSettingsFormGeneral extends Component {
 							) }
 						</>
 					) }
-				{ ! isNonAtomicJetpackSite && (
+				{ ! isNonAtomicJetpackSite && ! isWpcomStagingSite && (
 					<FormLabel className="site-settings__visibility-label is-public">
 						<FormRadio
 							name="blog_public"
@@ -437,34 +438,69 @@ export class SiteSettingsFormGeneral extends Component {
 						/>
 					</FormLabel>
 				) }
-				<FormSettingExplanation>
-					{ translate( 'Your site is visible to everyone.' ) }
-				</FormSettingExplanation>
-				<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
-					<FormInputCheckbox
-						name="blog_public"
-						value="0"
-						checked={
-							( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-							( 0 === blogPublic && ! wpcomPublicComingSoon )
-						}
-						onChange={ () =>
-							this.handleVisibilityOptionChange( {
-								blog_public: wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
-								wpcom_coming_soon: 0,
-								wpcom_public_coming_soon: 0,
-							} )
-						}
-						disabled={ isRequestingSettings }
-						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-					/>
-					<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
-					<FormSettingExplanation>
-						{ translate(
-							'This option does not block access to your site — it is up to search engines to honor your request.'
-						) }
-					</FormSettingExplanation>
-				</FormLabel>
+				{ isWpcomStagingSite && (
+					<>
+						<FormLabel className="site-settings__visibility-label is-public">
+							<FormRadio
+								name="blog_public"
+								value="0"
+								checked={
+									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+									( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
+									blogPublic === 1
+								}
+								onChange={ () =>
+									this.handleVisibilityOptionChange( {
+										blog_public: 0,
+										wpcom_coming_soon: 0,
+										wpcom_public_coming_soon: 0,
+									} )
+								}
+								disabled={ isRequestingSettings }
+								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+								label={ translate( 'Public' ) }
+							/>
+						</FormLabel>
+						<FormSettingExplanation>
+							{ translate(
+								'Your site is visible to everyone, but search engines are discouraged from indexing. Staging sites shouldn’t be indexed by search engines.'
+							) }
+						</FormSettingExplanation>
+					</>
+				) }
+				{ ! isWpcomStagingSite && (
+					<>
+						<FormSettingExplanation>
+							{ translate( 'Your site is visible to everyone.' ) }
+						</FormSettingExplanation>
+						<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
+							<FormInputCheckbox
+								name="blog_public"
+								value="0"
+								checked={
+									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+									( 0 === blogPublic && ! wpcomPublicComingSoon )
+								}
+								onChange={ () =>
+									this.handleVisibilityOptionChange( {
+										blog_public:
+											wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
+										wpcom_coming_soon: 0,
+										wpcom_public_coming_soon: 0,
+									} )
+								}
+								disabled={ isRequestingSettings }
+								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+							/>
+							<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
+							<FormSettingExplanation>
+								{ translate(
+									'This option does not block access to your site — it is up to search engines to honor your request.'
+								) }
+							</FormSettingExplanation>
+						</FormLabel>
+					</>
+				) }
 				{ ! isNonAtomicJetpackSite && (
 					<>
 						<FormLabel className="site-settings__visibility-label is-private">
