@@ -88,6 +88,7 @@ const RetentionOptionOnCancelPurchase: React.FC = () => {
 	}, [ dispatch, siteId, siteSlug, updateRetentionRequestStatus ] );
 
 	useEffect( () => {
+		//TODO: check for backups_stopped flag also (must be true) once #75477 gets merged
 		if ( MINIMUM_RETENTION_TO_OFFER < currentBackupRetention ) {
 			setRetentionOfferCardVisible( true );
 		} else {
