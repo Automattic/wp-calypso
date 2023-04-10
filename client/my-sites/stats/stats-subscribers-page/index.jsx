@@ -23,7 +23,6 @@ import SubscribersSection from '../subscribers-section';
 const StatsSubscribersPage = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
 
-	const isSubscribersPageEnabled = config.isEnabled( 'stats/subscribers-section' );
 	const showEmailSection = config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats;
 
 	const statsModuleListClass = classNames(
@@ -54,25 +53,21 @@ const StatsSubscribersPage = ( props ) => {
 					align="left"
 				/>
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
-				{ isSubscribersPageEnabled && (
-					<>
-						{ /* TODO: replace annual highlight */ }
-						<AnnualHighlightsSection siteId={ siteId } />
-						{ siteId && (
-							<DomainTip
-								siteId={ siteId }
-								event="stats_subscribers_domain"
-								vendor={ getSuggestionsVendor() }
-							/>
-						) }
-						{ isSubscribersPageEnabled && <SubscribersSection siteId={ siteId } /> }
-						<div className={ statsModuleListClass }>
-							<Followers path="followers" />
-							<Reach />
-							{ showEmailSection && <StatsModuleEmails /> }
-						</div>
-					</>
+				{ /* TODO: replace annual highlight */ }
+				<AnnualHighlightsSection siteId={ siteId } />
+				{ siteId && (
+					<DomainTip
+						siteId={ siteId }
+						event="stats_subscribers_domain"
+						vendor={ getSuggestionsVendor() }
+					/>
 				) }
+				<SubscribersSection siteId={ siteId } />
+				<div className={ statsModuleListClass }>
+					<Followers path="followers" />
+					<Reach />
+					{ showEmailSection && <StatsModuleEmails /> }
+				</div>
 				<JetpackColophon />
 			</div>
 		</Main>
