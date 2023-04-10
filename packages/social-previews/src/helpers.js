@@ -18,3 +18,9 @@ export const firstValid =
 
 export const stripHtmlTags = ( description ) =>
 	description ? description.replace( /(<([^>]+)>)/gi, '' ) : '';
+
+export const formatTweetDate = new Intl.DateTimeFormat( 'en-US', {
+	// Result: "Apr 7", "Dec 31"
+	month: 'short',
+	day: 'numeric',
+} ).format;
