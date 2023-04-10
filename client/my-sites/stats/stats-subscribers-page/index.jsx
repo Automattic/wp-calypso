@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DomainTip from 'calypso/blocks/domain-tip';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
-import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -19,6 +18,7 @@ import AnnualHighlightsSection from '../annual-highlights-section';
 import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
 import Reach from '../stats-reach';
+import SubscribersSection from '../subscribers-section';
 
 const StatsSubscribersPage = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
@@ -66,7 +66,7 @@ const StatsSubscribersPage = ( props ) => {
 							/>
 						) }
 						{ config.isEnabled( 'stats/subscribers-section' ) && (
-							<AsyncLoad require="calypso/my-sites/stats/subscribers-section" siteId={ siteId } />
+							<SubscribersSection siteId={ siteId } />
 						) }
 						<div className={ statsModuleListClass }>
 							<Followers path="followers" />
