@@ -33,6 +33,12 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 			'',
 			omitUrlParams( window.location.href, 'celebrateLaunch' )
 		);
+
+		dispatch(
+			recordTracksEvent( `calypso_launchpad_celebration_modal_view`, {
+				product_slug: site?.plan?.product_slug,
+			} )
+		);
 	}, [] );
 
 	function renderUpsellContent() {
