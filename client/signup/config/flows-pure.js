@@ -20,6 +20,14 @@ export function generateFlows( {
 } = {} ) {
 	const flows = [
 		{
+			name: 'writing',
+			steps: [ 'user' ],
+			destination: getSignupDestination,
+			description: 'Writing flow',
+			lastModified: '2023-04-10',
+			showRecaptcha: true,
+		},
+		{
 			name: HOSTING_LP_FLOW,
 			steps: [ 'plans', 'user', 'domains' ],
 			destination: getHomeDestination,
