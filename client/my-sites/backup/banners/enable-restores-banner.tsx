@@ -6,7 +6,7 @@ import Banner from 'calypso/components/banner';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-import './style.scss';
+import '../style.scss';
 
 const EnableRestoresBanner: FunctionComponent = () => {
 	const translate = useTranslate();
