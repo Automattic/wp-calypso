@@ -146,7 +146,7 @@ const JetpackFAQ: FC = () => {
 							className="jetpack-faq__section"
 						>
 							{ translate(
-								'Anyone with at least five websites can join our licensing platform and enjoy a 25% discount across all Jetpack products! You can learn more about our {{agenciesLink}}licensing platform and agency program here{{/agenciesLink}}.',
+								'Anyone with at least five websites can join our licensing platform and enjoy up to 60% discount across all Jetpack products! You can learn more about our {{agenciesLink}}licensing platform and agency program here{{/agenciesLink}}.',
 								{
 									components: { agenciesLink: getAgenciesLink() },
 								}
