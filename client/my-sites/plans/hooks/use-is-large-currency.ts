@@ -4,7 +4,7 @@ import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { PlanSlug } from '@automattic/calypso-products';
 
-const LARGE_CURRENCY_CHARS = 5;
+const LARGE_CURRENCY_CHAR_THRESHOLD = 5;
 
 /**
  * Hook that returns true if the string representation of any price (discounted/undiscounted)
@@ -21,7 +21,7 @@ export default function useIsLargeCurrency( planSlugs: PlanSlug[], returnMonthly
 				returnMonthly,
 			} );
 			return [ rawPrice, discountedRawPrice, planDiscountedRawPrice ].some(
-				( price ) => price?.toString().length > LARGE_CURRENCY_CHARS
+				( price ) => price?.toString().length > LARGE_CURRENCY_CHAR_THRESHOLD
 			);
 		} );
 	} );
