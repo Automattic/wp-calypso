@@ -34,7 +34,7 @@ export function getPlanPrices(
 		planDiscountedRawPrice:
 			( siteId &&
 				planSlug &&
-				getPlanDiscountedRawPrice( state, siteId, planSlug, { isMonthly: returnMonthly } ) ) ||
+				getPlanDiscountedRawPrice( state, siteId, planSlug, { returnMonthly } ) ) ||
 			0,
 	};
 }
