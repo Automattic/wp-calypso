@@ -338,6 +338,7 @@ export const FEATURE_EXTENSIONS = 'extensions-v1';
 export const FEATURE_STATS_JP = 'stats-jp';
 export const FEATURE_SPAM_JP = 'spam-jp';
 export const FEATURE_LTD_SOCIAL_MEDIA_JP = 'ltd-social-media-jp';
+export const FEATURE_SHARES_SOCIAL_MEDIA_JP = 'shares-social-media-jp';
 export const FEATURE_CONTACT_FORM_JP = 'contact-form-jp';
 export const FEATURE_PAID_SUBSCRIBERS_JP = 'paid-subscribers-jp';
 export const FEATURE_VIDEOPRESS_JP = 'videopress-jp';
