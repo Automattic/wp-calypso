@@ -12,17 +12,17 @@ class UpworkBanner extends PureComponent {
 	static propTypes = {
 		currentPlan: PropTypes.object,
 		location: PropTypes.string.isRequired,
-		utmCampaign: PropTypes.string.isRequired,
+		refURLParam: PropTypes.string.isRequired,
 		siteId: PropTypes.number,
 		translate: PropTypes.func.isRequired,
 	};
 
 	render() {
-		const { translate, location, utmCampaign, currentPlan } = this.props;
+		const { translate, location, refURLParam, currentPlan } = this.props;
 		const plan = currentPlan?.productSlug;
 		const builtByWpUrl = new URL( 'https://wordpress.com/built-by/' );
 		builtByWpUrl.search = new URLSearchParams( {
-			utm_campaign: utmCampaign,
+			ref: refURLParam,
 		} );
 
 		return (
