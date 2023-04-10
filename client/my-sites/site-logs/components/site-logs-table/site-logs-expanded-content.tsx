@@ -9,7 +9,7 @@ export default function SiteLogsExpandedContent( { log }: Props ) {
 	return (
 		<div className="site-logs-table__expanded-content">
 			{ Object.keys( log ).map( ( key ) => (
-				<tr key={ `expanded-row-${ key }` }>
+				<tr key={ key }>
 					<td>
 						<strong>{ key }</strong>
 					</td>
