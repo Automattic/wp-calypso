@@ -111,15 +111,23 @@ references:
     name: Decrypt desktop code signing certificates
     command: |
       openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/mac.p12.enc -out desktop/resource/certificates/mac.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
-      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}" -nopad
+      openssl aes-256-cbc -md md5 -d -in desktop/resource/certificates/win.p12.enc -out desktop/resource/certificates/win.p12 -k "${CALYPSO_SECRETS_ENCRYPTION_KEY}"
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
     when: on_success
-    command: cd desktop && yarn ci:github:dismiss-review
+    command: |
+      source $HOME/.nvm/nvm.sh
+      nvm use
+      npm install -g yarn
+      cd desktop && yarn ci:github:dismiss-review
   desktop-notify-github-failure: &desktop-notify-github-failure
     name: Notify Github Failure
     when: on_fail
-    command: cd desktop && yarn ci:github:add-review
+    command: |
+      source $HOME/.nvm/nvm.sh
+      nvm use
+      npm install -g yarn    
+      cd desktop && yarn ci:github:add-review
 
 commands:
   store-artifacts-and-test-results:
@@ -158,7 +166,7 @@ jobs:
 
   wp-desktop-mac:
     macos:
-      xcode: '12.3.0'
+      xcode: '14.2.0'
     shell: /bin/bash --login
     working_directory: /Users/distiller/wp-calypso
     environment:
@@ -189,8 +197,8 @@ jobs:
 
             # Override SDKROOT and MACOSX_DEPLOYMENT_TARGET to ensure correct SDK configuration:
             # https://github.com/Homebrew/homebrew-core/pull/19296#issuecomment-352867571
-            export SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk'
-            export MACOSX_DEPLOYMENT_TARGET=11.1
+            export SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk'
+            export MACOSX_DEPLOYMENT_TARGET=10.13
 
             cd desktop && ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
       - run:
@@ -356,19 +364,19 @@ jobs:
                   rm -rf desktop/release/win-ia32-unpacked
                   rm desktop/release/builder-debug.yml || true
                 shell: bash.exe
-      - when:
-          condition: << pipeline.git.tag >>
-          steps:
-            - run:
-                name: Import Codesigning Certificate
-                command: |
-                  # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
-                  # Ref: https://travis-ci.community/t/codesigning-on-windows/
-                  #
-                  # Fix: Import .p12 into the local certificate store. Sign Tool will use
-                  # package.json's `certificateSubjectName` to find the imported cert.
-                  $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
-                  Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
+      # - when:
+          # condition: << pipeline.git.tag >>
+          # steps:
+      - run:
+          name: Import Codesigning Certificate
+          command: |
+            # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
+            # Ref: https://travis-ci.community/t/codesigning-on-windows/
+            #
+            # Fix: Import .p12 into the local certificate store. Sign Tool will use
+            # package.json's `certificateSubjectName` to find the imported cert.
+            $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
+            Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
       - run:
           name: Build NSIS
           command: |
@@ -376,7 +384,8 @@ jobs:
             make -f desktop/Makefile build-main
 
             # Codesign release (tagged) builds only
-            If ( $env:CIRCLE_TAG ) { $env:ARG1='-c.win.certificateSubjectName="Automattic"' }
+            # If ( $env:CIRCLE_TAG ) { $env:ARG1='-c.win.certificateSubjectName="Automattic"' }
+            $env:ARG1='-c.win.certificateSubjectName="Automattic"'
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
@@ -466,15 +475,15 @@ workflows:
                 - /circleci.*/
                 - /release\/.*/
                 - /desktop\/.*/
-#     - wp-desktop-mac:
-#         requires:
-#           - wp-desktop-assets
-#         filters:
-#           branches:
-#             only:
-#               - trunk
-#               - /release\/.*/
-#               - /desktop\/.*/
+      - wp-desktop-mac:
+          requires:
+            - wp-desktop-assets
+          filters:
+            branches:
+              only:
+                - trunk
+                - /release\/.*/
+                - /desktop\/.*/
       - wp-desktop-linux:
           requires:
             - wp-desktop-assets
