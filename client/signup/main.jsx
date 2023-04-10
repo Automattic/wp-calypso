@@ -313,6 +313,24 @@ class Signup extends Component {
 		}
 	}
 
+	getRecordPropsFromFlow = () => {
+		const requiredDeps = this.getCurrentFlowSupportedQueryParams();
+
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		const optionalDependenciesInQuery = flow?.optionalDependenciesInQuery ?? [];
+		const optionalDeps = this.extractFlowDependenciesFromQuery( optionalDependenciesInQuery );
+
+		const deps = { ...requiredDeps, ...optionalDeps };
+
+		const snakeCaseDeps = {};
+
+		for ( const depsKey in deps ) {
+			snakeCaseDeps[ camelToSnakeCase( depsKey ) ] = deps[ depsKey ];
+		}
+
+		return snakeCaseDeps;
+	};
+
 	getRecordProps() {
 		const { signupDependencies } = this.props;
 		let theme = get( signupDependencies, 'selectedDesign.theme' );
@@ -321,16 +339,10 @@ class Signup extends Component {
 			theme = signupDependencies.themeParameter;
 		}
 
-		const deps = this.getCurrentFlowSupportedQueryParams();
-
-		const snakeCaseDeps = {};
-
-		for ( const depsKey in deps ) {
-			snakeCaseDeps[ camelToSnakeCase( depsKey ) ] = deps[ depsKey ];
-		}
+		const deps = this.getRecordPropsFromFlow();
 
 		return {
-			...snakeCaseDeps,
+			...deps,
 			theme,
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
@@ -611,18 +623,11 @@ class Signup extends Component {
 		return window.location.origin + path;
 	};
 
-	getDependenciesInQuery = () => {
+	extractFlowDependenciesFromQuery = ( dependencies ) => {
 		const queryObject = this.props.initialContext?.query ?? {};
 
-		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
-
-		const requiredDependenciesInQuery = flow?.providesDependenciesInQuery ?? [];
-		const optionalDependenciesInQuery = flow?.optionalDependenciesInQuery ?? [];
-
-		const dependenciesInQuery = [ ...requiredDependenciesInQuery, ...optionalDependenciesInQuery ];
-
 		const result = {};
-		for ( const dependencyKey of dependenciesInQuery ) {
+		for ( const dependencyKey of dependencies ) {
 			const value = queryObject[ dependencyKey ];
 			if ( value != null ) {
 				result[ dependencyKey ] = value;
@@ -630,6 +635,13 @@ class Signup extends Component {
 		}
 
 		return result;
+	};
+
+	getDependenciesInQuery = () => {
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		const requiredDependenciesInQuery = flow?.providesDependenciesInQuery ?? [];
+
+		return this.extractFlowDependenciesFromQuery( requiredDependenciesInQuery );
 	};
 
 	getCurrentFlowSupportedQueryParams = () => {
