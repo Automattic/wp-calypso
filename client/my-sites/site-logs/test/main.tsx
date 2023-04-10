@@ -80,7 +80,7 @@ test( 'displays the last 7 days worth of logs in descending order on mount', asy
 	await waitFor( () => expect( screen.getByText( /log entry/ ) ).toBeInTheDocument() );
 } );
 
-test( 'date is always rendered in the first column place', async () => {
+test( 'date is always rendered in the second column place', async () => {
 	mockSuccessfulLogApis( [
 		// API is returning date in the last column
 		{ message_first: 'log entry', date: '2023-03-24T04:36:04.238Z' },
@@ -89,7 +89,7 @@ test( 'date is always rendered in the first column place', async () => {
 	const { container } = render( <SiteLogs />, { initialState: makeTestState() } );
 
 	await waitFor( () =>
-		expect( container.querySelector( 'th:first-child' ) ).toHaveTextContent( 'date' )
+		expect( container.querySelector( 'th:nth-child(2)' ) ).toHaveTextContent( 'date' )
 	);
 } );
 

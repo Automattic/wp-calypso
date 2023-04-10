@@ -583,7 +583,8 @@ export function siteSelection( context, next ) {
 					const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
 
 					if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
-						return page.redirect( context.path.replace( siteFragment, siteSlug ) );
+						const hash = context.hashstring ? `#${ context.hashstring }` : '';
+						return page.redirect( context.path.replace( siteFragment, siteSlug ) + hash );
 					}
 				}
 

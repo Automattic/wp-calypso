@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page from 'page';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
 import { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/show-auto-loading-homepage-warning';
@@ -54,6 +56,15 @@ export function activate(
 			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
 		) {
 			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
+		}
+
+		// Check if the theme is a .org Theme and redirect it to the Marketplace theme installation page
+		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
+		if ( isDotOrgTheme ) {
+			const siteSlug = getSiteSlug( getState(), siteId );
+
+			dispatch( productToBeInstalled( themeId, siteSlug ) );
+			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {

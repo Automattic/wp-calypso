@@ -64,6 +64,17 @@ class ThanksModal extends Component {
 	}
 
 	static getDerivedStateFromProps( nextProps, prevState ) {
+		/**
+		 * Clear activation status and don't show the modal if the theme is not a WPCOM theme.
+		 */
+		if ( ! nextProps.isThemeWpcom && nextProps.siteId ) {
+			nextProps.clearActivated( nextProps.siteId );
+			return {
+				isVisible: false,
+				wasInstalling: nextProps.isInstalling,
+			};
+		}
+
 		if ( nextProps.isInstalling || nextProps.isActivating || nextProps.hasActivated ) {
 			return {
 				isVisible: true,
