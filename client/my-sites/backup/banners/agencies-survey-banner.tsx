@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import blogPostComments from 'calypso/assets/images/jetpack/block-post-comments.svg';
+import blogPostCommentsIcon from 'calypso/assets/images/jetpack/block-post-comments.svg';
 import Banner from 'calypso/components/banner';
 import { isAgencyUser } from 'calypso/state/partner-portal/partner/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -29,7 +29,7 @@ const AgenciesSurveyBanner: FunctionComponent = () => {
 				'What can we do to make your job easier by improving our products & tools?'
 			) }
 			href={ surveyUrl }
-			iconPath={ blogPostComments }
+			iconPath={ blogPostCommentsIcon }
 			dismissPreferenceName={ `agencies-survey-banner-${ siteId }` }
 			event="calypso_backup_agencies_survey_banner"
 			tracksImpressionName="calypso_backup_agencies_survey_banner_view"
