@@ -13,7 +13,6 @@ import {
 } from 'calypso/my-sites/hosting/staging-site-card/use-production-site-detail';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 
 const FirstPlaceholder = styled( LoadingPlaceholder )( {
 	height: 24,
@@ -50,7 +49,7 @@ const ActionButtons = styled.div( {
 
 type CardProps = {
 	disabled: boolean;
-	siteId: number | null;
+	siteId: number;
 };
 
 function StagingSiteProductionCard( { disabled, siteId }: CardProps ) {
@@ -136,12 +135,8 @@ function StagingSiteProductionCard( { disabled, siteId }: CardProps ) {
 
 export default connect( ( state ) => {
 	const currentUserId = getCurrentUserId( state );
-	const siteId = getSelectedSiteId( state );
-	const siteOwnerId = getSelectedSite( state )?.site_owner;
 
 	return {
 		currentUserId,
-		siteId,
-		siteOwnerId,
 	};
 } )( StagingSiteProductionCard );

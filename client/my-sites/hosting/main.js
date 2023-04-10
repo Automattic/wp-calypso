@@ -199,7 +199,9 @@ class Hosting extends Component {
 								{ isStagingSiteEnabled && ! isWpcomStagingSite && hasStagingSitesFeature && (
 									<StagingSiteCard disabled={ isDisabled } />
 								) }
-								{ isWpcomStagingSite && <StagingSiteProductionCard disabled={ isDisabled } /> }
+								{ isWpcomStagingSite && siteId && (
+									<StagingSiteProductionCard siteId={ siteId } disabled={ isDisabled } />
+								) }
 								{ isGithubIntegrationEnabled && <GitHubCard /> }
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
