@@ -10,7 +10,7 @@ type PatternSelectorProps = {
 };
 
 const PatternSelector = ( {
-	patterns,
+	patterns = [],
 	onSelect,
 	selectedPattern,
 	emptyPatternText,

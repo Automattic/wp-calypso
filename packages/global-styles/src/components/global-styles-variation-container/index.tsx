@@ -2,6 +2,7 @@ import {
 	__unstableIframe as Iframe,
 	__unstableEditorStyles as EditorStyles,
 } from '@wordpress/block-editor';
+import { useRefEffect } from '@wordpress/compose';
 import { useGlobalStylesOutput } from '@wordpress/edit-site/build-module/components/global-styles/use-global-styles-output';
 import { useMemo } from 'react';
 import './style.scss';
@@ -56,6 +57,15 @@ const GlobalStylesVariationContainer = ( {
 				visibility: width ? 'visible' : 'hidden',
 			} }
 			tabIndex={ -1 }
+			contentRef={ useRefEffect( ( bodyElement ) => {
+				// Disable moving focus to the writing flow wrapper if the focus disappears
+				// See https://github.com/WordPress/gutenberg/blob/aa8e1c52c7cb497e224a479673e584baaca97113/packages/block-editor/src/components/writing-flow/use-tab-nav.js#L136
+				const onFocusOut = ( event: Event ) => event.stopImmediatePropagation();
+				bodyElement.addEventListener( 'focusout', onFocusOut );
+				return () => {
+					bodyElement.removeEventListener( 'focusout', onFocusOut );
+				};
+			}, [] ) }
 			scrolling="no"
 			{ ...props }
 		>

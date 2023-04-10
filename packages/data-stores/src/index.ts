@@ -2,8 +2,6 @@ import * as Analyzer from './analyzer';
 import * as AutomatedTransferEligibility from './automated-transfer-eligibility';
 import * as DomainSuggestions from './domain-suggestions';
 import * as HelpCenter from './help-center';
-import * as I18n from './i18n';
-import * as Launch from './launch';
 import * as Onboard from './onboard';
 import * as Plans from './plans';
 import * as ProductsList from './products-list';
@@ -12,7 +10,6 @@ import * as Site from './site';
 import * as StepperInternal from './stepper-internal';
 import * as Subscriber from './subscriber';
 import * as User from './user';
-import * as WPCOMFeatures from './wpcom-features';
 import * as WpcomPlansUI from './wpcom-plans-ui';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
 export { useHas3PC } from './queries/use-has-3rd-party-cookies';
@@ -30,7 +27,6 @@ export * from './templates';
 export * from './onboard/types';
 export * from './domain-suggestions/types';
 export * from './plans/types';
-export * from './launch/types';
 export * from './user/types';
 
 const { SubscriptionManager } = Reader;
@@ -40,12 +36,9 @@ export {
 	User,
 	DomainSuggestions,
 	HelpCenter,
-	I18n,
 	Site,
 	Plans,
 	WpcomPlansUI,
-	Launch,
-	WPCOMFeatures,
 	Onboard,
 	ProductsList,
 	AutomatedTransferEligibility,
@@ -66,4 +59,3 @@ export * from './contextual-help/constants';
 export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
 export type { OnboardSelect } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';
-export type { WpcomFeaturesSelect } from './wpcom-features/types';

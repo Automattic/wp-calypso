@@ -305,6 +305,7 @@ import {
 	FEATURE_STATS_JP,
 	FEATURE_SPAM_JP,
 	FEATURE_LTD_SOCIAL_MEDIA_JP,
+	FEATURE_SHARES_SOCIAL_MEDIA_JP,
 	FEATURE_CONTACT_FORM_JP,
 	FEATURE_PAID_SUBSCRIBERS_JP,
 	FEATURE_VIDEOPRESS_JP,
@@ -329,6 +330,25 @@ import {
 	FEATURE_JETPACK_BOOST_MONTHLY,
 	FEATURE_JETPACK_SOCIAL_BASIC,
 	FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY,
+	FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+	FEATURE_SELL_INTERNATIONALLY,
+	FEATURE_AUTOMATIC_SALES_TAX,
+	FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+	FEATURE_SELL_EGIFTS_AND_VOUCHERS,
+	FEATURE_EMAIL_MARKETING,
+	FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
+	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
+	FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+	FEATURE_MARKETING_AUTOMATION,
+	FEATURE_AUTOMATED_EMAIL_TRIGGERS,
+	FEATURE_CART_ABANDONMENT_EMAILS,
+	FEATURE_REFERRAL_PROGRAMS,
+	FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
+	FEATURE_LOYALTY_POINTS_PROGRAMS,
+	FEATURE_OFFER_BULK_DISCOUNTS,
+	FEATURE_RECOMMEND_ADD_ONS,
+	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
+	FEATURE_MIN_MAX_ORDER_QUANTITY,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -472,12 +492,13 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	get2023PlanComparisonJetpackFeatureOverride: () => [
 		FEATURE_STATS_JP,
 		FEATURE_SPAM_JP,
-		FEATURE_LTD_SOCIAL_MEDIA_JP,
 		FEATURE_CONTACT_FORM_JP,
 		FEATURE_SITE_ACTIVITY_LOG_JP,
+		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 	],
 
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_1GB_STORAGE ],
+	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	getIncludedFeatures: () => [],
 	getInferiorFeatures: () => [],
 	getCancellationFeatureList: (): CancellationFeatureLists => ( {
@@ -658,6 +679,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_PREMIUM_CONTENT_JP,
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_6GB_STORAGE ],
+	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	getNewsletterDescription: () =>
 		i18n.translate(
 			'Jumpstart your Newsletter with a custom domain, ad-free experience, and the ability to sell subscriptions, take payments, and collect donations from day one. Backed with email support to help get everything just right.'
@@ -846,6 +868,7 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
+	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -888,6 +911,8 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 				FEATURE_CANCELLATION_SHIPPING_CARRIERS,
 				FEATURE_CANCELLATION_PREMIUM_DESIGN,
 				FEATURE_CANCELLATION_PLUGINS,
+				FEATURE_PREMIUM_THEMES,
+				FEATURE_SELL_INTERNATIONALLY,
 			],
 			andMore: true,
 		},
@@ -896,9 +921,53 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	getTitle: () => i18n.translate( 'Performance' ),
+	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+		FEATURE_MARKETING_AUTOMATION,
+		FEATURE_AUTOMATED_EMAIL_TRIGGERS,
+		FEATURE_CART_ABANDONMENT_EMAILS,
+		FEATURE_REFERRAL_PROGRAMS,
+		FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
+		FEATURE_LOYALTY_POINTS_PROGRAMS,
+		FEATURE_OFFER_BULK_DISCOUNTS,
+		FEATURE_RECOMMEND_ADD_ONS,
+		FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
+		FEATURE_MIN_MAX_ORDER_QUANTITY,
+	],
+	get2023PricingGridSignupStorageOptions: () => [],
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Express Performance and take advantage of its powerful marketplace features.'
+		),
+} );
+
+const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
+	...getPlanEcommerceDetails(),
+	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
+		FEATURE_EMAIL_LIVE_CHAT_SUPPORT,
+		FEATURE_UNLIMITED_ADMINS,
+		FEATURE_50GB_STORAGE,
+		FEATURE_UNLIMITED_PRODUCTS_SERVICES,
+		FEATURE_PREMIUM_THEMES,
+		FEATURE_SELL_INTERNATIONALLY,
+		FEATURE_AUTOMATIC_SALES_TAX,
+		FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+		FEATURE_INTEGRATED_SHIPMENT_TRACKING,
+		FEATURE_REAL_TIME_ANALYTICS,
+		FEATURE_SELL_EGIFTS_AND_VOUCHERS,
+		FEATURE_EMAIL_MARKETING,
+		FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
+		FEATURE_ADVANCED_SEO_TOOLS,
+	],
+	get2023PricingGridSignupStorageOptions: () => [],
+	getTitle: () => i18n.translate( 'Essential' ),
+	getPlanTagline: () =>
+		i18n.translate( 'Everything you need to set up your store and start selling your products.' ),
+	getTagline: () =>
+		i18n.translate(
+			'Learn more about everything included with Woo Express Essential and take advantage of its powerful marketplace features.'
 		),
 } );
 
@@ -1047,6 +1116,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SITE_ACTIVITY_LOG_JP,
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_13GB_STORAGE ],
+	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -1217,6 +1287,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SALES_REPORTS,
 		FEATURE_SHIPPING_CARRIERS,
 		FEATURE_EXTENSIONS,
+		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
 	// Features not displayed but used for checking plan abilities
@@ -1359,15 +1430,6 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 			andMore: true,
 		},
 	} ),
-} );
-
-const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
-	...getPlanBusinessDetails(),
-	getTitle: () => i18n.translate( 'Essential' ),
-	getTagline: () =>
-		i18n.translate(
-			'Learn more about everything included with Woo Express Essential and take advantage of its powerful marketplace features.'
-		),
 } );
 
 // The following is not a real plan, we are adding it here so that

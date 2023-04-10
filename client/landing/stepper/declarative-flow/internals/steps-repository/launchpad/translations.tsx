@@ -20,10 +20,8 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 	switch ( flow ) {
 		case NEWSLETTER_FLOW:
 			translatedStrings.flowName = translate( 'Newsletter' );
-			translatedStrings.title = translate( "You're all set to start publishing" );
-			translatedStrings.subtitle = translate(
-				'Why not welcome your readers with your first post?'
-			);
+			translatedStrings.title = translate( "Your newsletter's ready!" );
+			translatedStrings.subtitle = translate( 'Now it’s time to let your readers know.' );
 			break;
 		case LINK_IN_BIO_FLOW:
 		case LINK_IN_BIO_TLD_FLOW:

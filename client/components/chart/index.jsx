@@ -56,6 +56,9 @@ function Chart( {
 	chartXPadding,
 	sliceFromBeginning,
 	onChangeMaxBars,
+	minBarsToBeShown,
+	hideYAxis,
+	hideXAxis,
 } ) {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
 	const [ sizing, setSizing ] = useState( { clientWidth: 0, hasResized: false } );
@@ -112,7 +115,8 @@ function Chart( {
 	const minWidth = isTouch ? minTouchBarWidth : minBarWidth;
 
 	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth - chartXPadding; // mobile safari bug with zero width
-	const maxBars = Math.floor( width / minWidth );
+	// Max number of bars that can fit in the chart. If minBarsToBeShown is set, use that instead.
+	const maxBars = minBarsToBeShown ?? Math.floor( width / minWidth );
 
 	useEffect( () => {
 		if ( onChangeMaxBars ) {
@@ -191,7 +195,7 @@ function Chart( {
 					</div>
 				) }
 			</div>
-			{ ! isPlaceholder && <ChartYAxis /> }
+			{ ! isPlaceholder && ! hideYAxis && <ChartYAxis /> }
 			<BarContainer
 				barClick={ barClick }
 				chartWidth={ width }
@@ -201,6 +205,7 @@ function Chart( {
 				isTouch={ hasTouch() }
 				setTooltip={ handleTooltipChange }
 				yAxisMax={ yMax }
+				hideXAxis={ hideXAxis }
 			/>
 			{ isTooltipVisible && (
 				<Tooltip
@@ -228,6 +233,9 @@ Chart.propTypes = {
 	translate: PropTypes.func,
 	chartXPadding: PropTypes.number,
 	sliceFromBeginning: PropTypes.bool,
+	minBarsToBeShown: PropTypes.number,
+	hideYAxis: PropTypes.bool,
+	hideXAxis: PropTypes.bool,
 };
 
 Chart.defaultProps = {
@@ -237,6 +245,8 @@ Chart.defaultProps = {
 	minTouchBarWidth: 42,
 	chartXPadding: 20,
 	sliceFromBeginning: true,
+	hideYAxis: false,
+	hideXAxis: false,
 };
 
 export default withRtl( localize( Chart ) );

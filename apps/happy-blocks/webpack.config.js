@@ -1,12 +1,18 @@
 /**
  * WARNING: No ES6 modules here. Not transpiled!
  */
+// eslint-disable-next-line import/no-nodejs-modules
+const { existsSync } = require( 'fs' );
 const path = require( 'path' );
 const getBaseWebpackConfig = require( '@automattic/calypso-build/webpack.config.js' );
 const ReadableJsAssetsWebpackPlugin = require( '@wordpress/readable-js-assets-webpack-plugin' );
 const CopyPlugin = require( 'copy-webpack-plugin' );
 const webpack = require( 'webpack' );
 const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
+
+function ifExists( rule ) {
+	return existsSync( rule.from ) ? rule : undefined;
+}
 
 function getWebpackConfig( env = { block: '' }, argv ) {
 	const webpackConfig = getBaseWebpackConfig( { ...env, WP: true }, argv );
@@ -39,22 +45,29 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 			new ReadableJsAssetsWebpackPlugin(),
 			new CopyPlugin( {
 				patterns: [
-					{
+					ifExists( {
 						from: path.resolve( blockPath, 'index.php' ),
 						to: path.resolve( blockPath, 'build', '[name][ext]' ),
 						transform( content ) {
 							return content.toString().replace( '/build/rtl', '/rtl' ).replace( '/build', '/' );
 						},
-					},
-					{
+					} ),
+					ifExists( {
+						from: path.resolve( blockPath, 'includes.php' ),
+						to: path.resolve( blockPath, 'build', '[name][ext]' ),
+						transform( content ) {
+							return content.toString().replace( '/build/rtl', '/rtl' ).replace( '/build', '/' );
+						},
+					} ),
+					ifExists( {
 						from: path.resolve( blockPath, 'block.json' ),
 						to: path.resolve( blockPath, 'build', '[name][ext]' ),
-					},
-					{
+					} ),
+					ifExists( {
 						from: path.resolve( blockPath, 'rtl/block.json' ),
 						to: path.resolve( blockPath, 'build/rtl', '[name][ext]' ),
-					},
-				],
+					} ),
+				].filter( Boolean ),
 			} ),
 			new webpack.DefinePlugin( {
 				__i18n_text_domain__: JSON.stringify( 'happy-blocks' ),

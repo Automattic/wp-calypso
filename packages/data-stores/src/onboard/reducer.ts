@@ -3,7 +3,7 @@ import { SiteGoal } from './constants';
 import type { OnboardAction } from './actions';
 import type { DomainForm, ProfilerData } from './types';
 import type { DomainSuggestion } from '../domain-suggestions';
-import type { FeatureId } from '../wpcom-features/types';
+import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { callApi } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
-import type { SiteSubscriptionDeliveryFrequency } from '../types';
+import type { SiteSubscription, SiteSubscriptionDeliveryFrequency } from '../types';
 
 type SiteSubscriptionDeliveryFrequencyParams = {
 	delivery_frequency: SiteSubscriptionDeliveryFrequency;
@@ -52,7 +52,44 @@ const useSiteDeliveryFrequencyMutation = () => {
 			return response;
 		},
 		{
-			onSuccess: () => {
+			onMutate: async ( params ) => {
+				await queryClient.cancelQueries( [ 'read', 'site-subscriptions', isLoggedIn ] );
+				const previousSiteSubscriptions = queryClient.getQueryData< SiteSubscription[] >( [
+					'read',
+					'site-subscriptions',
+					isLoggedIn,
+				] );
+
+				const mutatedSiteSubscriptions = previousSiteSubscriptions?.map( ( siteSubscription ) => {
+					if ( siteSubscription.blog_ID === params.blog_id ) {
+						return {
+							...siteSubscription,
+							delivery_methods: {
+								...siteSubscription.delivery_methods,
+								email: {
+									...siteSubscription.delivery_methods?.email,
+									post_delivery_frequency: params.delivery_frequency,
+								},
+							},
+						};
+					}
+					return siteSubscription;
+				} );
+
+				queryClient.setQueryData(
+					[ 'read', 'site-subscriptions', isLoggedIn ],
+					mutatedSiteSubscriptions
+				);
+
+				return { previousSiteSubscriptions };
+			},
+			onError: ( err, params, context ) => {
+				queryClient.setQueryData(
+					[ 'read', 'site-subscriptions', isLoggedIn ],
+					context?.previousSiteSubscriptions
+				);
+			},
+			onSettled: () => {
 				queryClient.invalidateQueries( [ 'read', 'site-subscriptions', isLoggedIn ] );
 			},
 		}

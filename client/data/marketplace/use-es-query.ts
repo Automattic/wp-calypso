@@ -44,6 +44,8 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 		const plugin: Plugin = {
 			name: decodeEntities( hit.plugin?.title ), // TODO: add localization
 			slug: decodeEntities( hit.slug ),
+			software_slug: hit.plugin?.software_slug,
+			org_slug: hit.plugin?.org_slug,
 			version: hit[ 'plugin.stable_tag' ],
 			author: hit.author,
 			author_name: hit.plugin?.author,

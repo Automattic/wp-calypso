@@ -17,6 +17,7 @@ export type PlanProperties = {
 	jpFeatures: TransformedFeatureObject[];
 	isLandingPage?: boolean;
 	isPlaceholder?: boolean;
+	isVisible: boolean;
 	planConstantObj: ReturnType< typeof applyTestFiltersToPlansList >;
 	planName: string;
 	planObject: PricedAPIPlan | undefined;

@@ -8,6 +8,13 @@ import {
 import type { CheckoutPaymentMethodSlug } from '@automattic/wpcom-checkout';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
+function convertErrorToString( error: Error ): string {
+	if ( error.cause ) {
+		return `${ error.message }; Cause: ${ error.cause }; Stack: ${ error.stack }`;
+	}
+	return `${ error.message }; Stack: ${ error.stack }`;
+}
+
 export function logStashLoadErrorEvent(
 	errorType: string,
 	error: Error,
@@ -16,7 +23,7 @@ export function logStashLoadErrorEvent(
 	return logStashEvent( 'composite checkout load error', {
 		...additionalData,
 		type: errorType,
-		message: error.message + '; Stack: ' + error.stack,
+		message: convertErrorToString( error ),
 	} );
 }
 

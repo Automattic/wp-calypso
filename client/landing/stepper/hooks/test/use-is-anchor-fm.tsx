@@ -7,8 +7,10 @@ import { MemoryRouter as Router } from 'react-router-dom';
 import { useIsAnchorFm } from '../use-is-anchor-fm';
 
 describe( 'use-is-anchor-fm tests', () => {
-	const RouteWrapper: React.FC = ( props: { children?: React.ReactNode; path: string } ) => (
-		<Router initialEntries={ [ props.path ] }>{ props.children }</Router>
+	const RouteWrapper = ( props: { children?: React.ReactNode; path: string } ) => (
+		<Router initialEntries={ [ props.path ] } initialIndex={ 0 }>
+			{ props.children }
+		</Router>
 	);
 
 	test( 'Returns true for a valid podcast ID', () => {
