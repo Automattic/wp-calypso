@@ -37,6 +37,7 @@ import RewindConfigEditor from '../rewind-flow/rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from '../rewind-flow/rewind-flow-notice';
 import { defaultRewindConfig, RewindConfig } from '../rewind-flow/types';
 import CloneFlowStepProgress from './step-progress';
+import CloneFlowSuggestionSearch from './suggestion-search';
 import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
 import './style.scss';
@@ -63,6 +64,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const [ userHasSetBackupPeriod, setUserHasSetBackupPeriod ] = useState< boolean >( false );
 	const [ backupPeriod, setBackupPeriod ] = useState< string >( '' );
 	const [ backupDisplayDate, setBackupDisplayDate ] = useState< string >( '' );
+	const [ showCredentialForm, setShowCredentialForm ] = useState< boolean >( false );
 
 	const activityLogPath = '/activity-log/' + siteSlug;
 	const refreshBackups = useCallback(
@@ -105,6 +107,30 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		host: 'generic',
 		role: 'alternate',
 	};
+
+	const stagingSites = [
+		{ url: 'www.example.com', blog_id: 123456 },
+		{ url: 'www.foo.com', blog_id: 123457 },
+		{ url: 'www.bar.com', blog_id: 123458 },
+	];
+
+	const siteSuggestions = stagingSites.map( ( site ) => {
+		return { label: site.url, category: 'Staging Sites' };
+	} );
+
+	function onSearchChange( newValue: string, isNavigating: boolean ) {
+		if ( true === isNavigating ) {
+			if ( 'new' === newValue ) {
+				setShowCredentialForm( true );
+			} else {
+				const selectedSite = stagingSites.find( ( site ) => site.url === newValue );
+				if ( selectedSite ) {
+					setCloneDestination( selectedSite.blog_id.toString() );
+					setUserHasSetDestination( true );
+				}
+			}
+		}
+	}
 
 	const requestClone = useCallback(
 		() =>
@@ -159,14 +185,20 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 				{ translate( 'Input information about the site you want to clone to' ) }
 			</p>
 			<div className="clone-flow__advanced-credentials">
-				<AdvancedCredentials
-					action={ CredSettings.action }
-					host={ CredSettings.host }
-					role={ CredSettings.role }
-					onFinishCallback={ () => onSetDestination( CredSettings.role ) }
-					redirectOnFinish={ false }
-					goBackPath={ previousPath }
+				<CloneFlowSuggestionSearch
+					siteSuggestions={ siteSuggestions }
+					onSearchChange={ onSearchChange }
 				/>
+				{ showCredentialForm && (
+					<AdvancedCredentials
+						action={ CredSettings.action }
+						host={ CredSettings.host }
+						role={ CredSettings.role }
+						onFinishCallback={ () => onSetDestination( CredSettings.role ) }
+						redirectOnFinish={ false }
+						goBackPath={ previousPath }
+					/>
+				) }
 			</div>
 		</>
 	);
