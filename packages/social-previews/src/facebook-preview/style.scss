@@ -1,19 +1,9 @@
+@import "./variables";
 @import "../shared";
 
-:root {
-	--facebook-preview-width: 680px;
-	--facebook-preview-text-color: #050505;
-	--facebook-preview-light-text-color: #65676b;
-	--facebook-preview-font-family: system-ui, -apple-system, BlinkMacSystemFont, ".SFNSText-Regular", sans-serif;
-	--facebook-preview-card-background-color: #fff;
-	--facebook-preview-card-border-radius: 4px;
-	--facebook-preview-card-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-	--facebook-preview-text-background-color: #f0f2f5;
-	--facebook-preview-text-border: 1px solid #d4d0d4;
-}
-
 .facebook-preview__section {
-	width: var(--facebook-preview-width);
+	width: clamp($facebook-preview-min-width, 100%, $facebook-preview-max-width);
+	margin: 0 auto;
 }
 
 .facebook-preview__post {
@@ -22,38 +12,56 @@
 	display: flex;
 	flex-direction: column;
 
-	background-color: var(--facebook-preview-card-background-color);
-	border-radius: var(--facebook-preview-card-border-radius);
-	box-shadow: var(--facebook-preview-card-box-shadow);
+	background-color: $facebook-preview-card-background-color;
+	border-radius: $facebook-preview-card-border-radius;
+	box-shadow: $facebook-preview-card-box-shadow;
 
-	font-family: var(--facebook-preview-font-family);
+	font-family: $facebook-preview-font-family;
 }
 
 .facebook-preview__custom-text {
 	margin: 0;
 	padding: 0 1rem 1rem;
 
-	color: var(--facebook-preview-text-color);
+	color: $facebook-preview-text-color;
 
 	/* stylelint-disable-next-line scales/font-sizes */
 	font-size: 0.9375rem; // 15px
 	line-height: 1.33;
+	word-break: break-word;
 }
 
 .facebook-preview__body {
+	display: flex;
+	flex-direction: column;
+
+	border-top: $facebook-preview-body-border;
+	border-bottom: $facebook-preview-body-border;
+
+	&.is-portrait {
+		flex-direction: row;
+	}
+}
+
+.facebook-preview__text {
 	position: relative;
+
+	display: flex;
+	align-items: center;
+	flex: 1;
 
 	padding: 0.5rem 1rem;
 
-	background-color: var(--facebook-preview-text-background-color);
-	border-bottom: var(--facebook-preview-text-border);
-	color: var(--facebook-preview-text-color);
+	background-color: $facebook-preview-text-background-color;
+	color: $facebook-preview-text-color;
+
+	word-break: break-word;
 }
 
 .facebook-preview__url {
 	margin-bottom: 0.25rem;
 
-	color: var(--facebook-preview-light-text-color);
+	color: $facebook-preview-light-text-color;
 
 	/* stylelint-disable-next-line scales/font-sizes */
 	font-size: 0.8125rem; // 13px
@@ -71,7 +79,7 @@
 }
 
 .facebook-preview__description {
-	color: var(--facebook-preview-light-text-color);
+	color: $facebook-preview-light-text-color;
 
 	/* stylelint-disable-next-line scales/font-sizes */
 	font-size: 0.9375rem; // 15px
@@ -79,15 +87,38 @@
 }
 
 .facebook-preview__image {
+	&.is-empty {
+		width: 140px;
+		height: 140px;
+
+		border-inline-end: $facebook-preview-body-border;
+	}
+
+	&.is-portrait {
+		> img {
+			width: 278px;
+			height: 430px;
+		}
+	}
+
+	&.is-landscape {
+		> img {
+			width: 100%;
+			aspect-ratio: 1.91;
+		}
+	}
+
 	> img {
 		display: block;
+
+		object-fit: cover;
 	}
 }
 
 .facebook-preview__info {
 	position: absolute;
 	right: 15px;
-	top: -15px;
+	top: -10px;
 
 	display: flex;
 	justify-content: center;
@@ -96,8 +127,8 @@
 	width: 30px;
 	height: 30px;
 
-	background-color: var(--facebook-preview-card-background-color);
-	border: var(--facebook-preview-text-border);
+	background-color: $facebook-preview-card-background-color;
+	border: $facebook-preview-body-border;
 	border-radius: 50%;
 
 	i {
