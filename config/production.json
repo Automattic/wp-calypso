@@ -18,6 +18,7 @@
 	"features": {
 		"ad-tracking": true,
 		"akismet/siteless-checkout": false,
+		"anchor/sunset-integration": false,
 		"bilmur-script": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
