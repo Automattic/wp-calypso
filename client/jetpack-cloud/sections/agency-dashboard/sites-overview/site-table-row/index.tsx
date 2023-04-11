@@ -118,12 +118,12 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 						'site-table__actions-button': isExpandedContentEnabled,
 					} ) }
 					// If there is an error, we need to span the whole row because we don't show the expand buttons.
-					colSpan={ hasSiteError && isExpandedContentEnabled ? 2 : 1 }
+					colSpan={ isExpandedContentEnabled ? 2 : 1 }
 				>
 					<SiteActions isLargeScreen site={ site } siteError={ siteError } />
 				</td>
-				{ /* Show expand buttons only when the feature is enabled and there is no site error. */ }
-				{ ! hasSiteError && isExpandedContentEnabled && (
+				{ /* Show expand buttons only when the feature is enabled */ }
+				{ isExpandedContentEnabled && (
 					<SiteTableExpand
 						index={ index }
 						isExpanded={ isExpanded }

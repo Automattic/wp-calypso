@@ -63,7 +63,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 									</SiteSort>
 								</th>
 							) ) }
-							<th colSpan={ isExpandedBlockEnabled ? 2 : 1 }>
+							<th colSpan={ isExpandedBlockEnabled ? 3 : 1 }>
 								<div className="plugin-common-table__bulk-actions">
 									<EditButton isLargeScreen sites={ items } />
 								</div>
