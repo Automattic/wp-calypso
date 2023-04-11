@@ -7,6 +7,7 @@ interface Props {
 	showTooltip: boolean;
 }
 
+// @todo: We could make the component more generic by passing the text as a prop.
 const SiteTableTooltip = ( { siteId, showTooltip }: Props, ref: any ) => {
 	const translate = useTranslate();
 

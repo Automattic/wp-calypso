@@ -50,24 +50,22 @@ export default function SiteTableExpand( { index, setExpanded, isExpanded, siteI
 	};
 
 	return (
-		<>
-			<td
-				className={ classNames( 'site-table__actions site-table__expand-row', {
-					'site-table__td-without-border-bottom': isExpanded,
-				} ) }
-			>
-				<>
-					<Button { ...props }>
-						<Icon icon={ isExpanded ? chevronUp : chevronDown } />
-					</Button>
-					{ ! isExpanded && isPopoverDismissed && (
-						<SiteTableTooltip ref={ buttonRef } siteId={ siteId } showTooltip={ showTooltip } />
-					) }
-					{ ! isPopoverDismissed && (
-						<SiteTablePopover savePreferenceType={ savePreferenceType } ref={ buttonRef } />
-					) }
-				</>
-			</td>
-		</>
+		<td
+			className={ classNames( 'site-table__actions site-table__expand-row', {
+				'site-table__td-without-border-bottom': isExpanded,
+			} ) }
+		>
+			<>
+				<Button { ...props }>
+					<Icon icon={ isExpanded ? chevronUp : chevronDown } />
+				</Button>
+				{ ! isExpanded && isPopoverDismissed && (
+					<SiteTableTooltip ref={ buttonRef } siteId={ siteId } showTooltip={ showTooltip } />
+				) }
+				{ ! isPopoverDismissed && (
+					<SiteTablePopover savePreferenceType={ savePreferenceType } ref={ buttonRef } />
+				) }
+			</>
+		</td>
 	);
 }
