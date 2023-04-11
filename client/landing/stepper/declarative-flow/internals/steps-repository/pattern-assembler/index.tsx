@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
@@ -74,9 +75,10 @@ const PatternAssembler = ( {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
+	const locale = useLocale();
 
 	// Fetching all patterns and categories
-	const allPatterns = useAllPatterns( site?.lang );
+	const allPatterns = useAllPatterns( locale );
 	const patternIds = useMemo(
 		() => allPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
 		[ allPatterns ]
