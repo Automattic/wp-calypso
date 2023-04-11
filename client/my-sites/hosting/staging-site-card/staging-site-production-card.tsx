@@ -80,7 +80,7 @@ function StagingSiteProductionCard( { disabled, siteId }: CardProps ) {
 	const getManageStagingSiteContent = ( productionSite: ProductionSite ) => {
 		return (
 			<>
-				<p>{ __( 'Your staging site’s production site is available at:' ) }</p>
+				<p>{ __( 'The production site is available at:' ) }</p>
 				<SiteRow>
 					<SiteIcon siteId={ productionSite.id } size={ 40 } />
 					<SiteInfo>
