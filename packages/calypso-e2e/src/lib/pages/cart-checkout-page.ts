@@ -114,7 +114,7 @@ export class CartCheckoutPage {
 	 * @throws If the expected cart item is not found in the timeout period.
 	 */
 	async validateCartItem( expectedCartItemName: string ): Promise< void > {
-		await this.page.getByText( expectedCartItemName ).waitFor();
+		await this.page.waitForSelector( selectors.cartItem( expectedCartItemName ) );
 	}
 
 	/**
