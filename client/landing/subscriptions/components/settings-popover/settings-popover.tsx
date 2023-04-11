@@ -1,7 +1,7 @@
 import { Gridicon, Popover } from '@automattic/components';
 import classNames from 'classnames';
 import { useRef } from 'react';
-import usePopoverToggle from '../hooks/use-popover-toggle';
+import usePopoverToggle from 'calypso/landing/subscriptions/hooks/use-popover-toggle';
 import './styles.scss';
 
 type SettingsPopoverProps = {

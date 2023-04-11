@@ -1278,7 +1278,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SEO_JP,
 	],
 	get2023PlanComparisonConditionalFeatures: () => [
-		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_SELL_SHIP,
 		FEATURE_CUSTOM_STORE,
 		FEATURE_INVENTORY,

@@ -22,7 +22,7 @@ type Context = {
 const MUTATION_KEY = 'addEmailForward';
 
 export function useIsLoading() {
-	const activeCount = useIsMutating( MUTATION_KEY );
+	const activeCount = useIsMutating( [ MUTATION_KEY ] );
 
 	return Boolean( activeCount );
 }

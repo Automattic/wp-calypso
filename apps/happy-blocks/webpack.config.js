@@ -46,6 +46,10 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 			new CopyPlugin( {
 				patterns: [
 					ifExists( {
+						from: path.resolve( blockPath, 'assets' ),
+						to: path.resolve( blockPath, 'build', '[name][ext]' ),
+					} ),
+					ifExists( {
 						from: path.resolve( blockPath, 'index.php' ),
 						to: path.resolve( blockPath, 'build', '[name][ext]' ),
 						transform( content ) {

@@ -1,4 +1,4 @@
-import { VIDEOPRESS_FLOW, isWithThemeFlow } from '@automattic/onboarding';
+import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -649,6 +649,23 @@ class DomainsStep extends Component {
 
 			return translate(
 				'Set your video site apart with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
+				{ components }
+			);
+		}
+
+		if ( isHostingFlow( flowName ) ) {
+			const components = {
+				span: (
+					<button
+						className="tailored-flow-subtitle__cta-text"
+						style={ { fontWeight: 500, fontSize: '1em', display: 'inline' } }
+						onClick={ () => this.handleSkip( undefined, true ) }
+					/>
+				),
+			};
+
+			return translate(
+				'Enter some descriptive keywords to get started. Not sure yet? {{span}}Decide later{{/span}}.',
 				{ components }
 			);
 		}

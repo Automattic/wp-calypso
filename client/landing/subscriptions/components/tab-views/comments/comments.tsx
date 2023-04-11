@@ -1,5 +1,5 @@
-import CommentList from '../comment-list/comment-list';
-import TabView from './tab-view';
+import { CommentList } from 'calypso/landing/subscriptions/components/comment-list';
+import TabView from '../tab-view';
 import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
 
 const posts: PostSubscription[] = [
