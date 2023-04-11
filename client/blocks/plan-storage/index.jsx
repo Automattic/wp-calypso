@@ -15,8 +15,10 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import useMediaStorageQuery from 'calypso/data/media-storage/use-media-storage-query';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
+import hasWpcomStagingSite from 'calypso/state/selectors/has-wpcom-staging-site';
 import isLegacySiteWithHigherLimits from 'calypso/state/selectors/is-legacy-site-with-higher-limits';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getSitePlanSlug, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import PlanStorageBar from './bar';
 import Tooltip from './tooltip';
@@ -26,6 +28,8 @@ import './style.scss';
 export function PlanStorage( { children, className, siteId } ) {
 	const jetpackSite = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const atomicSite = useSelector( ( state ) => isAtomicSite( state, siteId ) );
+	const isStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, siteId ) );
+	const hasStagingSite = useSelector( ( state ) => hasWpcomStagingSite( state, siteId ) );
 	const sitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const canUserUpgrade = useSelector( ( state ) =>
@@ -72,7 +76,8 @@ export function PlanStorage( { children, className, siteId } ) {
 	const planHasTopStorageSpace =
 		isBusinessPlan( sitePlanSlug ) || isEcommercePlan( sitePlanSlug ) || isProPlan( sitePlanSlug );
 
-	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace;
+	const displayUpgradeLink = canUserUpgrade && ! planHasTopStorageSpace && ! isStagingSite;
+	const isSharedQuota = isStagingSite || hasStagingSite;
 
 	const planStorageComponents = (
 		<>
@@ -95,6 +100,16 @@ export function PlanStorage( { children, className, siteId } ) {
 				<a className={ classNames( className, 'plan-storage' ) } href={ `/plans/${ siteSlug }` }>
 					{ planStorageComponents }
 				</a>
+			</Tooltip>
+		);
+	}
+	if ( isSharedQuota ) {
+		return (
+			<Tooltip
+				title={ translate( 'Storage quota is shared between production and staging.' ) }
+				className="plan-storage__tooltip"
+			>
+				<div className={ classNames( className, 'plan-storage' ) }>{ planStorageComponents }</div>
 			</Tooltip>
 		);
 	}
