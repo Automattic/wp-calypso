@@ -81,8 +81,11 @@
 	.processing-step__content {
 		background-color: #fff3;
 		border-radius: 4px;
-		.loading-bar::before {
-			background-color: #ffe61c;
+		.loading-bar {
+			background-color: #fff3;
+			&::before {
+				background-color: #ffe61c;
+			}
 		}
 	}
 
