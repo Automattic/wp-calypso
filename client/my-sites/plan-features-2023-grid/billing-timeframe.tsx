@@ -43,7 +43,9 @@ function usePerMonthDescription( {
 	}
 
 	if ( isMonthlyPlan ) {
-		// we want the raw price (discounted or not) for the yearly variant, not the site-plan discounted one
+		// We want `yearlyVariantMaybeDiscountedPricePerMonth` to be the raw price the user
+		// would pay if they choose an annual plan instead of the monthly one. So pro-rated
+		// (or site-plan specific) credits should not be taken into account.
 		const yearlyVariantMaybeDiscountedPricePerMonth =
 			planYearlyVariantPricesPerMonth.discountedRawPrice ||
 			planYearlyVariantPricesPerMonth.rawPrice;
@@ -89,7 +91,7 @@ function usePerMonthDescription( {
 const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props ) => {
 	const { planName, billingTimeframe } = props;
 	const translate = useTranslate();
-	const perMonthDescription = usePerMonthDescription( props );
+	const perMonthDescription = usePerMonthDescription( props ) || billingTimeframe;
 	const price = formatCurrency( 25000, 'USD' );
 
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
@@ -104,7 +106,7 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 		);
 	}
 
-	return <div>{ perMonthDescription || billingTimeframe }</div>;
+	return <div>{ perMonthDescription }</div>;
 };
 
 export default localize( PlanFeatures2023GridBillingTimeframe );
