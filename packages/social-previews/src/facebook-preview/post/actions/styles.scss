@@ -1,3 +1,5 @@
+@import "../../variables";
+
 .facebook-preview__post-actions {
 	display: flex;
 	align-items: center;
@@ -8,7 +10,7 @@
 	margin: 0;
 	padding: 0;
 
-	color: var(--facebook-preview-light-text-color);
+	color: $facebook-preview-light-text-color;
 	list-style-type: none;
 
 	/* stylelint-disable-next-line scales/font-sizes */

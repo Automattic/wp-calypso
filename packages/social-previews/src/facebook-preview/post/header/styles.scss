@@ -1,3 +1,5 @@
+@import "../../variables";
+
 .facebook-preview__post-header {
 	display: flex;
 	justify-content: space-between;
@@ -25,7 +27,7 @@
 }
 
 .facebook-preview__post-header-name {
-	color: var(--facebook-preview-text-color);
+	color: $facebook-preview-text-color;
 
 	/* stylelint-disable-next-line scales/font-sizes */
 	font-size: 0.9375rem; // 15px
@@ -37,7 +39,7 @@
 	display: flex;
 	align-items: center;
 
-	color: var(--facebook-preview-light-text-color);
+	color: $facebook-preview-light-text-color;
 }
 
 .facebook-preview__post-header-time {
@@ -65,7 +67,7 @@
 		width: 0.25rem;
 		height: 0.25rem;
 
-		background-color: var(--facebook-preview-light-text-color);
+		background-color: $facebook-preview-light-text-color;
 		border-radius: 50%;
 	}
 }
