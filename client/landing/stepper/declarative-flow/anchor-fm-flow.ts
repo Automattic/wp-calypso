@@ -1,8 +1,22 @@
-import { useDispatch } from '@wordpress/data';
+import { isEnabled } from '@automattic/calypso-config';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
+import { useSiteSlugParam } from '../hooks/use-site-slug-param';
+import { recordSubmitStep } from './internals/analytics/record-submit-step';
+import DesignSetup from './internals/steps-repository/design-setup';
 import ErrorStep from './internals/steps-repository/error-step';
-import { AssertConditionState, type AssertConditionResult, type Flow } from './internals/types';
+import { redirect } from './internals/steps-repository/import/util';
+import LoginStep from './internals/steps-repository/login';
+import PodcastTitleStep from './internals/steps-repository/podcast-title';
+import ProcessingStep from './internals/steps-repository/processing-step';
+import {
+	AssertConditionState,
+	type AssertConditionResult,
+	type Flow,
+	type ProvidedDependencies,
+} from './internals/types';
+import type { SiteSelect } from '@automattic/data-stores';
 
 export function isAnchorFmFlow() {
 	const sanitizePodcast = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
@@ -15,21 +29,89 @@ const anchorFmFlow: Flow = {
 	name: 'anchor-fm',
 
 	useSteps() {
-		return [ { slug: 'error', component: ErrorStep } ];
+		if ( isEnabled( 'anchor/sunset-integration' ) ) {
+			return [ { slug: 'error', component: ErrorStep } ];
+		}
+		return [
+			{ slug: 'login', component: LoginStep },
+			{ slug: 'podcastTitle', component: PodcastTitleStep },
+			{ slug: 'designSetup', component: DesignSetup },
+			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'error', component: ErrorStep },
+		];
 	},
 
 	useAssertConditions(): AssertConditionResult {
 		const { setSiteSetupError } = useDispatch( SITE_STORE );
 		const { __ } = useI18n();
 
-		const error = __( '[Notice title]' );
-		const message = __( '[Notice message]' );
-		setSiteSetupError( error, message );
+		if ( isEnabled( 'anchor/sunset-integration' ) ) {
+			/**
+			 * TODO: Replace the title and the message with the content of the link in the PR description.
+			 */
+			const error = __( '[Notice title]' );
+			const message = __( '[Notice message]' );
+			setSiteSetupError( error, message );
+		}
 		return { state: AssertConditionState.SUCCESS };
 	},
 
-	useStepNavigation() {
-		return {};
+	useStepNavigation( currentStep, navigate ) {
+		const flowName = this.name;
+		const { getNewSite } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
+		const siteSlugParam = useSiteSlugParam();
+
+		if ( isEnabled( 'anchor/sunset-integration' ) ) {
+			return {};
+		}
+
+		function submit( providedDependencies: ProvidedDependencies = {} ) {
+			recordSubmitStep( providedDependencies, 'anchor-fm', flowName, currentStep );
+			const siteSlug = siteSlugParam || getNewSite()?.site_slug;
+
+			switch ( currentStep ) {
+				case 'login':
+					return navigate( 'podcastTitle' );
+				case 'podcastTitle':
+					return navigate( 'designSetup' );
+				case 'designSetup':
+					return navigate( 'processing' );
+				case 'processing':
+					return redirect( `/page/${ siteSlug }/home` );
+			}
+		}
+
+		const goBack = () => {
+			switch ( currentStep ) {
+				case 'designSetup':
+					return navigate( 'podcastTitle' );
+				default:
+					return navigate( 'podcastTitle' );
+			}
+		};
+
+		const goNext = () => {
+			const siteSlug = siteSlugParam || getNewSite()?.site_slug;
+
+			switch ( currentStep ) {
+				case 'login':
+					return navigate( 'podcastTitle' );
+				case 'podcastTitle':
+					return navigate( 'designSetup' );
+				case 'designSetup':
+					return navigate( 'processing' );
+				case 'processing':
+					return redirect( `/page/${ siteSlug }/home` );
+				default:
+					return navigate( 'podcastTitle' );
+			}
+		};
+
+		const goToStep = ( step: string ) => {
+			navigate( step );
+		};
+
+		return { goNext, goBack, goToStep, submit };
 	},
 };
 
