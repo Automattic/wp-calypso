@@ -144,7 +144,7 @@ export class Theme extends Component {
 	renderPlaceholder() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Card className="theme is-placeholder">
+			<Card className="theme theme-card is-placeholder">
 				<div className="theme__content" />
 			</Card>
 		);
