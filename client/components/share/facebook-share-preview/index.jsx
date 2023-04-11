@@ -1,11 +1,10 @@
-import { FacebookPreview } from '@automattic/social-previews';
+import { FacebookPreview, TYPE_ARTICLE } from '@automattic/social-previews';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
 export class FacebookSharePreview extends PureComponent {
 	static propTypes = {
 		articleContent: PropTypes.string,
-		articleSummary: PropTypes.string,
 		articleUrl: PropTypes.string,
 		externalProfilePicture: PropTypes.string,
 		imageUrl: PropTypes.string,
@@ -16,7 +15,6 @@ export class FacebookSharePreview extends PureComponent {
 	render() {
 		const {
 			articleContent,
-			articleSummary,
 			articleUrl,
 			externalDisplay,
 			externalProfilePicture,
@@ -31,8 +29,9 @@ export class FacebookSharePreview extends PureComponent {
 				title={ seoTitle }
 				description={ articleContent }
 				image={ imageUrl }
-				customText={ message || articleSummary }
+				customText={ message || articleContent || seoTitle }
 				user={ { displayName: externalDisplay, avatarUrl: externalProfilePicture } }
+				type={ TYPE_ARTICLE }
 			/>
 		);
 	}

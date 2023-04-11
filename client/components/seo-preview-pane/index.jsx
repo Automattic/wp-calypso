@@ -1,5 +1,11 @@
 import { FEATURE_SEO_PREVIEW_TOOLS } from '@automattic/calypso-products';
-import { FacebookPreview, TwitterPreview, SearchPreview } from '@automattic/social-previews';
+import {
+	FacebookPreview,
+	TwitterPreview,
+	SearchPreview,
+	TYPE_WEBSITE,
+	TYPE_ARTICLE,
+} from '@automattic/social-previews';
 import { localize } from 'i18n-calypso';
 import { compact, find, get } from 'lodash';
 import { PureComponent } from 'react';
@@ -125,6 +131,7 @@ const FacebookSite = ( site, frontPageMetaDescription ) => (
 		url={ site.URL }
 		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
 		image={ largeBlavatar( site ) }
+		type={ TYPE_WEBSITE }
 	/>
 );
 
@@ -135,6 +142,7 @@ const FacebookPost = ( site, post, frontPageMetaDescription ) => (
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
 		image={ getPostImage( post ) }
 		user={ { displayName: get( post, 'author.name', '' ) } }
+		type={ TYPE_ARTICLE }
 	/>
 );
 
