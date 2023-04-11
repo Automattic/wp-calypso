@@ -27,8 +27,9 @@ import {
 import { formatCurrency } from '@automattic/format-currency';
 import { render } from '@testing-library/react';
 import React from 'react';
-import usePlanPrices, { PlanPrices } from 'calypso/my-sites/plans/hooks/use-plan-prices';
+import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { PlanPrices } from 'calypso/state/plans/types';
 import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
 
 describe( 'PlanFeatures2023GridBillingTimeframe', () => {
@@ -98,7 +99,8 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		expect( container ).toHaveTextContent(
 			`per month, ${ formatCurrency(
 				planPrices.planDiscountedRawPrice,
-				getCurrentUserCurrencyCode()
+				getCurrentUserCurrencyCode(),
+				{ stripZeros: true }
 			) } billed annually`
 		);
 	} );
@@ -124,7 +126,8 @@ describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 		expect( container ).toHaveTextContent(
 			`per month, ${ formatCurrency(
 				planPrices.planDiscountedRawPrice,
-				getCurrentUserCurrencyCode()
+				getCurrentUserCurrencyCode(),
+				{ stripZeros: true }
 			) } billed every two years`
 		);
 	} );
