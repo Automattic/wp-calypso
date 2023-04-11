@@ -1015,7 +1015,7 @@ export class PlanFeatures2023Grid extends Component<
 }
 
 const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures2023Grid > ) => {
-	return function ( props: PlanFeatures2023GridConnectedProps ) {
+	return function ( props: PlanFeatures2023GridType ) {
 		const isLargeCurrency = useIsLargeCurrency(
 			( props.planProperties || [] ).map( ( properties ) => properties.planName as PlanSlug )
 		);
