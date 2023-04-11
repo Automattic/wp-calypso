@@ -1,3 +1,4 @@
+// import translate from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import LineChart from 'calypso/components/line-chart';
@@ -73,10 +74,20 @@ export default function SubscribersSection() {
 	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
 
 	// todo bring in real data for period navigation
+
+	const traffic = {
+		label: 'Subscribers',
+		path: `/stats/subscribers/`,
+	};
+
 	const date = new Date();
 	const period = 'day';
 	const query = {};
-	const pathTemplate = '/stats/email/:statType/:period/:date/:site';
+	const slug = 'anna.com';
+
+	const slugPath = slug ? `/${ slug }` : '';
+	const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
+	// const pathTemplate = `${ traffic.path }/${ slugPath }`;
 
 	return (
 		<div className="subscribers-section">
@@ -92,14 +103,13 @@ export default function SubscribersSection() {
 							date={ date }
 							period={ period }
 							url="/stats/email/" //todo: should have format `/stats/email/${ statType }/${ period }/${ date }/${ slug }`
-							isEmailStats
 						>
 							<DatePicker
 								period={ period }
 								date={ date }
 								query={ query }
 								statsType="statsTopPosts"
-								// showQueryDate={ false }
+								showQueryDate
 							/>
 						</StatsPeriodNavigation>
 						<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
