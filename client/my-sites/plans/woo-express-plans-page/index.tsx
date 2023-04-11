@@ -21,7 +21,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { SitePlanData } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import { WooExpressPlans } from 'calypso/my-sites/plans/ecommerce-trial/wooexpress-plans';
 import { getPlanRawPrice, getPlan } from 'calypso/state/plans/selectors';
-import TrialFeatureCard from '../components/ecommerce-plan-features/trial-feature-card';
+import TrialFeatureCard from '../components/trial-feature-card';
 import { getWooExpressMediumFeatureSets } from '../ecommerce-trial/wx-medium-features';
 import type { SiteDetails } from '@automattic/data-stores';
 
