@@ -1,9 +1,9 @@
 import { firstValid, hardTruncation, shortEnough, stripHtmlTags } from '../helpers';
 import { TextFormatter } from '../types';
 
-const TITLE_LENGTH = 70;
+const TITLE_LENGTH = 110;
 const DESCRIPTION_LENGTH = 200;
-const CUSTOM_TEXT_LENGTH = 63206;
+const CUSTOM_TEXT_LENGTH = 440;
 
 export const baseDomain: TextFormatter = ( url ) =>
 	url
