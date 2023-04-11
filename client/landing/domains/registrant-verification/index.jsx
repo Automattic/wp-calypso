@@ -1,5 +1,4 @@
 import { localize } from 'i18n-calypso';
-import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
@@ -23,7 +22,7 @@ class RegistrantVerificationPage extends Component {
 		wp.req
 			.get( `/domains/${ domain }/verify-email`, { email, token } )
 			.then( ( response ) => {
-				this.setState( this.getVerificationSuccessState( get( response, 'domains', [ domain ] ) ) );
+				this.setState( this.getVerificationSuccessState( response?.domains ?? [ domain ] ) );
 			} )
 			.catch( ( error ) => {
 				this.setErrorState( error );
