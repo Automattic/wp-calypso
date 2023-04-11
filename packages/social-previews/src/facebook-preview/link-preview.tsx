@@ -28,7 +28,8 @@ const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 		[ portraitMode ]
 	);
 	const handleImageLoad = useCallback(
-		( { target } ) => setMode( target.width > target.height ? LANDSCAPE_MODE : PORTRAIT_MODE ),
+		( { target } ) =>
+			setMode( target.naturalWidth > target.naturalHeight ? LANDSCAPE_MODE : PORTRAIT_MODE ),
 		[ setMode ]
 	);
 
