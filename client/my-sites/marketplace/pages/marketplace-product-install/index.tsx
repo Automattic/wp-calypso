@@ -17,7 +17,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
-import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
+import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
@@ -61,7 +61,7 @@ interface InstalledPlugin {
 	id?: number;
 }
 
-const MarketplacePluginInstall = ( {
+const MarketplaceProductInstall = ( {
 	productSlug = '',
 	themeSlug = '',
 }: MarketplacePluginInstallProps ) => {
@@ -505,4 +505,4 @@ const MarketplacePluginInstall = ( {
 	);
 };
 
-export default MarketplacePluginInstall;
+export default MarketplaceProductInstall;
