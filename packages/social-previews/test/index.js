@@ -267,11 +267,11 @@ describe( 'Twitter previews', () => {
 		);
 	} );
 
-	it( 'should only replace URLs in parentheses', () => {
+	it( 'should only replace URLs with hyperlinks', () => {
 		const tweets = [
 			{
 				...emptyTweet,
-				text: 'This text (https://jetpack.com/) has (https://wordpress.com/) some (https://jetpack.com/) URLs (https://wordpress.org/).',
+				text: 'This text https://jetpack.com/ has https://wordpress.com/ some https://jetpack.com/ URLs https://wordpress.org/.',
 				urls: [
 					'https://jetpack.com/',
 					'https://wordpress.com/',
@@ -291,7 +291,7 @@ describe( 'Twitter previews', () => {
 
 		expect( textEl ).toBeVisible();
 		expect( textEl ).toContainHTML(
-			'This text (<a href="https://jetpack.com/">https://jetpack.com/</a>) has (<a href="https://wordpress.com/">https://wordpress.com/</a>) some (<a href="https://jetpack.com/">https://jetpack.com/</a>) URLs (<a href="https://wordpress.org/">https://wordpress.org/</a>).'
+			'This text <a href="https://jetpack.com/" rel="noopener noreferrer" target="_blank">https://jetpack.com/</a> has <a href="https://wordpress.com/" rel="noopener noreferrer" target="_blank">https://wordpress.com/</a> some <a href="https://jetpack.com/" rel="noopener noreferrer" target="_blank">https://jetpack.com/</a> URLs <a href="https://wordpress.org/." rel="noopener noreferrer" target="_blank">https://wordpress.org/.</a>'
 		);
 	} );
 
