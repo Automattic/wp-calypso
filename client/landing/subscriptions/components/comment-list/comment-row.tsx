@@ -40,14 +40,11 @@ const CommentRow = ( {
 			</span>
 			<span className="actions" role="cell">
 				<CommentSettings
-					onChangeSendCommentsByEmail={ () => undefined }
-					onChangeSendCommentsByNotification={ () => undefined }
+					onChangeSendByEmail={ () => undefined }
 					onUnfollow={ () => undefined }
-					sendCommentsByEmail={ true }
-					sendCommentsByNotification={ false }
+					shouldSendByEmail={ true }
 					unfollowing={ false }
-					updatingSendCommentsByEmail={ false }
-					updatingSendCommentsByNotification={ true }
+					updatingSendByEmail={ false }
 				/>
 			</span>
 		</li>

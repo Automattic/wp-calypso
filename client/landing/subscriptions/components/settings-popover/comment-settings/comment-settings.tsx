@@ -5,42 +5,29 @@ import { ToggleInput } from '../toggle-input';
 import UnfollowCommentsButton from './unfollow-comments-button';
 
 type CommentSettingsProps = {
-	onChangeSendCommentsByEmail: ( sendCommentsByEmail: boolean ) => void;
-	onChangeSendCommentsByNotification: ( sendCommentsByNotification: boolean ) => void;
+	onChangeSendByEmail: ( sendByEmail: boolean ) => void;
 	onUnfollow: () => void;
-	sendCommentsByEmail: boolean;
-	sendCommentsByNotification: boolean;
+	shouldSendByEmail: boolean;
 	unfollowing: boolean;
-	updatingSendCommentsByEmail: boolean;
-	updatingSendCommentsByNotification: boolean;
+	updatingSendByEmail: boolean;
 };
 
 const CommentSettings = ( {
-	onChangeSendCommentsByEmail,
-	onChangeSendCommentsByNotification,
+	onChangeSendByEmail,
 	onUnfollow,
-	sendCommentsByEmail,
-	sendCommentsByNotification,
+	shouldSendByEmail,
 	unfollowing,
-	updatingSendCommentsByEmail,
-	updatingSendCommentsByNotification,
+	updatingSendByEmail,
 }: CommentSettingsProps ) => {
 	const translate = useTranslate();
 
 	return (
 		<SettingsPopover>
 			<ToggleInput
-				checked={ sendCommentsByNotification }
-				onChange={ onChangeSendCommentsByNotification }
-				label={ translate( 'Notify me of new comments' ) }
-				hint={ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
-				loading={ updatingSendCommentsByNotification }
-			/>
-			<ToggleInput
-				checked={ sendCommentsByEmail }
-				onChange={ onChangeSendCommentsByEmail }
+				checked={ shouldSendByEmail }
+				onChange={ onChangeSendByEmail }
 				label={ translate( 'Email me new comments' ) }
-				loading={ updatingSendCommentsByEmail }
+				loading={ updatingSendByEmail }
 			/>
 			<Separator />
 			<UnfollowCommentsButton unfollowing={ unfollowing } onUnfollow={ onUnfollow } />
