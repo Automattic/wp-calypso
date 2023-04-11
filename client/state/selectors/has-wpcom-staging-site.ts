@@ -13,5 +13,5 @@ export default function hasWpcomStagingSite( state: AppState, siteId: number | n
 		return false;
 	}
 	const site = getRawSite( state, siteId );
-	return site?.options?.wpcom_staging_blog_ids ?? false;
+	return site?.options?.wpcom_staging_blog_ids?.length ?? false;
 }
