@@ -35,7 +35,7 @@ const SiteLanguagePicker = ( { languages: origLanguages, ...restProps } ) => {
 		error,
 		isLoading,
 	} = useQuery(
-		[ 'wporg-translations-' + wpVersion ],
+		[ 'wporg-translations', wpVersion ],
 		async () => fetchWporgTranslationsList( wpVersion ),
 		{ enabled: !! siteIsJetpack }
 	);
