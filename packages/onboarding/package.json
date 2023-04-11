@@ -36,8 +36,8 @@
 		"@wordpress/icons": "^9.13.0",
 		"@wordpress/react-i18n": "^3.20.0",
 		"classnames": "^2.3.1",
-		"react-router-dom": "^5.1.2",
-		"tslib": "^2.3.0",
+		"react-router-dom": "^6.10.0",
+		"tslib": "^2.5.0",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
@@ -47,7 +47,6 @@
 		"@wordpress/base-styles": "^4.13.0",
 		"copyfiles": "^2.3.0",
 		"css-loader": "^3.6.0",
-		"history": "^5.1.0",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"redux": "^4.1.2",

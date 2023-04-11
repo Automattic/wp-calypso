@@ -30,6 +30,7 @@ import { requestSites } from 'calypso/state/sites/actions';
 import { isAnchorFmFlow } from './declarative-flow/anchor-fm-flow';
 import { FlowRenderer } from './declarative-flow/internals';
 import 'calypso/components/environment-badge/style.scss';
+import 'calypso/assets/stylesheets/style.scss';
 import availableFlows from './declarative-flow/registered-flows';
 import { useQuery } from './hooks/use-query';
 import { ONBOARD_STORE, USER_STORE } from './stores';

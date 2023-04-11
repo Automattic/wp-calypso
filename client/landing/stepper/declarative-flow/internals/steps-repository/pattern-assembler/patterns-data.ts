@@ -1,480 +1,581 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useMemo } from 'react';
+import useDotcomPatterns from './hooks/use-dotcom-patterns';
 import type { Pattern } from './types';
 
-const useHeaderPatterns = () => {
-	const header = 'header';
+const useHeaderPatterns = ( dotcomHeaderPatterns: Pattern[] ) => {
+	const header = {
+		slug: 'header',
+	};
 
 	// All headers in dotcompatterns
 	const headerPatterns: Pattern[] = useMemo(
 		() => [
 			{
-				id: 5579,
-				name: 'Centered header',
-				categories: [ header ],
+				ID: 5579,
+				title: 'Centered header',
+				name: '',
+				categories: { header },
 			},
 			{
-				id: 5608,
-				name: 'Centered header with logo and navigation',
-				categories: [ header ],
+				ID: 5608,
+				name: '',
+				title: 'Centered header with logo and navigation',
+				categories: { header },
 			},
 			{
-				id: 5582,
-				name: 'Simple header',
-				categories: [ header ],
+				ID: 5582,
+				name: '',
+				title: 'Simple header',
+				categories: { header },
 			},
 			{
-				id: 5588,
-				name: 'Header with site title and vertical navigation',
-				categories: [ header ],
+				ID: 5588,
+				name: '',
+				title: 'Header with site title and vertical navigation',
+				categories: { header },
 			},
 			{
-				id: 5590,
-				name: 'Simple header with image background',
-				categories: [ header ],
+				ID: 5590,
+				name: '',
+				title: 'Simple header with image background',
+				categories: { header },
 			},
 			{
-				id: 5593,
-				name: 'Simple header with dark background',
-				categories: [ header ],
+				ID: 5593,
+				name: '',
+				title: 'Simple header with dark background',
+				categories: { header },
 			},
 			{
-				id: 5595,
-				name: 'Simple header with image',
-				categories: [ header ],
+				ID: 5595,
+				name: '',
+				title: 'Simple header with image',
+				categories: { header },
 			},
 			{
-				id: 5601,
-				name: 'Simple header with tagline',
-				categories: [ header ],
+				ID: 5601,
+				name: '',
+				title: 'Simple header with tagline',
+				categories: { header },
 			},
 			{
-				id: 5603,
-				name: 'Header with site title and menu button',
-				categories: [ header ],
+				ID: 5603,
+				name: '',
+				title: 'Header with site title and menu button',
+				categories: { header },
 			},
 			{
-				id: 5605,
-				name: 'Header with site title and vertical navigation',
-				categories: [ header ],
+				ID: 5605,
+				name: '',
+				title: 'Header with site title and vertical navigation',
+				categories: { header },
 			},
 			{
-				id: 7914,
-				name: 'Header with button',
-				categories: [ header ],
+				ID: 7914,
+				name: '',
+				title: 'Header with button',
+				categories: { header },
 			},
 		],
 		[]
 	);
 
+	if ( isEnabled( 'pattern-assembler/dotcompatterns' ) ) {
+		return dotcomHeaderPatterns;
+	}
+
 	return headerPatterns;
 };
 
-const useFooterPatterns = () => {
-	const footer = 'footer';
+const useFooterPatterns = ( dotcomFooterPatterns: Pattern[] ) => {
+	const footer = {
+		slug: 'footer',
+	};
 
 	// All footers in dotcompatterns
 	const footerPatterns: Pattern[] = useMemo(
 		() => [
 			{
-				id: 5316,
-				name: 'Footer with social icons, address, e-mail, and telephone number',
-				categories: [ footer ],
+				ID: 5316,
+				name: '',
+				title: 'Footer with social icons, address, e-mail, and telephone number',
+				categories: { footer },
 			},
 			{
-				id: 5886,
-				name: 'Footer with large font size',
-				categories: [ footer ],
+				ID: 5886,
+				name: '',
+				title: 'Footer with large font size',
+				categories: { footer },
 			},
 			{
-				id: 5883,
-				name: 'Footer with credit line and navigation',
-				categories: [ footer ],
+				ID: 5883,
+				name: '',
+				title: 'Footer with credit line and navigation',
+				categories: { footer },
 			},
 			{
-				id: 5888,
-				name: 'Footer with navigation and credit line',
-				categories: [ footer ],
+				ID: 5888,
+				name: '',
+				title: 'Footer with navigation and credit line',
+				categories: { footer },
 			},
 			{
-				id: 5877,
-				name: 'Centered footer with social links',
-				categories: [ footer ],
+				ID: 5877,
+				name: '',
+				title: 'Centered footer with social links',
+				categories: { footer },
 			},
 			{
-				id: 5873,
-				name: 'Simple centered footer',
-				categories: [ footer ],
+				ID: 5873,
+				name: '',
+				title: 'Simple centered footer',
+				categories: { footer },
 			},
 			{
-				id: 7917,
-				name: 'Footer with address, email address, and social links',
-				categories: [ footer ],
+				ID: 7917,
+				name: '',
+				title: 'Footer with address, email address, and social links',
+				categories: { footer },
 			},
 			{
-				id: 7485,
-				name: 'Footer with newsletter subscription form',
-				categories: [ footer ],
+				ID: 7485,
+				name: '',
+				title: 'Footer with newsletter subscription form',
+				categories: { footer },
 			},
 			{
-				id: 1622,
-				name: 'Footer with paragraph and links',
-				categories: [ footer ],
+				ID: 1622,
+				name: '',
+				title: 'Footer with paragraph and links',
+				categories: { footer },
 			},
 			{
-				id: 5047,
-				name: 'Footer with navigation, contact details, social links, and subscription form',
-				categories: [ footer ],
+				ID: 5047,
+				name: '',
+				title: 'Footer with navigation, contact details, social links, and subscription form',
+				categories: { footer },
 			},
 			{
-				id: 5880,
-				name: 'Footer with background color and three columns',
-				categories: [ footer ],
+				ID: 5880,
+				name: '',
+				title: 'Footer with background color and three columns',
+				categories: { footer },
 			},
 			{
-				id: 8666,
-				name: 'Left-aligned minimal footer',
-				categories: [ footer ],
+				ID: 8666,
+				name: '',
+				title: 'Left-aligned minimal footer',
+				categories: { footer },
 			},
 			{
-				id: 8662,
-				name: 'Center-aligned minimal footer',
-				categories: [ footer ],
+				ID: 8662,
+				name: '',
+				title: 'Center-aligned minimal footer',
+				categories: { footer },
 			},
 			{
-				id: 8654,
-				name: 'Three columns with address and open times',
-				categories: [ footer ],
+				ID: 8654,
+				name: '',
+				title: 'Three columns with address and open times',
+				categories: { footer },
 			},
 			{
-				id: 8659,
-				name: 'Center-aligned minimal footer with dark background',
-				categories: [ footer ],
+				ID: 8659,
+				name: '',
+				title: 'Center-aligned minimal footer with dark background',
+				categories: { footer },
 			},
 			{
-				id: 8656,
-				name: 'Center-aligned minimal footer with dark background and social icons',
-				categories: [ footer ],
+				ID: 8656,
+				name: '',
+				title: 'Center-aligned minimal footer with dark background and social icons',
+				categories: { footer },
 			},
 			{
-				id: 8650,
-				name: 'Three columns with contact info and social icons',
-				categories: [ footer ],
+				ID: 8650,
+				name: '',
+				title: 'Three columns with contact info and social icons',
+				categories: { footer },
 			},
 		],
 		[]
 	);
 
+	if ( isEnabled( 'pattern-assembler/dotcompatterns' ) ) {
+		return dotcomFooterPatterns;
+	}
+
 	return footerPatterns;
 };
 
 const useSectionPatterns = () => {
-	const about = 'about';
-	const callToAction = 'call-to-action';
-	const images = 'images';
-	const links = 'links';
-	const list = 'list';
-	const numbers = 'numbers';
-	const portfolio = 'portfolio';
-	const posts = 'posts';
-	const services = 'services';
-	const testimonials = 'testimonials';
+	const about = { slug: 'about' };
+	const callToAction = { slug: 'call-to-action' };
+	const images = { slug: 'images' };
+	const links = { slug: 'links' };
+	const list = { slug: 'list' };
+	const numbers = { slug: 'numbers' };
+	const portfolio = { slug: 'portfolio' };
+	const posts = { slug: 'posts' };
+	const services = { slug: 'services' };
+	const testimonials = { slug: 'testimonials' };
 
 	const sectionPatterns: Pattern[] = useMemo(
 		() => [
 			{
-				id: 7156,
-				name: 'Media and text with image on the right',
-				categories: [ callToAction ],
+				ID: 7156,
+				name: '',
+				title: 'Media and text with image on the right',
+				categories: { callToAction },
 			},
 			{
-				id: 7153,
-				name: 'Media and text with image on the left',
-				categories: [ callToAction ],
+				ID: 7153,
+				name: '',
+				title: 'Media and text with image on the left',
+				categories: { callToAction },
 			},
 			{
-				id: 7146,
-				name: 'Four column list',
-				categories: [ callToAction ],
+				ID: 7146,
+				name: '',
+				title: 'Four column list',
+				categories: { callToAction },
 			},
 			{
-				id: 7132,
-				name: 'Cover image with left-aligned call to action',
-				categories: [ callToAction ],
+				ID: 7132,
+				name: '',
+				title: 'Cover image with left-aligned call to action',
+				categories: { callToAction },
 			},
 			{
-				id: 7159,
-				name: 'Cover image with centered text and a button',
-				categories: [ callToAction ],
+				ID: 7159,
+				name: '',
+				title: 'Cover image with centered text and a button',
+				categories: { callToAction },
 			},
 			{
-				id: 3741,
-				name: 'Large CTA',
-				categories: [ callToAction ],
+				ID: 3741,
+				name: '',
+				title: 'Large CTA',
+				categories: { callToAction },
 			},
 			{
-				id: 9768,
-				name: 'Centered call to action',
-				categories: [ callToAction ],
+				ID: 9768,
+				name: '',
+				title: 'Centered call to action',
+				categories: { callToAction },
 			},
 			{
-				id: 9754,
-				name: 'Full-width media and text with background',
-				categories: [ callToAction ],
+				ID: 9754,
+				name: '',
+				title: 'Full-width media and text with background',
+				categories: { callToAction },
 			},
 			{
-				id: 9751,
-				name: 'Full-width media and text with background',
-				categories: [ callToAction ],
+				ID: 9751,
+				name: '',
+				title: 'Full-width media and text with background',
+				categories: { callToAction },
 			},
 			{
-				id: 9748,
-				name: 'Call to action with image on the left',
-				categories: [ callToAction ],
+				ID: 9748,
+				name: '',
+				title: 'Call to action with image on the left',
+				categories: { callToAction },
 			},
 			{
-				id: 9745,
-				name: 'Call to action with image on the right',
-				categories: [ callToAction ],
+				ID: 9745,
+				name: '',
+				title: 'Call to action with image on the right',
+				categories: { callToAction },
 			},
 			{
-				id: 6303,
-				name: 'Two Buttons Centered CTA',
-				categories: [ callToAction ],
+				ID: 6303,
+				name: '',
+				title: 'Two Buttons Centered CTA',
+				categories: { callToAction },
 			},
 			{
-				id: 6304,
-				name: 'Centered Heading with CTA',
-				categories: [ callToAction ],
+				ID: 6304,
+				name: '',
+				title: 'Centered Heading with CTA',
+				categories: { callToAction },
 			},
 			{
-				id: 6311,
-				name: 'Portfolio Project',
-				categories: [ callToAction ],
+				ID: 6311,
+				name: '',
+				title: 'Portfolio Project',
+				categories: { callToAction },
 			},
 			{
-				id: 3747,
-				name: 'Hero with CTA',
-				categories: [ callToAction ],
+				ID: 3747,
+				name: '',
+				title: 'Hero with CTA',
+				categories: { callToAction },
 			},
 			{
-				id: 6308,
-				name: 'Cover Image with CTA',
-				categories: [ callToAction ],
+				ID: 6308,
+				name: '',
+				title: 'Cover Image with CTA',
+				categories: { callToAction },
 			},
 			{
-				id: 6310,
-				name: 'Gallery with description on the left',
-				categories: [ callToAction ],
+				ID: 6310,
+				name: '',
+				title: 'Gallery with description on the left',
+				categories: { callToAction },
 			},
 			{
-				id: 6312,
-				name: 'Two Column CTA',
-				categories: [ callToAction ],
+				ID: 6312,
+				name: '',
+				title: 'Two Column CTA',
+				categories: { callToAction },
 			},
 			{
-				id: 6305,
-				name: 'Heading with Image Grid',
-				categories: [ images ],
+				ID: 6305,
+				name: '',
+				title: 'Heading with Image Grid',
+				categories: { images },
 			},
 			{
-				id: 7149,
-				name: 'Two column image grid',
-				categories: [ images ],
+				ID: 7149,
+				name: '',
+				title: 'Two column image grid',
+				categories: { images },
 			},
 			{
-				id: 5691,
-				name: 'Three logos, heading, and paragraphs',
-				categories: [ images ],
+				ID: 5691,
+				name: '',
+				title: 'Three logos, heading, and paragraphs',
+				categories: { images },
 			},
 			{
-				id: 7143,
-				name: 'Full-width image',
-				categories: [ images ],
+				ID: 7143,
+				name: '',
+				title: 'Full-width image',
+				categories: { images },
 			},
 			{
-				id: 9766,
-				name: 'Heading and three images with rounded borders',
-				categories: [ images ],
+				ID: 9766,
+				name: '',
+				title: 'Heading and three images with rounded borders',
+				categories: { images },
 			},
 			{
-				id: 9763,
-				name: 'Three columns with images',
-				categories: [ images ],
+				ID: 9763,
+				name: '',
+				title: 'Three columns with images',
+				categories: { images },
 			},
 			{
-				id: 9760,
-				name: 'Three columns with heading, text, and image',
-				categories: [ images ],
+				ID: 9760,
+				name: '',
+				title: 'Three columns with heading, text, and image',
+				categories: { images },
 			},
 			{
-				id: 9757,
-				name: 'A heading, paragraph and two images',
-				categories: [ images ],
+				ID: 9757,
+				name: '',
+				title: 'A heading, paragraph and two images',
+				categories: { images },
 			},
 			{
-				id: 737,
-				name: 'Logos',
-				categories: [ images ],
+				ID: 737,
+				name: '',
+				title: 'Logos',
+				categories: { images },
 			},
 			{
-				id: 1585,
-				name: 'Quote and logos',
-				categories: [ images ],
+				ID: 1585,
+				name: '',
+				title: 'Quote and logos',
+				categories: { images },
 			},
 			{
-				id: 7135,
-				name: 'Three columns with images and text',
-				categories: [ list ],
+				ID: 7135,
+				name: '',
+				title: 'Three columns with images and text',
+				categories: { list },
 			},
 			{
-				id: 789,
-				name: 'Numbered list',
-				categories: [ list ],
+				ID: 789,
+				name: '',
+				title: 'Numbered list',
+				categories: { list },
 			},
 			{
-				id: 6712,
-				name: 'List of events',
-				categories: [ list ],
+				ID: 6712,
+				name: '',
+				title: 'List of events',
+				categories: { list },
 			},
 			{
-				id: 5666,
-				name: 'Large numbers, heading, and paragraphs',
-				categories: [ numbers ],
+				ID: 5666,
+				name: '',
+				title: 'Large numbers, heading, and paragraphs',
+				categories: { numbers },
 			},
 			{
-				id: 462,
-				name: 'Numbers',
-				categories: [ numbers ],
+				ID: 462,
+				name: '',
+				title: 'Numbers',
+				categories: { numbers },
 			},
 			{
-				id: 6309,
-				name: 'Names list',
-				categories: [ about ],
+				ID: 6309,
+				name: '',
+				title: 'Names list',
+				categories: { about },
 			},
 			{
-				id: 6306,
-				name: 'Team',
-				categories: [ about ],
+				ID: 6306,
+				name: '',
+				title: 'Team',
+				categories: { about },
 			},
 			{
-				id: 5663,
-				name: 'Large headline',
-				categories: [ about ],
+				ID: 5663,
+				name: '',
+				title: 'Large headline',
+				categories: { about },
 			},
 			{
-				id: 7140,
-				name: 'Left-aligned headline',
-				categories: [ about ],
+				ID: 7140,
+				name: '',
+				title: 'Left-aligned headline',
+				categories: { about },
 			},
 			{
-				id: 7138,
-				name: 'Centered headline and text',
-				categories: [ about ],
+				ID: 7138,
+				name: '',
+				title: 'Centered headline and text',
+				categories: { about },
 			},
 			{
-				id: 7161,
-				name: 'Two testimonials side by side',
-				categories: [ testimonials ],
+				ID: 7161,
+				name: '',
+				title: 'Two testimonials side by side',
+				categories: { testimonials },
 			},
 			{
-				id: 6307,
-				name: '3 Column Testimonials',
-				categories: [ testimonials ],
+				ID: 6307,
+				name: '',
+				title: '3 Column Testimonials',
+				categories: { testimonials },
 			},
 			{
-				id: 6324,
-				name: 'Two Column Testimonials',
-				categories: [ testimonials ],
+				ID: 6324,
+				name: '',
+				title: 'Two Column Testimonials',
+				categories: { testimonials },
 			},
 			{
-				id: 1600,
-				name: 'Three column text and links',
-				categories: [ links ],
+				ID: 1600,
+				name: '',
+				title: 'Three column text and links',
+				categories: { links },
 			},
 			{
-				id: 6323,
-				name: "FAQ's",
-				categories: [ services ],
+				ID: 6323,
+				name: '',
+				title: "FAQ's",
+				categories: { services },
 			},
 			{
-				id: 3743,
-				name: 'Simple Two Column Layout',
-				categories: [ services ],
+				ID: 3743,
+				name: '',
+				title: 'Simple Two Column Layout',
+				categories: { services },
 			},
 			{
-				id: 39,
-				name: 'Topics with Image',
-				categories: [ services ],
+				ID: 39,
+				name: '',
+				title: 'Topics with Image',
+				categories: { services },
 			},
 			{
-				id: 6313,
-				name: 'Portfolio Intro',
-				categories: [ portfolio ],
+				ID: 6313,
+				name: '',
+				title: 'Portfolio Intro',
+				categories: { portfolio },
 			},
 			{
-				id: 6314,
-				name: 'Centered Intro',
-				categories: [ portfolio ],
+				ID: 6314,
+				name: '',
+				title: 'Centered Intro',
+				categories: { portfolio },
 			},
 			{
-				id: 6315,
-				name: 'Large Intro Text',
-				categories: [ portfolio ],
+				ID: 6315,
+				name: '',
+				title: 'Large Intro Text',
+				categories: { portfolio },
 			},
 			{
-				id: 6316,
-				name: 'Squared Media & Text',
-				categories: [ portfolio ],
+				ID: 6316,
+				name: '',
+				title: 'Squared Media & Text',
+				categories: { portfolio },
 			},
 			{
-				id: 6318,
-				name: 'Offset Projects',
-				categories: [ portfolio ],
+				ID: 6318,
+				name: '',
+				title: 'Offset Projects',
+				categories: { portfolio },
 			},
 			{
-				id: 6320,
-				name: 'Heading with two images and descriptions',
-				categories: [ portfolio ],
+				ID: 6320,
+				name: '',
+				title: 'Heading with two images and descriptions',
+				categories: { portfolio },
 			},
 			{
-				id: 6321,
-				name: 'CV Text Grid',
-				categories: [ portfolio ],
+				ID: 6321,
+				name: '',
+				title: 'CV Text Grid',
+				categories: { portfolio },
 			},
 			{
-				id: 1784,
-				name: 'Recent Posts',
-				categories: [ posts ],
+				ID: 1784,
+				name: '',
+				title: 'Recent Posts',
+				categories: { posts },
 			},
 			{
-				id: 8437,
-				name: 'List of posts',
-				categories: [ posts ],
+				ID: 8437,
+				name: '',
+				title: 'List of posts',
+				categories: { posts },
 			},
 			{
-				id: 8421,
-				name: 'Grid of posts 2x3',
-				categories: [ posts ],
+				ID: 8421,
+				name: '',
+				title: 'Grid of posts 2x3',
+				categories: { posts },
 			},
 			{
-				id: 8435,
-				name: 'Grid of Posts 3x2',
-				categories: [ posts ],
+				ID: 8435,
+				name: '',
+				title: 'Grid of Posts 3x2',
+				categories: { posts },
 			},
 			{
-				id: 5645,
-				name: 'Four Recent Blog Posts',
-				categories: [ posts ],
+				ID: 5645,
+				name: '',
+				title: 'Four Recent Blog Posts',
+				categories: { posts },
 			},
 			{
-				id: 7996,
-				name: 'Grid of Posts 4x2',
-				categories: [ posts ],
+				ID: 7996,
+				name: '',
+				title: 'Grid of Posts 4x2',
+				categories: { posts },
 			},
 			{
-				id: 3213,
-				name: 'Latest podcast episodes',
-				categories: [ posts ],
+				ID: 3213,
+				name: '',
+				title: 'Latest podcast episodes',
+				categories: { posts },
 			},
 		],
 		[]
@@ -483,10 +584,15 @@ const useSectionPatterns = () => {
 	return sectionPatterns;
 };
 
-const useAllPatterns = () => {
-	const headerPatterns = useHeaderPatterns();
+const useAllPatterns = ( lang: string | undefined ) => {
+	const headerPatterns = useHeaderPatterns( [] );
 	const sectionPatterns = useSectionPatterns();
-	const footerPatterns = useFooterPatterns();
+	const footerPatterns = useFooterPatterns( [] );
+	const dotcomPatterns = useDotcomPatterns( lang );
+
+	if ( isEnabled( 'pattern-assembler/dotcompatterns' ) ) {
+		return dotcomPatterns;
+	}
 
 	return [ ...headerPatterns, ...sectionPatterns, ...footerPatterns ];
 };

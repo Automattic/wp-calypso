@@ -38,6 +38,7 @@ export const groupDomainProducts = (
 		const existingGroup = groups.get( product.domain );
 		if ( existingGroup ) {
 			existingGroup.product.raw_amount += product.raw_amount;
+			existingGroup.product.amount_integer += product.amount_integer;
 			existingGroup.groupCount++;
 		} else {
 			const newGroup = {
@@ -59,7 +60,10 @@ export const groupDomainProducts = (
 		}
 		groupedDomainProducts.push( {
 			...value.product,
-			amount: formatCurrency( value.product.raw_amount, value.product.currency ),
+			amount: formatCurrency( value.product.amount_integer, value.product.currency, {
+				isSmallestUnit: true,
+				stripZeros: true,
+			} ),
 			variation: translate( 'Domain Registration' ),
 		} );
 	} );
@@ -68,12 +72,12 @@ export const groupDomainProducts = (
 };
 
 export function transactionIncludesTax( transaction: BillingTransaction ) {
-	if ( ! transaction || ! transaction.tax ) {
+	if ( ! transaction || ! transaction.tax_integer ) {
 		return false;
 	}
 
 	// Consider the whole transaction to include tax if any item does
-	return transaction.items.some( ( item ) => item.raw_tax > 0 );
+	return transaction.items.some( ( item ) => item.tax_integer > 0 );
 }
 
 export function renderTransactionAmount(
@@ -81,7 +85,10 @@ export function renderTransactionAmount(
 	{ translate, addingTax = false }: { translate: LocalizeProps[ 'translate' ]; addingTax?: boolean }
 ) {
 	if ( ! transactionIncludesTax( transaction ) ) {
-		return transaction.amount;
+		return formatCurrency( transaction.amount_integer, transaction.currency, {
+			isSmallestUnit: true,
+			stripZeros: true,
+		} );
 	}
 
 	const countryTaxInfo = getVatVendorInfo(
@@ -92,23 +99,45 @@ export function renderTransactionAmount(
 
 	const addingTaxString = countryTaxInfo
 		? translate( '(+%(taxAmount)s %(taxName)s)', {
-				args: { taxAmount: transaction.tax, taxName: countryTaxInfo.taxName },
+				args: {
+					taxAmount: formatCurrency( transaction.tax_integer, transaction.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+					taxName: countryTaxInfo.taxName,
+				},
 				comment:
 					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
 		  } )
 		: translate( '(+%(taxAmount)s tax)', {
-				args: { taxAmount: transaction.tax },
+				args: {
+					taxAmount: formatCurrency( transaction.tax_integer, transaction.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+				},
 				comment: 'taxAmount is a localized price, like $12.34',
 		  } );
 
 	const includesTaxString = countryTaxInfo
 		? translate( '(includes %(taxAmount)s %(taxName)s)', {
-				args: { taxAmount: transaction.tax, taxName: countryTaxInfo.taxName },
+				args: {
+					taxAmount: formatCurrency( transaction.tax_integer, transaction.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+					taxName: countryTaxInfo.taxName,
+				},
 				comment:
 					'taxAmount is a localized price, like $12.34 | taxName is a localized tax, like VAT or GST',
 		  } )
 		: translate( '(includes %(taxAmount)s tax)', {
-				args: { taxAmount: transaction.tax },
+				args: {
+					taxAmount: formatCurrency( transaction.tax_integer, transaction.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
+				},
 				comment: 'taxAmount is a localized price, like $12.34',
 		  } );
 
@@ -116,7 +145,12 @@ export function renderTransactionAmount(
 
 	return (
 		<Fragment>
-			<div>{ transaction.amount }</div>
+			<div>
+				{ formatCurrency( transaction.amount_integer, transaction.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ) }
+			</div>
 			<div className="billing-history__transaction-tax-amount">{ taxAmount }</div>
 		</Fragment>
 	);

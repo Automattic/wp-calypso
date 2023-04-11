@@ -24,22 +24,26 @@ export interface AtomicTransferError {
 	code: string; // "no_transfer_record"
 }
 
+export interface InitiateTransfer {
+	softwareSet?: string | 'woo-on-plans';
+	themeSlug?: string;
+	pluginSlug?: string;
+	pluginFile?: File;
+	themeFile?: File;
+}
+
 /**
  * Initiate Atomic transfer, optionally with software set install.
  *
  * @param {string} siteId Site ID.
- * @param {Object} options Transfer options.
- * @param {string} options.softwareSet Software set to install.
+ * @param {InitiateTransfer} initiateTransfer The InitiateTransfer parameters.
  * @returns {Object} An action object.
  */
-export const initiateAtomicTransfer = (
-	siteId: number,
-	{ softwareSet }: { softwareSet: string }
-) =>
+export const initiateAtomicTransfer = ( siteId: number, initiateTransfer: InitiateTransfer ) =>
 	( {
 		type: ATOMIC_TRANSFER_INITIATE_TRANSFER,
 		siteId,
-		softwareSet,
+		...initiateTransfer,
 	} as const );
 
 /**

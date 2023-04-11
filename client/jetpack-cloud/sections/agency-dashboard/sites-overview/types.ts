@@ -185,6 +185,7 @@ export type AgencyDashboardFilterOption =
 	| 'backup_warning'
 	| 'threats_found'
 	| 'site_disconnected'
+	| 'site_down'
 	| 'plugin_updates';
 
 export type AgencyDashboardFilter = {
@@ -245,4 +246,10 @@ export interface ToggleActivateMonitorArgs {
 export interface Backup {
 	activityTitle: string;
 	activityDescription: { children: { text: string }[] }[];
+}
+
+export type AllowedMonitorPeriods = 'day' | 'week' | '30 days' | '90 days';
+
+export interface MonitorUptimeAPIResponse {
+	[ key: string ]: { status: string; downtime_in_minutes?: number };
 }

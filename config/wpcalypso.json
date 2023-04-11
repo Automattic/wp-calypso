@@ -15,7 +15,8 @@
 	"zendesk_presales_chat_key": "216bf91d-f10f-4f66-bf65-a0cba220cd38",
 	"features": {
 		"ad-tracking": false,
-		"akismet/siteless-checkout": false,
+		"akismet/siteless-checkout": true,
+		"block-editor/un-iframed-site-editor": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
@@ -105,8 +106,8 @@
 		"onboarding/import-redirect-to-themes": true,
 		"onboarding/2023-pricing-grid": true,
 		"p2/p2-plus": true,
-		"pattern-assembler/categories": true,
 		"pattern-assembler/color-and-fonts": true,
+		"pattern-assembler/dotcompatterns": true,
 		"pattern-assembler/logged-out-showcase": true,
 		"pattern-assembler/inline-styles": true,
 		"pattern-assembler/notices": true,
@@ -157,7 +158,6 @@
 		"subscription-management": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/premium": true,
-		"themes/showcase-i4/details-and-preview": true,
 		"themes/subscription-purchases": false,
 		"themes/theme-switch-persist-template": false,
 		"unified-pages/virtual-home-page": true,
@@ -171,7 +171,9 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/staging-sites-i1": true,
-		"woa-logging": true
+		"virtual-themes/onboarding": true,
+		"woa-logging": true,
+		"woa-logging-moved": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

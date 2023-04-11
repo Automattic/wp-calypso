@@ -8,13 +8,12 @@ import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useCategoriesOrder from './hooks/use-categories-order';
 import NavigatorHeader from './navigator-header';
 import PatternListPanel from './pattern-list-panel';
-import { useSectionPatterns } from './patterns-data';
 import type { Pattern, Category } from './types';
 import './screen-category-list.scss';
 
 interface Props {
 	categories: Category[];
-	sectionsMapByCategory: { [ key: string ]: Pattern[] };
+	patternsMapByCategory: { [ key: string ]: Pattern[] };
 	onDoneClick: () => void;
 	onSelect: (
 		type: string,
@@ -29,7 +28,7 @@ interface Props {
 }
 
 const ScreenCategoryList = ( {
-	sectionsMapByCategory,
+	patternsMapByCategory,
 	categories,
 	onDoneClick,
 	replacePatternMode,
@@ -41,13 +40,16 @@ const ScreenCategoryList = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
-	const sectionPatterns = useSectionPatterns();
 	const categoriesInOrder = useCategoriesOrder( categories );
 
 	const handleFocusOutside = ( event: Event ) => {
-		// Click on large preview but not action bar to close Pattern List
+		// Click outside the sidebar or action bar to close Pattern List
 		const target = event.target as HTMLElement;
-		if ( ! target.closest( '.pattern-action-bar' ) && target.closest( '.pattern-large-preview' ) ) {
+		if (
+			! (
+				target.closest( '.pattern-action-bar' ) || target.closest( '.pattern-assembler__sidebar' )
+			)
+		) {
 			setSelectedCategory( null );
 			onTogglePatternPanelList?.( false );
 		}
@@ -90,9 +92,11 @@ const ScreenCategoryList = ( {
 			<div className="screen-container__body screen-container__body--align-sides screen-category-list__body">
 				{ categoriesInOrder.map( ( { name, label, description } ) => {
 					const isOpen = selectedCategory === name;
-					const hasPatterns = sectionsMapByCategory[ name ]?.length;
+					const hasPatterns = name && patternsMapByCategory[ name ]?.length;
+					const isHeaderCategory = name === 'header';
+					const isFooterCategory = name === 'footer';
 
-					if ( ! hasPatterns ) {
+					if ( ! hasPatterns || isHeaderCategory || isFooterCategory ) {
 						return null;
 					}
 
@@ -115,7 +119,11 @@ const ScreenCategoryList = ( {
 							} }
 						>
 							<span>{ label }</span>
-							<Icon icon={ chevronRight } size={ 24 } />
+							<Icon
+								className="screen-category-list__arrow-icon"
+								icon={ chevronRight }
+								size={ 24 }
+							/>
 						</Button>
 					);
 				} ) }
@@ -137,10 +145,9 @@ const ScreenCategoryList = ( {
 					onSelect( 'section', selectedPattern, selectedCategory )
 				}
 				selectedPattern={ selectedPattern }
-				patterns={ sectionPatterns }
 				selectedCategory={ selectedCategory }
 				categories={ categories }
-				sectionsMapByCategory={ sectionsMapByCategory }
+				patternsMapByCategory={ patternsMapByCategory }
 			/>
 		</div>
 	);

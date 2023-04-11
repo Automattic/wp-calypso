@@ -103,6 +103,21 @@
 	}
 }
 
+.backup__agencies-survey-banner {
+	&.banner.card {
+		border-left-color: var(--color-jetpack);
+
+		.banner__icon-circle {
+			background-color: var(--color-jetpack);
+		}
+
+		.banner__icon-circle > img {
+			width: 19px;
+			height: 19px;
+		}
+	}
+}
+
 /* WordPress.com-only styles */
 .wordpressdotcom.backup__page {
 	.backup__main-wrap {

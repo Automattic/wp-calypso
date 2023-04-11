@@ -86,7 +86,7 @@ const PatternLargePreview = ( {
 				) }
 			>
 				<PatternRenderer
-					patternId={ encodePatternId( pattern.id ) }
+					patternId={ encodePatternId( pattern.ID ) }
 					viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
 					// Disable default max-height
 					maxHeight="none"

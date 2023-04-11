@@ -7,20 +7,16 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useSelect } from '@wordpress/data';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import * as actions from 'calypso/state/partner-portal/credit-card-form/actions';
 import * as selectors from 'calypso/state/partner-portal/credit-card-form/selectors';
 import CreditCardSubmitButton from '../credit-card-submit-button';
 
-const mockUseSelector = () => () => null;
-
 jest.mock( '@stripe/stripe-js', () => ( {
 	loadStripe: () => null,
 } ) );
 
-jest.mock( '@wordpress/data' );
 jest.mock( 'calypso/state/partner-portal/credit-card-form/selectors', () => {
 	const items = jest.requireActual( 'calypso/state/partner-portal/credit-card-form/selectors' );
 	return {
@@ -71,7 +67,6 @@ describe( '<CreditCardSubmitButton>', () => {
 	beforeEach( () => {
 		// Re-mock dependencies
 		jest.clearAllMocks();
-		useSelect.mockImplementation( mockUseSelector );
 		useFormStatus.mockImplementation( () => {
 			return {
 				formStatus: 'ready',
@@ -81,7 +76,6 @@ describe( '<CreditCardSubmitButton>', () => {
 	} );
 
 	afterEach( () => {
-		useSelect.mockClear();
 		useFormStatus.mockClear();
 	} );
 
@@ -106,7 +100,6 @@ describe( '<CreditCardSubmitButton>', () => {
 		const buttonText = 'Save payment method';
 
 		const props = {
-			store: newStore,
 			stripe,
 			stripeConfiguration,
 			disabled: false,

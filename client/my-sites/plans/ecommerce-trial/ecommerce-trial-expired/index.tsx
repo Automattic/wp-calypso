@@ -52,11 +52,20 @@ const ECommerceTrialExpired = (): JSX.Element => {
 		} );
 	}, [] );
 
+	const triggerPlansGridTracksEvent = useCallback( ( planSlug: string ) => {
+		recordTracksEvent( 'calypso_wooexpress_expired_trial_upgrade_cta_clicked', {
+			location: 'plans_grid',
+			plan_slug: planSlug,
+		} );
+	}, [] );
+
 	const plansContent = isEnabled( 'plans/wooexpress-small' ) ? (
 		<WooExpressPlans
 			interval={ interval }
 			monthlyControlProps={ monthlyControlProps }
 			siteId={ siteId ?? 0 }
+			siteSlug={ siteSlug ?? '' }
+			triggerTracksEvent={ triggerPlansGridTracksEvent }
 			yearlyControlProps={ yearlyControlProps }
 		/>
 	) : (

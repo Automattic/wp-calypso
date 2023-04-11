@@ -61,6 +61,7 @@ export class ConversationCommentList extends Component {
 		enableCaterpillar: true,
 		shouldRequestComments: true,
 		setActiveReply: noop,
+		filterParents: true,
 	};
 
 	state = {
@@ -158,16 +159,17 @@ export class ConversationCommentList extends Component {
 
 	// @todo: move all expanded comment set per commentId logic to memoized selectors
 	getCommentsToShow = () => {
-		const { commentIds, expansions, commentsTree, sortedComments } = this.props;
+		const { commentIds, expansions, commentsTree, sortedComments, filterParents } = this.props;
 
 		const minId = Math.min( ...commentIds );
 		const startingCommentIds = ( sortedComments || [] )
 			.filter( ( comment ) => comment.ID >= minId || comment.isPlaceholder )
 			.map( ( comment ) => comment.ID );
 
-		const parentIds = startingCommentIds
-			.map( ( id ) => this.getParentId( commentsTree, id ) )
-			.filter( Boolean );
+		let parentIds = startingCommentIds;
+		if ( filterParents ) {
+			parentIds = parentIds.map( ( id ) => this.getParentId( commentsTree, id ) ).filter( Boolean );
+		}
 
 		const startingExpanded = Object.fromEntries(
 			[ startingCommentIds, ...parentIds ].map( ( id ) => [

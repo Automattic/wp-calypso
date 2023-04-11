@@ -21,7 +21,6 @@ import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selecto
 const PluginSectionContainer = styled.div`
 	display: flex;
 	flex-direction: row;
-	flex-wrap: wrap;
 	width: 720px;
 	box-sizing: border-box;
 	align-items: center;
@@ -67,6 +66,7 @@ const PluginSectionExpirationDate = styled.div`
 
 const PluginSectionButtons = styled.div`
 	display: flex;
+	flex-shrink: 0;
 	gap: 16px;
 	min-width: auto;
 `;

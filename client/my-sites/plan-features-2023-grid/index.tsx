@@ -13,12 +13,6 @@ import {
 	isMonthly,
 	TERM_MONTHLY,
 	isBusinessPlan,
-	TYPE_FREE,
-	TYPE_PERSONAL,
-	TYPE_PREMIUM,
-	TYPE_BUSINESS,
-	TYPE_ECOMMERCE,
-	TYPE_ENTERPRISE_GRID_WPCOM,
 	getPlanPath,
 	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
@@ -99,6 +93,7 @@ import { PlanComparisonGrid } from './plan-comparison-grid';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
+import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 type PlanRowOptions = {
@@ -139,7 +134,6 @@ type PlanFeatures2023GridProps = {
 	withDiscount: boolean;
 	discountEndDate: Date;
 	hidePlansFeatureComparison: boolean;
-	hideFreePlan: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -393,24 +387,17 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderTabletView() {
-		const { planProperties, hideFreePlan } = this.props;
-		const plansToShow = hideFreePlan
-			? [ TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS, TYPE_ECOMMERCE, TYPE_ENTERPRISE_GRID_WPCOM ]
-			: [
-					TYPE_FREE,
-					TYPE_PERSONAL,
-					TYPE_PREMIUM,
-					TYPE_BUSINESS,
-					TYPE_ECOMMERCE,
-					TYPE_ENTERPRISE_GRID_WPCOM,
-			  ];
+		const { planProperties } = this.props;
+		const plansToShow = planProperties
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties ) => properties.planName );
 		const topRowPlans = plansToShow.slice( 0, 3 );
 		const bottomRowPlans = plansToShow.slice( 3, 6 );
 		const planPropertiesForTopRow = planProperties.filter( ( properties: PlanProperties ) =>
-			topRowPlans.includes( properties.planConstantObj.type )
+			topRowPlans.includes( properties.planName )
 		);
 		const planPropertiesForBottomRow = planProperties.filter( ( properties: PlanProperties ) =>
-			bottomRowPlans.includes( properties.planConstantObj.type )
+			bottomRowPlans.includes( properties.planName )
 		);
 
 		return (
@@ -441,37 +428,39 @@ export class PlanFeatures2023Grid extends Component<
 		};
 		let previousProductNameShort: string;
 
-		return planProperties.map( ( properties: PlanProperties, index: number ) => {
-			const planCardClasses = classNames(
-				'plan-features-2023-grid__mobile-plan-card',
-				getPlanClass( properties.planName )
-			);
-			const planCardJsx = (
-				<div className={ planCardClasses } key={ `${ properties.planName }-${ index }` }>
-					{ this.renderPlanLogos( [ properties ], { isMobile: true } ) }
-					{ this.renderPlanHeaders( [ properties ], { isMobile: true } ) }
-					{ this.renderPlanTagline( [ properties ], { isMobile: true } ) }
-					{ this.renderPlanPrice( [ properties ], { isMobile: true } ) }
-					{ this.renderBillingTimeframe( [ properties ], { isMobile: true } ) }
-					{ this.renderMobileFreeDomain( properties.planName, properties.isMonthlyPlan ) }
-					{ this.renderTopButtons( [ properties ], { isMobile: true } ) }
-					<CardContainer
-						header={ translate( 'Show all features' ) }
-						planName={ properties.planName }
-						key={ `${ properties.planName }-${ index }` }
-					>
-						{ this.renderPreviousFeaturesIncludedTitle( [ properties ], {
-							isMobile: true,
-							previousProductNameShort,
-						} ) }
-						{ this.renderPlanFeaturesList( [ properties ], { isMobile: true } ) }
-						{ this.renderPlanStorageOptions( [ properties ], { isMobile: true } ) }
-					</CardContainer>
-				</div>
-			);
-			previousProductNameShort = properties.product_name_short;
-			return planCardJsx;
-		} );
+		return planProperties
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties: PlanProperties, index: number ) => {
+				const planCardClasses = classNames(
+					'plan-features-2023-grid__mobile-plan-card',
+					getPlanClass( properties.planName )
+				);
+				const planCardJsx = (
+					<div className={ planCardClasses } key={ `${ properties.planName }-${ index }` }>
+						{ this.renderPlanLogos( [ properties ], { isMobile: true } ) }
+						{ this.renderPlanHeaders( [ properties ], { isMobile: true } ) }
+						{ this.renderPlanTagline( [ properties ], { isMobile: true } ) }
+						{ this.renderPlanPrice( [ properties ], { isMobile: true } ) }
+						{ this.renderBillingTimeframe( [ properties ], { isMobile: true } ) }
+						{ this.renderMobileFreeDomain( properties.planName, properties.isMonthlyPlan ) }
+						{ this.renderTopButtons( [ properties ], { isMobile: true } ) }
+						<CardContainer
+							header={ translate( 'Show all features' ) }
+							planName={ properties.planName }
+							key={ `${ properties.planName }-${ index }` }
+						>
+							{ this.renderPreviousFeaturesIncludedTitle( [ properties ], {
+								isMobile: true,
+								previousProductNameShort,
+							} ) }
+							{ this.renderPlanFeaturesList( [ properties ], { isMobile: true } ) }
+							{ this.renderPlanStorageOptions( [ properties ], { isMobile: true } ) }
+						</CardContainer>
+					</div>
+				);
+				previousProductNameShort = properties.product_name_short;
+				return planCardJsx;
+			} );
 	}
 
 	renderMobileFreeDomain( planName: string, isMonthlyPlan: boolean ) {
@@ -506,120 +495,130 @@ export class PlanFeatures2023Grid extends Component<
 			( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
 		);
 
-		return planPropertiesObj.map( ( properties ) => {
-			const { planName, rawPrice } = properties;
-			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
-				'has-border-top': ! isReskinned,
-			} );
-			const hasNoPrice = rawPrice === undefined || rawPrice === null;
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties ) => {
+				const { planName, rawPrice } = properties;
+				const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
+					'has-border-top': ! isReskinned,
+				} );
+				const hasNoPrice = rawPrice === undefined || rawPrice === null;
 
-			return (
-				<Container
-					scope="col"
-					key={ planName }
-					className={ classes }
-					isMobile={ options?.isMobile }
-				>
-					{ ! hasNoPrice && (
-						<PlanFeatures2023GridHeaderPrice
-							planProperties={ properties }
-							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
-							isLargeCurrency={ isLargeCurrency }
-						/>
-					) }
-				</Container>
-			);
-		} );
+				return (
+					<Container
+						scope="col"
+						key={ planName }
+						className={ classes }
+						isMobile={ options?.isMobile }
+					>
+						{ ! hasNoPrice && (
+							<PlanFeatures2023GridHeaderPrice
+								planProperties={ properties }
+								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+								isLargeCurrency={ isLargeCurrency }
+							/>
+						) }
+					</Container>
+				);
+			} );
 	}
 
 	renderBillingTimeframe( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		return planPropertiesObj.map( ( properties ) => {
-			const {
-				planConstantObj,
-				planName,
-				rawPrice,
-				maybeDiscountedFullTermPrice,
-				annualPricePerMonth,
-				isMonthlyPlan,
-				billingPeriod,
-			} = properties;
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties ) => {
+				const {
+					planConstantObj,
+					planName,
+					rawPrice,
+					maybeDiscountedFullTermPrice,
+					annualPricePerMonth,
+					isMonthlyPlan,
+					billingPeriod,
+				} = properties;
 
-			const classes = classNames(
-				'plan-features-2023-grid__table-item',
-				'plan-features-2023-grid__header-billing-info'
-			);
+				const classes = classNames(
+					'plan-features-2023-grid__table-item',
+					'plan-features-2023-grid__header-billing-info'
+				);
 
-			return (
-				<Container className={ classes } isMobile={ options?.isMobile } key={ planName }>
-					<PlanFeatures2023GridBillingTimeframe
-						rawPrice={ rawPrice }
-						maybeDiscountedFullTermPrice={ maybeDiscountedFullTermPrice }
-						annualPricePerMonth={ annualPricePerMonth }
-						isMonthlyPlan={ isMonthlyPlan }
-						planName={ planName }
-						billingTimeframe={ planConstantObj.getBillingTimeFrame() }
-						billingPeriod={ billingPeriod }
-					/>
-				</Container>
-			);
-		} );
+				return (
+					<Container className={ classes } isMobile={ options?.isMobile } key={ planName }>
+						<PlanFeatures2023GridBillingTimeframe
+							rawPrice={ rawPrice }
+							maybeDiscountedFullTermPrice={ maybeDiscountedFullTermPrice }
+							annualPricePerMonth={ annualPricePerMonth }
+							isMonthlyPlan={ isMonthlyPlan }
+							planName={ planName }
+							billingTimeframe={ planConstantObj.getBillingTimeFrame() }
+							billingPeriod={ billingPeriod }
+						/>
+					</Container>
+				);
+			} );
 	}
 
 	renderPlanLogos( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { isInSignup } = this.props;
 
-		return planPropertiesObj.map( ( properties, index ) => {
-			return (
-				<PlanLogo
-					key={ properties.planName }
-					planIndex={ index }
-					planPropertiesObj={ planPropertiesObj }
-					planProperties={ properties }
-					isMobile={ options?.isMobile }
-					isInSignup={ isInSignup }
-				/>
-			);
-		} );
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties, index ) => {
+				return (
+					<PlanLogo
+						key={ properties.planName }
+						planIndex={ index }
+						planPropertiesObj={ planPropertiesObj }
+						planProperties={ properties }
+						isMobile={ options?.isMobile }
+						isInSignup={ isInSignup }
+					/>
+				);
+			} );
 	}
 
 	renderPlanHeaders( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		return planPropertiesObj.map( ( properties: PlanProperties ) => {
-			const { planName, planConstantObj } = properties;
-			const headerClasses = classNames(
-				'plan-features-2023-grid__header',
-				getPlanClass( planName )
-			);
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties: PlanProperties ) => {
+				const { planName, planConstantObj } = properties;
+				const headerClasses = classNames(
+					'plan-features-2023-grid__header',
+					getPlanClass( planName )
+				);
 
-			return (
-				<Container
-					key={ planName }
-					className="plan-features-2023-grid__table-item"
-					isMobile={ options?.isMobile }
-				>
-					<header className={ headerClasses }>
-						<h4 className="plan-features-2023-grid__header-title">
-							{ planConstantObj.getTitle() }
-						</h4>
-					</header>
-				</Container>
-			);
-		} );
+				return (
+					<Container
+						key={ planName }
+						className="plan-features-2023-grid__table-item"
+						isMobile={ options?.isMobile }
+					>
+						<header className={ headerClasses }>
+							<h4 className="plan-features-2023-grid__header-title">
+								{ planConstantObj.getTitle() }
+							</h4>
+						</header>
+					</Container>
+				);
+			} );
 	}
 
 	renderPlanTagline( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		return planPropertiesObj.map( ( properties ) => {
-			const { planName, tagline } = properties;
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties ) => {
+				const { planName, tagline } = properties;
 
-			return (
-				<Container
-					key={ planName }
-					className="plan-features-2023-grid__table-item"
-					isMobile={ options?.isMobile }
-				>
-					<div className="plan-features-2023-grid__header-tagline">{ tagline }</div>
-				</Container>
-			);
-		} );
+				return (
+					<Container
+						key={ planName }
+						className="plan-features-2023-grid__table-item"
+						isMobile={ options?.isMobile }
+					>
+						<div className="plan-features-2023-grid__header-tagline">{ tagline }</div>
+					</Container>
+				);
+			} );
 	}
 
 	handleUpgradeClick = ( singlePlanProperties: PlanProperties ) => {
@@ -653,50 +652,55 @@ export class PlanFeatures2023Grid extends Component<
 			translate,
 		} = this.props;
 
-		return planPropertiesObj.map( ( properties: PlanProperties ) => {
-			const { planName, isPlaceholder, planConstantObj, current } = properties;
-			const classes = classNames(
-				'plan-features-2023-grid__table-item',
-				'is-top-buttons',
-				'is-bottom-aligned'
-			);
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties: PlanProperties ) => {
+				const { planName, isPlaceholder, planConstantObj, current } = properties;
+				const classes = classNames(
+					'plan-features-2023-grid__table-item',
+					'is-top-buttons',
+					'is-bottom-aligned'
+				);
 
-			// Leaving it `undefined` makes it use the default label
-			let buttonText;
+				// Leaving it `undefined` makes it use the default label
+				let buttonText;
 
-			if ( isWooExpressMediumPlan( planName ) && ! isWooExpressMediumPlan( currentSitePlanSlug ) ) {
-				buttonText = translate( 'Get Performance', { textOnly: true } );
-			} else if (
-				isWooExpressSmallPlan( planName ) &&
-				! isWooExpressSmallPlan( currentSitePlanSlug )
-			) {
-				buttonText = translate( 'Get Essential', { textOnly: true } );
-			}
+				if (
+					isWooExpressMediumPlan( planName ) &&
+					! isWooExpressMediumPlan( currentSitePlanSlug )
+				) {
+					buttonText = translate( 'Get Performance', { textOnly: true } );
+				} else if (
+					isWooExpressSmallPlan( planName ) &&
+					! isWooExpressSmallPlan( currentSitePlanSlug )
+				) {
+					buttonText = translate( 'Get Essential', { textOnly: true } );
+				}
 
-			return (
-				<Container key={ planName } className={ classes } isMobile={ options?.isMobile }>
-					<PlanFeatures2023GridActions
-						manageHref={ manageHref }
-						canUserPurchasePlan={ canUserPurchasePlan }
-						availableForPurchase={ properties.availableForPurchase }
-						className={ getPlanClass( planName ) }
-						freePlan={ isFreePlan( planName ) }
-						isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
-						isPlaceholder={ isPlaceholder ?? false }
-						isInSignup={ isInSignup }
-						isLaunchPage={ isLaunchPage }
-						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
-						planName={ planConstantObj.getTitle() }
-						planType={ planName }
-						flowName={ flowName }
-						current={ current ?? false }
-						currentSitePlanSlug={ currentSitePlanSlug }
-						selectedSiteSlug={ selectedSiteSlug }
-						buttonText={ buttonText }
-					/>
-				</Container>
-			);
-		} );
+				return (
+					<Container key={ planName } className={ classes } isMobile={ options?.isMobile }>
+						<PlanFeatures2023GridActions
+							manageHref={ manageHref }
+							canUserPurchasePlan={ canUserPurchasePlan }
+							availableForPurchase={ properties.availableForPurchase }
+							className={ getPlanClass( planName ) }
+							freePlan={ isFreePlan( planName ) }
+							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
+							isPlaceholder={ isPlaceholder ?? false }
+							isInSignup={ isInSignup }
+							isLaunchPage={ isLaunchPage }
+							onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
+							planName={ planConstantObj.getTitle() }
+							planType={ planName }
+							flowName={ flowName }
+							current={ current ?? false }
+							currentSitePlanSlug={ currentSitePlanSlug }
+							selectedSiteSlug={ selectedSiteSlug }
+							buttonText={ buttonText }
+						/>
+					</Container>
+				);
+			} );
 	}
 
 	renderEnterpriseClientLogos() {
@@ -721,36 +725,38 @@ export class PlanFeatures2023Grid extends Component<
 		const { translate } = this.props;
 		let previousPlanShortNameFromProperties: string;
 
-		return planPropertiesObj.map( ( properties: PlanProperties ) => {
-			const { planName, product_name_short } = properties;
-			const shouldShowFeatureTitle =
-				! isWpComFreePlan( planName ) && ! isWpcomEnterpriseGridPlan( planName );
-			const planShortName =
-				options?.previousProductNameShort || previousPlanShortNameFromProperties;
-			previousPlanShortNameFromProperties = product_name_short;
-			const title =
-				planShortName &&
-				translate( 'Everything in %(planShortName)s, plus:', {
-					args: { planShortName },
-				} );
-			const classes = classNames(
-				'plan-features-2023-grid__common-title',
-				getPlanClass( planName )
-			);
-			const rowspanProp =
-				! options?.isMobile && isWpcomEnterpriseGridPlan( planName ) ? { rowSpan: '2' } : {};
-			return (
-				<Container
-					key={ planName }
-					isMobile={ options?.isMobile }
-					className="plan-features-2023-grid__table-item"
-					{ ...rowspanProp }
-				>
-					{ shouldShowFeatureTitle && <div className={ classes }>{ title }</div> }
-					{ isWpcomEnterpriseGridPlan( planName ) && this.renderEnterpriseClientLogos() }
-				</Container>
-			);
-		} );
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties: PlanProperties ) => {
+				const { planName, product_name_short } = properties;
+				const shouldShowFeatureTitle =
+					! isWpComFreePlan( planName ) && ! isWpcomEnterpriseGridPlan( planName );
+				const planShortName =
+					options?.previousProductNameShort || previousPlanShortNameFromProperties;
+				previousPlanShortNameFromProperties = product_name_short;
+				const title =
+					planShortName &&
+					translate( 'Everything in %(planShortName)s, plus:', {
+						args: { planShortName },
+					} );
+				const classes = classNames(
+					'plan-features-2023-grid__common-title',
+					getPlanClass( planName )
+				);
+				const rowspanProp =
+					! options?.isMobile && isWpcomEnterpriseGridPlan( planName ) ? { rowSpan: '2' } : {};
+				return (
+					<Container
+						key={ planName }
+						isMobile={ options?.isMobile }
+						className="plan-features-2023-grid__table-item"
+						{ ...rowspanProp }
+					>
+						{ shouldShowFeatureTitle && <div className={ classes }>{ title }</div> }
+						{ isWpcomEnterpriseGridPlan( planName ) && this.renderEnterpriseClientLogos() }
+					</Container>
+				);
+			} );
 	}
 
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
@@ -759,72 +765,78 @@ export class PlanFeatures2023Grid extends Component<
 			( properties ) => ! isWpcomEnterpriseGridPlan( properties.planName )
 		);
 
-		return planProperties.map( ( properties, mapIndex ) => {
-			const { planName, features, jpFeatures } = properties;
-			return (
-				<Container
-					key={ `${ planName }-${ mapIndex }` }
-					isMobile={ options?.isMobile }
-					className="plan-features-2023-grid__table-item"
-				>
-					<PlanFeatures2023GridFeatures
-						features={ features }
-						planName={ planName }
-						domainName={ domainName }
-					/>
-					{ jpFeatures.length !== 0 && (
-						<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
-							<Plans2023Tooltip
-								text={ translate(
-									'Security, performance and growth tools made by the WordPress experts.'
-								) }
-							>
-								<JetpackLogo size={ 16 } />
-							</Plans2023Tooltip>
-						</div>
-					) }
-					<PlanFeatures2023GridFeatures
-						features={ jpFeatures }
-						planName={ planName }
-						domainName={ domainName }
-					/>
-				</Container>
-			);
-		} );
+		return planProperties
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties, mapIndex ) => {
+				const { planName, features, jpFeatures } = properties;
+				return (
+					<Container
+						key={ `${ planName }-${ mapIndex }` }
+						isMobile={ options?.isMobile }
+						className="plan-features-2023-grid__table-item"
+					>
+						<PlanFeatures2023GridFeatures
+							features={ features }
+							planName={ planName }
+							domainName={ domainName }
+						/>
+						{ jpFeatures.length !== 0 && (
+							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
+								<Plans2023Tooltip
+									text={ translate(
+										'Security, performance and growth tools made by the WordPress experts.'
+									) }
+								>
+									<JetpackLogo size={ 16 } />
+								</Plans2023Tooltip>
+							</div>
+						) }
+						<PlanFeatures2023GridFeatures
+							features={ jpFeatures }
+							planName={ planName }
+							domainName={ domainName }
+						/>
+					</Container>
+				);
+			} );
 	}
 
 	renderPlanStorageOptions( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { translate } = this.props;
-		return planPropertiesObj.map( ( properties ) => {
-			if ( options?.isMobile && isWpcomEnterpriseGridPlan( properties.planName ) ) {
-				return null;
-			}
-
-			const { planName, storageOptions } = properties;
-			const storageJSX = storageOptions.map( ( storageFeature: string ) => {
-				if ( storageFeature.length <= 0 ) {
-					return;
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties ) => {
+				if ( options?.isMobile && isWpcomEnterpriseGridPlan( properties.planName ) ) {
+					return null;
 				}
+
+				const { planName, storageOptions } = properties;
+				const storageJSX = storageOptions.map( ( storageFeature: string ) => {
+					if ( storageFeature.length <= 0 ) {
+						return;
+					}
+					return (
+						<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
+							{ getStorageStringFromFeature( storageFeature ) }
+						</div>
+					);
+				} );
+
 				return (
-					<div className="plan-features-2023-grid__storage-buttons" key={ planName }>
-						{ getStorageStringFromFeature( storageFeature ) }
-					</div>
+					<Container
+						key={ planName }
+						className="plan-features-2023-grid__table-item plan-features-2023-grid__storage"
+						isMobile={ options?.isMobile }
+					>
+						{ storageOptions.length ? (
+							<div className="plan-features-2023-grid__storage-title">
+								{ translate( 'Storage' ) }
+							</div>
+						) : null }
+						{ storageJSX }
+					</Container>
 				);
 			} );
-
-			return (
-				<Container
-					key={ planName }
-					className="plan-features-2023-grid__table-item plan-features-2023-grid__storage"
-					isMobile={ options?.isMobile }
-				>
-					{ storageOptions.length ? (
-						<div className="plan-features-2023-grid__storage-title">{ translate( 'Storage' ) }</div>
-					) : null }
-					{ storageJSX }
-				</Container>
-			);
-		} );
 	}
 
 	getBannerContainer() {
@@ -998,7 +1010,7 @@ export class PlanFeatures2023Grid extends Component<
 
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 const ConnectedPlanFeatures2023Grid = connect(
-	( state, ownProps: PlanFeatures2023GridProps ) => {
+	( state: IAppState, ownProps: PlanFeatures2023GridProps ) => {
 		const { placeholder, plans, isLandingPage, visiblePlans, isInSignup, siteId } = ownProps;
 		const canUserPurchasePlan =
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
@@ -1010,7 +1022,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 		const isJetpack = siteId ? isJetpackSite( state, siteId ) : false;
 		const isSiteAT = siteId ? isSiteAutomatedTransfer( state, siteId ) : false;
 
-		let planProperties: PlanProperties[] = plans.map( ( plan: string ) => {
+		const planProperties: PlanProperties[] = plans.map( ( plan: string ) => {
 			let isPlaceholder = false;
 			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 			const planProductId = planConstantObj.getProductId();
@@ -1036,7 +1048,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			);
 
 			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
-			const isMonthlyObj = { isMonthly: showMonthlyPrice };
+			const isMonthlyObj = { returnMonthly: showMonthlyPrice };
 
 			const discountPrice = siteId
 				? getPlanDiscountedRawPrice( state, siteId, plan, isMonthlyObj )
@@ -1114,6 +1126,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
 			const isCurrentPlan = isCurrentSitePlan( state, siteId, planProductId ) ?? false;
+			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
 
 			return {
 				availableForPurchase,
@@ -1124,6 +1137,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				jpFeatures: jetpackFeaturesTransformed,
 				isLandingPage,
 				isPlaceholder,
+				isVisible,
 				planConstantObj,
 				planName: plan,
 				planObject: planObject,
@@ -1141,12 +1155,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				showMonthlyPrice,
 			};
 		} );
-
-		if ( Array.isArray( visiblePlans ) ) {
-			planProperties = planProperties.filter(
-				( p: PlanProperties ) => visiblePlans.indexOf( p?.planName ) !== -1
-			);
-		}
 
 		const manageHref =
 			purchaseId && selectedSiteSlug

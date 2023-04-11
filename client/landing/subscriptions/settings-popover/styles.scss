@@ -1,7 +1,8 @@
 @import "@automattic/color-studio/dist/color-variables";
 
 .settings-popover {
-	width: 305px;
+	outline: none;
+	min-width: 305px;
 
 	.popover__inner {
 		border: none;

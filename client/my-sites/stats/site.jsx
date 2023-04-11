@@ -42,11 +42,11 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
+import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
-import StatsSubscribers from './stats-subscribers';
 import { getPathWithUpdatedQueryString } from './utils';
 
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
@@ -289,30 +289,7 @@ class StatsSite extends Component {
 							showSummaryLink
 						/>
 						{ config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats && (
-							<>
-								<StatsModule
-									additionalColumns={ {
-										header: (
-											<>
-												<span>{ translate( 'Opens' ) }</span>
-											</>
-										),
-										body: ( item ) => (
-											<>
-												<span>{ item.opens }</span>
-											</>
-										),
-									} }
-									path="emails"
-									moduleStrings={ moduleStrings.emails }
-									period={ this.props.period }
-									query={ query }
-									statType="statsEmailsSummary"
-									mainItemLabel={ translate( 'Latest Emails' ) }
-									metricLabel={ translate( 'Clicks' ) }
-									showSummaryLink
-								/>
-							</>
+							<StatsModuleEmails period={ this.props.period } query={ query } />
 						) }
 						{
 							// File downloads are not yet supported in Jetpack Stats
@@ -332,12 +309,6 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
-				{ config.isEnabled( 'stats/subscribers-section' ) && (
-					<>
-						<StatsSubscribers siteId={ siteId } />
-						<AsyncLoad require="calypso/my-sites/stats/subscribers-section" />
-					</>
-				) }
 				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
 				{ ! isOdysseyStats ? null : (
 					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />

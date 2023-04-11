@@ -1,6 +1,6 @@
 import { Plans } from '@automattic/data-stores';
 import languages from '@automattic/languages';
-import { useRouteMatch } from 'react-router-dom';
+import { useMatch } from 'react-router-dom';
 
 const plansPaths = Plans.plansSlugs;
 
@@ -25,7 +25,7 @@ export const Step = {
 	LanguageModal: 'language-modal',
 } as const;
 
-// We remove falsey `steps` with `.filter( Boolean )` as they'd mess up our |-separated route pattern.
+// We remove falsy `steps` with `.filter( Boolean )` as they'd mess up our |-separated route pattern.
 export const steps = Object.values( Step ).filter( Boolean );
 
 const routeFragments = {
@@ -38,6 +38,6 @@ const routeFragments = {
 export const path = [ '', ...Object.values( routeFragments ) ].join( '/' );
 
 export function useLangRouteParam() {
-	const match = useRouteMatch< { lang?: string } >( path );
+	const match = useMatch( path );
 	return match?.params.lang;
 }
