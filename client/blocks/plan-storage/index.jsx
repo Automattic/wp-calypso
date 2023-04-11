@@ -109,7 +109,9 @@ export function PlanStorage( { children, className, siteId } ) {
 				title={ translate( 'Storage quota is shared between production and staging.' ) }
 				className="plan-storage__tooltip"
 			>
-				<div className={ classNames( className, 'plan-storage' ) }>{ planStorageComponents }</div>
+				<div className={ classNames( className, 'plan-storage plan-storage__shared_quota' ) }>
+					{ planStorageComponents }
+				</div>
 			</Tooltip>
 		);
 	}
