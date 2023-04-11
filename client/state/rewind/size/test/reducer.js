@@ -1,8 +1,4 @@
-import {
-	JETPACK_BACKUP_RETENTION_SET,
-	REWIND_SIZE_GET,
-	REWIND_SIZE_SET,
-} from 'calypso/state/action-types';
+import { JETPACK_BACKUP_RETENTION_SET, REWIND_SIZE_SET } from 'calypso/state/action-types';
 import sizeReducer from '../reducer';
 
 // @TODO: Add tests for the other reducers
@@ -11,17 +7,7 @@ describe( 'rewind.size reducers', () => {
 		it.each( [
 			{
 				state: undefined,
-				action: {},
-				expected: null,
-			},
-			{
-				state: undefined,
-				action: { type: REWIND_SIZE_GET },
-				expected: null,
-			},
-			{
-				state: { lastBackupSize: 100 },
-				action: { type: REWIND_SIZE_GET },
+				action: { type: REWIND_SIZE_SET, size: { lastBackupSize: 100 } },
 				expected: 100,
 			},
 			{
@@ -41,18 +27,8 @@ describe( 'rewind.size reducers', () => {
 		it.each( [
 			{
 				state: undefined,
-				action: {},
-				expected: null,
-			},
-			{
-				state: undefined,
-				action: { type: REWIND_SIZE_GET },
-				expected: null,
-			},
-			{
-				state: { retentionDays: 30 },
-				action: { type: REWIND_SIZE_GET },
-				expected: 30,
+				action: { type: REWIND_SIZE_SET, size: { retentionDays: 7 } },
+				expected: 7,
 			},
 			{
 				state: { retentionDays: 30 },
@@ -82,12 +58,8 @@ describe( 'rewind.size reducers', () => {
 			).toEqual( 7 );
 		} );
 	} );
+
 	describe( 'backupsStopped', () => {
-		it( 'should return false when there is nothing in the state', () => {
-			expect(
-				sizeReducer( undefined, { type: REWIND_SIZE_SET, size: {} } ).backupsStopped
-			).toEqual( false );
-		} );
 		it( 'should return the value when the action is REWIND_SIZE_SET', () => {
 			expect(
 				sizeReducer( undefined, { type: REWIND_SIZE_SET, size: { backupsStopped: true } } )
@@ -102,7 +74,7 @@ describe( 'rewind.size reducers', () => {
 				).backupsStopped
 			).toEqual( false );
 		} );
-		it( 'should return null when the action is not REWIND_SIZE_SET', () => {
+		it( 'should return null when the action is not REWIND_SIZE_SET and the state is undefined', () => {
 			expect(
 				sizeReducer( undefined, { type: JETPACK_BACKUP_RETENTION_SET } ).backupsStopped
 			).toEqual( null );
