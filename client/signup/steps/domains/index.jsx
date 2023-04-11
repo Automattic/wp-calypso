@@ -1,4 +1,4 @@
-import { VIDEOPRESS_FLOW, isWithThemeFlow, HOSTING_LP_FLOW } from '@automattic/onboarding';
+import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -653,7 +653,7 @@ class DomainsStep extends Component {
 			);
 		}
 
-		if ( HOSTING_LP_FLOW === flowName ) {
+		if ( isHostingFlow( flowName ) ) {
 			const components = {
 				span: (
 					<button

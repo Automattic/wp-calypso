@@ -18,7 +18,7 @@ import {
 	CheckoutFormSubmit,
 	PaymentMethodStep,
 } from '@automattic/composite-checkout';
-import { HOSTING_LP_FLOW } from '@automattic/onboarding';
+import { isHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -622,7 +622,7 @@ const SubmitButtonFooter = () => {
 
 	const signupFlowName = getSignupCompleteFlowName();
 
-	if ( ! hasCartJetpackProductsOnly && HOSTING_LP_FLOW !== signupFlowName ) {
+	if ( ! hasCartJetpackProductsOnly && ! isHostingFlow( signupFlowName ) ) {
 		return null;
 	}
 
