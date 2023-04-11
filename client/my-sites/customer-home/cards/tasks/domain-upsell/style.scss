@@ -5,13 +5,13 @@
 	&.task__domain-upsell {
 		margin-bottom: 0 !important;
 
-		@media (min-width: $break-large) {
+		@media (min-width: ( $break-large + 1 ) ) {
 			margin-right: 0 !important;
 			margin-top: 0 !important;
 			background: url(calypso/assets/images/customer-home/illustration--task-domain-upsell.png) no-repeat right top;
 		}
 
-		@media ( min-width: $break-large ) and ( max-width: $break-wide ) {
+		@media ( min-width: ( $break-large + 1 ) ) and ( max-width: $break-wide ) {
 			background-position-x: calc(100% + 120px);
 		}
 
@@ -24,7 +24,7 @@
 			margin-top: 32px;
 			min-width: 360px;
 
-			@media (min-width: $break-wide) {
+			@media (min-width: ( $break-wide + 1 ) ) {
 				max-width: calc(100% - 450px);
 			}
 
@@ -76,7 +76,7 @@
 			width: 100%;
 			padding: 0;
 
-			@media (min-width: $break-large) {
+			@media (min-width: ( $break-large + 1 )) {
 				display: none;
 			}
 
