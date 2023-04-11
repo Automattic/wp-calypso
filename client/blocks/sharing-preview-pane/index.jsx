@@ -37,7 +37,6 @@ class SharingPreviewPane extends PureComponent {
 		site: PropTypes.object,
 		post: PropTypes.object,
 		seoTitle: PropTypes.string,
-		normalizedSeoTitle: PropTypes.string,
 		selectedService: PropTypes.string,
 	};
 
