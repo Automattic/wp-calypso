@@ -90,7 +90,6 @@ export const ZendeskPreSalesChat: React.VFC = () => {
 	}
 
 	if ( error ) {
-		console.error( 'Error while fetching presales chat availability:', error );
 		return null;
 	}
 
