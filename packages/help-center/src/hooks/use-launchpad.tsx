@@ -23,24 +23,27 @@ interface LaunchpadTasks {
 	checklist: LaunchpadTask[];
 }
 
-export const fetchLaunchpadChecklist = ( siteSlug: string | null ): Promise< LaunchpadTasks > => {
+export const fetchLaunchpadChecklist = (
+	siteSlug: string | null,
+	siteIntent: string
+): Promise< LaunchpadTasks > => {
 	const slug = encodeURIComponent( siteSlug as string );
 
 	return canAccessWpcomApis()
 		? wpcomRequest( {
-				path: `sites/${ slug }/launchpad/checklist?checklist_slug=newsletter`,
+				path: `sites/${ slug }/launchpad/checklist?checklist_slug=${ siteIntent }`,
 				apiNamespace: 'wpcom/v2/',
 				apiVersion: '2',
 		  } )
 		: apiFetch( {
 				global: true,
-				path: `sites/${ slug }/launchpad/checklist?checklist_slug=newsletter`,
+				path: `sites/${ slug }/launchpad/checklist?checklist_slug=${ siteIntent }`,
 		  } as APIFetchOptions );
 };
 
-export const useLaunchpadChecklist = ( siteSlug: string | null ) => {
+export const useLaunchpadChecklist = ( siteSlug: string | null, siteIntent: string ) => {
 	const key = [ 'launchpad', siteSlug ];
-	return useQuery( key, () => fetchLaunchpadChecklist( siteSlug ), {
+	return useQuery( key, () => fetchLaunchpadChecklist( siteSlug, siteIntent ), {
 		retry: 3,
 		initialData: {
 			checklist: [],

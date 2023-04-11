@@ -44,7 +44,7 @@ export const HelpCenterLaunchpad = () => {
 		siteSlug = window?.location?.host;
 	}
 
-	const { data } = useLaunchpadChecklist( siteSlug );
+	const { data } = useLaunchpadChecklist( siteSlug, siteIntent || '' );
 	const totalLaunchpadSteps = data?.checklist?.length || 4;
 	const completeLaunchpadSteps =
 		data?.checklist?.filter( ( checklistItem ) => checklistItem.completed ).length || 1;
