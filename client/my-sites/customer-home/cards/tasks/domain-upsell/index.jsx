@@ -7,8 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import domainUpsellMobileIllustration from 'calypso/assets/images/customer-home/illustration--task-domain-upsell-mobile.png';
-import domainUpsellMobileIllustrationRetina from 'calypso/assets/images/customer-home/illustration--task-domain-upsell-mobile@2x.png';
+import domainUpsellMobileIllustration from 'calypso/assets/images/customer-home/illustration--task-domain-upsell-mobile.svg';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { preventWidows } from 'calypso/lib/formatting';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -167,11 +166,6 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 		</svg>
 	);
 
-	const cardMobileImage =
-		window.devicePixelRatio > 1 && domainUpsellMobileIllustrationRetina
-			? domainUpsellMobileIllustrationRetina
-			: domainUpsellMobileIllustration;
-
 	return (
 		<Task
 			customClass="task__domain-upsell"
@@ -183,7 +177,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 			hasSecondaryAction={ true }
 			secondaryActionText={ translate( 'Find other domains' ) }
 			secondaryActionUrl={ searchLink }
-			illustration={ cardMobileImage }
+			illustration={ domainUpsellMobileIllustration }
 			illustrationAlwaysShow={ true }
 			illustrationHeader={ domainSuggestionName ? domainNameSVG : null }
 			badgeText={ domainSuggestionName }
