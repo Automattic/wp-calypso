@@ -29,7 +29,6 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/i18n-utils": "workspace:^",
 		"@wordpress/block-editor": "^10.5.0",
 		"@wordpress/compose": "^5.20.0",
 		"@wordpress/edit-site": "^4.19.0",

@@ -7,6 +7,5 @@
 		"types": []
 	},
 	"include": [ "src", "src/*.json" ],
-	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
-	"references": [ { "path": "../i18n-utils" } ]
+	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ]
 }
