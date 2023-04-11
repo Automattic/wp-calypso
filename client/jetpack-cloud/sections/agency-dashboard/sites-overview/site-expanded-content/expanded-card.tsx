@@ -12,6 +12,7 @@ interface Props {
 	onClick?: () => void;
 	href?: string;
 	isLoading?: boolean;
+	hasError?: boolean;
 }
 
 export default function ExpandedCard( {
@@ -22,6 +23,7 @@ export default function ExpandedCard( {
 	onClick,
 	href,
 	isLoading,
+	hasError,
 }: Props ) {
 	// Trigger click event when pressing Enter or Space
 	const handleOnKeyDown = ( event: React.KeyboardEvent< HTMLDivElement > ) => {
@@ -30,7 +32,7 @@ export default function ExpandedCard( {
 		}
 	};
 
-	const isClickable = !! onClick && ! isLoading;
+	const isClickable = !! onClick && ! isLoading && ! hasError;
 
 	const props = {
 		href,
@@ -40,6 +42,7 @@ export default function ExpandedCard( {
 			'expanded-card__not-enabled': ! isEnabled,
 			'expanded-card__clickable': isClickable,
 			'expanded-card__loading': isLoading,
+			'expanded-card__error': ! isEnabled && hasError, // If the card is not enabled and has an error, show the error state
 		} ),
 		// Add click handlers if onClick is provided
 		...( isClickable && {
