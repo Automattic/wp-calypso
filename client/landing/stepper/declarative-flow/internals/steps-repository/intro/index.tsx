@@ -52,7 +52,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 				videoPressGetStartedText = sprintf(
 					/* translators: Price displayed on VideoPress intro page. First %s is monthly price, second is annual price */
 					__(
-						'A home for all your videos.<br />Play. Roll. Share.<div>Get started from %s per month (%s billed annually).</div>'
+						'A home for all your videos.<br />Play. Roll. Share.<div>Starts at %s per month<br /><span>%s billed annually</span></div>'
 					),
 					planProductObject.price,
 					planProductObject.annualPrice
@@ -96,6 +96,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 				title: createInterpolateElement( videoPressGetStartedText, {
 					br: <br />,
 					div: <div className="videopress-intro-pricing" />,
+					span: <span className="small" />,
 				} ),
 				buttonText: __( 'Get started' ),
 				modal: {
