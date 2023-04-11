@@ -36,15 +36,29 @@ class SiteOrDomain extends Component {
 		return isValidDomain && domain;
 	}
 
+	isLeanDomainSearch() {
+		const { signupDependencies } = this.props;
+		return (
+			!! signupDependencies &&
+			!! signupDependencies.refParameter &&
+			'leandomainsearch' === signupDependencies.refParameter
+		);
+	}
+
 	getChoices() {
 		const { translate, isReskinned, isLoggedIn, siteCount } = this.props;
+
+		const domainName = this.getDomainName();
+		const buyADomainTitle = this.isLeanDomainSearch()
+			? translate( 'Just buy %s', { args: [ domainName ] } )
+			: translate( 'Just buy a domain' );
 
 		const choices = [];
 
 		if ( isReskinned ) {
 			choices.push( {
 				key: 'domain',
-				title: translate( 'Just buy a domain' ),
+				title: buyADomainTitle,
 				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
 				icon: globe,
 				value: 'domain',
@@ -105,7 +119,7 @@ class SiteOrDomain extends Component {
 			}
 			choices.push( {
 				type: 'domain',
-				label: translate( 'Just buy a domain' ),
+				label: buyADomainTitle,
 				image: <DomainImage />,
 				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
 			} );
@@ -240,6 +254,7 @@ class SiteOrDomain extends Component {
 		}
 
 		const additionalProps = {};
+		let headerText = this.props.headerText;
 
 		if ( isReskinned ) {
 			additionalProps.isHorizontalLayout = true;
@@ -247,14 +262,19 @@ class SiteOrDomain extends Component {
 			additionalProps.headerImageUrl = HeaderImage;
 		}
 
+		if ( this.isLeanDomainSearch() ) {
+			additionalProps.className = 'lean-domain-search';
+			headerText = translate( 'Choose how to use %s', { args: [ this.getDomainName() ] } );
+		}
+
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.headerText }
+				headerText={ headerText }
 				subHeaderText={ this.props.subHeaderText }
-				fallbackHeaderText={ this.props.headerText }
+				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
 				stepContent={ this.renderScreen() }
 				{ ...additionalProps }
