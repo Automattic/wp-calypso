@@ -50,7 +50,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			if ( planProductObject ) {
 				// eslint-disable-next-line @wordpress/valid-sprintf
 				videoPressGetStartedText = sprintf(
-					/* translators: Price displayed on VideoPress intro page "Get started" button. First %s is monthly price, second is annual price */
+					/* translators: Price displayed on VideoPress intro page. First %s is monthly price, second is annual price */
 					__(
 						'A home for all your videos.<br />Play. Roll. Share.<div>Get started for %s (%s billed annually).</div>'
 					),
