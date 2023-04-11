@@ -181,7 +181,7 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 		updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.PENDING;
 
 	const [ confirmationDialogVisible, setConfirmationDialogVisible ] = useState( false );
-	const onConfirmationClose = useCallback( () => {
+	const onClose = useCallback( () => {
 		setConfirmationDialogVisible( false );
 	}, [] );
 
@@ -371,7 +371,7 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 							confirmationDialogVisible={ confirmationDialogVisible }
 							retentionSelected={ retentionSelected }
 							updateRetentionRequestStatus={ updateRetentionRequestStatus }
-							onConfirmationClose={ onConfirmationClose }
+							onClose={ onClose }
 							onConfirmation={ updateRetentionPeriod }
 							disableFormSubmission={ disableFormSubmission }
 						/>

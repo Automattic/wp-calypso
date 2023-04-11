@@ -67,7 +67,7 @@ const RetentionOptionOnCancelPurchase: React.FC = () => {
 		setConfirmationDialogVisible( true );
 	}, [] );
 
-	const onConfirmationClose = useCallback( () => {
+	const onClose = useCallback( () => {
 		setConfirmationDialogVisible( false );
 	}, [] );
 
@@ -132,7 +132,7 @@ const RetentionOptionOnCancelPurchase: React.FC = () => {
 					confirmationDialogVisible={ confirmationDialogVisible }
 					retentionSelected={ MINIMUM_RETENTION_TO_OFFER }
 					updateRetentionRequestStatus={ updateRetentionRequestStatus }
-					onConfirmationClose={ onConfirmationClose }
+					onClose={ onClose }
 					onConfirmation={ updateRetentionPeriod }
 				/>
 			</Card>

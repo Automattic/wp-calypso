@@ -16,7 +16,7 @@ describe( 'RetentionConfirmationDialog', () => {
 				confirmationDialogVisible={ true }
 				retentionSelected={ 2 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.SUBMITTED }
-				onConfirmationClose={ jest.fn() }
+				onClose={ jest.fn() }
 				onConfirmation={ jest.fn() }
 			/>
 		);
@@ -35,7 +35,7 @@ describe( 'RetentionConfirmationDialog', () => {
 				confirmationDialogVisible={ true }
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.SUBMITTED }
-				onConfirmationClose={ jest.fn() }
+				onClose={ jest.fn() }
 				onConfirmation={ jest.fn() }
 			/>
 		);
@@ -54,7 +54,7 @@ describe( 'RetentionConfirmationDialog', () => {
 				confirmationDialogVisible={ true }
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.PENDING }
-				onConfirmationClose={ jest.fn() }
+				onClose={ jest.fn() }
 				onConfirmation={ jest.fn() }
 			/>
 		);
@@ -74,7 +74,7 @@ describe( 'RetentionConfirmationDialog', () => {
 				confirmationDialogVisible={ true }
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED }
-				onConfirmationClose={ jest.fn() }
+				onClose={ jest.fn() }
 				onConfirmation={ confirmationCallback }
 			/>
 		);
@@ -94,7 +94,7 @@ describe( 'RetentionConfirmationDialog', () => {
 				confirmationDialogVisible={ true }
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED }
-				onConfirmationClose={ cancelCallback }
+				onClose={ cancelCallback }
 				onConfirmation={ jest.fn() }
 			/>
 		);
@@ -113,7 +113,7 @@ describe( 'RetentionConfirmationDialog', () => {
 				confirmationDialogVisible={ false }
 				retentionSelected={ 7 }
 				updateRetentionRequestStatus={ BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED }
-				onConfirmationClose={ jest.fn() }
+				onClose={ jest.fn() }
 				onConfirmation={ jest.fn() }
 			/>
 		);
