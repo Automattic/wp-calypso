@@ -24,7 +24,6 @@ describe( 'updateBackupRetentionRequestStatus', () => {
 	} );
 
 	test( 'should return UNSUBMITTED when retention update request status is RESET', () => {
-		// lets ensure that state is not modified when passed an unrelated action.
 		expect(
 			updateBackupRetentionRequestStatus( undefined, {
 				type: JETPACK_BACKUP_RETENTION_UPDATE_RESET,
