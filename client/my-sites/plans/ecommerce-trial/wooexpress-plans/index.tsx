@@ -1,16 +1,22 @@
 import {
+	PLAN_FREE,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	getPlanPath,
 	getPlans,
+	isWooExpressPlan,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import page from 'page';
+import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
 import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/plan-interval-selector';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 import './style.scss';
 
@@ -20,14 +26,24 @@ type SegmentedOptionProps = {
 };
 interface WooExpressPlansProps {
 	siteId: number | string;
+	siteSlug: string;
 	interval?: 'monthly' | 'yearly';
 	monthlyControlProps: SegmentedOptionProps;
+	triggerTracksEvent?: ( planSlug: string ) => void;
 	yearlyControlProps: SegmentedOptionProps;
 	showIntervalToggle?: boolean;
 }
 
 export function WooExpressPlans( props: WooExpressPlansProps ) {
-	const { siteId, interval, monthlyControlProps, yearlyControlProps, showIntervalToggle } = props;
+	const {
+		interval,
+		monthlyControlProps,
+		showIntervalToggle,
+		siteId,
+		siteSlug,
+		triggerTracksEvent,
+		yearlyControlProps,
+	} = props;
 	const translate = useTranslate();
 
 	const mediumPlanAnnual = getPlans()[ PLAN_WOOEXPRESS_MEDIUM ];
@@ -68,10 +84,28 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 	const mediumPlan =
 		interval === 'yearly' ? PLAN_WOOEXPRESS_MEDIUM : PLAN_WOOEXPRESS_MEDIUM_MONTHLY;
 
+	const onUpgradeClick = useCallback(
+		( cartItem: MinimalRequestCartProduct | null ) => {
+			const upgradePlanSlug = cartItem?.product_slug ?? PLAN_FREE;
+
+			triggerTracksEvent?.( upgradePlanSlug );
+
+			const planPath = getPlanPath( upgradePlanSlug ) ?? '';
+
+			const checkoutUrl = isWooExpressPlan( upgradePlanSlug )
+				? getECommerceTrialCheckoutUrl( { productSlug: planPath, siteSlug } )
+				: `/checkout/${ siteSlug }/${ planPath }`;
+
+			page( checkoutUrl );
+		},
+		[ siteSlug, triggerTracksEvent ]
+	);
+
 	const plansTableProps = {
 		plans: [ smallPlan, mediumPlan ],
 		hidePlansFeatureComparison: true,
 		siteId,
+		onUpgradeClick,
 	};
 
 	return (

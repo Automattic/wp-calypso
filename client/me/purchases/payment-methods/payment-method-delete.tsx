@@ -16,7 +16,10 @@ interface Props {
 
 const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 	const translate = useTranslate();
-	const { isDeleting, deletePaymentMethod } = useStoredPaymentMethods();
+	const { isDeleting, deletePaymentMethod } = useStoredPaymentMethods( {
+		type: 'all',
+		expired: true,
+	} );
 	const reduxDispatch = useDispatch< CalypsoDispatch >();
 	const [ isDialogVisible, setIsDialogVisible ] = useState( false );
 	const closeDialog = useCallback( () => setIsDialogVisible( false ), [] );

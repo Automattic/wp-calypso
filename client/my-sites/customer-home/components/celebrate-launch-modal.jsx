@@ -1,5 +1,6 @@
 import { Gridicon, ConfettiAnimation } from '@automattic/components';
 import { Button, Modal } from '@wordpress/components';
+import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState, useRef } from 'react';
 import { useDispatch } from 'react-redux';
@@ -122,7 +123,7 @@ function CelebrateLaunchModal( { setModalIsOpen, site, allDomains } ) {
 								onMouseLeave={ () => setClipboardCopied( false ) }
 								ref={ clipboardButtonEl }
 							>
-								<Gridicon icon="clipboard" />
+								<Icon icon={ copy } size={ 18 } />
 							</ClipboardButton>
 							<Tooltip
 								context={ clipboardButtonEl.current }

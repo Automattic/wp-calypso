@@ -14,6 +14,7 @@ import {
 } from '@automattic/wpcom-checkout';
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { dangerouslyGetExperimentAssignment } from 'calypso/lib/explat';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { useGetProductVariants } from 'calypso/my-sites/checkout/composite-checkout/hooks/product-variants';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
@@ -201,6 +202,21 @@ function LineItemWrapper( {
 		if ( isJetpack || isAkismet ) {
 			return true;
 		}
+
+		try {
+			const { variationName } = dangerouslyGetExperimentAssignment( 'calypso_plans_2yr_toggle' );
+
+			if ( variationName === 'toggle_and_checkout' ) {
+				return true;
+			}
+		} catch {
+			// The error is intentionally ignore here. For this particular experiment,
+			// the experience should start from the 2023 version of plans page to the checkout.
+			// Thus, for any other flow that leads to the checkout, they shouldn't be affected.
+			// That also means chances are that we can't load or preload the experiment earlier
+			// so that `dangerouslyGetExperimentAssignment` doesn't throw.
+		}
+
 		return variant.termIntervalInMonths >= initialVariantTerm;
 	} );
 

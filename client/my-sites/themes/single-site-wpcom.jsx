@@ -15,7 +15,6 @@ import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import Main from 'calypso/components/main';
 import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
-import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
@@ -28,7 +27,6 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const { currentPlan, currentThemeId, isVip, requestingSitePlans, siteId, siteSlug, translate } =
 		props;
 
-	const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
 	const displayUpsellBanner = ! requestingSitePlans && currentPlan && ! isVip;
 	const upsellUrl = `/plans/${ siteSlug }`;
 	const isEnglishLocale = useIsEnglishLocale();
@@ -86,9 +84,6 @@ const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 
 	return (
 		<Main fullWidthLayout className="themes">
-			<BodySectionCssClass
-				bodyClass={ [ ...( isNewDetailsAndPreview ? [ 'is-section-themes-i4-2' ] : [] ) ] }
-			/>
 			<QueryActiveTheme siteId={ siteId } />
 			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 

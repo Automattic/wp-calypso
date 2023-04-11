@@ -1,8 +1,13 @@
+import { getLocaleSlug, numberFormat, useTranslate } from 'i18n-calypso';
 import throttle from 'lodash/throttle';
 import { useMemo, useState, useRef, useEffect } from 'react';
+import uPlot from 'uplot';
 import UplotReact from 'uplot-react';
 
-import 'uplot/dist/uPlot.min.css';
+import './style.scss';
+
+// NOTE: Do not include this component in the package entry bundle!
+// Doing so will unnecessarily bloat the package bundle size.
 
 const DEFAULT_DIMENSIONS = {
 	height: 300,
@@ -10,10 +15,6 @@ const DEFAULT_DIMENSIONS = {
 };
 
 const THROTTLE_DURATION = 400; // in ms
-interface UplotChartProps {
-	data: uPlot.AlignedData;
-	options?: Partial< uPlot.Options >;
-}
 
 function useResize(
 	uplotRef: React.RefObject< uPlot >,
@@ -44,17 +45,28 @@ function useResize(
 	}, [ uplotRef, containerRef ] );
 }
 
-// NOTE: Do not include this component in the package entry bundle!
-// Doing so will unnecessarily bloat the package bundle size.
-export default function UplotChart( { data, options: propOptions }: UplotChartProps ) {
+interface UplotChartProps {
+	data: uPlot.AlignedData;
+	options?: Partial< uPlot.Options >;
+	legendContainer?: React.RefObject< HTMLDivElement >;
+}
+
+export default function UplotChart( {
+	data,
+	options: propOptions,
+	legendContainer,
+}: UplotChartProps ) {
+	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
+
 	const [ options ] = useState< uPlot.Options >(
-		useMemo(
-			() => ( {
+		useMemo( () => {
+			const defaultOptions: uPlot.Options = {
 				class: 'calypso-uplot-chart',
 				...DEFAULT_DIMENSIONS,
-				padding: [ 16, 8, 16, 8 ],
+				// Set incoming dates as UTC.
+				tzDate: ( ts ) => uPlot.tzDate( new Date( ts * 1e3 ), 'Etc/UTC' ),
 				axes: [
 					{
 						// x-axis
@@ -87,21 +99,51 @@ export default function UplotChart( { data, options: propOptions }: UplotChartPr
 					y: false,
 				},
 				series: [
-					{},
+					{
+						label: translate( 'Date' ),
+						value: ( self: uPlot, rawValue: number ) => {
+							if ( ! rawValue ) {
+								return '-';
+							}
+
+							return new Date( rawValue * 1000 ).toLocaleDateString( getLocaleSlug() ?? 'en', {
+								month: 'long',
+								year: 'numeric',
+							} );
+						},
+					},
 					{
 						fill: 'rgba(48, 87, 220, 0.075)',
-						label: 'Value',
+						label: translate( 'Subscribers' ),
 						stroke: '#3057DC',
 						width: 2,
 						points: {
 							show: false,
 						},
+						value: ( self: uPlot, rawValue: number ) => {
+							if ( ! rawValue ) {
+								return '-';
+							}
+
+							return numberFormat( rawValue, 0 );
+						},
 					},
 				],
+				legend: {
+					isolate: true,
+					mount: ( self: uPlot, el: HTMLElement ) => {
+						// If legendContainer is defined, move the legend into it.
+						if ( legendContainer?.current ) {
+							legendContainer?.current.append( el );
+						}
+					},
+				},
+			};
+			return {
+				...defaultOptions,
 				...( typeof propOptions === 'object' ? propOptions : {} ),
-			} ),
-			[ propOptions ]
-		)
+			};
+		}, [ legendContainer, propOptions, translate ] )
 	);
 
 	useResize( uplot, uplotContainer );

@@ -1097,6 +1097,7 @@ class SignupForm extends Component {
 								handleResponse={ this.handleWooCommerceSocialConnect }
 								socialService={ this.props.socialService }
 								socialServiceResponse={ this.props.socialServiceResponse }
+								redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 							/>
 						) }
 					</LoggedOutForm>
@@ -1170,6 +1171,7 @@ class SignupForm extends Component {
 							socialService={ this.props.socialService }
 							socialServiceResponse={ this.props.socialServiceResponse }
 							isReskinned={ this.props.isReskinned }
+							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 						/>
 					) }
 					{ this.props.footerLink || this.footerLink() }
@@ -1210,6 +1212,7 @@ class SignupForm extends Component {
 							isReskinned={ this.props.isReskinned }
 							flowName={ this.props.flowName }
 							compact={ this.props.isWoo }
+							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 						/>
 					</Fragment>
 				) }

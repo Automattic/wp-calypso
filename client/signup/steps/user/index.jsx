@@ -358,12 +358,18 @@ export class UserStep extends Component {
 			return;
 		}
 
+		const query = initialContext?.query || {};
+		if ( typeof window !== 'undefined' && window.sessionStorage.getItem( 'signup_redirect_to' ) ) {
+			query.redirect_to = window.sessionStorage.getItem( 'signup_redirect_to' );
+			window.sessionStorage.removeItem( 'signup_redirect_to' );
+		}
+
 		this.submit( {
 			service,
 			access_token,
 			id_token,
 			userData,
-			queryArgs: initialContext?.query || {},
+			queryArgs: query,
 		} );
 	};
 
@@ -449,7 +455,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isReskinned } = this.props;
+		const { oauth2Client, isReskinned, isPasswordless } = this.props;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -479,7 +485,7 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
-					isPasswordless={ isMobile() }
+					isPasswordless={ isMobile() || isPasswordless }
 					queryArgs={ this.props.initialContext?.query || {} }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }

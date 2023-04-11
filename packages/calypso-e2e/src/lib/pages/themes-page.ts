@@ -5,8 +5,8 @@ const selectors = {
 	currentTheme: ( name: string ) => `.current-theme:has-text("${ name }")`,
 
 	// Main themes listing
-	items: '.card.theme',
-	excludeActiveTheme: ':not(.is-active)',
+	items: '.card.theme-card',
+	excludeActiveTheme: ':not(.theme-card--is-active)',
 
 	// Transitions
 	spinner: '.themes__content > .spinner',

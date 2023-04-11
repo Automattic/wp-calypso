@@ -21,7 +21,7 @@ export function generateFlows( {
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
-			steps: [ 'plans', 'user', 'domains' ],
+			steps: [ 'plans-hosting', 'user-hosting', 'domains' ],
 			destination: getHomeDestination,
 			description:
 				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
@@ -94,6 +94,8 @@ export function generateFlows( {
 			description: 'Preselect a theme to activate/buy from an external source',
 			lastModified: '2022-11-28',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'theme' ],
+			optionalDependenciesInQuery: [ 'theme_type', 'style_variation' ],
 		},
 		{
 			name: 'with-theme-assembler',
