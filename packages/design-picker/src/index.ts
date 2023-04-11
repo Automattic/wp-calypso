@@ -3,6 +3,7 @@ export { default as FeaturedPicksButtons } from './components/featured-picks-but
 export { default as PremiumBadge } from './components/premium-badge';
 export { default as BadgeContainer } from './components/badge-container';
 export { default as StyleVariationBadges } from './components/style-variation-badges';
+export { default as ThemeCard } from './components/theme-card';
 export { default as ThemePreview } from './components/theme-preview';
 export { default as UnifiedDesignPicker } from './components/unified-design-picker';
 export { default as WooCommerceBundledBadge } from './components/woocommerce-bundled-badge';

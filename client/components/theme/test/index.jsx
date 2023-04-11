@@ -27,7 +27,7 @@ describe( 'Theme', () => {
 		describe( 'with default display buttonContents', () => {
 			test( 'should render an element with a className of "theme"', () => {
 				const { container } = render( <Theme { ...props } /> );
-				expect( container.firstChild ).toHaveClass( 'theme', 'is-actionable' );
+				expect( container.firstChild ).toHaveClass( 'theme-card--is-actionable' );
 				expect( container.getElementsByTagName( 'h2' )[ 0 ] ).toHaveTextContent(
 					'Twenty Seventeen'
 				);
