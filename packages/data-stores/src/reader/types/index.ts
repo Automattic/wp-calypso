@@ -69,5 +69,5 @@ export type PostSubscription = {
 	site_title: string;
 	site_icon: string;
 	site_url: string;
-	date_subscribed: string;
+	date_subscribed: Date;
 };

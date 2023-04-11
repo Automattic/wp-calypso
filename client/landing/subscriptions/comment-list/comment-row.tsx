@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
-import moment from 'moment';
 import { useMemo } from 'react';
+import TimeSince from 'calypso/components/time-since';
 import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
 
 const CommentRow = ( {
@@ -11,10 +11,6 @@ const CommentRow = ( {
 	site_url,
 	date_subscribed,
 }: PostSubscription ) => {
-	const since = useMemo(
-		() => moment( date_subscribed ).format( 'LL' ),
-		[ date_subscribed, moment ]
-	);
 	const hostname = useMemo( () => new URL( site_url ).hostname, [ site_url ] );
 	const siteIcon = useMemo( () => {
 		if ( site_icon ) {
@@ -39,7 +35,7 @@ const CommentRow = ( {
 				</span>
 			</a>
 			<span className="date" role="cell">
-				{ since }
+				<TimeSince date={ date_subscribed.toISOString() } />
 			</span>
 			<span className="actions" role="cell">
 				...

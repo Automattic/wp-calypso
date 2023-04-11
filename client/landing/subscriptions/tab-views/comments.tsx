@@ -11,7 +11,7 @@ const posts: PostSubscription[] = [
 		site_title: 'Test Site 2022',
 		site_icon: 'https://www.gravatar.com/avatar/',
 		site_url: 'https://testsite2022.wordpress.com',
-		date_subscribed: '2022-03-29T14:55:53+00:00',
+		date_subscribed: new Date( '2022-03-29T14:55:53+00:00' ),
 	},
 	{
 		id: '2',
@@ -21,7 +21,7 @@ const posts: PostSubscription[] = [
 		site_icon: 'https://www.gravatar.com/avatar/',
 		site_title: 'April Site',
 		site_url: 'https://testsite2023.wordpress.com',
-		date_subscribed: '2023-01-04T17:55:53+00:00',
+		date_subscribed: new Date( '2023-01-04T17:55:53+00:00' ),
 	},
 ];
 
