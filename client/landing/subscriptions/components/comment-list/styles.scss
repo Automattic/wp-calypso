@@ -34,8 +34,7 @@ $max-list-width: 1300px;
 		}
 
 		.post {
-			max-width: 403px;
-			min-width: 350px;
+			flex: 0 0 403px;
 			font-size: $font-body-small;
 			line-height: 20px;
 
@@ -60,7 +59,12 @@ $max-list-width: 1300px;
 
 		@media (max-width: $break-small) {
 			.post {
+				flex: 1 1 302px;
 				min-width: 0;
+
+				.excerpt {
+					max-width: 302px;
+				}
 			}
 		}
 
