@@ -9,19 +9,14 @@ jest.mock( 'react-redux', () => ( {
 	useSelector: ( selector ) => selector(),
 } ) );
 jest.mock( 'calypso/state/plans/selectors', () => ( {
-	getPlanRawPrice: jest.fn(),
-	getDiscountedRawPrice: jest.fn(),
-} ) );
-jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
-	getPlanDiscountedRawPrice: jest.fn(),
+	getPlanPrices: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn( () => 1 ),
 } ) );
 
 import { PLAN_PREMIUM } from '@automattic/calypso-products';
-import { getPlanRawPrice, getDiscountedRawPrice } from 'calypso/state/plans/selectors';
-import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
+import { getPlanPrices } from 'calypso/state/plans/selectors';
 import usePlanPrices from '../hooks/use-plan-prices';
 
 describe( 'usePlanPrices', () => {
@@ -35,9 +30,11 @@ describe( 'usePlanPrices', () => {
 	} );
 
 	test( 'should return correct pricing structure', () => {
-		getPlanRawPrice.mockImplementation( () => 300 );
-		getDiscountedRawPrice.mockImplementation( () => 200 );
-		getPlanDiscountedRawPrice.mockImplementation( () => 100 );
+		getPlanPrices.mockImplementation( () => ( {
+			rawPrice: 300,
+			discountedRawPrice: 200,
+			planDiscountedRawPrice: 100,
+		} ) );
 
 		const planPrices = usePlanPrices( defaultProps );
 
