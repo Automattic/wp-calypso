@@ -11,10 +11,8 @@ import TumblrSharePreview from 'calypso/components/share/tumblr-share-preview';
 import TwitterSharePreview from 'calypso/components/share/twitter-share-preview';
 import VerticalMenu from 'calypso/components/vertical-menu';
 import { SocialItem } from 'calypso/components/vertical-menu/items';
-import { decodeEntities } from 'calypso/lib/formatting';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSitePost } from 'calypso/state/posts/selectors';
-import { normalizePostForDisplay } from 'calypso/state/posts/utils';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
 import { getSiteUserConnections } from 'calypso/state/sharing/publicize/selectors';
 import { getSeoTitle, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
@@ -63,17 +61,8 @@ class SharingPreviewPane extends PureComponent {
 	};
 
 	renderPreview() {
-		const {
-			post,
-			site,
-			message,
-			connections,
-			translate,
-			seoTitle,
-			normalizedSeoTitle,
-			siteSlug,
-			siteIcon,
-		} = this.props;
+		const { post, site, message, connections, translate, seoTitle, siteSlug, siteIcon } =
+			this.props;
 		const { selectedService } = this.state;
 		const connection = find( connections, { service: selectedService } );
 		if ( ! connection ) {
@@ -126,8 +115,8 @@ class SharingPreviewPane extends PureComponent {
 				return (
 					<FacebookSharePreview
 						{ ...previewProps }
-						seoTitle={ normalizedSeoTitle }
-						articleContent={ decodeEntities( post.content ) }
+						articleExcerpt={ post.excerpt }
+						articleContent={ post.content }
 					/>
 				);
 			case 'tumblr':
@@ -177,8 +166,6 @@ const mapStateToProps = ( state, ownProps ) => {
 	const site = getSite( state, siteId );
 	const post = getSitePost( state, siteId, postId );
 	const seoTitle = getSeoTitle( state, 'posts', { site, post } );
-	const normalizedPost = normalizePostForDisplay( getSitePost( state, siteId, postId ) );
-	const normalizedSeoTitle = getSeoTitle( state, 'posts', { site, post: normalizedPost } );
 	const currentUserId = getCurrentUserId( state );
 	const connections = getSiteUserConnections( state, siteId, currentUserId );
 	const siteSlug = getSiteSlug( state, siteId );
@@ -188,7 +175,6 @@ const mapStateToProps = ( state, ownProps ) => {
 		site,
 		post,
 		seoTitle,
-		normalizedSeoTitle,
 		connections,
 		siteSlug,
 		siteIcon,
