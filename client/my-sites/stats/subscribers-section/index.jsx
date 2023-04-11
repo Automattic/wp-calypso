@@ -67,13 +67,11 @@ function transformData( data ) {
 	return [ processedData.reverse() ];
 }
 
-export default function SubscribersSection() {
+export default function SubscribersSection( siteId, siteSlug ) {
 	const { counts, isLoading } = useSubscriberCounts();
 
 	// Determines what is shown in the tooltip on hover.
 	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
-
-	// todo bring in real data for period navigation
 
 	const traffic = {
 		label: 'Subscribers',
@@ -83,11 +81,9 @@ export default function SubscribersSection() {
 	const date = new Date();
 	const period = 'day';
 	const query = {};
-	const slug = 'anna.com';
 
-	const slugPath = slug ? `/${ slug }` : '';
-	const pathTemplate = `${ traffic.path }/{{ interval }}${ slugPath }`;
-	// const pathTemplate = `${ traffic.path }/${ slugPath }`;
+	const slugPath = siteSlug ? `/${ siteSlug }` : '';
+	const pathTemplate = `${ traffic.path }{{ interval }}${ slugPath }`;
 
 	return (
 		<div className="subscribers-section">
