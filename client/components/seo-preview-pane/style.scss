@@ -84,8 +84,12 @@
 }
 
 .seo-preview-pane__preview-area {
-	margin: 1.625rem auto;
-	max-width: 100%;
+	flex: 1;
+
+	margin: 0 auto;
+	padding: 1.5rem 0;
+
+	background-color: #f3f5f9;
 }
 
 .seo-preview-pane__preview {
