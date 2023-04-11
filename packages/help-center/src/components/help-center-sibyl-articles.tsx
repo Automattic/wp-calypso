@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable no-restricted-imports */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
@@ -111,7 +110,7 @@ export function SibylArticles( {
 			sibylArticles?.length
 				? sibylArticles
 				: getFilteredContextResults( sectionName, intent?.site_intent ?? '' )
-		 ).map( ( article ) => {
+		).map( ( article ) => {
 			const hasPostId = 'post_id' in article && article.post_id;
 			return {
 				...article,
