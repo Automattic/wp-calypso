@@ -12,6 +12,7 @@ class RegistrantVerificationPage extends Component {
 	static propTypes = {
 		domain: PropTypes.string.isRequired,
 		email: PropTypes.string.isRequired,
+		reseller: PropTypes.string,
 		token: PropTypes.string.isRequired,
 	};
 
@@ -42,11 +43,14 @@ class RegistrantVerificationPage extends Component {
 	}
 
 	getVerificationSuccessState = ( domains ) => {
-		const { translate } = this.props;
+		const { reseller, translate } = this.props;
+
+		// DSAPI reseller domains shouldn't use the ?logmein=1 query parameter
+		const logMeInSuffix = reseller ? '' : '?logmein=1';
 
 		const DomainLinks = domains.map( ( domain, index ) => [
 			index > 0 && ', ',
-			<a key={ domain } href={ `https://${ domain }?logmein=1` }>
+			<a key={ domain } href={ `https://${ domain }${ logMeInSuffix }` }>
 				{ domain }
 			</a>,
 		] );
@@ -65,16 +69,26 @@ class RegistrantVerificationPage extends Component {
 			),
 			actionTitle: null,
 			actionCallback: null,
-			footer: translate(
-				'All done. You can close this window now or {{domainsManagementLink}}manage your domains{{/domainsManagementLink}}.',
-				{
-					components: {
-						domainsManagementLink: <a href={ domainManagementRoot() } />,
-					},
-				}
-			),
+			footer: this.getSuccessFooterMessage(),
 			isLoading: false,
 		};
+	};
+
+	getSuccessFooterMessage = () => {
+		const { reseller, translate } = this.props;
+
+		if ( reseller ) {
+			return translate( 'All done. You can close this window now.' );
+		}
+
+		return translate(
+			'All done. You can close this window now or {{domainsManagementLink}}manage your domains{{/domainsManagementLink}}.',
+			{
+				components: {
+					domainsManagementLink: <a href={ domainManagementRoot() } />,
+				},
+			}
+		);
 	};
 
 	getExpiredState = () => {
@@ -136,14 +150,7 @@ class RegistrantVerificationPage extends Component {
 						},
 					}
 				),
-				footer: translate(
-					'All done. You can close this window now or {{domainsManagementLink}}manage your domains{{/domainsManagementLink}}.',
-					{
-						components: {
-							domainsManagementLink: <a href={ domainManagementRoot() } />,
-						},
-					}
-				),
+				footer: this.getSuccessFooterMessage(),
 			};
 		}
 	};
@@ -157,13 +164,15 @@ class RegistrantVerificationPage extends Component {
 	};
 
 	getDefaultErrorState = () => {
-		const { translate } = this.props;
+		const { reseller, translate } = this.props;
+
+		// DSAPI resellers shouldn't link to the support contact form
 		const defaultErrorFooter = translate(
 			"If you're having trouble verifying your contact information, please {{a}}{{strong}}contact support{{/strong}}{{/a}}.",
 			{
 				components: {
-					a: <a href={ CALYPSO_CONTACT } />,
-					strong: <strong />,
+					a: reseller ? <span /> : <a href={ CALYPSO_CONTACT } />,
+					strong: reseller ? <span /> : <strong />,
 				},
 			}
 		);
@@ -246,11 +255,14 @@ class RegistrantVerificationPage extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { reseller, translate } = this.props;
 
 		return (
 			<div className="registrant-verification">
-				<DomainsLandingHeader title={ translate( 'Domain Contact Verification' ) } />
+				<DomainsLandingHeader
+					reseller={ reseller }
+					title={ translate( 'Domain Contact Verification' ) }
+				/>
 				<DomainsLandingContentCard
 					title={ this.state.title }
 					message={ this.state.message }
