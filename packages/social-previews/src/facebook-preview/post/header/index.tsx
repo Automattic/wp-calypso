@@ -1,4 +1,4 @@
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import FacebookPostIcon from '../icons';
 import defaultAvatar from './default-avatar.png';
 import type { FacebookUser } from '../../types';
@@ -6,8 +6,6 @@ import type { FacebookUser } from '../../types';
 import './styles.scss';
 
 const FacebookPostHeader: React.FC< { user?: FacebookUser } > = ( { user } ) => {
-	const translate = useTranslate();
-
 	return (
 		<div className="facebook-preview__post-header">
 			<div className="facebook-preview__post-header-content">
@@ -19,13 +17,15 @@ const FacebookPostHeader: React.FC< { user?: FacebookUser } > = ( { user } ) => 
 				<div>
 					<div className="facebook-preview__post-header-name">
 						{ user?.displayName ||
-							translate( 'Anonymous User', { comment: 'Name of a fictional Facebook User' } ) }
+							// translators: name of a fictional Facebook User
+							__( 'Anonymous User' ) }
 					</div>
 					<div className="facebook-preview__post-header-share">
 						<span className="facebook-preview__post-header-time">
-							{ translate( 'Just now', {
-								comment: 'Temporal indication of when a post was published',
-							} ) }
+							{
+								// translators: temporal indication of when a post was published
+								__( 'Just now' )
+							}
 						</span>
 						<span className="facebook-preview__post-header-dot" aria-hidden="true">
 							·

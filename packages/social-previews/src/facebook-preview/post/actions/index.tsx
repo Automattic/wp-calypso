@@ -1,24 +1,37 @@
-import { useTranslate } from 'i18n-calypso';
+import { __ } from '@wordpress/i18n';
 import FacebookPostIcon from '../icons';
 
 import './styles.scss';
 
 const FacebookPostActions: React.FC = () => {
-	const translate = useTranslate();
-
 	return (
 		<ul className="facebook-preview__post-actions">
 			<li>
 				<FacebookPostIcon name="like" />
-				<span>{ translate( 'Like', { comment: 'Facebook "Like" action' } ) }</span>
+				<span>
+					{
+						// translators: Facebook "Like" action
+						__( 'Like' )
+					}
+				</span>
 			</li>
 			<li>
 				<FacebookPostIcon name="comment" />
-				<span>{ translate( 'Comment', { comment: 'Facebook "Comment" action' } ) }</span>
+				<span>
+					{
+						// translators: Facebook "Comment" action
+						__( 'Comment' )
+					}
+				</span>
 			</li>
 			<li>
 				<FacebookPostIcon name="share" />
-				<span>{ translate( 'Share', { comment: 'Facebook "Share" action' } ) }</span>
+				<span>
+					{
+						// translators: Facebook "Share" action
+						__( 'Share' )
+					}
+				</span>
 			</li>
 		</ul>
 	);
