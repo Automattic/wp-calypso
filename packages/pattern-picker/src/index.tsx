@@ -1,24 +1,43 @@
 import { Gridicon } from '@automattic/components';
+import { useStarterDesignsQuery } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect, useRef } from 'react';
 import Swiper from 'swiper';
-import { PATTERN_SOURCE_SITE_SLUG } from './constants';
 import { Item } from './item';
-import useQueryPatterns from './use-query-patterns';
 import type { Pattern } from './types';
+import type { Design } from '@automattic/design-picker';
 import 'swiper/dist/css/swiper.css';
 
-type Props = { onPick: ( pattern: Pattern ) => void };
+type Props = { onPick: ( design: Design ) => void };
 
 export default function PatternPicker( { onPick }: Props ) {
 	const { __ } = useI18n();
-	const { data: patterns } = useQueryPatterns( PATTERN_SOURCE_SITE_SLUG );
+	const { data: allDesigns } = useStarterDesignsQuery(
+		{
+			vertical_id: '',
+			intent: '',
+			seed: undefined,
+			_locale: useLocale(),
+			include_pattern_virtual_designs: true,
+		},
+		{
+			enabled: true,
+		}
+	);
+	const designs = allDesigns
+		? allDesigns.static.designs.filter(
+				( design ) =>
+					design.is_virtual &&
+					design.categories.some( ( category ) => category.slug === 'link-in-bio' )
+		  )
+		: [];
 	const swiperInstance = useRef< Swiper | null >( null );
 
 	useEffect( () => {
-		if ( patterns ) {
+		if ( designs ) {
 			swiperInstance.current = new Swiper( '.swiper-container', {
 				mousewheel: true,
 				keyboard: true,
@@ -36,9 +55,9 @@ export default function PatternPicker( { onPick }: Props ) {
 		return () => {
 			swiperInstance.current?.destroy();
 		};
-	}, [ patterns ] );
+	}, [ designs ] );
 
-	if ( ! patterns ) {
+	if ( ! designs ) {
 		return null;
 	}
 
@@ -46,12 +65,9 @@ export default function PatternPicker( { onPick }: Props ) {
 		<div className="pattern-picker">
 			<div className="pattern-picker__carousel swiper-container">
 				<div className="swiper-wrapper">
-					{ patterns.map( ( pattern ) => (
-						<div
-							className="pattern-picker__slide swiper-slide"
-							key={ `${ pattern.ID }-slide-item` }
-						>
-							<Item pattern={ pattern } />
+					{ designs.map( ( design, key ) => (
+						<div className="pattern-picker__slide swiper-slide" key={ key }>
+							<Item design={ design } />
 						</div>
 					) ) }
 				</div>
@@ -70,7 +86,7 @@ export default function PatternPicker( { onPick }: Props ) {
 					isPrimary
 					onClick={ () => {
 						if ( swiperInstance.current ) {
-							onPick( patterns[ swiperInstance.current?.activeIndex ] );
+							onPick( designs[ swiperInstance.current?.activeIndex ] );
 						}
 					} }
 				>
