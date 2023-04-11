@@ -1,16 +1,15 @@
-:root {
-	--social-preview-text-color: #1e1e1e;
-	--social-preview-light-text-color: #757575;
-}
+$social-preview-text-color: #1e1e1e;
+$social-preview-light-text-color: #757575;
 
 .social-preview__section {
-	max-width: 100%;
+	margin-bottom: 2rem;
 }
 
 .social-preview__section-heading {
+	margin-top: 0;
 	margin-bottom: 0.375rem;
 
-	color: var(--social-preview-text-color);
+	color: $social-preview-text-color;
 
 	font-weight: 600;
 	font-size: 0.875rem;
@@ -18,9 +17,10 @@
 }
 
 .social-preview__section-desc {
+	margin-top: 0;
 	margin-bottom: 1rem;
 
-	color: var(--social-preview-light-text-color);
+	color: $social-preview-light-text-color;
 
 	font-size: 0.75rem;
 	line-height: 1.33;
