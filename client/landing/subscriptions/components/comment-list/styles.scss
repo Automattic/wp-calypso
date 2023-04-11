@@ -53,6 +53,7 @@ $max-list-width: 1300px;
 				max-width: 350px;
 				font-weight: 400;
 				color: $studio-gray-60;
+				margin-top: 4px;
 				@extend %ellipsis;
 			}
 		}
