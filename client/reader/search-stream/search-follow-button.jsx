@@ -23,7 +23,22 @@ class SearchFollowButton extends Component {
 		const { query, translate, readerAliasedFollowFeedUrl, feed } = this.props;
 		let isPotentialFeedUrl = false;
 		if ( resemblesUrl( query ) ) {
-			const parsedUrl = new URL( query );
+			let parsedUrl;
+			try {
+				parsedUrl = new URL( query );
+			} catch {
+				// Do nothing.
+			}
+
+			// If we got an invalid URL, add a protocol and try again.
+			if ( parsedUrl === undefined ) {
+				try {
+					parsedUrl = new URL( 'http://' + query );
+				} catch {
+					// Do nothing.
+				}
+			}
+
 			if ( parsedUrl ) {
 				isPotentialFeedUrl = some( commonExtensions, ( ext ) =>
 					parsedUrl.toString().includes( ext )
