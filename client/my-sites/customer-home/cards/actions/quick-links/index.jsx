@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -214,7 +215,7 @@ export const QuickLinks = ( {
 					/>
 				</>
 			) }
-			{ canManageSite && ! isAtomic && (
+			{ ! isEnabled( 'anchor/sunset-integration' ) && canManageSite && ! isAtomic && (
 				<ActionBox
 					href="https://anchor.fm/wordpressdotcom"
 					onClick={ trackAnchorPodcastAction }
