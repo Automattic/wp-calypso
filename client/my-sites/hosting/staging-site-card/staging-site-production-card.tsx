@@ -1,4 +1,4 @@
-import { Button, Card, Gridicon, LoadingPlaceholder } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
@@ -7,27 +7,13 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import CardHeading from 'calypso/components/card-heading';
 import Notice from 'calypso/components/notice';
 import { urlToSlug } from 'calypso/lib/url';
+import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
 import {
 	useProductionSiteDetail,
 	ProductionSite,
 } from 'calypso/my-sites/hosting/staging-site-card/use-production-site-detail';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-
-const FirstPlaceholder = styled( LoadingPlaceholder )( {
-	height: 24,
-	width: '85%',
-	marginBottom: '0.25em',
-} );
-const SecondPlaceholder = styled( LoadingPlaceholder )( {
-	height: 24,
-	width: '60%',
-	marginBottom: '1.5em',
-} );
-const ButtonPlaceholder = styled( LoadingPlaceholder )( {
-	width: '148px',
-	height: '40px',
-} );
 
 const SiteRow = styled.div( {
 	display: 'flex',
@@ -107,13 +93,7 @@ function StagingSiteProductionCard( { disabled, siteId }: CardProps ) {
 	if ( ! isLoading && productionSite ) {
 		cardContent = getManageStagingSiteContent( productionSite );
 	} else if ( isLoading ) {
-		cardContent = (
-			<div data-testid="loading-placeholder">
-				<FirstPlaceholder />
-				<SecondPlaceholder />
-				<ButtonPlaceholder />
-			</div>
-		);
+		cardContent = <LoadingPlaceholder />;
 	} else if ( loadingError ) {
 		cardContent = getLoadingErrorContent(
 			__(
