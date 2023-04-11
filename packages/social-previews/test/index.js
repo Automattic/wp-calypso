@@ -21,7 +21,7 @@ describe( 'Facebook previews', () => {
 		const { container } = render(
 			<Facebook
 				url={ DEFAULT_POST_URL }
-				title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral."
+				title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical."
 			/>
 		);
 
@@ -29,9 +29,9 @@ describe( 'Facebook previews', () => {
 
 		expect( titleEl ).toBeVisible();
 		expect( titleEl ).toHaveTextContent(
-			"I am the very model of a modern Major-General, I've information vegeta…"
+			"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kin…"
 		);
-		expect( titleEl.textContent.replace( '…', '' ) ).toHaveLength( 70 );
+		expect( titleEl.textContent.replace( '…', '' ) ).toHaveLength( 110 );
 	} );
 
 	it( 'should display a (hard) truncated description', () => {
