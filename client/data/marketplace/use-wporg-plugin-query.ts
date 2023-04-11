@@ -71,7 +71,7 @@ export const useWPORGInfinitePlugins = (
 	const locale = useSelector( getCurrentUserLocale );
 
 	return useInfiniteQuery(
-		getPluginsListKey( WPORG_CACHE_KEY, options, true ),
+		getPluginsListKey( [ WPORG_CACHE_KEY ], options, true ),
 		( { pageParam = 1 } ) =>
 			fetchPluginsList( {
 				pageSize: options.pageSize,

@@ -119,7 +119,7 @@ export const getESPluginsInfiniteQueryParams = (
 ): [ QueryKey, QueryFunction< ESResponse, QueryKey > ] => {
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
-	const cacheKey = getPluginsListKey( 'DEBUG-new-site-seach', options, true );
+	const cacheKey = getPluginsListKey( [ 'DEBUG-new-site-seach' ], options, true );
 	const groupId =
 		config.isEnabled( 'marketplace-jetpack-plugin-search' ) && options.category !== 'popular'
 			? 'marketplace'
