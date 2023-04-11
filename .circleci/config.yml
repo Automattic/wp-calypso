@@ -189,7 +189,7 @@ jobs:
 
             # Override SDKROOT and MACOSX_DEPLOYMENT_TARGET to ensure correct SDK configuration:
             # https://github.com/Homebrew/homebrew-core/pull/19296#issuecomment-352867571
-            export SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX12.6.sdk'
+            export SDKROOT='/Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk'
             export MACOSX_DEPLOYMENT_TARGET=10.13
 
             cd desktop && ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run ci:build-mac
