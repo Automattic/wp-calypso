@@ -29,7 +29,13 @@ const callFollowingEndPoint = async (
 	} );
 
 	if ( incoming && incoming.subscriptions ) {
-		data.push( ...incoming.subscriptions );
+		data.push(
+			...incoming.subscriptions.map( ( subscription ) => ( {
+				...subscription,
+				last_updated: new Date( subscription.last_updated ),
+				date_subscribed: new Date( subscription.date_subscribed ),
+			} ) )
+		);
 	}
 
 	if ( incoming.page * number < incoming.total_subscriptions ) {

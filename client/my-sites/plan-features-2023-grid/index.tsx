@@ -1126,7 +1126,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
 			const isCurrentPlan = isCurrentSitePlan( state, siteId, planProductId ) ?? false;
-			const isVisible = visiblePlans.indexOf( plan ) !== -1;
+			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
 
 			return {
 				availableForPurchase,

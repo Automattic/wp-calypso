@@ -1,3 +1,21 @@
 @import "../styles/theme.scss";
 @import "../styles/wp-admin.scss";
 @import "../styles/typography.scss";
+
+.jp-stats-widget {
+	// Offset the margin and padding of the `.postbox .inside` container.
+	margin: -11px -12px -12px;
+}
+
+.stats-widget-content {
+	font-family: $font-sf-pro-text;
+}
+
+.stats-widget-highlights-wrapper {
+	padding: 24px;
+	background: var(--jetpack-white-off);
+
+	label {
+		font-family: $font-sf-pro-display;
+	}
+}

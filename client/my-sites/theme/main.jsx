@@ -38,7 +38,6 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import StickyPanel from 'calypso/components/sticky-panel';
-import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -539,14 +538,8 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	renderSectionContent = ( section ) => {
-		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
+	renderSectionContent = () => {
 		const { isPremium, isWpcomTheme, supportDocumentation } = this.props;
-		const activeSection = {
-			'': this.renderOverviewTab(),
-			setup: this.renderSetupTab(),
-			support: this.renderSupportTab(),
-		}[ section ];
 
 		return (
 			<div className="theme__sheet-content">
@@ -557,27 +550,13 @@ class ThemeSheet extends Component {
 						messagePath="calypso:theme:admin_notices"
 					/>
 				) }
-				{ ! isNewDetailsAndPreview ? (
+				{ this.isLoaded() && (
 					<>
-						{ this.renderSectionNav( section ) }
-						{ activeSection }
+						{ this.renderOverviewTab() }
+						{ ! isPremium && supportDocumentation && this.renderSetupTab() }
+						{ this.renderSupportTab() }
+						{ isWpcomTheme && this.renderNextTheme() }
 					</>
-				) : (
-					<>
-						{ this.isLoaded() && (
-							<>
-								{ this.renderOverviewTab() }
-								{ ! isPremium && supportDocumentation && this.renderSetupTab() }
-								{ this.renderSupportTab() }
-								{ isNewDetailsAndPreview && isWpcomTheme && this.renderNextTheme() }
-							</>
-						) }
-					</>
-				) }
-				{ ! isNewDetailsAndPreview && (
-					<div className="theme__sheet-footer-line">
-						<Gridicon icon="my-sites" />
-					</div>
 				) }
 			</div>
 		);
@@ -693,7 +672,6 @@ class ThemeSheet extends Component {
 	};
 
 	renderOverviewTab = () => {
-		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium } = this.props;
 
 		return (
@@ -708,7 +686,6 @@ class ThemeSheet extends Component {
 					/>
 				</div>
 				{ download && ! isPremium && <ThemeDownloadCard href={ download } /> }
-				{ ! isNewDetailsAndPreview && isWpcomTheme && this.renderNextTheme() }
 			</div>
 		);
 	};
@@ -1174,7 +1151,6 @@ class ThemeSheet extends Component {
 			isBundledSoftwareSet,
 			isSiteBundleEligible,
 			translate,
-			isWPForTeamsSite,
 			isLoggedIn,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
@@ -1321,7 +1297,6 @@ class ThemeSheet extends Component {
 			} );
 		}
 
-		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const isRemoved = this.isRemoved();
 
 		const className = classNames( 'theme__sheet', {
@@ -1333,9 +1308,6 @@ class ThemeSheet extends Component {
 
 		return (
 			<Main className={ className }>
-				<BodySectionCssClass
-					bodyClass={ [ ...( isNewDetailsAndPreview ? [ 'is-section-theme-i4' ] : [] ) ] }
-				/>
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
 				<QueryProductsList />
 				<QueryUserPurchases />
@@ -1352,45 +1324,30 @@ class ThemeSheet extends Component {
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
-				{ ! isNewDetailsAndPreview && this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<AutoLoadingHomepageModal source="details" />
-				{ ! isNewDetailsAndPreview && pageUpsellBanner }
 				<div className="theme__sheet-action-bar-container">
 					<HeaderCake
 						className="theme__sheet-action-bar"
-						backText={
-							isNewDetailsAndPreview ? translate( 'Back to themes' ) : translate( 'All Themes' )
-						}
+						backText={ translate( 'Back to themes' ) }
 						onClick={ this.goBack }
-						alwaysShowBackText={ isNewDetailsAndPreview }
-					>
-						{ ! isNewDetailsAndPreview &&
-							! retired &&
-							! hasWpOrgThemeUpsellBanner &&
-							! isWPForTeamsSite &&
-							! this.shouldRenderForStaging() &&
-							this.renderButton() }
-					</HeaderCake>
+						alwaysShowBackText
+					/>
 				</div>
 				<div className={ columnsClassName }>
-					{ isNewDetailsAndPreview && (
-						<div className="theme__sheet-column-header">
-							{ pageUpsellBanner }
-							{ this.renderStagingPaidThemeNotice() }
-							{ this.renderHeader() }
-						</div>
-					) }
+					<div className="theme__sheet-column-header">
+						{ pageUpsellBanner }
+						{ this.renderStagingPaidThemeNotice() }
+						{ this.renderHeader() }
+					</div>
 					<div className="theme__sheet-column-left">
 						{ ! retired && this.renderSectionContent( section ) }
 						{ retired && this.renderRetired() }
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ isNewDetailsAndPreview && styleVariations.length
-								? this.renderWebPreview()
-								: this.renderScreenshot() }
+							{ styleVariations.length ? this.renderWebPreview() : this.renderScreenshot() }
 						</div>
 					) }
 				</div>

@@ -2,7 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import TimeSince from 'calypso/components/time-since';
 import { SiteSettings } from '../settings-popover';
 import type {
 	SiteSubscription,
@@ -32,11 +32,6 @@ export default function SiteRow( {
 	date_subscribed,
 	delivery_methods,
 }: SiteSubscription ) {
-	const moment = useLocalizedMoment();
-	const since = useMemo(
-		() => moment( date_subscribed ).format( 'LL' ),
-		[ date_subscribed, moment ]
-	);
 	const hostname = useMemo( () => new URL( url ).hostname, [ url ] );
 	const siteIcon = useMemo( () => {
 		if ( site_icon ) {
@@ -68,7 +63,7 @@ export default function SiteRow( {
 				</span>
 			</a>
 			<span className="date" role="cell">
-				{ since }
+				<TimeSince date={ date_subscribed.toDateString?.() ?? date_subscribed } />
 			</span>
 			<span className="email-frequency" role="cell">
 				{ deliveryFrequencyLabel }
