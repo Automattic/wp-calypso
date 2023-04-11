@@ -2,7 +2,7 @@
 @import "../shared";
 
 .facebook-preview__section {
-	width: clamp($facebook-preview-min-width, 100%, $facebook-preview-max-width);
+	width: clamp(#{$facebook-preview-min-width}, 100%, #{$facebook-preview-max-width});
 	margin: 0 auto;
 }
 
