@@ -23517,16 +23517,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"node-abi@npm:^2.19.2, node-abi@npm:^2.21.0":
-  version: 2.30.0
-  resolution: "node-abi@npm:2.30.0"
-  dependencies:
-    semver: ^5.4.1
-  checksum: 656da9820083b76b33d2474144707a93ea8550a05c7523619ead78ec861879efa1ba839d3a7454f4ccc2e6044d38e7a4be85ebc9539ccb01881658e3d98cd2cd
-  languageName: node
-  linkType: hard
-
-"node-abi@npm:^3.0.0":
+"node-abi@npm:3.35.0":
   version: 3.35.0
   resolution: "node-abi@npm:3.35.0"
   dependencies:

@@ -300,7 +300,8 @@
 		"@wordpress/base-styles": "4.13.0",
 		"@wordpress/interface@^4.8.0": "patch:@wordpress/interface@npm%3A4.8.0#./.yarn/patches/@wordpress-interface-npm-4.8.0-8a39ad37cf.patch",
 		"@wordpress/data-controls": "2.22.0",
-		"@wordpress/element": "4.20.0"
+		"@wordpress/element": "4.20.0",
+		"node-abi": "3.35.0"
 	},
 	"packageManager": "yarn@3.2.3",
 	"dependenciesMeta": {
