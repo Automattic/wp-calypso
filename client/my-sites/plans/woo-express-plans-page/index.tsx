@@ -1,5 +1,4 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	getPlans,
 	plansLink,
@@ -119,66 +118,66 @@ const WooExpressPlansPage = ( {
 		} );
 	}, [] );
 
-	const planFeatures =
-		isEnabled( 'plans/wooexpress-small' ) || isWooExpressSmallPlan( currentPlan.productSlug ) ? (
-			<WooExpressPlans
-				interval={ interval ? interval : planInterval }
-				monthlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'monthly', true ) } }
-				siteId={ selectedSite.ID }
-				siteSlug={ selectedSite.slug }
-				triggerTracksEvent={ triggerPlansGridTracksEvent }
-				yearlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'yearly', true ) } }
-				showIntervalToggle={ showIntervalToggle }
-			/>
-		) : (
-			<>
-				<h2 className="woo-express-plans-page__section-title">
-					{ translate( 'What’s included in %(planName)s plan', {
-						args: {
-							planName: activePlan.getTitle(),
-						},
-					} ) }
-				</h2>
+	const planFeatures = isWooExpressSmallPlan( currentPlan.productSlug ) ? (
+		<WooExpressPlans
+			interval={ interval ? interval : planInterval }
+			monthlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'monthly', true ) } }
+			siteId={ selectedSite.ID }
+			siteSlug={ selectedSite.slug }
+			triggerTracksEvent={ triggerPlansGridTracksEvent }
+			yearlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'yearly', true ) } }
+			showIntervalToggle={ showIntervalToggle }
+		/>
+	) : (
+		<>
+			<h2 className="woo-express-plans-page__section-title">
+				{ translate( 'What’s included in %(planName)s plan', {
+					args: {
+						planName: activePlan.getTitle(),
+					},
+				} ) }
+			</h2>
 
-				<div className="woo-express-plans-page__features-wrapper">
-					{ wooExpressMediumPlanFeatureSets.map( ( featureSet ) => (
-						<TrialFeatureCard key={ featureSet.title } { ...featureSet } />
-					) ) }
+			<div className="woo-express-plans-page__features-wrapper">
+				{ wooExpressMediumPlanFeatureSets.map( ( featureSet ) => (
+					<TrialFeatureCard key={ featureSet.title } { ...featureSet } />
+				) ) }
+			</div>
+
+			<Card className="woo-express-plans-page__bottom-banner">
+				<div className="woo-express-plans-page__bottom-banner-content">
+					<p className="woo-express-plans-page__bottom-banner-title">
+						{ translate( 'Want to get the most powerful tools?' ) }
+					</p>
+					<p className="woo-express-plans-page__bottom-banner-subtitle">
+						{ translate(
+							'Get in touch to discuss a custom solution that meet your business needs. '
+						) }
+					</p>
+					<Button className="woo-express-plans-page__bottom-banner-cta" primary>
+						{ translate( 'Get in touch' ) }
+					</Button>
 				</div>
-
-				<Card className="woo-express-plans-page__bottom-banner">
-					<div className="woo-express-plans-page__bottom-banner-content">
-						<p className="woo-express-plans-page__bottom-banner-title">
-							{ translate( 'Want to get the most powerful tools?' ) }
-						</p>
-						<p className="woo-express-plans-page__bottom-banner-subtitle">
-							{ translate(
-								'Get in touch to discuss a custom solution that meet your business needs. '
-							) }
-						</p>
-						<Button className="woo-express-plans-page__bottom-banner-cta" primary>
-							{ translate( 'Get in touch' ) }
-						</Button>
-					</div>
-					<div className="woo-express-plans-page__bottom-banner-img-wrapper">
-						<img
-							src={ getInTouch }
-							alt={ translate( 'Get in touch', { textOnly: true } ) }
-							className="woo-express-plans-page__bottom-banner-img"
-						/>
-					</div>
-				</Card>
-			</>
-		);
+				<div className="woo-express-plans-page__bottom-banner-img-wrapper">
+					<img
+						src={ getInTouch }
+						alt={ translate( 'Get in touch', { textOnly: true } ) }
+						className="woo-express-plans-page__bottom-banner-img"
+					/>
+				</div>
+			</Card>
+		</>
+	);
 
 	return (
 		<>
 			<BodySectionCssClass bodyClass={ [ 'is-woo-express-plan' ] } />
 
 			<Card
-				className={ classNames( 'woo-express-plans-page__price-card', {
-					'woo-express-plans-page__price-card-for-grid': isEnabled( 'plans/wooexpress-small' ),
-				} ) }
+				className={ classNames(
+					'woo-express-plans-page__price-card',
+					'woo-express-plans-page__price-card-for-grid'
+				) }
 			>
 				<div className="woo-express-plans-page__price-card-text">
 					<span className="woo-express-plans-page__price-card-label">
@@ -193,7 +192,7 @@ const WooExpressPlansPage = ( {
 				</div>
 				<div className="woo-express-plans-page__price-card-conditions">{ priceContent }</div>
 				<div className="woo-express-plans-page__price-card-cta-wrapper">
-					{ currentPlan && selectedSite && ! isEnabled( 'plans/wooexpress-small' ) && (
+					{ currentPlan && selectedSite && (
 						<Button
 							className="woo-express-plans-page__price-card-cta"
 							onClick={ goToSubscriptionPage }
