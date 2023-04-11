@@ -137,6 +137,10 @@ function getEditorDestination( dependencies ) {
 	return `/page/${ dependencies.siteSlug }/home`;
 }
 
+function getPostEditorDestination( dependencies ) {
+	return `/post/${ dependencies.siteSlug }`;
+}
+
 function getDestinationFromIntent( dependencies ) {
 	const { intent, storeType, startingPoint, siteSlug } = dependencies;
 	// If the user skips starting point, redirect them to My Home
@@ -183,6 +187,7 @@ const flows = generateFlows( {
 	getEmailSignupFlowDestination,
 	getChecklistThemeDestination,
 	getEditorDestination,
+	getPostEditorDestination,
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,

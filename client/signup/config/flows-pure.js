@@ -17,12 +17,13 @@ export function generateFlows( {
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
 	getHomeDestination = noop,
+	getPostEditorDestination = noop,
 } = {} ) {
 	const flows = [
 		{
 			name: 'writing',
-			steps: [ 'user' ],
-			destination: getSignupDestination,
+			steps: [ 'user', 'site' ],
+			destination: getPostEditorDestination,
 			description: 'Writing flow',
 			lastModified: '2023-04-10',
 			showRecaptcha: true,
