@@ -67,8 +67,9 @@ function transformData( data ) {
 	return [ processedData.reverse() ];
 }
 
-export default function SubscribersSection( siteId, siteSlug ) {
+export default function SubscribersSection( props ) {
 	const { counts, isLoading } = useSubscriberCounts();
+	const { slug } = props;
 
 	// Determines what is shown in the tooltip on hover.
 	const tooltipHelper = ( datum ) => `Changed: ${ datum.diff }`;
@@ -80,9 +81,8 @@ export default function SubscribersSection( siteId, siteSlug ) {
 
 	const date = new Date();
 	const period = 'day';
-	const query = {};
 
-	const slugPath = siteSlug ? `/${ siteSlug }` : '';
+	const slugPath = slug ? `/${ slug }` : '';
 	const pathTemplate = `${ traffic.path }{{ interval }}${ slugPath }`;
 
 	return (
@@ -98,15 +98,9 @@ export default function SubscribersSection( siteId, siteSlug ) {
 						<StatsPeriodNavigation
 							date={ date }
 							period={ period }
-							url="/stats/email/" //todo: should have format `/stats/email/${ statType }/${ period }/${ date }/${ slug }`
+							url={ `/${ traffic.path }/${ period }/${ slug }` }
 						>
-							<DatePicker
-								period={ period }
-								date={ date }
-								query={ query }
-								statsType="statsTopPosts"
-								showQueryDate
-							/>
+							<DatePicker period={ period } date={ date } statsType="statsTopPosts" showQueryDate />
 						</StatsPeriodNavigation>
 						<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
 					</StatsPeriodHeader>

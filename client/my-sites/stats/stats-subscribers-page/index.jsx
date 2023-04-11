@@ -65,7 +65,7 @@ const StatsSubscribersPage = () => {
 						vendor={ getSuggestionsVendor() }
 					/>
 				) }
-				<SubscribersSection siteId={ siteId } slug={ siteSlug } />
+				<SubscribersSection slug={ siteSlug } />
 				<div className={ statsModuleListClass }>
 					<Followers path="followers" />
 					<Reach />
