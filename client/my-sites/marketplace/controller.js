@@ -13,7 +13,7 @@ export function renderDomainsPage( context, next ) {
 
 export function renderPluginsInstallPage( context, next ) {
 	const { productSlug } = context.params;
-	context.primary = <MarketplaceProductInstall productSlug={ productSlug } />;
+	context.primary = <MarketplaceProductInstall pluginSlug={ productSlug } />;
 	next();
 }
 
