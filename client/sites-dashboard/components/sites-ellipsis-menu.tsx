@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
+	FEATURE_SITE_STAGING_SITES,
 	WPCOM_FEATURES_MANAGE_PLUGINS,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
 } from '@automattic/calypso-products';
@@ -264,6 +265,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 	const siteSlug = site.slug;
 	const isStagingSite = site.is_wpcom_staging_site;
 	const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
+	const hasStagingSitesFeature = useSafeSiteHasFeature( site.ID, FEATURE_SITE_STAGING_SITES );
 
 	useQueryReaderTeams();
 	const isA12n = useSelector( ( state ) => isAutomatticTeamMember( getReaderTeams( state ) ) );
@@ -281,7 +283,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'database_access',
 			},
 			{
-				condition: ! isStagingSite && isStagingSiteEnabled,
+				condition: ! isStagingSite && isStagingSiteEnabled && hasStagingSitesFeature,
 				label: __( 'Staging site' ),
 				href: `/hosting-config/${ siteSlug }#staging-site`,
 				sectionName: 'staging_site',
