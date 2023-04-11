@@ -2,9 +2,6 @@
 @import "@wordpress/base-styles/mixins";
 
 .task {
-	@media (max-width: $break-large) {
-		flex-direction: column;
-	}
 	&.task__domain-upsell {
 		margin-bottom: 0 !important;
 
@@ -16,6 +13,10 @@
 
 		@media ( min-width: $break-large ) and ( max-width: $break-wide ) {
 			background-position-x: calc(100% + 120px);
+		}
+
+		@media (max-width: $break-large) {
+			flex-direction: column;
 		}
 
 		.task__text {
