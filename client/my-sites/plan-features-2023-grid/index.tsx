@@ -409,12 +409,12 @@ export class PlanFeatures2023Grid extends Component<
 			numberOfPlansToShowOnTop = 4;
 		} else {
 			plansToShow = planProperties
-			.filter( ( { isVisible } ) => isVisible )
-			.map( ( properties ) => properties.planName );
+				.filter( ( { isVisible } ) => isVisible )
+				.map( ( properties ) => properties.planName );
 		}
 
 		const topRowPlans = plansToShow.slice( 0, numberOfPlansToShowOnTop );
-		const bottomRowPlans = plansToShow.slice( numberOfPlansToShowOnTop, 6 );
+		const bottomRowPlans = plansToShow.slice( numberOfPlansToShowOnTop, plansToShow.length );
 		const planPropertiesForTopRow = planProperties.filter( ( properties: PlanProperties ) =>
 			topRowPlans.includes( properties.planName )
 		);
