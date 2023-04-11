@@ -77,7 +77,7 @@
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
 		"plans/wooexpress-medium": true,
-		"plans/wooexpress-small": false,
+		"plans/wooexpress-small": true,
 		"plugins/ssr-categories": true,
 		"plugins/ssr-details": true,
 		"plugins/ssr-landing": true,
