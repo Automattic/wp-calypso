@@ -271,9 +271,9 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 				site_plan: sitePlan,
 				search_term: searchTerm,
 			} );
-			window.location.replace( 'https://wordpress.com/do-it-for-me/' );
+			window.location.replace( 'https://wordpress.com/built-by/?ref=no-themes' );
 		},
-		url: 'https://wordpress.com/do-it-for-me/',
+		url: 'https://wordpress.com/built-by/?ref=no-themes',
 		buttonText: translate( 'Hire an expert' ),
 	} );
 

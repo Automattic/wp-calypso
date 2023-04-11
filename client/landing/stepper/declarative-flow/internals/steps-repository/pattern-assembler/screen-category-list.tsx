@@ -43,9 +43,13 @@ const ScreenCategoryList = ( {
 	const categoriesInOrder = useCategoriesOrder( categories );
 
 	const handleFocusOutside = ( event: Event ) => {
-		// Click on large preview but not action bar to close Pattern List
+		// Click outside the sidebar or action bar to close Pattern List
 		const target = event.target as HTMLElement;
-		if ( ! target.closest( '.pattern-action-bar' ) && target.closest( '.pattern-large-preview' ) ) {
+		if (
+			! (
+				target.closest( '.pattern-action-bar' ) || target.closest( '.pattern-assembler__sidebar' )
+			)
+		) {
 			setSelectedCategory( null );
 			onTogglePatternPanelList?.( false );
 		}

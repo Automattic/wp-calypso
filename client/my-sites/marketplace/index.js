@@ -29,7 +29,7 @@ export default function () {
 	}
 
 	page(
-		'/marketplace/:productSlug?/install/:site?',
+		'/marketplace/plugin/:productSlug?/install/:site?',
 		siteSelection,
 		renderPluginsInstallPage,
 		makeLayout,

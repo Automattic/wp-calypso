@@ -1,4 +1,5 @@
 import {
+	isAkismetProduct,
 	isGoogleWorkspaceExtraLicence,
 	isGoogleWorkspaceProductSlug,
 	isGSuiteProductSlug,
@@ -39,8 +40,12 @@ export default function getContactDetailsType( responseCart: ResponseCart ): Con
 
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
 	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
+	const isAkismetPurchase = responseCart.products.some( ( product ) => {
+		return isAkismetProduct( product );
+	} );
 
-	if ( isPurchaseFree && ! isFullCredits ) {
+	// Akismet free purchases still need contact information if logged out
+	if ( isPurchaseFree && ! isAkismetPurchase && ! isFullCredits ) {
 		return 'none';
 	}
 

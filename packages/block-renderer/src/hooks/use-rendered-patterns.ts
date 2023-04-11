@@ -16,6 +16,7 @@ const fetchRenderedPatterns = (
 	const params = new URLSearchParams( {
 		stylesheet,
 		pattern_ids,
+		_locale: 'user',
 	} );
 
 	if ( title ) {
