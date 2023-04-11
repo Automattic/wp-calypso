@@ -8,7 +8,7 @@
 		@media (min-width: ( $break-large + 1 ) ) {
 			margin-right: 0 !important;
 			margin-top: 0 !important;
-			background: url(calypso/assets/images/customer-home/illustration--task-domain-upsell.png) no-repeat right top;
+			background: url(calypso/assets/images/customer-home/illustration--task-domain-upsell.svg) no-repeat right top;
 		}
 
 		@media ( min-width: ( $break-large + 1 ) ) and ( max-width: $break-wide ) {
@@ -98,7 +98,7 @@
 			color: #000;
 			position: absolute;
 			right: 0;
-			top: 110px;
+			top: 119px;
 			width: 270px;
 			word-break: break-all;
 			overflow: hidden;
@@ -106,7 +106,6 @@
 			display: inline-flex;
 			@media (max-width: $break-wide) {
 				width: 155px;
-				top: 110px;
 			}
 			@media (max-width: $break-large) {
 				display: none;
