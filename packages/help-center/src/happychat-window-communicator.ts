@@ -89,7 +89,7 @@ export function useHCWindowCommunicator( isMinimized: boolean ) {
 						break;
 
 					case 'happy-chat-authentication-data':
-						queryClient.fetchQuery( happychatAuthQueryKey ).then( ( auth ) => {
+						queryClient.fetchQuery( [ happychatAuthQueryKey ] ).then( ( auth ) => {
 							event.source?.postMessage(
 								{
 									type: 'happy-chat-authentication-data',
