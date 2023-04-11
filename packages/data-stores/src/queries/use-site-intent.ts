@@ -5,7 +5,7 @@ export function useSiteIntent( siteId: string | number | undefined ) {
 	return useQuery< {
 		site_intent: '';
 	} >(
-		'site-intent-' + siteId,
+		[ 'site-intent', siteId ],
 		async () =>
 			await wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId as string ) }/site-intent`,
