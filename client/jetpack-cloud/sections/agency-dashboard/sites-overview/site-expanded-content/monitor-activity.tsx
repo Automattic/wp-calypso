@@ -15,6 +15,7 @@ interface Props {
 	hasMonitor: boolean;
 	site: Site;
 	trackEvent: ( eventName: string ) => void;
+	hasError: boolean;
 }
 
 const START_INDEX = 10;
@@ -82,7 +83,7 @@ const MonitorDataContent = ( { siteId }: { siteId: number } ) => {
 	);
 };
 
-export default function MonitorActivity( { hasMonitor, site, trackEvent }: Props ) {
+export default function MonitorActivity( { hasMonitor, site, trackEvent, hasError }: Props ) {
 	const translate = useTranslate();
 
 	const toggleActivateMonitor = useToggleActivateMonitor( [ site ] );
@@ -107,6 +108,7 @@ export default function MonitorActivity( { hasMonitor, site, trackEvent }: Props
 				}
 			) }
 			isLoading={ isLoading }
+			hasError={ hasError }
 			// Allow to click on the card only if the monitor is not active
 			onClick={ ! hasMonitor ? handleOnClick : undefined }
 		>
