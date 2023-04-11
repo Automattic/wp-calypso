@@ -52,7 +52,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 				videoPressGetStartedText = sprintf(
 					/* translators: Price displayed on VideoPress intro page. First %s is monthly price, second is annual price */
 					__(
-						'A home for all your videos.<br />Play. Roll. Share.<div>Get started for %s (%s billed annually).</div>'
+						'A home for all your videos.<br />Play. Roll. Share.<div>Get started for %s per month (%s billed annually).</div>'
 					),
 					planProductObject.price,
 					planProductObject.annualPrice
