@@ -39,9 +39,14 @@ $max-list-width: 1300px;
 			font-size: $font-body-small;
 			line-height: 20px;
 
-			.title {
+			.title a {
 				font-weight: 500;
+				color: $studio-gray-100;
 				@extend %ellipsis;
+
+				&:hover {
+					text-decoration: underline;
+				}
 			}
 
 			.excerpt {
