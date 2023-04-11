@@ -68,6 +68,9 @@ const LayoutLoggedOut = ( {
 		sectionName === 'checkout' &&
 		window.location.pathname.startsWith( '/checkout/jetpack/thank-you' );
 
+	const isReaderTagPage =
+		sectionName === 'reader' && window.location.pathname.startsWith( '/tag/' );
+
 	const classes = {
 		[ 'is-group-' + sectionGroup ]: sectionGroup,
 		[ 'is-section-' + sectionName ]: sectionName,
@@ -110,7 +113,8 @@ const LayoutLoggedOut = ( {
 	} else if ( config.isEnabled( 'jetpack-cloud' ) || isWpMobileApp() || isJetpackThankYou ) {
 		masterbar = null;
 	} else if (
-		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions' ].includes( sectionName )
+		[ 'plugins', 'themes', 'theme', 'reader', 'subscriptions' ].includes( sectionName ) &&
+		! isReaderTagPage
 	) {
 		masterbar = (
 			<UniversalNavbarHeader
