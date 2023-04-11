@@ -87,9 +87,11 @@
 	margin-bottom: 26px;
 	padding-left: 10px;
 	@include break-small {
+		padding-left: 0;
+	}
+	@include break-large {
 		display: flex;
 		flex-direction: row;
-		padding-left: 0;
 	}
 
 	h2 {
@@ -98,7 +100,7 @@
 		font-weight: 500;
 		width: 100%;
 		margin-bottom: 20px;
-		@include break-small {
+		@include break-large {
 			width: 50%;
 			margin-bottom: 0;
 		}
@@ -108,7 +110,7 @@
 		flex-direction: row;
 		justify-content: space-between;
 		width: 100%;
-		@include break-small {
+		@include break-large {
 			width: 50%;
 		}
 		button {
@@ -117,8 +119,9 @@
 			text-decoration: none;
 			font-weight: 500;
 			flex-grow: 1;
-			padding-left: 6px;
-
+			&:last-child {
+				flex-grow: 0;
+			}
 			&:focus {
 				border-radius: 0;
 				box-shadow: none;
@@ -130,6 +133,7 @@
 		}
 	}
 }
+
 .alphabetic-tags__table {
 	padding-bottom: 26px;
 	border-bottom: 1px solid var(--studio-gray-5);

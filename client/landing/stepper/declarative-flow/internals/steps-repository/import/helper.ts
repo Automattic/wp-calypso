@@ -18,7 +18,7 @@ export function getFinalImporterUrl(
 	framework: 'signup' | 'stepper' = 'signup'
 ) {
 	let importerUrl;
-
+	const encodedFromSite = encodeURIComponent( fromSite );
 	// Escape WordPress, has two sub-flows "Import everything" and "Content only"
 	// firstly show import type chooser screen and then decide about importer url
 	if ( isAtomicSite && platform !== 'wordpress' ) {
@@ -30,7 +30,7 @@ export function getFinalImporterUrl(
 			);
 		} )
 	) {
-		importerUrl = getWpComOnboardingUrl( targetSlug, platform, fromSite, framework );
+		importerUrl = getWpComOnboardingUrl( targetSlug, platform, encodedFromSite, framework );
 
 		if ( platform === 'wordpress' && ! fromSite && isAtomicSite ) {
 			importerUrl = getWpOrgImporterUrl( targetSlug, platform );
@@ -40,7 +40,7 @@ export function getFinalImporterUrl(
 			} );
 		}
 	} else {
-		importerUrl = getImporterUrl( targetSlug, platform, fromSite );
+		importerUrl = getImporterUrl( targetSlug, platform, encodedFromSite );
 	}
 
 	return importerUrl;

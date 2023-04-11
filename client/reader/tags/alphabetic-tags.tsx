@@ -1,6 +1,7 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import titlecase from 'to-title-case';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { AlphabeticTagsResult, Tag } from './controller';
 
@@ -20,9 +21,19 @@ interface TagsTableProps {
 	tags: Tag[][];
 }
 
+const trackTagClick = ( slug: string ) => {
+	recordTracksEvent( 'calypso_tags_page_tag_clicked', {
+		type: 'alphabetic',
+		tag: slug,
+	} );
+};
+
 const TagsColumn = ( props: TagsColProps ) => (
 	<div key={ props.slug }>
-		<a href={ `/tag/${ encodeURIComponent( props.slug ) }` }>
+		<a
+			href={ `/tag/${ encodeURIComponent( props.slug ) }` }
+			onClick={ trackTagClick.bind( null, props.slug ) }
+		>
 			<span className="alphabetic-tags__title">{ titlecase( props.title ) }</span>
 		</a>
 	</div>
