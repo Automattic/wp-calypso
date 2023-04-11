@@ -644,3 +644,8 @@ export const getMonitorDowntimeText = ( downtime: number | undefined ) => {
 		comment: '%(time) is the downtime, e.g. "2d 5h 30m", "5h 30m", "55m"',
 	} );
 };
+
+export const DASHBOARD_PREFERENCE_NAMES = {
+	EXPANDABLE_BLOCK_POPOVER_MESSAGE:
+		'jetpack-cloud-agency-dashboard-expandable-block-popover-message',
+};

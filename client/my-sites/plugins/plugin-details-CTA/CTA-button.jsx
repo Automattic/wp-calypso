@@ -285,12 +285,12 @@ function onClickInstallPlugin( {
 
 	if ( isPreinstalledPremiumPlugin ) {
 		const checkoutUrl = `/checkout/${ selectedSite.slug }/${ preinstalledPremiumPluginProduct }`;
-		const installUrl = `/marketplace/${ plugin.slug }/install/${ selectedSite.slug }`;
+		const installUrl = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
 		return page( `${ checkoutUrl }?redirect_to=${ installUrl }#step2` );
 	}
 
 	// After buying a plan we need to redirect to the plugin install page.
-	const installPluginURL = `/marketplace/${ plugin.slug }/install/${ selectedSite.slug }`;
+	const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
 	if ( upgradeAndInstall ) {
 		// We also need to add a business plan to the cart.
 		return page(

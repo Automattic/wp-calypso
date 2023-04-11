@@ -118,13 +118,16 @@ export const useWPCOMPlugins = ( slugs: Array< string > ): Array< UseQueryResult
 		slugs.map( ( slug ) => {
 			const [ cacheKey, fetchFn ] = getWPCOMPluginQueryParams( slug );
 
-			return { queryKey: cacheKey, queryFn: fetchFn };
+			return {
+				queryKey: cacheKey,
+				queryFn: fetchFn,
+			};
 		} )
 	);
 };
 
 export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< any[] > ] => {
-	const cacheKey = 'plugins-featured-list-normalized';
+	const cacheKey = [ 'plugins-featured-list-normalized' ];
 	const fetchFn = () =>
 		wpcom.req
 			.get( {

@@ -62,6 +62,10 @@ export const isTailoredSignupFlow = ( flowName: string | null ) => {
 	);
 };
 
+export const isHostingFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && HOSTING_LP_FLOW === flowName );
+};
+
 export const isMigrationFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ MIGRATION_FLOW ].includes( flowName ) );
 };
