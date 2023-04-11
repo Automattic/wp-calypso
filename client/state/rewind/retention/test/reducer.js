@@ -31,6 +31,17 @@ describe( 'updateBackupRetentionRequestStatus', () => {
 		).toEqual( BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED );
 	} );
 
+	test( 'should return UNSUBMITTED when current retention update request status is RESET, and previous state was SUCCESS', () => {
+		expect(
+			updateBackupRetentionRequestStatus(
+				{ updateBackupRetentionRequestStatus: BACKUP_RETENTION_UPDATE_REQUEST.SUCCESS },
+				{
+					type: JETPACK_BACKUP_RETENTION_UPDATE_RESET,
+				}
+			)
+		).toEqual( BACKUP_RETENTION_UPDATE_REQUEST.UNSUBMITTED );
+	} );
+
 	test( 'should return PENDING status when retention update request action is initiated', () => {
 		// lets update backup retention for siteId:123 to 7 days.
 		expect(
