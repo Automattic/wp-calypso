@@ -18,6 +18,7 @@ import {
 	isPremiumPlan,
 	PLAN_BIENNIAL_PERIOD,
 	isWooExpressMediumPlan,
+	isWooExpressSmallPlan,
 	isWooExpressPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
@@ -496,7 +497,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, is2023OnboardingPricingGrid, translate, isLargeCurrency } = this.props;
+		const { isReskinned, is2023OnboardingPricingGrid, translate } = this.props;
 
 		const isLargeCurrency = planPropertiesObj.some(
 			( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
