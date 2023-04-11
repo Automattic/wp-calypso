@@ -8,7 +8,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useInView } from 'calypso/lib/use-in-view'; // eslint-disable-line no-restricted-imports
+import { useInView } from 'react-intersection-observer';
 import {
 	SHOW_ALL_SLUG,
 	SHOW_GENERATED_DESIGNS_SLUG,
@@ -519,9 +519,20 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	const hasCategories = !! categorization?.categories.length;
 	const hasGeneratedDesigns = generatedDesigns.length > 0;
 	const isShowAll = ! categorization?.selection || categorization?.selection === SHOW_ALL_SLUG;
+	const [ viewedSelections, setViewedSelections ] = useState< string[] >( [] );
 
-	// Track as if user has scrolled to bottom of the design picker
-	const ref = useInView< HTMLDivElement >( onViewAllDesigns, {}, [ categorization?.selection ] );
+	const { ref } = useInView( {
+		onChange: ( inView ) => {
+			if (
+				inView &&
+				categorization?.selection &&
+				! viewedSelections.includes( categorization?.selection )
+			) {
+				onViewAllDesigns();
+				setViewedSelections( [ ...viewedSelections, categorization?.selection ] );
+			}
+		},
+	} );
 	const bottomAnchorContent = <div className="design-picker__bottom_anchor" ref={ ref }></div>;
 
 	return (
