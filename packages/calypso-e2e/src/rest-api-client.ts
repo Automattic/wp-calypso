@@ -10,6 +10,7 @@ import {
 	AllDomainsResponse,
 	DomainData,
 } from './types';
+import { RenderedPatternResponse } from './types/rest-api-client.types';
 import type { Roles } from './lib';
 import type {
 	AccountDetails,
@@ -1089,5 +1090,39 @@ export class RestAPIClient {
 		const widgets = await this.getAllWidgets( siteID );
 
 		widgets.map( async ( widget ) => await this.deleteWidget( siteID, widget.id ) );
+	}
+
+	/**
+	 * Gets the rendered patterns.
+	 *
+	 * @returns {Promise<RenderedPatternResponse>} An Array of posts.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async getRenderedPatterns(
+		siteID: number,
+		urlParams?: { title?: string }
+	): Promise< ReaderResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+		const urlParamsStr = urlParams ? `?${ new URLSearchParams( urlParams ) }` : '';
+		const url = this.getRequestURL(
+			'2',
+			`/sites/${ siteID }/block-renderer/patterns/render${ urlParamsStr }`,
+			'wpcom'
+		);
+		const response = await this.sendRequest( url, params );
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
 	}
 }

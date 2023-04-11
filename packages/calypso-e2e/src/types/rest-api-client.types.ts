@@ -186,6 +186,17 @@ export interface PluginRemovalResponse {
 	log: string[];
 }
 
+export interface RenderedPatternResponse {
+	[ key: string ]: {
+		ID: string;
+		html: string;
+		styles: {
+			css: string;
+			isGlobalStyles: boolean;
+		}[];
+	};
+}
+
 /* Error Responses */
 
 export interface BearerTokenErrorResponse {
