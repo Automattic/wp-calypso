@@ -136,7 +136,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 			{ isExpanded && (
 				<tr className="site-table__table-row-expanded">
 					<td colSpan={ Object.keys( item ).length + 1 }>
-						<SiteExpandedContent site={ site.value } />
+						<SiteExpandedContent site={ site.value } hasError={ hasSiteError } />
 						<SitePhpVersion phpVersion={ site.value.php_version_num } />
 					</td>
 				</tr>

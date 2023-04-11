@@ -156,6 +156,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 														isSmallScreen
 														site={ rows.site.value }
 														columns={ [ column.key ] }
+														hasError={ site.error || ! isSiteConnected }
 													/>
 												) }
 											</>
