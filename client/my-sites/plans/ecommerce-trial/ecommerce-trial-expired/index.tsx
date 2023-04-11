@@ -90,7 +90,7 @@ const ECommerceTrialExpired = (): JSX.Element => {
 			<Main wideLayout>
 				<PageViewTracker
 					path="/plans/my-plan/trial-expired/:site"
-					title="Plans > Ecommerce Trial Expired"
+					title="Plans > Woo Express: Trial Expired"
 				/>
 				<div className="ecommerce-trial-expired__content">
 					<div className="ecommerce-trial-expired__header">
