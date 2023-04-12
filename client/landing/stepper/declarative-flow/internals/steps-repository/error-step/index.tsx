@@ -46,15 +46,13 @@ const ErrorStep: Step = function ErrorStep( { navigation, flow } ) {
 					<Button className="error-step__button" href="/start" primary>
 						{ __( 'Continue' ) }
 					</Button>
-					<Button className="error-step__link" borderless href="https://anchor.fm">
-						{ __( 'Back to Anchor.fm' ) }
-					</Button>
+					{ ! isEnabled( 'anchor/sunset-integration' ) && (
+						<Button className="error-step__link" borderless href="https://anchor.fm">
+							{ __( 'Back to Anchor.fm' ) }
+						</Button>
+					) }
 					{ isEnabled( 'anchor/sunset-integration' ) && (
-						<Button
-							className="error-step__link error-step__contact-suport"
-							borderless
-							href="https://anchor.fm"
-						>
+						<Button className="error-step__link" borderless href="/help/contact">
 							{ __( 'Contact support' ) }
 						</Button>
 					) }
