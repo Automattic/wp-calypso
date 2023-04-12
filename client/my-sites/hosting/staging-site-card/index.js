@@ -208,7 +208,11 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 					</SiteInfo>
 				</SiteRow>
 				<ActionButtons>
-					<Button primary href={ `/home/${ urlToSlug( stagingSite.url ) }` } disabled={ disabled }>
+					<Button
+						primary
+						href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
+						disabled={ disabled }
+					>
 						<span>{ translate( 'Manage staging site' ) }</span>
 					</Button>
 					<DeleteStagingSite
