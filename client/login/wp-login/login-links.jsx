@@ -328,7 +328,10 @@ export class LoginLinks extends Component {
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
 			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
 
-		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
+		if (
+			( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) ||
+			isGravatarOAuth2Client( oauth2Client )
+		) {
 			return null;
 		}
 

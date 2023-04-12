@@ -22,11 +22,7 @@ import {
 	pathWithLeadingSlash,
 	isReactLostPasswordScreenEnabled,
 } from 'calypso/lib/login';
-import {
-	isCrowdsignalOAuth2Client,
-	isWooOAuth2Client,
-	isGravatarOAuth2Client,
-} from 'calypso/lib/oauth2-clients';
+import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -566,7 +562,7 @@ export class LoginForm extends Component {
 			isWoo,
 			isPartnerSignup,
 		} = this.props;
-		const showSignupUrl = !! oauth2Client && ! isGravatarOAuth2Client( oauth2Client );
+		const isOauthLogin = !! oauth2Client;
 		const isPasswordHidden = this.isUsernameOrEmailView();
 
 		const signupUrl = this.props.signupUrl
@@ -741,7 +737,7 @@ export class LoginForm extends Component {
 						</FormsButton>
 					</div>
 
-					{ showSignupUrl && (
+					{ isOauthLogin && (
 						<div className={ classNames( 'login__form-signup-link' ) }>
 							{ this.props.translate(
 								'Not on WordPress.com? {{signupLink}}Create an Account{{/signupLink}}.',

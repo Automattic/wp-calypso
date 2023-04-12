@@ -546,6 +546,15 @@ $image-height: 47px;
 	.wp-login__main {
 		max-width: 640px;
 	}
+
+	.wp-login__links > a:first-of-type {
+		border-top: none;
+		border-left: none;
+		border-right: none;
+		box-shadow: none;
+		border-radius: 0;
+		color: var(--color-neutral-50);
+	}
 }
 
 .wp-login__p2-logo {
