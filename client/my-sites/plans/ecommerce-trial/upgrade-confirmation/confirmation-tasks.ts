@@ -40,7 +40,8 @@ export const getConfirmationTasks = ( { translate }: ConfirmationTasksProps ) =>
 			subtitle: translate(
 				'Set up one or more payment methods to make it easy for your customers to pay.'
 			),
-			getActionUrl: ( { wooAdminUrl }: GetActionUrlProps ) => `${ wooAdminUrl }&task=payments`,
+			getActionUrl: ( { wooAdminUrl }: GetActionUrlProps ) =>
+				`${ wooAdminUrl }&path=%2Fpayments%2Fconnect`,
 		},
 		{
 			id: 'custom-domain',
