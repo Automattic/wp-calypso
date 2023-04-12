@@ -28,31 +28,3 @@
 	box-shadow: 0 4px 40px rgba(0, 0, 0, 0.08);
 	border-radius: 4px;
 }
-
-.stats-widget-modules {
-	margin-top: 24px;
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	column-gap: 24px;
-}
-
-.stats-widget-module_icon {
-	margin-bottom: 16px;
-}
-
-.stats-widget-module_title {
-	font-family: $font-sf-pro-text;
-	font-weight: 500;
-	font-size: $font-body-small;
-	line-height: 20px;
-	letter-spacing: -0.24px;
-}
-
-.stats-widget-module_value {
-	margin-top: 4px;
-	font-family: $font-sf-pro-display;
-	font-weight: 400;
-	font-size: $font-headline-small;
-	line-height: 1;
-	letter-spacing: -0.02em;
-}
