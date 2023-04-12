@@ -8,7 +8,6 @@ import './hightlights.scss';
 
 function TopColumn( { items, viewAllUrl, viewAllText, title, className = null } ) {
 	const translate = useTranslate();
-	// TODO: add a placeholder state
 
 	return (
 		<div className={ classNames( 'stats-widget-highlights-card', className ) }>
@@ -41,6 +40,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
 
+	// TODO: add a loading state placeholder with isFetching returned from the query.
 	const { data: topPostsAndPages = [] } = useTopPostsQuery( siteId, 'day', 7, queryDate );
 	const { data: topReferrers = [] } = useReferrersQuery( siteId, 'day', 7, queryDate );
 
