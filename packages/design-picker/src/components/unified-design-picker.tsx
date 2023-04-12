@@ -451,7 +451,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 export interface UnifiedDesignPickerProps {
 	locale: string;
 	verticalId?: string;
-	onSelect: ( design: Design ) => void;
 	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
