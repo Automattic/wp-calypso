@@ -176,7 +176,7 @@ export const HelpCenterContactPage: FC = () => {
 							{ renderChat.env === 'staging' && (
 								<Notice
 									status="warning"
-									actions={ [ { label: 'HUD', url: 'https://hud-staging.happychat.io/' } ] }
+									actions={ [ { label: 'Learn more', url: 'https://wp.me/PCYsg-Q7X' } ] }
 									className="help-center-contact-page__staging-notice"
 									isDismissible={ false }
 								>
