@@ -16,7 +16,7 @@ if ( ! function_exists( 'happy_blocks_get_content_footer_asset' ) ) {
 	function happy_blocks_get_content_footer_asset( $file ) {
 		return array(
 			'path'    => "https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-library/support-content-footer/build/$file",
-			'version' => filemtime( __DIR__ . "/$file" ),
+			'version' => filemtime( __DIR__ . "/build/$file" ),
 		);
 	}
 }
