@@ -24,8 +24,9 @@ export function generateFlows( {
 			name: 'writing',
 			steps: [ 'user', 'quick-site' ],
 			destination: getPostEditorDestination,
-			description: 'Writing flow',
-			lastModified: '2023-04-10',
+			description:
+				'Blog start writing flow. Creates a user, site (without user interaction), and then opens the Post editor.',
+			lastModified: '2023-04-12',
 			showRecaptcha: true,
 		},
 		{
