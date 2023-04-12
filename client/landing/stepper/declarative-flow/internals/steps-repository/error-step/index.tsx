@@ -41,21 +41,21 @@ const ErrorStep: Step = function ErrorStep( { navigation, flow } ) {
 
 	const getContent = () => {
 		if ( flow === 'anchor-fm' ) {
+			const secondaryAction = isEnabled( 'anchor/sunset-integration' ) ? (
+				<Button className="error-step__link" borderless href="/help/contact">
+					{ __( 'Contact support' ) }
+				</Button>
+			) : (
+				<Button className="error-step__link" borderless href="https://anchor.fm">
+					{ __( 'Back to Anchor.fm' ) }
+				</Button>
+			);
 			return (
 				<WarningsOrHoldsSection>
 					<Button className="error-step__button" href="/start" primary>
 						{ __( 'Continue' ) }
 					</Button>
-					{ ! isEnabled( 'anchor/sunset-integration' ) && (
-						<Button className="error-step__link" borderless href="https://anchor.fm">
-							{ __( 'Back to Anchor.fm' ) }
-						</Button>
-					) }
-					{ isEnabled( 'anchor/sunset-integration' ) && (
-						<Button className="error-step__link" borderless href="/help/contact">
-							{ __( 'Contact support' ) }
-						</Button>
-					) }
+					{ secondaryAction }
 				</WarningsOrHoldsSection>
 			);
 		}
