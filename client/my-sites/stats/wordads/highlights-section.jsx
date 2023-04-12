@@ -1,4 +1,5 @@
-import { HighlightCardSimple, Popover } from '@automattic/components';
+import { Popover } from '@automattic/components';
+import CountCard from '@automattic/components/src/highlight-cards/count-card';
 import { Icon, info, payment, receipt, tip } from '@wordpress/icons';
 import { numberFormat, translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
@@ -132,7 +133,7 @@ function HighlightsListing( props ) {
 	return (
 		<div className="highlight-cards-list">
 			{ props.highlights.map( ( highlight ) => (
-				<HighlightCardSimple
+				<CountCard
 					key={ highlight.id }
 					heading={ highlight.heading }
 					icon={ highlight.icon }
