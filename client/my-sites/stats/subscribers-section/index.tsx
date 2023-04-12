@@ -60,7 +60,8 @@ export default function SubscribersSection( {
 
 	return (
 		<div className="subscribers-section">
-			<div className="subscribers-section-heading">
+			{ /* TODO: Remove highlight-cards class and use a highlight cards heading component instead. */ }
+			<div className="subscribers-section-heading highlight-cards">
 				<h1 className="highlight-cards-heading">
 					{ translate( 'Subscribers' ) }{ ' ' }
 					<small>
