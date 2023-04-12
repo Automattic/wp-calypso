@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
 import styled from '@emotion/styled';
@@ -48,6 +49,15 @@ const ErrorStep: Step = function ErrorStep( { navigation, flow } ) {
 					<Button className="error-step__link" borderless href="https://anchor.fm">
 						{ __( 'Back to Anchor.fm' ) }
 					</Button>
+					{ isEnabled( 'anchor/sunset-integration' ) && (
+						<Button
+							className="error-step__link error-step__contact-suport"
+							borderless
+							href="https://anchor.fm"
+						>
+							{ __( 'Contact support' ) }
+						</Button>
+					) }
 				</WarningsOrHoldsSection>
 			);
 		}
