@@ -60,7 +60,7 @@
 			margin-top: 18px;
 		}
 
-		&.is-photo {
+		&.is-photo:not(.is-tag-post) {
 			.reader-post-card__post {
 				flex-direction: column;
 			}
@@ -212,6 +212,8 @@
 		}
 
 		.reader-post-card__post {
+			flex-direction: row;
+			gap: 24px;
 			margin: 0;
 		}
 
@@ -229,8 +231,18 @@
 			word-wrap: break-word;
 		}
 
+		.reader-post-card__title-link {
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+		}
+
 		.reader-post-card__featured-images {
-			flex-direction: column;
+			flex-direction: row;
+			.reader-featured-image {
+				width: 150px !important;
+			}
 		}
 	}
 
