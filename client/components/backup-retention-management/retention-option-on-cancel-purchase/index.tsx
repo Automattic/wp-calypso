@@ -15,6 +15,7 @@ import { BACKUP_RETENTION_UPDATE_REQUEST } from 'calypso/state/rewind/retention/
 import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
 import getBackupRetentionDays from 'calypso/state/rewind/selectors/get-backup-retention-days';
 import getBackupRetentionUpdateRequestStatus from 'calypso/state/rewind/selectors/get-backup-retention-update-status';
+import getBackupStoppedFlag from 'calypso/state/rewind/selectors/get-backup-stopped-flag';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import LoadingPlaceholder from '../loading';
 import RetentionConfirmationDialog from '../retention-confirmation-dialog';
@@ -50,6 +51,8 @@ const RetentionOptionOnCancelPurchase: React.FC = () => {
 	const updateRetentionRequestStatus = useSelector( ( state ) =>
 		getBackupRetentionUpdateRequestStatus( state, siteId )
 	);
+
+	const areBackupsStopped = useSelector( ( state ) => getBackupStoppedFlag( state, siteId ) );
 
 	// The retention days that currently applies for this customer.
 	const currentBackupRetention = customerRetentionPeriod || planRetentionPeriod || 0;
@@ -88,13 +91,13 @@ const RetentionOptionOnCancelPurchase: React.FC = () => {
 	}, [ dispatch, siteId, siteSlug, updateRetentionRequestStatus ] );
 
 	useEffect( () => {
-		//TODO: check for backups_stopped flag also (must be true) once #75477 gets merged
-		if ( MINIMUM_RETENTION_TO_OFFER < currentBackupRetention ) {
+		// show only if backups are stopped and current retention > 2 days.
+		if ( areBackupsStopped && MINIMUM_RETENTION_TO_OFFER < currentBackupRetention ) {
 			setRetentionOfferCardVisible( true );
 		} else {
 			setRetentionOfferCardVisible( false );
 		}
-	}, [ currentBackupRetention ] );
+	}, [ areBackupsStopped, currentBackupRetention ] );
 
 	if ( retentionOfferCardVisible ) {
 		return (
