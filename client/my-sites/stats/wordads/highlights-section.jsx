@@ -6,9 +6,6 @@ import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
 import './highlights-section.scss';
-// TODO: HighlightCard does not accept string values.
-// Should refactor to accept strings and move the business logic into the callers.
-// Then refactor this Comp to use HighlightCard again.
 
 function getAmountAsFormattedString( amount ) {
 	if ( amount === 0 ) {
