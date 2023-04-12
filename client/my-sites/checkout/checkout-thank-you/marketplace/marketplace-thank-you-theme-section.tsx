@@ -92,7 +92,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const isActive = useSelector( ( state ) => isThemeActive( state, theme.id, siteId ) );
 	const { data: activeThemeData, isLoading } = useActiveThemeQuery( siteId, true );
-	const isFSEActive = activeThemeData?.[ 0 ]?.theme_supports[ 'block-templates' ] ?? false;
+	const isFSEActive = activeThemeData?.[ 0 ]?.theme_supports[ 'block-template-parts' ] ?? false;
 	const hasActivated = useSelector( ( state ) => hasActivatedTheme( state, siteId ) );
 	const isActivating = useSelector( ( state ) => isActivatingTheme( state, siteId ) );
 	const customizeUrl = useSelector( ( state ) =>
