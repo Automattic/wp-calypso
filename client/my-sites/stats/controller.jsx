@@ -107,7 +107,7 @@ function getSiteFilters( siteId ) {
 		},
 		{
 			title: i18n.translate( 'Months' ),
-			path: '/statssubscribers//month/' + siteId,
+			path: '/stats/subscribers/month/' + siteId,
 			id: 'stats-subscribers-month',
 			period: 'month',
 		},
