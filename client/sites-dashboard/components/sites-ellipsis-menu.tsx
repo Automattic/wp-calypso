@@ -311,7 +311,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'logs',
 			},
 		].filter( ( { condition } ) => condition ?? true );
-	}, [ __, isStagingSiteEnabled, siteSlug, isStagingSite, isA12n ] );
+	}, [ __, siteSlug, isStagingSite, isStagingSiteEnabled, hasStagingSitesFeature, isA12n ] );
 }
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
