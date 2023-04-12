@@ -2,14 +2,14 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon, Button } from '@automattic/components';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import { useActiveThemeQuery } from 'calypso/data/themes/use-active-theme-query';
 import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
-import { activate } from 'calypso/state/themes/actions';
+import { activate, clearActivated } from 'calypso/state/themes/actions';
 import {
 	isThemeActive,
 	isActivatingTheme,
@@ -111,6 +111,13 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 		},
 		[ siteId, theme ]
 	);
+
+	// Clear completed activated them request state to avoid displaying the Thanks modal
+	useEffect( () => {
+		return () => {
+			dispatch( clearActivated( siteId ) );
+		};
+	}, [ dispatch, siteId ] );
 
 	const handleActivateTheme = () => {
 		if ( isActive ) {
