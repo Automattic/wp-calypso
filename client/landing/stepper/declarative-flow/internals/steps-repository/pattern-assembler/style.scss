@@ -208,6 +208,7 @@ $font-family: "SF Pro Text", $sans;
 		}
 
 		.pattern-selector__body {
+			position: relative;
 			margin-bottom: 32px;
 			padding: 2px;
 			overflow-y: scroll;
