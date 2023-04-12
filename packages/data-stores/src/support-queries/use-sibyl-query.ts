@@ -14,7 +14,7 @@ export function useSibylQuery( query: string, isJetpackSite: boolean, isAtomic: 
 	const site = ! isJetpackSite || isAtomic ? 'wpcom' : 'jpop';
 
 	return useQuery< SupportArticleResult[] >(
-		query,
+		[ query ],
 		async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {

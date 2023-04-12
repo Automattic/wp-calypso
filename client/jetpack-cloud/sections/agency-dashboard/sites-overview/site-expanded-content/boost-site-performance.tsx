@@ -15,6 +15,7 @@ interface Props {
 	siteId: number;
 	siteUrlWithScheme: string;
 	trackEvent: ( eventName: string ) => void;
+	hasError: boolean;
 }
 
 export default function BoostSitePerformance( {
@@ -23,6 +24,7 @@ export default function BoostSitePerformance( {
 	siteId,
 	siteUrlWithScheme,
 	trackEvent,
+	hasError,
 }: Props ) {
 	const translate = useTranslate();
 
@@ -51,6 +53,7 @@ export default function BoostSitePerformance( {
 					components,
 				}
 			) }
+			hasError={ hasError }
 		>
 			<div className="site-expanded-content__card-content-container">
 				<div className="site-expanded-content__card-content">
