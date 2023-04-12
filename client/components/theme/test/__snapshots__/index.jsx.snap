@@ -16,7 +16,12 @@ exports[`Theme rendering with default display buttonContents should match snapsh
         class="theme-card__image"
         href="#"
       >
-	    <img
+        <div
+          class="theme-card__image-label"
+        >
+          Info
+        </div>
+        <img
           class="theme__img"
           src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
           srcset="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
