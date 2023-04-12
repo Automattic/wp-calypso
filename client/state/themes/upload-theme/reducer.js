@@ -232,10 +232,26 @@ export const inProgress = ( state = {}, action ) => {
 	return state;
 };
 
+export const isTransferComplete = ( state = {}, action ) => {
+	switch ( action.type ) {
+		case THEME_TRANSFER_STATUS_RECEIVE: {
+			const { siteId, status } = action;
+
+			return {
+				...state,
+				[ siteId ]: status === 'complete',
+			};
+		}
+	}
+
+	return state;
+};
+
 export default combineReducers( {
 	uploadedThemeId,
 	uploadError,
 	progressLoaded,
 	progressTotal,
 	inProgress,
+	isTransferComplete,
 } );

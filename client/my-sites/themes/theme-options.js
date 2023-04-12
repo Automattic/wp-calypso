@@ -8,6 +8,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isJetpackSite, isJetpackSiteMultiSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
@@ -68,6 +69,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		} ),
 		action: addExternalManagedThemeToCart,
 		hideForTheme: ( state, themeId, siteId ) =>
+			isSiteWpcomStaging( state, siteId ) || // No individual theme purchase on a staging site
 			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
 			! isUserLoggedIn( state ) || // Not logged in
 			isMarketplaceThemeSubscribed( state, themeId, siteId ) || // Already purchased individually, or thru a plan

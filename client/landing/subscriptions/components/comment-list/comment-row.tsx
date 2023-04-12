@@ -1,6 +1,7 @@
 import { Gridicon } from '@automattic/components';
-import { memo, useMemo } from '@wordpress/element';
+import { memo, useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
+import { CommentSettings } from '../settings-popover';
 import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
 
 type CommentRowProps = PostSubscription & {
@@ -45,7 +46,7 @@ const CommentRow = ( {
 					<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
 				</span>
 				<span className="actions" role="cell">
-					...
+					<CommentSettings onUnfollow={ () => undefined } unfollowing={ false } />
 				</span>
 			</div>
 		</div>

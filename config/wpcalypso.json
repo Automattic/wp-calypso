@@ -16,6 +16,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
+		"anchor/sunset-integration": false,
 		"block-editor/un-iframed-site-editor": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
@@ -171,7 +172,6 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/staging-sites-i1": true,
-		"virtual-themes/onboarding": true,
 		"woa-logging": true,
 		"woa-logging-moved": true
 	},
