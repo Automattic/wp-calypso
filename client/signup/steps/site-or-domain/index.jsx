@@ -38,18 +38,19 @@ class SiteOrDomain extends Component {
 
 	isLeanDomainSearch() {
 		const { signupDependencies } = this.props;
-		return (
-			'leandomainsearch' === signupDependencies?.refParameter
-		);
+		return 'leandomainsearch' === signupDependencies?.refParameter;
 	}
 
 	getChoices() {
 		const { translate, isReskinned, isLoggedIn, siteCount } = this.props;
 
 		const domainName = this.getDomainName();
-		const buyADomainTitle = this.isLeanDomainSearch()
-			? translate( 'Just buy %s', { args: [ domainName ] } )
-			: translate( 'Just buy a domain' );
+		let buyADomainTitle = translate( 'Just buy a domain' );
+
+		if ( this.isLeanDomainSearch() && domainName ) {
+			// translators: %s is a domain name
+			buyADomainTitle = translate( 'Just buy %s', { args: [ domainName ] } );
+		}
 
 		const choices = [];
 
@@ -228,8 +229,9 @@ class SiteOrDomain extends Component {
 
 	render() {
 		const { translate, productsLoaded, isReskinned } = this.props;
+		const domainName = this.getDomainName();
 
-		if ( productsLoaded && ! this.getDomainName() ) {
+		if ( productsLoaded && ! domainName ) {
 			const headerText = translate( 'Unsupported domain.' );
 			const subHeaderText = translate(
 				'Please visit {{a}}wordpress.com/domains{{/a}} to search for a domain.',
@@ -262,7 +264,10 @@ class SiteOrDomain extends Component {
 
 		if ( this.isLeanDomainSearch() ) {
 			additionalProps.className = 'lean-domain-search';
-			headerText = translate( 'Choose how to use %s', { args: [ this.getDomainName() ] } );
+			if ( domainName ) {
+				// translators: %s is a domain name
+				headerText = translate( 'Choose how to use %s', { args: [ domainName ] } );
+			}
 		}
 
 		return (
