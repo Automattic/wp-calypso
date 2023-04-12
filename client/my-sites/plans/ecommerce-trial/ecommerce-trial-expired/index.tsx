@@ -46,17 +46,6 @@ const ECommerceTrialExpired = (): JSX.Element => {
 		} );
 	}, [] );
 
-	const plansContent = (
-		<WooExpressPlans
-			interval={ interval }
-			monthlyControlProps={ monthlyControlProps }
-			siteId={ siteId ?? 0 }
-			siteSlug={ siteSlug ?? '' }
-			triggerTracksEvent={ triggerPlansGridTracksEvent }
-			yearlyControlProps={ yearlyControlProps }
-		/>
-	);
-
 	return (
 		<>
 			<QueryPlans />
@@ -88,8 +77,14 @@ const ECommerceTrialExpired = (): JSX.Element => {
 						) }
 					</div>
 				</div>
-
-				{ plansContent }
+				<WooExpressPlans
+					interval={ interval }
+					monthlyControlProps={ monthlyControlProps }
+					siteId={ siteId ?? 0 }
+					siteSlug={ siteSlug ?? '' }
+					triggerTracksEvent={ triggerPlansGridTracksEvent }
+					yearlyControlProps={ yearlyControlProps }
+				/>
 			</Main>
 		</>
 	);

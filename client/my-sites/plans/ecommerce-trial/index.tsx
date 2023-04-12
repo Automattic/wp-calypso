@@ -25,18 +25,6 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 		} );
 	}, [] );
 
-	const availablePlanFeatures = (
-		<WooExpressPlans
-			siteId={ siteId }
-			siteSlug={ siteSlug }
-			interval={ interval }
-			yearlyControlProps={ { path: plansLink( '/plans', siteSlug, 'yearly', true ) } }
-			monthlyControlProps={ { path: plansLink( '/plans', siteSlug, 'monthly', true ) } }
-			showIntervalToggle={ true }
-			triggerTracksEvent={ triggerPlansGridTracksEvent }
-		/>
-	);
-
 	return (
 		<>
 			<BodySectionCssClass bodyClass={ [ 'is-ecommerce-trial-plan' ] } />
@@ -45,7 +33,15 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 				<ECommerceTrialBanner />
 			</div>
 
-			{ availablePlanFeatures }
+			<WooExpressPlans
+				siteId={ siteId }
+				siteSlug={ siteSlug }
+				interval={ interval }
+				yearlyControlProps={ { path: plansLink( '/plans', siteSlug, 'yearly', true ) } }
+				monthlyControlProps={ { path: plansLink( '/plans', siteSlug, 'monthly', true ) } }
+				showIntervalToggle={ true }
+				triggerTracksEvent={ triggerPlansGridTracksEvent }
+			/>
 		</>
 	);
 };
