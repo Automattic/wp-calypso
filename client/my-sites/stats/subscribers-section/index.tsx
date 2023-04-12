@@ -1,8 +1,12 @@
 import UplotChart from '@automattic/components/src/chart-uplot';
 import { useEffect, useRef, useState } from 'react';
 import { UseQueryResult } from 'react-query';
+import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
+import DatePicker from '../stats-date-picker';
 import StatsModulePlaceholder from '../stats-module/placeholder';
+import StatsPeriodHeader from '../stats-period-header';
+import StatsPeriodNavigation from '../stats-period-navigation';
 import type uPlot from 'uplot';
 
 import './style.scss';
@@ -29,7 +33,7 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 	return [ x, y ];
 }
 
-export default function SubscribersSection( { siteId }: { siteId: string } ) {
+export default function SubscribersSection( { siteId, slug }: { siteId: string; slug?: string } ) {
 	const period = 'month';
 	const quantity = 30;
 	const {
@@ -50,6 +54,16 @@ export default function SubscribersSection( { siteId }: { siteId: string } ) {
 
 	const chartData = transformData( data?.data || [] );
 
+	const traffic = {
+		label: 'Subscribers',
+		path: `/stats/subscribers/`,
+	};
+
+	const date = new Date();
+
+	const slugPath = slug ? `/${ slug }` : '';
+	const pathTemplate = `${ traffic.path }{{ interval }}${ slugPath }`;
+
 	return (
 		<div className="subscribers-section">
 			<div className="subscribers-section-heading">
@@ -58,9 +72,19 @@ export default function SubscribersSection( { siteId }: { siteId: string } ) {
 			</div>
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isLoading && chartData.length === 0 && (
-				<p className="subscribers-section__no-data">No data availble for the specified period.</p>
+				<p className="subscribers-section__no-data">No data available for the specified period.</p>
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
+			{ ! isLoading && (
+				<div>
+					<StatsPeriodHeader>
+						<StatsPeriodNavigation date={ date } period={ period } url={ pathTemplate }>
+							<DatePicker period={ period } date={ date } statsType="statsTopPosts" showQueryDate />
+						</StatsPeriodNavigation>
+						<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
+					</StatsPeriodHeader>
+				</div>
+			) }
 			{ ! isLoading && chartData.length !== 0 && (
 				<UplotChart data={ chartData } legendContainer={ legendRef } />
 			) }
