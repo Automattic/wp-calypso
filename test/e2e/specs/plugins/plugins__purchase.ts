@@ -82,6 +82,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Add two plugins to the cart' ),
 		} );
 
 		it( `WordPress.com ${ planName } is still to cart`, async function () {
+			cartCheckoutPage = new CartCheckoutPage( page );
 			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
 		} );
 
