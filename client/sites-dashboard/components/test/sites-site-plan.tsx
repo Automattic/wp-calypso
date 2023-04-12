@@ -35,6 +35,16 @@ const expiredBusinessSite = {
 };
 
 describe( '<SitePlan>', () => {
+	beforeEach( () => {
+		const mockIntersectionObserver = jest.fn();
+		mockIntersectionObserver.mockReturnValue( {
+			observe: () => null,
+			unobserve: () => null,
+			disconnect: () => null,
+		} );
+		window.IntersectionObserver = mockIntersectionObserver;
+	} );
+
 	test( 'shows "Staging" as label for a staging site', () => {
 		const { container } = render( <SitePlan site={ stagingSite } userId={ siteOwnerId } /> );
 		expect( container.textContent ).toBe( 'Staging' );
