@@ -51,10 +51,10 @@ const PatternListItem = ( {
 	);
 
 	useEffect( () => {
-		if ( isShown && inViewOnce && isFirst && ref.current ) {
+		if ( isShown && isFirst && ref.current ) {
 			ref.current.focus();
 		}
-	}, [ isShown, isFirst, ref, inViewOnce ] );
+	}, [ isShown, isFirst, ref ] );
 
 	return (
 		<Button

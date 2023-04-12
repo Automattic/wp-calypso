@@ -1,0 +1,12 @@
+@import "@automattic/typography/styles/fonts";
+
+.pattern-assembler {
+	.pattern-layout__navigator-item-group {
+		color: var(--color-neutral-100);
+		font-size: $font-body-small;
+		font-weight: 500;
+		letter-spacing: -0.15px;
+		line-height: 1.4;
+		padding: 0 10px;
+	}
+}
