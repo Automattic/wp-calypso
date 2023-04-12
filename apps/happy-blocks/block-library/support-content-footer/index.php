@@ -115,7 +115,20 @@ $wpsupport3_image_dir = get_template_directory_uri() . '/assets/svg';
 		</div>
 		<div class="support-content-subscribe">
 			<p><?php esc_html_e( 'Sign up for educational resources updates:', 'happy-blocks' ); ?></p>
-			<p class="support-content-subscribe-disclaimer"><?php esc_html_e( 'Your information will be used in accordance with WordPress.com privacy policy.', 'happy-blocks' ); ?></p>
+			<form action="https://subscribe.wordpress.com" method="post" accept-charset="utf-8" data-blog="<?php echo get_current_blog_id(); ?>" data-post_access_level="everybody" id="subscribe-blog">
+				<input class="support-content-subscribe-email" required="required" type="email" name="email" placeholder="<?php esc_html_e( 'Enter your email address', 'full-site-editing' ); ?>"  id="subscribe-field">
+				<input type="hidden" name="action" value="subscribe">
+				<input type="hidden" name="blog_id" value="<?php echo get_current_blog_id(); ?>">
+				<input type="hidden" name="sub-type" value="subscribe-block">
+				<input type="hidden" name="redirect_fragment" value="subscribe-blog">
+				<input type="hidden" id="_wpnonce" name="_wpnonce" value="cfa1e9a8e2">
+				<button class="support-content-subscribe-submit" type="submit">
+					<?php esc_html_e( 'Subscribe', 'happy-blocks' ); ?>
+				</button>
+			</form>
+			<p class="support-content-subscribe-disclaimer">
+				<?php esc_html_e( 'Your information will be used in accordance with WordPress.com privacy policy.', 'happy-blocks' ); ?>
+			</p>
 		</div>
 	</div>
 </div>
