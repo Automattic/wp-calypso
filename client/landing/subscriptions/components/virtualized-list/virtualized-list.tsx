@@ -81,5 +81,5 @@ const VirtualizedList = < T, >( { width, items, children }: VirtualizedListProps
 	);
 };
 
-// cast as typeof CommentList to avoid TS error
+// cast as typeof VirtualizedList to avoid TS error
 export default withDimensions( VirtualizedList ) as typeof VirtualizedList;
