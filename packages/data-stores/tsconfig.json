@@ -9,7 +9,6 @@
 	"exclude": [ "**/test/*" ],
 	"references": [
 		{ "path": "../i18n-utils" },
-		{ "path": "../domain-utils" },
 		{ "path": "../shopping-cart" },
 		{ "path": "../format-currency" }
 	]

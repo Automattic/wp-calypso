@@ -383,16 +383,16 @@ class ThemeShowcase extends Component {
 			// these are from the time we rely on the redirect.
 			// See p2-pau2Xa-4nq#comment-12480
 			let location = 'theme-banner';
-			let utmCampaign = 'built-by-wordpress-com-redirect';
+			let refURLParam = 'built-by-wordpress-com-redirect';
 
 			// See p2-pau2Xa-4nq#comment-12458 for the context regarding the utm campaign value.
 			switch ( tabKey ) {
 				case staticFilters.ALL.key:
 					location = 'all-theme-banner';
-					utmCampaign = 'theme-all';
+					refURLParam = 'themes';
 			}
 
-			return <UpworkBanner location={ location } utmCampaign={ utmCampaign } />;
+			return <UpworkBanner location={ location } refURLParam={ refURLParam } />;
 		}
 
 		return upsellBanner;

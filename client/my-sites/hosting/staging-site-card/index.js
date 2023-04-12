@@ -1,4 +1,4 @@
-import { Button, Card, Gridicon, LoadingPlaceholder } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -12,6 +12,7 @@ import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { urlToSlug } from 'calypso/lib/url';
+import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
 import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
@@ -26,21 +27,6 @@ import { useDeleteStagingSite } from './use-delete-staging-site';
 import { useHasSiteAccess } from './use-has-site-access';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
-
-const FirstPlaceholder = styled( LoadingPlaceholder )( {
-	height: 24,
-	width: '85%',
-	marginBottom: '0.25em',
-} );
-const SecondPlaceholder = styled( LoadingPlaceholder )( {
-	height: 24,
-	width: '60%',
-	marginBottom: '1.5em',
-} );
-const ButtonPlaceholder = styled( LoadingPlaceholder )( {
-	width: '148px',
-	height: '40px',
-} );
 
 const StyledLoadingBar = styled( LoadingBar )( {
 	marginBottom: '1em',
@@ -260,16 +246,6 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		);
 	}, [ progress, __, siteOwnerId, currentUserId, isReverting ] );
 
-	const getLoadingStagingSitesPlaceholder = () => {
-		return (
-			<div data-testid="loading-placeholder">
-				<FirstPlaceholder />
-				<SecondPlaceholder />
-				<ButtonPlaceholder />
-			</div>
-		);
-	};
-
 	const getLoadingErrorContent = ( message ) => {
 		return (
 			<Notice status="is-error" showDismiss={ false }>
@@ -321,7 +297,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	} else if ( showAddStagingSite && ! addingStagingSite ) {
 		stagingSiteCardContent = getNewStagingSiteContent();
 	} else {
-		stagingSiteCardContent = getLoadingStagingSitesPlaceholder();
+		stagingSiteCardContent = <LoadingPlaceholder />;
 	}
 
 	return (

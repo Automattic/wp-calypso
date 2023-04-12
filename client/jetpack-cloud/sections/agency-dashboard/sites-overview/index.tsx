@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -104,7 +103,6 @@ export default function SitesOverview() {
 	}, [ refetch, jetpackSiteDisconnected ] );
 
 	const pageTitle = translate( 'Dashboard' );
-	const expandableBlockEnabled = 'Dashboard - Expandable block for sites enabled';
 
 	const basePath = '/dashboard';
 
@@ -236,11 +234,7 @@ export default function SitesOverview() {
 								} ) }
 							>
 								<div className="sites-overview__page-heading">
-									{ isEnabled( 'jetpack/pro-dashboard-expandable-block' ) ? (
-										<h2 className="sites-overview__page-title">{ expandableBlockEnabled }</h2>
-									) : (
-										<h2 className="sites-overview__page-title">{ pageTitle }</h2>
-									) }
+									<h2 className="sites-overview__page-title">{ pageTitle }</h2>
 									<div className="sites-overview__page-subtitle">
 										{ translate( 'Manage all your Jetpack sites from one location' ) }
 									</div>
