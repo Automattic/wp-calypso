@@ -121,8 +121,8 @@ export function generateSteps( {
 			providesDependencies: [ 'siteSlug' ],
 		},
 
-		'site-no-input': {
-			stepName: 'site-no-input',
+		'quick-site': {
+			stepName: 'quick-site',
 			apiRequestFunction: createSiteFromUsername,
 			providesDependencies: [ 'siteSlug' ],
 			props: {
