@@ -72,15 +72,35 @@ export function activate(
 			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
 		}
 
-		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
-			// If theme is already installed, installation will silently fail,
-			// and it will just be activated.
-			return dispatch(
-				installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
-			);
-		}
-
-		return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
+		return dispatchActivateAction(
+			dispatch,
+			getState,
+			siteId,
+			themeId,
+			source,
+			purchased,
+			keepCurrentHomepage
+		);
 	};
+}
+
+function dispatchActivateAction(
+	dispatch,
+	getState,
+	siteId,
+	themeId,
+	source,
+	purchased,
+	keepCurrentHomepage
+) {
+	if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
+		const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
+		// If theme is already installed, installation will silently fail,
+		// and it will just be activated.
+		return dispatch(
+			installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
+		);
+	}
+
+	return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
 }
