@@ -7,6 +7,7 @@ export const PATTERN_ASSEMBLER_EVENTS = {
 	 */
 	MAIN_ITEM_SELECT: 'calypso_signup_pattern_assembler_main_item_select',
 	CONTINUE_CLICK: 'calypso_signup_pattern_assembler_continue_click',
+	CONTINUE_MISCLICK: 'calypso_signup_pattern_assembler_continue_misclick',
 	BACK_CLICK: 'calypso_signup_pattern_assembler_back_click',
 	PATTERN_FINAL_SELECT: 'calypso_signup_pattern_assembler_pattern_final_select',
 

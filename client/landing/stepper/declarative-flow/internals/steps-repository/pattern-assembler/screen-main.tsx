@@ -4,6 +4,7 @@ import { __experimentalHStack as HStack } from '@wordpress/components';
 import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
 import { NavigatorItemGroup } from './navigator-item-group';
@@ -14,6 +15,7 @@ interface Props {
 	isDismissedGlobalStylesUpgradeModal?: boolean;
 	onSelect: ( name: string ) => void;
 	onContinueClick: () => void;
+	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
 const ScreenMain = ( {
@@ -21,6 +23,7 @@ const ScreenMain = ( {
 	isDismissedGlobalStylesUpgradeModal,
 	onSelect,
 	onContinueClick,
+	recordTracksEvent,
 }: Props ) => {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( true );
@@ -42,6 +45,7 @@ const ScreenMain = ( {
 	const handleMouseDown = ( event: MouseEvent< HTMLButtonElement > ) => {
 		if ( disabled ) {
 			event.preventDefault();
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_MISCLICK );
 			return;
 		}
 
