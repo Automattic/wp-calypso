@@ -84,6 +84,7 @@ const ECommerceTrialExpired = (): JSX.Element => {
 					siteSlug={ siteSlug ?? '' }
 					triggerTracksEvent={ triggerPlansGridTracksEvent }
 					yearlyControlProps={ yearlyControlProps }
+					showIntervalToggle={ true }
 				/>
 			</Main>
 		</>
