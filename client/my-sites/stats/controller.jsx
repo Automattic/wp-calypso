@@ -94,6 +94,30 @@ function getSiteFilters( siteId ) {
 			id: 'stats-subscribers',
 		},
 		{
+			title: i18n.translate( 'Days' ),
+			path: '/stats/subscribers/day/' + siteId,
+			id: 'stats-subscribers-day',
+			period: 'day',
+		},
+		{
+			title: i18n.translate( 'Weeks' ),
+			path: '/stats/subscribers/week/' + siteId,
+			id: 'stats-subscribers-week',
+			period: 'week',
+		},
+		{
+			title: i18n.translate( 'Months' ),
+			path: '/statssubscribers//month/' + siteId,
+			id: 'stats-subscribers-month',
+			period: 'month',
+		},
+		{
+			title: i18n.translate( 'Years' ),
+			path: '/stats/subscribers/year/' + siteId,
+			id: 'stats-subscribers-year',
+			period: 'year',
+		},
+		{
 			title: i18n.translate( 'Hours' ),
 			path: '/stats/hour/' + siteId,
 			id: 'stats-hour',
