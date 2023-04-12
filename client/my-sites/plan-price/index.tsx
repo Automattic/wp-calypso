@@ -391,10 +391,10 @@ function HtmlPriceDisplay( {
 	if ( is2023OnboardingPricingGrid ) {
 		return (
 			<div className="plan-price__integer-fraction">
-				<span className="plan-price__integer">{ priceObj.integer }</span>
-				<sup className="plan-price__fraction">
+				<span className="plan-price__integer">
+					{ priceObj.integer }
 					{ priceObj.hasNonZeroFraction && priceObj.fraction }
-				</sup>
+				</span>
 			</div>
 		);
 	}

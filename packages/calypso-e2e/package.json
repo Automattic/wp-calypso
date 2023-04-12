@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-e2e",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Tools for e2e tests.",
 	"main": "dist/esm/src/index.js",
 	"types": "dist/types/src/index.d.ts",

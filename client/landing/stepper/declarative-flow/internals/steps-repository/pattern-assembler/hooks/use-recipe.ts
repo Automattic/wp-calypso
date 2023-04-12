@@ -89,8 +89,8 @@ const useRecipe = ( siteId = 0, patterns: Pattern[], categories: Category[] ) =>
 				.map( ( patternId: string | number ) => patternsById[ decodePatternId( patternId ) ] )
 				.filter( Boolean )
 				.map( ( pattern: Pattern ) => {
-					const [ firstCategory ] = Object.values( pattern.categories ) as Category[];
-					const category = firstCategory?.slug ? categoriesByName[ firstCategory.slug ] : undefined;
+					const [ firstCategory ] = Object.keys( pattern.categories );
+					const category = categoriesByName[ firstCategory ];
 					return {
 						...pattern,
 						key: generateKey( pattern ),
