@@ -39,9 +39,7 @@ class SiteOrDomain extends Component {
 	isLeanDomainSearch() {
 		const { signupDependencies } = this.props;
 		return (
-			!! signupDependencies &&
-			!! signupDependencies.refParameter &&
-			'leandomainsearch' === signupDependencies.refParameter
+			'leandomainsearch' === signupDependencies?.refParameter
 		);
 	}
 
