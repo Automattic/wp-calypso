@@ -16,7 +16,7 @@ interface ThemeCardProps {
 	banner?: React.ReactNode;
 	badge?: React.ReactNode;
 	styleVariations: StyleVariation[];
-	selectedStyleVariation: StyleVariation;
+	selectedStyleVariation?: StyleVariation;
 	optionsMenu?: React.ReactNode;
 	isActive?: boolean;
 	isInstalling?: boolean;
@@ -24,7 +24,7 @@ interface ThemeCardProps {
 	isSoftLaunched?: boolean;
 	onClick?: () => void;
 	onImageClick?: () => void;
-	onStyleVariationClick?: () => void;
+	onStyleVariationClick?: ( styleVariation: StyleVariation ) => void;
 	onStyleVariationMoreClick?: () => void;
 }
 
@@ -127,7 +127,7 @@ const ThemeCard = forwardRef(
 								<StyleVariationBadges
 									variations={ styleVariations }
 									selectedVariation={ selectedStyleVariation }
-									onMoreClick={ onStyleVariationMoreClick || onStyleVariationClick }
+									onMoreClick={ onStyleVariationMoreClick }
 									onClick={ onStyleVariationClick }
 								/>
 							</div>

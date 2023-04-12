@@ -148,7 +148,7 @@ interface DesignCardProps {
 	design: Design;
 	locale: string;
 	category?: string | null;
-	verticalId?: string | null;
+	verticalId?: string;
 	currentPlanFeatures?: string[];
 	hasPurchasedTheme?: boolean;
 	isPremiumThemeAvailable?: boolean;
@@ -251,7 +251,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	);
 };
 
-interface DesignButtonContainerProps extends DesignButtonProps {
+interface DesignButtonContainerProps extends DesignCardProps {
 	category?: string | null;
 	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 }
@@ -371,7 +371,6 @@ const wasThemePurchased = ( purchasedThemes: string[] | undefined, design: Desig
 interface DesignPickerProps {
 	locale: string;
 	verticalId?: string;
-	onSelect: ( design: Design ) => void;
 	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
@@ -379,7 +378,6 @@ interface DesignPickerProps {
 	generatedDesigns: Design[];
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
-	onCheckout?: any;
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
 	shouldLimitGlobalStyles?: boolean;
@@ -387,7 +385,6 @@ interface DesignPickerProps {
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
-	onSelect,
 	onSelectBlankCanvas,
 	onPreview,
 	onChangeVariation,
@@ -395,7 +392,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	generatedDesigns,
 	categorization,
 	isPremiumThemeAvailable,
-	onCheckout,
 	verticalId,
 	purchasedThemes,
 	currentPlanFeatures,
@@ -426,12 +422,10 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						key={ index }
 						design={ design }
 						locale={ locale }
-						onSelect={ onSelect }
 						onSelectBlankCanvas={ onSelectBlankCanvas }
 						onPreview={ onPreview }
 						onChangeVariation={ onChangeVariation }
 						isPremiumThemeAvailable={ isPremiumThemeAvailable }
-						onCheckout={ onCheckout }
 						verticalId={ verticalId }
 						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 						currentPlanFeatures={ currentPlanFeatures }
@@ -467,7 +461,6 @@ export interface UnifiedDesignPickerProps {
 	categorization?: Categorization;
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
-	onCheckout?: any;
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
 	shouldLimitGlobalStyles?: boolean;
@@ -475,7 +468,6 @@ export interface UnifiedDesignPickerProps {
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
-	onSelect,
 	onSelectBlankCanvas,
 	onPreview,
 	onChangeVariation,
@@ -486,7 +478,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	heading,
 	categorization,
 	isPremiumThemeAvailable,
-	onCheckout,
 	purchasedThemes,
 	currentPlanFeatures,
 	shouldLimitGlobalStyles,
@@ -515,7 +506,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			<div className="unified-design-picker__designs">
 				<DesignPicker
 					locale={ locale }
-					onSelect={ onSelect }
 					onSelectBlankCanvas={ onSelectBlankCanvas }
 					onPreview={ onPreview }
 					onChangeVariation={ onChangeVariation }
@@ -524,7 +514,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					categorization={ categorization }
 					verticalId={ verticalId }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
-					onCheckout={ onCheckout }
 					purchasedThemes={ purchasedThemes }
 					currentPlanFeatures={ currentPlanFeatures }
 					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
