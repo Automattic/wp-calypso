@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import BaseCard from './base-card';
 
 interface CountCardProps {
@@ -6,8 +7,20 @@ interface CountCardProps {
 	value: number | string;
 }
 
+function useDisplayValue( value: CountCardProps[ 'value' ] ) {
+	return useMemo( () => {
+		if ( typeof value === 'string' ) {
+			return value;
+		}
+		if ( typeof value === 'number' ) {
+			return value.toLocaleString();
+		}
+		return '-';
+	}, [ value ] );
+}
+
 export default function CountCard( { heading, icon, value }: CountCardProps ) {
-	const displayValue = typeof value === 'string' ? value : '-';
+	const displayValue = useDisplayValue( value );
 
 	return (
 		<BaseCard
