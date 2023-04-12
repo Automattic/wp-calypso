@@ -22,11 +22,8 @@ const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 	const [ mode, setMode ] = useState( LANDSCAPE_MODE );
 	const isArticle = type === TYPE_ARTICLE;
 	const portraitMode = ( isArticle && ! image ) || mode === PORTRAIT_MODE;
+	const modeClass = `is-${ portraitMode ? 'portrait' : 'landscape' }`;
 
-	const getModeClass = useCallback(
-		() => `is-${ portraitMode ? 'portrait' : 'landscape' }`,
-		[ portraitMode ]
-	);
 	const handleImageLoad = useCallback(
 		( { target } ) =>
 			setMode( target.naturalWidth > target.naturalHeight ? LANDSCAPE_MODE : PORTRAIT_MODE ),
@@ -40,12 +37,10 @@ const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 				{ customText && (
 					<p className="facebook-preview__custom-text">{ facebookCustomText( customText ) }</p>
 				) }
-				<div className={ `facebook-preview__body ${ getModeClass() }` }>
+				<div className={ `facebook-preview__body ${ modeClass }` }>
 					{ ( image || isArticle ) && (
 						<div
-							className={ `facebook-preview__image ${
-								image ? '' : 'is-empty'
-							} ${ getModeClass() }` }
+							className={ `facebook-preview__image ${ image ? '' : 'is-empty' } ${ modeClass }` }
 						>
 							{ image && (
 								<img
