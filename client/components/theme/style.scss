@@ -53,7 +53,8 @@ $theme-info-height: 54px;
 		fill: #fff;
 	}
 
-	&.premium-badge.theme__marketplace-theme {
+	&.premium-badge.theme__marketplace-theme,
+	&.premium-badge.theme__community-theme {
 		background: var(--color-primary);
 	}
 
