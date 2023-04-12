@@ -11,7 +11,6 @@
 		{ "path": "../data-stores" },
 		{ "path": "../calypso-analytics" },
 		{ "path": "../i18n-utils" },
-		{ "path": "../onboarding" },
-		{ "path": "../domain-utils" }
+		{ "path": "../onboarding" }
 	]
 }
