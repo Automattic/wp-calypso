@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page from 'page';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
 import { showAtomicTransferDialog } from 'calypso/state/themes/actions/show-atomic-transfer-dialog';
@@ -9,6 +10,7 @@ import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-the
 import {
 	getTheme,
 	hasAutoLoadingHomepageModalAccepted,
+	isThemePremium,
 	themeHasAutoLoadingHomepage,
 	wasAtomicTransferDialogAccepted,
 	isExternallyManagedTheme,
@@ -70,6 +72,33 @@ export function activate(
 			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
 		) {
 			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
+		}
+
+		/**
+		 * Check if its a free dotcom theme, if so, dispatch the activate action
+		 * and redirect to the Marketplace Thank You Page.
+		 *
+		 * A theme is considered free when its not premium and not externally managed.
+		 *
+		 * Currently a feature flag check is also being applied.
+		 */
+		const isPremiumTheme = isThemePremium( getState(), themeId );
+		const isExternallyManaged = isExternallyManagedTheme( getState(), themeId );
+		const isFreeTheme = ! isPremiumTheme && ! isExternallyManaged;
+		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
+		if ( isFreeTheme && isDotComTheme && isEnabled( 'themes/display-thank-you-page' ) ) {
+			dispatchActivateAction(
+				dispatch,
+				getState,
+				siteId,
+				themeId,
+				source,
+				purchased,
+				keepCurrentHomepage
+			);
+
+			const siteSlug = getSiteSlug( getState(), siteId );
+			return page( `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }` );
 		}
 
 		return dispatchActivateAction(
