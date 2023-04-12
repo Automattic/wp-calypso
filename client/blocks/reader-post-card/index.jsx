@@ -207,19 +207,6 @@ class ReaderPostCard extends Component {
 					followSource={ followSource }
 				/>
 			);
-		} else if ( isReaderTagPage ) {
-			postByline = (
-				<PostByline
-					post={ post }
-					site={ site }
-					feed={ feed }
-					showSiteName={ false }
-					showAvatar={ false }
-					showFollow={ false }
-					showPrimaryFollowButton={ false }
-					isTagPost={ true }
-				/>
-			);
 		} else {
 			postByline = (
 				<PostByline
@@ -259,7 +246,6 @@ class ReaderPostCard extends Component {
 					expandCard={ expandCard }
 					site={ site }
 					postKey={ postKey }
-					postByline={ postByline }
 				></TagPost>
 			);
 		} else if ( isPhotoPost ) {

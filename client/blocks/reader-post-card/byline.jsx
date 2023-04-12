@@ -22,7 +22,6 @@ class PostByline extends Component {
 		site: PropTypes.object,
 		feed: PropTypes.object,
 		isDiscoverPost: PropTypes.bool,
-		isTagPost: PropTypes.bool,
 		showSiteName: PropTypes.bool,
 		showAvatar: PropTypes.bool,
 		teams: PropTypes.array,
@@ -33,7 +32,6 @@ class PostByline extends Component {
 
 	static defaultProps = {
 		isDiscoverPost: false,
-		isTagPost: false,
 		showAvatar: true,
 	};
 
@@ -53,7 +51,6 @@ class PostByline extends Component {
 			isDiscoverPost,
 			showSiteName,
 			showAvatar,
-			isTagPost,
 			teams,
 			showPrimaryFollowButton,
 			followSource,
@@ -70,7 +67,6 @@ class PostByline extends Component {
 			hasAuthorName && areEqualIgnoringWhitespaceAndCase( siteName, post.author.name );
 		const shouldDisplayAuthor =
 			! isDiscoverPost &&
-			! isTagPost &&
 			hasAuthorName &&
 			! isAuthorNameBlocked( post.author.name ) &&
 			( ! hasMatchingAuthorAndSiteNames || ! showSiteName );
@@ -141,7 +137,7 @@ class PostByline extends Component {
 							</span>
 						) }
 					</div>
-					{ ! isTagPost && <TagsList post={ post } /> }
+					<TagsList post={ post } />
 				</div>
 				{ showPrimaryFollowButton && followUrl && (
 					<FollowButton
@@ -152,14 +148,7 @@ class PostByline extends Component {
 						followingIcon={ ReaderFollowingFeedIcon( { iconSize: 20 } ) }
 					/>
 				) }
-				{ ! isTagPost && (
-					<ReaderPostEllipsisMenu
-						site={ site }
-						teams={ teams }
-						post={ post }
-						showFollow={ false }
-					/>
-				) }
+				<ReaderPostEllipsisMenu site={ site } teams={ teams } post={ post } showFollow={ false } />
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-gridicon-size */
