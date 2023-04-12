@@ -3,7 +3,6 @@ export { areRecommendedThemesLoading } from 'calypso/state/themes/selectors/are-
 export { areTrendingThemesLoading } from 'calypso/state/themes/selectors/are-trending-themes-loading';
 export { doesThemeBundleSoftwareSet } from 'calypso/state/themes/selectors/does-theme-bundle-software-set';
 export { doesThemeBundleUsableSoftwareSet } from 'calypso/state/themes/selectors/does-theme-bundle-usable-software-set';
-export { doesThemeRequireAtomicSite } from 'calypso/state/themes/selectors/does-theme-require-atomic-site';
 export { findThemeFilterTerm } from 'calypso/state/themes/selectors/find-theme-filter-term';
 export { getActiveTheme } from 'calypso/state/themes/selectors/get-active-theme';
 export { getCanonicalTheme } from 'calypso/state/themes/selectors/get-canonical-theme';

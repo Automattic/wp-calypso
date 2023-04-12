@@ -11,7 +11,7 @@ import {
 	hasAutoLoadingHomepageModalAccepted,
 	themeHasAutoLoadingHomepage,
 	wasAtomicTransferDialogAccepted,
-	doesThemeRequireAtomicSite,
+	isExternallyManagedTheme,
 } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
@@ -51,7 +51,7 @@ export function activate(
 		 * an Atomic site. If the dialog has been accepted, we can continue.
 		 */
 		if (
-			doesThemeRequireAtomicSite( getState(), themeId ) &&
+			isExternallyManagedTheme( getState(), themeId ) &&
 			! isJetpackSite( getState(), siteId ) &&
 			! isSiteAtomic( getState(), siteId ) &&
 			! wasAtomicTransferDialogAccepted( getState(), themeId )
