@@ -46,6 +46,8 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Add two plugins to the cart' ),
 			);
 			if ( ! response.success ) {
 				console.error( 'Failed to clear the shopping cart, the test may not run as expected.' );
+			} else {
+				console.log( 'shopping cart cleared successfully.' );
 			}
 		} catch {
 			console.error( 'Failed to clear the shopping cart, the test may not run as expected.' );
