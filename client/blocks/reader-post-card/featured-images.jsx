@@ -2,11 +2,19 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import ReaderFeaturedImage from 'calypso/blocks/reader-featured-image';
 import { getImagesFromPostToDisplay } from 'calypso/state/reader/posts/normalization-rules';
-import { READER_FEATURED_MAX_IMAGE_HEIGHT } from 'calypso/state/reader/posts/sizes';
+import {
+	READER_FEATURED_MAX_IMAGE_HEIGHT,
+	READER_TAG_POST_FEATURED_MAX_IMAGE_HEIGHT,
+} from 'calypso/state/reader/posts/sizes';
 
-const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia } ) => {
+const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isTagPost } ) => {
 	let classNames = 'reader-post-card__featured-images';
-	const imagesToDisplay = getImagesFromPostToDisplay( post, 4 );
+	let numImages = 4;
+	if ( isTagPost ) {
+		// We only need one image for tag streams
+		numImages = 1;
+	}
+	const imagesToDisplay = getImagesFromPostToDisplay( post, numImages );
 	if ( imagesToDisplay.length === 0 ) {
 		return (
 			<ReaderFeaturedImage
@@ -19,7 +27,9 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia } ) => {
 
 	const listItems = imagesToDisplay.map( ( image, index, [ imageWidth, imageHeight ] ) => {
 		imageWidth = null;
-		imageHeight = READER_FEATURED_MAX_IMAGE_HEIGHT;
+		imageHeight = isTagPost
+			? READER_TAG_POST_FEATURED_MAX_IMAGE_HEIGHT
+			: READER_FEATURED_MAX_IMAGE_HEIGHT;
 
 		let width = '50%';
 
