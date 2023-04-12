@@ -57,10 +57,23 @@ describe( '<SitePlan>', () => {
 		expect( container.textContent ).toBe( 'Business' );
 	} );
 
-	test( 'shows "Business" as label for a site with an expired Business plan', () => {
-		const { container } = render(
+	test( 'shows "Business" as label to an administrator for site with an expired Business plan', () => {
+		const { getByText, queryAllByRole } = render(
 			<SitePlan site={ expiredBusinessSite } userId={ otherAdminId } />
 		);
-		expect( container.textContent ).toBe( 'Business - Expired' );
+		expect( getByText( 'Business - Expired' ) ).toBeInTheDocument();
+		expect( queryAllByRole( 'link' ) ).toHaveLength( 0 );
+	} );
+
+	test( 'shows "Business" as label to a site owner for a site with an expired Business plan', () => {
+		const { getByText, queryAllByRole, getByRole } = render(
+			<SitePlan site={ expiredBusinessSite } userId={ siteOwnerId } />
+		);
+		expect( getByText( 'Business - Expired' ) ).toBeInTheDocument();
+		expect( queryAllByRole( 'link' ) ).toHaveLength( 1 );
+		expect( getByRole( 'link', { name: 'Renew plan' } ) ).toHaveAttribute(
+			'href',
+			expect.stringMatching( /\/checkout\// )
+		);
 	} );
 } );
