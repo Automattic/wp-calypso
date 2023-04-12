@@ -34,11 +34,9 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 }
 
 export default function SubscribersSection( {
-	siteId,
 	slug,
 	period = 'month',
 }: {
-	siteId: string;
 	slug?: string;
 	period?: string;
 } ) {
@@ -49,7 +47,7 @@ export default function SubscribersSection( {
 		data,
 		// error,
 		status,
-	}: UseQueryResult< SubscribersDataResult > = useSubscribersQuery( siteId, period, quantity );
+	}: UseQueryResult< SubscribersDataResult > = useSubscribersQuery( period, quantity );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const legendRef = useRef< HTMLDivElement >( null );
 
