@@ -58,10 +58,14 @@ const ButtonContainer = styled.div`
 const Row = styled.div`
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
 	padding-top: 16px;
 	flex-wrap: wrap;
 	gap: 12px;
+	flex-direction: column;
+	@media ( min-width: 780px ) {
+		flex-direction: row;
+		align-items: center;
+	}
 `;
 
 const RowWithBorder = styled( Row )`
@@ -95,6 +99,7 @@ const StyledButton = styled( Button )`
 	font-weight: 500;
 	font-size: 14px;
 	line-height: 20px;
+	flex: 1;
 	&.is-primary,
 	&.is-primary.is-busy,
 	&.is-primary:hover,
@@ -111,6 +116,7 @@ const StyledButton = styled( Button )`
 	}
 	width: 100%;
 	@media ( min-width: 780px ) {
+		max-width: fit-content;
 		width: unset;
 	}
 `;
@@ -142,7 +148,7 @@ export function FreePlanPaidDomainDialog( {
 		isLoading,
 		isError,
 	} = useGetWordPressSubdomain( domainName );
-	const planName = getPlan( planSlug )?.getTitle();
+	const planTitle = getPlan( planSlug )?.getTitle();
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
@@ -191,9 +197,10 @@ export function FreePlanPaidDomainDialog( {
 						</DomainName>
 						<StyledButton busy={ isBusy } primary onClick={ handlePaidPlanClick }>
 							{ currencyCode &&
-								translate( 'Get %(planName)s - %(planPrice)s', {
+								translate( 'Get %(planTitle)s - %(planPrice)s/month', {
+									comment: 'Eg: Get Personal - $4/month',
 									args: {
-										planName,
+										planTitle,
 										planPrice: formatCurrency(
 											planPrices.discountedRawPrice || planPrices.rawPrice,
 											currencyCode,
