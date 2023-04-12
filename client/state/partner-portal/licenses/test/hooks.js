@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { setLogger, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act } from '@testing-library/react-hooks';
 import nock from 'nock';
 import { useDispatch } from 'react-redux';
@@ -402,20 +402,15 @@ describe( 'useTOSConsentMutation', () => {
 } );
 
 describe( 'useBillingDashboardQuery', () => {
-	beforeEach( () => {
-		// Prevent react-query from logging an error due to the failing requests.
-		setLogger( {
+	function createQueryClient() {
+		const logger = {
 			error: jest.fn(),
-		} );
-	} );
-
-	afterEach( () => {
-		// Restore react-query logger.
-		setLogger( console );
-	} );
+		};
+		return new QueryClient( { logger } );
+	}
 
 	it( 'returns transformed request data', async () => {
-		const queryClient = new QueryClient();
+		const queryClient = createQueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
@@ -491,7 +486,7 @@ describe( 'useBillingDashboardQuery', () => {
 	} );
 
 	it( 'dispatches notification on no invoice available', async () => {
-		const queryClient = new QueryClient();
+		const queryClient = createQueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
@@ -522,7 +517,7 @@ describe( 'useBillingDashboardQuery', () => {
 	} );
 
 	it( 'dispatches notice on error', async () => {
-		const queryClient = new QueryClient();
+		const queryClient = createQueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
