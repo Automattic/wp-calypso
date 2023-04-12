@@ -48,7 +48,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 			</p>
 			<div class="resource-link">
 				<p>
-					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/webinars/' ) ); ?>">
+					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
 						<?php esc_html_e( 'Search Guides', 'full-site-editing' ); ?>
 						<figure><img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
 					</a>
