@@ -38,6 +38,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Add two plugins to the cart' ),
 		// Authenticate as simpleSiteFreePlanUser.
 		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
 		await testAccount.authenticate( page );
+		await BrowserManager.setStoreCookie( page );
 		siteURL = credentials.testSites?.primary.url as string;
 		pluginsPage = new PluginsPage( page );
 		await pluginsPage.visit( siteURL );
@@ -45,10 +46,6 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Add two plugins to the cart' ),
 
 	describe( 'Plugin: Purchase', function () {
 		let cartCheckoutPage: CartCheckoutPage;
-
-		beforeAll( async function () {
-			await BrowserManager.setStoreCookie( page );
-		} );
 
 		it( `Purchase ${ plugin1Name } and show Elegibility warning`, async function () {
 			await pluginsPage.visitPage( plugin1Name.replace( ' ', '-' ).toLowerCase(), siteURL );
