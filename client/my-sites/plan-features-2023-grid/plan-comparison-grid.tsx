@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	applyTestFiltersToPlansList,
 	FeatureGroup,
@@ -8,6 +7,7 @@ import {
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	getPlanFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -18,9 +18,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, useCallback, useEffect, ChangeEvent } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
-import PlanTypeSelector, {
-	PlanTypeSelectorProps,
-} from 'calypso/my-sites/plans-features-main/plan-type-selector';
+import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
+import TermExperimentPlanTypeSelector from 'calypso/my-sites/plans-features-main/term-experiment-plan-type-selector';
+import useIsLargeCurrency from '../plans/hooks/use-is-large-currency';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PopularBadge from './components/popular-badge';
@@ -329,7 +329,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	const popularBadgeClasses = classNames( {
 		'is-current-plan': current,
 	} );
-	const rawPrice = planPropertiesObj.rawPrice;
 	const showPlanSelect = ! allVisible && ! current;
 
 	return (
@@ -376,9 +375,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 			<div className="plan-comparison-grid__billing-info">
 				<PlanFeatures2023GridBillingTimeframe
 					planName={ planName }
-					rawPrice={ rawPrice }
-					maybeDiscountedFullTermPrice={ planPropertiesObj.maybeDiscountedFullTermPrice }
-					annualPricePerMonth={ planPropertiesObj.annualPricePerMonth }
 					isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
 					billingTimeframe={ planConstantObj.getBillingTimeFrame() }
 					billingPeriod={ planPropertiesObj.billingPeriod }
@@ -422,8 +418,8 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 } ) => {
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 
-	const isLargeCurrency = displayedPlansProperties.some(
-		( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
+	const isLargeCurrency = useIsLargeCurrency(
+		displayedPlansProperties.map( ( properties ) => properties.planName as PlanSlug )
 	);
 
 	return (
@@ -517,7 +513,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 					) }
 					{ hasConditionalFeature && feature?.getConditionalTitle && (
 						<span className="plan-comparison-grid__plan-conditional-title">
-							{ feature?.getConditionalTitle() }
+							{ feature?.getConditionalTitle( planName ) }
 						</span>
 					) }
 					{ hasFeature && feature?.getCompareSubtitle && (
@@ -525,7 +521,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							{ feature.getCompareSubtitle() }
 						</span>
 					) }
-					{ hasFeature && <Gridicon icon="checkmark" color="#0675C4" /> }
+					{ hasFeature && ! hasConditionalFeature && <Gridicon icon="checkmark" color="#0675C4" /> }
 					{ ! hasFeature && ! hasConditionalFeature && (
 						<Gridicon icon="minus-small" color="#C3C4C7" />
 					) }
@@ -612,7 +608,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	const displayedPlansProperties = useMemo(
 		() =>
 			( planProperties ?? [] ).filter(
-				( { planName } ) => ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
+				( { planName, isVisible } ) => isVisible && ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
 			),
 		[ planProperties ]
 	);
@@ -711,7 +707,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					const { planName } = plan;
 					const planObject = applyTestFiltersToPlansList( planName, undefined );
 					const jetpackFeatures = planObject.get2023PricingGridSignupJetpackFeatures?.() ?? [];
-					return jetpackFeatures;
+					const additionalJetpackFeatures =
+						planObject.get2023PlanComparisonJetpackFeatureOverride?.() ?? [];
+					return jetpackFeatures.concat( ...additionalJetpackFeatures );
 				} )
 				.flat()
 		);
@@ -756,20 +754,11 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			<PlanComparisonHeader className="wp-brand-font">
 				{ translate( 'Compare our plans and find yours' ) }
 			</PlanComparisonHeader>
-			<PlanTypeSelector
+			<TermExperimentPlanTypeSelector
+				isEligible={ true }
 				kind="interval"
 				plans={ displayedPlansProperties.map( ( { planName } ) => planName ) }
-				isInSignup={ planTypeSelectorProps.isInSignup }
-				isStepperUpgradeFlow={ planTypeSelectorProps.isStepperUpgradeFlow }
-				eligibleForWpcomMonthlyPlans={ planTypeSelectorProps.eligibleForWpcomMonthlyPlans }
-				isPlansInsideStepper={ planTypeSelectorProps.isPlansInsideStepper }
-				intervalType={ planTypeSelectorProps.intervalType }
-				customerType={ planTypeSelectorProps.customerType }
-				hidePersonalPlan={ planTypeSelectorProps.hidePersonalPlan }
-				basePlansPath={ planTypeSelectorProps.basePlansPath }
-				siteSlug={ planTypeSelectorProps.siteSlug }
-				hideDiscountLabel={ false }
-				showBiannualToggle={ config.isEnabled( 'plans/biannual-toggle' ) }
+				planTypeSelectorProps={ planTypeSelectorProps }
 			/>
 			<Grid isInSignup={ isInSignup }>
 				<PlanComparisonGridHeader

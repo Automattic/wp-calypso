@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
@@ -9,6 +8,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isJetpackSite, isJetpackSiteMultiSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
@@ -22,7 +22,6 @@ import {
 	getTheme,
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
-	getThemeHelpUrl,
 	getThemePurchaseUrl,
 	getThemeSignupUrl,
 	isPremiumThemeAvailable,
@@ -70,6 +69,7 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		} ),
 		action: addExternalManagedThemeToCart,
 		hideForTheme: ( state, themeId, siteId ) =>
+			isSiteWpcomStaging( state, siteId ) || // No individual theme purchase on a staging site
 			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
 			! isUserLoggedIn( state ) || // Not logged in
 			isMarketplaceThemeSubscribed( state, themeId, siteId ) || // Already purchased individually, or thru a plan
@@ -255,11 +255,6 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		getUrl: getThemeDetailsUrl,
 	};
 
-	const help = {
-		label: translate( 'Support' ),
-		getUrl: getThemeHelpUrl,
-	};
-
 	return {
 		customize,
 		preview,
@@ -274,7 +269,6 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		signup,
 		separator,
 		info,
-		...( ! isEnabled( 'themes/showcase-i4/details-and-preview' ) && { help } ),
 	};
 }
 

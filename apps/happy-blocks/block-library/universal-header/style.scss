@@ -1,12 +1,12 @@
+@import "@automattic/calypso-color-schemes";
+
 $breakpoint-mobile: 782px; //Mobile size.
 $breakpoint-tablet: 1224px; //Large tablet size.
 $breakpoint-desktop: 1440px; //Desktop size.
 $search-icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"%3E%3Cpath d="M9.16667 15.8333C12.8486 15.8333 15.8333 12.8486 15.8333 9.16667C15.8333 5.48477 12.8486 2.5 9.16667 2.5C5.48477 2.5 2.5 5.48477 2.5 9.16667C2.5 12.8486 5.48477 15.8333 9.16667 15.8333Z" stroke="%238C8F94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/%3E%3Cpath d="M17.5 17.5L13.875 13.875" stroke="%238C8F94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/%3E%3C/svg%3E';
-
-body:not(.home) header.wp-block-template-part {
-	height: 60px;
-	margin-bottom: 40px;
-}
+$recoleta-font-family: "Recoleta", sans-serif;
+$system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI", "Roboto",
+	"Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
 
 .lpc-mobile-menu-mask {
 	position: fixed !important;
@@ -33,14 +33,7 @@ body:not(.home) header.wp-block-template-part {
 
 .x-menu,
 .x-link {
-	font-family:
-		-apple-system,
-		BlinkMacSystemFont,
-		"Segoe UI",
-		Roboto,
-		Helvetica,
-		Arial,
-		sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -59,14 +52,7 @@ body:not(.home) header.wp-block-template-part {
 	background: none;
 	color: inherit;
 	font: inherit;
-	font-family:
-		-apple-system,
-		BlinkMacSystemFont,
-		"Segoe UI",
-		Roboto,
-		Helvetica,
-		Arial,
-		sans-serif;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 	text-decoration: none;
 	cursor: pointer;
 	transition: 0.15s ease-out;
@@ -289,11 +275,7 @@ body:not(.home) header.wp-block-template-part {
 }
 
 .x-nav {
-	position: absolute;
 	z-index: 1000;
-	top: 0;
-	right: 0;
-	left: 0;
 	height: auto;
 	padding: 0 24px;
 	display: flex;
@@ -301,8 +283,6 @@ body:not(.home) header.wp-block-template-part {
 }
 
 .x-nav-list {
-	position: absolute;
-	top: 0;
 	display: flex;
 	align-items: flex-end;
 	margin: 0;
@@ -354,7 +334,7 @@ body:not(.home) header.wp-block-template-part {
 }
 
 .x-nav-link--logo {
-	padding: 0 18px 0;
+	padding: 0;
 	margin-top: 9px;
 }
 
@@ -363,7 +343,7 @@ body:not(.home) header.wp-block-template-part {
 	margin-top: 9px;
 }
 
-@media (min-width: 768px) {
+@media ( min-width: 768px ) {
 	.x-nav-link--logo {
 		padding: 0 24px 0;
 	}
@@ -374,7 +354,7 @@ body:not(.home) header.wp-block-template-part {
 	}
 }
 
-@media (min-width: 864px) {
+@media ( min-width: 864px ) {
 	.x-nav-item--narrow {
 		display: none;
 	}
@@ -403,7 +383,7 @@ body:not(.home) header.wp-block-template-part {
 	}
 }
 
-@media (min-width: 1056px) {
+@media ( min-width: 1056px ) {
 	.x-nav-link {
 		padding-right: 12px;
 		padding-left: 12px;
@@ -475,7 +455,7 @@ body:not(.home) header.wp-block-template-part {
 	pointer-events: none;
 }
 
-@media (min-width: 480px) {
+@media ( min-width: 480px ) {
 	.x-menu-content {
 		left: auto;
 		width: 408px;
@@ -609,46 +589,64 @@ body.logged-in .x-dropdown {
 	top: 72px;
 }
 
-@media only screen and (max-width: 782px) {
+@media only screen and ( max-width: 782px ) {
 	body.logged-in .x-nav {
 		top: 46px;
 	}
 }
 
-
 .happy-blocks-search {
 	min-height: 399px;
 	position: relative;
 	padding: 0;
+}
 
-	.header-search__input {
-		.happy-blocks-search__inside-wrapper {
-			width: 464px;
-			font-size: 1rem;
-			border: 0;
-			border-radius: 4px;
-			box-shadow:
-				0 9px 5px rgba(38, 19, 19, 0.02),
-				0 4px 4px rgba(38, 19, 19, 0.03),
-				0 1px 2px rgba(38, 19, 19, 0.03),
-				0 0 0 rgba(38, 19, 19, 0.03);
-		}
+.happy-blocks-global-header__top {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: 37px;
+	margin-bottom: 32px;
+
+	@media only screen and ( max-width: $breakpoint-mobile ) {
+		flex-direction: column-reverse;
+	}
+}
+
+.happy-blocks-global-header__tabs {
+	display: flex;
+	width: 100%;
+}
+
+.happy-blocks-global-header__tab {
+	display: block;
+	padding: 3px 2px;
+	margin-right: 32px;
+	font-size: 1rem;
+	text-decoration: none !important;
+	color: var(--color-neutral-100);
+
+	&.active {
+		border-bottom: 2px solid #0675c4;
+	}
+
+	&:hover,
+	&:active {
+		border-bottom: 2px solid #0675c4;
 	}
 }
 
 .happy-blocks-mini-search {
-	.header-search__input {
-		input {
-			border: 1px solid #949494;
-		}
+	.screen-reader-text {
+		clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+		clip: rect(1px, 1px, 1px, 1px);
+		position: absolute !important;
 	}
-}
-
-.happy-blocks-mini-search,
-.happy-blocks-search {
+	margin-bottom: 45px;
 	// This applies to all search bars
 	.happy-blocks-search__inside-wrapper {
-		width: 497px;
+		// width is 1/3 of the grid width minus 30px * 2 / 3 for the grid gap (gap is 30px, we need 2/3 of it)
+		width: calc(var(--wp--style--global--wide-size, 1224px) / 3 - 30px * 2 / 3);
 		height: 50px;
 		max-width: 100%;
 		position: relative;
@@ -656,6 +654,13 @@ body.logged-in .x-dropdown {
 		background-color: #fff;
 		box-shadow: 0 0 0 1px var(--color-neutral-5) inset;
 		display: flex;
+		margin-left: auto;
+
+		@media only screen and ( max-width: $breakpoint-mobile ) {
+			margin-left: 0;
+			width: 100%;
+			margin-bottom: 20px;
+		}
 
 		input {
 			flex: 1;
@@ -666,11 +671,15 @@ body.logged-in .x-dropdown {
 			border-width: 0;
 			border-style: none;
 			border-radius: 4px;
+
 			&,
 			&::placeholder {
 				font-size: 1rem;
 				color: var(--color-neutral-50);
 			}
+
+			font-size: 1rem;
+			color: var(--color-neutral-50);
 		}
 
 		&::before {
@@ -686,19 +695,9 @@ body.logged-in .x-dropdown {
 		}
 	}
 
-	.alignwide {
-		max-width: var(--wp--style--global--wide-size);
-		margin: 0 auto;
-	}
-
-	.header-search__input {
-		input {
-			padding-left: 46px;
-		}
-	}
-
 	.happy-blocks-search-container {
-		width: 100%;
+		margin: 0 auto;
+		max-width: var(--wp--style--global--wide-size, 1224px);
 
 		form {
 			width: 100%;
@@ -710,32 +709,16 @@ body.logged-in .x-dropdown {
 	}
 }
 
-/**
- * Search results box
- */
-.jetpack-instant-search__search-results-wrapper {
-	h2,
-	h3 {
-		font-family: var(--wp--preset--font-family--recoleta);
-		font-weight: 400;
-
-		svg {
-			display: none;
-		}
-
-		a {
-			font-size: 1.5rem;
-			font-weight: 500;
-		}
+.happy-blocks-global-header-site__title {
+	h1 {
+		font-family: $recoleta-font-family;
+		font-size: 2.75rem;
+		margin-bottom: 5px;
 	}
 
-	.jetpack-instant-search__search-results-list li + li {
-		border-top: 1px solid var(--color-neutral-5);
-		padding: 20px 0 10px;
-	}
-
-	.jetpack-instant-search__search-result-minimal-content {
+	p {
+		color: var(--color-neutral-60);
+		font-family: $system-font-family;
 		font-size: 1rem;
-		color: var(--color-neutral-100);
 	}
 }

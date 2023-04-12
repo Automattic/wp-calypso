@@ -9,6 +9,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import HeaderCake from 'calypso/components/header-cake';
 import Main from 'calypso/components/main';
 import { makeLayout, render as clientRender } from 'calypso/controller';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { logToLogstash } from 'calypso/lib/logstash';
 import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
@@ -21,12 +22,14 @@ import {
 } from 'calypso/me/purchases/paths';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { getVatVendorInfo } from './billing-history/vat-vendor-details';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
 import ManagePurchase from './manage-purchase';
 import PurchasesList from './purchases-list';
 import titles from './titles';
 import VatInfoPage from './vat-info';
+import useVatDetails from './vat-info/use-vat-details';
 
 function useLogPurchasesError( message ) {
 	return useCallback(
@@ -142,13 +145,27 @@ export function vatDetails( context, next ) {
 		const goToBillingHistory = () => page( billingHistory );
 		const classes = 'vat-details';
 
+		const translate = useTranslate();
+		const { data: geoData } = useGeoLocationQuery();
+		const { vatDetails: vatDetailsFromServer } = useVatDetails();
+		const vendorInfo = getVatVendorInfo(
+			vatDetailsFromServer.country ?? geoData?.country_short ?? 'GB',
+			'now',
+			translate
+		);
+		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+		const title = translate( 'Add %s details', {
+			textOnly: true,
+			args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+		} );
+
 		return (
-			<PurchasesWrapper title={ titles.vatDetails }>
+			<PurchasesWrapper title={ title }>
 				<Main wideLayout className={ classes }>
 					<PageViewTracker path={ vatDetailsPath } title="Purchases > VAT Details" />
 
 					<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-					<HeaderCake onClick={ goToBillingHistory }>{ titles.vatDetails }</HeaderCake>
+					<HeaderCake onClick={ goToBillingHistory }>{ title }</HeaderCake>
 
 					<VatInfoPage siteSlug={ context.params.site } />
 				</Main>

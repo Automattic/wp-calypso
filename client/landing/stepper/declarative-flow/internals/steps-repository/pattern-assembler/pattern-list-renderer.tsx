@@ -1,8 +1,8 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { Button } from '@automattic/components';
 import classnames from 'classnames';
-import { useEffect, useState } from 'react';
-import { useInView } from 'calypso/lib/use-in-view';
+import { useEffect, useCallback, useRef } from 'react';
+import { useInView } from 'react-intersection-observer';
 import EmptyPattern from './empty-pattern';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
@@ -35,22 +35,32 @@ const PatternListItem = ( {
 	isShown,
 	onSelect,
 }: PatternListItemProps ) => {
-	const [ inViewOnce, setInViewOnce ] = useState( false );
-	const ref = useInView< HTMLButtonElement >( () => setInViewOnce( true ), {
-		threshold: [ 0 ],
+	const ref = useRef< HTMLButtonElement >();
+	const { ref: inViewRef, inView: inViewOnce } = useInView( {
+		triggerOnce: true,
 	} );
 
+	const setRefs = useCallback(
+		( node?: Element | null | undefined ) => {
+			if ( node ) {
+				ref.current;
+			}
+			inViewRef( node );
+		},
+		[ inViewRef ]
+	);
+
 	useEffect( () => {
-		if ( isShown && inViewOnce && isFirst && ref.current ) {
+		if ( isShown && isFirst && ref.current ) {
 			ref.current.focus();
 		}
-	}, [ isShown, isFirst, ref, inViewOnce ] );
+	}, [ isShown, isFirst, ref ] );
 
 	return (
 		<Button
 			className={ className }
 			title={ pattern.title }
-			ref={ ref }
+			ref={ setRefs }
 			onClick={ () => onSelect( pattern ) }
 		>
 			{ isShown && inViewOnce ? (

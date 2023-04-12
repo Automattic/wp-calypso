@@ -21,7 +21,7 @@ describe( DataHelper.createSuiteTitle( 'Server-side Rendering' ), function () {
 		${ DataHelper.getCalypsoURL( 'themes' ) }
 		${ DataHelper.getCalypsoURL( 'theme/twentytwenty' ) }
 	`( 'Check endpoint: $endpoint', async function ( { endpoint } ) {
-		await page.goto( endpoint );
+		await page.goto( endpoint, { waitUntil: 'domcontentloaded' } );
 		await page.locator( '#wpcom[data-calypso-ssr="true"]' ).waitFor( { timeout: 15 * 1000 } );
 	} );
 } );

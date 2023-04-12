@@ -1,7 +1,7 @@
 import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
 import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
-import type { FeatureId } from '../wpcom-features';
+import type { FeatureId } from '../shared-types';
 
 export interface Dispatch {
 	dispatch: DispatchFromMap< ActionCreators >;
@@ -235,6 +235,7 @@ export interface SiteDetailsOptions {
 	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
+	can_blaze?: boolean;
 }
 
 export type SiteOption = keyof SiteDetails[ 'options' ];
@@ -461,8 +462,6 @@ export interface GlobalStyles {
 }
 
 export interface LaunchPadCheckListTasksStatuses {
-	newsletter_plan_created: boolean;
-	stripe_connected?: boolean;
 	first_post_published?: boolean;
 	links_edited?: boolean;
 	site_launched?: boolean;

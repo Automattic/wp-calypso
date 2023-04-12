@@ -16,7 +16,7 @@ import {
 
 export default function () {
 	page( '/marketing/do-it-for-me*', function redirectToDIFMLandingPage() {
-		window.location.replace( 'https://wordpress.com/do-it-for-me/' );
+		window.location.replace( 'https://wordpress.com/built-by/' );
 	} );
 
 	page( '/marketing/ultimate-traffic-guide*', function redirectToWPCoursesPage() {

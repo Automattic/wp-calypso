@@ -68,6 +68,20 @@
 		align-items: center;
 	}
 
+	.launchpad__clipboard-button {
+		opacity: 0;
+	}
+
+	.launchpad__clipboard-button:focus {
+		opacity: 1;
+	}
+
+	&-site:hover {
+		.launchpad__clipboard-button {
+			opacity: 1;
+		}
+	}
+
 	&-customize {
 		color: var(--studio-blue-50);
 		font-size: 0.875rem;
@@ -121,4 +135,8 @@
 	&-view-site:hover {
 		text-decoration: underline;
 	}
+}
+
+.tooltip.popover {
+	z-index: 100000;
 }
