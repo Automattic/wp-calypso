@@ -118,7 +118,7 @@ const WooExpressPlansPage = ( {
 		} );
 	}, [] );
 
-	const planFeatures = isWooExpressSmallPlan( currentPlan.productSlug ) ? (
+	const planFeatures = (
 		<WooExpressPlans
 			interval={ interval ? interval : planInterval }
 			monthlyControlProps={ { path: plansLink( '/plans', selectedSite.slug, 'monthly', true ) } }
