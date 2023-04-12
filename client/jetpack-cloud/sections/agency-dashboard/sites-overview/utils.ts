@@ -539,7 +539,7 @@ interface BoostThreshold {
 	rating: BoostRating;
 }
 
-const BOOST_THRESHOLDS: BoostThreshold[] = [
+export const BOOST_THRESHOLDS: BoostThreshold[] = [
 	{ threshold: 90, rating: 'A' },
 	{ threshold: 75, rating: 'B' },
 	{ threshold: 50, rating: 'C' },
@@ -571,7 +571,7 @@ export const getBoostRatingClass = ( boostScore: number ): string => {
 	}
 };
 
-function extractBackupTextValues( str: string ): { [ key: string ]: number } {
+export function extractBackupTextValues( str: string ): { [ key: string ]: number } {
 	const regex = /(\d+)\s+(\w+)(s)?\b/g;
 
 	let match;
@@ -639,7 +639,7 @@ export const getMonitorDowntimeText = ( downtime: number | undefined ) => {
 
 	return translate( 'Downtime for %(time)s', {
 		args: {
-			time,
+			time: time.trim(),
 		},
 		comment: '%(time) is the downtime, e.g. "2d 5h 30m", "5h 30m", "55m"',
 	} );
