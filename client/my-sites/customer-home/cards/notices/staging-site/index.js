@@ -7,16 +7,22 @@ import { NOTICE_STAGING_SITE } from 'calypso/my-sites/customer-home/cards/consta
 import CelebrateNotice, {
 	CelebrateNoticePlaceholder,
 } from 'calypso/my-sites/customer-home/cards/notices/celebrate-notice';
-import { useProductionSiteDetailsForWpcomStaging } from 'calypso/my-sites/customer-home/cards/notices/staging-site/use-production-site-details-for-wpcom-staging';
+import { useProductionSiteDetail } from 'calypso/my-sites/hosting/staging-site-card/use-production-site-detail';
 import { getSiteHomeUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
+const DEFAULT_PRODUCTION_DETAILS = {
+	name: '',
+	url: '',
+	id: '',
+};
 
 const StagingSiteNotice = () => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const {
 		loading,
-		data: { name: productionSiteName, id: productionSiteId },
-	} = useProductionSiteDetailsForWpcomStaging( siteId );
+		data: { name: productionSiteName, id: productionSiteId } = DEFAULT_PRODUCTION_DETAILS,
+	} = useProductionSiteDetail( siteId );
 
 	const productionHomeUrl = useSelector( ( state ) => getSiteHomeUrl( state, productionSiteId ) );
 	const shouldShowNotice = ! loading && productionSiteName && productionSiteId && productionHomeUrl;

@@ -18,7 +18,7 @@ export const useProductionSiteDetail = ( siteId: number, options: UseQueryOption
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
-			enabled: !! siteId && ( options.enabled ?? true ),
+			enabled: !! siteId && ( options?.enabled ?? true ),
 			select: ( data ) => {
 				return data;
 			},
@@ -26,7 +26,7 @@ export const useProductionSiteDetail = ( siteId: number, options: UseQueryOption
 				persist: false,
 			},
 			staleTime: 10 * 1000,
-			onError: options.onError,
+			onError: options?.onError,
 		}
 	);
 };
