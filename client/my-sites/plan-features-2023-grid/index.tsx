@@ -21,12 +21,19 @@ import {
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
 	isWooExpressPlan,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
-import { localize, LocalizeProps, TranslateResult, useTranslate } from 'i18n-calypso';
+import {
+	localize,
+	LocalizedComponent,
+	LocalizeProps,
+	TranslateResult,
+	useTranslate,
+} from 'i18n-calypso';
 import { last } from 'lodash';
 import page from 'page';
 import { Component, createRef } from 'react';
@@ -80,6 +87,7 @@ import {
 	isJetpackSite,
 } from 'calypso/state/sites/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
+import useIsLargeCurrency from '../plans/hooks/use-is-large-currency';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
@@ -151,7 +159,9 @@ type PlanFeatures2023GridConnectedProps = {
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
-	PlanFeatures2023GridConnectedProps & { children?: React.ReactNode };
+	PlanFeatures2023GridConnectedProps & { children?: React.ReactNode } & {
+		isLargeCurrency: boolean;
+	};
 
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
@@ -489,11 +499,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, is2023OnboardingPricingGrid } = this.props;
-
-		const isLargeCurrency = planPropertiesObj.some(
-			( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
-		);
+		const { isReskinned, is2023OnboardingPricingGrid, isLargeCurrency } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -1008,6 +1014,15 @@ export class PlanFeatures2023Grid extends Component<
 	}
 }
 
+const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures2023Grid > ) => {
+	return function ( props: PlanFeatures2023GridType ) {
+		const isLargeCurrency = useIsLargeCurrency(
+			( props.planProperties || [] ).map( ( properties ) => properties.planName as PlanSlug )
+		);
+		return <Component { ...props } isLargeCurrency={ isLargeCurrency } />;
+	};
+};
+
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 const ConnectedPlanFeatures2023Grid = connect(
 	( state: IAppState, ownProps: PlanFeatures2023GridProps ) => {
@@ -1126,7 +1141,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
 			const isCurrentPlan = isCurrentSitePlan( state, siteId, planProductId ) ?? false;
-			const isVisible = visiblePlans.indexOf( plan ) !== -1;
+			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
 
 			return {
 				availableForPurchase,
@@ -1186,7 +1201,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 	{
 		recordTracksEvent,
 	}
-)( localize( PlanFeatures2023Grid ) );
+)( withIsLargeCurrency( localize( PlanFeatures2023Grid ) ) );
 /* eslint-enable wpcalypso/redux-no-bound-selectors */
 
 const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {

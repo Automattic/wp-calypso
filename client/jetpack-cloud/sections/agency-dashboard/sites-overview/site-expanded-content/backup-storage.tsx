@@ -17,6 +17,7 @@ import type { Site, Backup } from '../types';
 interface Props {
 	site: Site;
 	trackEvent: ( eventName: string ) => void;
+	hasError: boolean;
 }
 
 const BACKUP_ERROR_STATUSES = [ 'rewind_backup_error', 'backup_only_error' ];
@@ -96,7 +97,7 @@ const BackupStorageContent = ( {
 	);
 };
 
-export default function BackupStorage( { site, trackEvent }: Props ) {
+export default function BackupStorage( { site, trackEvent, hasError }: Props ) {
 	const {
 		blog_id: siteId,
 		url: siteUrl,
@@ -181,6 +182,7 @@ export default function BackupStorage( { site, trackEvent }: Props ) {
 			// If the backup is not enabled, we want to allow the user to click on the card
 			onClick={ ! isBackupEnabled ? handleOnClick : undefined }
 			href={ link }
+			hasError={ hasError }
 		>
 			{ isBackupEnabled && (
 				<BackupStorageContent

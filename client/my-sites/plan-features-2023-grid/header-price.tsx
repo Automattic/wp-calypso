@@ -92,7 +92,7 @@ const HeaderPriceContainer = styled.div`
 
 	.plan-price.is-large-currency {
 		.plan-price__integer {
-			font-size: 38px;
+			font-size: 30px;
 		}
 		&.is-original {
 			.plan-price__integer {

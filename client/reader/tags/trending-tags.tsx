@@ -1,4 +1,5 @@
 import titlecase from 'to-title-case';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
 import { TagResult } from './controller';
 
@@ -12,9 +13,19 @@ interface TagRowProps {
 	count: number;
 }
 
+const trackTagClick = ( slug: string ) => {
+	recordTracksEvent( 'calypso_tags_page_tag_clicked', {
+		type: 'trending',
+		tag: slug,
+	} );
+};
+
 const TagRow = ( props: TagRowProps ) => (
 	<div className="trending-tags__column" key={ props.slug }>
-		<a href={ `/tag/${ encodeURIComponent( props.slug ) }` }>
+		<a
+			href={ `/tag/${ encodeURIComponent( props.slug ) }` }
+			onClick={ trackTagClick.bind( null, props.slug ) }
+		>
 			<span className="trending-tags__title">{ titlecase( props.title ) }</span>
 			<span className="trending-tags__count">{ formatNumberCompact( props.count ) }</span>
 		</a>

@@ -19,7 +19,8 @@
 	display: grid;
 	grid-template-columns: 65px auto;
 	margin-bottom: 5px;
-	margin-right: 24px;
+	font-size: $tweet-font-size;
+	line-height: 20px;
 
 	.twitter-preview__sidebar {
 		display: grid;
@@ -41,32 +42,33 @@
 		}
 	}
 
-	.twitter-preview__name {
-		font-weight: bold;
+	.twitter-preview__main {
+		padding-bottom: 1rem;
+	}
+
+	.twitter-preview__header {
+		display: flex;
+		gap: 0.25rem;
 		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		font-size: 16px;
-		line-height: 19px;
+		line-height: 18px;
+		margin-bottom: 2px;
+	}
+
+	.twitter-preview__name {
+		font-weight: 700;
 	}
 
 	.twitter-preview__screen-name,
 	.twitter-preview__date {
 		color: #667886;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-		font-size: 16px;
-		line-height: 18px;
 		letter-spacing: -0.3px;
-		margin-left: 15px;
 	}
 
 	.twitter-preview__content {
-		margin: 7px 0;
 
 		.twitter-preview__text {
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			font-size: 14px;
-			line-height: 18px;
-			letter-spacing: -0.3px;
-			color: #787c82;
+			color: rgb(15, 20, 25);
 			white-space: pre-wrap;
 			word-break: break-word;
 		}
@@ -132,7 +134,8 @@
 		}
 
 		.twitter-preview__card {
-			margin-top: 10px;
+			margin-top: 12px;
+			margin-bottom: 12px;
 			overflow: hidden;
 			border: 1px solid #e1e8ed;
 			border-radius: 12px; /* stylelint-disable-line scales/radii */
@@ -171,32 +174,28 @@
 				padding: 0.75em;
 				text-decoration: none;
 				font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-				font-size: $font-body-small;
 				color: var(--studio-black);
 				text-align: left;
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				line-height: 1.3em;
 				overflow: hidden;
+				display: flex;
+				flex-direction: column;
+				gap: 2px;
 			}
 
 			.twitter-preview__card-title {
 				max-height: 1.3em;
 				white-space: nowrap;
-				font-weight: bold;
-				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-				font-size: 1em;
-				margin: 0 0 0.15em;
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
 
 			.twitter-preview__card-description {
-				margin-top: 0.32333em;
 				max-height: 3.9em;
 				text-overflow: ellipsis;
-				//clamp after two lines
+				color: rgb(83, 100, 113);
+				//clamp after three lines
 				display: -webkit-box;
-				-webkit-line-clamp: 2;
+				-webkit-line-clamp: 3;
 				-webkit-box-orient: vertical;
 				overflow: hidden;
 			}
@@ -204,25 +203,18 @@
 			.twitter-preview__card-url {
 				text-transform: lowercase;
 				color: #8899a6;
-				max-height: 1.3em;
 				white-space: nowrap;
 				overflow-inline: hidden;
 				text-overflow: ellipsis;
-				margin-top: 0.32333em;
-
-				svg {
-					fill: #8899a6;
-					height: 15px;
-					width: 15px;
-					margin: 0 2px -4px 0;
-				}
 			}
 		}
 	}
 
 	.twitter-preview__footer {
-		display: grid;
-		grid-template-columns: repeat(4, auto);
+		display: flex;
+		justify-content: space-between;
+		max-width: 425px;
+		margin-top: 12px;
 
 		svg {
 			fill: #787c82;

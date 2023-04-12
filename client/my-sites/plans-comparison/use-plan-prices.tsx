@@ -33,6 +33,9 @@ function toMonthlyPrice( plan: WPComPlan ) {
 	};
 }
 
+/**
+ * @deprecated
+ */
 export default function usePlanPrices( plans: WPComPlan[] ): PlanPrices[] {
 	return useSelector( ( state: IAppState ) => {
 		return plans.map( ( plan ) => {
