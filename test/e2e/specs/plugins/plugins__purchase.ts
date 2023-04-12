@@ -25,7 +25,8 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Add two plugins to the cart' ),
 	let pluginsPage: PluginsPage;
 	let page: Page;
 	let siteURL: string;
-
+	let siteId: number;
+	let restApiClient: RestAPIClient;
 	const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
 
 	beforeAll( async function () {
@@ -37,25 +38,18 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Add two plugins to the cart' ),
 		await testAccount.authenticate( page );
 		await BrowserManager.setStoreCookie( page );
 		siteURL = credentials.testSites?.primary.url as string;
+		siteId = credentials.testSites?.primary?.id as number;
 
-		const restApiClient = new RestAPIClient( credentials );
-		try {
-			// Make sure the shopping cart is empty before we start!
-			const response = await restApiClient.clearShoppingCart(
-				credentials.testSites?.primary?.id as number
-			);
-			if ( ! response.success ) {
-				console.error( 'Failed to clear the shopping cart, the test may not run as expected.' );
-			} else {
-				console.log( 'shopping cart cleared successfully.' );
-			}
-		} catch {
-			console.error( 'Failed to clear the shopping cart, the test may not run as expected.' );
-		}
+		restApiClient = new RestAPIClient( credentials );
 	} );
 
 	describe( 'Plugin: Purchase', function () {
 		let cartCheckoutPage: CartCheckoutPage;
+
+		beforeAll( async function () {
+			await restApiClient.clearShoppingCart( siteId );
+			await page.reload();
+		} );
 
 		it( `Navigate to plugins page`, async function () {
 			pluginsPage = new PluginsPage( page );
