@@ -254,10 +254,20 @@ export function insights( context, next ) {
 }
 
 export function subscribers( context, next ) {
+	const givenSiteId = context.params.site;
+	const filters = getSiteFilters( givenSiteId );
+	const activeFilter = find( filters, ( filter ) => {
+		return (
+			context.path.indexOf( filter.path ) >= 0 ||
+			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
+		);
+	} );
+
 	context.primary = (
 		<AsyncLoad
 			require="calypso/my-sites/stats/stats-subscribers-page"
 			placeholder={ PageLoading }
+			period={ activeFilter.period } // TODO: investigate rangeOfPeriod() for date changes
 		/>
 	);
 	next();

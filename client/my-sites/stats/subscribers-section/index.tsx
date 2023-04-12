@@ -33,8 +33,15 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 	return [ x, y ];
 }
 
-export default function SubscribersSection( { siteId, slug }: { siteId: string; slug?: string } ) {
-	const period = 'month';
+export default function SubscribersSection( {
+	siteId,
+	slug,
+	period = 'month',
+}: {
+	siteId: string;
+	slug?: string;
+	period?: string;
+} ) {
 	const quantity = 30;
 	const {
 		isLoading,
