@@ -18,7 +18,7 @@ import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-tr
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
 import { IAppState } from 'calypso/state/types';
-import { filterTransactions } from './filter-transactions';
+import { filterTransactions, paginateTransactions } from './filter-transactions';
 import {
 	getTransactionTermLabel,
 	groupDomainProducts,
@@ -271,7 +271,12 @@ export default connect(
 		const transactions = getPastBillingTransactions( state );
 		const filter = getBillingTransactionFilters( state, 'past' );
 		const pageSize = 5;
-		const filteredTransactions = filterTransactions( transactions, filter, siteId, pageSize );
+		const filteredTransactions = filterTransactions( transactions, filter, siteId );
+		const paginatedTransactions = paginateTransactions(
+			filteredTransactions,
+			filter.page,
+			pageSize
+		);
 
 		return {
 			app: filter.app,
@@ -280,7 +285,7 @@ export default connect(
 			pageSize,
 			query: filter.query,
 			total: filteredTransactions.length,
-			transactions: filteredTransactions,
+			transactions: paginatedTransactions,
 			sendingBillingReceiptEmail: getIsSendingReceiptEmail( state ),
 		};
 	},
