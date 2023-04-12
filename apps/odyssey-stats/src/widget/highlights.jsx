@@ -45,7 +45,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 	const { data: topReferrers = [] } = useReferrersQuery( siteId, 'day', 7, queryDate );
 
 	return (
-		<div className="stats-widget-highlights">
+		<div className="stats-widget-highlights stats-widget-card">
 			<div className="stats-widget-highlights__header">
 				<label>{ translate( '7 Day Highlights' ) }</label>
 				<a href={ odysseyStatsBaseUrl }>{ translate( 'View detailed stats' ) }</a>
