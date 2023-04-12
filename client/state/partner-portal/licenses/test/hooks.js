@@ -336,13 +336,13 @@ describe( 'useIssueLicenseMutation', () => {
 			.post( '/wpcom/v2/jetpack-licensing/license', '{"product":"jetpack-scan"}' )
 			.reply( 200, stub );
 
-		const { result } = renderHook( () => useIssueLicenseMutation(), {
+		const { result, waitFor } = renderHook( () => useIssueLicenseMutation(), {
 			wrapper,
 		} );
 
 		await act( async () => result.current.mutateAsync( { product: 'jetpack-scan' } ) );
 
-		expect( result.current.data ).toEqual( stub );
+		await waitFor( () => expect( result.current.data ).toEqual( stub ) );
 	} );
 } );
 
@@ -363,13 +363,13 @@ describe( 'useRevokeLicenseMutation', () => {
 			.delete( '/wpcom/v2/jetpack-licensing/license', '{"license_key":"jetpack-scan_foobarbaz"}' )
 			.reply( 200, stub );
 
-		const { result } = renderHook( () => useRevokeLicenseMutation(), {
+		const { result, waitFor } = renderHook( () => useRevokeLicenseMutation(), {
 			wrapper,
 		} );
 
 		await act( async () => result.current.mutateAsync( { licenseKey: 'jetpack-scan_foobarbaz' } ) );
 
-		expect( result.current.data ).toEqual( stub );
+		await waitFor( () => expect( result.current.data ).toEqual( stub ) );
 	} );
 } );
 
@@ -391,13 +391,13 @@ describe( 'useTOSConsentMutation', () => {
 			.put( '/wpcom/v2/jetpack-licensing/partner', '{"tos":"consented"}' )
 			.reply( 200, stub );
 
-		const { result } = renderHook( () => useTOSConsentMutation(), {
+		const { result, waitFor } = renderHook( () => useTOSConsentMutation(), {
 			wrapper,
 		} );
 
 		await act( async () => result.current.mutateAsync() );
 
-		expect( result.current.data ).toEqual( stub );
+		await waitFor( () => expect( result.current.data ).toEqual( stub ) );
 	} );
 } );
 

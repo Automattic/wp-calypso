@@ -132,19 +132,21 @@ describe( 'usePayInvoiceMutation', () => {
 		const dispatch = jest.fn();
 		useDispatch.mockReturnValue( dispatch );
 
-		const { result } = renderHook( () => usePayInvoiceMutation(), {
+		const { result, waitFor } = renderHook( () => usePayInvoiceMutation(), {
 			wrapper,
 		} );
 
 		await act( async () => result.current.mutateAsync( { invoiceId: invoiceStub.id } ) );
 
-		expect( result.current.data ).toEqual( invoiceStub );
-		expect( result.current.isSuccess ).toBe( true );
-		expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
-			'partner-portal-pay-invoice-success'
-		);
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-success' );
+		await waitFor( () => {
+			expect( result.current.data ).toEqual( invoiceStub );
+			expect( result.current.isSuccess ).toBe( true );
+			expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
+			expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
+				'partner-portal-pay-invoice-success'
+			);
+			expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-success' );
+		} );
 	} );
 
 	it( 'dispatches notice on error', async () => {
@@ -165,9 +167,12 @@ describe( 'usePayInvoiceMutation', () => {
 		useDispatch.mockReturnValue( dispatch );
 
 		// Prevent console.error from being loud during testing because of the test 500 error.
-		const { result } = renderHook( () => usePayInvoiceMutation( { useErrorBoundary: false } ), {
-			wrapper,
-		} );
+		const { result, waitFor } = renderHook(
+			() => usePayInvoiceMutation( { useErrorBoundary: false } ),
+			{
+				wrapper,
+			}
+		);
 
 		try {
 			await act( async () => result.current.mutateAsync( { invoiceId: invoiceStub.id } ) );
@@ -176,12 +181,14 @@ describe( 'usePayInvoiceMutation', () => {
 			// so we have to wrap it in a try/catch.
 		}
 
-		expect( result.current.isError ).toBe( true );
-		expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.text ).toBe( stub.message );
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
-			'partner-portal-pay-invoice-failure'
-		);
-		expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-error' );
+		await waitFor( () => {
+			expect( result.current.isError ).toBe( true );
+			expect( dispatch.mock.calls[ 0 ][ 0 ].type ).toBe( 'NOTICE_CREATE' );
+			expect( dispatch.mock.calls[ 0 ][ 0 ].notice.text ).toBe( stub.message );
+			expect( dispatch.mock.calls[ 0 ][ 0 ].notice.noticeId ).toBe(
+				'partner-portal-pay-invoice-failure'
+			);
+			expect( dispatch.mock.calls[ 0 ][ 0 ].notice.status ).toBe( 'is-error' );
+		} );
 	} );
 } );
