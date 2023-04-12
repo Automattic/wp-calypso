@@ -112,7 +112,7 @@ export const ThankYouThemeSection = ( { theme }: { theme: any } ) => {
 		[ siteId, theme ]
 	);
 
-	// Clear completed activated them request state to avoid displaying the Thanks modal
+	// Clear completed activated theme request state to avoid displaying the Thanks modal
 	useEffect( () => {
 		return () => {
 			dispatch( clearActivated( siteId ) );
