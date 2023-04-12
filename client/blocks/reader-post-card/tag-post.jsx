@@ -3,7 +3,7 @@ import ReaderExcerpt from 'calypso/blocks/reader-excerpt';
 import AutoDirection from 'calypso/components/auto-direction';
 import FeaturedAsset from './featured-asset';
 
-const TagPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded, site } ) => {
+const TagPost = ( { post, postByline, isDiscover, expandCard, postKey, isExpanded, site } ) => {
 	const onVideoThumbnailClick =
 		post.canonical_media?.mediaType === 'video'
 			? () => expandCard( { postKey, post, site } )
@@ -20,7 +20,7 @@ const TagPost = ( { post, children, isDiscover, expandCard, postKey, isExpanded,
 					</h2>
 				</AutoDirection>
 				<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
-				{ children }
+				{ postByline }
 			</div>
 			<FeaturedAsset
 				post={ post }
