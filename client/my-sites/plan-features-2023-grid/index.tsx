@@ -23,7 +23,6 @@ import {
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
 import { isHostingFlow } from '@automattic/onboarding';
-import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -404,7 +403,7 @@ export class PlanFeatures2023Grid extends Component<
 		let plansToShow = [];
 		let numberOfPlansToShowOnTop = 3;
 
-		if ( flowName === NEWSLETTER_FLOW ) {
+		if ( isNewsletterFlow( flowName ) ) {
 			plansToShow = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
 			numberOfPlansToShowOnTop = 4;
 		} else {
@@ -944,14 +943,12 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			let planFeatures = [];
 			let jetpackFeatures: FeatureObject[] = [];
-			let tagline = planConstantObj.getPlanTagline?.() ?? '';
+			const tagline = planConstantObj.getPlanTagline?.( flowName ) ?? '';
 
-			if ( flowName === NEWSLETTER_FLOW ) {
+			if ( isNewsletterFlow( flowName ) ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getNewsletterSignupFeatures?.() ?? []
 				);
-
-				tagline = planConstantObj.getCustomTagline?.( NEWSLETTER_FLOW ) ?? '';
 			} else {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []

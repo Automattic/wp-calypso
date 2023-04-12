@@ -40,7 +40,7 @@ export interface WPComPlan extends Plan {
 	getBlogAudience?: () => TranslateResult;
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
-	getPlanTagline?: ( flowName?: string ) => string;
+	getPlanTagline?: ( flowName: string | null ) => string;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
@@ -256,7 +256,6 @@ export type Plan = BillingTerm & {
 	 */
 	getInferiorFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
-	getCustomTagline?: ( flowName: string ) => string;
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };

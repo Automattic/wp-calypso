@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { isNewsletterFlow } from '@automattic/onboarding';
 import i18n, { getLocaleSlug, translate } from 'i18n-calypso';
 import {
 	FEATURE_13GB_STORAGE,
@@ -455,7 +455,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
 	getStoreAudience: () => i18n.translate( 'Best for students' ),
 	getPlanTagline: ( flowName ) => {
-		if ( flowName === NEWSLETTER_FLOW ) {
+		if ( isNewsletterFlow( flowName ) ) {
 			return i18n.translate(
 				'Start fresh or make the switch, bringing your first 100 readers with you.'
 			);
@@ -666,7 +666,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
 	getPlanTagline: ( flowName ) => {
-		if ( flowName === NEWSLETTER_FLOW ) {
+		if ( isNewsletterFlow( flowName ) ) {
 			return i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' );
 		}
 		return i18n.translate( 'Create your home on the web with a custom domain name.' );
@@ -1138,7 +1138,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPlanTagline: ( flowName ) => {
-		if ( flowName === NEWSLETTER_FLOW ) {
+		if ( isNewsletterFlow( flowName ) ) {
 			return i18n.translate(
 				'Make it even more memorable with premium designs and style customization.'
 			);
@@ -1328,7 +1328,7 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
 	getPlanTagline: ( flowName ) => {
-		if ( flowName === NEWSLETTER_FLOW ) {
+		if ( isNewsletterFlow( flowName ) ) {
 			return i18n.translate(
 				'Reimagine what a newsletter can be with plugins and growth tools to help you scale.'
 			);
