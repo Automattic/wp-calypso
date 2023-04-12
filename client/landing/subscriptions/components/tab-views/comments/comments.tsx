@@ -25,9 +25,13 @@ const posts: PostSubscription[] = [
 	},
 ];
 
+// repeat input array x times
+const repeat = ( arr: PostSubscription[], times: number ) =>
+	Array.from( { length: times }, () => arr ).flat() as PostSubscription[];
+
 const Comments = () => (
 	<TabView errorMessage="" isLoading={ false }>
-		<CommentList posts={ posts } />
+		<CommentList posts={ repeat( posts, 500 ) } />
 	</TabView>
 );
 
