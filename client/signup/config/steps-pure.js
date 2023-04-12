@@ -393,6 +393,26 @@ export function generateSteps( {
 			},
 			delayApiRequestUntilComplete: true,
 		},
+
+		'domains-hosting': {
+			stepName: 'domains-hosting',
+			apiRequestFunction: createSiteWithCart,
+			providesDependencies: [
+				'siteId',
+				'siteSlug',
+				'domainItem',
+				'themeItem',
+				'shouldHideFreePlan',
+				'isManageSiteFlow',
+			],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
+			props: {
+				isDomainOnly: false,
+				shouldAllowSkippingDomainSelection: true,
+			},
+			delayApiRequestUntilComplete: true,
+		},
+
 		emails: {
 			stepName: 'emails',
 			dependencies: [ 'domainItem', 'siteSlug' ],

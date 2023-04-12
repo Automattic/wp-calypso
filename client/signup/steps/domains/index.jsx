@@ -79,6 +79,7 @@ class DomainsStep extends Component {
 		stepSectionName: PropTypes.string,
 		selectedSite: PropTypes.object,
 		isReskinned: PropTypes.bool,
+		shouldAllowSkippingDomainSelection: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -462,6 +463,15 @@ class DomainsStep extends Component {
 		return [ 'domain' ].includes( flowName );
 	};
 
+	mapProductSlugToFlowName = ( productSlug ) => {
+		return (
+			{
+				'business-bundle': 'business',
+				'ecommerce-bundle': 'ecommerce',
+			}[ productSlug ] || this.props.flowName
+		);
+	};
+
 	getSideContent = () => {
 		const useYourDomain = ! this.shouldHideUseYourDomain() ? (
 			<div className="domains__domain-side-content">
@@ -469,14 +479,22 @@ class DomainsStep extends Component {
 			</div>
 		) : null;
 
+		const productSlug = get( this.props, 'signupDependencies.cartItem.product_slug', '' );
+
+		const canSkipDomainSelection =
+			! this.shouldHideDomainExplainer() && this.props.isPlanSelectionAvailableLaterInFlow;
+
+		const shouldDisplayFreeDomainExplainer =
+			canSkipDomainSelection || this.props.shouldAllowSkippingDomainSelection;
+
 		return (
 			<div className="domains__domain-side-content-container">
-				{ ! this.shouldHideDomainExplainer() && this.props.isPlanSelectionAvailableLaterInFlow && (
+				{ shouldDisplayFreeDomainExplainer && (
 					<div className="domains__domain-side-content domains__free-domain">
 						<ReskinSideExplainer
 							onClick={ this.handleDomainExplainerClick }
 							type="free-domain-explainer"
-							flowName={ this.props.flowName }
+							flowName={ this.mapProductSlugToFlowName( productSlug ) }
 						/>
 					</div>
 				) }

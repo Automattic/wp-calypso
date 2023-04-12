@@ -13,6 +13,7 @@ const stepNameToModuleName = {
 	'creds-permission': 'creds-permission',
 	domains: 'domains',
 	'domain-only': 'domains',
+	'domains-hosting': 'domains',
 	'domains-launch': 'domains',
 	'domains-store': 'domains',
 	'domains-theme-preselected': 'domains',
