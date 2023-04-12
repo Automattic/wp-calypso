@@ -19,11 +19,11 @@ const StagingSiteNotice = () => {
 	} = useProductionSiteDetailsForWpcomStaging( siteId );
 
 	const productionHomeUrl = useSelector( ( state ) => getSiteHomeUrl( state, productionSiteId ) );
-	const showNotice = ! loading && productionSiteName && productionSiteId && productionHomeUrl;
+	const shouldShowNotice = ! loading && productionSiteName && productionSiteId && productionHomeUrl;
 
 	return (
 		<>
-			{ showNotice ? (
+			{ shouldShowNotice ? (
 				<CelebrateNotice
 					description={ createInterpolateElement(
 						sprintf(
