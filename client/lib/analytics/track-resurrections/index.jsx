@@ -1,68 +1,43 @@
-import { useEffect } from '@wordpress/element';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
-const TrackResurrections = ( { login_time, yearInterval, isFetchingUserSettings } ) => {
-	const isResurrected = ( loginTime, previousLoginTime ) => {
-		const differenceInMilliseconds = loginTime - previousLoginTime;
-		const differenceInYears = differenceInMilliseconds / ( 1000 * 60 * 60 * 24 * 365 );
+const TrackResurrections = () => {
+	const YEAR_IN_SECONDS = 365 * 24 * 60 * 60;
 
-		return differenceInYears > yearInterval;
+	const isResurrected = ( lastSeen ) => {
+		// Get the current timestamp in seconds
+		const nowInSeconds = Math.floor( Date.now() / 1000 );
+
+		// Calculate the timestamp for one year ago in seconds
+		const oneYearAgoInSeconds = nowInSeconds - YEAR_IN_SECONDS;
+
+		// Compare the given timestamp with one year ago
+		return lastSeen < oneYearAgoInSeconds;
 	};
 
+	const userSettings = useSelector( getUserSettings ) ?? {};
+	const isFetching = useSelector( isFetchingUserSettings );
+
 	useEffect( () => {
-		if ( isFetchingUserSettings ) {
+		if ( isFetching ) {
 			return null;
 		}
 
-		const { login_time: loginTimeArr, previous_login_time: previousLoginTimeArr } = login_time;
+		const lastSeen = userSettings?.last_admin_activity_timestamp || Date.now();
 
-		// Used `Math.max` function to get maximum values of `login_time` and `previous_login_time` arrays
-		const loginTime = loginTimeArr.length ? Math.max( ...loginTimeArr ) : Date.now();
-		const previousLoginTime = previousLoginTimeArr.length
-			? Math.max( ...previousLoginTimeArr )
-			: loginTime;
-
-		if ( ! isResurrected( loginTime, previousLoginTime, yearInterval ) ) {
+		if ( ! isResurrected( lastSeen ) ) {
 			return;
 		}
 
-		// Only fire event if the difference between resurrection login time and current time is less 5 minutes.
-		const differenceInDays = ( Date.now() - loginTime ) / ( 1000 * 60 * 5 );
-
-		if ( differenceInDays <= 1 ) {
-			recordTracksEvent( 'calypso_user_resurrected', {
-				loginTime,
-				previousLoginTime,
-			} );
-		}
+		recordTracksEvent( 'calypso_user_resurrected', {
+			lastSeen,
+		} );
 	}, [] ); // We want this to only fire once.
 
 	return null;
 };
 
-TrackResurrections.propTypes = {
-	yearInterval: PropTypes.number,
-	login_time: PropTypes.shape( {
-		login_time: PropTypes.arrayOf( PropTypes.number ),
-		previous_login_time: PropTypes.arrayOf( PropTypes.number ),
-	} ),
-};
-
-TrackResurrections.defaultProps = {
-	yearInterval: 1,
-	login_time: { login_time: [], previous_login_time: [] },
-};
-
-const mapStateToProps = ( state ) => {
-	const login_time = getUserSetting( state, 'login_time' );
-
-	return {
-		login_time,
-		isFetchingUserSettings: state.userSettings.fetching,
-	};
-};
-
-export default connect( mapStateToProps )( TrackResurrections );
+export default TrackResurrections;
