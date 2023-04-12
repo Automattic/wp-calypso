@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from 'react';
-import { useInfiniteQuery } from 'react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { useMemo, useEffect } from 'react';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SiteSubscription } from '../types';
