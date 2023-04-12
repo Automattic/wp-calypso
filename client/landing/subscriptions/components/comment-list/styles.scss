@@ -12,6 +12,7 @@ $max-list-width: 1300px;
 
 .subscription-manager__comment-list {
 	max-width: $max-list-width;
+	min-width: 300px;
 
 	.row-wrapper {
 		border-bottom: 1px solid var(--color-border-subtle);
@@ -23,6 +24,7 @@ $max-list-width: 1300px;
 		flex-direction: row;
 		margin-top: 20px;
 		margin-bottom: 20px;
+		justify-content: space-between;
 
 		* {
 			flex: 1;
@@ -38,13 +40,16 @@ $max-list-width: 1300px;
 			font-size: $font-body-small;
 			line-height: 20px;
 
-			.title a {
-				font-weight: 500;
-				color: $studio-gray-100;
+			.title {
 				@extend %ellipsis;
 
-				&:hover {
-					text-decoration: underline;
+				a {
+					font-weight: 500;
+					color: $studio-gray-100;
+
+					&:hover {
+						text-decoration: underline;
+					}
 				}
 			}
 
@@ -59,12 +64,8 @@ $max-list-width: 1300px;
 
 		@media (max-width: $break-small) {
 			.post {
-				flex: 1 1 302px;
-				min-width: 0;
-
-				.excerpt {
-					max-width: 302px;
-				}
+				flex: 1 1;
+				max-width: calc(100% - 54px);
 			}
 		}
 
