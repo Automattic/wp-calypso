@@ -329,7 +329,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	const popularBadgeClasses = classNames( {
 		'is-current-plan': current,
 	} );
-	const rawPrice = planPropertiesObj.rawPrice;
 	const showPlanSelect = ! allVisible && ! current;
 
 	return (
@@ -376,9 +375,6 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 			<div className="plan-comparison-grid__billing-info">
 				<PlanFeatures2023GridBillingTimeframe
 					planName={ planName }
-					rawPrice={ rawPrice }
-					maybeDiscountedFullTermPrice={ planPropertiesObj.maybeDiscountedFullTermPrice }
-					annualPricePerMonth={ planPropertiesObj.annualPricePerMonth }
 					isMonthlyPlan={ planPropertiesObj.isMonthlyPlan }
 					billingTimeframe={ planConstantObj.getBillingTimeFrame() }
 					billingPeriod={ planPropertiesObj.billingPeriod }
