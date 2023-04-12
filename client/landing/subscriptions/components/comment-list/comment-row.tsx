@@ -39,13 +39,7 @@ const CommentRow = ( {
 				<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
 			</span>
 			<span className="actions" role="cell">
-				<CommentSettings
-					onChangeSendByEmail={ () => undefined }
-					onUnfollow={ () => undefined }
-					shouldSendByEmail={ true }
-					unfollowing={ false }
-					updatingSendByEmail={ false }
-				/>
+				<CommentSettings onUnfollow={ () => undefined } unfollowing={ false } />
 			</span>
 		</li>
 	);
