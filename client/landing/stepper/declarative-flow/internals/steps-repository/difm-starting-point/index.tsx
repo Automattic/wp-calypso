@@ -28,7 +28,7 @@ const DIFMStartingPoint: Step = function ( { navigation, flow } ) {
 	const siteId = useSite()?.ID;
 	return (
 		<>
-			<DocumentHead title={ translate( 'Hire a professional' ) } />
+			<DocumentHead title={ translate( 'Let us build your site' ) } />
 			<StepContainer
 				stepName={ STEP_NAME }
 				goBack={ goBack }

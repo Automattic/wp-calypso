@@ -49,10 +49,9 @@ function searchTransactions(
 export function filterTransactions(
 	transactions: BillingTransaction[] | null | undefined,
 	filter: BillingTransactionUiState,
-	siteId: number | string | null | undefined,
-	pageSize: number
+	siteId: number | string | null | undefined
 ): BillingTransaction[] {
-	const { app, date, page, query } = filter;
+	const { app, date, query } = filter;
 	let results = query ? searchTransactions( transactions ?? [], query ) : transactions ?? [];
 
 	if ( date && date.month && date.operator ) {
@@ -79,6 +78,14 @@ export function filterTransactions(
 		} );
 	}
 
+	return results;
+}
+
+export function paginateTransactions(
+	transactions: BillingTransaction[],
+	page: number | null | undefined,
+	pageSize: number
+): BillingTransaction[] {
 	const pageIndex = ( page ?? 1 ) - 1;
-	return results.slice( pageIndex * pageSize, pageIndex * pageSize + pageSize );
+	return transactions.slice( pageIndex * pageSize, pageIndex * pageSize + pageSize );
 }
