@@ -291,16 +291,9 @@ export const exitPost = ( context, next ) => {
  * Redirects to the un-iframed Site Editor if the config is enabled.
  *
  * @param {Object} context Shared context in the route.
- * @param {Function} next  Next registered callback for the route.
  * @returns {*}            Whatever the next callback returns.
  */
-export const redirectSiteEditor = async ( context, next ) => {
-	// bail unless the config is enabled
-	if ( ! isEnabled( 'block-editor/un-iframed-site-editor' ) ) {
-		return next();
-	}
-
-	// Let's ditch that iframe!
+export const redirectSiteEditor = async ( context ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
@@ -323,5 +316,6 @@ export const redirectSiteEditor = async ( context, next ) => {
 	// We aren't using `getSiteEditorUrl` because it still thinks we should gutenframe the Site Editor.
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 	const siteEditorUrl = addQueryArgs( queryArgs, `${ siteAdminUrl }site-editor.php` );
-	return location.assign( siteEditorUrl );
+	// Calling replace to avoid adding an entry to the browser history.
+	return location.replace( siteEditorUrl );
 };
