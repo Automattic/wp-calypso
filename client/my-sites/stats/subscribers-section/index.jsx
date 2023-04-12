@@ -95,11 +95,7 @@ export default function SubscribersSection( props ) {
 			{ ! isLoading && (
 				<div>
 					<StatsPeriodHeader>
-						<StatsPeriodNavigation
-							date={ date }
-							period={ period }
-							url={ `/${ traffic.path }/${ period }/${ slug }` }
-						>
+						<StatsPeriodNavigation date={ date } period={ period } url={ pathTemplate }>
 							<DatePicker period={ period } date={ date } statsType="statsTopPosts" showQueryDate />
 						</StatsPeriodNavigation>
 						<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
