@@ -744,7 +744,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			onPreview={ previewDesign }
 			onChangeVariation={ onChangeVariation }
 			onViewAllDesigns={ trackAllDesignsView }
-			onCheckout={ goToCheckout }
 			heading={ heading }
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
