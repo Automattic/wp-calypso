@@ -130,6 +130,7 @@
 		"subscription-gifting": true,
 		"subscription-management": true,
 		"themes/atomic-homepage-replace": true,
+		"themes/display-thank-you-page": false,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
 		"themes/theme-switch-persist-template": false,
