@@ -348,3 +348,8 @@ export async function blogDiscoveryByFeedId( context, next ) {
 			renderFeedError( context, next );
 		} );
 }
+
+export async function sitesSubscriptionManager( context, next ) {
+	context.primary = <AsyncLoad require="calypso/reader/subscriptions" />;
+	next();
+}
