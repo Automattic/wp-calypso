@@ -157,7 +157,6 @@
 		"upsell/concierge-session": true,
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
-		"virtual-themes/onboarding": true,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,

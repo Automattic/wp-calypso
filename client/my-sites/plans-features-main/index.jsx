@@ -357,7 +357,6 @@ export class PlansFeaturesMain extends Component {
 			hidePersonalPlan,
 			hidePremiumPlan,
 			hideEcommercePlan,
-			hideEnterprisePlan = false,
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
 			flowName,
@@ -373,7 +372,7 @@ export class PlansFeaturesMain extends Component {
 			plans = plansFromProps;
 		} else {
 			const isBloggerPlanVisible = hideBloggerPlan === true ? false : true;
-			const isEnterprisePlanVisible = is2023PricingGridVisible && hideEnterprisePlan !== false;
+			const isEnterprisePlanVisible = is2023PricingGridVisible;
 			plans = [
 				findPlansKeys( { group: GROUP_WPCOM, type: TYPE_FREE } )[ 0 ],
 				isBloggerPlanVisible &&

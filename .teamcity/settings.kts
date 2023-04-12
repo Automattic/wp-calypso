@@ -90,6 +90,11 @@ project {
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY", "credentialsJSON:782b4bde-b73d-4326-9970-5a79251bdf07", display = ParameterDisplay.HIDDEN)
 		password("MATTICBOT_GITHUB_BEARER_TOKEN", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN, label = "Matticbot GitHub Bearer Token")
 		text("CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT", "s3://a8c-calypso-e2e-reports", label = "Calypso E2E Dashboard S3 bucket root")
+
+		// Values related to the WPCOM VCS
+		password("WPCOM_VCS_ROOT_ID", "credentialsJSON:f7437cc0-c8f2-4b10-bdfa-271946bb5f72", display = ParameterDisplay.HIDDEN)
+		password("WPCOM_JETPACK_PLUGIN_PATH", "credentialsJSON:db955a02-2a79-4167-a823-ac4840fd71d7", display = ParameterDisplay.HIDDEN)
+		password("WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH", "credentialsJSON:81683f57-784e-4535-9af0-26212c9e599b", display = ParameterDisplay.HIDDEN)
 	}
 
 	features {
