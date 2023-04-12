@@ -157,6 +157,7 @@
 		"subscriber-importer": true,
 		"subscription-gifting": true,
 		"subscription-management": true,
+		"subscription-management-comments-view": false,
 		"themes/atomic-homepage-replace": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,

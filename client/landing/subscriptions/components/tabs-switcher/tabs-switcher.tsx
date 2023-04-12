@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { useTranslate } from 'i18n-calypso';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
@@ -31,11 +32,13 @@ const TabsSwitcher = () => {
 					</NavItem>
 
 					<NavItem
-						onClick={ () =>
-							window.location.replace(
-								'https://wordpress.com/email-subscriptions/?option=comments'
-							)
-						}
+						onClick={ () => {
+							config.isEnabled( 'subscription-management-comments-view' )
+								? navigate( commentsPath )
+								: window.location.replace(
+										'https://wordpress.com/email-subscriptions/?option=comments'
+								  );
+						} }
 						count={ counts?.comments || undefined }
 						selected={ pathname.startsWith( commentsPath ) }
 					>
