@@ -95,6 +95,10 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 				min-width: 317px;
 			}
 		}
+
+		.support-content-links-subscribe {
+			flex-direction: column;
+		}
 	}
 
 	@media (min-width: $breakpoint-mobile) {
