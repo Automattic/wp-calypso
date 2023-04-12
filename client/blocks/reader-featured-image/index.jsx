@@ -4,7 +4,6 @@ import cssSafeUrl from 'calypso/lib/css-safe-url';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import {
 	READER_FEATURED_MAX_IMAGE_HEIGHT,
-	READER_CONTENT_WIDTH,
 	READER_TAG_POST_FEATURED_MAX_IMAGE_HEIGHT,
 	READER_TAG_POST_FEATURED_MAX_IMAGE_WIDTH,
 } from 'calypso/state/reader/posts/sizes';
@@ -30,7 +29,7 @@ const ReaderFeaturedImage = ( {
 	}
 	let resizedImageWidth = imageWidth;
 	if ( resizedImageWidth === undefined ) {
-		resizedImageWidth = isTagPost ? READER_TAG_POST_FEATURED_MAX_IMAGE_WIDTH : READER_CONTENT_WIDTH;
+		resizedImageWidth = isTagPost ? READER_TAG_POST_FEATURED_MAX_IMAGE_WIDTH : 'auto';
 	}
 	// Don't resize image if it was already fetched.
 	const resizedUrl = fetched
