@@ -34,7 +34,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 		</div>
 
 		<div class="support-content-cta-right">
-			<figure><img src="<?php echo esc_url( $image_dir . '/let-us-build-your-website.svg' ); ?>" alt=""/></figure>
+			<figure><img src="<?php echo esc_url( $image_dir . '/let-us-build-your-website.png' ); ?>" alt=""/></figure>
 		</div>
 	</div>
 	<div class="support-content-resources alignwide" style="border-radius:0px; margin-bottom:0px">
