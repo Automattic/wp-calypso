@@ -35,7 +35,7 @@ const StagingSiteNotice = () => {
 						sprintf(
 							/* translators: %s - The WordPress.com production site. (ex.: wordpress.com/home/subdomain.wordpress.com) */
 							__(
-								'This is a staging site for <a>%s</a> that you can use to try out new plugins and themes, debug and troubleshoot changes, and fine-tune every aspect of your website without worrying about breaking your live site.'
+								'This is a staging site for <a>%s</a> that you can use to try out new plugins and themes, debug and troubleshoot changes, and fine-tune every aspect of your website without worrying about breaking your production site.'
 							),
 							productionSiteName
 						),
