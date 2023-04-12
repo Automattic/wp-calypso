@@ -46,12 +46,10 @@ const anchorFmFlow: Flow = {
 		const { __ } = useI18n();
 
 		if ( isEnabled( 'anchor/sunset-integration' ) ) {
-			/**
-			 * TODO: Replace the title and the message with the content of the link in the PR description.
-			 * p2: p7fD6U-9EZ-p2
-			 */
-			const error = __( '[Notice title]' );
-			const message = __( '[Notice message]' );
+			const error = __( 'Anchor.fm Discontinuation Notice' );
+			const message = __(
+				"We're sorry to inform you that the Anchor.fm integration with WordPress.com is being discontinued. As a result, you may have encountered an error while setting up your site. We apologize for any inconvenience. Please contact our support team for assistance or return to Anchor.fm to continue managing your podcast."
+			);
 			setSiteSetupError( error, message );
 		}
 		return { state: AssertConditionState.SUCCESS };
