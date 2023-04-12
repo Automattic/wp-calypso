@@ -811,6 +811,49 @@ export function createAccount(
 	}
 }
 
+function postToCreateSite( data, reduxStore, callback ) {
+	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
+		let providedDependencies;
+		let siteSlug;
+
+		if ( response && response.blog_details ) {
+			const parsedBlogURL = getUrlParts( response.blog_details.url );
+			siteSlug = parsedBlogURL.hostname;
+
+			providedDependencies = { siteSlug };
+		}
+
+		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
+			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
+		} else {
+			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
+		}
+	} );
+}
+
+export function createSiteFromUsername( callback, dependencies, stepData, reduxStore ) {
+	const locale = getLocaleSlug();
+
+	const data = {
+		blog_name: '',
+		blog_title: '',
+		public: Visibility.PublicNotIndexed,
+		options: {
+			timezone_string: guessTimezone(),
+			wpcom_public_coming_soon: 1,
+			site_creation_flow: 'free',
+		},
+		validate: false,
+		locale,
+		lang_id: getLanguage( locale ).value,
+		client_id: config( 'wpcom_signup_id' ),
+		client_secret: config( 'wpcom_signup_key' ),
+		find_available_url: true,
+	};
+
+	postToCreateSite( data, reduxStore, callback );
+}
+
 export function createSite( callback, dependencies, stepData, reduxStore ) {
 	const { site, themeSlugWithRepo } = stepData;
 	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
@@ -843,23 +886,7 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	// Pre Load Experiment relevant to the post site creation goal screen
 	// loadExperimentAssignment( CALYPSO_BUILTBYEXPRESS_GOAL_TEXT_EXPERIMENT_NAME );
 
-	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
-		let providedDependencies;
-		let siteSlug;
-
-		if ( response && response.blog_details ) {
-			const parsedBlogURL = getUrlParts( response.blog_details.url );
-			siteSlug = parsedBlogURL.hostname;
-
-			providedDependencies = { siteSlug };
-		}
-
-		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
-			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
-		} else {
-			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
-		}
-	} );
+	postToCreateSite( data, reduxStore, callback );
 }
 
 export function createWpForTeamsSite( callback, dependencies, stepData, reduxStore ) {
@@ -889,23 +916,7 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 		client_secret: config( 'wpcom_signup_key' ),
 	};
 
-	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
-		let providedDependencies;
-		let siteSlug;
-
-		if ( response && response.blog_details ) {
-			const parsedBlogURL = getUrlParts( response.blog_details.url );
-			siteSlug = parsedBlogURL.hostname;
-
-			providedDependencies = { siteSlug };
-		}
-
-		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
-			fetchSitesAndUser( siteSlug, () => callback( undefined, providedDependencies ), reduxStore );
-		} else {
-			callback( isEmpty( errors ) ? undefined : [ errors ], providedDependencies );
-		}
-	} );
+	postToCreateSite( data, reduxStore, callback );
 }
 
 function recordExcludeStepEvent( step, value ) {

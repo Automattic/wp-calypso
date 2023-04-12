@@ -40,6 +40,7 @@ const stepNameToModuleName = {
 	'plans-store-nux': 'plans-atomic-store',
 	'select-domain': 'domains',
 	site: 'site',
+	'site-no-input': 'site-no-input',
 	'rewind-migrate': 'rewind-migrate',
 	'rewind-were-backing': 'rewind-were-backing',
 	'rewind-form-creds': 'rewind-form-creds',

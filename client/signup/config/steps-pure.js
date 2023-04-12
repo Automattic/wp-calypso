@@ -29,6 +29,7 @@ export function generateSteps( {
 	addAddOnsToCart = noop,
 	createAccount = noop,
 	createSite = noop,
+	createSiteFromUsername = noop,
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
@@ -118,6 +119,15 @@ export function generateSteps( {
 			stepName: 'site',
 			apiRequestFunction: createSite,
 			providesDependencies: [ 'siteSlug' ],
+		},
+
+		'site-no-input': {
+			stepName: 'site-no-input',
+			apiRequestFunction: createSiteFromUsername,
+			providesDependencies: [ 'siteSlug' ],
+			props: {
+				nonInteractive: true,
+			},
 		},
 
 		user: {

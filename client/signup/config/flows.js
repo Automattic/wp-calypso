@@ -138,7 +138,7 @@ function getEditorDestination( dependencies ) {
 }
 
 function getPostEditorDestination( dependencies ) {
-	return `/post/${ dependencies.siteSlug }`;
+	return `/post/${ dependencies.siteSlug }?showLaunchpad=true`;
 }
 
 function getDestinationFromIntent( dependencies ) {

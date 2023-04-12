@@ -22,7 +22,7 @@ export function generateFlows( {
 	const flows = [
 		{
 			name: 'writing',
-			steps: [ 'user', 'site' ],
+			steps: [ 'user', 'site-no-input' ],
 			destination: getPostEditorDestination,
 			description: 'Writing flow',
 			lastModified: '2023-04-10',
