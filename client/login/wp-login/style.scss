@@ -542,6 +542,12 @@ $image-height: 47px;
 	}
 }
 
+.layout.is-gravatar {
+	.wp-login__main {
+		max-width: 640px;
+	}
+}
+
 .wp-login__p2-logo {
 	position: absolute;
 	top: 24px;

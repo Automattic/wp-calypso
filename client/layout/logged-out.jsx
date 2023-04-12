@@ -16,7 +16,11 @@ import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { navigate } from 'calypso/lib/navigate';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isWooOAuth2Client,
+	isGravatarOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import {
@@ -106,6 +110,12 @@ const LayoutLoggedOut = ( {
 			// Force masterbar for all Crowdsignal OAuth pages
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 				classes[ 'has-no-masterbar' ] = false;
+			}
+
+			// Using more specific class name insteadly to avoid style conflicts with the Gravatar component
+			if ( isGravatarOAuth2Client( oauth2Client ) ) {
+				classes[ oauth2Client.name ] = false;
+				classes[ 'is-gravatar' ] = true;
 			}
 
 			masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
@@ -219,11 +229,14 @@ export default withCurrentRoute(
 			! isJetpackLogin &&
 			! isP2Login &&
 			Boolean( currentQuery?.client_id ) === false;
-		const isWhiteLogin = isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart );
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const isWhiteLogin =
+			isReskinLoginRoute ||
+			( isPartnerSignup && ! isPartnerSignupStart ) ||
+			isGravatarOAuth2Client( oauth2Client );
 		const noMasterbarForRoute =
 			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
-		const oauth2Client = getCurrentOAuth2Client( state );
 		const noMasterbarForSection =
 			! isWooOAuth2Client( oauth2Client ) &&
 			[ 'signup', 'jetpack-connect' ].includes( sectionName );

@@ -14,6 +14,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
+	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -125,7 +126,7 @@ export class LoginLinks extends Component {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			this.props.isWhiteLogin ||
+			( this.props.isWhiteLogin && ! isGravatarOAuth2Client( this.props.oauth2Client ) ) ||
 			this.props.isP2Login ||
 			this.props.isPartnerSignup
 		) {
