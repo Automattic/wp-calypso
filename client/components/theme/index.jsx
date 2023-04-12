@@ -377,7 +377,7 @@ export class Theme extends Component {
 		} else if ( isWporgTheme ) {
 			return createInterpolateElement(
 				translate(
-					'This community theme can only be installed if you have the <Link>Business plan</Link> on your site.'
+					'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
 				),
 				{
 					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
