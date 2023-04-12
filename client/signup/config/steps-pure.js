@@ -238,7 +238,6 @@ export function generateSteps( {
 				hideFreePlan: true,
 				hidePremiumPlan: true,
 				hidePersonalPlan: true,
-				hideEnterprisePlan: true,
 				shouldHideNavButtons: true,
 			},
 		},
