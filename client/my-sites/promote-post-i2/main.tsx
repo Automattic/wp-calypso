@@ -19,8 +19,9 @@ import memoizeLast from 'calypso/lib/memoize-last';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
-import PromotePostTabBar from 'calypso/my-sites/promote-post/components/promoted-post-filter';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
+import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
+
 import {
 	getSitePost,
 	getPostsForQuery,
@@ -38,6 +39,7 @@ export type TabType = 'posts' | 'campaigns';
 export type TabOption = {
 	id: TabType;
 	name: string;
+	itemCount: number;
 };
 
 interface Props {
@@ -138,9 +140,27 @@ export default function PromotedPosts( { tab }: Props ) {
 
 	const translate = useTranslate();
 
+	const content = [
+		...( postAndPagesByIDs || [] ),
+		...( mostPopularPostAndPages || [] ),
+		...( postAndPagesByComments || [] ),
+		...( products || [] ),
+	];
+
+	/**
+	 * Some of the posts/pages may be duplicated as we load them by popularity and sometimes by comments.
+	 */
+	const contentWithoutDuplicatedIds = content.filter(
+		( obj, index ) => content.findIndex( ( item ) => item.ID === obj.ID ) === index
+	);
+
 	const tabs: TabOption[] = [
-		{ id: 'posts', name: translate( 'Ready to Blaze' ) },
-		{ id: 'campaigns', name: translate( 'Campaigns' ) },
+		{
+			id: 'posts',
+			name: translate( 'Ready to promote' ),
+			itemCount: contentWithoutDuplicatedIds.length,
+		},
+		{ id: 'campaigns', name: translate( 'Campaigns' ), itemCount: ( campaignsFull || [] ).length },
 	];
 
 	const topViewedPostAndPagesIds = topViewedPostAndPages?.map( ( post: any ) => post.id );
@@ -225,20 +245,6 @@ export default function PromotedPosts( { tab }: Props ) {
 			/>
 		);
 	}
-
-	const content = [
-		...( postAndPagesByIDs || [] ),
-		...( mostPopularPostAndPages || [] ),
-		...( postAndPagesByComments || [] ),
-		...( products || [] ),
-	];
-
-	/**
-	 * Some of the posts/pages may be duplicated as we load them by popularity and sometimes by comments.
-	 */
-	const contentWithoutDuplicatedIds = content.filter(
-		( obj, index ) => content.findIndex( ( item ) => item.ID === obj.ID ) === index
-	);
 
 	const isLoading =
 		isLoadingByCommentsQuery ||
