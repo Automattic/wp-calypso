@@ -54,7 +54,7 @@ export default function SubscribersSection( { siteId, slug }: { siteId: string; 
 
 	const chartData = transformData( data?.data || [] );
 
-	const traffic = {
+	const subscribers = {
 		label: 'Subscribers',
 		path: `/stats/subscribers/`,
 	};
@@ -62,7 +62,7 @@ export default function SubscribersSection( { siteId, slug }: { siteId: string; 
 	const date = new Date();
 
 	const slugPath = slug ? `/${ slug }` : '';
-	const pathTemplate = `${ traffic.path }{{ interval }}${ slugPath }`;
+	const pathTemplate = `${ subscribers.path }{{ interval }}${ slugPath }`;
 
 	return (
 		<div className="subscribers-section">
