@@ -206,9 +206,9 @@
 	&.is-tag-post {
 
 		.reader-featured-image {
-			height: auto;
-			margin-bottom: 0;
-			max-width: 150px;
+			width: 150px !important;
+			min-height: 150px;
+			max-height: 150px;
 		}
 
 		.reader-post-card__post {
@@ -221,16 +221,6 @@
 			margin: 0;
 		}
 
-		.reader-post-card__post-details .reader-excerpt {
-			font-size: $font-body;
-			font-weight: 400;
-			margin-top: 4px;
-			max-height: 400px;
-			overflow: hidden;
-			position: relative;
-			word-wrap: break-word;
-		}
-
 		.reader-post-card__title-link {
 			display: -webkit-box;
 			-webkit-line-clamp: 2;
@@ -240,9 +230,6 @@
 
 		.reader-post-card__featured-images {
 			flex-direction: row;
-			.reader-featured-image {
-				width: 150px !important;
-			}
 		}
 	}
 

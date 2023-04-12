@@ -23,6 +23,7 @@ const FeaturedAsset = ( {
 				allowPlaying={ allowVideoPlaying }
 				onThumbnailClick={ onVideoThumbnailClick }
 				isExpanded={ isVideoExpanded }
+				isTagPost={ isTagPost }
 			/>
 		);
 	}

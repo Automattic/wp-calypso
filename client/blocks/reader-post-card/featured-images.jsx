@@ -8,12 +8,7 @@ import {
 } from 'calypso/state/reader/posts/sizes';
 
 const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isTagPost } ) => {
-	let classNames = 'reader-post-card__featured-images';
-	let numImages = 4;
-	if ( isTagPost ) {
-		// We only need one image for tag streams
-		numImages = 1;
-	}
+	const numImages = isTagPost ? 1 : 4;
 	const imagesToDisplay = getImagesFromPostToDisplay( post, numImages );
 	if ( imagesToDisplay.length === 0 ) {
 		return (
@@ -21,10 +16,12 @@ const ReaderFeaturedImages = ( { post, postUrl, canonicalMedia, isTagPost } ) =>
 				canonicalMedia={ canonicalMedia }
 				href={ postUrl }
 				fetched={ canonicalMedia.fetched }
+				isTagPost={ isTagPost }
 			/>
 		);
 	}
 
+	let classNames = 'reader-post-card__featured-images';
 	const listItems = imagesToDisplay.map( ( image, index, [ imageWidth, imageHeight ] ) => {
 		imageWidth = null;
 		imageHeight = isTagPost
