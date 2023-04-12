@@ -75,6 +75,21 @@ export default function SubscribersSection( {
 		<div className="subscribers-section">
 			<div className="subscribers-section-heading">
 				<h1 className="highlight-cards-heading">Subscribers</h1>
+				{ ! isLoading && (
+					<div>
+						<StatsPeriodHeader>
+							<StatsPeriodNavigation date={ date } period={ period } url={ pathTemplate }>
+								<DatePicker
+									period={ period }
+									date={ date }
+									statsType="statsTopPosts"
+									showQueryDate
+								/>
+							</StatsPeriodNavigation>
+							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
+						</StatsPeriodHeader>
+					</div>
+				) }
 				<div className="subscribers-section-legend" ref={ legendRef }></div>
 			</div>
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
@@ -82,16 +97,6 @@ export default function SubscribersSection( {
 				<p className="subscribers-section__no-data">No data available for the specified period.</p>
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
-			{ ! isLoading && (
-				<div>
-					<StatsPeriodHeader>
-						<StatsPeriodNavigation date={ date } period={ period } url={ pathTemplate }>
-							<DatePicker period={ period } date={ date } statsType="statsTopPosts" showQueryDate />
-						</StatsPeriodNavigation>
-						<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
-					</StatsPeriodHeader>
-				</div>
-			) }
 			{ ! isLoading && chartData.length !== 0 && (
 				<UplotChart data={ chartData } legendContainer={ legendRef } />
 			) }

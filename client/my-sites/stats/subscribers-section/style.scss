@@ -14,7 +14,6 @@
 
 .subscribers-section-heading {
 	align-content: center;
-	display: flex;
 	justify-content: space-between;
 	margin-bottom: 16px;
 
@@ -39,6 +38,11 @@
 		.u-series > th {
 			padding-left: 0;
 		}
+	}
+
+	.u-legend {
+		display: flex;
+		justify-content: right;
 	}
 }
 
