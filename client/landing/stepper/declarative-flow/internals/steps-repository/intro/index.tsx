@@ -10,6 +10,7 @@ import { useSelect } from '@wordpress/data';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { ReactElement } from 'react';
 import { PlansSelect } from 'calypso/../packages/data-stores/src';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
@@ -29,7 +30,10 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 		( select ) => ( select( PLANS_STORE ) as PlansSelect ).getPlanProduct,
 		[]
 	);
-	let videoPressGetStartedText = __( 'A home for all your videos.<br />Play. Roll. Share.' );
+	// VideoPress: we should always send a non-empty string so the spacing stays the same on the intro page
+	let videoPressGetStartedText: string | ReactElement = createInterpolateElement( '<nbsp />', {
+		nbsp: <>&nbsp;</>,
+	} );
 
 	if ( VIDEOPRESS_FLOW === flowName ) {
 		let defaultSupportedPlan = supportedPlans.find( ( plan ) => {
@@ -51,9 +55,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 				// eslint-disable-next-line @wordpress/valid-sprintf
 				videoPressGetStartedText = sprintf(
 					/* translators: Price displayed on VideoPress intro page. First %s is monthly price, second is annual price */
-					__(
-						'A home for all your videos.<br />Play. Roll. Share.<div>Starts at %s per month<br /><span>%s billed annually</span></div>'
-					),
+					__( 'Starts at %s per month, %s billed annually' ),
 					planProductObject.price,
 					planProductObject.annualPrice
 				);
@@ -93,11 +95,11 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 
 		if ( flowName === VIDEOPRESS_FLOW ) {
 			return {
-				title: createInterpolateElement( videoPressGetStartedText, {
-					br: <br />,
-					div: <div className="videopress-intro-pricing" />,
-					span: <span className="small" />,
-				} ),
+				title: createInterpolateElement(
+					__( 'A home for all your videos.<br />Play. Roll. Share.' ),
+					{ br: <br /> }
+				),
+				secondaryText: videoPressGetStartedText,
 				buttonText: __( 'Get started' ),
 				modal: {
 					buttonText: __( 'Learn more' ),
