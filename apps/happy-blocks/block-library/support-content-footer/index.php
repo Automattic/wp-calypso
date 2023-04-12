@@ -17,7 +17,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 <div class="support-content-footer">
 	<div class="support-content-cta">
 		<div class="support-content-cta-left">
-			<h4 class="support-content-resource__title has-recoleta-font-family" style="margin-bottom:0px;font-size:32px;font-style:normal;font-weight:400">
+			<h4 class="support-content-resource__title">
 				<?php esc_html_e( 'Let us build your website', 'happy-blocks' ); ?>
 			</h4>
 			<p>
@@ -40,7 +40,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 	<div class="support-content-resources alignwide" style="border-radius:0px; margin-bottom:0px">
 		<div class="support-content-resource">
 			<figure><img src="<?php echo esc_url( $image_dir . '/webinars.svg' ); ?>" alt=""/></figure>
-			<h4 class="support-content-resource__title has-recoleta-font-family" style="margin-bottom:0px;font-size:32px;font-style:normal;font-weight:400">
+			<h4 class="support-content-resource__title has-recoleta-font-family">
 				<?php esc_html_e( 'Support Guides', 'happy-blocks' ); ?>
 			</h4>
 			<p>
@@ -57,7 +57,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 		</div>
 		<div class="support-content-resource">
 			<figure><img src="<?php echo esc_url( $image_dir . '/forums.svg' ); ?>" alt=""/></figure>
-			<h4 class="support-content-resource__title has-recoleta-font-family" style="margin-bottom:0px;font-size:32px;font-style:normal;font-weight:400">
+			<h4 class="support-content-resource__title has-recoleta-font-family">
 				<?php esc_html_e( 'Forums', 'happy-blocks' ); ?>
 			</h4>
 			<p>
@@ -74,7 +74,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 		</div>
 		<div class="support-content-resource">
 			<figure><img src="<?php echo esc_url( $image_dir . '/youtube.svg' ); ?>" alt=""/></figure>
-			<h4 class="support-content-resource__title has-recoleta-font-family" style="margin-bottom:0px;font-size:32px;font-style:normal;font-weight:400">
+			<h4 class="support-content-resource__title has-recoleta-font-family">
 				<?php esc_html_e( 'YouTube', 'happy-blocks' ); ?>
 			</h4>
 			<p>
