@@ -3,16 +3,14 @@ import type { Pattern, Category } from '../types';
 
 const usePatternsMapByCategory = ( patterns: Pattern[], categories: Category[] ) => {
 	return useMemo( () => {
-		const categoriesMap = {} as { [ key: string ]: Pattern[] };
+		const categoriesMap: Record< string, Pattern[] > = {};
 
 		patterns.forEach( ( pattern ) => {
-			Object.values( pattern.categories ).forEach( ( { slug } = {} ) => {
-				if ( slug ) {
-					if ( ! categoriesMap[ slug ] ) {
-						categoriesMap[ slug ] = [];
-					}
-					categoriesMap[ slug ].push( pattern );
+			Object.keys( pattern.categories ).forEach( ( category ) => {
+				if ( ! categoriesMap[ category ] ) {
+					categoriesMap[ category ] = [];
 				}
+				categoriesMap[ category ].push( pattern );
 			} );
 		} );
 		return categoriesMap;

@@ -487,7 +487,7 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
  */
 export const getProductSlugFromProductType = ( type: string ): string | undefined => {
 	const slugs: Record< string, string > = {
-		backup: 'jetpack-backup-t2',
+		backup: 'jetpack-backup-t1',
 		scan: 'jetpack-scan',
 	};
 
@@ -643,4 +643,9 @@ export const getMonitorDowntimeText = ( downtime: number | undefined ) => {
 		},
 		comment: '%(time) is the downtime, e.g. "2d 5h 30m", "5h 30m", "55m"',
 	} );
+};
+
+export const DASHBOARD_PREFERENCE_NAMES = {
+	EXPANDABLE_BLOCK_POPOVER_MESSAGE:
+		'jetpack-cloud-agency-dashboard-expandable-block-popover-message',
 };

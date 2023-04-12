@@ -7,7 +7,7 @@ export function useCountries(
 	queryOptions: UseQueryOptions< any, unknown, WooCountries > = {}
 ): UseQueryResult< WooCountries > {
 	return useQuery< any, unknown, WooCountries >(
-		'countries',
+		[ 'countries' ],
 		() => wpcom.req.get( '/woocommerce/countries/regions/', { apiNamespace: 'wpcom/v2' } ),
 		{
 			staleTime: Infinity,

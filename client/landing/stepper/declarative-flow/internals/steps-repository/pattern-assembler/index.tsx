@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { useSyncGlobalStylesUserConfig } from '@automattic/global-styles';
+import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer, WITH_THEME_ASSEMBLER_FLOW } from '@automattic/onboarding';
 import {
 	__experimentalNavigatorProvider as NavigatorProvider,
@@ -74,9 +75,10 @@ const PatternAssembler = ( {
 	const siteSlug = useSiteSlugParam();
 	const siteId = useSiteIdParam();
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
+	const locale = useLocale();
 
 	// Fetching all patterns and categories
-	const allPatterns = useAllPatterns( site?.lang );
+	const allPatterns = useAllPatterns( locale );
 	const patternIds = useMemo(
 		() => allPatterns.map( ( pattern ) => encodePatternId( pattern.ID ) ),
 		[ allPatterns ]
@@ -191,7 +193,7 @@ const PatternAssembler = ( {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PATTERN_FINAL_SELECT, {
 				pattern_id: ID,
 				pattern_name: name,
-				pattern_category: category?.slug,
+				pattern_category: category?.name,
 			} );
 		} );
 	};
@@ -312,16 +314,16 @@ const PatternAssembler = ( {
 		if ( selectedPattern ) {
 			// Inject the selected pattern category or the first category
 			// because it's used in tracks and as pattern name in the list
-			const [ firstCategory ] = Object.values( selectedPattern.categories );
+			const [ firstCategory ] = Object.keys( selectedPattern.categories );
 			selectedPattern.category = categories.find(
-				( { name } ) => name === ( selectedCategory || firstCategory?.slug )
+				( { name } ) => name === ( selectedCategory || firstCategory )
 			);
 
 			trackEventPatternSelect( {
 				patternType: type,
 				patternId: selectedPattern.ID,
 				patternName: selectedPattern.name,
-				patternCategory: selectedPattern.category?.slug,
+				patternCategory: selectedPattern.category?.name,
 			} );
 
 			if ( 'section' === type ) {
@@ -395,7 +397,7 @@ const PatternAssembler = ( {
 			pattern_type: type,
 			pattern_ids: patterns.map( ( { ID } ) => ID ).join( ',' ),
 			pattern_names: patterns.map( ( { name } ) => name ).join( ',' ),
-			pattern_categories: patterns.map( ( { category } ) => category?.slug ).join( ',' ),
+			pattern_categories: patterns.map( ( { category } ) => category?.name ).join( ',' ),
 		} );
 	};
 

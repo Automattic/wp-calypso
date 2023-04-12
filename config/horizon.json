@@ -13,6 +13,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
+		"anchor/sunset-integration": false,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
@@ -91,7 +92,7 @@
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
 		"plans/wooexpress-medium": true,
-		"plans/wooexpress-small": false,
+		"plans/wooexpress-small": true,
 		"plugins/ssr-categories": true,
 		"plugins/ssr-details": true,
 		"plugins/ssr-landing": true,
