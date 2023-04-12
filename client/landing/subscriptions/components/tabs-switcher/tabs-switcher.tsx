@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Nav from 'calypso/components/section-nav';
@@ -18,6 +19,9 @@ const TabsSwitcher = () => {
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
 	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
+	const locale = useLocale();
+	const shouldEnableCommentsTab =
+		config.isEnabled( 'subscription-management-comments-view' ) && locale === 'en';
 
 	return (
 		<>
@@ -33,7 +37,7 @@ const TabsSwitcher = () => {
 
 					<NavItem
 						onClick={ () => {
-							config.isEnabled( 'subscription-management-comments-view' )
+							shouldEnableCommentsTab
 								? navigate( commentsPath )
 								: window.location.replace(
 										'https://wordpress.com/email-subscriptions/?option=comments'
