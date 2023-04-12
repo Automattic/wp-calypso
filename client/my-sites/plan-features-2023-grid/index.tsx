@@ -499,7 +499,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, is2023OnboardingPricingGrid, isLargeCurrency } = this.props;
+		const { isReskinned, isLargeCurrency } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -520,7 +520,7 @@ export class PlanFeatures2023Grid extends Component<
 						{ ! hasNoPrice && (
 							<PlanFeatures2023GridHeaderPrice
 								planProperties={ properties }
-								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+								is2023OnboardingPricingGrid={ true }
 								isLargeCurrency={ isLargeCurrency }
 							/>
 						) }
