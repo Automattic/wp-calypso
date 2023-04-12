@@ -11,7 +11,7 @@ if ( ! isset( $args ) ) {
 	$args = array();
 }
 
-$wpsupport3_image_dir = get_template_directory_uri() . '/assets/svg';
+$image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-library/support-content-footer/build/assets';
 ?>
 
 <div class="support-content-footer">
@@ -27,19 +27,19 @@ $wpsupport3_image_dir = get_template_directory_uri() . '/assets/svg';
 				<p>
 					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/webinars/' ) ); ?>">
 						<?php esc_html_e( 'Get Started', 'happy-blocks' ); ?>
-						<figure><img src="<?php echo esc_url( $wpsupport3_image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
+						<figure><img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
 					</a>
 				</p>
 			</div>
 		</div>
 
 		<div class="support-content-cta-right">
-			<figure><img src="<?php echo esc_url( $wpsupport3_image_dir . '/let-us-build-your-website.svg' ); ?>" alt=""/></figure>
+			<figure><img src="<?php echo esc_url( $image_dir . '/let-us-build-your-website.svg' ); ?>" alt=""/></figure>
 		</div>
 	</div>
 	<div class="support-content-resources alignwide" style="border-radius:0px; margin-bottom:0px">
 		<div class="support-content-resource">
-			<figure><img src="<?php echo esc_url( $wpsupport3_image_dir . '/webinars.svg' ); ?>" alt=""/></figure>
+			<figure><img src="<?php echo esc_url( $image_dir . '/webinars.svg' ); ?>" alt=""/></figure>
 			<h4 class="support-content-resource__title has-recoleta-font-family" style="margin-bottom:0px;font-size:32px;font-style:normal;font-weight:400">
 				<?php esc_html_e( 'Support Guides', 'happy-blocks' ); ?>
 			</h4>
@@ -50,13 +50,13 @@ $wpsupport3_image_dir = get_template_directory_uri() . '/assets/svg';
 				<p>
 					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/webinars/' ) ); ?>">
 						<?php esc_html_e( 'Search Guides', 'full-site-editing' ); ?>
-						<figure><img src="<?php echo esc_url( $wpsupport3_image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
+						<figure><img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
 					</a>
 				</p>
 			</div>
 		</div>
 		<div class="support-content-resource">
-			<figure><img src="<?php echo esc_url( $wpsupport3_image_dir . '/forums.svg' ); ?>" alt=""/></figure>
+			<figure><img src="<?php echo esc_url( $image_dir . '/forums.svg' ); ?>" alt=""/></figure>
 			<h4 class="support-content-resource__title has-recoleta-font-family" style="margin-bottom:0px;font-size:32px;font-style:normal;font-weight:400">
 				<?php esc_html_e( 'Forums', 'happy-blocks' ); ?>
 			</h4>
@@ -67,13 +67,13 @@ $wpsupport3_image_dir = get_template_directory_uri() . '/assets/svg';
 				<p>
 					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/forums/' ) ); ?>">
 						<?php esc_html_e( 'Ask the Community', 'happy-blocks' ); ?>
-						<figure><img src="<?php echo esc_url( $wpsupport3_image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
+						<figure><img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
 					</a>
 				</p>
 			</div>
 		</div>
 		<div class="support-content-resource">
-			<figure><img src="<?php echo esc_url( $wpsupport3_image_dir . '/youtube.svg' ); ?>" alt=""/></figure>
+			<figure><img src="<?php echo esc_url( $image_dir . '/youtube.svg' ); ?>" alt=""/></figure>
 			<h4 class="support-content-resource__title has-recoleta-font-family" style="margin-bottom:0px;font-size:32px;font-style:normal;font-weight:400">
 				<?php esc_html_e( 'YouTube', 'happy-blocks' ); ?>
 			</h4>
@@ -85,7 +85,7 @@ $wpsupport3_image_dir = get_template_directory_uri() . '/assets/svg';
 					<a href="https://www.youtube.com/wordpressdotcom">
 						<?php esc_html_e( 'Subscribe now', 'happy-blocks' ); ?>
 						<figure>
-							<img src="<?php echo esc_url( $wpsupport3_image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/>
+							<img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/>
 						</figure>
 					</a>
 				</p>
