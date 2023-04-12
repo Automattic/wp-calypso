@@ -1,5 +1,4 @@
 import { useTranslate } from 'i18n-calypso';
-import withDimensions from 'calypso/lib/with-dimensions';
 import { VirtualizedList } from '../virtualized-list';
 import CommentRow from './comment-row';
 import './styles.scss';
@@ -40,4 +39,4 @@ const CommentList = ( { posts }: CommentListProps ) => {
 	);
 };
 
-export default withDimensions( CommentList );
+export default CommentList;
