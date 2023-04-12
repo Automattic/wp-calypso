@@ -272,9 +272,9 @@ describe( 'paginateTransactions()', () => {
 		const result = paginateTransactions( testState.billingTransactions.items.past, 2, 3 );
 		expect( result.length ).toEqual( 3 );
 		expect( result ).toEqual( state.billingTransactions.items.past.slice( 3, 6 ) );
-		expect( result[ 0 ].items ).toMatchObject( [ { date: '2018-03-15T10:39:27' } ] );
-		expect( result[ 1 ].items ).toMatchObject( [ { date: '2018-03-13T16:10:45' } ] );
-		expect( result[ 2 ].items ).toMatchObject( [ { date: '2018-01-10T14:24:38' } ] );
+		expect( result[ 0 ].date ).toEqual( '2018-03-15T10:39:27' );
+		expect( result[ 1 ].date ).toEqual( '2018-03-13T16:10:45' );
+		expect( result[ 2 ].date ).toEqual( '2018-01-10T14:24:38' );
 	} );
 
 	test( 'returns an abbreviated last page of transactions when the last page is specified', () => {
@@ -282,6 +282,6 @@ describe( 'paginateTransactions()', () => {
 		const result = paginateTransactions( testState.billingTransactions.items.past, 4, 3 );
 		expect( result.length ).toEqual( 1 );
 		expect( result ).toEqual( state.billingTransactions.items.past.slice( 9, 10 ) );
-		expect( result[ 0 ].items ).toMatchObject( [ { date: '2017-01-01T00:00:00' } ] );
+		expect( result[ 0 ].date ).toEqual( '2017-01-01T00:00:00' );
 	} );
 } );
