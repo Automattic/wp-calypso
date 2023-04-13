@@ -399,18 +399,13 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderTabletView() {
-		const { planProperties, flowName } = this.props;
+		const { planProperties } = this.props;
 		let plansToShow = [];
-		let numberOfPlansToShowOnTop = 3;
+		const numberOfPlansToShowOnTop = 3;
 
-		if ( isNewsletterFlow( flowName ) ) {
-			plansToShow = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
-			numberOfPlansToShowOnTop = 4;
-		} else {
-			plansToShow = planProperties
-				.filter( ( { isVisible } ) => isVisible )
-				.map( ( properties ) => properties.planName );
-		}
+		plansToShow = planProperties
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties ) => properties.planName );
 
 		const topRowPlans = plansToShow.slice( 0, numberOfPlansToShowOnTop );
 		const bottomRowPlans = plansToShow.slice( numberOfPlansToShowOnTop, plansToShow.length );
