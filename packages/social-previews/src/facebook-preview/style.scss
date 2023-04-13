@@ -103,6 +103,9 @@
 
 	&.is-landscape {
 		> img {
+			// At the moment of writing, the post card on Facebook.com goes from 508 to 680px wide.
+			// In landscape mode, the image takes the full width of the card, and respect the 1.91
+			// aspect ratio at any width.
 			width: 100%;
 			aspect-ratio: 1.91;
 		}
