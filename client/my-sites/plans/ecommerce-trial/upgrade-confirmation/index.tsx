@@ -1,5 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
@@ -11,7 +12,6 @@ import { GetConfirmationTasks } from './confirmation-tasks';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
-import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 
 const TrialUpgradeConfirmation = () => {
 	const selectedSite = useSelector( getSelectedSite );
