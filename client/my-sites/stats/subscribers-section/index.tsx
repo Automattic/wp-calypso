@@ -71,8 +71,16 @@ export default function SubscribersSection( {
 
 	return (
 		<div className="subscribers-section">
-			<div className="subscribers-section-heading">
-				<h1 className="highlight-cards-heading">Subscribers</h1>
+			{ /* TODO: Remove highlight-cards class and use a highlight cards heading component instead. */ }
+			<div className="subscribers-section-heading highlight-cards">
+				<h1 className="highlight-cards-heading">
+					{ translate( 'Subscribers' ) }{ ' ' }
+					<small>
+						<a className="highlight-cards-heading-wrapper" href={ '/people/subscribers/' + slug }>
+							{ translate( 'View all subscribers' ) }
+						</a>
+					</small>
+				</h1>
 				{ ! isLoading && (
 					<div>
 						<StatsPeriodHeader>
@@ -87,7 +95,9 @@ export default function SubscribersSection( {
 			</div>
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isLoading && chartData.length === 0 && (
-				<p className="subscribers-section__no-data">No data available for the specified period.</p>
+				<p className="subscribers-section__no-data">
+					{ translate( 'No data availble for the specified period.' ) }
+				</p>
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
 			{ ! isLoading && chartData.length !== 0 && (
