@@ -1,5 +1,5 @@
 /**
- * @group calypso-pr
+ * @group calypso-release
  */
 
 import {
@@ -41,15 +41,11 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Add two plugins to the cart' ),
 		siteId = credentials.testSites?.primary?.id as number;
 
 		restApiClient = new RestAPIClient( credentials );
+		await restApiClient.clearShoppingCart( siteId );
 	} );
 
 	describe( 'Plugin: Purchase', function () {
 		let cartCheckoutPage: CartCheckoutPage;
-
-		it( `Clear Shopping Cart`, async function () {
-			await restApiClient.clearShoppingCart( siteId );
-			await page.reload();
-		} );
 
 		it( `Navigate to plugins page`, async function () {
 			pluginsPage = new PluginsPage( page );
