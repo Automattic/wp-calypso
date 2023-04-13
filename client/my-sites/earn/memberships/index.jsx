@@ -23,6 +23,7 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -700,6 +701,12 @@ class MembershipsSection extends Component {
 				<QueryMembershipsSettings siteId={ this.props.siteId } source={ this.props.source } />
 				{ this.props.connectedAccountId && this.renderStripeConnected() }
 				{ this.props.connectUrl && ! this.props.connectedAccountId && this.renderConnectStripe() }
+
+				{ ! this.props.connectedAccountId && ! this.props.connectUrl && (
+					<div className="earn__payments-loading">
+						<LoadingEllipsis />
+					</div>
+				) }
 			</div>
 		);
 	}
