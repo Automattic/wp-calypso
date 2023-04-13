@@ -203,16 +203,11 @@ export function isJetpackBundle( product: APIProductFamilyProduct | string ) {
 }
 
 /**
- *	Checks if the license keys are compatible with multisite.
+ * Whether the license keys are compatible with WP Multisite.
  *
- * @param licenseKeys
- * @returns boolean indicating if the license keys are compatible with multisite
+ * @param {Array<string>} licenseKeys
+ * @returns {boolean} indicating if the license keys are compatible with multisite
  */
-export function isMultisiteCompatibleLicenseKeys( licenseKeys: string[] ): boolean {
-	const INCOMPATIBLE_LICENSE_KEY_PREFIXES = [ 'jetpack-backup', 'jetpack-scan' ];
-
-	const isIncompatibleLicenseKey = ( licenseKey: string ) =>
-		!! INCOMPATIBLE_LICENSE_KEY_PREFIXES.find( ( prefix ) => licenseKey?.startsWith( prefix ) );
-
-	return ! licenseKeys.find( ( licenseKey ) => isIncompatibleLicenseKey( licenseKey ) );
+export function areLicenseKeysMultisiteCompatible( licenseKeys: Array< string > ): boolean {
+	return licenseKeys.every( ( key ) => ! /^jetpack-(backup|scan)/.test( key ) );
 }
