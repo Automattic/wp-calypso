@@ -56,7 +56,7 @@ body {
 		border-radius: 2px;
 
 		@media (max-width: $break-small) {
-			visibility: hidden;
+			display: none;
 		}
 
 		.subscriptions-manager__search-icon {
