@@ -82,8 +82,4 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 			} );
 		} );
 	} );
-
-	describe( 'GET `/block-renderer/patterns/render` should response HTML and styles', function () {
-		// TODO:
-	} );
 } );
