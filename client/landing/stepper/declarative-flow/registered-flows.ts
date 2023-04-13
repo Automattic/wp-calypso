@@ -20,7 +20,7 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	videopress: () =>
 		import( /* webpackChunkName: "videopress-flow" */ '../declarative-flow/videopress' ),
 
-	'link-in-dusty': () =>
+	'link-in-bio': () =>
 		import( /* webpackChunkName: "link-in-bio-flow" */ '../declarative-flow/link-in-bio' ),
 
 	[ LINK_IN_BIO_DOMAIN_FLOW ]: () =>
