@@ -41,6 +41,7 @@ const LayoutLoggedOut = ( {
 	isJetpackWooCommerceFlow,
 	isJetpackWooDnaFlow,
 	isP2Login,
+	isGravatarLogin,
 	wccomFrom,
 	masterbarIsHidden,
 	oauth2Client,
@@ -90,6 +91,7 @@ const LayoutLoggedOut = ( {
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 		'is-p2-login': isP2Login,
+		'is-gravatar-login': isGravatarLogin,
 	};
 
 	let masterbar = null;
@@ -104,18 +106,15 @@ const LayoutLoggedOut = ( {
 		} else if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			masterbar = null;
 		} else {
-			classes.dops = true;
-			classes[ oauth2Client.name ] = true;
+			if ( ! isGravatarLogin ) {
+				classes.dops = true;
+				// Using .is-gravatar-login instead of .gravatar to avoid style conflicts with the Gravatar component
+				classes[ oauth2Client.name ] = true;
+			}
 
 			// Force masterbar for all Crowdsignal OAuth pages
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 				classes[ 'has-no-masterbar' ] = false;
-			}
-
-			// Using more specific class name insteadly to avoid style conflicts with the Gravatar component
-			if ( isGravatarOAuth2Client( oauth2Client ) ) {
-				classes[ oauth2Client.name ] = false;
-				classes[ 'is-gravatar' ] = true;
 			}
 
 			masterbar = <OauthClientMasterbar oauth2Client={ oauth2Client } />;
@@ -224,16 +223,15 @@ export default withCurrentRoute(
 		const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const isGravatarLogin = isGravatarOAuth2Client( oauth2Client );
 		const isReskinLoginRoute =
 			currentRoute.startsWith( '/log-in' ) &&
 			! isJetpackLogin &&
 			! isP2Login &&
 			Boolean( currentQuery?.client_id ) === false;
-		const oauth2Client = getCurrentOAuth2Client( state );
 		const isWhiteLogin =
-			isReskinLoginRoute ||
-			( isPartnerSignup && ! isPartnerSignupStart ) ||
-			isGravatarOAuth2Client( oauth2Client );
+			isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart ) || isGravatarLogin;
 		const noMasterbarForRoute =
 			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
@@ -252,6 +250,7 @@ export default withCurrentRoute(
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
 			isP2Login,
+			isGravatarLogin,
 			wccomFrom,
 			masterbarIsHidden,
 			sectionGroup,

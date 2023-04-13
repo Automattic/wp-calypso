@@ -14,7 +14,6 @@ import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
-	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -126,7 +125,7 @@ export class LoginLinks extends Component {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			( this.props.isWhiteLogin && ! isGravatarOAuth2Client( this.props.oauth2Client ) ) ||
+			( this.props.isWhiteLogin && ! this.props.isGravatarLogin ) ||
 			this.props.isP2Login ||
 			this.props.isPartnerSignup
 		) {
@@ -315,6 +314,7 @@ export class LoginLinks extends Component {
 		const {
 			currentRoute,
 			isP2Login,
+			isGravatarLogin,
 			locale,
 			oauth2Client,
 			pathname,
@@ -323,15 +323,16 @@ export class LoginLinks extends Component {
 			usernameOrEmail,
 		} = this.props;
 
+		if ( isGravatarLogin ) {
+			return null;
+		}
+
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl = this.props.signupUrl
 			? window.location.origin + pathWithLeadingSlash( this.props.signupUrl )
 			: getSignupUrl( query, currentRoute, oauth2Client, locale, pathname );
 
-		if (
-			( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) ||
-			isGravatarOAuth2Client( oauth2Client )
-		) {
+		if ( isJetpackCloudOAuth2Client( oauth2Client ) && '/log-in/authenticator' !== currentRoute ) {
 			return null;
 		}
 

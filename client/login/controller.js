@@ -50,13 +50,13 @@ const enhanceContextWithLogin = ( context ) => {
 	const isP2Login = query && query.from === 'p2';
 	const clientId = query?.client_id;
 	const oauth2ClientId = query?.oauth2_client_id;
-	const oauth2Client = { id: Number( clientId || oauth2ClientId ) };
+	const isGravatarLogin = isGravatarOAuth2Client( { id: Number( clientId || oauth2ClientId ) } );
 	const isWhiteLogin =
 		( ! isJetpackLogin &&
 			! isP2Login &&
 			Boolean( clientId ) === false &&
 			Boolean( oauth2ClientId ) === false ) ||
-		isGravatarOAuth2Client( oauth2Client );
+		isGravatarLogin;
 
 	context.primary = (
 		<WPLogin
@@ -64,6 +64,7 @@ const enhanceContextWithLogin = ( context ) => {
 			isJetpack={ isJetpackLogin }
 			isWhiteLogin={ isWhiteLogin }
 			isP2Login={ isP2Login }
+			isGravatarLogin={ isGravatarLogin }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }

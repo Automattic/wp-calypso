@@ -223,6 +223,7 @@ export class Login extends Component {
 			isJetpack,
 			isWhiteLogin,
 			isP2Login,
+			isGravatarLogin,
 			oauth2Client,
 			privateSite,
 			socialConnect,
@@ -259,6 +260,7 @@ export class Login extends Component {
 						twoFactorAuthType={ twoFactorAuthType }
 						isWhiteLogin={ isWhiteLogin }
 						isP2Login={ isP2Login }
+						isGravatarLogin={ isGravatarLogin }
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
 						oauth2ClientId={ this.props.oauth2Client?.id }
@@ -278,6 +280,7 @@ export class Login extends Component {
 				isJetpack={ isJetpack }
 				isWhiteLogin={ isWhiteLogin }
 				isP2Login={ isP2Login }
+				isGravatarLogin={ isGravatarLogin }
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }

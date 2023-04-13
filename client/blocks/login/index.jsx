@@ -16,7 +16,6 @@ import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
-	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { isWebAuthnSupported } from 'calypso/lib/webauthn';
@@ -260,6 +259,7 @@ class Login extends Component {
 			isWhiteLogin,
 			isJetpackWooCommerceFlow,
 			isP2Login,
+			isGravatarLogin,
 			wccomFrom,
 			isManualRenewalImmediateLoginAttempt,
 			linkingSocialService,
@@ -463,7 +463,7 @@ class Login extends Component {
 		}
 
 		if ( isWhiteLogin ) {
-			preHeader = isGravatarOAuth2Client( oauth2Client ) ? (
+			preHeader = isGravatarLogin ? (
 				<div className="login__form-gravatar-logo">
 					<img src={ oauth2Client.icon } alt={ oauth2Client.title } />
 				</div>
