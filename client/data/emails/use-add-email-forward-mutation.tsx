@@ -54,7 +54,7 @@ export default function useAddEmailForwardMutation(
 	const suppliedOnMutate = mutationOptions.onMutate;
 	const suppliedOnError = mutationOptions.onError;
 
-	mutationOptions.mutationKey = MUTATION_KEY;
+	mutationOptions.mutationKey = [ MUTATION_KEY ];
 
 	mutationOptions.onSettled = ( data, error, variables, context ) => {
 		suppliedOnSettled?.( data, error, variables, context );

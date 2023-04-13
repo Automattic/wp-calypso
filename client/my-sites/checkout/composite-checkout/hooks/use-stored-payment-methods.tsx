@@ -6,7 +6,7 @@ import wp from 'calypso/lib/wp';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { ComponentType } from 'react';
 
-export const storedPaymentMethodsQueryKey = 'use-stored-payment-methods';
+export const storedPaymentMethodsQueryKey = [ 'use-stored-payment-methods' ];
 
 export type PaymentMethodRequestType = 'card' | 'agreement' | 'all';
 
