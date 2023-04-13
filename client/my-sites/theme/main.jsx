@@ -87,6 +87,7 @@ import {
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
@@ -1367,6 +1368,7 @@ class ThemeSheet extends Component {
 						onFailure={ this.onAtomicThemeActiveFailure }
 					/>
 				) }
+				<EligibilityWarningModal />
 			</Main>
 		);
 	};

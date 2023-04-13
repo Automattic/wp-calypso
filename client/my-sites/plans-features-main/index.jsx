@@ -357,7 +357,7 @@ export class PlansFeaturesMain extends Component {
 			hidePersonalPlan,
 			hidePremiumPlan,
 			hideEcommercePlan,
-			hideEnterprisePlan = false,
+			hideEnterprisePlan,
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
 			flowName,
@@ -373,7 +373,7 @@ export class PlansFeaturesMain extends Component {
 			plans = plansFromProps;
 		} else {
 			const isBloggerPlanVisible = hideBloggerPlan === true ? false : true;
-			const isEnterprisePlanVisible = is2023PricingGridVisible && hideEnterprisePlan !== false;
+			const isEnterprisePlanVisible = is2023PricingGridVisible && ! hideEnterprisePlan;
 			plans = [
 				findPlansKeys( { group: GROUP_WPCOM, type: TYPE_FREE } )[ 0 ],
 				isBloggerPlanVisible &&
@@ -683,6 +683,7 @@ PlansFeaturesMain.propTypes = {
 	hidePersonalPlan: PropTypes.bool,
 	hidePremiumPlan: PropTypes.bool,
 	hideEcommercePlan: PropTypes.bool,
+	hideEnterprisePlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
 	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly', '2yearly', '3yearly' ] ),
@@ -711,6 +712,7 @@ PlansFeaturesMain.defaultProps = {
 	hideFreePlan: false,
 	hidePersonalPlan: false,
 	hidePremiumPlan: false,
+	hideEnterprisePlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
 	showFAQ: true,

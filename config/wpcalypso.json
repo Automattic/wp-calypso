@@ -158,6 +158,7 @@
 		"subscription-gifting": true,
 		"subscription-management": true,
 		"themes/atomic-homepage-replace": true,
+		"themes/display-thank-you-page": false,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
 		"themes/theme-switch-persist-template": false,
@@ -172,7 +173,6 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/staging-sites-i1": true,
-		"virtual-themes/onboarding": true,
 		"woa-logging": true,
 		"woa-logging-moved": true
 	},

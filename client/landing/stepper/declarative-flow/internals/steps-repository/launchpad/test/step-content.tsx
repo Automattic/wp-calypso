@@ -141,7 +141,6 @@ describe( 'StepContent', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
 			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Edit design' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

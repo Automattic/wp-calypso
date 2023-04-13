@@ -98,3 +98,14 @@ export function getUploadProgressLoaded( state, siteId ) {
 export function isInstallInProgress( state, siteId ) {
 	return getUploadProgressTotal( state, siteId ) === getUploadProgressLoaded( state, siteId );
 }
+
+/**
+ * Returns true if a transfer is completed.
+ *
+ * @param {Object} state -- Global state tree
+ * @param {number} siteId -- Site ID
+ * @returns {boolean} -- True if transfer is completed
+ */
+export function isTransferComplete( state, siteId ) {
+	return get( state.themes.uploadTheme.isTransferComplete, siteId, false );
+}
