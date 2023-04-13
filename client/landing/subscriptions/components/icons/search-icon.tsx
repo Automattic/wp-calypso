@@ -26,6 +26,6 @@ const SearchSVG = (
 	</svg>
 );
 
-const SearchIcon = () => <Icon icon={ SearchSVG } size={ 18 } />;
+const SearchIcon = ( props: Icon.Props< never > ) => <Icon icon={ SearchSVG } { ...props } />;
 
 export default SearchIcon;

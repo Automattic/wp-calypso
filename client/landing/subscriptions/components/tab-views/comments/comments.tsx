@@ -5,8 +5,6 @@ import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import TabView from '../tab-view';
 import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
 
-const noop = () => {};
-
 const posts: PostSubscription[] = [
 	{
 		id: '1',
@@ -43,8 +41,9 @@ const Comments = () => {
 			<div className="subscriptions-manager__list-actions-bar">
 				<SearchInput
 					placeholder={ translate( 'Search by post name…' ) }
-					searchIcon={ <SearchIcon /> }
-					onSearch={ noop }
+					searchIcon={ <SearchIcon size={ 18 } /> }
+					// eslint-disable-next-line @typescript-eslint/no-empty-function -- until we implement search
+					onSearch={ () => {} }
 				/>
 			</div>
 
