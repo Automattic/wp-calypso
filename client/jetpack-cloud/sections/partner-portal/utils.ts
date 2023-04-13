@@ -201,3 +201,18 @@ export function isJetpackBundle( product: APIProductFamilyProduct | string ) {
 	}
 	return product.family_slug === 'jetpack-packs';
 }
+
+/**
+ *	Checks if the license keys are compatible with multisite.
+ *
+ * @param licenseKeys
+ * @returns boolean indicating if the license keys are compatible with multisite
+ */
+export function isMultisiteCompatibleLicenseKeys( licenseKeys: string[] ): boolean {
+	const INCOMPATIBLE_LICENSE_KEY_PREFIXES = [ 'jetpack-backup', 'jetpack-scan' ];
+
+	const isIncompatibleLicenseKey = ( licenseKey: string ) =>
+		!! INCOMPATIBLE_LICENSE_KEY_PREFIXES.find( ( prefix ) => licenseKey?.startsWith( prefix ) );
+
+	return ! licenseKeys.find( ( licenseKey ) => isIncompatibleLicenseKey( licenseKey ) );
+}
