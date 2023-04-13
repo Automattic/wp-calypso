@@ -209,5 +209,6 @@ export function isJetpackBundle( product: APIProductFamilyProduct | string ) {
  * @returns {boolean} indicating if the license keys are compatible with multisite
  */
 export function areLicenseKeysMultisiteCompatible( licenseKeys: Array< string > ): boolean {
+	// Jetpack Backup and Scan are not compatible with WP Multisite.
 	return licenseKeys.every( ( key ) => ! /^jetpack-(backup|scan)/.test( key ) );
 }
