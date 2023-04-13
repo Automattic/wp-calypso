@@ -66,8 +66,6 @@ export default function SubscribersSection( {
 		path: `/stats/subscribers/`,
 	};
 
-	const date = new Date();
-
 	const slugPath = slug ? `/${ slug }` : '';
 	const pathTemplate = `${ subscribers.path }{{ interval }}${ slugPath }`;
 
