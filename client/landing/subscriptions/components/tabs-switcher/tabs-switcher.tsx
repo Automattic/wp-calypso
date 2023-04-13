@@ -9,11 +9,6 @@ import NavTabs from 'calypso/components/section-nav/tabs';
 import { Comments, Settings, Sites } from 'calypso/landing/subscriptions/components/tab-views';
 import './styles.scss';
 
-const getFullPath = ( subpath: string ) => `/subscriptions/${ subpath }`;
-const [ sitesPath, commentsPath, settingsPath ] = [ 'sites', 'comments', 'settings' ].map(
-	getFullPath
-);
-
 const TabsSwitcher = () => {
 	const translate = useTranslate();
 	const navigate = useNavigate();
@@ -22,6 +17,13 @@ const TabsSwitcher = () => {
 	const locale = useLocale();
 	const shouldEnableCommentsTab =
 		config.isEnabled( 'subscription-management-comments-view' ) && locale === 'en';
+
+	const getFullPath = ( subpath: string ) =>
+		`/subscriptions/${ subpath }${ locale !== 'en' ? '/' + locale : '' }`;
+
+	const [ sitesPath, commentsPath, settingsPath ] = [ 'sites', 'comments', 'settings' ].map(
+		getFullPath
+	);
 
 	return (
 		<>
@@ -60,9 +62,9 @@ const TabsSwitcher = () => {
 
 			<Routes>
 				<Route index element={ <Navigate to="sites" /> } />
-				<Route path="sites*" element={ <Sites /> } />
-				<Route path="comments*" element={ <Comments /> } />
-				<Route path="settings" element={ <Settings /> } />
+				<Route path="sites/*" element={ <Sites /> } />
+				<Route path="comments/*" element={ <Comments /> } />
+				<Route path="settings/*" element={ <Settings /> } />
 			</Routes>
 		</>
 	);
