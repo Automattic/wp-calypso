@@ -14,7 +14,6 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 	ElementHelper,
-	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -202,9 +201,5 @@ describe( `Editor: Advanced Post Flow`, function () {
 				type: 'Success',
 			} );
 		} );
-	} );
-
-	afterAll( async function () {
-		const restAPIClient = new RestAPIClient( testAccount.credentials );
 	} );
 } );
