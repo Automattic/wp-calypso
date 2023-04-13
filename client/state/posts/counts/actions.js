@@ -14,8 +14,8 @@ import 'calypso/state/posts/init';
  *
  * @param  {number} siteId   Site ID
  * @param  {string} postType Post type
- * @param  {object} counts   Mapping of post status to count
- * @returns {object}          Action object
+ * @param  {Object} counts   Mapping of post status to count
+ * @returns {Object}          Action object
  */
 export function receivePostCounts( siteId, postType, counts ) {
 	return {

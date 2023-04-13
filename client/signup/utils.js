@@ -5,7 +5,6 @@ import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
 import steps from 'calypso/signup/config/steps-pure';
-import { VIDEOPRESS_ONBOARDING_FLOW_STEPS } from './config/constants';
 
 const { defaultFlowName } = flows;
 
@@ -116,14 +115,6 @@ export function getThemeForDesignType( designType ) {
 	}
 }
 
-export function getVideoPressOnboardingTotalSteps() {
-	return VIDEOPRESS_ONBOARDING_FLOW_STEPS.length;
-}
-
-export function getVideoPressOnboardingStepNumber( stepName ) {
-	return VIDEOPRESS_ONBOARDING_FLOW_STEPS.indexOf( stepName ) + 1;
-}
-
 export function getFilteredSteps( flowName, progress, isUserLoggedIn ) {
 	const flow = flows.getFlow( flowName, isUserLoggedIn );
 
@@ -197,7 +188,7 @@ export const isWpccFlow = ( flowName ) => {
  * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
  * i.e. Check "launch-site" flow while having a purchased paid plan
  *
- * @param  {object} flowSteps steps in the current flow
+ * @param  {Object} flowSteps steps in the current flow
  * @returns {boolean} true indicates that "plans" step will be one of the next steps in the flow
  */
 export const isPlanSelectionAvailableLaterInFlow = ( flowSteps ) => {
@@ -206,8 +197,8 @@ export const isPlanSelectionAvailableLaterInFlow = ( flowSteps ) => {
 	 * i.e. Check flow "domain"
 	 */
 
-	const plansIndex = flowSteps.findIndex(
-		( stepName ) => getStepModuleName( stepName ) === 'plans'
+	const plansIndex = flowSteps.findIndex( ( stepName ) =>
+		[ 'plans', 'plans-pm' ].includes( getStepModuleName( stepName ) )
 	);
 	const domainsIndex = flowSteps.findIndex(
 		( stepName ) => getStepModuleName( stepName ) === 'domains'

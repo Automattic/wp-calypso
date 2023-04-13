@@ -8,6 +8,7 @@ import {
 	PHOTO_GALLERY_PAGE,
 	PRICING_PAGE,
 	SERVICE_SHOWCASE_PAGE,
+	SHOP_PAGE,
 	SITEMAP_PAGE,
 	TEAM_PAGE,
 	TESTIMONIALS_PAGE,
@@ -60,7 +61,8 @@ const Container = styled.div< { isSelected?: boolean; isClickDisabled?: boolean 
 	width: 222px;
 	height: 170px;
 	position: relative;
-	cursor: ${ ( { isClickDisabled } ) => ( isClickDisabled ? 'default' : 'pointer' ) }; ;
+	cursor: ${ ( { isClickDisabled } ) => ( isClickDisabled ? 'default' : 'pointer' ) };
+	pointer-events: ${ ( { isClickDisabled } ) => ( isClickDisabled ? 'none' : 'default' ) };
 `;
 
 const HeaderContainer = styled.div< { isSelected?: boolean; isClickDisabled?: boolean } >`
@@ -141,6 +143,7 @@ export function BrowserView( {
 			case HOME_PAGE:
 				return homePage;
 			case PHOTO_GALLERY_PAGE:
+			case SHOP_PAGE:
 				return photoGallery;
 			case SERVICE_SHOWCASE_PAGE:
 				return serviceShowcase;

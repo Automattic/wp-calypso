@@ -1,4 +1,4 @@
-import { ActionButtons } from '@automattic/onboarding';
+import { ActionButtons, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -138,6 +138,11 @@ class StepWrapper extends Component {
 				return this.props.headerText;
 			}
 
+			const params = new URLSearchParams( window.location.search );
+			if ( params.get( 'variationName' ) === NEWSLETTER_FLOW ) {
+				return this.props.translate( 'Let’s get you signed up.' );
+			}
+
 			return this.props.translate( 'Let’s get started' );
 		}
 
@@ -178,6 +183,7 @@ class StepWrapper extends Component {
 			headerImageUrl,
 			isHorizontalLayout,
 			customizedActionButtons,
+			isExtraWideLayout,
 		} = this.props;
 
 		const backButton = ! hideBack && this.renderBack();
@@ -190,6 +196,7 @@ class StepWrapper extends Component {
 		const classes = classNames( 'step-wrapper', this.props.className, {
 			'is-horizontal-layout': isHorizontalLayout,
 			'is-wide-layout': isWideLayout,
+			'is-extra-wide-layout': isExtraWideLayout,
 			'is-full-layout': isFullLayout,
 			'is-large-skip-layout': isLargeSkipLayout,
 			'has-navigation': hasNavigation,

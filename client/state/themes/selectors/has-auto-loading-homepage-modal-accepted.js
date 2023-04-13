@@ -5,7 +5,7 @@ import 'calypso/state/themes/init';
  * accepted by the user, which means that the theme
  * will be activated.
  *
- * @param {object} state   Global state tree
+ * @param {Object} state   Global state tree
  * @param {string} themeId Theme ID to activate in the site.
  * @returns {boolean}      True if the auto loading homepage dialog has been accepted. Otherwise, False.
  */

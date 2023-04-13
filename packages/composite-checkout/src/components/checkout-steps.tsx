@@ -362,7 +362,9 @@ function CheckoutStepGroupWrapper( {
 			// a duplicate of the store object to the React context. This way all
 			// context consumers get the modified store because its identity has
 			// changed.
-			isMounted.current && setContextValue( { ...store } );
+			setTimeout( () => {
+				isMounted.current && setContextValue( { ...store } );
+			}, 0 );
 		} );
 	}, [ store ] );
 

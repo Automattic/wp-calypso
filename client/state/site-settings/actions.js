@@ -18,8 +18,8 @@ import 'calypso/state/ui/init';
  * Returns an action object to be used in signalling that site settings have been received.
  *
  * @param  {number} siteId Site ID
- * @param  {object} settings The site settings object
- * @returns {object}        Action object
+ * @param  {Object} settings The site settings object
+ * @returns {Object}        Action object
  */
 export function receiveSiteSettings( siteId, settings ) {
 	return {
@@ -33,8 +33,8 @@ export function receiveSiteSettings( siteId, settings ) {
  * Returns an action object to be used in signalling that some site settings have been update.
  *
  * @param  {number} siteId Site ID
- * @param  {object} settings The updated site settings
- * @returns {object}        Action object
+ * @param  {Object} settings The updated site settings
+ * @returns {Object}        Action object
  */
 export function updateSiteSettings( siteId, settings ) {
 	return {

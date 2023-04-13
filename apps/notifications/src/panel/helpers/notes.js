@@ -9,7 +9,7 @@ function getActionBlock( blocks ) {
  * Returns an object specifying which actions are enabled for a note and their values
  *
  * @param note
- * @returns {object}
+ * @returns {Object}
  */
 export function getActions( note ) {
 	return getActionBlock( note.body ).actions;

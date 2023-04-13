@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import { SimpleItemCardProps } from '../types';
 
 import './style.scss';
@@ -7,10 +7,12 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 	ctaAsPrimary,
 	ctaHref,
 	ctaLabel,
+	ctaAriaLabel,
 	description,
 	icon,
 	isCtaDisabled,
 	isCtaExternal,
+	isProductInCart,
 	onClickCta,
 	price,
 	title,
@@ -31,7 +33,9 @@ export const SimpleItemCard: React.FC< SimpleItemCardProps > = ( {
 						href={ isCtaDisabled ? '#' : ctaHref }
 						target={ isCtaExternal ? '_blank' : undefined }
 						primary={ ctaAsPrimary }
+						aria-label={ ctaAriaLabel }
 					>
+						{ isProductInCart && <Gridicon icon="checkmark" /> }
 						{ ctaLabel }
 					</Button>
 				</div>

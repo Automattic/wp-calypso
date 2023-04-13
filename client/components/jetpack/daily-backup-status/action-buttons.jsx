@@ -71,18 +71,54 @@ const RestoreButton = ( { disabled, rewindId, primary } ) => {
 	);
 };
 
-const ActionButtons = ( { rewindId, disabled, isMultiSite, hasWarnings = false } ) => (
+const CloneButton = ( { disabled, rewindId, primary, onClickClone } ) => {
+	const translate = useTranslate();
+
+	const siteId = useSelector( getSelectedSiteId );
+	const isRestoreInProgress = useSelector( ( state ) => getIsRestoreInProgress( state, siteId ) );
+	const isCloneDisabled = disabled || isRestoreInProgress; // TODO check if there is valid alternate credentials?
+
+	return (
+		<Button
+			isPrimary={ primary }
+			className="daily-backup-status__clone-button"
+			disabled={ isCloneDisabled }
+			onClick={ () => onClickClone( rewindId ) }
+		>
+			{ translate( 'Clone from latest point' ) }
+		</Button>
+	);
+};
+
+const ActionButtons = ( {
+	rewindId,
+	disabled,
+	isMultiSite,
+	hasWarnings = false,
+	availableActions = [ 'rewind', 'download' ],
+	onClickClone,
+} ) => (
 	<>
-		<DownloadButton
-			disabled={ disabled || ! rewindId }
-			rewindId={ rewindId }
-			primary={ isMultiSite }
-		/>
-		{ ! isMultiSite && (
+		{ availableActions && availableActions.includes( 'download' ) && (
+			<DownloadButton
+				disabled={ disabled || ! rewindId }
+				rewindId={ rewindId }
+				primary={ isMultiSite }
+			/>
+		) }
+		{ ! isMultiSite && availableActions && availableActions.includes( 'rewind' ) && (
 			<RestoreButton
 				disabled={ disabled || ! rewindId }
 				rewindId={ rewindId }
 				primary={ ! hasWarnings }
+			/>
+		) }
+		{ availableActions && availableActions.includes( 'clone' ) && (
+			<CloneButton
+				disabled={ disabled }
+				rewindId={ rewindId }
+				primary={ true }
+				onClickClone={ onClickClone }
 			/>
 		) }
 	</>

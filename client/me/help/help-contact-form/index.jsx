@@ -107,7 +107,7 @@ export class HelpContactForm extends PureComponent {
 	/**
 	 * Set up our initial state
 	 *
-	 * @returns {object} An object representing our initial state
+	 * @returns {Object} An object representing our initial state
 	 */
 	state = this.props.valueLink.value || {
 		message: '',
@@ -151,7 +151,7 @@ export class HelpContactForm extends PureComponent {
 		} );
 	};
 
-	getSibylQuery = () => ( this.state.subject + ' ' + this.state.message ).trim();
+	getSibylQuery = () => this.state.message.trim();
 
 	doRequestSite = () => {
 		if ( resemblesUrl( this.state.userDeclaredUrl ) ) {
@@ -205,15 +205,21 @@ export class HelpContactForm extends PureComponent {
 
 		wpcom.req
 			.get( '/help/qanda', { query, site } )
-			.then( ( qanda ) =>
+			.then( ( qanda ) => {
+				const sameQuestionsReturned = areSameQuestions( this.state.qanda, qanda );
+				if ( ! sameQuestionsReturned ) {
+					recordTracksEvent( 'calypso_sibyl_display_results', {
+						results_count: qanda?.length,
+					} );
+				}
 				this.setState( {
 					qanda: Array.isArray( qanda ) ? qanda : [],
 					// only keep sibylClicked true if the user is seeing the same set of questions
 					// we don't want to track "questions -> question click -> different questions -> support click",
 					// so we need to set sibylClicked to false here if the questions have changed
-					sibylClicked: this.state.sibylClicked && areSameQuestions( this.state.qanda, qanda ),
-				} )
-			)
+					sibylClicked: this.state.sibylClicked && sameQuestionsReturned,
+				} );
+			} )
 			.catch( () => this.setState( { qanda: [], sibylClicked: false } ) );
 	};
 
@@ -378,7 +384,7 @@ export class HelpContactForm extends PureComponent {
 	/**
 	 * Render the contact form
 	 *
-	 * @returns {object} ReactJS JSX object
+	 * @returns {Object} ReactJS JSX object
 	 */
 	render() {
 		const {
@@ -482,6 +488,19 @@ export class HelpContactForm extends PureComponent {
 			<div className="help-contact-form">
 				{ formDescription && <p>{ formDescription }</p> }
 
+				{ showChatStagingNotice && (
+					<Notice
+						className="help-contact-form__site-notice"
+						status="is-warning"
+						showDismiss={ false }
+						text="Targeting HappyChat staging"
+					>
+						<NoticeAction href="https://wp.me/PCYsg-Q7X" external>
+							Learn More
+						</NoticeAction>
+					</Notice>
+				) }
+
 				{ showSiteField && (
 					<div className="help-contact-form__site-selection">
 						{ ! hasNoSites && (
@@ -556,18 +575,6 @@ export class HelpContactForm extends PureComponent {
 								{ actionMessage }
 							</NoticeAction>
 						) }
-					</Notice>
-				) }
-				{ showChatStagingNotice && (
-					<Notice
-						className="help-contact-form__site-notice"
-						status="is-warning"
-						showDismiss={ false }
-						text="Targeting HappyChat staging"
-					>
-						<NoticeAction href="https://hud-staging.happychat.io/" external>
-							HUD
-						</NoticeAction>
 					</Notice>
 				) }
 

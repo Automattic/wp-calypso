@@ -3,120 +3,138 @@
  */
 
 /* eslint-disable jest/no-conditional-expect */
-
-import { shallow } from 'enzyme';
+import '@testing-library/jest-dom';
+import { render } from '@testing-library/react';
 import moment from 'moment';
 import {
 	FacebookPreview as Facebook,
 	TwitterPreview as Twitter,
 	SearchPreview as Search,
 } from '../src';
-import Tweet from '../src/twitter-preview/tweet';
 
 const IMAGE_SRC_FIXTURE = 'https://wordpress.com/someimagehere';
 
 describe( 'Facebook previews', () => {
-	it( 'should expose a Facebook preview component', () => {
-		expect( Facebook ).not.toBe( undefined );
-	} );
-
 	it( 'should display a (hard) truncated title', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<Facebook title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral." />
 		);
 
-		const titleEl = wrapper.find( '.facebook-preview__title' );
-		expect( titleEl.exists() ).toBeTruthy();
-		expect( titleEl.text() ).toEqual(
+		const titleEl = container.querySelector( '.facebook-preview__title' );
+
+		expect( titleEl ).toBeVisible();
+		expect( titleEl ).toHaveTextContent(
 			"I am the very model of a modern Major-General, I've information vegetable, anima…"
 		);
-		const titleTextNoEllipsis = titleEl.text().replace( '…', '' );
-		expect( titleTextNoEllipsis ).toHaveLength( 80 );
+		expect( titleEl.textContent.replace( '…', '' ) ).toHaveLength( 80 );
 	} );
 
 	it( 'should display a (hard) truncated description', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<Facebook description="I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
 		);
 
-		const descEl = wrapper.find( '.facebook-preview__description' );
-		expect( descEl.exists() ).toBeTruthy();
-		expect( descEl.text() ).toEqual(
+		const descEl = container.querySelector( '.facebook-preview__description' );
+
+		expect( descEl ).toBeVisible();
+		expect( descEl ).toHaveTextContent(
 			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both …"
 		);
-
-		const descTextNoEllipsis = descEl.text().replace( '…', '' );
-		expect( descTextNoEllipsis ).toHaveLength( 200 );
+		expect( descEl.textContent.replace( '…', '' ) ).toHaveLength( 200 );
 	} );
 
 	it( 'should strip html tags from the description', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<Facebook description="<p style='color:red'>I know the kings of <span>England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, <span>both</span> the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
 		);
 
-		const descEl = wrapper.find( '.facebook-preview__description' );
-		expect( descEl.exists() ).toBeTruthy();
-		expect( descEl.text() ).toEqual(
+		const descEl = container.querySelector( '.facebook-preview__description' );
+
+		expect( descEl ).toBeVisible();
+		expect( descEl ).toHaveTextContent(
 			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both …"
 		);
-
-		const descTextNoEllipsis = descEl.text().replace( '…', '' );
-		expect( descTextNoEllipsis ).toHaveLength( 200 );
+		expect( descEl.textContent.replace( '…', '' ) ).toHaveLength( 200 );
 	} );
 
 	it( 'should display image only when provided', () => {
-		const wrapperNoImage = shallow( <Facebook /> );
-		const wrapperWithImage = shallow( <Facebook image={ IMAGE_SRC_FIXTURE } /> );
+		const { container } = render(
+			<>
+				<Facebook type="article" />
+				<Facebook image={ IMAGE_SRC_FIXTURE } type="website" />
+			</>
+		);
 
 		// No image
-		expect( wrapperNoImage.find( 'img[alt="Facebook Preview Thumbnail"]' ).exists() ).toBeFalsy();
+		expect(
+			container
+				.querySelector( '.facebook-preview__article' )
+				.querySelector( 'img[alt="Facebook Preview Thumbnail"]' )
+		).not.toBeInTheDocument();
 
 		// Has image
-		const imageEl = wrapperWithImage.find( 'img[alt="Facebook Preview Thumbnail"]' );
-		expect( imageEl.exists() ).toBeTruthy();
-		expect( imageEl.html() ).toContain( `src="${ IMAGE_SRC_FIXTURE }"` );
+		const imageEl = container
+			.querySelector( '.facebook-preview__website' )
+			.querySelector( 'img[alt="Facebook Preview Thumbnail"]' );
+
+		expect( imageEl ).toBeVisible();
+		expect( imageEl ).toHaveAttribute( 'src', IMAGE_SRC_FIXTURE );
 	} );
 
 	describe( 'Preview url display', () => {
 		it( 'should display a protocol-less url and author if provided', () => {
-			const wrapper = shallow( <Facebook url="https://wordpress.com" author="Jane Doe" /> );
+			const { container } = render( <Facebook url="https://wordpress.com" author="Jane Doe" /> );
 
-			const urlEl = wrapper.find( '.facebook-preview__url' );
-			expect( urlEl.exists() ).toBeTruthy();
-			expect( urlEl.text() ).toEqual( 'wordpress.com | Jane Doe' );
+			const urlEl = container.querySelector( '.facebook-preview__url' );
+
+			expect( urlEl ).toBeVisible();
+			expect( urlEl ).toHaveTextContent( 'wordpress.com | Jane Doe' );
 		} );
 
 		it( 'should display a protocol-less url only (with no separator) when author is not provided', () => {
-			const wrapper = shallow( <Facebook url="https://wordpress.com" /> );
+			const { container } = render( <Facebook url="https://wordpress.com" /> );
 
-			const urlEl = wrapper.find( '.facebook-preview__url' );
-			expect( urlEl.exists() ).toBeTruthy();
-			expect( urlEl.text() ).toEqual( 'wordpress.com' );
-			expect( urlEl.text() ).not.toContain( '|' );
+			const urlEl = container.querySelector( '.facebook-preview__url' );
+
+			expect( urlEl ).toBeVisible();
+			expect( urlEl ).toHaveTextContent( 'wordpress.com' );
+			expect( urlEl.textContent ).not.toContain( '|' );
 		} );
 
 		it( 'should display the author only (with no separator) when a url is not provided', () => {
-			const wrapper = shallow( <Facebook author="Jane Doe" /> );
+			const { container } = render( <Facebook author="Jane Doe" /> );
 
-			const urlEl = wrapper.find( '.facebook-preview__url' );
-			expect( urlEl.exists() ).toBeTruthy();
-			expect( urlEl.text() ).toEqual( 'Jane Doe' );
-			expect( urlEl.text() ).not.toContain( '|' );
+			const urlEl = container.querySelector( '.facebook-preview__url' );
+
+			expect( urlEl ).toBeVisible();
+			expect( urlEl ).toHaveTextContent( 'Jane Doe' );
+			expect( urlEl.textContent ).not.toContain( '|' );
 		} );
 	} );
 
 	describe( 'Styling hooks', () => {
 		it( 'should append a classname with the correct "type" to the root element when provided', () => {
-			const wrapper = shallow( <Facebook type="article" /> );
+			const { container } = render( <Facebook type="article" /> );
 
-			const rootEl = wrapper.find( '.facebook-preview' );
+			const rootEl = container.querySelector( '.facebook-preview' );
 
-			expect( rootEl.hasClass( 'facebook-preview__article' ) ).toBeTruthy();
+			expect( rootEl ).toHaveClass( 'facebook-preview__article' );
 		} );
 	} );
 } );
 
 describe( 'Twitter previews', () => {
+	let originalConsoleError;
+
+	beforeAll( () => {
+		originalConsoleError = global.console.error;
+		global.console.error = jest.fn();
+	} );
+
+	afterAll( () => {
+		global.console.error = originalConsoleError;
+	} );
+
 	const emptyTweet = {
 		profileImage: '',
 		name: '',
@@ -128,90 +146,91 @@ describe( 'Twitter previews', () => {
 		urls: [],
 	};
 
-	it( 'should expose a Twitter preview component', () => {
-		expect( Twitter ).not.toBe( undefined );
-	} );
-
 	it( 'should display an untruncated title', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<Twitter title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral." />
 		);
 
-		const tweetWrapper = wrapper.find( Tweet ).dive();
+		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
+		const titleEl = tweetWrapper.querySelector( '.twitter-preview__card-title' );
 
-		const titleEl = tweetWrapper.find( '.twitter-preview__card-title' );
-		expect( titleEl.exists() ).toBeTruthy();
-		expect( titleEl.text() ).toEqual(
+		expect( titleEl ).toBeVisible();
+		expect( titleEl ).toHaveTextContent(
 			"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral."
 		);
 	} );
 
 	it( 'should display a truncated description', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<Twitter description="I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
 		);
 
-		const tweetWrapper = wrapper.find( Tweet ).dive();
+		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
+		const descEl = tweetWrapper.querySelector( '.twitter-preview__card-description' );
 
-		const descEl = tweetWrapper.find( '.twitter-preview__card-description' );
-		expect( descEl.exists() ).toBeTruthy();
-		expect( descEl.text() ).toEqual(
+		expect( descEl ).toBeVisible();
+		expect( descEl ).toHaveTextContent(
 			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both …"
 		);
-
-		const descTextNoEllipsis = descEl.text().replace( '…', '' );
-		expect( descTextNoEllipsis ).toHaveLength( 200 );
+		expect( descEl.textContent.replace( '…', '' ) ).toHaveLength( 200 );
 	} );
 
 	it( 'should strip html tags from the description', () => {
-		const wrapper = shallow(
+		const { container } = render(
 			<Twitter description="<p style='color:red'>I know the kings of <span>England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, <span>both</span> the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
 		);
 
-		const tweetWrapper = wrapper.find( Tweet ).dive();
+		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
+		const descEl = tweetWrapper.querySelector( '.twitter-preview__card-description' );
 
-		const descEl = tweetWrapper.find( '.twitter-preview__card-description' );
-		expect( descEl.exists() ).toBeTruthy();
-		expect( descEl.text() ).toEqual(
+		expect( descEl ).toBeVisible();
+		expect( descEl ).toHaveTextContent(
 			"I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both …"
 		);
 	} );
 
 	it( 'should display image only when provided', () => {
-		const wrapperNoImage = shallow( <Twitter /> );
-		const wrapperWithImage = shallow( <Twitter image={ IMAGE_SRC_FIXTURE } /> );
+		const { container } = render(
+			<>
+				<Twitter />
+				<Twitter image={ IMAGE_SRC_FIXTURE } />
+			</>
+		);
 
-		const tweetWrapperNoImage = wrapperNoImage.find( Tweet ).dive();
-		const tweetWrapperWithImage = wrapperWithImage.find( Tweet ).dive();
+		const twitterPreviews = container.querySelectorAll( '.twitter-preview' );
+		const tweetWrapperNoImage = twitterPreviews[ 0 ];
+		const tweetWrapperWithImage = twitterPreviews[ 1 ];
 
 		// No image
-		expect( tweetWrapperNoImage.find( '.twitter-preview__card-image' ).exists() ).toBeFalsy();
+		expect(
+			tweetWrapperNoImage.querySelector( '.twitter-preview__card-image' )
+		).not.toBeInTheDocument();
 
 		// Has image
-		const imageEl = tweetWrapperWithImage.find( '.twitter-preview__card-image' );
-		expect( imageEl.exists() ).toBeTruthy();
-		expect( imageEl.html() ).toContain( `src="${ IMAGE_SRC_FIXTURE }"` );
+		const imageEl = tweetWrapperWithImage.querySelector( '.twitter-preview__card-image' );
+
+		expect( imageEl ).toBeVisible();
+		expect( imageEl ).toHaveAttribute( 'src', IMAGE_SRC_FIXTURE );
 	} );
 
 	it( 'should display a protocol-less url only (with no separator) when author is not provided', () => {
-		const wrapper = shallow( <Twitter url="https://wordpress.com" /> );
+		const { container } = render( <Twitter url="https://wordpress.com" /> );
 
-		const tweetWrapper = wrapper.find( Tweet ).dive();
+		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
+		const urlEl = tweetWrapper.querySelector( '.twitter-preview__card-url' );
 
-		const urlEl = tweetWrapper.find( '.twitter-preview__card-url' );
-		expect( urlEl.exists() ).toBeTruthy();
-		expect( urlEl.text() ).toEqual( 'wordpress.com' );
+		expect( urlEl ).toBeVisible();
+		expect( urlEl ).toHaveTextContent( 'wordpress.com' );
 	} );
 
 	describe( 'Styling hooks', () => {
 		it( 'should append a classname with the correct "type" to the root element when provided', () => {
-			const wrapper = shallow( <Twitter type="article" /> );
+			const { container } = render( <Twitter type="article" /> );
 
-			const tweetWrapper = wrapper.find( Tweet ).dive();
+			const tweetWrapper = container.querySelector( '.twitter-preview__container' );
+			const innerEl = tweetWrapper.querySelector( '.twitter-preview__card > div' );
 
-			const innerEl = tweetWrapper.find( '.twitter-preview__card > div' );
-
-			expect( innerEl.hasClass( 'twitter-preview__card-article' ) ).toBeTruthy();
+			expect( innerEl ).toHaveClass( 'twitter-preview__card-article' );
 		} );
 	} );
 
@@ -220,7 +239,6 @@ describe( 'Twitter previews', () => {
 		const name = 'WordPress';
 		const screenName = '@WordPress';
 		const date = Date.now();
-
 		const tweets = [
 			{
 				...emptyTweet,
@@ -231,19 +249,20 @@ describe( 'Twitter previews', () => {
 			},
 		];
 
-		const wrapper = shallow( <Twitter tweets={ tweets } /> );
-		const tweetWrapper = wrapper.find( Tweet );
+		const { container } = render( <Twitter tweets={ tweets } /> );
 
-		expect( tweetWrapper ).toHaveLength( 1 );
+		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
-		const renderedWrapper = tweetWrapper.dive();
-
-		expect( renderedWrapper.find( '.twitter-preview__profile-image > img' ).html() ).toContain(
-			`src="${ profileImage }"`
+		expect( tweetWrapper ).toBeVisible();
+		expect( tweetWrapper.querySelector( '.twitter-preview__profile-image > img' ) ).toHaveAttribute(
+			'src',
+			profileImage
 		);
-		expect( renderedWrapper.find( '.twitter-preview__name' ).text() ).toEqual( name );
-		expect( renderedWrapper.find( '.twitter-preview__screen-name' ).text() ).toEqual( screenName );
-		expect( renderedWrapper.find( '.twitter-preview__date' ).text() ).toEqual(
+		expect( tweetWrapper.querySelector( '.twitter-preview__name' ) ).toHaveTextContent( name );
+		expect( tweetWrapper.querySelector( '.twitter-preview__screen-name' ) ).toHaveTextContent(
+			screenName
+		);
+		expect( tweetWrapper.querySelector( '.twitter-preview__date' ) ).toHaveTextContent(
 			moment( date ).format( 'MMM D' )
 		);
 	} );
@@ -262,22 +281,22 @@ describe( 'Twitter previews', () => {
 			},
 		];
 
-		const wrapper = shallow( <Twitter tweets={ tweets } /> );
-		const tweetWrapper = wrapper.find( Tweet );
+		const { container } = render( <Twitter tweets={ tweets } /> );
 
-		expect( tweetWrapper ).toHaveLength( 1 );
+		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
-		const textEl = tweetWrapper.dive().find( '.twitter-preview__text' );
-		expect( textEl ).toHaveLength( 1 );
+		expect( tweetWrapper ).toBeVisible();
 
-		expect( textEl.render().html() ).toEqual(
+		const textEl = tweetWrapper.querySelector( '.twitter-preview__text' );
+
+		expect( textEl ).toBeVisible();
+		expect( textEl ).toContainHTML(
 			'This text (<a href="https://jetpack.com/">https://jetpack.com/</a>) has (<a href="https://wordpress.com/">https://wordpress.com/</a>) some (<a href="https://jetpack.com/">https://jetpack.com/</a>) URLs (<a href="https://wordpress.org/">https://wordpress.org/</a>).'
 		);
 	} );
 
 	it( 'should render a quoted tweet', () => {
 		const tweet = 'https://twitter.com/GaryPendergast/status/934003415507546112';
-
 		const tweets = [
 			{
 				...emptyTweet,
@@ -285,16 +304,16 @@ describe( 'Twitter previews', () => {
 			},
 		];
 
-		const wrapper = shallow( <Twitter tweets={ tweets } /> );
-		const tweetWrapper = wrapper.find( Tweet );
+		const { container } = render( <Twitter tweets={ tweets } /> );
 
-		expect( tweetWrapper ).toHaveLength( 1 );
+		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
 
-		const quoteEl = tweetWrapper.dive().find( '.twitter-preview__quote-tweet' );
+		expect( tweetWrapper ).toBeVisible();
 
-		expect( quoteEl ).toHaveLength( 1 );
+		const quoteEl = tweetWrapper.querySelector( '.twitter-preview__quote-tweet' );
 
-		expect( quoteEl.childAt( 0 ).prop( 'html' ) ).toEqual(
+		expect( quoteEl ).toBeVisible();
+		expect( quoteEl.children.item( 0 ).contentWindow.document.body ).toContainHTML(
 			`<blockquote class="twitter-tweet" data-conversation="none" data-dnt="true"><a href="${ tweet }"></a></blockquote>`
 		);
 	} );
@@ -310,20 +329,22 @@ describe( 'Twitter previews', () => {
 				text: 'tweet-2',
 			},
 		];
-		const wrapper = shallow( <Twitter tweets={ tweets } /> );
-		const tweetWrappers = wrapper.find( Tweet );
+		const { container } = render( <Twitter tweets={ tweets } /> );
+
+		const tweetWrappers = container.querySelectorAll( '.twitter-preview__container' );
 
 		expect( tweetWrappers ).toHaveLength( 2 );
 
-		expect( tweetWrappers.at( 0 ).render().find( '.twitter-preview__text' ).text() ).toEqual(
+		expect( tweetWrappers.item( 0 ).querySelector( '.twitter-preview__text' ) ).toHaveTextContent(
 			'tweet-1'
 		);
-		expect( tweetWrappers.at( 1 ).render().find( '.twitter-preview__text' ).text() ).toEqual(
+		expect( tweetWrappers.item( 1 ).querySelector( '.twitter-preview__text' ) ).toHaveTextContent(
 			'tweet-2'
 		);
-
-		expect( tweetWrappers.at( 0 ).prop( 'isLast' ) ).toBeFalsy();
-		expect( tweetWrappers.at( 1 ).prop( 'isLast' ) ).toBeTruthy();
+		expect( tweetWrappers.item( 0 ).querySelector( '.twitter-preview__connector' ) ).toBeVisible();
+		expect(
+			tweetWrappers.item( 1 ).querySelector( '.twitter-preview__connector' )
+		).not.toBeInTheDocument();
 	} );
 
 	it( 'should render media correctly', () => {
@@ -447,34 +468,38 @@ describe( 'Twitter previews', () => {
 			],
 		];
 
-		const wrapper = shallow( <Twitter tweets={ tweets } /> );
-		const tweetWrappers = wrapper.find( Tweet );
+		const { container } = render( <Twitter tweets={ tweets } /> );
+
+		const tweetWrappers = container.querySelectorAll( '.twitter-preview__container' );
 
 		expect( tweetWrappers ).toHaveLength( tweets.length );
 
 		tweetWrappers.forEach( ( tweet, index ) => {
-			const mediaEl = tweet.dive().find( '.twitter-preview__media' );
+			const mediaEl = tweet.querySelector( '.twitter-preview__media' );
 
 			if ( expected[ index ].length === 0 ) {
-				expect( mediaEl.exists() ).toBeFalsy();
+				expect( mediaEl ).not.toBeInTheDocument();
 				return;
 			}
 
-			expect( mediaEl.exists() ).toBeTruthy();
-			expect( mediaEl.children() ).toHaveLength( expected[ index ].length );
+			expect( mediaEl ).toBeVisible();
+			expect( mediaEl.children ).toHaveLength( expected[ index ].length );
 
 			expected[ index ].forEach( ( mediaItem, mediaIndex ) => {
-				const mediaItemEl = mediaEl.childAt( mediaIndex );
-				expect( mediaItemEl.type() ).toEqual( mediaItem.tag );
+				const mediaItemEl = mediaEl.children.item( mediaIndex );
+				expect( mediaItemEl.tagName.toLowerCase() ).toEqual( mediaItem.tag );
 
 				switch ( mediaItem.tag ) {
 					case 'img':
-						expect( mediaItemEl.prop( 'alt' ) ).toEqual( mediaItem.alt );
-						expect( mediaItemEl.prop( 'src' ) ).toEqual( mediaItem.src );
+						expect( mediaItemEl ).toHaveAttribute( 'alt', mediaItem.alt );
+						expect( mediaItemEl ).toHaveAttribute( 'src', mediaItem.src );
 						break;
 					case 'video':
-						expect( mediaItemEl.find( 'source' ).prop( 'src' ) ).toEqual( mediaItem.src );
-						expect( mediaItemEl.find( 'source' ).prop( 'type' ) ).toEqual( mediaItem.type );
+						expect( mediaItemEl.querySelector( 'source' ) ).toHaveAttribute( 'src', mediaItem.src );
+						expect( mediaItemEl.querySelector( 'source' ) ).toHaveAttribute(
+							'type',
+							mediaItem.type
+						);
 						break;
 				}
 			} );
@@ -483,124 +508,132 @@ describe( 'Twitter previews', () => {
 } );
 
 describe( 'Search previews', () => {
-	it( 'should expose a Search preview component', () => {
-		expect( Search ).not.toBe( undefined );
-	} );
-
 	describe( 'Title truncation', () => {
 		it( 'should display entire title if short enough', () => {
-			const wrapper = shallow( <Search title="I am the very model of a modern Major-General" /> );
+			const { container } = render(
+				<Search title="I am the very model of a modern Major-General" />
+			);
 
-			const titleEl = wrapper.find( '.search-preview__title' );
-			expect( titleEl.exists() ).toBeTruthy();
-			expect( titleEl.text() ).toEqual( 'I am the very model of a modern Major-General' );
-			const titleElNoEllipsis = titleEl.text().replace( '…', '' );
-			expect( titleElNoEllipsis.length ).toBeLessThanOrEqual( 63 );
+			const titleEl = container.querySelector( '.search-preview__title' );
+
+			expect( titleEl ).toBeVisible();
+			expect( titleEl ).toHaveTextContent( 'I am the very model of a modern Major-General' );
+			expect( titleEl.textContent.replace( '…', '' ).length ).toBeLessThanOrEqual( 63 );
 		} );
 
 		it( 'should truncate title at suitable space character where possible', () => {
-			const wrapper = shallow(
+			const { container } = render(
 				<Search title="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral." />
 			);
 
-			const titleEl = wrapper.find( '.search-preview__title' );
-			expect( titleEl.exists() ).toBeTruthy();
-			expect( titleEl.text() ).toEqual(
+			const titleEl = container.querySelector( '.search-preview__title' );
+
+			expect( titleEl ).toBeVisible();
+			expect( titleEl ).toHaveTextContent(
 				"I am the very model of a modern Major-General, I've information…"
 			);
-			const titleElNoEllipsis = titleEl.text().replace( '…', '' );
-			expect( titleElNoEllipsis.length ).toBeLessThanOrEqual( 63 );
+			expect( titleEl.textContent.replace( '…', '' ).length ).toBeLessThanOrEqual( 63 );
 		} );
 
 		it( 'should hard truncate title as last resort', () => {
-			const wrapper = shallow(
+			const { container } = render(
 				<Search title="IamtheverymodelofamodernMajorGeneralIveinformationvegetableanimalandmineral." />
 			);
 
-			const titleEl = wrapper.find( '.search-preview__title' );
-			expect( titleEl.exists() ).toBeTruthy();
-			expect( titleEl.text() ).toEqual(
+			const titleEl = container.querySelector( '.search-preview__title' );
+
+			expect( titleEl ).toBeVisible();
+			expect( titleEl ).toHaveTextContent(
 				'IamtheverymodelofamodernMajorGeneralIveinformationvegetableanim…'
 			);
-			const titleElNoEllipsis = titleEl.text().replace( '…', '' );
-			expect( titleElNoEllipsis ).toHaveLength( 63 );
+			expect( titleEl.textContent.replace( '…', '' ) ).toHaveLength( 63 );
 		} );
 	} );
 
 	describe( 'Description truncation', () => {
 		it( 'should display entire description if short enough', () => {
-			const wrapper = shallow(
+			const { container } = render(
 				<Search description="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical." />
 			);
 
-			const descriptionEl = wrapper.find( '.search-preview__description' );
-			expect( descriptionEl.exists() ).toBeTruthy();
-			expect( descriptionEl.text() ).toEqual(
+			const descriptionEl = container.querySelector( '.search-preview__description' );
+
+			expect( descriptionEl ).toBeVisible();
+			expect( descriptionEl ).toHaveTextContent(
 				"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical."
 			);
-			expect( descriptionEl.text().length ).toBeLessThanOrEqual( 160 );
+			expect( descriptionEl.textContent.length ).toBeLessThanOrEqual( 160 );
 		} );
 
 		it( 'should truncate description at suitable space character where possible', () => {
 			const descriptionUpperBound = 160 + 10;
-			const wrapper = shallow(
+
+			const { container } = render(
 				<Search description="I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, From Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
 			);
 
-			const descriptionEl = wrapper.find( '.search-preview__description' );
-			expect( descriptionEl.exists() ).toBeTruthy();
-			expect( descriptionEl.text() ).toEqual(
+			const descriptionEl = container.querySelector( '.search-preview__description' );
+
+			expect( descriptionEl ).toBeVisible();
+			expect( descriptionEl ).toHaveTextContent(
 				"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, From…"
 			);
-			const rawDescriptionText = descriptionEl.text().replace( '…', '' );
-			expect( rawDescriptionText.length ).toBeLessThanOrEqual( descriptionUpperBound );
+			expect( descriptionEl.textContent.replace( '…', '' ).length ).toBeLessThanOrEqual(
+				descriptionUpperBound
+			);
 		} );
 
 		it( 'should hard truncate description as last resort', () => {
-			const wrapper = shallow(
+			const { container } = render(
 				<Search description="IamtheverymodelofamodernMajor-General,I'veinformationvegetable,animal,andmineral.IknowthekingsofEngland,andIquotethefightshistorical,FromMarathontoWaterloo,inordercategorical;I'mverywellacquainted,too,withmattersmathematical,Iunderstandequations,boththesimpleandquadratical;AboutbinomialtheoremI'mteemingwithaloto'news,Withmanycheerfulfactsaboutthesquareofthehypotenuse." />
 			);
 
-			const descriptionEl = wrapper.find( '.search-preview__description' );
-			expect( descriptionEl.exists() ).toBeTruthy();
-			expect( descriptionEl.text() ).toEqual(
+			const descriptionEl = container.querySelector( '.search-preview__description' );
+
+			expect( descriptionEl ).toBeVisible();
+			expect( descriptionEl ).toHaveTextContent(
 				"IamtheverymodelofamodernMajor-General,I'veinformationvegetable,animal,andmineral.IknowthekingsofEngland,andIquotethefightshistorical,FromMarathontoWaterloo,inor…"
 			);
-			const descriptionElNoEllipsis = descriptionEl.text().replace( '…', '' );
-			expect( descriptionElNoEllipsis ).toHaveLength( 160 );
+			expect( descriptionEl.textContent.replace( '…', '' ) ).toHaveLength( 160 );
 		} );
 
 		it( 'should strip html tags from the description', () => {
 			const descriptionUpperBound = 160 + 10;
-			const wrapper = shallow(
+
+			const { container } = render(
 				<Search description="<p style='color:red'>I am the very model</p> of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, <span>From</span> Marathon to Waterloo, in order categorical; I'm very well acquainted, too, with matters mathematical, I understand equations, both the simple and quadratical; About binomial theorem I'm teeming with a lot o' news, With many cheerful facts about the square of the hypotenuse." />
 			);
 
-			const descriptionEl = wrapper.find( '.search-preview__description' );
-			expect( descriptionEl.exists() ).toBeTruthy();
-			expect( descriptionEl.text() ).toEqual(
+			const descriptionEl = container.querySelector( '.search-preview__description' );
+
+			expect( descriptionEl ).toBeVisible();
+			expect( descriptionEl ).toHaveTextContent(
 				"I am the very model of a modern Major-General, I've information vegetable, animal, and mineral. I know the kings of England, and I quote the fights historical, From…"
 			);
-			const rawDescriptionText = descriptionEl.text().replace( '…', '' );
-			expect( rawDescriptionText.length ).toBeLessThanOrEqual( descriptionUpperBound );
+			expect( descriptionEl.textContent.replace( '…', '' ).length ).toBeLessThanOrEqual(
+				descriptionUpperBound
+			);
 		} );
 	} );
 
 	it( 'should display truncated url', () => {
 		const downArrowChar = '▾';
-		const wrapper = shallow(
+
+		const { container } = render(
 			<Search url="https://wordpress.com/alongpathnameheretoensuretruncationoccursbutitdoesneedtobequitelongtomakethathappen" />
 		);
 
-		const urlEl = wrapper.find( '.search-preview__url' );
-		expect( urlEl.exists() ).toBeTruthy();
-		expect( urlEl.text() ).toEqual(
+		const urlEl = container.querySelector( '.search-preview__url' );
+
+		expect( urlEl ).toBeVisible();
+		expect( urlEl ).toHaveTextContent(
 			'wordpress.com › alongpathnameheretoensuretruncationoccursbutitdoesne' +
 				'…' +
 				' ' +
 				downArrowChar
 		);
-		const urlTextRaw = urlEl.text().replace( '…', '' ).replace( downArrowChar, '' ).trimEnd();
-		expect( urlTextRaw ).toHaveLength( 68 );
+		expect(
+			urlEl.textContent.replace( '…', '' ).replace( downArrowChar, '' ).trimEnd()
+		).toHaveLength( 68 );
 	} );
 } );

@@ -10,8 +10,8 @@ import { stringify } from 'calypso/lib/shortcode';
  * Given an array of media items, returns a gallery shortcode using an
  * optional set of parameters.
  *
- * @param  {object} settings Gallery settings
- * @returns {string}          Gallery shortcode
+ * @param  {Object} settings Gallery settings
+ * @returns {string|undefined}          Gallery shortcode
  */
 export function generateGalleryShortcode( settings ) {
 	let attrs;

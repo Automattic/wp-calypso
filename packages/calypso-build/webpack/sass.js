@@ -5,11 +5,11 @@ const MiniCSSWithRTLPlugin = require( './mini-css-with-rtl' );
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.
  *
- * @param  {object}    _                              Options
+ * @param  {Object}    _                              Options
  * @param  {string[]}  _.includePaths                 Sass files lookup paths
  * @param  {string}    _.prelude                      String to prepend to each Sass file
- * @param  {object}    _.postCssOptions               PostCSS options
- * @returns {object}                                  webpack loader object
+ * @param  {Object}    _.postCssOptions               PostCSS options
+ * @returns {Object}                                  webpack loader object
  */
 module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
@@ -50,10 +50,10 @@ module.exports.loader = ( { includePaths, prelude, postCssOptions } ) => ( {
 /**
  * Return an array of styling relevant webpack plugin objects.
  *
- * @param  {object}   _                Options
+ * @param  {Object}   _                Options
  * @param  {string}   _.chunkFilename  filename pattern to use for CSS files
  * @param  {string}   _.filename       filename pattern to use for CSS chunk files
- * @returns {object[]}                 styling relevant webpack plugin objects
+ * @returns {Object[]}                 styling relevant webpack plugin objects
  */
 module.exports.plugins = ( { chunkFilename, filename } ) => [
 	new MiniCssExtractPlugin( {

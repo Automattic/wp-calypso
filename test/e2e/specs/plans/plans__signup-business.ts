@@ -12,7 +12,6 @@ import {
 	CartCheckoutPage,
 	TestAccount,
 	SignupDomainPage,
-	MediaPage,
 	NewSiteResponse,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
@@ -70,15 +69,23 @@ describe(
 			} );
 
 			it( 'Make purchase', async function () {
-				await cartCheckoutPage.purchase();
+				await cartCheckoutPage.purchase( { timeout: 75 * 1000 } );
 			} );
 
-			it( 'Skip to dashboard', async function () {
+			it( 'Skip Onboarding', async function () {
+				await page.waitForURL( /setup\/site-setup\/goals/, { waitUntil: 'networkidle' } );
 				const startSiteFlow = new StartSiteFlow( page );
-				await Promise.all( [
-					page.waitForNavigation( { url: /.*\/home\/.*/ } ),
-					startSiteFlow.clickButton( 'Skip to dashboard' ),
-				] );
+				await startSiteFlow.clickButton( 'Skip to dashboard' );
+			} );
+
+			it( 'Skip Launchpad', async function () {
+				await page.waitForURL( /launchpad/, { waitUntil: 'networkidle' } );
+				await page
+					.getByRole( 'button', { name: 'Skip to dashboard' } )
+					.click( { timeout: 20 * 1000 } );
+
+				// Launchpad redirects to `/view` when skipped.
+				await page.waitForURL( /view/ );
 			} );
 		} );
 
@@ -89,12 +96,6 @@ describe(
 				sidebarComponent = new SidebarComponent( page );
 				const currentPlan = await sidebarComponent.getCurrentPlanName();
 				expect( currentPlan ).toBe( planName );
-			} );
-
-			it( 'Validate storage capacity', async function () {
-				await sidebarComponent.navigate( 'Media' );
-				const mediaPage = new MediaPage( page );
-				expect( await mediaPage.hasStorageCapacity( 200 ) ).toBe( true );
 			} );
 		} );
 

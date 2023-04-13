@@ -35,7 +35,7 @@ function assembleCurrentUserCannotAddEmailReason( reason ) {
 /**
  * Creates a ResponseDomain object.
  *
- * @param {object} domain domain object
+ * @param {Object} domain domain object
  * @returns {import('calypso/lib/domains/types').ResponseDomain} Response domain
  */
 export const createSiteDomainObject = ( domain ) => {
@@ -117,6 +117,10 @@ export const createSiteDomainObject = ( domain ) => {
 			domain.must_remove_privacy_before_contact_update
 		),
 		name: String( domain.domain ),
+		nominetDomainSuspended: Boolean( domain.nominet_domain_suspended ),
+		nominetPendingContactVerificationRequest: Boolean(
+			domain.nominet_pending_contact_verification_request
+		),
 		owner: String( domain.owner ),
 		partnerDomain: Boolean( domain.partner_domain ),
 		pendingRegistration: Boolean( domain.pending_registration ),

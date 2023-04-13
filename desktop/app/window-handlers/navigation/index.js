@@ -38,9 +38,15 @@ module.exports = function ( { view, window } ) {
 	if ( process.platform === 'darwin' ) {
 		ipcMain.on( 'title-bar-double-click', () => {
 			const action = systemPreferences.getUserDefault( 'AppleActionOnDoubleClick', 'string' );
-			if ( action === 'None' ) return;
-			if ( action === 'Minimize' ) return window.minimize();
-			if ( window.isMaximized() ) return window.unmaximize();
+			if ( action === 'None' ) {
+				return;
+			}
+			if ( action === 'Minimize' ) {
+				return window.minimize();
+			}
+			if ( window.isMaximized() ) {
+				return window.unmaximize();
+			}
 			return window.maximize();
 		} );
 	}

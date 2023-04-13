@@ -1,5 +1,6 @@
 import { Button, Gridicon } from '@automattic/components';
 import { CheckoutCheckIcon, PaymentLogo } from '@automattic/composite-checkout';
+import formatCurrency from '@automattic/format-currency';
 import {
 	getCreditsLineItemFromCart,
 	getItemIntroductoryOfferDisplay,
@@ -15,7 +16,7 @@ import { BEFORE_SUBMIT } from './constants';
 import { formatDate } from './util';
 import type { LineItem } from '@automattic/composite-checkout';
 import type { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
-import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
+import type { StoredPaymentMethodCard } from 'calypso/lib/checkout/payment-methods';
 import type { MouseEventHandler, ReactNode } from 'react';
 
 function PurchaseModalStep( { children, id }: { children: ReactNode; id: string } ) {
@@ -51,10 +52,17 @@ function LineItemIntroductoryOffer( { product }: { product: ResponseCartProduct 
 
 function OrderStep( { siteSlug, product }: { siteSlug: string; product: ResponseCartProduct } ) {
 	const translate = useTranslate();
-	const originalAmountDisplay = product.item_original_subtotal_display;
+	const originalAmountDisplay = formatCurrency(
+		product.item_original_subtotal_integer,
+		product.currency,
+		{ isSmallestUnit: true, stripZeros: true }
+	);
 	const originalAmountInteger = product.item_original_subtotal_integer;
 
-	const actualAmountDisplay = product.item_subtotal_display;
+	const actualAmountDisplay = formatCurrency( product.item_subtotal_integer, product.currency, {
+		isSmallestUnit: true,
+		stripZeros: true,
+	} );
 	const isDiscounted = Boolean(
 		product.item_subtotal_integer < originalAmountInteger && originalAmountDisplay
 	);
@@ -86,14 +94,20 @@ function OrderStep( { siteSlug, product }: { siteSlug: string; product: Response
 	);
 }
 
-function PaymentMethodStep( { card, siteSlug }: { card: StoredCard; siteSlug: string } ) {
+function PaymentMethodStep( {
+	card,
+	siteSlug,
+}: {
+	card: StoredPaymentMethodCard;
+	siteSlug: string;
+} ) {
 	const translate = useTranslate();
 	const clickHandler = useCallback( ( event ) => {
 		event.preventDefault();
 		page( event.target.href );
 	}, [] );
 	// translators: %s will be replaced with the last 4 digits of a credit card.
-	const maskedCard = sprintf( translate( '**** %s' ), card?.card || '' );
+	const maskedCard = sprintf( translate( '**** %s' ), card?.card_last_4 || '' );
 
 	return (
 		<PurchaseModalStep id="payment-method">
@@ -104,13 +118,13 @@ function PaymentMethodStep( { card, siteSlug }: { card: StoredCard; siteSlug: st
 				</a>
 			</div>
 			<div className="purchase-modal__step-content">
-				<div className="purchase-modal__card-holder">{ card?.name }</div>
+				<div className="purchase-modal__card-holder">{ card.name }</div>
 				<div>
-					<PaymentLogo brand={ card?.card_type } isSummary={ true } />
+					<PaymentLogo brand={ card.card_type } isSummary={ true } />
 					<span className="purchase-modal__card-number">{ maskedCard }</span>
 					<span className="purchase-modal__card-expiry">{ `${ translate(
 						'Expiry:'
-					) } ${ formatDate( card?.expiry ) }` }</span>
+					) } ${ formatDate( card.expiry ) }` }</span>
 				</div>
 			</div>
 		</PurchaseModalStep>
@@ -186,7 +200,7 @@ export default function PurchaseModalContent( {
 	step,
 	submitTransaction,
 }: {
-	cards: StoredCard[];
+	cards: StoredPaymentMethodCard[];
 	cart: ResponseCart;
 	onClose(): void;
 	siteSlug: string;
@@ -195,6 +209,8 @@ export default function PurchaseModalContent( {
 } ) {
 	const translate = useTranslate();
 	const creditsLineItem = getCreditsLineItemFromCart( cart );
+	const firstProduct = cart.products.length > 0 ? cart.products[ 0 ] : undefined;
+	const firstCard = cards.length > 0 ? cards[ 0 ] : undefined;
 
 	return (
 		<>
@@ -206,21 +222,30 @@ export default function PurchaseModalContent( {
 			>
 				<Gridicon icon="cross-small" />
 			</Button>
-			<OrderStep siteSlug={ siteSlug } product={ cart.products?.[ 0 ] } />
-			<PaymentMethodStep siteSlug={ siteSlug } card={ cards?.[ 0 ] } />
+			{ firstProduct && <OrderStep siteSlug={ siteSlug } product={ firstProduct } /> }
+			{ firstCard && <PaymentMethodStep siteSlug={ siteSlug } card={ firstCard } /> }
 			<CheckoutTerms cart={ cart } />
 			<hr />
 			<OrderReview
 				creditsLineItem={ cart.sub_total_integer > 0 ? creditsLineItem : null }
-				shouldDisplayTax={ cart.tax?.display_taxes }
-				total={ cart.total_cost_display }
-				tax={ cart.total_tax_display }
+				shouldDisplayTax={ cart.tax.display_taxes }
+				total={ formatCurrency( cart.total_cost_integer, cart.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ) }
+				tax={ formatCurrency( cart.total_tax_integer, cart.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ) }
 			/>
 			<PayButton
 				busy={ BEFORE_SUBMIT !== step }
 				onClick={ submitTransaction }
 				totalCost={ cart.total_cost_integer }
-				totalCostDisplay={ cart.total_cost_display }
+				totalCostDisplay={ formatCurrency( cart.total_cost_integer, cart.currency, {
+					isSmallestUnit: true,
+					stripZeros: true,
+				} ) }
 			/>
 		</>
 	);

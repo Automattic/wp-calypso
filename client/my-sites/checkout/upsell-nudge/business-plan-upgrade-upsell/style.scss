@@ -1,124 +1,116 @@
-main.business-plan-upgrade-upsell.main {
+@import "@automattic/typography/styles/fonts";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+body.is-section-business-plan-upgrade-upsell-new-design {
+	--color-surface-backdrop: var(--studio-white);
+}
+
+main.business-plan-upgrade-upsell-new-design.main {
 	margin: auto;
 }
 
-.business-plan-upgrade-upsell {
-	display: flex;
-	flex-direction: column;
+.business-plan-upgrade-upsell-new-design {
+	padding: 16px;
 
 	b {
 		font-weight: 700;
 	}
 
-	.card {
-		width: 100%;
-	}
+	&__header {
+		grid-area: header;
+		@extend .wp-brand-font;
+		font-size: $font-title-large;
+		font-weight: 400;
+		line-height: 40px;
+		color: var(--studio-blue-90);
+		margin-bottom: 24px;
 
-	&__placeholders {
-		display: flex;
-		flex-direction: column;
-
-		.is-placeholder {
-			animation: pulse-light 800ms ease-in-out infinite;
-			background: var(--color-neutral-10);
+		@include breakpoint-deprecated( "<960px" ) {
+			font-size: $font-title-small;
+			margin-bottom: 0;
 		}
 	}
 
-	&__placeholder-row {
-		height: 40px;
-		flex: 0 0 100%;
-		margin-bottom: 15px;
-	}
-
-	&__placeholder-button {
-		height: 50px;
-		width: 100%;
-
-		@include breakpoint-deprecated( ">480px" ) {
-			width: 80px;
-			height: 40px;
+	&__small-header-title {
+		text-transform: uppercase;
+		font-family: "SF Pro Text", $sans;
+		font-size: $font-body;
+		@include breakpoint-deprecated( "<960px" ) {
+			text-align: left;
 		}
 	}
 
-	&__placeholder-button-container {
+	&__header-title {
+		@extend .wp-brand-font;
+		font-size: 2.75rem;
+		line-height: 1.1;
+		font-weight: 400;
+		color: var(--studio-blue-90);
+
+		@include breakpoint-deprecated( "<960px" ) {
+			font-size: $font-headline-small;
+			text-align: left;
+			padding: 0 0 20px;
+		}
+	}
+
+	&__image-container {
+		grid-area: images;
 		display: flex;
-		justify-content: space-between;
+		align-items: center;
+		justify-content: center;
+		@include breakpoint-deprecated( "<960px" ) {
+			padding: 20px 0;
+		}
+
+		img {
+			@include breakpoint-deprecated( ">660px" ) {
+				margin: 0 0 0 30px;
+			}
+		}
 	}
 
-	&__card-header,
-	&__card-footer {
-		width: 100%;
-	}
-
-	&__card-body {
+	&__body {
 		overflow: auto;
 		flex: 1;
+		grid-area: body;
 	}
 
-	&__column-pane {
-		display: flex;
-		flex-flow: row;
+	&__footer {
+		grid-area: buttons;
 	}
 
-	&__column-content {
-		padding-right: 10px;
-		@include breakpoint-deprecated( "<480px" ) {
-			padding-right: 0;
-		}
-	}
-
-	&__column-doodle {
-		width: 120px;
-		flex-shrink: 0;
-		@include breakpoint-deprecated( "<480px" ) {
-			display: none;
-		}
-	}
-
-	&__doodle {
-		margin-top: 85px;
-	}
-
-	&__small-header {
-		font-style: italic;
-		text-align: center;
-	}
-
-	&__header {
-		font-size: $font-title-medium;
-		font-weight: 600;
-		text-align: center;
-		line-height: 1.4;
-		margin-top: 0.7em;
-		margin-bottom: 1em;
-
-		@include breakpoint-deprecated( "<660px" ) {
-			font-size: $font-title-small;
-		}
-	}
-	&__sub-header {
-		font-size: $font-title-small;
-		font-weight: normal;
-		text-align: center;
-		line-height: 1.4;
-		margin-top: 5px;
-		margin-bottom: 1.6em;
-
-		@include breakpoint-deprecated( "<660px" ) {
-			font-size: $font-body;
+	&__container {
+		max-width: 1034px;
+		margin: 0 auto;
+		display: grid;
+		grid-template-columns: fit-content(500px) auto;
+		grid-template-areas:
+			"header images"
+			"body images"
+			"buttons images";
+		@include breakpoint-deprecated( "<960px" ) {
+			grid-auto-rows: auto;
+			grid-template-columns: auto;
+			grid-template-areas:
+				"header"
+				"body"
+				"buttons"
+				"images";
 		}
 	}
 
 	&__checklist {
-		margin: 0 0 0.75em;
+		margin: 0 0 1.75em;
 
 		&-item {
+			max-width: 80%;
 			display: flex;
-			width: 100%;
 			align-items: flex-start;
-			margin-bottom: 1.2em;
+			margin: 0 0 10px 20px;
 
-			@include breakpoint-deprecated( "<660px" ) {
+			@include breakpoint-deprecated( "<960px" ) {
 				align-items: flex-start;
 			}
 		}
@@ -139,21 +131,18 @@ main.business-plan-upgrade-upsell.main {
 
 		@include breakpoint-deprecated( "<480px" ) {
 			width: 100%;
+			margin-bottom: 20px;
 		}
 
 		@include breakpoint-deprecated( ">480px" ) {
-			float: left;
+			margin-left: 20px;
 		}
 	}
 
 	&__footer &__accept-offer-button {
 		@include breakpoint-deprecated( "<480px" ) {
 			width: 100%;
-			margin-top: 10px;
-		}
-
-		@include breakpoint-deprecated( ">480px" ) {
-			float: right;
+			margin-bottom: 10px;
 		}
 	}
 }

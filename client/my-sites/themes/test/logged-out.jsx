@@ -12,19 +12,21 @@ import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
 import LoggedOutShowcase from '../logged-out';
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/track-component-view', () =>
+	require( 'calypso/components/empty-component' )
+);
 jest.mock( 'calypso/lib/analytics/page-view-tracker', () =>
 	require( 'calypso/components/empty-component' )
 );
 jest.mock( 'calypso/my-sites/themes/theme-preview', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'calypso/my-sites/themes/themes-magic-search-card', () =>
-	require( 'calypso/components/empty-component' )
-);
 jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: () => false,
 } ) );
+
+window.IntersectionObserver = jest.fn( () => ( { observe: jest.fn(), disconnect: jest.fn() } ) );
 
 const themes = [
 	{
@@ -100,7 +102,7 @@ describe( 'logged-out', () => {
 		render( <TestComponent store={ store } /> );
 
 		await waitFor( () => {
-			expect( screen.getByText( 'Sorry, no themes found.' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'No themes match your search' ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -114,7 +116,7 @@ describe( 'logged-out', () => {
 			themes.forEach( ( theme ) => {
 				expect( screen.getByText( theme.name ) ).toBeInTheDocument();
 			} );
-			expect( screen.queryByText( 'Sorry, no themes found.' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'No themes match your search' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -131,7 +133,7 @@ describe( 'logged-out', () => {
 		render( <TestComponent store={ store } /> );
 
 		await waitFor( () => {
-			expect( screen.queryByText( 'Sorry, no themes found.' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'No themes match your search' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

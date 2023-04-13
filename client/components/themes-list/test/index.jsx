@@ -56,8 +56,8 @@ describe( 'ThemesList', () => {
 		expect( screen.getAllByTestId( /theme-/ ) ).toHaveLength( defaultProps.themes.length );
 	} );
 
-	test( 'should display the EmptyContent component when no themes are found', () => {
+	test( 'should display a message when no themes are found', () => {
 		render( <ThemesList { ...defaultProps } themes={ [] } /> );
-		expect( screen.getByText( /no themes found/i ) ).toBeInTheDocument();
+		expect( screen.getByText( /No themes match your search/i ) ).toBeInTheDocument();
 	} );
 } );

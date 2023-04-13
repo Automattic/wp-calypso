@@ -1,4 +1,5 @@
 import { Spinner } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 // For some reason, the missing types for qrcode.react are a TS error and not
@@ -90,7 +91,13 @@ export class WeChatPaymentQRcode extends Component< WeChatQRProps > {
 					{ this.props.translate(
 						'Please scan the barcode using the WeChat Pay application to confirm your %(price)s payment.',
 						{
-							args: { price: this.props.cart.total_cost_display },
+							args: {
+								price: formatCurrency(
+									this.props.cart.total_cost_integer,
+									this.props.cart.currency,
+									{ isSmallestUnit: true, stripZeros: true }
+								),
+							},
 							comment: 'Instruction to scan a QR barcode and finalize payment with WeChat Pay.',
 						}
 					) }

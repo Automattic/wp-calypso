@@ -8,6 +8,7 @@ import RootChild from '../root-child';
 import {
 	bindWindowListeners,
 	unbindWindowListeners,
+	onViewportChange,
 	suggested as suggestPosition,
 	constrainLeft,
 	offset,
@@ -30,6 +31,7 @@ class PopoverInner extends Component {
 		onClose: noop,
 		onMouseEnter: noop,
 		onMouseLeave: noop,
+		hideArrow: false,
 	};
 
 	/**
@@ -57,6 +59,9 @@ class PopoverInner extends Component {
 	};
 
 	componentDidMount() {
+		// make sure to set the viewport when mounting, because it might have been changed between two mounts of this
+		// component, e.g. when the viewport is changed while the popover is hidden
+		onViewportChange();
 		this.bindListeners();
 		this.setPosition();
 		this.show();
@@ -247,7 +252,7 @@ class PopoverInner extends Component {
 	 * Computes the position of the Popover in function
 	 * of its main container and the target.
 	 *
-	 * @returns {object} reposition parameters
+	 * @returns {Object} reposition parameters
 	 */
 	computePosition() {
 		const { position, relativePosition } = this.props;
@@ -349,7 +354,7 @@ class PopoverInner extends Component {
 				onMouseEnter={ this.handleOnMouseEnter }
 				onMouseLeave={ this.handleOnMouseLeave }
 			>
-				<div className="popover__arrow" />
+				{ ! this.props.hideArrow ? <div className="popover__arrow" /> : null }
 				<div ref={ this.popoverInnerNodeRef } className="popover__inner">
 					{ this.props.children }
 				</div>
@@ -367,7 +372,7 @@ class PopoverInner extends Component {
 // the outer `isVisible` prop by the `showDelay` timeout. One consequence is that the `RootChild`
 // is created on show and destroyed on hide, making sure that the last shown popover will be
 // also the last DOM element inside `document.body`, ensuring that it has a higher z-index.
-function Popover( { isVisible = false, showDelay = 0, ...props } ) {
+function Popover( { isVisible = false, showDelay = 0, hideArrow = false, ...props } ) {
 	const isRtl = useRtl();
 	const [ show, setShow ] = useState( isVisible );
 
@@ -398,7 +403,7 @@ function Popover( { isVisible = false, showDelay = 0, ...props } ) {
 
 	return (
 		<RootChild>
-			<PopoverInner { ...props } isRtl={ isRtl } />
+			<PopoverInner { ...props } isRtl={ isRtl } hideArrow={ hideArrow } />
 		</RootChild>
 	);
 }
@@ -411,6 +416,7 @@ const PropTypeElement = PropTypes.oneOfType( [
 ] );
 
 Popover.propTypes = {
+	hideArrow: PropTypes.bool,
 	autoPosition: PropTypes.bool,
 	autoRtl: PropTypes.bool,
 	className: PropTypes.string,

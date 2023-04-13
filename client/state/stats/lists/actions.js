@@ -4,8 +4,8 @@ import {
 	SITE_STATS_REQUEST,
 	SITE_STATS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
-
 import 'calypso/state/stats/init';
+import { PERIOD_ALL_TIME } from 'calypso/state/stats/emails/constants';
 
 /**
  * Returns an action object to be used in signalling that stats for a given type of stats and query
@@ -13,10 +13,10 @@ import 'calypso/state/stats/init';
  *
  * @param  {number} siteId   Site ID
  * @param  {string} statType Stat Key
- * @param  {object} query    Stats query
+ * @param  {Object} query    Stats query
  * @param  {Array}  data     Stat Data
- * @param  {object} date	 Date
- * @returns {object}          Action object
+ * @param  {Object} date	 Date
+ * @returns {Object}          Action object
  */
 export function receiveSiteStats( siteId, statType, query, data, date ) {
 	return {
@@ -33,6 +33,8 @@ const wpcomV1Endpoints = {
 	statsInsights: 'stats/insights',
 	statsFileDownloads: 'stats/file-downloads',
 	statsAds: 'wordads/stats',
+	statsEmailsSummary: 'stats/emails/summary',
+	statsEmailsSummaryByOpens: 'stats/emails/summary',
 };
 
 const wpcomV2Endpoints = {
@@ -49,7 +51,7 @@ const wpcomV2Endpoints = {
  *
  * @param  {number} siteId   Site ID
  * @param  {string} statType Type of stats
- * @param  {object} query    Stats Query
+ * @param  {Object} query    Stats Query
  * @returns {Function}        Action thunk
  */
 export function requestSiteStats( siteId, statType, query ) {
@@ -70,7 +72,28 @@ export function requestSiteStats( siteId, statType, query ) {
 			apiNamespace = 'wpcom/v2';
 		}
 
-		const options = 'statsVideo' === statType ? query.postId : query;
+		const options = ( () => {
+			switch ( statType ) {
+				case 'statsVideo':
+					return query.postId;
+				case 'statsEmailsSummary':
+					return {
+						period: PERIOD_ALL_TIME,
+						quantity: query.quantity ?? 10,
+						sort_field: query.sort_field ?? 'post_id',
+						sort_order: query.sort_order ?? 'desc',
+					};
+				case 'statsEmailsSummaryByOpens':
+					return {
+						period: PERIOD_ALL_TIME,
+						quantity: query.quantity ?? 10,
+						sort_field: 'opens',
+						sort_order: 'desc',
+					};
+				default:
+					return query;
+			}
+		} )();
 		const requestStats = subpath
 			? wpcom.req.get(
 					{

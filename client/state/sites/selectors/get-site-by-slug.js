@@ -5,9 +5,9 @@ import getSiteSlug from './get-site-slug';
 /**
  * Returns a site object by its slug.
  *
- * @param  {object}  state     Global state tree
+ * @param  {Object}  state     Global state tree
  * @param  {string}  siteSlug  Site URL
- * @returns {?object}           Site object
+ * @returns {?Object}           Site object
  */
 export default createSelector(
 	( state, siteSlug ) => {

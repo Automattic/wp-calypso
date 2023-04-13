@@ -113,9 +113,8 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const happyChat = useHappyChat();
 	const numberOfPluginsThemes = numberFormat( 50000, 0 );
 	const discountRate = '25%';
-	const couponCode = 'BIZC25';
-	const builtByURL =
-		'https://builtbywp.com/get-started/?utm_medium=automattic_referred&utm_source=WordPresscom&utm_campaign=cancel-flow';
+	const couponCode = 'BIZWPC25';
+	const builtByURL = 'https://wordpress.com/built-by/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
 
 	switch ( upsell ) {
@@ -136,6 +135,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 						const userInfo = happyChat.getUserInfo( { site } );
 
 						happyChat.open();
+						happyChat.setChatTag( 'cancelation_chat_prompt' );
 						happyChat.sendUserInfo( { ...userInfo, cancellationReason: props.cancellationReason } );
 						props.closeDialog();
 					} }

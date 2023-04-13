@@ -2,12 +2,14 @@ export { default as Button } from './button';
 export * as Animation from './animation';
 export { default as Card } from './card';
 export { default as CompactCard } from './card/compact';
+export * from './device-switcher';
 export { default as Dialog } from './dialog';
 export { default as FormInputValidation } from './forms/form-input-validation';
 export { default as Gridicon } from './gridicon';
 export { default as Popover } from './popover';
 export { default as ProductIcon } from './product-icon';
 export { default as ProgressBar } from './progress-bar';
+export { default as CircularProgressBar } from './circular-progress-bar';
 export { default as ResponsiveToolbarGroup } from './responsive-toolbar-group';
 export { default as Ribbon } from './ribbon';
 export { default as RootChild } from './root-child';
@@ -22,7 +24,9 @@ export { Spinner } from './spinner';
 export { SpinnerExample } from './spinner/example';
 export { GMClosureNotice } from './gm-closure-notice/gm-closure-notice';
 export { default as WordPressLogo } from './wordpress-logo';
+export { default as WordPressWordmark } from './wordpress-wordmark';
 export { default as JetpackLogo } from './jetpack-logo';
+export { default as WooCommerceWooLogo } from './woocommerce-woo-logo';
 export { ListTile } from './list-tile';
 export { LoadingPlaceholder } from './loading-placeholder';
 export {
@@ -37,4 +41,13 @@ export {
 	default as HighlightCard,
 	percentCalculator as PercentCalculator,
 } from './highlight-cards/highlight-card';
-export { default as MobilePromoCard } from './mobile-promo-card';
+export { default as HighlightCardSimple } from './highlight-cards/highlight-card-simple';
+export { default as AppPromoFullWidth } from './app-promo-full-width';
+export { default as ShortenedNumber } from './number-formatters';
+export { default as formattedNumber } from './number-formatters/formatted-number';
+export { default as PostStatsCard } from './post-stats-card';
+export { default as ConfettiAnimation } from './confetti';
+export { default as ComponentSwapper } from './component-swapper';
+export { default as SubmenuPopover, useSubmenuPopoverProps } from './submenu-popover';
+export { default as JetpackUpsellCard } from './jetpack-upsell-card';
+export { UpsellMenuGroup } from './upsell-menu-group';

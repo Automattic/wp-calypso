@@ -1,6 +1,6 @@
-import { Gridicon } from '@automattic/components';
+import { Gridicon, Button } from '@automattic/components';
 import { translate } from 'i18n-calypso';
-import promoteMenuIllustration from 'calypso/assets/images/customer-home/illustration--promote-menu.svg';
+import promoteMenuIllustration from 'calypso/assets/images/customer-home/illustration--blaze.svg';
 import './style.scss';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 
@@ -19,18 +19,16 @@ export default function PostsListBanner() {
 			</div>
 			<div>
 				<div className="posts-list-banner__title wp-brand-font">
-					{ translate( 'Promote your posts and pages' ) }
+					{ translate( 'Get more visitors to your site' ) }
 				</div>
 				<div className="posts-list-banner__description">
 					{ translate(
-						'Increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-						{
-							components: {
-								learnMoreLink: learnMoreLink,
-							},
-						}
+						'Reach more people by promoting your work to the larger WordPress.com community of blogs and sites.'
 					) }
 				</div>
+				<Button compact className="posts-list-banner__learn-more">
+					<span>{ learnMoreLink }</span>
+				</Button>
 				<div className="posts-list-banner__footer">
 					<Gridicon icon="my-sites" />
 					{ translate( 'WordPress.com Ads' ) }

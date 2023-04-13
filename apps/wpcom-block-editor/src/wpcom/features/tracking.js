@@ -26,8 +26,8 @@ let ignoreNextReplaceBlocksAction = false;
  * Use this function when you need to inspect the block
  * to get specific data and populate the record.
  *
- * @param {object} block - Block object data.
- * @returns {object} Record properties object.
+ * @param {Object} block - Block object data.
+ * @returns {Object} Record properties object.
  */
 function globalEventPropsHandler( block ) {
 	if ( ! block?.name ) {
@@ -138,8 +138,8 @@ const getBlockInserterUsed = ( originalBlockIds = [] ) => {
  * Ensure you are working with block object. This either returns the object
  * or tries to lookup the block by id.
  *
- * @param {string|object} block Block object or string identifier.
- * @returns {object} block object or an empty object if not found.
+ * @param {string | Object} block Block object or string identifier.
+ * @returns {Object} block object or an empty object if not found.
  */
 const ensureBlockObject = ( block ) => {
 	if ( typeof block === 'object' ) {
@@ -164,7 +164,7 @@ const ensureBlockObject = ( block ) => {
  * @param {Array}    blocks            Block instances object or an array of such objects
  * @param {string}   eventName         Event name used to track.
  * @param {Function} propertiesHandler Callback function to populate event properties
- * @param {object}   parentBlock       parent block. optional.
+ * @param {Object}   parentBlock       parent block. optional.
  * @returns {void}
  */
 function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parentBlock ) {
@@ -248,7 +248,7 @@ const getBlocksTracker = ( eventName ) => ( blockIds, fromRootClientId, toRootCl
  * inserted pattern replaced blocks.
  *
  * @param {Array} actionData Data supplied to block insertion or replacement tracking functions.
- * @param {object} additionalData Additional information.
+ * @param {Object} additionalData Additional information.
  * @returns {string} Pattern name being inserted if available.
  */
 const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
@@ -290,7 +290,7 @@ const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
 /**
  * Track block insertion.
  *
- * @param {object|Array} blocks block instance object or an array of such objects
+ * @param {Object | Array} blocks block instance object or an array of such objects
  * @param {Array} args additional insertBlocks data e.g. metadata containing pattern name.
  * @returns {void}
  */
@@ -313,7 +313,7 @@ const trackBlockInsertion = ( blocks, ...args ) => {
 /**
  * Track block removal.
  *
- * @param {object|Array} blocks block instance object or an array of such objects
+ * @param {Object | Array} blocks block instance object or an array of such objects
  * @returns {void}
  */
 const trackBlockRemoval = ( blocks ) => {
@@ -331,7 +331,7 @@ const trackBlockRemoval = ( blocks ) => {
  * Track block replacement.
  *
  * @param {Array} originalBlockIds ids or blocks that are being replaced
- * @param {object|Array} blocks block instance object or an array of such objects
+ * @param {Object | Array} blocks block instance object or an array of such objects
  * @param {Array} args Additional data supplied to replaceBlocks action
  * @returns {void}
  */
@@ -363,7 +363,7 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
  * Page Templates insert their content into the page replacing everything that was already there.
  *
  * @param {Array} rootClientId id of parent block
- * @param {object|Array} blocks block instance object or an array of such objects
+ * @param {Object | Array} blocks block instance object or an array of such objects
  * @returns {void}
  */
 const trackInnerBlocksReplacement = ( rootClientId, blocks ) => {
@@ -429,7 +429,7 @@ const trackGlobalStyles = ( eventName ) => ( options ) => {
  * folks see different errors and what types of sites they occur on.
  *
  * @param {string} content The error message. Like "Update failed."
- * @param {object} options Optional. Extra data logged with the error in Gutenberg.
+ * @param {Object} options Optional. Extra data logged with the error in Gutenberg.
  */
 const trackErrorNotices = ( content, options ) =>
 	tracksRecordEvent( 'wpcom_gutenberg_error_notice', {
@@ -591,7 +591,7 @@ const trackSiteEditorChangeContent = ( { type, slug } ) => {
  * @param {string} kind    Kind of the edited entity record.
  * @param {string} type    Name of the edited entity record.
  * @param {number} id      Record ID of the edited entity record.
- * @param {object} updates The edits made to the record.
+ * @param {Object} updates The edits made to the record.
  */
 const trackEditEntityRecord = ( kind, type, id, updates ) => {
 	// When the site editor is loaded without query params specified to which
@@ -701,7 +701,7 @@ const trackSaveSpecifiedEntityEdits = ( kind, type, id, itemsToSave ) => {
 /**
  * Track block install.
  *
- * @param {object} block block instance object
+ * @param {Object} block block instance object
  * @returns {void}
  */
 const trackInstallBlockType = ( block ) => {
@@ -715,7 +715,7 @@ const trackInstallBlockType = ( block ) => {
  * - string - which means it is an event name and should be tracked as such automatically
  * - function - in case you need to load additional properties from the action.
  *
- * @type {object}
+ * @type {Object}
  */
 const REDUX_TRACKING = {
 	'jetpack/global-styles': {

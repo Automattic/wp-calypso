@@ -5,8 +5,9 @@ import { connect, useDispatch } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryJITM from 'calypso/components/data/query-jitm';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { JITM_OPEN_HELP_CENTER } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { dismissJITM, setupDevTool } from 'calypso/state/jitm/actions';
+import { dismissJITM, openHelpCenterFromJITM, setupDevTool } from 'calypso/state/jitm/actions';
 import { getTopJITM } from 'calypso/state/jitm/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -87,8 +88,17 @@ function getEventHandlers( props, dispatch ) {
 	handlers.onClick = () => {
 		tracks.click &&
 			props.recordTracksEvent( tracks.click.name, { ...tracks.click.props, ...eventProps } );
-
-		jitm.action && dispatch( jitm.action );
+		if ( jitm.action ) {
+			switch ( jitm.action.type ) {
+				// Cases for dispatching action thunks
+				case JITM_OPEN_HELP_CENTER:
+					dispatch( openHelpCenterFromJITM( jitm.action.payload ) );
+					break;
+				default:
+					// Dispatch regular actions
+					dispatch( jitm.action );
+			}
+		}
 	};
 
 	return handlers;

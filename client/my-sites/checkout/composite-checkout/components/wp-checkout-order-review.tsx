@@ -7,7 +7,6 @@ import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled, joinClasses } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { hasP2PlusPlan } from 'calypso/lib/cart-values/cart-items';
@@ -18,8 +17,8 @@ import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/s
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
-import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { OnChangeItemVariant } from './item-variation-picker';
+import type { CouponFieldStateProps } from '../hooks/use-coupon-field-state';
 import type { RemoveProductFromCart, CouponStatus } from '@automattic/shopping-cart';
 
 const SiteSummary = styled.div`
@@ -71,18 +70,19 @@ export default function WPCheckoutOrderReview( {
 	couponFieldStateProps,
 	onChangePlanLength,
 	siteUrl,
-	siteId,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
+	useVariantPickerRadioButtons,
 }: {
 	className?: string;
 	removeProductFromCart?: RemoveProductFromCart;
 	couponFieldStateProps: CouponFieldStateProps;
 	onChangePlanLength?: OnChangeItemVariant;
 	siteUrl?: string;
-	siteId?: number | undefined;
 	isSummary?: boolean;
 	createUserAndSiteBeforeTransaction?: boolean;
+	// This is just for unit tests.
+	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const translate = useTranslate();
 	const [ isCouponFieldVisible, setCouponFieldVisible ] = useState( false );
@@ -163,7 +163,7 @@ export default function WPCheckoutOrderReview( {
 
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
-					siteId={ siteId }
+					useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 					removeProductFromCart={ removeProductFromCart }
 					removeCoupon={ removeCouponAndClearField }
 					onChangePlanLength={ onChangePlanLength }
@@ -187,15 +187,6 @@ export default function WPCheckoutOrderReview( {
 		</div>
 	);
 }
-
-WPCheckoutOrderReview.propTypes = {
-	isSummary: PropTypes.bool,
-	className: PropTypes.string,
-	removeProductFromCart: PropTypes.func,
-	onChangePlanLength: PropTypes.func,
-	siteUrl: PropTypes.string,
-	couponFieldStateProps: PropTypes.object.isRequired,
-};
 
 function CouponFieldArea( {
 	isCouponFieldVisible,

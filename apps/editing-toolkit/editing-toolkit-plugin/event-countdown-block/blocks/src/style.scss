@@ -117,7 +117,6 @@ $ecf_color6: #b82806;
 		top: 0;
 		width: 4px;
 		height: 4px;
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		animation: 1s event_countdown_bang ease-out infinite backwards, 1s event_countdown_gravity ease-in infinite backwards, 5s event_countdown_position linear infinite backwards;
 		mix-blend-mode: overlay;

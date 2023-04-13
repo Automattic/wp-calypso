@@ -46,7 +46,7 @@ function bumpStat( group, name ) {
  * Render JSX template to a markup string.
  *
  * @param {string} view - JSX template to render (basename)
- * @param {object} props - Properties which got passed to the JSX template
+ * @param {Object} props - Properties which got passed to the JSX template
  * @returns {string} Rendered markup
  */
 export function renderJsx( view, props ) {
@@ -71,10 +71,10 @@ export function renderJsx( view, props ) {
  * Render and cache supplied React element to a markup string.
  * Cache is keyed by stringified element by default.
  *
- * @param {object} element - React element to be rendered to html
+ * @param {Object} element - React element to be rendered to html
  * @param {string} key - cache key
- * @param {object} req - Request object
- * @returns {string} The rendered Layout
+ * @param {Object} req - Request object
+ * @returns {string|undefined} The rendered Layout
  */
 function render( element, key, req ) {
 	try {
@@ -83,6 +83,7 @@ function render( element, key, req ) {
 
 		// If the cached layout was stored earlier in the request, no need to get it again.
 		let renderedLayout = req.context.cachedMarkup ?? markupCache.get( key );
+		const markupFromCache = !! renderedLayout; // Store this before updating renderedLayout.
 		if ( ! renderedLayout ) {
 			bumpStat( 'calypso-ssr', 'loggedout-design-cache-miss' );
 			debug( 'cache miss for key', key );
@@ -110,14 +111,19 @@ function render( element, key, req ) {
 
 		logServerEvent( req.context.sectionName, [
 			{
-				name: `ssr.markup_cache.${ renderedLayout ? 'hit' : 'miss' }`,
+				name: `ssr.markup_cache.${ markupFromCache ? 'hit' : 'miss' }`,
 				type: 'counting',
 			},
-			{
-				name: 'ssr.react_render.duration',
-				type: 'timing',
-				value: rtsTimeMs,
-			},
+			// Only log the render time if we didn't get it from the cache.
+			...( markupFromCache
+				? []
+				: [
+						{
+							name: 'ssr.react_render.duration',
+							type: 'timing',
+							value: rtsTimeMs,
+						},
+				  ] ),
 		] );
 
 		if ( rtsTimeMs > 100 ) {
@@ -294,7 +300,7 @@ export function serverRender( req, res ) {
  * Warning: Having context.serverSideRender=true is not sufficient for performing SSR. The app-level checks are also
  * applied before truly SSRing (@see isServerSideRenderCompatible)
  *
- * @param {object}   context  The entire request context
+ * @param {Object}   context  The entire request context
  * @param {Function} next     As all middlewares, will call next in the sequence
  */
 export function setShouldServerSideRender( context, next ) {
@@ -318,7 +324,7 @@ export function setShouldServerSideRender( context, next ) {
  * that set context.serverSideRender), think twice: the context may not be populated with all the necessary values
  * when the sections-specific middlewares are run (examples: context.layout, context.user).
  *
- * @param {object}   context The currently built context
+ * @param {Object}   context The currently built context
  * @returns {boolean} True if all the app-level criteria are fulfilled.
  */
 function isServerSideRenderCompatible( context ) {
@@ -334,7 +340,7 @@ function isServerSideRenderCompatible( context ) {
  *
  * Warning: the context needs to be 'ready' for these checks (needs to have all values)
  *
- * @param {object}   context The currently built context
+ * @param {Object}   context The currently built context
  * @returns {boolean} if the current page/request should return a SSR response
  */
 export function shouldServerSideRender( context ) {

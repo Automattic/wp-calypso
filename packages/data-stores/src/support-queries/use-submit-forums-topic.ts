@@ -1,5 +1,6 @@
+import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import { useMutation } from 'react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { AnalysisReport } from '../queries/use-site-analysis';
 import { SiteDetails } from '../site';
 
@@ -13,8 +14,10 @@ type ForumTopic = {
 	ownershipResult: AnalysisReport;
 };
 
-type Response = {
+export type ForumResponse = {
 	topic_URL: string;
+	topic_ID: number;
+	success: boolean;
 };
 
 export function useSubmitForumsMutation() {
@@ -31,14 +34,8 @@ export function useSubmitForumsMutation() {
 			const blogHelpMessages = [];
 
 			if ( site ) {
-				if ( site.jetpack ) {
-					blogHelpMessages.push( 'WP.com: Unknown' );
-					blogHelpMessages.push( 'Jetpack: Yes' );
-				} else {
-					blogHelpMessages.push( `WP.com: ${ ownershipResult.isWpcom ? 'Yes' : 'No' }` );
-					blogHelpMessages.push( 'Jetpack: No' );
-				}
-
+				blogHelpMessages.push( `WP.com: ${ ownershipResult.isWpcom ? 'Yes' : 'No' }` );
+				blogHelpMessages.push( `Jetpack: ${ site.jetpack ? 'Yes' : 'No' }` );
 				blogHelpMessages.push(
 					`Correct account: ${ ownershipResult.result === 'OWNED_BY_USER' ? 'Yes' : 'No' }`
 				);
@@ -54,18 +51,25 @@ export function useSubmitForumsMutation() {
 				subject,
 				message: forumMessage,
 				locale,
-				client: 'help-center',
 				hide_blog_info: hideInfo,
 				blog_id: site?.ID,
 				blog_url: site?.URL,
 			};
 
-			return wpcomRequest< Response >( {
-				path: '/help/forums/support/topics/new',
-				apiVersion: '1.1',
-				method: 'POST',
-				body: requestData,
-			} );
+			return canAccessWpcomApis()
+				? wpcomRequest< ForumResponse >( {
+						path: 'help/forum/new',
+						apiNamespace: 'wpcom/v2/',
+						apiVersion: '2',
+						method: 'POST',
+						body: requestData,
+				  } )
+				: apiFetch< ForumResponse >( {
+						global: true,
+						path: '/help-center/forum/new',
+						method: 'POST',
+						data: requestData,
+				  } as APIFetchOptions );
 		}
 	);
 }

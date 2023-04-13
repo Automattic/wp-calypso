@@ -26,7 +26,7 @@ class RewindMigrate extends Component {
 	 * Before component updates, check if we have to go somewhere else.
 	 * If Rewind was activated, user clicked the Switch now button so let's go to migrate creds.
 	 *
-	 * @param {object} nextProps Props received by component for next update.
+	 * @param {Object} nextProps Props received by component for next update.
 	 */
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillUpdate( nextProps ) {

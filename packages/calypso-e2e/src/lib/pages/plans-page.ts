@@ -16,7 +16,7 @@ const selectors = {
 		if ( name === 'Free' ) {
 			// Free plan is a pseudo-button presented as a
 			// link.
-			return `button:text-matches("${ name }", "i")`;
+			return `button:text-matches("${ name }", "i"):visible`;
 		}
 		return `button.is-${ name.toLowerCase() }-plan:visible`;
 	},
@@ -27,19 +27,26 @@ const selectors = {
 	activeNavigationTab: ( tabName: PlansPageTab ) =>
 		`.is-selected.section-nav-tab:has-text("${ tabName }")`,
 
-	// Legacy plans view
+	// Plans tab
 	PlansGrid: '.plans-features-main',
 	actionButton: ( { plan, buttonText }: { plan: Plans; buttonText: PlanActionButton } ) => {
 		const viewportSuffix = envVariables.VIEWPORT_NAME === 'mobile' ? 'mobile' : 'table';
 		return `.plan-features__${ viewportSuffix } >> .plan-features__actions-button.is-${ plan.toLowerCase() }-plan:has-text("${ buttonText }")`;
 	},
+	activePlan: ( plan: Plans ) => `a.is-${ plan.toLowerCase() }-plan.is-current-plan:visible`,
+	ContinueWithPlanButton: ( buttonText: string ) =>
+		`.plans__header button:has-text("${ buttonText }")`,
+	SkipPlanConfirmButton: ( message: string ) => `.dialog__button-label:has-text("${ message }")`,
 
-	// My Plans view
+	// My Plans tab
 	myPlanTitle: ( planName: Plans ) => `.my-plan-card__title:has-text("${ planName }")`,
 };
 
 /**
- * Page representing the Plans page accessible at Upgrades >> Plans
+ * Page representing the Plans page under `/plans` endpoint.
+ *
+ * Also forms a component of the `SignupPickPlanPage` used in the
+ * signup stepper flow.
  */
 export class PlansPage {
 	private page: Page;
@@ -80,22 +87,31 @@ export class PlansPage {
 	 */
 	async selectPlan( plan: Plans ): Promise< void > {
 		const locator = this.page.locator( selectors.selectPlanButton( plan ) );
-		// In the /plans view, there are two buttons for "Upgrade" on the
-		// plan comparison chart.
-		await Promise.all( [ this.page.waitForNavigation(), locator.first().click() ] );
+		// In the `/plans` view, there are two buttons for "Upgrade" on the
+		// plan comparison chart. Select the first one.
+		await locator.first().click();
 	}
 
 	/* Generic */
 
 	/**
-	 * Validates that the provided plan name is the title of the active plan in the My Plan tab of the Plans page. Throws if it isn't.
+	 * Validates the expected plan is active.
+	 *
+	 * This method accepts a parameter of `Plan` type which defines the expected
+	 * plan to be active on the site. This method then compares this against the
+	 * actual text on both the My Plans and Plans tabs, hence the race.
 	 *
 	 * @param {Plans} expectedPlan Name of the expected plan.
 	 * @throws If the expected plan title is not found in the timeout period.
 	 */
 	async validateActivePlan( expectedPlan: Plans ): Promise< void > {
-		const expectedPlanLocator = this.page.locator( selectors.myPlanTitle( expectedPlan ) );
-		await expectedPlanLocator.waitFor();
+		await Promise.race( [
+			this.page.locator( selectors.myPlanTitle( expectedPlan ) ).waitFor(),
+			// There can be lots of these link buttons for different viewports.
+			// We only need one to be there! We must use strict selection.
+			// Any of these link buttons means the right plan is selected.
+			this.page.locator( selectors.activePlan( expectedPlan ) ).first().waitFor(),
+		] );
 	}
 
 	/**
@@ -149,7 +165,7 @@ export class PlansPage {
 	/**
 	 * Click a plan action button (on the plan cards on the "Plans" tab) based on expected plan name and button text.
 	 *
-	 * @param {object} param0 Object containing plan name and button text
+	 * @param {Object} param0 Object containing plan name and button text
 	 * @param {Plans} param0.plan Name of the plan (e.g. "Premium")
 	 * @param {PlanActionButton} param0.buttonText Expected action button text (e.g. "Upgrade")
 	 */
@@ -166,5 +182,19 @@ export class PlansPage {
 		} );
 		// These action buttons trigger real page navigations.
 		await Promise.all( [ this.page.waitForNavigation(), this.page.click( selector ) ] );
+	}
+
+	/**
+	 * Click on skip button on the plan page.
+	 */
+	async clickSkipPlanActionButton( buttonText: string ): Promise< void > {
+		await this.page.click( selectors.ContinueWithPlanButton( buttonText ) );
+	}
+
+	/**
+	 * Click on confirm button to continue without a plan.
+	 */
+	async clickSkipPlanConfirmButton( skipPlanButtonText: string ): Promise< void > {
+		await this.page.click( selectors.SkipPlanConfirmButton( skipPlanButtonText ) );
 	}
 }

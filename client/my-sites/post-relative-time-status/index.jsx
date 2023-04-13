@@ -225,12 +225,12 @@ class PostRelativeTime extends PureComponent {
 		const { showPublishedStatus, post } = this.props;
 		const timeText = this.getTimeText();
 		let innerText = (
-			<span>
+			<>
 				{ showPublishedStatus ? this.getStatus() : timeText }
 				{ post.status === 'pending' && this.getPendingLabel() }
 				{ post.status === 'private' && this.getPrivateLabel() }
 				{ post.sticky && this.getStickyLabel() }
-			</span>
+			</>
 		);
 
 		if ( this.props.link ) {

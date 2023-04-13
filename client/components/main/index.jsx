@@ -8,10 +8,12 @@ export default function Main( {
 	children,
 	wideLayout = false,
 	fullWidthLayout = false,
+	isLoggedOut = false,
 } ) {
 	const classes = classNames( className, 'main', {
 		'is-wide-layout': wideLayout,
 		'is-full-width-layout': fullWidthLayout,
+		'is-logged-out': isLoggedOut,
 	} );
 
 	return (

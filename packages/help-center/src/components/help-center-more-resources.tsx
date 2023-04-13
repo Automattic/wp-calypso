@@ -12,14 +12,19 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
-import NewReleases from '../icons/new-releases';
+import { NewReleases } from '../icons';
 import { HELP_CENTER_STORE } from '../stores';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 const circle = (
 	<SVG viewBox="0 0 24 24">
 		<Circle cx="12" cy="12" r="5" />
 	</SVG>
 );
+
+type CoreDataPlaceholder = {
+	hasFinishedResolution: ( ...args: unknown[] ) => boolean;
+};
 
 export const HelpCenterMoreResources = () => {
 	const { __ } = useI18n();
@@ -36,14 +41,19 @@ export const HelpCenterMoreResources = () => {
 		};
 	} );
 
-	const { hasSeenWhatsNewModal, doneLoading } = useSelect( ( select ) => ( {
-		hasSeenWhatsNewModal: select( HELP_CENTER_STORE ).getHasSeenWhatsNewModal(),
-		doneLoading: select( 'core/data' ).hasFinishedResolution(
-			HELP_CENTER_STORE,
-			'getHasSeenWhatsNewModal',
-			[]
-		),
-	} ) );
+	const { hasSeenWhatsNewModal, doneLoading } = useSelect(
+		( select ) => ( {
+			hasSeenWhatsNewModal: (
+				select( HELP_CENTER_STORE ) as HelpCenterSelect
+			 ).getHasSeenWhatsNewModal(),
+			doneLoading: ( select( 'core/data' ) as CoreDataPlaceholder ).hasFinishedResolution(
+				HELP_CENTER_STORE,
+				'getHasSeenWhatsNewModal',
+				[]
+			),
+		} ),
+		[]
+	);
 
 	const { setHasSeenWhatsNewModal } = useDispatch( HELP_CENTER_STORE );
 
@@ -55,7 +65,7 @@ export const HelpCenterMoreResources = () => {
 		recordTracksEvent( 'calypso_help_moreresources_click', {
 			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
 			resource: resource,
-			forceSiteId: true,
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );
@@ -64,7 +74,7 @@ export const HelpCenterMoreResources = () => {
 	const trackWebinairsButtonClick = () => {
 		recordTracksEvent( 'calypso_help_courses_click', {
 			is_business_or_ecommerce_plan_user: isBusinessOrEcomPlanUser,
-			forceSiteId: true,
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );

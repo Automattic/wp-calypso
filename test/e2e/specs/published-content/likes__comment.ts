@@ -4,22 +4,21 @@
 
 import {
 	DataHelper,
-	ElementHelper,
 	CommentsComponent,
-	EditorPage,
 	TestAccount,
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	RestAPIClient,
+	NewCommentResponse,
+	PostResponse,
+	ElementHelper,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
-const quote =
-	'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
-
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
+describe( 'Likes: Comment', function () {
 	const features = envToFeatureKey( envVariables );
 	// @todo Does it make sense to create a `simpleSitePersonalPlanUserEdge` with GB edge?
 	// for now, it will pick up the default `gutenbergAtomicSiteEdgeUser` if edge is set.
@@ -30,54 +29,96 @@ describe( DataHelper.createSuiteTitle( 'Likes (Comment) ' ), function () {
 			accountName: 'simpleSitePersonalPlanUser',
 		},
 	] );
-
 	const comment = DataHelper.getRandomPhrase();
+	const postContent =
+		'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 	let page: Page;
-	let commentsComponent: CommentsComponent;
-	let editorPage: EditorPage;
+	let newPost: PostResponse;
+	let newComment: NewCommentResponse;
+	let restAPIClient: RestAPIClient;
+	let testAccount: TestAccount;
 
-	beforeAll( async () => {
+	beforeAll( async function () {
 		page = await browser.newPage();
-		editorPage = new EditorPage( page, { target: features.siteType } );
 
-		const testAccount = new TestAccount( accountName );
+		testAccount = new TestAccount( accountName );
+
+		restAPIClient = new RestAPIClient( testAccount.credentials );
+
+		newPost = await restAPIClient.createPost(
+			testAccount.credentials.testSites?.primary.id as number,
+			{
+				title: DataHelper.getTimestamp() as string,
+				content: postContent,
+			}
+		);
+
+		newComment = await restAPIClient.createComment(
+			testAccount.credentials.testSites?.primary.id as number,
+			newPost.ID,
+			comment
+		);
+
 		await testAccount.authenticate( page );
 	} );
 
-	it( 'Go to the new post page', async function () {
-		await editorPage.visit( 'post' );
+	it( 'View the post', async function () {
+		await page.goto( newPost.URL );
 	} );
 
-	it( 'Enter post title', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
-		const title = DataHelper.getRandomPhrase();
-		await editorPage.enterTitle( title );
+	describe( 'Like', function () {
+		let commentsComponent: CommentsComponent;
+
+		beforeAll( async function () {
+			// Establish proper state.
+			await restAPIClient.commentAction(
+				'unlike',
+				testAccount.credentials.testSites?.primary.id as number,
+				newComment.ID
+			);
+
+			async function closure( page: Page ) {
+				await page.getByText( 'Loading...' ).last().waitFor( { state: 'hidden' } );
+			}
+			await ElementHelper.reloadAndRetry( page, closure );
+		} );
+
+		it( 'Like the comment', async function () {
+			commentsComponent = new CommentsComponent( page );
+			await commentsComponent.like( comment );
+		} );
 	} );
 
-	it( 'Enter post text', async function () {
-		await editorPage.enterText( quote );
+	describe( 'Unlike', function () {
+		let commentsComponent: CommentsComponent;
+
+		beforeAll( async function () {
+			// Establish proper state.
+			await restAPIClient.commentAction(
+				'like',
+				testAccount.credentials.testSites?.primary.id as number,
+				newComment.ID
+			);
+
+			async function closure( page: Page ) {
+				await page.getByText( 'Loading...' ).last().waitFor( { state: 'hidden' } );
+			}
+			await ElementHelper.reloadAndRetry( page, closure );
+		} );
+
+		it( 'Unlike the comment', async function () {
+			commentsComponent = new CommentsComponent( page );
+			await commentsComponent.unlike( comment );
+		} );
 	} );
 
-	it( 'Publish and visit post', async function () {
-		await editorPage.publish( { visit: true } );
-	} );
-
-	it( 'Post a comment', async function () {
-		commentsComponent = new CommentsComponent( page );
-		await commentsComponent.postComment( comment );
-	} );
-
-	it( 'Like the comment', async function () {
-		// Sometimes, in the Atomic env, the Likes widget is not immediately
-		// loaded and gets stuck in the "Loading…" state. The reason for that is
-		// that the API likes request for the created comment returns an
-		// "unknown_comment" error. This is most likely because it doesn't catch
-		// up with the automation speed, so we reload the page to fetch the
-		// likes status again.
-		await ElementHelper.reloadAndRetry( page, () => commentsComponent.like( comment ) );
-	} );
-
-	it( 'Unlike the comment', async function () {
-		await commentsComponent.unlike( comment );
+	afterAll( async function () {
+		if ( ! newPost ) {
+			return;
+		}
+		await restAPIClient.deletePost(
+			testAccount.credentials.testSites?.primary.id as number,
+			newPost.ID
+		);
 	} );
 } );

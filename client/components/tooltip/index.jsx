@@ -25,6 +25,7 @@ function Tooltip( props ) {
 			isVisible={ props.isVisible }
 			position={ props.position }
 			showDelay={ props.showDelay }
+			hideArrow
 		>
 			{ props.children }
 		</Popover>
@@ -40,6 +41,7 @@ Tooltip.propTypes = {
 	status: PropTypes.string,
 	showDelay: PropTypes.number,
 	showOnMobile: PropTypes.bool,
+	hideArrow: PropTypes.bool,
 	children: PropTypes.node,
 	context: PropTypes.any,
 };
@@ -48,6 +50,7 @@ Tooltip.defaultProps = {
 	showDelay: 100,
 	position: 'top',
 	showOnMobile: false,
+	hideArrow: false,
 };
 
 export default Tooltip;

@@ -5,7 +5,7 @@ import getSiteSlug from './get-site-slug';
 /**
  * Returns a site's theme showcase path.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId SiteId
  * @returns {?string}        Theme showcase path
  */

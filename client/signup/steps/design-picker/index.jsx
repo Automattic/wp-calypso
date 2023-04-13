@@ -59,9 +59,11 @@ export default function DesignPickerStep( props ) {
 	const [ selectedDesign, setSelectedDesign ] = useState( null );
 	const scrollTop = useRef( 0 );
 
+	const isDIFMStoreFlow = 'do-it-for-me-store' === props.flowName;
+
 	const getThemeFilters = () => {
 		if ( props.useDIFMThemes ) {
-			return 'do-it-for-me';
+			return isDIFMStoreFlow ? 'do-it-for-me-store' : 'do-it-for-me';
 		}
 
 		return 'auto-loading-homepage,full-site-editing';
@@ -134,13 +136,6 @@ export default function DesignPickerStep( props ) {
 				result.defaultSelection = null;
 				result.sort = sortBlogToTop;
 				break;
-		}
-
-		// This is a temporary change until DIFM Lite switches to the full WPCOM theme catalog.
-		// We'll then use the 'difm' intent here.
-		if ( props.useDIFMThemes ) {
-			result.defaultSelection = null;
-			result.sort = sortLocalServicesToTop;
 		}
 
 		return result;
@@ -390,7 +385,7 @@ export default function DesignPickerStep( props ) {
 			{ ...props }
 			className={ classnames( {
 				'design-picker__has-categories': showDesignPickerCategories,
-				'design-picker__sell-intent': 'sell' === intent,
+				'design-picker__sell-intent': 'sell' === intent || isDIFMStoreFlow,
 			} ) }
 			{ ...headerProps }
 			stepContent={ renderDesignPicker() }
@@ -427,17 +422,6 @@ function sortStoreToTop( a, b ) {
 	} else if ( a.slug === 'store' ) {
 		return -1;
 	} else if ( b.slug === 'store' ) {
-		return 1;
-	}
-	return 0;
-}
-
-function sortLocalServicesToTop( a, b ) {
-	if ( a.slug === b.slug ) {
-		return 0;
-	} else if ( a.slug === 'local-services' ) {
-		return -1;
-	} else if ( b.slug === 'local-services' ) {
 		return 1;
 	}
 	return 0;

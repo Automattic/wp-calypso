@@ -4,31 +4,46 @@
 
 import { render, screen, waitFor } from '@testing-library/react';
 import { SiteThumbnail } from '..';
+import { fetchAwaitRedirect } from '../fetch-await-redirect';
 
 const MSHOTS_URL = 'https://fakeUrl';
 const IMG_ALT = 'test image';
 
-// Mocking the fetch function to return response.redirect = false by default
-// and to return response.redirect = true when the url is the same as the mshots url
-// This is to simulate the mshots image being loaded
-jest.mock( '../fetch-is-redirect', () => ( {
-	fetchIsRedirect: async () => {
-		return false;
-	},
-} ) );
+jest.mock( '../fetch-await-redirect' );
 
 describe( 'SiteThumbnail', () => {
 	beforeEach( () => {
 		jest.useFakeTimers();
 		jest.useFakeTimers();
+		// Mocking the fetch function to return response.redirect = false by default
+		// and to return response.redirect = true when the url is the same as the mshots url
+		// This is to simulate the mshots image being loaded
+		fetchAwaitRedirect.mockImplementation( async () => {
+			return {
+				isError: false,
+				isRedirect: false,
+			};
+		} );
 	} );
 	test( 'has an image that points to mshot', async () => {
 		render( <SiteThumbnail mShotsUrl={ MSHOTS_URL } alt={ IMG_ALT } /> );
-		await waitFor( () =>
+		await waitFor( () => {
+			expect( screen.queryByAltText( IMG_ALT ) ).not.toBeNull();
 			expect( screen.getByAltText( IMG_ALT ).getAttribute( 'src' ) ).toMatch(
 				'https://s0.wp.com/mshots/v1/' + encodeURIComponent( MSHOTS_URL )
-			)
-		);
+			);
+		} );
+	} );
+
+	test( 'shows fallback when mshot returns 429', async () => {
+		fetchAwaitRedirect.mockImplementation( async () => {
+			return {
+				isError: true,
+				isRedirect: false,
+			};
+		} );
+		render( <SiteThumbnail mShotsUrl={ MSHOTS_URL } alt={ IMG_ALT } /> );
+		await waitFor( () => expect( screen.queryByAltText( IMG_ALT ) ).toBeNull() );
 	} );
 
 	test( 'should show the dimension width for the default sizes', async () => {

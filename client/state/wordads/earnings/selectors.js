@@ -5,9 +5,9 @@ import 'calypso/state/wordads/init';
 /**
  * Returns earnings object for a siteId
  *
- * @param   {object} state  Global State
+ * @param   {Object} state  Global State
  * @param   {number} siteId Site Id
- * @returns {object}        WordAds Error
+ * @returns {Object}        WordAds Error
  */
 export function getWordAdsEarnings( state, siteId ) {
 	return get( state, [ 'wordads', 'earnings', siteId ], null );

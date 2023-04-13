@@ -2,13 +2,18 @@ import fs from 'fs';
 import FormData from 'form-data';
 import fetch from 'node-fetch';
 import { SecretsManager } from './secrets';
-import { BearerTokenErrorResponse, TestFile, SettingsParams } from './types';
+import {
+	BearerTokenErrorResponse,
+	TestFile,
+	SettingsParams,
+	PluginParams,
+	AllDomainsResponse,
+	DomainData,
+} from './types';
 import type { Roles } from './lib';
 import type {
 	AccountDetails,
-	SiteDetails,
 	BearerTokenResponse,
-	AllSitesResponse,
 	MyAccountInformationResponse,
 	AccountClosureResponse,
 	SiteDeletionResponse,
@@ -23,9 +28,14 @@ import type {
 	DeleteInvitesResponse,
 	NewPostParams,
 	NewMediaResponse,
-	NewPostResponse,
+	PostResponse,
 	ReaderResponse,
 	Invite,
+	AllPluginsResponse,
+	PluginResponse,
+	PluginRemovalResponse,
+	AllWidgetsResponse,
+	CommentLikeResponse,
 } from './types';
 import type { BodyInit, HeadersInit, RequestInit } from 'node-fetch';
 
@@ -171,21 +181,18 @@ export class RestAPIClient {
 	/* Sites */
 
 	/**
-	 * Gets the list of users's sites.
+	 * Gets the list of domains belonging to the user.
 	 *
-	 * This method returns an array of Site objects, where
-	 * each Site object exposes a few key pieces of data from
+	 * This method returns an array of DomainData objects, where
+	 * each object exposes a few key pieces of data from
 	 * the response JSON:
-	 * 	- ID
-	 * 	- name
-	 * 	- site description
-	 * 	- URL
-	 * 	- site owner
+	 * 	- domain
+	 * 	- blog id
 	 *
-	 * @returns {Promise<AllSitesResponse} JSON array of sites.
+	 * @returns {Promise<AllDomainsResponse>} JSON array of sites.
 	 * @throws {Error} If API responded with an error.
 	 */
-	async getAllSites(): Promise< AllSitesResponse > {
+	async getAllDomains(): Promise< AllDomainsResponse > {
 		const params: RequestParams = {
 			method: 'get',
 			headers: {
@@ -194,7 +201,7 @@ export class RestAPIClient {
 			},
 		};
 
-		const response = await this.sendRequest( this.getRequestURL( '1.1', '/me/sites' ), params );
+		const response = await this.sendRequest( this.getRequestURL( '1.1', '/all-domains/' ), params );
 
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
@@ -244,48 +251,65 @@ export class RestAPIClient {
 	}
 
 	/**
-	 * Deletes a site.
+	 * Deletes a site belonging to the user.
 	 *
-	 * If the target site has an upgrade purchased within the
+	 * This method will perform a quick check to ensure the target site
+	 * belongs to the user.
+	 *
+	 * Additionally, if the target site has an upgrade purchased within the
 	 * sandboxed environment, it can be deleted without first
 	 * cancelling the subscription.
 	 *
 	 * Otherwise the active subscription must be first cancelled
-	 * otherwise the REST API will throw a HTTP 403 status.
+	 * or else the REST API will throw a HTTP 403 status.
 	 *
-	 * @param {SiteDetails} expectedSiteDetails Expected details for the site to be deleted.
+	 * @param { {id: number, domain: string}} targetSite Details for the target site to be deleted.
 	 * @returns {SiteDeletionResponse | null} Null if deletion was unsuccessful or not performed. SiteDeletionResponse otherwise.
 	 */
-	async deleteSite( expectedSiteDetails: SiteDetails ): Promise< SiteDeletionResponse | null > {
-		if ( ! expectedSiteDetails.url.includes( 'e2e' ) ) {
-			console.warn( `Aborting site deletion: target is not a test site.` );
+	async deleteSite( targetSite: {
+		id: number;
+		domain: string;
+	} ): Promise< SiteDeletionResponse | null > {
+		// Every new testing site since 2021 has the prefix `e2e` of some sort.
+		if ( ! targetSite.domain.includes( 'e2e' ) ) {
 			return null;
 		}
 
-		const mySites = await this.getAllSites();
-		const myAccountInformation = await this.getMyAccountInformation();
+		const scheme = 'http://';
+		const targetDomain = targetSite.domain.startsWith( scheme )
+			? targetSite.domain.replace( scheme, '' )
+			: targetSite.domain;
 
-		// Start from tail end of the array since
-		// the target of site deletion is likely the
-		// most recently created site.
-		for ( const site of mySites.sites.reverse() ) {
-			if ( site.ID === expectedSiteDetails.id && site.site_owner === myAccountInformation.ID ) {
-				const params: RequestParams = {
-					method: 'post',
-					headers: {
-						Authorization: await this.getAuthorizationHeader( 'bearer' ),
-						'Content-Type': this.getContentTypeHeader( 'json' ),
-					},
-				};
+		const mySites: AllDomainsResponse = await this.getAllDomains();
 
-				return await this.sendRequest(
-					this.getRequestURL( '1.1', `/sites/${ expectedSiteDetails.id }/delete` ),
-					params
-				);
-			}
+		const match = mySites.domains.filter( ( site: DomainData ) => {
+			site.blog_id === targetSite.id && site.domain === targetDomain;
+		} );
+
+		if ( ! match ) {
+			return null;
 		}
-		// If nothing matches, return that no action was performed.
-		return null;
+
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ targetSite.id }/delete` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
 	}
 
 	/* Invites */
@@ -330,15 +354,20 @@ export class RestAPIClient {
 			params
 		);
 
+		// This handles API errors such as `unauthorized`.
 		if ( response.hasOwnProperty( 'error' ) ) {
 			throw new Error(
 				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
 			);
 		}
 
-		if ( response.errors === [] ) {
-			console.log( response );
-			throw new Error( `Failed to create invite: ${ response.errors }` );
+		// This handles "errors" relating to the invite itself and can be an array.
+		// For instance, if a user tries to invite itself, or invite an already added user.
+		if ( response.errors.length ) {
+			for ( const err of response.errors ) {
+				console.error( `${ err.code }: ${ err.message }` );
+			}
+			throw new Error( `Failed to create invite due to ${ response.errors.length } errors.` );
 		}
 
 		return response;
@@ -606,7 +635,7 @@ export class RestAPIClient {
 	 * @param {number} siteID Target site ID.
 	 * @param {NewPostParams} details Details of the new post.
 	 */
-	async createPost( siteID: number, details: NewPostParams ): Promise< NewPostResponse > {
+	async createPost( siteID: number, details: NewPostParams ): Promise< PostResponse > {
 		const params: RequestParams = {
 			method: 'post',
 			headers: {
@@ -618,6 +647,35 @@ export class RestAPIClient {
 
 		const response = await this.sendRequest(
 			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/new` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Deletes a post denoted by postID from the site.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {number} postID Target post ID.
+	 */
+	async deletePost( siteID: number, postID: number ): Promise< PostResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/posts/${ postID }/delete` ),
 			params
 		);
 
@@ -697,6 +755,56 @@ export class RestAPIClient {
 			);
 		}
 
+		return response;
+	}
+
+	/**
+	 * Method to perform two similar operations - like and unlike a comment.
+	 *
+	 * @param {'like'|'unlike'} action Action to perform on the comment.
+	 * @param {number} siteID Target site ID.
+	 * @param {number} commentID Target comment ID.
+	 */
+	async commentAction(
+		action: 'like' | 'unlike',
+		siteID: number,
+		commentID: number
+	): Promise< CommentLikeResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		let endpoint: URL;
+		if ( action === 'like' ) {
+			endpoint = this.getRequestURL(
+				'1.1',
+				`/sites/${ siteID }/comments/${ commentID }/likes/new`
+			);
+		} else {
+			endpoint = this.getRequestURL(
+				'1.1',
+				`/sites/${ siteID }/comments/${ commentID }/likes/mine/delete`
+			);
+		}
+
+		const response = await this.sendRequest( endpoint, params );
+
+		// Tried to like the comment, but failed to do so
+		// and the user still has not liked the comment.
+		if ( action === 'like' && ! response.success && ! response.i_like ) {
+			throw new Error( `Failed to like ${ commentID } on site ${ siteID }` );
+		}
+		// Tried to unlike the comment, but failed to do so
+		// and the user still likes the comment.
+		if ( action === 'unlike' && ! response.success && response.i_like ) {
+			throw new Error( `Failed to unlike ${ commentID } on site ${ siteID }` );
+		}
+
+		// Otherwise, consider it a success.
 		return response;
 	}
 
@@ -790,5 +898,196 @@ export class RestAPIClient {
 		}
 
 		return response;
+	}
+
+	/* Plugins */
+
+	/**
+	 * Gets a list of plugins installed in a site.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @returns {Promise<AllPluginsResponse>} An Array of plugins.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async getAllPlugins( siteID: number ): Promise< AllPluginsResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/plugins` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Modifies a plugin installed in a site.
+	 *
+	 * @param {number} siteID Target site ID.
+	 * @param {string} pluginID Plugin ID.
+	 * @param {PluginResponse} details Key/value attributes to be set for the user.
+	 * @returns {Promise<PluginResponse>} Details for the plugin.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async modifyPlugin(
+		siteID: number,
+		pluginID: string,
+		details: PluginParams
+	): Promise< PluginResponse > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( details ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/plugins/${ pluginID }` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Finds a plugin by name, deactivates it, and removes it from the site.
+	 *
+	 * @returns {Promise<PluginRemovalResponse | null>} Null if plugin removal was unsuccessful or not performed. PluginRemovalResponse otherwise.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async removePluginIfInstalled(
+		siteID: number,
+		pluginName: string
+	): Promise< PluginRemovalResponse | null > {
+		const myPlugins = await this.getAllPlugins( siteID );
+		for ( const plugin of myPlugins.plugins ) {
+			if ( plugin.name === pluginName ) {
+				const pluginID = encodeURIComponent( plugin.id );
+				/// Plugin should be deactivated before removal.
+				if ( plugin.active ) {
+					await this.modifyPlugin( siteID, pluginID, { active: false } );
+				}
+				const params: RequestParams = {
+					method: 'post',
+					headers: {
+						Authorization: await this.getAuthorizationHeader( 'bearer' ),
+						'Content-Type': this.getContentTypeHeader( 'json' ),
+					},
+				};
+
+				return await this.sendRequest(
+					this.getRequestURL( '1.1', `/sites/${ siteID }/plugins/${ pluginID }/delete` ),
+					params
+				);
+			}
+		}
+
+		// If nothing matches, return that no action was performed.
+		return null;
+	}
+
+	/* Widgets */
+
+	/**
+	 * This method either deactivates or deletes the widget from the site.
+	 *
+	 * As noted in the comments, this method is quite overloaded as its outcome
+	 * differs depending on the current state of the widget (activate/deactivated).
+	 *
+	 * @param {number} siteID ID of the target site.
+	 * @param {string} widgetID ID of the target widget.
+	 */
+	async deleteWidget( siteID: number, widgetID: string ): Promise< void > {
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/widgets/widget:${ widgetID }/delete` ),
+			params
+		);
+
+		// This API call is quite overloaded in what it can do.
+		// If the `widgetId` does not exist for any reason, then an 'error' is returned.
+		// We can safely ignore this 'error'.
+		// If the widget is active, the call will first deactivate the widget.
+		// If the widget is deactivated, the call will remoe the widget.
+		// For all other unexpected errors, throw an error.
+		if ( response.hasOwnProperty( 'error' ) && response.error === 'not_found' ) {
+			console.info( `Widget ${ widgetID } not found.` );
+			return;
+		} else if ( response.length === 0 ) {
+			console.info( `Deleted widget ${ widgetID }.` );
+		} else if ( response.id === widgetID ) {
+			console.info( `Deactivated widget ${ widgetID }` );
+		} else {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+	}
+
+	/**
+	 * Returns the list of widgets for a siteID.
+	 *
+	 * @param {number} siteID ID of the target site.
+	 * @returns {AllWidgetsResponse} Array of Widgets object describing the list of widgets on the site.
+	 */
+	async getAllWidgets( siteID: number ): Promise< AllWidgetsResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/sites/${ siteID }/widgets` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response.widgets;
+	}
+
+	/**
+	 * Deletes or deactivates all widgets for a given site.
+	 *
+	 * @param {number} siteID ID of the target site.
+	 */
+	async deleteAllWidgets( siteID: number ): Promise< void > {
+		const widgets = await this.getAllWidgets( siteID );
+
+		widgets.map( async ( widget ) => await this.deleteWidget( siteID, widget.id ) );
 	}
 }

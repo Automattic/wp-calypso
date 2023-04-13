@@ -1,12 +1,15 @@
+import config from '@automattic/calypso-config';
 import { useSetStepComplete } from '@automattic/composite-checkout';
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import { useDispatch } from '@wordpress/data';
 import debugFactory from 'debug';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import useCountryList from './use-country-list';
 import type {
 	PossiblyCompleteDomainContactDetails,
@@ -35,11 +38,13 @@ function useCachedContactDetails(): PossiblyCompleteDomainContactDetails | null 
 
 function useCachedContactDetailsForCheckoutForm(
 	cachedContactDetails: PossiblyCompleteDomainContactDetails | null,
+	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void,
 	overrideCountryList?: CountryListItem[]
-): void {
+): boolean {
 	const countriesList = useCountryList( overrideCountryList );
 	const reduxDispatch = useReduxDispatch();
 	const setStepCompleteStatus = useSetStepComplete();
+	const [ isComplete, setComplete ] = useState( false );
 	const didFillForm = useRef( false );
 
 	const arePostalCodesSupported =
@@ -47,13 +52,21 @@ function useCachedContactDetailsForCheckoutForm(
 			? getCountryPostalCodeSupport( countriesList, cachedContactDetails.countryCode )
 			: false;
 
-	const checkoutStoreActions = useDispatch( 'wpcom-checkout' );
+	const checkoutStoreActions = useDispatch( CHECKOUT_STORE );
 	if ( ! checkoutStoreActions?.loadDomainContactDetailsFromCache ) {
 		throw new Error(
 			'useCachedContactDetailsForCheckoutForm must be run after the checkout data store has been initialized'
 		);
 	}
 	const { loadDomainContactDetailsFromCache } = checkoutStoreActions;
+
+	const isMounted = useRef( true );
+	useEffect( () => {
+		isMounted.current = true;
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
 
 	// When we have fetched or loaded contact details, send them to the
 	// `wpcom-checkout` data store for use by the checkout contact form.
@@ -73,27 +86,49 @@ function useCachedContactDetailsForCheckoutForm(
 		}
 		debug( 'using fetched cached contact details for checkout data store', cachedContactDetails );
 		didFillForm.current = true;
-		// NOTE: the types for `@wordpress/data` actions imply that actions return
-		// `void` by default but they actually return `Promise<void>` so I override
-		// this type here until the actual types can be improved. See
-		// https://github.com/DefinitelyTyped/DefinitelyTyped/pull/60693
-		loadDomainContactDetailsFromCache< Promise< void > >( {
+		loadDomainContactDetailsFromCache( {
 			...cachedContactDetails,
 			postalCode: arePostalCodesSupported ? cachedContactDetails.postalCode : '',
 		} )
 			.then( () => {
+				if ( ! isMounted.current ) {
+					return false;
+				}
 				if ( cachedContactDetails.countryCode ) {
+					setShouldShowContactDetailsValidationErrors( false );
 					debug( 'Contact details are populated; attempting to skip to payment method step' );
 					return setStepCompleteStatus( 'contact-form' );
 				}
 				return false;
 			} )
 			.then( ( didSkip: boolean ) => {
+				if ( ! isMounted.current ) {
+					return false;
+				}
 				if ( didSkip ) {
 					reduxDispatch( recordTracksEvent( 'calypso_checkout_skip_to_last_step' ) );
 				}
+				setShouldShowContactDetailsValidationErrors( true );
+				setComplete( true );
+			} )
+			.catch( ( error: Error ) => {
+				setShouldShowContactDetailsValidationErrors( true );
+				isMounted.current && setComplete( true );
+				// eslint-disable-next-line no-console
+				console.error( 'Error while autocompleting contact details:', error );
+				logToLogstash( {
+					feature: 'calypso_client',
+					message: 'composite checkout autocomplete error',
+					severity: config( 'env_id' ) === 'production' ? 'warning' : 'debug',
+					extra: {
+						env: config( 'env_id' ),
+						type: 'checkout_contact_details_autocomplete',
+						message: error.message + '; Stack: ' + error.stack,
+					},
+				} );
 			} );
 	}, [
+		setShouldShowContactDetailsValidationErrors,
 		reduxDispatch,
 		setStepCompleteStatus,
 		cachedContactDetails,
@@ -101,6 +136,8 @@ function useCachedContactDetailsForCheckoutForm(
 		loadDomainContactDetailsFromCache,
 		countriesList,
 	] );
+
+	return isComplete;
 }
 
 /**
@@ -108,8 +145,13 @@ function useCachedContactDetailsForCheckoutForm(
  * checkout contact form and the shopping cart tax location.
  */
 export default function useCachedDomainContactDetails(
+	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void,
 	overrideCountryList?: CountryListItem[]
 ): void {
 	const cachedContactDetails = useCachedContactDetails();
-	useCachedContactDetailsForCheckoutForm( cachedContactDetails, overrideCountryList );
+	useCachedContactDetailsForCheckoutForm(
+		cachedContactDetails,
+		setShouldShowContactDetailsValidationErrors,
+		overrideCountryList
+	);
 }

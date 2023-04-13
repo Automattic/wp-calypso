@@ -9,8 +9,9 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 	RestAPIClient,
+	EditorWelcomeTourComponent,
 } from '@automattic/calypso-e2e';
-import { Page, Frame, Browser } from 'playwright';
+import { Page, Browser, Locator } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
 
 type Translations = {
@@ -48,7 +49,7 @@ const translations: Translations = {
 				blockEditorSelector: '[data-type="core/image"]',
 				blockEditorContent: [
 					'.components-placeholder__label:has-text("Image")',
-					'.jetpack-external-media-button-menu:text("Select Image")', // Jetpack extension
+					'.jetpack-external-media-button-menu:has-text("Select Image")', // Jetpack extension
 				],
 				blockPanelTitle: 'Image',
 			},
@@ -117,7 +118,7 @@ const translations: Translations = {
 				blockEditorSelector: '[data-type="core/image"]',
 				blockEditorContent: [
 					'.components-placeholder__label:has-text("Image")',
-					'.jetpack-external-media-button-menu:text("Sélectionner une image")', // Jetpack extension
+					'.jetpack-external-media-button-menu:has-text("Sélectionner une image")', // Jetpack extension
 				],
 				blockPanelTitle: 'Image',
 			},
@@ -188,7 +189,7 @@ const translations: Translations = {
 				blockEditorSelector: '[data-type="core/image"]',
 				blockEditorContent: [
 					'.components-placeholder__label:has-text("תמונה")',
-					'.jetpack-external-media-button-menu:text("לבחור תמונה")', // Jetpack extension
+					'.jetpack-external-media-button-menu:has-text("לבחור תמונה")', // Jetpack extension
 				],
 				blockPanelTitle: 'תמונה',
 			},
@@ -275,7 +276,7 @@ describe( 'I18N: Editor', function () {
 	describe.each( locales )( `Locale: %s`, function ( locale ) {
 		beforeAll( async function () {
 			await restAPIClient.setMySettings( { language: locale } );
-			await page.reload( { waitUntil: 'networkidle', timeout: 20 * 1000 } );
+			await page.reload();
 		} );
 
 		describe( 'Editing Toolkit Plugin', function () {
@@ -284,15 +285,31 @@ describe( 'I18N: Editor', function () {
 			} );
 
 			it( 'Translations for Welcome Guide', async function () {
-				const frame = await editorPage.getEditorHandle();
+				// Abort API request to fetch the Welcome Tour status in order to avoid
+				// overwriting the current state when the request finishes.
+				await page.route( '**/block-editor/nux*', ( route ) => {
+					route.abort();
+				} );
+
+				const editorWindowLocator = editorPage.getEditorWindowLocator();
+				const editorWelcomeTourComponent = new EditorWelcomeTourComponent(
+					page,
+					editorWindowLocator
+				);
+
 				// We know these are all defined because of the filtering above. Non-null asserting is safe here.
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 				const etkTranslations = translations[ locale ]!.etkPlugin!;
 
-				await editorPage.openEditorOptionsMenu();
-				await frame.locator( etkTranslations.welcomeGuide.openGuideSelector ).click();
-				await frame.waitForSelector( etkTranslations.welcomeGuide.welcomeTitleSelector );
-				await frame.locator( etkTranslations.welcomeGuide.closeButtonSelector ).click();
+				// Ensure the Welcome Guide component is shown.
+				await editorWelcomeTourComponent.forceShowWelcomeTour();
+
+				await editorWindowLocator
+					.locator( etkTranslations.welcomeGuide.welcomeTitleSelector )
+					.waitFor();
+				await editorWindowLocator
+					.locator( etkTranslations.welcomeGuide.closeButtonSelector )
+					.click();
 			} );
 		} );
 
@@ -302,7 +319,7 @@ describe( 'I18N: Editor', function () {
 			'Translations for block: $blockName',
 			( ...args ) => {
 				const block = args[ 0 ]; // Makes TS stop complaining about incompatible args type
-				let frame: Page | Frame;
+				let editorWindowLocator: Locator;
 				let editorPage: EditorPage;
 
 				it( 'Insert test block', async function () {
@@ -311,35 +328,48 @@ describe( 'I18N: Editor', function () {
 				} );
 
 				it( 'Render block content translations', async function () {
-					frame = await editorPage.getEditorHandle();
+					editorWindowLocator = editorPage.getEditorWindowLocator();
 					// Ensure block contents are translated as expected.
+					// To deal with multiple potential matches (eg. Jetpack/Business Hours > Add Hours)
+					// the first locator is matched.
 					await Promise.all(
 						block.blockEditorContent.map( ( content ) =>
-							frame.waitForSelector( `${ block.blockEditorSelector } ${ content }` )
+							editorWindowLocator
+								.locator( `${ block.blockEditorSelector } ${ content }` )
+								.first()
+								.waitFor()
 						)
 					);
 				} );
 
 				it( 'Render block title translations', async function () {
 					await editorPage.openSettings();
-					await frame.click( block.blockEditorSelector );
+					await editorWindowLocator.locator( block.blockEditorSelector ).click();
 
 					// Ensure the block is highlighted.
-					await frame.waitForSelector(
-						`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`
-					);
+					await editorWindowLocator
+						.locator(
+							`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`
+						)
+						.click();
 
 					// If on block insertion, one of the sub-blocks are selected, click on
 					// the first button in the floating toolbar which selects the overall
 					// block.
-					if ( await frame.isVisible( '.block-editor-block-parent-selector__button' ) ) {
-						await frame.click( '.block-editor-block-parent-selector__button' );
+					if (
+						await editorWindowLocator
+							.locator( '.block-editor-block-parent-selector__button:visible' )
+							.count()
+					) {
+						await editorWindowLocator
+							.locator( '.block-editor-block-parent-selector__button' )
+							.click();
 					}
 
 					// Ensure the Settings with the block selected shows the expected title.
-					await frame.waitForSelector(
-						`.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")`
-					);
+					await editorWindowLocator
+						.locator( `.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")` )
+						.waitFor();
 				} );
 			}
 		);

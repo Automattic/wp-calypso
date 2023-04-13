@@ -21,7 +21,7 @@ const CHAT_STATUSES = [
  * chat status. For example new chats and ongoing chats should be able to send messages,
  * but blocked or pending chats should not.
  *
- * @param {object} state - global redux state
+ * @param {Object} state - global redux state
  * @returns {boolean} Whether the user is able to send messages
  */
 const canUserSendMessages = ( state ) =>

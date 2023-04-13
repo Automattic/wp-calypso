@@ -36,12 +36,19 @@ class Help_Center {
 	 * Help_Center constructor.
 	 */
 	public function __construct() {
+		global $wp_customize;
+
+		if ( isset( $wp_customize ) ) {
+			return;
+		}
+
 		$this->asset_file = include plugin_dir_path( __FILE__ ) . 'dist/help-center.asset.php';
 		$this->version    = $this->asset_file['version'];
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_script' ), 100 );
 		add_action( 'rest_api_init', array( $this, 'register_rest_api' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_wp_admin_scripts' ), 100 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_wp_admin_scripts' ), 100 );
 	}
 
 	/**
@@ -121,11 +128,20 @@ class Help_Center {
 	 * Get current site details.
 	 */
 	public function get_current_site() {
-		$site       = \Jetpack_Options::get_option( 'id' );
-		$logo_id    = get_option( 'site_logo' );
-		$products   = wpcom_get_site_purchases();
-		$at_options = get_option( 'at_options' );
-		$plan       = array_pop(
+		$is_support_site = $this->is_support_site();
+
+		if ( $is_support_site ) {
+			$user_id = get_current_user_id();
+			$user    = get_userdata( $user_id );
+			$site    = $user->primary_blog;
+			switch_to_blog( $site );
+		} else {
+			$site = \Jetpack_Options::get_option( 'id' );
+		}
+
+		$logo_id  = get_option( 'site_logo' );
+		$products = wpcom_get_site_purchases();
+		$plan     = array_pop(
 			array_filter(
 				$products,
 				function ( $product ) {
@@ -134,21 +150,29 @@ class Help_Center {
 			)
 		);
 
-		return array(
-			'ID'              => $site,
-			'name'            => get_bloginfo( 'name' ),
-			'URL'             => get_bloginfo( 'url' ),
-			'plan'            => array(
+		$return_data = array(
+			'ID'               => $site,
+			'name'             => get_bloginfo( 'name' ),
+			'URL'              => get_bloginfo( 'url' ),
+			'plan'             => array(
 				'product_slug' => $plan->product_slug,
 			),
-			'is_wpcom_atomic' => boolval( $at_options ),
-			'jetpack'         => true === apply_filters( 'is_jetpack_site', false, $site ),
-			'logo'            => array(
+			'is_wpcom_atomic'  => defined( 'IS_ATOMIC' ) && IS_ATOMIC,
+			'jetpack'          => true === apply_filters( 'is_jetpack_site', false, $site ),
+			'logo'             => array(
 				'id'    => $logo_id,
 				'sizes' => array(),
 				'url'   => wp_get_attachment_image_src( $logo_id, 'thumbnail' )[0],
 			),
+			'launchpad_screen' => get_option( 'launchpad_screen' ),
+			'site_intent'      => get_option( 'site_intent' ),
 		);
+
+		if ( $is_support_site ) {
+			restore_current_blog();
+		}
+
+		return $return_data;
 	}
 
 	/**
@@ -167,10 +191,6 @@ class Help_Center {
 		$controller = new WP_REST_Help_Center_Support_Availability();
 		$controller->register_rest_route();
 
-		require_once __DIR__ . '/class-wp-rest-help-center-has-seen-promotion.php';
-		$controller = new WP_REST_Help_Center_Has_Seen_Promotion();
-		$controller->register_rest_route();
-
 		require_once __DIR__ . '/class-wp-rest-help-center-search.php';
 		$controller = new WP_REST_Help_Center_Search();
 		$controller->register_rest_route();
@@ -182,18 +202,52 @@ class Help_Center {
 		require_once __DIR__ . '/class-wp-rest-help-center-ticket.php';
 		$controller = new WP_REST_Help_Center_Ticket();
 		$controller->register_rest_route();
+
+		require_once __DIR__ . '/class-wp-rest-help-center-forum.php';
+		$controller = new WP_REST_Help_Center_Forum();
+		$controller->register_rest_route();
+	}
+	/**
+	 * Returns true if the current site is a support site.
+	 */
+	public function is_support_site() {
+		// Disable the Help Center in support sites for now. It may be causing issues with notifications.
+		return false;
+		// Disable for now: `return defined( 'WPCOM_SUPPORT_BLOG_IDS' ) && in_array( get_current_blog_id(), WPCOM_SUPPORT_BLOG_IDS, true )`.
+	}
+
+	/**
+	 * Returns true if the admin bar is set.
+	 */
+	public function is_admin_bar() {
+		global $wp_admin_bar;
+		return is_object( $wp_admin_bar );
+	}
+
+	/**
+	 * Returns true if the current screen is the site editor.
+	 */
+	public function is_site_editor() {
+		global $current_screen;
+		return ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
+	}
+
+	/**
+	 * Returns true if the current screen if the block editor.
+	 */
+	public function is_block_editor() {
+		global $current_screen;
+		return $current_screen->is_block_editor;
 	}
 
 	/**
 	 * Add icon to WP-ADMIN admin bar.
 	 */
 	public function enqueue_wp_admin_scripts() {
+
 		require_once ABSPATH . 'wp-admin/includes/screen.php';
-		global $wp_admin_bar, $current_screen;
 
-		$is_site_editor = ( function_exists( 'gutenberg_is_edit_site_page' ) && gutenberg_is_edit_site_page( $current_screen->id ) );
-
-		if ( ! is_admin() || ! is_object( $wp_admin_bar ) || $is_site_editor || $current_screen->is_block_editor ) {
+		if ( ( ! $this->is_support_site() ) && ( ! is_admin() || ! $this->is_admin_bar() || $this->is_site_editor() || $this->is_block_editor() ) ) {
 			return;
 		}
 

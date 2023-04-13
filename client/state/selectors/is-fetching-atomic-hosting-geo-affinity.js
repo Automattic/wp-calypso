@@ -3,7 +3,7 @@ import 'calypso/state/hosting/init';
 /**
  * Whether or not we're currently fetching geo affinity.
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {number}  siteId The ID of the site we're querying
  * @returns {boolean}
  */

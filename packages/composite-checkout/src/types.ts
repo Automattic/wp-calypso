@@ -33,13 +33,18 @@ export interface OrderSummaryData {
 	summaryContent: React.ReactNode;
 }
 
+export interface PaymentMethodSubmitButtonProps {
+	disabled?: boolean;
+	onClick?: ProcessPayment;
+}
+
 export interface PaymentMethod {
 	id: string;
 	paymentProcessorId: string;
 	label?: React.ReactNode;
 	activeContent?: React.ReactNode;
 	inactiveContent?: React.ReactNode;
-	submitButton: ReactElement;
+	submitButton: ReactElement< PaymentMethodSubmitButtonProps >;
 	getAriaLabel: ( localize: ( value: string ) => string ) => string;
 }
 
@@ -120,6 +125,7 @@ export interface CheckoutProviderProps {
 	paymentProcessors: PaymentProcessorProp;
 	isValidating?: boolean;
 	initiallySelectedPaymentMethodId?: string | null;
+	selectFirstAvailablePaymentMethod?: boolean;
 	children: React.ReactNode;
 }
 
@@ -313,3 +319,5 @@ export interface CheckoutStepGroupActions {
 	getStepCompleteCallback: ( stepNumber: number ) => StepCompleteCallback;
 	setTotalSteps: ( totalSteps: number ) => void;
 }
+
+export type TogglePaymentMethod = ( paymentMethodId: string, available: boolean ) => void;

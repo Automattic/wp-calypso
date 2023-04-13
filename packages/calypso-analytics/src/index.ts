@@ -14,6 +14,7 @@ export {
 	getTracksLoadPromise,
 	analyticsEvents,
 	pushEventToTracksQueue,
+	getGenericSuperPropsGetter,
 } from './tracks';
 export {
 	recordTrainTracksRender,

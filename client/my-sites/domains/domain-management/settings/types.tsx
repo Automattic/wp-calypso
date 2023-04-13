@@ -3,7 +3,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 import type { DnsRequest, ResponseDomain } from 'calypso/lib/domains/types';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
-type WhoisData = {
+export type WhoisData = {
 	fname: string;
 	lname: string;
 	org: string;

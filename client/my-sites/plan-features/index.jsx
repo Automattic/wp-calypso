@@ -57,7 +57,6 @@ import {
 	getPlanSlug,
 	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
-import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -69,6 +68,7 @@ import {
 	getPlansBySiteId,
 	isCurrentUserCurrentPlanOwner,
 } from 'calypso/state/sites/plans/selectors';
+import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import {
 	getSitePlan,
 	getSiteSlug,
@@ -81,6 +81,7 @@ import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
 import PlanFeaturesActionsWrapper from './plan-features-action-wrapper';
 import PlanFeaturesScroller from './scroller';
+
 import './style.scss';
 
 const noop = () => {};
@@ -306,7 +307,7 @@ export class PlanFeatures extends Component {
 	renderMobileView() {
 		const {
 			redirectToAddDomainFlow,
-			domainAndPlanPackage,
+			hidePlanTypeSelector,
 			basePlansPath,
 			canPurchase,
 			isInSignup,
@@ -354,7 +355,7 @@ export class PlanFeatures extends Component {
 		let buttonText = null;
 		let forceDisplayButton = false;
 
-		if ( redirectToAddDomainFlow === true || domainAndPlanPackage ) {
+		if ( redirectToAddDomainFlow === true || hidePlanTypeSelector ) {
 			buttonText = translate( 'Add to Cart' );
 			forceDisplayButton = true;
 		}
@@ -577,7 +578,7 @@ export class PlanFeatures extends Component {
 			selectedSiteSlug,
 			shoppingCartManager,
 			redirectToAddDomainFlow,
-			domainAndPlanPackage,
+			hidePlanTypeSelector,
 		} = this.props;
 
 		const {
@@ -602,7 +603,7 @@ export class PlanFeatures extends Component {
 			return;
 		}
 
-		if ( domainAndPlanPackage ) {
+		if ( hidePlanTypeSelector ) {
 			try {
 				// In this flow we redirect to checkout with both the plan and domain
 				// product in the cart.
@@ -949,9 +950,8 @@ const ConnectedPlanFeatures = connect(
 				const isLoadingSitePlans = selectedSiteId && ! sitePlans.hasLoadedFromServer;
 				const isMonthlyPlan = isMonthly( plan );
 				const showMonthly = ! isMonthlyPlan;
-				const availableForPurchase = isInSignup
-					? true
-					: canUpgradeToPlan( state, selectedSiteId, plan ) && canPurchase;
+				const availableForPurchase =
+					isInSignup || isPlanAvailableForPurchase( state, selectedSiteId, plan );
 				const relatedMonthlyPlan = showMonthly
 					? getPlanBySlug( state, getMonthlyPlanByYearly( plan ) )
 					: null;
@@ -994,7 +994,7 @@ const ConnectedPlanFeatures = connect(
 				}
 
 				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
-				const isMonthlyObj = { isMonthly: showMonthlyPrice };
+				const isMonthlyObj = { returnMonthly: showMonthlyPrice };
 				const rawPrice = siteId
 					? getSitePlanRawPrice( state, selectedSiteId, plan, isMonthlyObj )
 					: getPlanRawPrice( state, planProductId, showMonthlyPrice );

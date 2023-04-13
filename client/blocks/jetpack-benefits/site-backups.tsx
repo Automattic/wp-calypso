@@ -11,6 +11,7 @@ import { EVERY_SECOND, Interval } from 'calypso/lib/interval';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 interface Props {
 	siteId: number;
@@ -26,11 +27,13 @@ interface Backup {
 				published: string;
 			};
 		};
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		[ key: string ]: any;
 	};
 }
 
 const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone } ) => {
+	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const backups = useSelector( ( state ) => getRewindBackups( state, siteId ) );
@@ -100,6 +103,16 @@ const JetpackBenefitsSiteBackups: React.FC< Props > = ( { siteId, isStandalone }
 
 	// now that backups are loaded and any in progress are complete, get the most recent one
 	const mostRecentBackup = backups?.[ 0 ] || null;
+
+	// License is not attached to a site yet
+	if ( ! siteSlug ) {
+		return (
+			<JetpackBenefitsCard
+				headline={ translate( 'Site Backups' ) }
+				description={ translate( 'License key awaiting activation' ) }
+			/>
+		);
+	}
 
 	// no backups taken yet
 	if ( ! mostRecentBackup ) {

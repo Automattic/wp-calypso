@@ -4,8 +4,8 @@ import { getJetpackVersion, getSiteAdminUrl, isJetpackSite } from 'calypso/state
 /**
  * Returns the Jetpack Search dashboard URL.
  *
- * @param  {object}    state        Global state tree
- * @param  {object}    siteID       Site ID
+ * @param  {Object}    state        Global state tree
+ * @param  {Object}    siteID       Site ID
  * @returns {?string}  URL for Jetpack Search dashboard.
  *                     Falls back to the Jetpack dashboard for older versions.
  *                     Returns null for Simple sites.

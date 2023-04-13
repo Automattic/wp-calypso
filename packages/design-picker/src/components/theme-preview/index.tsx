@@ -1,3 +1,4 @@
+import { DeviceSwitcher } from '@automattic/components';
 import { Spinner } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
@@ -5,9 +6,6 @@ import { addQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { v4 as uuid } from 'uuid';
-import { DEVICE_TYPE } from '../../constants';
-import Toolbar from './toolbar';
-import type { Device } from '../../types';
 import './style.scss';
 
 interface Viewport {
@@ -25,6 +23,11 @@ interface ThemePreviewProps {
 	recordDeviceClick?: ( device: string ) => void;
 }
 
+// Determine whether the preview URL is from the WPCOM site preview endpoint.
+// This endpoint allows more preview capabilities via window.postMessage().
+const isUrlWpcomApi = ( url: string ) =>
+	url.indexOf( 'public-api.wordpress.com/wpcom/v2/block-previews/site' ) >= 0;
+
 const ThemePreview: React.FC< ThemePreviewProps > = ( {
 	url,
 	inlineCss,
@@ -36,17 +39,12 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 } ) => {
 	const { __ } = useI18n();
 	const iframeRef = useRef< HTMLIFrameElement >( null );
-	const [ isLoaded, setIsLoaded ] = useState( false );
+	const [ isLoaded, setIsLoaded ] = useState( ! isUrlWpcomApi( url ) );
+	const [ isFullyLoaded, setIsFullyLoaded ] = useState( ! isUrlWpcomApi( url ) );
 	const [ viewport, setViewport ] = useState< Viewport >();
 	const [ containerResizeListener, { width: containerWidth } ] = useResizeObserver();
 	const calypso_token = useMemo( () => uuid(), [] );
 	const scale = containerWidth && viewportWidth ? containerWidth / viewportWidth : 1;
-
-	const [ device, setDevice ] = useState< Device >( DEVICE_TYPE.COMPUTER );
-	function handleDeviceClick( device: string ) {
-		recordDeviceClick?.( device );
-		setDevice( device );
-	}
 
 	useEffect( () => {
 		const handleMessage = ( event: MessageEvent ) => {
@@ -64,7 +62,9 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 			switch ( data.type ) {
 				case 'partially-loaded':
 					setIsLoaded( true );
+					return;
 				case 'page-dimensions-on-load':
+					setIsFullyLoaded( true );
 				case 'page-dimensions-on-resize':
 					if ( isFitHeight ) {
 						setViewport( data.payload );
@@ -82,8 +82,10 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 		};
 	}, [ setIsLoaded, setViewport ] );
 
+	// Ideally the iframe's document.body is already available on isLoaded = true.
+	// Unfortunately that's not always the case, so isFullyLoaded serves as another retry.
 	useEffect( () => {
-		if ( isLoaded ) {
+		if ( isLoaded || isFullyLoaded ) {
 			iframeRef.current?.contentWindow?.postMessage(
 				{
 					channel: `preview-${ calypso_token }`,
@@ -93,20 +95,18 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 				'*'
 			);
 		}
-	}, [ inlineCss, isLoaded ] );
+	}, [ inlineCss, isLoaded, isFullyLoaded ] );
 
 	return (
-		<div
+		<DeviceSwitcher
 			className={ classnames( 'theme-preview__container', {
-				'theme-preview__container--loading': ! isLoaded,
-				'theme-preview__container--frame-bordered': isShowFrameBorder,
-				'theme-preview__container--is-computer': device === 'computer',
-				'theme-preview__container--is-tablet': device === 'tablet',
-				'theme-preview__container--is-phone': device === 'phone',
+				'theme-preview__container--loading': ! isLoaded && ! isFullyLoaded,
 			} ) }
+			isShowDeviceSwitcherToolbar={ isShowDeviceSwitcher }
+			isShowFrameBorder={ isShowFrameBorder }
+			onDeviceChange={ recordDeviceClick }
 		>
 			{ containerResizeListener }
-			{ isShowDeviceSwitcher && <Toolbar device={ device } onDeviceClick={ handleDeviceClick } /> }
 			<div className="theme-preview__frame-wrapper">
 				{ ! isLoaded && (
 					<div className="theme-preview__frame-message">
@@ -127,7 +127,7 @@ const ThemePreview: React.FC< ThemePreviewProps > = ( {
 					tabIndex={ -1 }
 				/>
 			</div>
-		</div>
+		</DeviceSwitcher>
 	);
 };
 

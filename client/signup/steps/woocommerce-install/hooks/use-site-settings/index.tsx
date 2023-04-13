@@ -52,8 +52,17 @@ export function useSiteSettings( siteId: number ) {
 		dispatch( requestSiteSettings( siteId ) );
 	}, [ dispatch, siteId, settingsSaved ] );
 
-	// Simple getter helper.
-	function get( option: optionNameType ) {
+	/**
+	 * Simple getter function.
+	 *
+	 * @todo The any return type was inferred in the original code because of an
+	 * invalid JSDoc type. Once that type was fixed, we had to hardcode "any" in
+	 * order to avoid the errors that got hidden. See below for more details.
+	 * @see https://github.com/Automattic/wp-calypso/pull/59970/files#r1083218153
+	 * @param option The option type.
+	 * @returns The option value.
+	 */
+	function get( option: optionNameType ): any {
 		if ( updates[ option ] ) {
 			return updates[ option ];
 		}

@@ -100,11 +100,32 @@ const apiVersion = '1.3';
 /**
  * Perform a search.
  *
- * @param {object} options - Search options
+ * @param {Object} options - Search options
  * @returns {Promise} A promise to the JSON response object
  */
 export function search( options: SearchParams ) {
 	const queryString = generateApiQueryString( options );
+
+	return wpcom.req.get(
+		{
+			path: marketplaceSearchApiBase,
+		},
+		{ ...queryString, apiVersion }
+	);
+}
+
+export function searchBySlug(
+	slug: string,
+	locale: string,
+	options?: { fields?: Array< string > | undefined; group_id?: string }
+) {
+	const params = {
+		lang: locale,
+		filter: getFilterbySlug( slug ),
+		fields: options?.fields ?? RETURNABLE_FIELDS,
+		group_id: options?.group_id ?? 'wporg',
+	};
+	const queryString = params;
 
 	return wpcom.req.get(
 		{
@@ -126,6 +147,18 @@ function getFilterbyAuthor( author: string ): {
 	};
 }
 
+function getFilterbySlug( slug: string ): {
+	bool: {
+		must: { term: object }[];
+	};
+} {
+	return {
+		bool: {
+			must: [ { term: { slug } } ],
+		},
+	};
+}
+
 function getFilterByCategory( category: string ): {
 	bool: object;
 } {
@@ -134,8 +167,12 @@ function getFilterByCategory( category: string ): {
 	return {
 		bool: {
 			should: [
+				// matching wp.org categories and tags
 				{ term: { 'taxonomy.plugin_category.slug': category } },
-				{ terms: { 'taxonomy.plugin_tags.slug': categoryTags } },
+				{ terms: { 'taxonomy.plugin_tags.slug': categoryTags || [ category ] } },
+				// matching wc.com categories and tags
+				{ term: { 'taxonomy.wpcom_marketplace_categories.slug': category } },
+				{ terms: { 'taxonomy.plugin_tag.slug': categoryTags || [ category ] } },
 			],
 		},
 	};

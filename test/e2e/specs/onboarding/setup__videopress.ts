@@ -42,6 +42,11 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 			await Promise.all( [ page.waitForNavigation(), page.click( 'text=Get started' ) ] );
 		} );
 
+		it( 'Navigate VideoMaker Setup', async function () {
+			await page.waitForURL( /.*videomakerSetup.*/ );
+			await page.click( 'button.videomaker-setup__dark-button' );
+		} );
+
 		it( 'Enter account details', async function () {
 			await page.waitForURL( /.*videopress-account.*/ );
 			const userSignupPage = new UserSignupPage( page );
@@ -61,11 +66,6 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 			await page.fill( 'input[name="siteTitle"]', `Video site ${ testUser.username }` );
 			await page.fill( 'textarea[name="tagline"]', `The place of ${ testUser.username }` );
 			await page.click( 'button.site-options__submit-button' );
-		} );
-
-		it( 'Navigate VideoMaker Setup', async function () {
-			await page.waitForURL( /.*videomakerSetup.*/ );
-			await page.click( 'button.videomaker-setup__dark-button' );
 		} );
 
 		it( 'Navigate choose a domain', async function () {

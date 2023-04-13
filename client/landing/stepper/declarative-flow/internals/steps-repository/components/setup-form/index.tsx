@@ -3,20 +3,23 @@ import { Button, FormInputValidation } from '@automattic/components';
 import { TextControl } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import { Dispatch, FormEvent, ReactChild, SetStateAction, useEffect } from 'react';
-import { SiteDetails } from 'calypso/../packages/data-stores/src';
 import { ForwardedAutoresizingFormTextarea } from 'calypso/blocks/comments/autoresizing-form-textarea';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import { SiteIconWithPicker } from 'calypso/components/site-icon-with-picker';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
 interface TranslatedStrings {
+	titleLabel?: string;
 	titlePlaceholder?: string;
 	titleMissing?: string;
+	taglineLabel?: string;
 	taglinePlaceholder?: string;
 	iconPlaceholder?: string;
+	buttonText?: string;
 }
 interface SetupFormProps {
 	site: SiteDetails | null;
@@ -83,7 +86,7 @@ const SetupForm = ( {
 			/>
 			<FormFieldset>
 				<TextControl
-					label={ __( 'Site name' ) }
+					label={ translatedText?.titleLabel || __( 'Site name' ) }
 					name="setup-form-input-name"
 					id="setup-form-input-name"
 					value={ siteTitle }
@@ -101,7 +104,9 @@ const SetupForm = ( {
 				) }
 			</FormFieldset>
 			<FormFieldset>
-				<FormLabel htmlFor="setup-form-input-description">{ __( 'Brief description' ) }</FormLabel>
+				<FormLabel htmlFor="setup-form-input-description">
+					{ translatedText?.taglineLabel || __( 'Brief description' ) }
+				</FormLabel>
 				<ForwardedAutoresizingFormTextarea
 					name="setup-form-input-description"
 					id="setup-form-input-description"
@@ -114,8 +119,8 @@ const SetupForm = ( {
 				/>
 			</FormFieldset>
 			{ children }
-			<Button className="setup-form__submit" disabled={ isLoading } primary type="submit">
-				{ isLoading ? __( 'Loading' ) : __( 'Continue' ) }
+			<Button className="setup-form__submit" disabled={ isLoading } type="submit">
+				{ isLoading ? __( 'Loading' ) : translatedText?.buttonText ?? __( 'Continue' ) }
 			</Button>
 			{ isSubmitError && (
 				<FormInputValidation

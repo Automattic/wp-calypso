@@ -24,7 +24,7 @@ import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { getRewindBytesAvailable, getRewindBytesUsed } from 'calypso/state/rewind/selectors';
 import type { Purchase } from 'calypso/lib/purchases/types';
 
-type SelectorProductWithStorage = SelectorProduct & {
+export type SelectorProductWithStorage = SelectorProduct & {
 	storage: React.ReactChild;
 };
 
@@ -41,11 +41,11 @@ const UPGRADEABLE_STORAGE_PRODUCT_SLUGS_T2 = [
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 ];
-const BYTES_10GB = 10737418240;
-const BYTES_100GB = 107374182400;
-const BYTES_1TB = 1073741824000;
+export const BYTES_10GB = 10737418240;
+export const BYTES_100GB = 107374182400;
+export const BYTES_1TB = 1073741824000;
 
-const storageToUpsellProduct: Record< number, string > = {
+export const storageToUpsellProduct: Record< number, string > = {
 	[ BYTES_10GB ]: PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY,
 	[ BYTES_100GB ]: PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY,
 	[ BYTES_1TB ]: PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY,

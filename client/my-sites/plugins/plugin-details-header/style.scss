@@ -34,6 +34,7 @@ $mobile-icon-height: 175px;
 		margin-bottom: 15px;
 		width: $mobile-icon-height;
 		height: $mobile-icon-height;
+		flex-shrink: 0;
 	}
 }
 

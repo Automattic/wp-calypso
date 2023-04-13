@@ -720,6 +720,13 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 		};
 	},
 
+	updateTaxFields: (
+		oldDetails: ManagedContactDetails,
+		newDetails: ManagedContactDetails
+	): ManagedContactDetails => {
+		return { ...oldDetails, ...newDetails };
+	},
+
 	updateDomainContactFields: (
 		oldDetails: ManagedContactDetails,
 		newField: DomainContactDetails
@@ -809,5 +816,6 @@ export function getInitialWpcomStoreState(
 		recaptchaClientId: -1,
 		transactionResult: undefined,
 		contactDetails,
+		vatDetails: {},
 	};
 }

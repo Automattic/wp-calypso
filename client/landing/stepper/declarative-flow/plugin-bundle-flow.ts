@@ -13,7 +13,7 @@ import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import GetCurrentThemeSoftwareSets from './internals/steps-repository/get-current-theme-software-sets';
 import { redirect } from './internals/steps-repository/import/util';
-import { ProcessingResult } from './internals/steps-repository/processing-step';
+import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import {
 	AssertConditionResult,
 	AssertConditionState,
@@ -23,6 +23,7 @@ import {
 } from './internals/types';
 import pluginBundleData from './plugin-bundle-data';
 import type { BundledPlugin } from './plugin-bundle-data';
+import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const WRITE_INTENT_DEFAULT_THEME = 'livro';
 const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
@@ -33,13 +34,11 @@ const pluginBundleFlow: Flow = {
 
 	useSteps() {
 		const siteSlugParam = useSiteSlugParam();
-		const pluginSlug = useSelect( ( select ) =>
-			select( SITE_STORE ).getBundledPluginSlug( siteSlugParam || '' )
+		const pluginSlug = useSelect(
+			( select ) =>
+				( select( SITE_STORE ) as SiteSelect ).getBundledPluginSlug( siteSlugParam || '' ),
+			[ siteSlugParam ]
 		) as BundledPlugin;
-
-		if ( ! isEnabled( 'themes/plugin-bundling' ) ) {
-			window.location.replace( `/home/${ siteSlugParam }` );
-		}
 
 		const steps = [
 			{
@@ -53,14 +52,26 @@ const pluginBundleFlow: Flow = {
 		if ( pluginSlug && pluginBundleData.hasOwnProperty( pluginSlug ) ) {
 			bundlePluginSteps = pluginBundleData[ pluginSlug ];
 		}
-		return steps.concat( bundlePluginSteps );
+		return [ ...steps, ...bundlePluginSteps ];
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
-		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
-		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
-		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
-		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
+		const intent = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+			[]
+		);
+		const goals = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+			[]
+		);
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
+		const startingPoint = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStartingPoint(),
+			[]
+		);
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
@@ -73,19 +84,29 @@ const pluginBundleFlow: Flow = {
 		}
 
 		const adminUrl = useSelect(
-			( select ) => site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' )
+			( select ) =>
+				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
+			[ site ]
 		);
 		const isAtomic = useSelect(
-			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
+			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
+			[ site ]
 		);
-		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
+		const storeType = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),
+			[]
+		);
 		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
 			useDispatch( ONBOARD_STORE );
 		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
+		const siteDetails = useSelect(
+			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).getSite( site.ID ),
+			[ site ]
+		);
 		const dispatch = reduxDispatch();
 
 		// Since we're mimicking a subset of the site-setup-flow, we're safe to use the siteSetupProgress.
-		const flowProgress = useSiteSetupFlowProgress( currentStep, intent, storeType );
+		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
 
 		if ( flowProgress ) {
 			setStepProgress( flowProgress );
@@ -133,7 +154,21 @@ const pluginBundleFlow: Flow = {
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 
+			const defaultExitDest = siteDetails?.options?.theme_slug
+				? `/theme/${ siteDetails?.options.theme_slug }/${ siteSlug }`
+				: `/home/${ siteSlug }`;
+
 			switch ( currentStep ) {
+				case 'checkForWoo':
+					// If WooCommerce is already installed, we should exit the flow.
+					if ( providedDependencies?.hasWooCommerce ) {
+						// If we have the theme for the site, redirect to the theme page. Otherwise redirect to /home.
+						return exitFlow( defaultExitDest );
+					}
+
+					// Otherwise, we should continue to the next step.
+					return navigate( 'storeAddress' );
+
 				case 'storeAddress':
 					return navigate( 'businessInfo' );
 
@@ -183,7 +218,7 @@ const pluginBundleFlow: Flow = {
 						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
-					return exitFlow( `/home/${ siteSlug }` );
+					return exitFlow( defaultExitDest );
 				}
 
 				case 'wooTransfer':
@@ -195,9 +230,6 @@ const pluginBundleFlow: Flow = {
 
 		const goBack = () => {
 			switch ( currentStep ) {
-				case 'storeAddress':
-					return navigate( 'storeFeatures' );
-
 				case 'businessInfo':
 					return navigate( 'storeAddress' );
 
@@ -205,7 +237,7 @@ const pluginBundleFlow: Flow = {
 					return navigate( 'businessInfo' );
 
 				default:
-					return navigate( 'storeAddress' );
+					return navigate( 'checkForWoo' );
 			}
 		};
 
@@ -213,7 +245,7 @@ const pluginBundleFlow: Flow = {
 			switch ( currentStep ) {
 				// TODO - Do we need anything here?
 				default:
-					return navigate( 'storeAddress' );
+					return navigate( 'checkForWoo' );
 			}
 		};
 
@@ -227,9 +259,13 @@ const pluginBundleFlow: Flow = {
 	useAssertConditions(): AssertConditionResult {
 		const siteSlug = useSiteSlugParam();
 		const siteId = useSiteIdParam();
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const fetchingSiteError = useSelect( ( select ) =>
-			select( SITE_STORE ).getFetchingSiteError()
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+		const fetchingSiteError = useSelect(
+			( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+			[]
 		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 

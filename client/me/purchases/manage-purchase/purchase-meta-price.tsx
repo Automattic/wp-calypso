@@ -1,12 +1,12 @@
 import {
-	getPlan,
-	getProductFromSlug,
 	isDIFMProduct,
 	isDomainTransfer,
-	isEmailMonthly,
-	TERM_BIENNIALLY,
-	TERM_MONTHLY,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_MONTHLY_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
+import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import {
 	isIncludedWithPlan,
@@ -17,8 +17,7 @@ import type { Purchase } from 'calypso/lib/purchases/types';
 
 function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 	const translate = useTranslate();
-	const { productSlug, productDisplayPrice } = purchase;
-	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
+	const { priceInteger, currencyCode } = purchase;
 
 	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 		if ( isDIFMProduct( purchase ) ) {
@@ -63,10 +62,12 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 		return translate( '{{displayPrice/}} {{period}}(one-time){{/period}}', {
 			components: {
 				displayPrice: (
-					<span
-						// eslint-disable-next-line react/no-danger
-						dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
-					/>
+					<span>
+						{ formatCurrency( priceInteger, currencyCode, {
+							stripZeros: true,
+							isSmallestUnit: true,
+						} ) }
+					</span>
 				),
 				period: <span className="manage-purchase__time-period" />,
 			},
@@ -78,45 +79,61 @@ function PurchaseMetaPrice( { purchase }: { purchase: Purchase } ) {
 	}
 
 	const getPeriod = () => {
-		if ( isEmailMonthly( purchase ) ) {
-			return translate( 'month' );
+		switch ( purchase.billPeriodDays ) {
+			case PLAN_TRIENNIAL_PERIOD:
+				return translate( 'three years' );
+			case PLAN_BIENNIAL_PERIOD:
+				return translate( 'two years' );
+			case PLAN_ANNUAL_PERIOD:
+				return translate( 'year' );
+			case PLAN_MONTHLY_PERIOD:
+				return translate( 'month' );
+			case 7:
+				// Note: does this period ever happen? I don't think it does but it
+				// was added in https://github.com/Automattic/wp-calypso/pull/65006
+				// and so I'm leaving it for now.
+				return translate( 'week' );
+			case 1:
+				// Note: does this period ever happen? I don't think it does but it
+				// was added in https://github.com/Automattic/wp-calypso/pull/65006
+				// and so I'm leaving it for now.
+				return translate( 'day' );
 		}
 
-		if ( typeof plan === 'object' && plan.term ) {
-			switch ( plan.term ) {
-				case TERM_BIENNIALLY:
-					return translate( 'two years' );
-				case TERM_MONTHLY:
-					return translate( 'month' );
-			}
-		}
-
-		if ( purchase.billPeriodLabel ) {
-			switch ( purchase.billPeriodLabel ) {
-				case 'per year':
-					return translate( 'year' );
-				case 'per month':
-					return translate( 'month' );
-				case 'per week':
-					return translate( 'week' );
-				case 'per day':
-					return translate( 'day' );
-			}
-		}
-
-		return translate( 'year' );
+		return null;
 	};
 
-	const getPriceLabel = ( period: string ) => {
+	const getPriceLabel = ( period: string | null ) => {
+		if (
+			// If this is not a product that will renew, we should display the price
+			// without "x/year".
+			! period ||
+			// For introductory offers with prorated renewals, it's confusing to see
+			// the renewal price as "x/year", so we will just show the renewal
+			// price by itself.
+			purchase.introductoryOffer?.isNextRenewalProrated
+		) {
+			return (
+				<span>
+					{ formatCurrency( priceInteger, currencyCode, {
+						stripZeros: true,
+						isSmallestUnit: true,
+					} ) }
+				</span>
+			);
+		}
+
 		//translators: displayPrice is the price of the purchase with localized currency (i.e. "C$10"), %(period)s is how long the plan is active (i.e. "year")
 		return translate( '{{displayPrice/}} {{period}}/ %(period)s{{/period}}', {
 			args: { period },
 			components: {
 				displayPrice: (
-					<span
-						// eslint-disable-next-line react/no-danger
-						dangerouslySetInnerHTML={ { __html: productDisplayPrice } }
-					/>
+					<span>
+						{ formatCurrency( priceInteger, currencyCode, {
+							stripZeros: true,
+							isSmallestUnit: true,
+						} ) }
+					</span>
 				),
 				period: <span className="manage-purchase__time-period" />,
 			},

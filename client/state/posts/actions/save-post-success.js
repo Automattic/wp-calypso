@@ -10,10 +10,10 @@ import 'calypso/state/posts/init';
  *
  * @param  {number}   siteId     Site ID
  * @param  {number}   postId     Post ID
- * @param  {object}   savedPost  Updated post
- * @param  {object}   post       Post attributes
+ * @param  {Object}   savedPost  Updated post
+ * @param  {Object}   post       Post attributes
  * @param  {boolean}  silent     Whether to stop related notices from appearing
- * @returns {object}              Action thunk
+ * @returns {Object}              Action thunk
  */
 export function savePostSuccess( siteId, postId = null, savedPost, post, silent = false ) {
 	return ( dispatch ) => {

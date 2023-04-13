@@ -3,6 +3,7 @@ import { Title, SubTitle, NextButton, Notice } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, check } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import { getQueryArg } from '@wordpress/url';
 import classnames from 'classnames';
 import React, { useState, useEffect } from 'react';
 import { UrlData } from 'calypso/blocks/import/types';
@@ -21,7 +22,9 @@ interface Props {
 	targetSite: SiteDetails | null;
 	targetSiteSlug: string;
 	isTargetSitePlanCompatible: boolean;
+	showConfirmDialog: boolean;
 	startImport: () => void;
+	isMigrateFromWp: boolean;
 }
 
 export const Confirm: React.FunctionComponent< Props > = ( props ) => {
@@ -37,7 +40,9 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 		targetSite,
 		targetSiteSlug,
 		isTargetSitePlanCompatible,
+		showConfirmDialog,
 		startImport,
+		isMigrateFromWp,
 	} = props;
 	const [ isModalDetailsOpen, setIsModalDetailsOpen ] = useState( false );
 	const [ showUpgradePlanScreen, setShowUpgradePlanScreen ] = useState( false );
@@ -46,8 +51,31 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 	 ↓ Effects
 	 */
 	useEffect( () => {
+		const skipCta = getQueryArg( window.location.href, 'skipCta' );
 		recordTracksEvent( 'calypso_site_importer_migration_confirmation' );
+		if ( isTargetSitePlanCompatible && isMigrateFromWp && skipCta ) {
+			startImportCta();
+		}
 	}, [] );
+
+	/**
+	 ↓ Functions
+	 */
+	function showConfirmDialogOrStartImport() {
+		if ( showConfirmDialog ) {
+			setIsModalDetailsOpen( true );
+		} else {
+			startImport();
+		}
+	}
+	function startImportCta() {
+		recordTracksEvent( 'calypso_signup_step_start', {
+			flow: 'importer',
+			step: 'importerWordpress',
+			action: 'startImport',
+		} );
+		showConfirmDialogOrStartImport();
+	}
 
 	return (
 		<>
@@ -130,18 +158,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 						) }
 
 						{ isTargetSitePlanCompatible && (
-							<NextButton
-								onClick={ () => {
-									recordTracksEvent( 'calypso_signup_step_start', {
-										flow: 'importer',
-										step: 'importerWordpress',
-										action: 'startImport',
-									} );
-									setIsModalDetailsOpen( true );
-								} }
-							>
-								{ __( 'Start import' ) }
-							</NextButton>
+							<NextButton onClick={ startImportCta }>{ __( 'Start import' ) }</NextButton>
 						) }
 					</>
 				) }
@@ -149,7 +166,7 @@ export const Confirm: React.FunctionComponent< Props > = ( props ) => {
 				{ showUpgradePlanScreen && (
 					<>
 						<ConfirmUpgradePlan sourceSite={ sourceSite } targetSite={ targetSite } />
-						<NextButton onClick={ () => setIsModalDetailsOpen( true ) }>
+						<NextButton onClick={ () => showConfirmDialogOrStartImport() }>
 							{ __( 'Upgrade and import' ) }
 						</NextButton>
 					</>

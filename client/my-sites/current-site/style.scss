@@ -10,11 +10,8 @@
 	box-shadow: none;
 	background: transparent;
 
-	&.is-loading {
-		.site-icon {
-			animation: pulse-light 0.8s ease-in-out infinite;
-		}
-
+	&.is-loading,
+	&.is-no-sites {
 		.site__title {
 			color: var(--color-neutral-50);
 			line-height: 35px;
@@ -27,6 +24,10 @@
 				visibility: hidden;
 			}
 		}
+	}
+
+	&.is-loading .site-icon {
+		animation: pulse-light 0.8s ease-in-out infinite;
 	}
 }
 
@@ -118,10 +119,4 @@
 .sidebar .current-site .site,
 .sidebar .current-site .all-sites {
 	border-bottom: 0;
-}
-
-.current-site__launchpad-notice {
-	button {
-		background-color: var(--color-primary);
-	}
 }

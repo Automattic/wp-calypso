@@ -3,18 +3,13 @@ import { useStripe } from '@automattic/calypso-stripe';
 import colorStudio from '@automattic/color-studio';
 import { CheckoutProvider, checkoutTheme } from '@automattic/composite-checkout';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import {
-	useStripePaymentRequest,
-	usePaymentRequestOptions,
-	isValueTruthy,
-} from '@automattic/wpcom-checkout';
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useSelect } from '@wordpress/data';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
-import QueryIntroOffers from 'calypso/components/data/query-intro-offers';
 import QueryJetpackSaleCoupon from 'calypso/components/data/query-jetpack-sale-coupon';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QueryPostCounts from 'calypso/components/data/query-post-counts';
@@ -23,7 +18,6 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import wp from 'calypso/lib/wp';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
@@ -32,7 +26,6 @@ import {
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { errorNotice, infoNotice } from 'calypso/state/notices/actions';
-import getIsIntroOfferRequesting from 'calypso/state/selectors/get-is-requesting-into-offers';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -48,8 +41,7 @@ import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
-import useStoredCards from '../hooks/use-stored-cards';
-import { useWpcomStore } from '../hooks/wpcom-store';
+import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
 import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
@@ -61,21 +53,19 @@ import payPalProcessor from '../lib/paypal-express-processor';
 import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
-import { StoredCard } from '../types/stored-cards';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type {
-	ManagedContactDetails,
 	CountryListItem,
 	CheckoutPaymentMethodSlug,
+	SitelessCheckoutType,
 } from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
-
-const wpcomGetStoredCards = (): StoredCard[] => wp.req.get( { path: '/me/stored-cards' } );
 
 export default function CheckoutMain( {
 	siteSlug,
@@ -96,11 +86,13 @@ export default function CheckoutMain( {
 	isInModal,
 	onAfterPaymentComplete,
 	disabledThankYouPage,
-	isJetpackCheckout = false,
+	sitelessCheckoutType,
+	akismetSiteSlug,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
 	isUserComingFromLoginForm,
 	customizedPreviousPath,
+	useVariantPickerRadioButtons,
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
@@ -123,26 +115,41 @@ export default function CheckoutMain( {
 	// `getThankYouUrl`.
 	onAfterPaymentComplete?: () => void;
 	disabledThankYouPage?: boolean;
-	isJetpackCheckout?: boolean;
+	sitelessCheckoutType?: SitelessCheckoutType;
+	akismetSiteSlug?: string;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
 	isUserComingFromLoginForm?: boolean;
 	customizedPreviousPath?: string;
+	// This is just for unit tests.
+	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
 		useSelector( ( state ) => {
 			return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-		} ) || isJetpackCheckout;
+		} ) || sitelessCheckoutType === 'jetpack';
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
-	const isLoadingIntroOffers = useSelector( ( state ) =>
-		getIsIntroOfferRequesting( state, siteId )
-	);
+	const isSiteless = sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet';
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const createUserAndSiteBeforeTransaction =
-		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isJetpackCheckout;
+		Boolean( isLoggedOutCart || isNoSiteCart ) && ! isSiteless;
 	const reduxDispatch = useDispatch();
-	const updatedSiteSlug = isJetpackCheckout ? jetpackSiteSlug : siteSlug;
+
+	const updatedSiteSlug = useMemo( () => {
+		if ( sitelessCheckoutType === 'jetpack' ) {
+			return jetpackSiteSlug;
+		}
+
+		// Currently, the `akismetSiteSlug` prop is not being passed to this component anywhere
+		// We are not doing any site specific things with akismet checkout, so this should always be undefined for now
+		// If this was not here to return `undefined`, the akismet routes would get messed with due to `siteSlug` returning "no-user" in akismet siteless checkout
+		if ( sitelessCheckoutType === 'akismet' ) {
+			return akismetSiteSlug;
+		}
+
+		return siteSlug;
+	}, [ akismetSiteSlug, jetpackSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
 		( error ) => {
@@ -159,7 +166,7 @@ export default function CheckoutMain( {
 
 	const checkoutFlow = useCheckoutFlowTrackKey( {
 		hasJetpackSiteSlug: !! jetpackSiteSlug,
-		isJetpackCheckout,
+		sitelessCheckoutType,
 		isJetpackNotAtomic,
 		isLoggedOutCart,
 		isUserComingFromLoginForm,
@@ -178,9 +185,9 @@ export default function CheckoutMain( {
 		usesJetpackProducts: isJetpackNotAtomic,
 		isPrivate,
 		siteSlug: updatedSiteSlug,
+		sitelessCheckoutType,
 		isLoggedOutCart,
 		isNoSiteCart,
-		isJetpackCheckout,
 		jetpackSiteSlug,
 		jetpackPurchaseToken,
 		source: productSourceFromUrl,
@@ -191,7 +198,6 @@ export default function CheckoutMain( {
 	const {
 		applyCoupon,
 		replaceProductInCart,
-		replaceProductsInCart,
 		isLoading: isLoadingCart,
 		isPendingUpdate: isCartPendingUpdate,
 		responseCart,
@@ -200,7 +206,8 @@ export default function CheckoutMain( {
 		addProductsToCart,
 	} = useShoppingCart( cartKey );
 
-	const updatedSiteId = isJetpackCheckout ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
+	// For site-less checkouts, get the blog ID from the cart response
+	const updatedSiteId = isSiteless ? parseInt( String( responseCart.blog_id ), 10 ) : siteId;
 
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
@@ -210,7 +217,6 @@ export default function CheckoutMain( {
 		couponCodeFromUrl,
 		applyCoupon,
 		addProductsToCart,
-		replaceProductsInCart,
 	} );
 
 	useRecordCartLoaded( {
@@ -239,8 +245,8 @@ export default function CheckoutMain( {
 		isJetpackNotAtomic,
 		productAliasFromUrl,
 		hideNudge: !! isComingFromUpsell,
+		sitelessCheckoutType,
 		isInModal,
-		isJetpackCheckout,
 		domains,
 	} );
 
@@ -253,8 +259,6 @@ export default function CheckoutMain( {
 	}, [ getThankYouUrlBase ] );
 
 	const contactDetailsType = getContactDetailsType( responseCart );
-
-	useWpcomStore();
 
 	useDetectedCountryCode();
 
@@ -314,10 +318,10 @@ export default function CheckoutMain( {
 		);
 
 	const {
-		storedCards,
+		paymentMethods: storedCards,
 		isLoading: isLoadingStoredCards,
 		error: storedCardsError,
-	} = useStoredCards( wpcomGetStoredCards, Boolean( isLoggedOutCart ) );
+	} = useStoredPaymentMethods( { isLoggedOut: isLoggedOutCart, type: 'card' } );
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) => {
@@ -329,25 +333,11 @@ export default function CheckoutMain( {
 		} );
 	} );
 
-	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration, cartKey );
-	const { allowedPaymentTypes: allowedWebPayTypes, isLoading: isWebPayLoading } =
-		useStripePaymentRequest( {
-			paymentRequestOptions,
-			// No callback is needed here; this is being used only to determine what
-			// payment methods are available.
-			onSubmit: () => undefined,
-			stripe,
-		} );
-	const { applePay: isApplePayAvailable, googlePay: isGooglePayAvailable } = allowedWebPayTypes;
-
 	const paymentMethodObjects = useCreatePaymentMethods( {
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isApplePayAvailable,
-		isGooglePayAvailable,
-		isWebPayLoading,
 		storedCards,
 		siteSlug: updatedSiteSlug,
 	} );
@@ -360,15 +350,12 @@ export default function CheckoutMain( {
 		responseCart.products.length < 1 ||
 		isInitialCartLoading ||
 		// Only wait for stored cards to load if we are using cards
-		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards ) ||
-		// Only wait for web pay to load if we are using web pay
-		( allowedPaymentMethods.includes( 'web-pay' ) && isWebPayLoading );
+		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards );
 
-	const contactDetails: ManagedContactDetails | undefined = useSelect( ( select ) =>
-		select( 'wpcom-checkout' )?.getContactInfo()
-	);
-	const recaptchaClientId: number | undefined = useSelect( ( select ) =>
-		select( 'wpcom-checkout' )?.getRecaptchaClientId()
+	const contactDetails = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
+	const recaptchaClientId = useSelect(
+		( select ) => select( CHECKOUT_STORE ).getRecaptchaClientId(),
+		[]
 	);
 
 	const paymentMethods = arePaymentMethodsLoading
@@ -385,7 +372,7 @@ export default function CheckoutMain( {
 		updatedSiteSlug,
 		feature,
 		plan,
-		isJetpackCheckout,
+		sitelessCheckoutType,
 		checkoutFlow
 	);
 
@@ -504,33 +491,37 @@ export default function CheckoutMain( {
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
-	const isLoading: boolean =
+	// This variable determines if we see the loading page or if checkout can
+	// render its steps. Note that this does not prevent everything inside
+	// `CheckoutProvider` from rendering, only everything inside
+	// `CheckoutStepGroup`. This is because this variable is used to set the
+	// `FormStatus` to `FormStatus::LOADING`. Be careful what you add to this
+	// variable because it will slow down checkout's load time.
+	const isCheckoutPageLoading: boolean =
 		isInitialCartLoading ||
 		arePaymentMethodsLoading ||
 		paymentMethods.length < 1 ||
 		responseCart.products.length < 1 ||
-		countriesList.length < 1 ||
-		isLoadingIntroOffers;
-	if ( isLoading ) {
+		countriesList.length < 1;
+	if ( isCheckoutPageLoading ) {
 		debug( 'still loading because one of these is true', {
 			isInitialCartLoading,
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
 			countriesList: countriesList.length < 1,
-			isLoadingIntroOffers,
 		} );
 	} else {
 		debug( 'no longer loading' );
 	}
 
 	useRecordCheckoutLoaded( {
-		isLoading,
-		isApplePayAvailable,
+		isLoading: isCheckoutPageLoading,
 		responseCart,
 		storedCards,
 		productAliasFromUrl,
 		checkoutFlow,
+		isGiftPurchase,
 	} );
 
 	const onPageLoadError: CheckoutPageErrorCallback = useCallback(
@@ -575,7 +566,7 @@ export default function CheckoutMain( {
 		isComingFromUpsell,
 		disabledThankYouPage,
 		siteSlug: updatedSiteSlug,
-		isJetpackCheckout,
+		sitelessCheckoutType,
 		checkoutFlow,
 	} );
 
@@ -680,14 +671,15 @@ export default function CheckoutMain( {
 	const cartHasSearchProduct = useMemo(
 		() =>
 			responseCart.products.some( ( { product_slug } ) =>
-				JETPACK_SEARCH_PRODUCTS.includes( product_slug as typeof JETPACK_SEARCH_PRODUCTS[ number ] )
+				JETPACK_SEARCH_PRODUCTS.includes(
+					product_slug as ( typeof JETPACK_SEARCH_PRODUCTS )[ number ]
+				)
 			),
 		[ responseCart.products ]
 	);
 
 	return (
 		<Fragment>
-			<QueryIntroOffers siteId={ updatedSiteId } />
 			<QueryJetpackSaleCoupon />
 			<QuerySitePlans siteId={ updatedSiteId } />
 			<QuerySitePurchases siteId={ updatedSiteId } />
@@ -699,7 +691,10 @@ export default function CheckoutMain( {
 				path={ analyticsPath }
 				title="Checkout"
 				properties={ analyticsProps }
-				options={ { useJetpackGoogleAnalytics: isJetpackCheckout || isJetpackNotAtomic } }
+				options={ {
+					useJetpackGoogleAnalytics: sitelessCheckoutType === 'jetpack' || isJetpackNotAtomic,
+					useAkismetGoogleAnalytics: sitelessCheckoutType === 'akismet',
+				} }
 			/>
 			<CheckoutProvider
 				total={ total }
@@ -711,12 +706,13 @@ export default function CheckoutMain( {
 				onPaymentMethodChanged={ handlePaymentMethodChanged }
 				paymentMethods={ paymentMethods }
 				paymentProcessors={ paymentProcessors }
-				isLoading={ isLoading }
+				isLoading={ isCheckoutPageLoading }
 				isValidating={ isCartPendingUpdate }
 				theme={ theme }
-				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
+				selectFirstAvailablePaymentMethod
 			>
 				<WPCheckout
+					useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 					customizedPreviousPath={ customizedPreviousPath }
 					isRemovingProductFromCart={ isRemovingProductFromCart }
 					areThereErrors={ areThereErrors }
@@ -744,7 +740,7 @@ function getAnalyticsPath(
 	selectedSiteSlug: string | undefined,
 	selectedFeature: string | undefined,
 	plan: string | undefined,
-	isJetpackCheckout: boolean,
+	sitelessCheckoutType: SitelessCheckoutType,
 	checkoutFlow: string
 ): { analyticsPath: string; analyticsProps: Record< string, string > } {
 	debug( 'getAnalyticsPath', {
@@ -753,7 +749,7 @@ function getAnalyticsPath(
 		selectedSiteSlug,
 		selectedFeature,
 		plan,
-		isJetpackCheckout,
+		sitelessCheckoutType,
 		checkoutFlow,
 	} );
 	let analyticsPath = '';
@@ -781,8 +777,12 @@ function getAnalyticsPath(
 		analyticsPath = '/checkout/no-site';
 	}
 
-	if ( isJetpackCheckout ) {
+	if ( sitelessCheckoutType === 'jetpack' ) {
 		analyticsPath = analyticsPath.replace( 'checkout', 'checkout/jetpack' );
+	}
+
+	if ( sitelessCheckoutType === 'akismet' ) {
+		analyticsPath = analyticsPath.replace( 'checkout', 'checkout/akismet' );
 	}
 
 	return { analyticsPath, analyticsProps };

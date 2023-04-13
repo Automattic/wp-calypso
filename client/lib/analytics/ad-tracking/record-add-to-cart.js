@@ -11,7 +11,7 @@ import './setup';
 /**
  * Records that an item was added to the cart
  *
- * @param {object} cartItem - The item added to the cart
+ * @param {Object} cartItem - The item added to the cart
  * @returns {void}
  */
 export async function recordAddToCart( cartItem ) {

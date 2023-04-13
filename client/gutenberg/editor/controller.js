@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { makeLayout, render } from 'calypso/controller';
 import { addQueryArgs } from 'calypso/lib/route';
+import wpcom from 'calypso/lib/wp';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { getAdminMenu, getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
@@ -13,10 +14,10 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import shouldLoadGutenframe from 'calypso/state/selectors/should-load-gutenframe';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
-	getSiteUrl,
 	getSiteOption,
 	isJetpackSite,
 	isSSOEnabled,
+	getSiteAdminUrl,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
@@ -107,9 +108,9 @@ function waitForPreferredEditorView( context ) {
  * tracking), so we redirect the user to the WP Admin login page in order to store the auth cookie. Users will be
  * redirected back to Calypso when they are authenticated in WP Admin.
  *
- * @param {object} context  Shared context in the route.
- * @param {Function} next   Next registered callback for the route.
- * @returns {*}             Whatever the next callback returns.
+ * @param {Object} context Shared context in the route.
+ * @param {Function} next  Next registered callback for the route.
+ * @returns {*}            Whatever the next callback returns.
  */
 export const authenticate = ( context, next ) => {
 	const state = context.store.getState();
@@ -158,8 +159,11 @@ export const authenticate = ( context, next ) => {
 		`${ origin }${ context.path }`
 	);
 
-	const siteUrl = getSiteUrl( state, siteId );
-	const wpAdminLoginUrl = addQueryArgs( { redirect_to: returnUrl }, `${ siteUrl }/wp-login.php` );
+	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+	const wpAdminLoginUrl = addQueryArgs(
+		{ redirect_to: returnUrl },
+		`${ siteAdminUrl }../wp-login.php`
+	);
 
 	window.location.replace( wpAdminLoginUrl );
 };
@@ -198,7 +202,6 @@ export const redirect = async ( context, next ) => {
 		// pass along parameters, for example press-this
 		return window.location.replace( addQueryArgs( context.query, url ) );
 	}
-
 	return next();
 };
 
@@ -212,12 +215,9 @@ function getAnchorFmData( query ) {
 	return { anchor_podcast, anchor_episode, spotify_url };
 }
 
-function showDraftPostModal() {
-	const value = window.sessionStorage.getItem( 'wpcom_signup_complete_show_draft_post_modal' );
-	if ( value ) {
-		window.sessionStorage.removeItem( 'wpcom_signup_complete_show_draft_post_modal' );
-	}
-
+function getSessionStorageOneTimeValue( key ) {
+	const value = window.sessionStorage.getItem( key );
+	window.sessionStorage.removeItem( key );
 	return value;
 }
 
@@ -252,7 +252,9 @@ export const post = ( context, next ) => {
 			parentPostId={ parentPostId }
 			creatingNewHomepage={ postType === 'page' && context.query.hasOwnProperty( 'new-homepage' ) }
 			stripeConnectSuccess={ context.query.stripe_connect_success ?? null }
-			showDraftPostModal={ showDraftPostModal() }
+			showDraftPostModal={ getSessionStorageOneTimeValue(
+				'wpcom_signup_complete_show_draft_post_modal'
+			) }
 		/>
 	);
 
@@ -269,6 +271,7 @@ export const siteEditor = ( context, next ) => {
 			// It will force the component to remount completely when the Id changes.
 			key={ siteId }
 			editorType="site"
+			completedFlow={ getSessionStorageOneTimeValue( 'wpcom_signup_completed_flow' ) }
 		/>
 	);
 
@@ -282,4 +285,43 @@ export const exitPost = ( context, next ) => {
 		context.store.dispatch( stopEditingPost( siteId, postId ) );
 	}
 	next();
+};
+
+/**
+ * Redirects to the un-iframed Site Editor if the config is enabled.
+ *
+ * @param {Object} context Shared context in the route.
+ * @param {Function} next  Next registered callback for the route.
+ * @returns {*}            Whatever the next callback returns.
+ */
+export const redirectSiteEditor = async ( context, next ) => {
+	// bail unless the config is enabled
+	if ( ! isEnabled( 'block-editor/un-iframed-site-editor' ) ) {
+		return next();
+	}
+
+	// Let's ditch that iframe!
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	const { home_template } = await wpcom.req
+		.get( {
+			path: `/sites/${ siteId }/block-editor`,
+			apiNamespace: 'wpcom/v2',
+		} )
+		.catch( () => {} );
+
+	let queryArgs = {};
+	// Only add the origin if it's not wordpress.com.
+	if ( location.origin !== 'https://wordpress.com' ) {
+		queryArgs.calypso_origin = location.origin;
+	}
+	// Adds home_template.post_id and home_template.postType if we received them.
+	if ( home_template ) {
+		queryArgs = { ...queryArgs, ...home_template };
+	}
+	// We aren't using `getSiteEditorUrl` because it still thinks we should gutenframe the Site Editor.
+	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+	const siteEditorUrl = addQueryArgs( queryArgs, `${ siteAdminUrl }site-editor.php` );
+	return location.assign( siteEditorUrl );
 };

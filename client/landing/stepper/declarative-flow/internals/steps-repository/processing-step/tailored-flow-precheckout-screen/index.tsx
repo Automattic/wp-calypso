@@ -1,8 +1,15 @@
-import { NEWSLETTER_FLOW, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
+import {
+	NEWSLETTER_FLOW,
+	LINK_IN_BIO_FLOW,
+	LINK_IN_BIO_TLD_FLOW,
+	isNewsletterOrLinkInBioFlow,
+} from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import { LoadingBar } from 'calypso/components/loading-bar';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { useInterval } from 'calypso/lib/interval/use-interval';
 import './style.scss';
 
@@ -15,6 +22,7 @@ const useSteps = ( flowName: string ) => {
 
 	switch ( flowName ) {
 		case LINK_IN_BIO_FLOW:
+		case LINK_IN_BIO_TLD_FLOW:
 			steps = [
 				{ title: __( 'Great choices. Nearly there!' ) },
 				{ title: __( 'Shining and polishing your Bio' ) },
@@ -24,9 +32,17 @@ const useSteps = ( flowName: string ) => {
 		case NEWSLETTER_FLOW:
 			steps = [
 				{ title: __( 'Excellent choices. Nearly there!' ) },
-				{ title: __( 'Smoothing down the stationery' ) },
-				{ title: __( 'Embossing all the envelopes' ) },
+				{
+					title: __( 'Spreading the news' ),
+				},
+				{
+					title: __( 'Folding the letters' ),
+				},
+				{
+					title: __( 'Bringing the news to the letter' ),
+				},
 			];
+
 			break;
 		default:
 			steps = [
@@ -79,14 +95,14 @@ export default function TailoredFlowPreCheckoutScreen( { flowName }: { flowName:
 		<div className="processing-step__container">
 			<div className="processing-step">
 				<h1 className="processing-step__progress-step">{ steps.current[ currentStep ]?.title }</h1>
-				<div
-					className="processing-step__progress-bar"
-					style={
-						{
-							'--progress': ! hasStarted ? /* initial 10% progress */ 0.1 : progress,
-						} as React.CSSProperties
-					}
-				/>
+				{ isNewsletterOrLinkInBioFlow( flowName ) ? (
+					<LoadingBar
+						className="processing-step__progress-bar"
+						progress={ ! hasStarted ? /* initial 10% progress */ 0.1 : progress }
+					/>
+				) : (
+					<LoadingEllipsis />
+				) }
 			</div>
 
 			{ flowName === NEWSLETTER_FLOW && (

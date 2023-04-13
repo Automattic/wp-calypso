@@ -63,8 +63,6 @@ export class EditorDimensionsComponent {
 	 * @param {number} padding Padding dimension to select.
 	 */
 	private async setPadding( padding: number ): Promise< void > {
-		const locator = this.editor.locator( selectors.paddingInput );
-		await locator.fill( padding.toString() );
-		await locator.press( 'Enter' ); // Confirm rounding.
+		await this.editor.getByLabel( 'All sides padding' ).fill( padding.toString() );
 	}
 }

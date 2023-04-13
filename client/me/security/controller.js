@@ -3,11 +3,11 @@ import page from 'page';
 import { createElement } from 'react';
 import { getSocialServiceFromClientId } from 'calypso/lib/login';
 import ConnectedAppsComponent from 'calypso/me/connected-applications';
+import PasswordComponent from 'calypso/me/security/main';
 import SecurityAccountEmail from 'calypso/me/security-account-email';
 import AccountRecoveryComponent from 'calypso/me/security-account-recovery';
 import SecurityCheckupComponent from 'calypso/me/security-checkup';
 import { SecuritySSHKey } from 'calypso/me/security-ssh-key/security-ssh-key';
-import PasswordComponent from 'calypso/me/security/main';
 import SocialLoginComponent from 'calypso/me/social-login';
 import { successNotice } from 'calypso/state/notices/actions';
 

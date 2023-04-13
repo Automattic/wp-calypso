@@ -7,14 +7,24 @@ import './style.scss';
 
 interface Props {
 	className?: string;
+	labelText?: string;
+	tooltipContent?: string | React.ReactElement;
+	tooltipClassName?: string;
 	tooltipPosition?: string;
 	isPremiumThemeAvailable?: boolean;
+	shouldHideTooltip?: boolean;
+	focusOnShow?: boolean;
 }
 
 const PremiumBadge: FunctionComponent< Props > = ( {
 	className,
+	labelText,
+	tooltipContent,
+	tooltipClassName,
 	tooltipPosition = 'bottom left',
 	isPremiumThemeAvailable,
+	shouldHideTooltip,
+	focusOnShow,
 } ) => {
 	const { __ } = useI18n();
 
@@ -39,15 +49,18 @@ const PremiumBadge: FunctionComponent< Props > = ( {
 		>
 			{ /*  eslint-disable-next-line wpcalypso/jsx-gridicon-size */ }
 			<Gridicon className="premium-badge__logo" icon="star" size={ 14 } />
-			<span>{ __( 'Premium' ) }</span>
-			<Popover
-				className="premium-badge__popover"
-				context={ divRef.current }
-				isVisible={ isPopoverVisible }
-				position={ tooltipPosition }
-			>
-				{ tooltipText }
-			</Popover>
+			<span>{ labelText || __( 'Premium' ) }</span>
+			{ ! shouldHideTooltip && (
+				<Popover
+					className={ classNames( 'premium-badge__popover', tooltipClassName ) }
+					context={ divRef.current }
+					isVisible={ isPopoverVisible }
+					position={ tooltipPosition }
+					focusOnShow={ focusOnShow }
+				>
+					{ tooltipContent || tooltipText }
+				</Popover>
+			) }
 		</div>
 	);
 };

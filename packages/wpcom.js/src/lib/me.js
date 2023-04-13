@@ -7,8 +7,8 @@ import MeTwoStep from './me.two-step';
 /**
  * Create `Me` instance
  *
- * @param {object} wpcom - wpcom instance
- * @returns {null} null
+ * @param {Object} wpcom - wpcom instance
+ * @returns {undefined|Me} New Me instance or undefined.
  */
 export default function Me( wpcom ) {
 	if ( ! ( this instanceof Me ) ) {
@@ -21,7 +21,7 @@ export default function Me( wpcom ) {
 /**
  * Meta data about auth token's User
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -32,7 +32,7 @@ Me.prototype.get = function ( query, fn ) {
 /**
  * Get user billing history.
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} [fn] - callback function
  * @returns {Function} request handler
  */
@@ -51,7 +51,7 @@ Me.prototype.billingHistory = function ( query, fn ) {
  *      // posts list data object
  *    } );
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -62,7 +62,7 @@ Me.prototype.postsList = function ( query, fn ) {
 /**
  * A list of the current user's sites
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -73,7 +73,7 @@ Me.prototype.sites = function ( query, fn ) {
 /**
  * List the currently authorized user's likes
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -84,7 +84,7 @@ Me.prototype.likes = function ( query, fn ) {
 /**
  * Get current user's connected applications.
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -96,7 +96,7 @@ Me.prototype.connectedApps = function ( query, fn ) {
  * Get a list of all the keyring connections
  * associated with the current user
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -108,7 +108,7 @@ Me.prototype.keyringConnections = function ( query, fn ) {
  * Get a list of publicize connections
  * that the current user has set up.
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */

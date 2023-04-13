@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { RestClientContext } from '../Notifications';
 import { keys } from '../helpers/input';
 import { getReferenceId } from '../helpers/notes';
-import { setApproveStatus } from '../state/notes/thunks';
+import { setApproveStatus as setApproveStatusAction } from '../state/notes/thunks';
 import ActionButton from './action-button';
 
 const ApproveButton = ( { isApproved, note, translate, setApproveStatus } ) => {
@@ -13,7 +13,7 @@ const ApproveButton = ( { isApproved, note, translate, setApproveStatus } ) => {
 
 	return (
 		<ActionButton
-			icon={ 'checkmark' }
+			icon="checkmark"
 			isActive={ isApproved }
 			hotkey={ keys.KEY_A }
 			onToggle={ () =>
@@ -46,4 +46,6 @@ ApproveButton.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default connect( null, { setApproveStatus } )( localize( ApproveButton ) );
+export default connect( null, { setApproveStatus: setApproveStatusAction } )(
+	localize( ApproveButton )
+);

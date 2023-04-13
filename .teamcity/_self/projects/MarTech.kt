@@ -76,7 +76,7 @@ object ToSAcceptanceTracking: BuildType ({
 				mkdir temp
 
 				# Run suite.
-				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=legal
+				xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=legal
 			"""
 			dockerImage = "%docker_image_e2e%"
 		}

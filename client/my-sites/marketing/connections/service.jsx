@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
 import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
@@ -50,7 +50,7 @@ import ServiceTip from './service-tip';
 /**
  * Check if the connection is broken or requires reauth.
  *
- * @param {object} connection Publicize connection.
+ * @param {Object} connection Publicize connection.
  * @returns {boolean} True if connection is broken or requires reauthentication.
  */
 const isConnectionInvalidOrMustReauth = ( connection ) =>
@@ -145,7 +145,7 @@ export class SharingService extends Component {
 	/**
 	 * Establishes a new connection.
 	 *
-	 * @param {object} service             Service to connect to.
+	 * @param {Object} service             Service to connect to.
 	 * @param {number} keyringConnectionId Keyring conneciton ID.
 	 * @param {number} externalUserId      Optional. User ID for the service. Default: 0.
 	 */
@@ -251,7 +251,7 @@ export class SharingService extends Component {
 	/**
 	 * Sets a connection to be site-wide or not.
 	 *
-	 * @param  {object}   connection Connection to update.
+	 * @param  {Object}   connection Connection to update.
 	 * @param  {boolean}  shared     Whether the connection can be used by other users.
 	 * @returns {Function}            Action thunk
 	 */
@@ -304,7 +304,7 @@ export class SharingService extends Component {
 	/**
 	 * Fetch connections
 	 *
-	 * @param {object} connection Connection to update.
+	 * @param {Object} connection Connection to update.
 	 * @returns {Function} Action thunk
 	 */
 	fetchConnection = ( connection ) =>
@@ -502,6 +502,13 @@ export class SharingService extends Component {
 		return get( this, 'props.service.ID' ) === 'mailchimp';
 	};
 
+	isMastodonService = () => {
+		if ( ! config.isEnabled( 'mastodon' ) ) {
+			return false;
+		}
+		return get( this, 'props.service.ID' ) === 'mastodon';
+	};
+
 	isPicasaMigration( status ) {
 		if ( status === 'must-disconnect' && get( this, 'props.service.ID' ) === 'google_photos' ) {
 			return true;
@@ -518,6 +525,8 @@ export class SharingService extends Component {
 			'is-open': this.state.isOpen,
 		} );
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
+		const showLinkedInNotice =
+			'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } );
 
 		const header = (
 			<div>
@@ -533,7 +542,7 @@ export class SharingService extends Component {
 						numberOfConnections={ this.getConnections().length }
 					/>
 				</div>
-				{ 'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } ) && (
+				{ showLinkedInNotice && (
 					<Notice isCompact status="is-error" className="sharing-service__notice">
 						{ this.props.translate(
 							'Time to reauthenticate! Some changes to LinkedIn mean that you need to re-enable Jetpack Social ' +
@@ -572,14 +581,22 @@ export class SharingService extends Component {
 					expanded={ this.shouldBeExpanded( connectionStatus ) }
 					compact
 					summary={ action }
-					expandedSummary={ action }
+					expandedSummary={
+						this.isMastodonService() ? cloneElement( action, { isExpanded: true } ) : action
+					}
 				>
 					<div
 						className={ classnames( 'sharing-service__content', {
 							'is-placeholder': this.props.isFetching,
 						} ) }
 					>
-						<ServiceExamples service={ this.props.service } />
+						<ServiceExamples
+							service={ this.props.service }
+							action={ this.performAction }
+							connectAnother={ this.connectAnother }
+							isConnecting={ this.state.isConnecting }
+							connections={ connections }
+						/>
 
 						{ this.isPicasaMigration( connectionStatus ) && <PicasaMigration /> }
 
@@ -623,7 +640,7 @@ export class SharingService extends Component {
  * @param  {Component} sharingService     A SharingService component
  * @param  {Function}  mapStateToProps    Optional. A function to pick props from the state.
  *                                        It should return a plain object, which will be merged into the component's props.
- * @param  {object}    mapDispatchToProps Optional. An object that contains additional action creators. Default: {}
+ * @param  {Object}    mapDispatchToProps Optional. An object that contains additional action creators. Default: {}
  * @returns {Component} A highter-order service component
  */
 export function connectFor( sharingService, mapStateToProps, mapDispatchToProps = {} ) {

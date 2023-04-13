@@ -8,7 +8,7 @@ import 'calypso/state/purchases/init';
  * Returns a list of Purchases associated with a Site that may be expiring soon
  * or have expired recently but are still renewable.
  *
- * @param {object} state      global state
+ * @param {Object} state      global state
  * @param {number} siteId     the site id
  * @returns {Array} the matching expiring purchases if there are some
  */

@@ -1,6 +1,13 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.site-table__table-v2 {
+	td,
+	th {
+		border: 1px solid rgba(220, 220, 222, 0.5);
+	}
+}
+
 .site-table__table {
 	border: 1px solid var(--studio-gray-5);
 	border-collapse: collapse;
@@ -14,7 +21,14 @@
 		font-size: 0.75rem;
 		color: var(--studio-gray-50);
 		font-weight: 400;
-		height: 40px;
+		height: 50px;
+
+		&:hover,
+		&:focus-within {
+			.site-sort__icon {
+				visibility: visible;
+			}
+		}
 	}
 
 	td {
@@ -27,11 +41,11 @@
 			position: relative;
 			width: initial;
 
-			@include break-large() {
+			@include break-xlarge {
 				max-width: 200px;
 			}
 
-			@include break-huge() {
+			@include break-huge {
 				max-width: 300px;
 			}
 		}
@@ -53,11 +67,11 @@
 		border-collapse: collapse;
 		vertical-align: middle;
 
-		@include break-large() {
+		@include break-xlarge {
 			padding: 0 8px;
 		}
 
-		@include break-wide() {
+		@include break-wide {
 			padding: 0 16px;
 		}
 	}
@@ -75,4 +89,8 @@
 
 .site-table-site-title {
 	margin-inline-start: 32px;
+}
+
+.site-table__tr-loading {
+	width: 200px !important;
 }

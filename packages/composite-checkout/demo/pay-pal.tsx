@@ -28,7 +28,7 @@ export function createPayPalMethod(): PaymentMethod {
 function PaypalLabel() {
 	return (
 		<Fragment>
-			<span>{ 'PayPal' }</span>
+			<span>PayPal</span>
 		</Fragment>
 	);
 }
@@ -88,7 +88,7 @@ function PayPalButtonContents( {
 }
 
 function PaypalSummary() {
-	return <>{ 'PayPal' }</>;
+	return <>PayPal</>;
 }
 
 function PaypalLogo( { className }: { className?: string } ) {

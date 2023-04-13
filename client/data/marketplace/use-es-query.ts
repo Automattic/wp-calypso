@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import languages, { LanguageSlug } from '@automattic/languages';
 import {
 	UseQueryResult,
@@ -6,66 +7,28 @@ import {
 	InfiniteData,
 	QueryKey,
 	QueryFunction,
+	useQuery,
 } from 'react-query';
 import { useSelector } from 'react-redux';
+import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	extractSearchInformation,
 	getPreinstalledPremiumPluginsVariations,
 } from 'calypso/lib/plugins/utils';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { DEFAULT_PAGE_SIZE } from './constants';
-import { search } from './search-api';
+import { search, searchBySlug } from './search-api';
 import { getPluginsListKey } from './utils';
-import type { ESHits, ESResponse, Plugin, PluginQueryOptions, Icon } from './types';
+import type { ESHits, ESResponse, Plugin, PluginQueryOptions } from './types';
 
-/**
- *
- * @param pluginSlug
- * @param icons
- * @returns A string containing an icon url or
- * 	a default generated url Icon if icons param is falsy, it is not JSON or it does not contain a valid resolution
- */
-const createIconUrl = ( pluginSlug: string, icons?: string ): string => {
-	const defaultIconUrl = buildDefaultIconUrl( pluginSlug );
-	if ( ! icons ) {
-		return defaultIconUrl;
-	}
-
-	let iconsObject: Record< string, Icon > = {};
+const getIconUrl = ( pluginSlug: string, icon: string ): string => {
 	try {
-		iconsObject = JSON.parse( icons );
-	} catch ( error ) {
-		return defaultIconUrl;
-	}
+		const url = new URL( icon || '' );
+		return url.toString();
+	} catch ( _ ) {}
 
-	// Transform Icon response for easier handling
-	const iconByResolution = Object.values( iconsObject ).reduce(
-		( iconByResolution, currentIcon ) => {
-			const newKey = currentIcon.resolution;
-			iconByResolution[ newKey ] = currentIcon;
-			return iconByResolution;
-		},
-		{} as Record< string, Icon >
-	);
-
-	const icon =
-		iconByResolution[ '256x256' ] ||
-		iconByResolution[ '128x128' ] ||
-		iconByResolution[ '2x' ] ||
-		iconByResolution[ '1x' ] ||
-		iconByResolution.svg ||
-		iconByResolution.default;
-
-	if ( ! icon ) {
-		return defaultIconUrl;
-	}
-
-	return buildIconUrl( pluginSlug, icon.location, icon.filename, icon.revision );
+	return buildDefaultIconUrl( pluginSlug );
 };
-
-function buildIconUrl( pluginSlug: string, location: string, filename: string, revision: string ) {
-	return `https://ps.w.org/${ pluginSlug }/${ location }/${ filename }?rev=${ revision }`;
-}
 
 function buildDefaultIconUrl( pluginSlug: string ) {
 	return `https://s.w.org/plugins/geopattern-icon/${ pluginSlug }.svg`;
@@ -79,24 +42,30 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 	}
 	return results.map( ( { fields: hit, railcar } ) => {
 		const plugin: Plugin = {
-			name: hit.plugin.title, // TODO: add localization
-			slug: hit.slug,
+			name: decodeEntities( hit.plugin?.title ), // TODO: add localization
+			slug: decodeEntities( hit.slug ),
+			software_slug: hit.plugin?.software_slug,
+			org_slug: hit.plugin?.org_slug,
 			version: hit[ 'plugin.stable_tag' ],
 			author: hit.author,
-			author_name: hit.plugin.author,
+			author_name: hit.plugin?.author,
 			author_profile: '', // TODO: get author profile URL
 			tested: hit[ 'plugin.tested' ],
-			rating: mapStarRatingToPercent( hit.plugin.rating ),
-			num_ratings: hit.plugin.num_ratings,
+			rating: mapStarRatingToPercent( hit.plugin?.rating ),
+			num_ratings: hit.plugin?.num_ratings,
 			support_threads: hit[ 'plugin.support_threads' ],
 			support_threads_resolved: hit[ 'plugin.support_threads_resolved' ],
-			active_installs: hit.plugin.active_installs,
+			active_installs: hit.plugin?.active_installs,
 			last_updated: hit.modified,
-			short_description: hit.plugin.excerpt, // TODO: add localization
-			icon: createIconUrl( hit.slug, hit.plugin.icons ),
+			short_description: decodeEntities( hit.plugin?.excerpt ), // TODO: add localization
+			icon: getIconUrl( hit.slug, hit.plugin?.icons ),
+			premium_slug: decodeEntities( hit.plugin?.premium_slug ),
+			variations: {
+				monthly: { product_id: hit.plugin?.store_product_monthly_id },
+				yearly: { product_id: hit.plugin?.store_product_yearly_id },
+			},
 			railcar,
 		};
-
 		plugin.variations = getPreinstalledPremiumPluginsVariations( plugin );
 
 		return plugin;
@@ -114,18 +83,52 @@ const getWpLocaleBySlug = ( slug: LanguageSlug ) => {
 	return languages.find( ( l ) => l.langSlug === slug )?.wpLocale || defaultLanguage;
 };
 
+export const getESPluginQueryParams = (
+	slug: string,
+	locale: string,
+	fields?: Array< string >
+): [ QueryKey, QueryFunction< { plugins: Plugin[]; pagination: { page: number } }, QueryKey > ] => {
+	const cacheKey = `es-plugin-slug-${ slug }`;
+	const fetchFn = () =>
+		searchBySlug( slug, locale, { fields } )
+			.then( ( { data }: { data: { results: ESHits } } ) =>
+				mapIndexResultsToPluginData( data.results )
+			)
+			.then( ( plugins: Plugin[] ) => plugins?.[ 0 ] || null );
+	return [ [ cacheKey ], fetchFn ];
+};
+
+const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
+export const useESPlugin = (
+	slug: string,
+	fields?: Array< string >,
+	{ enabled = true, staleTime = ONE_DAY_IN_MS, refetchOnMount = true }: UseQueryOptions = {}
+): UseQueryResult => {
+	const locale = useSelector( getCurrentUserLocale );
+
+	return useQuery( ...getESPluginQueryParams( slug, locale, fields ), {
+		enabled,
+		staleTime,
+		refetchOnMount,
+	} );
+};
+
 export const getESPluginsInfiniteQueryParams = (
 	options: PluginQueryOptions,
 	locale: string
 ): [ QueryKey, QueryFunction< ESResponse, QueryKey > ] => {
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
-	const cacheKey = getPluginsListKey( 'DEBUG-new-site-seach', options, true );
+	const cacheKey = getPluginsListKey( [ 'DEBUG-new-site-seach' ], options, true );
+	const groupId =
+		config.isEnabled( 'marketplace-jetpack-plugin-search' ) && options.category !== 'popular'
+			? 'marketplace'
+			: 'wporg';
 	const fetchFn = ( { pageParam = 1 } ) =>
 		search( {
 			query: searchTerm,
 			author,
-			groupId: 'wporg',
+			groupId,
 			category: options.category,
 			pageHandle: pageParam + '',
 			pageSize,

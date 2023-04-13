@@ -129,6 +129,13 @@
 	}
 }
 
+.purchase-item__static-icon {
+	width: 36px;
+	height: 36px;
+	border-radius: 2px;
+	overflow: hidden;
+}
+
 .purchase-item__title {
 	color: var(--color-neutral-80);
 	overflow: hidden;
@@ -183,7 +190,7 @@ a.purchase-item__link {
 				top: calc(50% - 4px);
 				left: -16px;
 				background: var(--color-error-50);
-				border-radius: 100%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				border-radius: 100%;
 			}
 		}
 	}

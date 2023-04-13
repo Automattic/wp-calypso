@@ -17,7 +17,7 @@ export const SuccessScreen: React.FC = () => {
 
 	const trackForumOpen = () =>
 		recordTracksEvent( 'calypso_inlinehelp_forums_open', {
-			forceSiteId: true,
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );

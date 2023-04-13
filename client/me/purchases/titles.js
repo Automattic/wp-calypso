@@ -55,9 +55,6 @@ Object.defineProperties( titles, {
 	paymentMethods: {
 		get: () => i18n.translate( 'Payment Methods' ),
 	},
-	vatDetails: {
-		get: () => i18n.translate( 'VAT Details' ),
-	},
 } );
 
 export default titles;

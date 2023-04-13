@@ -1,4 +1,5 @@
 import { Page } from 'playwright';
+import { getCalypsoURL } from '../../data-helper';
 
 const selectors = {
 	visitSiteButton: '.button >> text=Visit site',
@@ -6,6 +7,12 @@ const selectors = {
 	// Task card (topmost card)
 	taskHeadingMessage: ( message: string ) =>
 		`.primary__customer-home-location-content :text("${ message }")`,
+
+	domainUpsellCard: `.domain-upsell__card`,
+	domainUpsellDomainAvailable: `.domain-upsell__card .suggested-domain-name .badge--success`,
+	domainUpsellSuggestedDomain: `.domain-upsell__card .suggested-domain-name .card:nth-child(2) span`,
+	domainUpsellBuyDomain: ( message: string ) =>
+		`.domain-upsell-actions button:text("${ message }")`,
 };
 
 /**
@@ -24,6 +31,17 @@ export class MyHomePage {
 	}
 
 	/**
+	 * Visits the `/home` endpoint.
+	 *
+	 * @param {string} siteSlug Site URL.
+	 */
+	async visit( siteSlug: string ): Promise< void > {
+		await this.page.goto( getCalypsoURL( `/home/${ siteSlug }` ), {
+			timeout: 20 * 1000,
+		} );
+	}
+
+	/**
 	 * Click on the Visit Site button on the home dashboard.
 	 *
 	 * @returns {Promise<void>} No return value.
@@ -32,6 +50,39 @@ export class MyHomePage {
 		await Promise.all( [
 			this.page.waitForNavigation(),
 			this.page.click( selectors.visitSiteButton ),
+		] );
+	}
+
+	/**
+	 * Validates the domain upsell is showing
+	 *
+	 * @returns {Promise<void>} No return value.
+	 */
+	async validateDomainUpsell(): Promise< void > {
+		await this.page.locator( selectors.domainUpsellCard ).waitFor();
+	}
+
+	/**
+	 * Get suggested domain name.
+	 *
+	 * @returns {string} No return value.
+	 */
+	async suggestedDomainName(): Promise< string > {
+		await this.page.locator( selectors.domainUpsellDomainAvailable ).waitFor();
+		const elementHandle = await this.page.waitForSelector( selectors.domainUpsellSuggestedDomain );
+		return await elementHandle.innerText();
+	}
+
+	/**
+	 * Click on Buy this Domain button on the domain Upsell.
+	 *
+	 * @param {string} buyDomainButton Button text to click.
+	 * @returns {Promise<void>} No return value.
+	 */
+	async clickBuySuggestedDomain( buyDomainButton: string ): Promise< void > {
+		await Promise.all( [
+			this.page.waitForNavigation(),
+			this.page.click( selectors.domainUpsellBuyDomain( buyDomainButton ) ),
 		] );
 	}
 

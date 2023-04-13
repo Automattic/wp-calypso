@@ -1,5 +1,5 @@
 import { ABOUT_PAGE, HOME_PAGE, PORTFOLIO_PAGE } from '../../../../../signup/difm/constants';
-import { initialState, MEDIA_UPLOAD_STATES } from '../schema';
+import { initialState, MEDIA_UPLOAD_STATES } from '../constants';
 import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
@@ -10,7 +10,7 @@ describe( 'selectors', () => {
 	test( 'should return the initial state as a default state', () => {
 		expect( getWebsiteContent( { signup: undefined } ) ).toEqual( {
 			pages: [],
-			siteLogoSection: { siteLogoUrl: '' },
+			siteInformationSection: { siteLogoUrl: '', searchTerms: '' },
 			feedbackSection: { genericFeedback: '' },
 		} );
 	} );

@@ -1,12 +1,15 @@
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import SectionNav from 'calypso/components/section-nav';
 import SegmentedControl from 'calypso/components/segmented-control';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
+import DatePicker from '../stats-date-picker';
+import StatsPeriodHeader from '../stats-period-header';
+import StatsPeriodNavigation from '../stats-period-navigation';
 import SummaryChart from '../stats-summary';
 
 import './style.scss';
@@ -61,12 +64,13 @@ class StatsPostSummary extends Component {
 				}
 
 				return stats.data
-					.slice( Math.max( stats.data.length - 10, 1 ) )
+					.slice( Math.max( stats.data.length - 10, 0 ) )
 					.map( ( [ date, value ] ) => {
 						const momentDate = moment( date );
 						return {
 							period: momentDate.format( 'MMM D' ),
 							periodLabel: momentDate.format( 'LL' ),
+							startDate: date,
 							value,
 						};
 					} );
@@ -109,6 +113,7 @@ class StatsPostSummary extends Component {
 					return {
 						period: firstDay.format( 'MMM D' ),
 						periodLabel: firstDay.format( 'L' ) + ' - ' + firstDay.add( 6, 'days' ).format( 'L' ),
+						startDate: moment( week.days[ 0 ].day ).format( 'YYYY/MM/DD' ),
 						value: week.total,
 					};
 				} );
@@ -131,11 +136,19 @@ class StatsPostSummary extends Component {
 			selectedRecord = chartData[ chartData.length - 1 ];
 		}
 
+		const summaryWrapperClass = classNames( 'stats-post-summary', 'is-chart-tabs', {
+			'is-period-year': this.state.period === 'year',
+		} );
+
 		return (
-			<div className="stats-post-summary">
+			<div className={ summaryWrapperClass }>
 				<QueryPostStats siteId={ siteId } postId={ postId } />
-				<SectionNav>
-					<SegmentedControl compact>
+
+				<StatsPeriodHeader>
+					<StatsPeriodNavigation showArrows={ false }>
+						<DatePicker period={ this.state.period } date={ selectedRecord?.startDate } isShort />
+					</StatsPeriodNavigation>
+					<SegmentedControl primary>
 						{ periods.map( ( { id, label } ) => (
 							<SegmentedControl.Item
 								key={ id }
@@ -146,19 +159,20 @@ class StatsPostSummary extends Component {
 							</SegmentedControl.Item>
 						) ) }
 					</SegmentedControl>
-				</SectionNav>
+				</StatsPeriodHeader>
 
 				<SummaryChart
 					isLoading={ isRequesting && ! chartData.length }
 					data={ chartData }
-					selected={ selectedRecord }
 					activeKey="period"
 					dataKey="value"
 					labelKey="periodLabel"
-					labelClass="visible"
+					chartType="views"
 					sectionClass="is-views"
-					tabLabel={ translate( 'Views' ) }
+					selected={ selectedRecord }
 					onClick={ this.selectRecord }
+					tabLabel={ translate( 'Views' ) }
+					type="post"
 				/>
 			</div>
 		);

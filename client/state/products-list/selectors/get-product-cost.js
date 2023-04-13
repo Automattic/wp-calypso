@@ -5,7 +5,7 @@ import 'calypso/state/products-list/init';
 /**
  * Returns the price of the specified product.
  *
- * @param {object} state - global state tree
+ * @param {Object} state - global state tree
  * @param {string} productSlug - internal product slug, eg 'jetpack_premium'
  * @returns {?number} the price formatted in the user's currency (e.g. '29.15'), or null otherwise
  */

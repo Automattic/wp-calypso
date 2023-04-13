@@ -11,6 +11,7 @@ import {
 	HAPPYCHAT_IO_SEND_PREFERENCES,
 	HAPPYCHAT_IO_SEND_TYPING,
 	HAPPYCHAT_IO_SET_CUSTOM_FIELDS,
+	HAPPYCHAT_IO_SET_CHAT_TAG,
 } from 'calypso/state/action-types';
 import {
 	receiveAccept,
@@ -89,6 +90,7 @@ export const socketMiddleware = ( connection = null ) => {
 			case HAPPYCHAT_IO_SEND_PREFERENCES:
 			case HAPPYCHAT_IO_SEND_TYPING:
 			case HAPPYCHAT_IO_SET_CUSTOM_FIELDS:
+			case HAPPYCHAT_IO_SET_CHAT_TAG:
 				connection.send( action );
 				break;
 

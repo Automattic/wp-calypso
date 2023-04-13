@@ -31,8 +31,8 @@ export const getEditorType = () => {
  * Helper for `getBlockEventContextProperties` function.  Builds the properties to return based on
  * the block provided.
  *
- * @param {object} block block object that provides context.
- * @returns	{object} Properties for tracking event.
+ * @param {Object} block block object that provides context.
+ * @returns	{Object} Properties for tracking event.
  */
 const buildPropsFromContextBlock = ( block ) => {
 	let context = block?.name;
@@ -66,7 +66,7 @@ const buildPropsFromContextBlock = ( block ) => {
  * block action.
  *
  * @param {string} rootClientId The rootClientId of the block event.
- * @returns {object} The block event's context properties.
+ * @returns {Object} The block event's context properties.
  */
 export const getBlockEventContextProperties = ( rootClientId ) => {
 	const { getBlockParentsByBlockName, getBlock } = select( 'core/block-editor' );
@@ -106,8 +106,8 @@ export const getBlockEventContextProperties = ( rootClientId ) => {
  * Compares two objects, returning values in newObject that do not correspond
  * to values in oldObject.
  *
- * @param {object|Array} newObject The object that has had an update.
- * @param {object|Array} oldObject The original object to reference.
+ * @param {Object | Array} newObject The object that has had an update.
+ * @param {Object | Array} oldObject The original object to reference.
  * @param {Array}  		 keyMap    Used in recursion.  A list of keys mapping to the changed item.
  * @returns {Array[object]} Array of objects containing a keyMap array and value for the changed items.
  */
@@ -144,8 +144,8 @@ const compareObjects = ( newObject, oldObject, keyMap = [] ) => {
  * Additionally, items found in oldContent that are not in newContent are added to the
  * change list with their value as 'reset'.
  *
- * @param {object} newContent The object that has had an update.
- * @param {object} oldContent The original object to reference.
+ * @param {Object} newContent The object that has had an update.
+ * @param {Object} oldContent The original object to reference.
  * @returns {Array[object]} Array of objects containing a keyMap array and value for the changed items.
  */
 const findUpdates = ( newContent, oldContent ) => {
@@ -176,7 +176,7 @@ const findUpdates = ( newContent, oldContent ) => {
  *
  * @param {Array[string]} keyMap A list of keys mapping to the changed item in the global styles content object.
  * @param {*} 			  value  New value of the updated item.
- * @returns {object} An object containing the event properties for a global styles change.
+ * @returns {Object} An object containing the event properties for a global styles change.
  */
 const buildGlobalStylesEventProps = ( keyMap, value ) => {
 	let blockName;

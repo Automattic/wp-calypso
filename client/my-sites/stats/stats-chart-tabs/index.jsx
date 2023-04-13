@@ -1,5 +1,3 @@
-import config from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -17,6 +15,7 @@ import { requestChartCounts } from 'calypso/state/stats/chart-tabs/actions';
 import { QUERY_FIELDS } from 'calypso/state/stats/chart-tabs/constants';
 import { getCountRecords, getLoadingTabs } from 'calypso/state/stats/chart-tabs/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatTabs from '../stats-tabs';
 import { buildChartData, getQueryDate } from './utility';
@@ -93,21 +92,16 @@ class StatModuleChartTabs extends Component {
 	makeQuery = () => this.props.requestChartCounts( this.props.query );
 
 	render() {
-		const isNewFeatured = config.isEnabled( 'stats/new-main-chart' );
-
 		const { isActiveTabLoading } = this.props;
-
-		//TODO Try to retire `.stats-module` and replace it with `.is-chart-tabs`.
 		const classes = [
 			'is-chart-tabs',
 			{
 				'is-loading': isActiveTabLoading,
-				'stats-module': ! isNewFeatured,
 			},
 		];
 
 		/* pass bars count as `key` to disable transitions between tabs with different column count */
-		return isNewFeatured ? (
+		return (
 			<div className={ classNames( ...classes ) }>
 				<Legend
 					activeCharts={ this.props.activeLegend }
@@ -118,7 +112,9 @@ class StatModuleChartTabs extends Component {
 				/>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 } />
+				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
+					<StatsEmptyState />
+				</Chart>
 				<StatTabs
 					data={ this.props.counts }
 					tabs={ this.props.charts }
@@ -128,27 +124,6 @@ class StatModuleChartTabs extends Component {
 					activeKey="period"
 				/>
 			</div>
-		) : (
-			<Card key={ this.props.chartData.length } className={ classNames( ...classes ) }>
-				<Legend
-					activeCharts={ this.props.activeLegend }
-					activeTab={ this.props.activeTab }
-					availableCharts={ this.props.availableLegend }
-					clickHandler={ this.onLegendClick }
-					tabs={ this.props.charts }
-				/>
-				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
-				<Chart barClick={ this.props.barClick } data={ this.props.chartData } />
-				<StatTabs
-					data={ this.props.counts }
-					tabs={ this.props.charts }
-					switchTab={ this.props.switchTab }
-					selectedTab={ this.props.chartTab }
-					activeIndex={ this.props.queryDate }
-					activeKey="period"
-				/>
-			</Card>
 		);
 	}
 }

@@ -38,7 +38,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
  * @param getCalypsoLiveURL String containing the commands to be run in order to obtain the live URL. Only used for Calypso E2E.
  * @param testGroup String corresponding to an existing group defined for Jest Runner Group.
  * @param buildParams Environment variables and other parameters to set for the build.
- * @param buildFeatures Features to enable on top of the default feature set (perfmon, commitStatusPublisher).
+ * @param buildFeatures Features to enable on top of the default feature set (perfmon).
+ * @param enableCommitStatusPublisher Boolean toggle to enable the commit status publisher in Build Features.
  * @param buildTriggers Rules to trigger the build. By default, no triggers are defined.
  * @param buildDepedencies If the build configuration depends on another existing build configuration, define it here.
  */
@@ -52,6 +53,7 @@ open class E2EBuildType(
 	var testGroup: String,
 	var buildParams: ParametrizedWithType.() -> Unit = {},
 	var buildFeatures: BuildFeatures.() -> Unit,
+	var enableCommitStatusPublisher: Boolean = false,
 	var buildTriggers: Triggers.() -> Unit = {},
 	var buildDependencies: Dependencies.() -> Unit = {},
 
@@ -62,6 +64,7 @@ open class E2EBuildType(
 		val testGroup = testGroup
 		val buildParams = buildParams
 		val buildFeatures = buildFeatures
+		val enableCommitStatusPublisher = enableCommitStatusPublisher
 		val buildTriggers = buildTriggers
 		val buildDependencies = buildDependencies
 		val params = params
@@ -135,9 +138,10 @@ open class E2EBuildType(
 					mkdir temp
 
 					# Run suite.
-					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%E2E_WORKERS% --group=$testGroup
+					xvfb-run yarn jest --reporters=jest-teamcity --reporters=default --maxWorkers=%JEST_E2E_WORKERS% --group=$testGroup
 				"""
 				dockerImage = "%docker_image_e2e%"
+				dockerRunParameters = "-u %env.UID% --shm-size=4g"
 			}
 
 			bashNodeScript {
@@ -162,15 +166,19 @@ open class E2EBuildType(
 		features {
 			perfmon {
 			}
-			commitStatusPublisher {
-				vcsRootExtId = "${Settings.WpCalypso.id}"
-				publisher = github {
-					githubUrl = "https://api.github.com"
-					authType = personalToken {
-						token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+
+			if (enableCommitStatusPublisher) {
+				commitStatusPublisher {
+					vcsRootExtId = "${Settings.WpCalypso.id}"
+					publisher = github {
+						githubUrl = "https://api.github.com"
+						authType = personalToken {
+							token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+						}
 					}
 				}
 			}
+
 			buildFeatures()
 		}
 

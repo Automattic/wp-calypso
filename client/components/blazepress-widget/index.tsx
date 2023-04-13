@@ -1,13 +1,15 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
+import { useLocale } from '@automattic/i18n-utils';
+import classNames from 'classnames';
 import { TranslateOptionsText, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
+import BlazeLogo from 'calypso/components/blaze-logo';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
@@ -20,6 +22,7 @@ export type BlazePressPromotionProps = {
 	siteId: string | number;
 	postId: string | number;
 	keyValue: string;
+	source?: string;
 };
 
 type BlazePressTranslatable = ( original: string, extra?: TranslateOptionsText ) => string;
@@ -35,6 +38,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const [ isLoading, setIsLoading ] = useState( true );
 	const [ showCancelDialog, setShowCancelDialog ] = useState( false );
 	const [ showCancelButton, setShowCancelButton ] = useState( true );
+	const [ hiddenHeader, setHiddenHeader ] = useState( true );
 	const widgetContainer = useRef< HTMLDivElement >( null );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const translate = useTranslate() as BlazePressTranslatable;
@@ -43,6 +47,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, selectedSiteId ) );
 	const { closeModal } = useRouteModal( 'blazepress-widget', keyValue );
 	const queryClient = useQueryClient();
+	const localeSlug = useLocale();
 
 	// Scroll to top on initial load regardless of previous page position
 	useEffect( () => {
@@ -52,8 +57,12 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	}, [ isVisible ] );
 
 	const handleShowCancel = ( show: boolean ) => setShowCancelButton( show );
+	const handleShowTopBar = ( show: boolean ) => {
+		setHiddenHeader( ! show );
+	};
 
 	const onClose = ( goToCampaigns?: boolean ) => {
+		queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 		if ( goToCampaigns ) {
 			page( `/advertising/${ siteSlug }/campaigns` );
 		} else {
@@ -72,12 +81,14 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 				if ( props.siteId === null || props.postId === null ) {
 					return;
 				}
+				const source = props.source || 'blazepress';
 
 				await showDSP(
 					selectedSiteSlug,
 					props.siteId,
 					props.postId,
 					onClose,
+					source,
 					( original: string, options?: TranslateOptionsText ): string => {
 						if ( options ) {
 							// This is a special case where we re-use the translate in another application
@@ -89,7 +100,9 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 						return translate( original );
 					},
 					widgetContainer.current,
-					handleShowCancel
+					handleShowCancel,
+					handleShowTopBar,
+					localeSlug
 				);
 				setIsLoading( false );
 			} )();
@@ -119,10 +132,14 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	return (
 		<>
 			{ isVisible && (
-				<BlankCanvas className="blazepress-widget">
+				<BlankCanvas
+					className={ classNames( 'blazepress-widget', {
+						'hidden-header': hiddenHeader,
+					} ) }
+				>
 					<div className="blazepress-widget__header-bar">
-						<WordPressLogo />
-						<h2>{ translate( 'Advertising' ) }</h2>
+						<BlazeLogo />
+						<h2>{ translate( 'Blaze' ) }</h2>
 						{ showCancelButton && (
 							<span
 								role="button"

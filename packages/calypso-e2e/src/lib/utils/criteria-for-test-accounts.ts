@@ -23,6 +23,19 @@ const defaultCriteria: FeatureCriteria[] = [
 		accountName: 'coBlocksSimpleSiteEdgeUser',
 	},
 	{
+		// CoBlocks on Atomic: https://github.com/Automattic/wp-calypso/pull/73052
+		coblocks: 'edge',
+		gutenberg: 'stable',
+		siteType: 'atomic',
+		accountName: 'coBlocksAtomicSiteEdgeUser',
+	},
+	{
+		coblocks: 'edge',
+		gutenberg: 'edge',
+		siteType: 'atomic',
+		accountName: 'coBlocksAtomicSiteEdgeUser',
+	},
+	{
 		gutenberg: 'stable',
 		siteType: 'simple',
 		variant: 'siteEditor',
@@ -38,13 +51,13 @@ const defaultCriteria: FeatureCriteria[] = [
 		gutenberg: 'stable',
 		siteType: 'atomic',
 		variant: 'siteEditor',
-		accountName: 'gutenbergAtomicSiteUser',
+		accountName: 'siteEditorAtomicSiteUser',
 	},
 	{
 		gutenberg: 'edge',
 		siteType: 'atomic',
 		variant: 'siteEditor',
-		accountName: 'gutenbergAtomicSiteEdgeUser',
+		accountName: 'siteEditorAtomicSiteEdgeUser',
 	},
 	{
 		gutenberg: 'stable',
@@ -65,6 +78,29 @@ const defaultCriteria: FeatureCriteria[] = [
 	// simple site even if "atomic"
 	{ gutenberg: 'edge', variant: 'i18n', siteType: 'atomic', accountName: 'i18nUser' },
 	{ gutenberg: 'stable', variant: 'i18n', siteType: 'atomic', accountName: 'i18nUser' },
+
+	// Jetpack users
+	{
+		siteType: 'simple',
+		jetpackTarget: 'wpcom-staging',
+		gutenberg: 'stable',
+		accountName: 'jetpackStagingUser',
+	},
+	{
+		siteType: 'simple',
+		jetpackTarget: 'wpcom-staging',
+		gutenberg: 'stable',
+		variant: 'siteEditor',
+		accountName: 'jetpackStagingFseUser',
+	},
+	{
+		siteType: 'atomic',
+		gutenberg: 'stable',
+		jetpackTarget: 'remote-site',
+		accountName: 'jetpackRemoteSiteUser',
+	},
+
+	// They aren't run in atomic.
 ];
 
 export default defaultCriteria;

@@ -30,8 +30,8 @@ const debug = debugFactory( 'calypso:state:sites:domains:actions' );
  * a given site have been received.
  *
  * @param {number} siteId - identifier of the site
- * @param {object} domains - domains array gotten from WP REST-API response
- * @returns {object} the action object
+ * @param {Object} domains - domains array gotten from WP REST-API response
+ * @returns {Object} the action object
  */
 export const domainsReceiveAction = ( siteId, domains ) => {
 	const action = {
@@ -50,7 +50,7 @@ export const domainsReceiveAction = ( siteId, domains ) => {
  * Return SITE_DOMAINS_REQUEST action object
  *
  * @param {number} siteId - side identifier
- * @returns {object} siteId - action object
+ * @returns {Object} siteId - action object
  */
 export const domainsRequestAction = ( siteId ) => {
 	const action = {
@@ -68,7 +68,7 @@ export const domainsRequestAction = ( siteId ) => {
  * Return SITE_DOMAINS_REQUEST_SUCCESS action object
  *
  * @param {number} siteId - side identifier
- * @returns {object} siteId - action object
+ * @returns {Object} siteId - action object
  */
 export const domainsRequestSuccessAction = ( siteId ) => {
 	const action = {
@@ -86,8 +86,8 @@ export const domainsRequestSuccessAction = ( siteId ) => {
  * Return SITE_DOMAINS_REQUEST_FAILURE action object
  *
  * @param {number} siteId - site identifier
- * @param {object} error - error message according to REST-API error response
- * @returns {object} action object
+ * @param {Object} error - error message according to REST-API error response
+ * @returns {Object} action object
  */
 export const domainsRequestFailureAction = ( siteId, error ) => {
 	const action = {

@@ -8,18 +8,20 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isJetpackSite, isJetpackSiteMultiSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
 	confirmDelete,
 	showThemePreview as themePreview,
+	addExternalManagedThemeToCart,
 } from 'calypso/state/themes/actions';
 import {
 	getJetpackUpgradeUrlIfPremiumTheme,
 	getTheme,
+	getThemeDemoUrl,
 	getThemeDetailsUrl,
-	getThemeHelpUrl,
 	getThemePurchaseUrl,
 	getThemeSignupUrl,
 	isPremiumThemeAvailable,
@@ -31,6 +33,7 @@ import {
 	isSiteEligibleForManagedExternalThemes,
 	isWpcomTheme,
 } from 'calypso/state/themes/selectors';
+import { isMarketplaceThemeSubscribed } from 'calypso/state/themes/selectors/is-marketplace-theme-subscribed';
 
 const identity = ( theme ) => theme;
 
@@ -64,14 +67,12 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme',
 		} ),
-		getUrl: () => {
-			// TODO - The checkout url will come later once the store product functionality is done on wpcom
-		},
+		action: addExternalManagedThemeToCart,
 		hideForTheme: ( state, themeId, siteId ) =>
+			isSiteWpcomStaging( state, siteId ) || // No individual theme purchase on a staging site
 			( isJetpackSite( state, siteId ) && ! isSiteWpcomAtomic( state, siteId ) ) || // No individual theme purchase on a JP site
 			! isUserLoggedIn( state ) || // Not logged in
-			! isThemePremium( state, themeId ) || // Not a premium theme
-			isPremiumThemeAvailable( state, themeId, siteId ) || // Already purchased individually, or thru a plan
+			isMarketplaceThemeSubscribed( state, themeId, siteId ) || // Already purchased individually, or thru a plan
 			doesThemeBundleSoftwareSet( state, themeId ) || // Premium themes with bundled Software Sets cannot be purchased ||
 			! isExternallyManagedTheme( state, themeId ) || // We're currently only subscribing to third-party themes
 			( isExternallyManagedTheme( state, themeId ) &&
@@ -147,14 +148,11 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			context: 'verb',
 			comment: 'label for selecting a site for which to upgrade a plan',
 		} ),
-		getUrl: () => {
-			// TODO - The checkout url will come later once the store product functionality is done on wpcom
-		},
+		action: addExternalManagedThemeToCart,
 		hideForTheme: ( state, themeId, siteId ) =>
 			isJetpackSite( state, siteId ) ||
 			isSiteWpcomAtomic( state, siteId ) ||
 			! isUserLoggedIn( state ) ||
-			! isThemePremium( state, themeId ) ||
 			! isExternallyManagedTheme( state, themeId ) ||
 			( isExternallyManagedTheme( state, themeId ) &&
 				isSiteEligibleForManagedExternalThemes( state, siteId ) ) ||
@@ -172,6 +170,8 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		hideForTheme: ( state, themeId, siteId ) =>
 			! isUserLoggedIn( state ) ||
 			isJetpackSiteMultiSite( state, siteId ) ||
+			( isExternallyManagedTheme( state, themeId ) &&
+				! isMarketplaceThemeSubscribed( state, themeId, siteId ) ) ||
 			isThemeActive( state, themeId, siteId ) ||
 			( ! isWpcomTheme( state, themeId ) && ! isSiteWpcomAtomic( state, siteId ) ) ||
 			( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ),
@@ -225,6 +225,11 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 			comment: 'label for previewing the theme demo website',
 		} ),
 		action: themePreview,
+		hideForTheme: ( state, themeId, siteId ) => {
+			const demoUrl = getThemeDemoUrl( state, themeId, siteId );
+
+			return ! demoUrl;
+		},
 	};
 
 	const signupLabel = translate( 'Pick this design', {
@@ -250,11 +255,6 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		getUrl: getThemeDetailsUrl,
 	};
 
-	const help = {
-		label: translate( 'Support' ),
-		getUrl: getThemeHelpUrl,
-	};
-
 	return {
 		customize,
 		preview,
@@ -269,7 +269,6 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		signup,
 		separator,
 		info,
-		help,
 	};
 }
 
@@ -291,9 +290,9 @@ const connectOptionsHoc = connect(
 			mapHideForTheme = ( hideForTheme ) => ( t, s ) => hideForTheme( state, t, s, origin );
 		}
 
-		return mapValues( getAllThemeOptions( props ), ( option ) =>
+		return mapValues( getAllThemeOptions( props ), ( option, key ) =>
 			Object.assign(
-				{},
+				{ key },
 				option,
 				option.getUrl ? { getUrl: mapGetUrl( option.getUrl ) } : {},
 				option.hideForTheme ? { hideForTheme: mapHideForTheme( option.hideForTheme ) } : {}

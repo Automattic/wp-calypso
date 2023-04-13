@@ -2,14 +2,14 @@ import 'calypso/state/user-settings/init';
 
 /**
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  */
 export const isFetchingUserSettings = ( state ) => state.userSettings.fetching;
 
 /**
  * Returns whether there's currently a password change pending
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  */
 export const isPendingPasswordChange = ( state ) => state.userSettings.updatingPassword;
 

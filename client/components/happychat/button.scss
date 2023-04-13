@@ -5,7 +5,6 @@
 	z-index: z-index("root", ".floating-help");
 	line-height: 0;
 	padding: 1px;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 100%;
 	background: var(--color-primary);
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);

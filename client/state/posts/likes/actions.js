@@ -17,7 +17,7 @@ import 'calypso/state/posts/init';
  *
  * @param  {number}   siteId Site ID
  * @param  {number}   postId Post ID
- * @returns {object}        Action
+ * @returns {Object}        Action
  */
 export function requestPostLikes( siteId, postId ) {
 	return {
@@ -32,7 +32,7 @@ export function requestPostLikes( siteId, postId ) {
  *
  * @param {number} siteId Site ID
  * @param {number} postId Post ID
- * @returns {object} The like action
+ * @returns {Object} The like action
  */
 export const like = ( siteId, postId, { source } = {} ) => ( {
 	type: POST_LIKE,
@@ -46,7 +46,7 @@ export const like = ( siteId, postId, { source } = {} ) => ( {
  *
  * @param {number} siteId Site ID
  * @param {number} postId Post ID
- * @returns {object} The unlike action
+ * @returns {Object} The unlike action
  */
 export const unlike = ( siteId, postId, { source } = {} ) => ( {
 	type: POST_UNLIKE,

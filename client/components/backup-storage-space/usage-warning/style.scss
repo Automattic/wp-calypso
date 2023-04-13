@@ -8,7 +8,7 @@
 	width: 100%;
 	height: 100%;
 
-	margin-top: 10px;
+	margin-top: 24px;
 
 	flex-wrap: nowrap;
 	justify-content: space-between;
@@ -43,7 +43,7 @@
 	}
 
 	.action-button__status {
-		margin-bottom: 0.5rem;
+		margin-bottom: 0.25rem;
 	}
 
 	.action-button__action-text {
@@ -55,7 +55,8 @@
 
 		color: var(--studio-jetpack-green);
 		font-size: $font-title-medium;
-		font-weight: 600;
+		font-weight: 700;
+		line-height: 24px;
 	}
 }
 

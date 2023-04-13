@@ -1,4 +1,5 @@
-import { Icon, megaphone } from '@wordpress/icons';
+import { blaze } from '@automattic/components/src/icons';
+import { Icon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import BlazePressWidget from 'calypso/components/blazepress-widget';
@@ -9,7 +10,7 @@ import {
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
 import { useRouteModal } from 'calypso/lib/route-modal';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PromotePost = ( props ) => {
 	const { moduleName, postId, onToggleVisibility } = props;
@@ -21,11 +22,7 @@ const PromotePost = ( props ) => {
 	const { isModalOpen, value, openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
-
-	const site = useSelector( getSelectedSite );
-	const { is_private, is_coming_soon } = site;
-	const showPromotePost =
-		usePromoteWidget() === PromoteWidgetStatus.ENABLED && ! is_private && ! is_coming_soon;
+	const showPromotePost = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	const showDSPWidget = async ( event ) => {
 		event.stopPropagation();
@@ -63,7 +60,8 @@ const PromotePost = ( props ) => {
 							context: 'Stats ARIA label: Opens a pop-out post promotion tool',
 						} ) }
 					>
-						<Icon className="stats-icon" icon={ megaphone } size={ 22 } />
+						<Icon className="stats-icon" icon={ blaze } size={ 18 } />
+
 						<span className="stats-list__item-action-label module-content-list-item-action-label module-content-list-item-action-label-view">
 							{ translate( 'Promote', { context: 'Stats: List item action to view content' } ) }
 						</span>

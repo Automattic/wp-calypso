@@ -11,7 +11,7 @@ export default function MyComponent() {
 	return (
 		<ThreatDialog
 			threatId={ 123 }
-			threatTitle={ 'Title...' }
+			threatTitle="Title..."
 			threatDescription="Description..."
 			action="fix"
 			siteName="WordPress.com"

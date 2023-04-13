@@ -7,11 +7,15 @@ import './style.scss';
 
 interface Props {
 	className?: string;
+	tooltipContent?: React.ReactElement;
+	tooltipClassName?: string;
 	tooltipPosition?: string;
 }
 
 const WooCommerceBundledBadge: FunctionComponent< Props > = ( {
 	className,
+	tooltipContent,
+	tooltipClassName,
 	tooltipPosition = 'bottom right',
 } ) => {
 	const { __ } = useI18n();
@@ -53,12 +57,12 @@ const WooCommerceBundledBadge: FunctionComponent< Props > = ( {
 			</svg>
 			<span>WooCommerce</span>
 			<Popover
-				className="woocommerce-bundled-badge__popover"
+				className={ classNames( 'woocommerce-bundled-badge__popover', tooltipClassName ) }
 				context={ divRef.current }
 				isVisible={ isPopoverVisible }
 				position={ tooltipPosition }
 			>
-				{ tooltipText }
+				{ tooltipContent || tooltipText }
 			</Popover>
 		</div>
 	);

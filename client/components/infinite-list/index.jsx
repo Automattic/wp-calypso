@@ -327,7 +327,7 @@ export default class InfiniteList extends Component {
 	 * This includes any items that are partially visible in the viewport.
 	 * Instance method that is called externally (via a ref) by a parent component.
 	 *
-	 * @param {object} options - offset properties
+	 * @param {Object} options - offset properties
 	 * @param {number} options.offsetTop - in pixels, 0 if unspecified
 	 * @param {number} options.offsetBottom - in pixels, 0 if unspecified
 	 * @returns {Array} This list of indexes

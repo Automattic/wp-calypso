@@ -14,8 +14,8 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	/**
 	 * Returns true if the post matches the given query, or false otherwise.
 	 *
-	 * @param  {object}  query Query object
-	 * @param  {object}  post  Item to consider
+	 * @param  {Object}  query Query object
+	 * @param  {Object}  post  Item to consider
 	 * @returns {boolean}       Whether post matches query
 	 */
 	static matches( query, post ) {
@@ -110,9 +110,9 @@ export default class PostQueryManager extends PaginatedQueryManager {
 	 * A sort comparison function that defines the sort order of posts under
 	 * consideration of the specified query.
 	 *
-	 * @param  {object} query Query object
-	 * @param  {object} postA First post
-	 * @param  {object} postB Second post
+	 * @param  {Object} query Query object
+	 * @param  {Object} postA First post
+	 * @param  {Object} postB Second post
 	 * @returns {number}       0 if equal, less than 0 if postA is first,
 	 *                        greater than 0 if postB is first.
 	 */

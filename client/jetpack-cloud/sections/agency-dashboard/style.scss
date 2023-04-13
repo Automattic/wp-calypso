@@ -10,11 +10,8 @@
 	box-shadow: none;
 	background: transparent;
 
-	&.is-loading {
-		.site-icon {
-			animation: pulse-light 0.8s ease-in-out infinite;
-		}
-
+	&.is-loading,
+	&.is-no-sites {
 		.site__title {
 			color: var(--color-neutral-50);
 			line-height: 35px;
@@ -27,6 +24,10 @@
 				visibility: hidden;
 			}
 		}
+	}
+
+	&.is-loading .site-icon {
+		animation: pulse-light 0.8s ease-in-out infinite;
 	}
 }
 
@@ -118,4 +119,33 @@
 .sidebar .current-site .site,
 .sidebar .current-site .all-sites {
 	border-bottom: 0;
+}
+
+.min-width-100px {
+	min-width: 100px;
+}
+
+
+.site-select-checkbox,
+.site-bulk-select__checkbox {
+	input[type="checkbox"] {
+
+		&:checked::before {
+			content: url(/calypso/images/checkbox-icons/checkmark-jetpack.svg);
+		}
+
+		&::after {
+			// Making tap area larger
+			content: "";
+			position: absolute;
+			inset-block-start: -18px;
+			inset-inline-start: -16px;
+			width: 40px;
+			height: 50px;
+		}
+	}
+}
+
+.padding-0 {
+	padding: 0 !important;
 }

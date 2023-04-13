@@ -110,7 +110,7 @@ export interface StripePaymentRequestHandlerEvent {
  * find which error was for which input field.
  *
  * @param {string} code - The error code
- * @param {object} messagesByField - An object whose keys are input field names and whose values are arrays of error strings for that field
+ * @param {Object} messagesByField - An object whose keys are input field names and whose values are arrays of error strings for that field
  */
 export class StripeValidationError extends Error {
 	code: string | undefined;
@@ -142,7 +142,7 @@ export class StripeConfigurationError extends Error {}
  *
  * The object will include the original stripe error in the stripeError prop.
  *
- * @param {object} stripeError - The original Stripe error object
+ * @param {Object} stripeError - The original Stripe error object
  */
 export class StripeSetupIntentError extends Error {
 	stripeError: Error;
@@ -159,7 +159,7 @@ export class StripeSetupIntentError extends Error {
  *
  * The object will include the original stripe error in the stripeError prop.
  *
- * @param {object} stripeError - The original Stripe error object
+ * @param {Object} stripeError - The original Stripe error object
  */
 export class StripePaymentMethodError extends Error {
 	stripeError: Error;
@@ -187,9 +187,9 @@ export class StripePaymentMethodError extends Error {
  * `validation_error` and have a `code` property which might be something like
  * `incomplete_cvc`.
  *
- * @param {object} stripe The stripe object with payment data included
- * @param {object} element The StripeCardNumberElement or StripeCardElement
- * @param {object} paymentDetails The `billing_details` field of the `createPaymentMethod()` request
+ * @param {Object} stripe The stripe object with payment data included
+ * @param {Object} element The StripeCardNumberElement or StripeCardElement
+ * @param {Object} paymentDetails The `billing_details` field of the `createPaymentMethod()` request
  * @returns {Promise} Promise that will be resolved or rejected
  */
 export async function createStripePaymentMethod(
@@ -281,8 +281,8 @@ export async function confirmStripePaymentIntent(
  *
  * Returns null if validation errors cannot be found.
  *
- * @param {object} error An error returned by a Stripe function like createPaymentMethod
- * @returns {object | null} An object keyed by input field name whose values are arrays of error strings for that field
+ * @param {Object} error An error returned by a Stripe function like createPaymentMethod
+ * @returns {Object | null} An object keyed by input field name whose values are arrays of error strings for that field
  */
 function getValidationErrorsFromStripeError(
 	error: StripeError
@@ -317,7 +317,7 @@ function getValidationErrorsFromStripeError(
  *
  * Its parameter is the value returned by useStripeConfiguration
  *
- * @param {object} stripeConfiguration An object containing { public_key, js_url }
+ * @param {Object} stripeConfiguration An object containing { public_key, js_url }
  * @param {Error|undefined} [stripeConfigurationError] Any error that occured trying to load the configuration
  * @param {string} [locale] The locale, like 'en-us'. Stripe will auto-detect if not set.
  * @returns {UseStripeJs} The Stripe data

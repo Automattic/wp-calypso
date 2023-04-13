@@ -2,8 +2,6 @@
 @import "calypso/assets/stylesheets/shared/_loading";
 @import "@automattic/onboarding/styles/mixins";
 
-$progress-duration: 800ms;
-
 .processing-step {
 	padding: 1em;
 	max-width: 540px;
@@ -30,42 +28,64 @@ $progress-duration: 800ms;
 	}
 }
 
-.processing-step__progress-bar {
-	position: relative;
-	overflow: hidden;
-	height: 6px;
-	margin-top: 1em;
-	background: var(--studio-gray-10);
-
-	--progress: 0;
-
-	&::before {
-		background: var(--studio-blue-50);
-		transform: translateX(calc(-100% * min(1 - var(--progress, 0), 1)));
-		position: absolute;
-		content: "";
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		transition: transform $progress-duration ease-out;
-	}
-}
-
+.import-focused .step-container__content,
 .site-setup.processing .step-container__content,
 .anchor-fm.processing .step-container__content {
 	width: 100%;
+}
+
+.processing-step__subtitle {
+	font-size: 1rem;
+	line-height: 21px;
+	letter-spacing: -0.02em;
+	color: var(--studio-gray-50);
+	margin-top: 24px;
+}
+
+// Processing Copy Site Styles
+.copy-site.processing-copy {
+	.processing-step {
+		margin: 5vh auto 0;
+		max-width: 660px;
+	}
+
+	.processing-step__progress-step {
+		font-size: 3rem;
+		margin-bottom: 24px;
+	}
+
+	.processing-step__progress-bar {
+		max-width: 540px;
+		margin: 0 auto;
+	}
+}
+
+.processing {
+	.signup-header {
+		.wordpress-logo {
+			position: absolute;
+			inset-inline-start: 20px;
+			inset-block-start: 20px;
+			fill: var(--color-text);
+			stroke: none;
+			transform-origin: 0 0;
+		}
+	}
+
 }
 
 .is-videopress-stepper.is-processing-step {
 	padding: 0;
 	color: #fff;
 
-	.processing-step__progress-bar {
+	.processing-step__content {
 		background-color: #fff3;
 		border-radius: 4px;
-		&::before {
-			background-color: #ffe61c;
+		.loading-bar {
+			background-color: #fff3;
+			&::before {
+				background-color: #ffe61c;
+			}
 		}
 	}
 

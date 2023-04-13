@@ -5,7 +5,9 @@ const BasicEvaluatedExpression = require( 'webpack/lib/javascript/BasicEvaluated
 
 // Checks if the identifier `name` in the current scope points to an imported binding
 const isImport = ( parser, name ) => {
-	if ( ! name ) return false;
+	if ( ! name ) {
+		return false;
+	}
 
 	const scoped = parser.scope.definitions.get( name );
 
@@ -55,7 +57,9 @@ class ConfigFlagPlugin {
 				const currentModule = parser.state.current.resource;
 
 				if ( source === 'config' || source === '@automattic/calypso-config' ) {
-					if ( ! statement.specifiers ) return;
+					if ( ! statement.specifiers ) {
+						return;
+					}
 
 					// We have an import of 'config'.
 					const specifiers = statement.specifiers;

@@ -2,8 +2,8 @@ import { Gridicon } from '@automattic/components';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import * as React from 'react';
-import ThreatItemSubheader from 'calypso/components/jetpack/threat-item-subheader';
 import { getThreatType } from 'calypso/components/jetpack/threat-item/utils';
+import ThreatItemSubheader from 'calypso/components/jetpack/threat-item-subheader';
 import ThreatSeverityBadge from 'calypso/components/jetpack/threat-severity-badge';
 import type { Threat } from 'calypso/components/jetpack/threat-item/types';
 
@@ -26,11 +26,16 @@ const severityClassNames = ( severity: number ) => {
 // This should be temporary since this data should be coming from the api
 // and not something that we should change to accommodate the results.
 const getThreatMessage = ( threat: Threat ) => {
-	const { filename, extension = { slug: 'unknown', version: 'n/a' } } = threat;
+	const { filename, extension = { slug: 'unknown', version: 'n/a' }, version } = threat;
 	const basename = filename ? filename.replace( /.*\//, '' ) : '';
 
 	switch ( getThreatType( threat ) ) {
 		case 'core':
+			return translate( 'Vulnerable WordPress version: %s', {
+				args: [ version ],
+			} );
+
+		case 'core_file':
 			return translate( 'Infected core file: %s', {
 				args: [ basename ],
 			} );

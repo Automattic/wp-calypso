@@ -2,15 +2,17 @@
 	margin-right: 0;
 }
 
+.people-invite-details .card.people-list-item {
+	padding: 0;
+}
+
 .people-invite-details__meta {
-	border-top: 1px solid var(--color-neutral-0);
 	padding-top: 24px;
 	margin-top: 24px;
 }
 
 .people-invite-details__meta-item {
-	margin-bottom: 12px;
-	color: var(--color-text-subtle);
+	margin-bottom: 1rem;
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
@@ -34,6 +36,20 @@
 	.gravatar {
 		vertical-align: middle;
 		margin-right: 6px;
+	}
+
+	strong {
+		color: var(--studio-gray-70);
+	}
+
+	.people-invite-details__meta-status {
+		&-pending {
+			color: var(--color-warning);
+		}
+
+		&-active {
+			color: var(--color-success);
+		}
 	}
 }
 

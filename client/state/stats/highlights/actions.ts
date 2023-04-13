@@ -7,7 +7,7 @@ import 'calypso/state/stats/init';
  * retrieve stats highlights data.
  *
  * @param  {number}  siteId Site ID
- * @returns {object}  Action object
+ * @returns {Object}  Action object
  */
 
 export function requestHighlights( siteId: number ) {
@@ -22,8 +22,8 @@ export function requestHighlights( siteId: number ) {
  * been received.
  *
  * @param {number} siteId Site ID
- * @param {object} data   API response
- * @returns {object}  Action object
+ * @param {Object} data   API response
+ * @returns {Object}  Action object
  */
 export function receiveHighlights( siteId: number, data: object ) {
 	return {

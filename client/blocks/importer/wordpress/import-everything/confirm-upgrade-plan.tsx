@@ -32,13 +32,12 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 	const plan = getPlan( planType );
 	const planId = plan?.getProductId();
 	const [ visibleFeaturesNum, setVisibleFeatureNum ] = useState( initialFeaturesNumber );
-
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	let features: string[] = plan?.getPlanCompareFeatures() ?? [];
-	features = features
-		.map( ( x: string ) => getFeatureByKey( x )?.getTitle() || '' )
-		.filter( ( x: string ) => x );
+	let features: React.ReactChild[] = [];
+	if ( plan && 'getPlanCompareFeatures' in plan ) {
+		features = ( plan?.getPlanCompareFeatures?.() || [] )
+			.map( ( feature: string ) => getFeatureByKey( feature )?.getTitle() || '' )
+			.filter( ( x: string | React.ReactChild ) => x );
+	}
 
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const rawPrice = useSelector( ( state ) => getPlanRawPrice( state, planId as number, true ) );
@@ -83,7 +82,7 @@ export const ConfirmUpgradePlan: FunctionComponent< Props > = ( props ) => {
 			<div className={ classnames( 'import__upgrade-plan-container' ) }>
 				<div className={ classnames( 'import__upgrade-plan-price' ) }>
 					<h3 className={ classnames( 'plan-title' ) }>{ plan?.getTitle() }</h3>
-					<PlanPrice rawPrice={ rawPrice } currencyCode={ currencyCode } />
+					<PlanPrice rawPrice={ rawPrice ?? undefined } currencyCode={ currencyCode } />
 					<span className={ classnames( 'plan-time-frame' ) }>{ plan?.getBillingTimeFrame() }</span>
 				</div>
 				<div className={ classnames( 'import__upgrade-plan-details' ) }>

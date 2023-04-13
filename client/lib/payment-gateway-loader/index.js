@@ -6,7 +6,7 @@ const debug = debugFactory( 'calypso:payment-gateway' );
 /**
  * PaymentGatewayLoader component
  *
- * @returns { PaymentGatewayLoader } - an instance of PaymentGatewayLoader
+ * @returns {PaymentGatewayLoader|undefined} - an instance of PaymentGatewayLoader
  */
 function PaymentGatewayLoader() {
 	if ( ! ( this instanceof PaymentGatewayLoader ) ) {

@@ -5,10 +5,10 @@ import resize from 'calypso/lib/resize-image-url';
  * Given a media object, returns a URL string to that media. Accepts
  * optional options to specify photon usage or a maximum image width.
  *
- * @param  {object} media   Media object
- * @param  {object} options Optional options, accepting a `photon` boolean,
+ * @param  {Object} media   Media object
+ * @param  {Object} options Optional options, accepting a `photon` boolean,
  *                          `maxWidth` pixel value, `resize` string, or `size`.
- * @returns {string}         URL to the media
+ * @returns {string|undefined} URL to the media
  */
 export function url( media, options ) {
 	if ( ! media ) {

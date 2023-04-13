@@ -32,7 +32,7 @@ function prefixSearch( prefixQuery: string ) {
 		.flat();
 }
 
-export function findCountryFromNumber( inputNumber: string ) {
+export function findCountryFromNumber( inputNumber: string, fallbackCountry?: string ) {
 	let lastExactMatch;
 
 	for ( let i = 1; i <= 6; i++ ) {
@@ -57,6 +57,15 @@ export function findCountryFromNumber( inputNumber: string ) {
 		if ( prefixMatch.length === 1 ) {
 			// not an exact match, but there is only one option with this prefix
 			return countries[ prefixMatch[ 0 ] as keyof typeof countries ];
+		}
+	}
+
+	if ( fallbackCountry && lastExactMatch ) {
+		const fallbackCountryData = lastExactMatch.find(
+			( countryCode ) => fallbackCountry === countryCode
+		);
+		if ( fallbackCountryData ) {
+			return countries[ fallbackCountryData ];
 		}
 	}
 
@@ -156,7 +165,7 @@ export function applyTemplate(
  * prefix. For everything else it will use the `nationalPrefix` for the given region.
  *
  * @param {string} inputNumber - Unformatted number
- * @param {object} numberRegion - The local/region for which we process the number
+ * @param {Object} numberRegion - The local/region for which we process the number
  * @returns {{nationalNumber: string, prefix: string}} - Phone is the national phone number and prefix is to be
  *   shown before the phone number
  */
@@ -218,7 +227,7 @@ export function processNumber(
  * This function also supports partial formatting, i.e. it can format incomplete numbers as well.
  *
  * @param {string} inputNumber - Unformatted number
- * @param {object} country - The region for which we are formatting
+ * @param {Object} country - The region for which we are formatting
  * @returns {string} - Formatted number
  */
 export function formatNumber( inputNumber: string, country: CountryData ): string {

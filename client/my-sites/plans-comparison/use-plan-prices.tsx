@@ -1,7 +1,14 @@
-import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from '@automattic/calypso-products';
+import {
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_MONTHLY,
+	TERM_TRIENNIALLY,
+} from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import { getPlanRawPrice, getDiscountedRawPrice } from 'calypso/state/plans/selectors';
 import type { WPComPlan } from '@automattic/calypso-products';
+import type { IAppState } from 'calypso/state/types';
+
 export interface PlanPrices {
 	price: number;
 	originalPrice?: number;
@@ -18,14 +25,19 @@ function toMonthlyPrice( plan: WPComPlan ) {
 				return yearlyPrice / 12;
 			case TERM_BIENNIALLY:
 				return yearlyPrice / 24;
+			case TERM_TRIENNIALLY:
+				return yearlyPrice / 36;
 			case TERM_MONTHLY:
 				return yearlyPrice;
 		}
 	};
 }
 
+/**
+ * @deprecated
+ */
 export default function usePlanPrices( plans: WPComPlan[] ): PlanPrices[] {
-	return useSelector( ( state ) => {
+	return useSelector( ( state: IAppState ) => {
 		return plans.map( ( plan ) => {
 			const productId = plan.getProductId();
 			const [ price, discountPrice ] = [

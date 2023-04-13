@@ -7,6 +7,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
+import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
 
 export interface FailureInfo {
 	type: string;
@@ -32,18 +33,23 @@ export const transferStates = {
 
 const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
 
-const WaitForAtomic: Step = function WaitForAtomic( { navigation } ) {
+const WaitForAtomic: Step = function WaitForAtomic( { navigation, data } ) {
 	const { submit } = navigation;
-	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
 	const site = useSite();
 
-	const siteId = site?.ID;
+	let siteId = site?.ID as number;
+	// In some cases, we get the siteId from the navigation extra data rather than the SITE_STORE.
+	if ( data?.siteId ) {
+		siteId = data?.siteId as number;
+	}
 
-	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect( ( select ) =>
-		select( SITE_STORE )
+	const { getSiteLatestAtomicTransfer, getSiteLatestAtomicTransferError } = useSelect(
+		( select ) => select( SITE_STORE ) as SiteSelect,
+		[]
 	);
-	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
 
 	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
 		recordTracksEvent( 'calypso_woocommerce_dashboard_snag_error', {
@@ -75,8 +81,6 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation } ) {
 		}
 
 		setPendingAction( async () => {
-			setProgress( 0 );
-
 			const startTime = new Date().getTime();
 			const totalTimeout = 1000 * 300;
 			const maxFinishTime = startTime + totalTimeout;
@@ -91,21 +95,6 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation } ) {
 				const transferError = getSiteLatestAtomicTransferError( siteId );
 				const transferStatus = transfer?.status;
 				const isTransferringStatusFailed = transferError && transferError?.status >= 500;
-
-				switch ( transferStatus ) {
-					case transferStates.PENDING:
-						setProgress( 0.2 );
-						break;
-					case transferStates.ACTIVE:
-						setProgress( 0.4 );
-						break;
-					case transferStates.PROVISIONED:
-						setProgress( 0.5 );
-						break;
-					case transferStates.COMPLETED:
-						setProgress( 0.7 );
-						break;
-				}
 
 				if ( isTransferringStatusFailed || transferStatus === transferStates.ERROR ) {
 					handleTransferFailure( {
@@ -128,13 +117,12 @@ const WaitForAtomic: Step = function WaitForAtomic( { navigation } ) {
 				stopPollingTransfer = transferStatus === transferStates.COMPLETED;
 			}
 
-			setProgress( 1 );
-
-			return { finishedWaitingForAtomic: true };
+			return { finishedWaitingForAtomic: true, siteSlug: data?.siteSlug };
 		} );
 
 		submit?.();
 
+		// Only trigger when the siteId changes.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ siteId ] );
 

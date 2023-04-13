@@ -4,6 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { Input } from 'calypso/my-sites/domains/components/form';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
+import type { WpcomCreditCardSelectors } from './store';
 import type { StripeFieldChangeInput } from './types';
 import type { StripeElementStyle } from '@stripe/stripe-js';
 
@@ -25,8 +26,9 @@ export default function CreditCardExpiryField( {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const { cardExpiry: cardExpiryError } = useSelect( ( select ) =>
-		select( 'wpcom-credit-card' ).getCardDataErrors()
+	const { cardExpiry: cardExpiryError } = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
+		[]
 	);
 	const errorMessages = getErrorMessagesForField( 'expiration-date' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;

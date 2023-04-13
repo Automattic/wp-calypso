@@ -26,7 +26,7 @@ const recentRequests = new Map();
  * replaced by the `freshness` system in the data layer
  * when it arrives. For now, it's statefully ugly.
  *
- * @param {object} action Redux action
+ * @param {Object} action Redux action
  */
 const fetchProgress = ( action ) => {
 	const { downloadId, siteId } = action;
@@ -54,8 +54,8 @@ const fetchProgress = ( action ) => {
 /**
  * Parse and merge response data for backup creation status with defaults.
  *
- * @param   {object} data The data received from API response.
- * @returns {object}      Parsed response data.
+ * @param   {Object} data The data received from API response.
+ * @returns {Object}      Parsed response data.
  */
 const fromApi = ( data ) => ( {
 	backupPoint: data.backupPoint,
@@ -77,7 +77,7 @@ const fromApi = ( data ) => ( {
  * Otherwise the backup creation progress will be updated.
  *
  * @param {number}   siteId   Id of the site for the one we're creating a backup.
- * @param {object}   apiData  Data returned by a successful response.
+ * @param {Object}   apiData  Data returned by a successful response.
  */
 export const updateProgress = ( { siteId }, apiData ) => {
 	const [ latestDownloadableBackup ] = apiData;
@@ -106,8 +106,8 @@ export const announceError = () =>
  * Mark a specific downloadable backup record as dismissed.
  * This has the effect that subsequent calls to /sites/%site_id%/rewind/downloads won't return the download.
  *
- * @param   {object}   action   Changeset to update state.
- * @returns {object}          The dispatched action.
+ * @param   {Object}   action   Changeset to update state.
+ * @returns {Object}          The dispatched action.
  */
 export const dismissBackup = ( action ) =>
 	http(
@@ -126,8 +126,8 @@ export const dismissBackup = ( action ) =>
  * On successful dismiss, the card will be removed and we don't need to do anything further.
  * If request succeeded but backup couldn't be dismissed, a notice will be shown.
  *
- * @param {object}   action   Changeset to update state.
- * @param {object}     data     Description of request result.
+ * @param {Object}   action   Changeset to update state.
+ * @param {Object}     data     Description of request result.
  */
 export const backupSilentlyDismissed = ( action, data ) =>
 	! data.dismissed
@@ -145,8 +145,8 @@ export const backupDismissFailed = () =>
 /**
  * Parse and merge response data for backup dismiss result with defaults.
  *
- * @param   {object} data   The data received from API response.
- * @returns {object} Parsed response data.
+ * @param   {Object} data   The data received from API response.
+ * @returns {Object} Parsed response data.
  */
 const fromBackupDismiss = ( data ) => ( {
 	downloadId: +data.download_id,

@@ -1,5 +1,6 @@
 // Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
 import 'jest-fetch-mock';
+import config from '@automattic/calypso-config';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 import {
 	ACTIVE_THEME_REQUEST,
@@ -45,6 +46,7 @@ import {
 	receiveThemes,
 	requestThemes,
 	requestTheme,
+	requestThemeOnAtomic,
 	pollThemeTransferStatus,
 	initiateThemeTransfer,
 	installTheme,
@@ -63,7 +65,7 @@ import { themesUpdated } from '../actions/theme-update';
 jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
 	mock.isEnabled = jest.fn( ( flag ) => {
-		const allowedFlags = [ 'themes/third-party-premium' ];
+		const allowedFlags = [];
 		if ( allowedFlags.includes( flag ) ) {
 			return true;
 		}
@@ -192,8 +194,13 @@ describe( 'actions', () => {
 		describe( 'with a wpcom site', () => {
 			let nockScope;
 			useNock( ( nock ) => {
+				const url =
+					'/rest/v1.2/themes' +
+					( config.isEnabled( 'pattern-assembler/logged-out-showcase' )
+						? '?include_blankcanvas_theme=true'
+						: '?include_blankcanvas_theme=' );
 				nockScope = nock( 'https://public-api.wordpress.com:443' )
-					.get( '/rest/v1.2/themes' )
+					.get( url )
 					.reply( 200, {
 						found: 2,
 						themes: [
@@ -531,6 +538,7 @@ describe( 'actions', () => {
 									search_taxonomies: '',
 									search_term: 'simple, white',
 									source: 'unknown',
+									style_variation_slug: '',
 									theme: 'twentysixteen',
 								},
 								service: 'tracks',
@@ -559,6 +567,23 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#activateTheme()', () => {
+		const getState = () => ( {
+			themes: {
+				queries: {
+					wpcom: new ThemeQueryManager(),
+				},
+			},
+			sites: {
+				items: {},
+			},
+			productsList: {
+				items: {},
+			},
+			purchases: {
+				data: {},
+			},
+		} );
+
 		const trackingData = {
 			theme: 'twentysixteen',
 			previous_theme: 'twentyfifteen',
@@ -580,7 +605,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when thunk is triggered', () => {
-			activateTheme( 'twentysixteen', 2211667 )( spy );
+			activateTheme( 'twentysixteen', 2211667 )( spy, getState );
 
 			expect( spy ).toBeCalledWith( {
 				type: THEME_ACTIVATE,
@@ -594,7 +619,7 @@ describe( 'actions', () => {
 				'twentysixteen',
 				2211667,
 				trackingData
-			)( spy ).then( () => {
+			)( spy, getState ).then( () => {
 				expect( spy.mock.calls[ 1 ][ 0 ].name ).toEqual( 'themeActivatedThunk' );
 			} );
 		} );
@@ -611,7 +636,7 @@ describe( 'actions', () => {
 				'badTheme',
 				2211667,
 				trackingData
-			)( spy ).then( () => {
+			)( spy, getState ).then( () => {
 				expect( spy ).toBeCalledWith( themeActivationFailure );
 			} );
 		} );
@@ -1418,6 +1443,57 @@ describe( 'actions', () => {
 			await expect(
 				addExternalManagedThemeToCart( twentyfifteenTheme.id, siteId )( spy, getState )
 			).rejects.toThrowError( 'Theme is already purchased' );
+		} );
+	} );
+
+	describe( '#requestThemeOnAtomic()', () => {
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com:443' )
+				.persist()
+				.get( '/wp/v2/sites/1234/themes/makoney' )
+				.reply( 200, { id: 'makoney', name: 'Makoney' } )
+				.get( '/wp/v2/sites/1234/themes/solarone' )
+				.reply( 404, {
+					error: 'unknown_theme',
+					message: 'Unknown theme',
+				} );
+		} );
+
+		test( 'should dispatch THEME_REQUEST', () => {
+			requestThemeOnAtomic( 'makoney', 1234 )( spy );
+
+			expect( spy ).toBeCalledWith( {
+				type: THEME_REQUEST,
+				siteId: 1234,
+				themeId: 'makoney',
+			} );
+		} );
+
+		test( 'should dispatch THEME_REQUEST_SUCCESS on success', () => {
+			return requestThemeOnAtomic(
+				'makoney',
+				1234
+			)( spy ).then( () => {
+				expect( spy ).toBeCalledWith( {
+					type: THEME_REQUEST_SUCCESS,
+					siteId: 1234,
+					themeId: 'makoney',
+				} );
+			} );
+		} );
+
+		test( 'should dispatch THEME_REQUEST_FAILURE on failure', () => {
+			return requestThemeOnAtomic(
+				'solarone',
+				1234
+			)( spy ).finally( () => {
+				expect( spy ).toBeCalledWith( {
+					type: THEME_REQUEST_FAILURE,
+					siteId: 1234,
+					themeId: 'solarone',
+					error: expect.objectContaining( { message: 'Unknown theme' } ),
+				} );
+			} );
 		} );
 	} );
 } );

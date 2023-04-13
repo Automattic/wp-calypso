@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { createInterpolateElement } from '@wordpress/element';
 import { translate } from 'i18n-calypso';
 import AnimatedIcon from 'calypso/components/animated-icon';
@@ -63,32 +62,6 @@ export const getTask = (
 ) => {
 	let taskData = {};
 
-	const displayJetpackAppBranding = config.isEnabled( 'jetpack/app-branding' );
-
-	const wpAppBanner = {
-		title: translate( 'Try the WordPress app' ),
-		description: isBlogger
-			? translate( 'Write posts, check stats, and reply to comments on the go!' )
-			: translate(
-					'Download the WordPress app to your mobile device to manage your site and follow your stats on the go.'
-			  ),
-	};
-
-	const jetpackAppBanner = {
-		title: translate( 'Try the Jetpack app' ),
-		subtitle: translate( 'Put your site in your pocket' ),
-		icon: (
-			<AnimatedIcon
-				icon={ `/calypso/animations/app-promo/wp-to-jp${ isRtl ? '-rtl' : '' }.json` }
-				className="site-setup-list__task-icon"
-			/>
-		),
-		description: translate(
-			'Write posts, view your stats, reply to comments, and upload media anywhere, anytime.'
-		),
-		jetpackBranding: true,
-	};
-
 	switch ( task.id ) {
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
 			taskData = {
@@ -150,7 +123,18 @@ export const getTask = (
 			break;
 		case CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:
 			taskData = {
-				...( displayJetpackAppBranding ? jetpackAppBanner : wpAppBanner ),
+				title: translate( 'Try the Jetpack app' ),
+				subtitle: translate( 'Put your site in your pocket' ),
+				icon: (
+					<AnimatedIcon
+						icon={ `/calypso/animations/app-promo/wp-to-jp${ isRtl ? '-rtl' : '' }.json` }
+						className="site-setup-list__task-icon"
+					/>
+				),
+				description: translate(
+					'Write posts, view your stats, reply to comments, and upload media anywhere, anytime.'
+				),
+				jetpackBranding: true,
 				timing: 3,
 				actionText: isBlogger
 					? translate( 'Download the app' )
@@ -174,6 +158,21 @@ export const getTask = (
 					? translate( 'Go to WooCommerce Home' )
 					: translate( 'Finish store setup' ),
 				actionUrl: taskUrls?.woocommerce_setup,
+				actionDisableOnComplete: false,
+				isSkippable: true,
+			};
+			break;
+		case CHECKLIST_KNOWN_TASKS.SENSEI_SETUP:
+			taskData = {
+				timing: 15,
+				title: translate( 'Finish Sensei setup' ),
+				description: translate(
+					'Customize your course templates, create your first course, and more!'
+				),
+				actionText: task.isCompleted
+					? translate( 'Go to Sensei Home' )
+					: translate( 'Finish Sensei setup' ),
+				actionUrl: taskUrls?.sensei_setup,
 				actionDisableOnComplete: false,
 				isSkippable: true,
 			};
@@ -223,6 +222,13 @@ export const getTask = (
 				),
 				actionText: isFSEActive ? translate( 'Edit site' ) : translate( 'Edit homepage' ),
 				actionUrl: taskUrls?.front_page_updated,
+				// Mark the task as completed upon clicking on the action button when redirecting to the site editor
+				// since we don't have any good way to track changes within the site editor.
+				...( ! task.isCompleted &&
+					isFSEActive && {
+						actionDispatch: requestSiteChecklistTaskUpdate,
+						actionDispatchArgs: [ siteId, task.id ],
+					} ),
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.SITE_MENU_UPDATED:

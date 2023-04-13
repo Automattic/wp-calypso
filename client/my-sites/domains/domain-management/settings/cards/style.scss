@@ -125,3 +125,55 @@
 		white-space: nowrap;
 	}
 }
+
+.ownership-verification-card {
+	div {
+		margin-bottom: 24px;
+	}
+	div:last-child {
+		margin-bottom: 0;
+	}
+
+	.ownership-verification-card__contact-information-placeholder {
+		width: 100%;
+		height: 64px;
+
+		@include placeholder( --color-neutral-10 );
+	}
+
+	.ownership-verification-card__contact-information {
+		padding: 16px;
+		background-color: var(--studio-gray-0);
+
+		p {
+			margin: 0;
+		}
+	}
+
+	.ownership-verification-card__message {
+		flex-basis: 100%;
+		background-color: var(--studio-gray-0);
+		display: flex;
+		align-items: center;
+		padding: 8px;
+		gap: 8px;
+
+		.ownership-verification-card__message-icon {
+			min-width: 18px;
+
+			&.error {
+				fill: var(--studio-orange-40);
+				transform: rotate(180deg);
+			}
+
+			&.success {
+				fill: var(--studio-green-50);
+			}
+		}
+
+		.ownership-verification-card__message-text {
+			font-size: $font-body-small;
+			color: var(--studio-gray-80);
+		}
+	}
+}

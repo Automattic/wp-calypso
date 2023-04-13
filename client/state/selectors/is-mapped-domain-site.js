@@ -5,7 +5,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
  * Returns true if site is a mapped domain site, false if the site is not,
  * or null if the site is unknown.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {number} siteId Site ID
  * @returns {?boolean} Whether site is a mapped domain site
  */

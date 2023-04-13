@@ -2,10 +2,10 @@ import cookie from 'cookie';
 import isCountryInGdprZone from './is-country-in-gdpr-zone';
 import isRegionInCcpaZone from './is-region-in-ccpa-zone';
 
-const v1CookieName = 'sensitive_pixel_option';
-const v2CookieName = 'sensitive_pixel_options';
+export const TRACKING_PREFS_COOKIE_V1 = 'sensitive_pixel_option';
+export const TRACKING_PREFS_COOKIE_V2 = 'sensitive_pixel_options';
 
-type TrackingPrefs = {
+export type TrackingPrefs = {
 	ok: boolean;
 	buckets: {
 		essential: boolean;
@@ -14,16 +14,47 @@ type TrackingPrefs = {
 	};
 };
 
-const allBucketsFalse: TrackingPrefs[ 'buckets' ] = {
-	essential: false,
-	analytics: false,
-	advertising: false,
+const prefsDisallowAll: TrackingPrefs = {
+	ok: false,
+	buckets: {
+		essential: true, // essential bucket is always allowed
+		analytics: false,
+		advertising: false,
+	},
 };
 
-const allBucketsTrue: TrackingPrefs[ 'buckets' ] = {
-	essential: true,
-	analytics: true,
-	advertising: true,
+const prefsAllowAll: TrackingPrefs = {
+	ok: true,
+	buckets: {
+		essential: true,
+		analytics: true,
+		advertising: true,
+	},
+};
+
+export const parseTrackingPrefs = (
+	cookieV2?: string,
+	cookieV1?: string,
+	defaultPrefs = prefsDisallowAll
+): TrackingPrefs => {
+	const { ok, buckets }: Partial< TrackingPrefs > = cookieV2 ? JSON.parse( cookieV2 ) : {};
+
+	if ( typeof ok === 'boolean' ) {
+		return {
+			ok,
+			buckets: {
+				...defaultPrefs.buckets,
+				...buckets,
+			},
+		};
+	} else if ( cookieV1 && [ 'yes', 'no' ].includes( cookieV1 ) ) {
+		return {
+			ok: cookieV1 === 'yes',
+			buckets: prefsAllowAll.buckets,
+		};
+	}
+
+	return defaultPrefs;
 };
 
 /**
@@ -34,39 +65,38 @@ const allBucketsTrue: TrackingPrefs[ 'buckets' ] = {
  * @returns Whether we may track the current user
  */
 export default function getTrackingPrefs(): TrackingPrefs {
-	const cookies = cookie.parse( document.cookie );
-
-	if ( ! isCountryInGdprZone( cookies.country_code ) && ! isRegionInCcpaZone( cookies.region ) ) {
-		return {
-			ok: true,
-			buckets: allBucketsTrue,
-		};
+	if ( typeof document === 'undefined' ) {
+		throw new Error( 'getTrackingPrefs() can only be called on the client side' );
 	}
 
-	const oldUserConsent = cookies[ v1CookieName ];
-	const userOptionsJson = cookies[ v2CookieName ];
+	const cookies = cookie.parse( document.cookie );
+	const isCountryGdpr = isCountryInGdprZone( cookies.country_code );
+	const isCountryCcpa = isRegionInCcpaZone( cookies.country_code, cookies.region );
 
-	const { ok, buckets }: Partial< TrackingPrefs > = userOptionsJson
-		? JSON.parse( userOptionsJson )
-		: {};
+	if ( ! isCountryGdpr && ! isCountryCcpa ) {
+		return prefsAllowAll;
+	}
 
-	if ( typeof ok === 'boolean' ) {
+	// default tracking mechanism for GDPR is opt-in, for CCPA is opt-out:
+	const defaultPrefs = isCountryGdpr ? prefsDisallowAll : prefsAllowAll;
+
+	const { ok, buckets } = parseTrackingPrefs(
+		cookies[ TRACKING_PREFS_COOKIE_V2 ],
+		cookies[ TRACKING_PREFS_COOKIE_V1 ],
+		defaultPrefs
+	);
+
+	if ( isCountryCcpa ) {
+		// For CCPA, only the advertising bucket is relevant, the rest are always true
 		return {
 			ok,
 			buckets: {
-				...allBucketsFalse,
-				...buckets,
+				...prefsAllowAll.buckets,
+				advertising: buckets.advertising,
 			},
-		};
-	} else if ( [ 'yes', 'no' ].includes( oldUserConsent ) ) {
-		return {
-			ok: oldUserConsent === 'yes',
-			buckets: allBucketsTrue,
 		};
 	}
 
-	return {
-		ok: false,
-		buckets: allBucketsFalse,
-	};
+	// For CCPA, only the advertising bucket is relevant, the rest are always true
+	return { ok, buckets };
 }

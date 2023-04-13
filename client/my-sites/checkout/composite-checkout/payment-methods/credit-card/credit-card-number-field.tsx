@@ -4,6 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
+import type { WpcomCreditCardSelectors } from './store';
 import type { StripeFieldChangeInput } from './types';
 import type { StripeElementStyle } from '@stripe/stripe-js';
 
@@ -27,9 +28,13 @@ export default function CreditCardNumberField( {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const brand = useSelect( ( select ) => select( 'wpcom-credit-card' ).getBrand() );
-	const { cardNumber: cardNumberError } = useSelect( ( select ) =>
-		select( 'wpcom-credit-card' ).getCardDataErrors()
+	const brand: string = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getBrand(),
+		[]
+	);
+	const { cardNumber: cardNumberError } = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
+		[]
 	);
 	const errorMessages = getErrorMessagesForField( 'number' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;

@@ -1,11 +1,10 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import HelpCenter, { HelpIcon, PromotionalPopover } from '@automattic/help-center';
+import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { LocaleProvider } from '@automattic/i18n-utils';
-import { Button } from '@wordpress/components';
+import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
-import { PinnedItems } from '@wordpress/interface';
 import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
 import { QueryClientProvider } from 'react-query';
@@ -13,6 +12,14 @@ import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';
 import CalypsoStateProvider from './CalypsoStateProvider';
+
+// Implement PinnedItems to avoid importing @wordpress/interface.
+// Because @wordpress/interface depends on @wordpress/preferences which is not always available outside the editor,
+// causing the script to not be enqueued due to the missing dependency.
+// check https://github.com/Automattic/wp-calypso/pull/74122 for more details.
+function PinnedItems( { scope, ...props } ) {
+	return <Fill name={ `PinnedItems/${ scope }` } { ...props } />;
+}
 
 function HelpCenterContent() {
 	const [ helpIconRef, setHelpIconRef ] = useState();
@@ -25,7 +32,7 @@ function HelpCenterContent() {
 
 	const handleToggleHelpCenter = () => {
 		recordTracksEvent( `calypso_inlinehelp_${ show ? 'close' : 'show' }`, {
-			forceSiteId: true,
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );
@@ -56,7 +63,6 @@ function HelpCenterContent() {
 				aria-pressed={ show ? true : false }
 				aria-expanded={ show ? true : false }
 			/>
-			<PromotionalPopover iconElement={ helpIconRef } />
 		</>
 	);
 

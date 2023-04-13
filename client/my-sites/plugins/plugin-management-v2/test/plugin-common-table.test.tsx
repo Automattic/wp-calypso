@@ -36,6 +36,11 @@ const initialState = {
 			},
 		},
 	},
+	marketplace: {
+		billingInterval: {
+			interval: 'yearly',
+		},
+	},
 };
 
 const props = {

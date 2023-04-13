@@ -2,18 +2,10 @@ import { Button } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const noop = () => {};
-const PlanFeaturesComparisonActions = ( props ) => {
-	return (
-		<div className="plan-features-comparison__actions">
-			<div className="plan-features-comparison__actions-buttons">
-				<PlanFeaturesActionsButton { ...props } />
-			</div>
-		</div>
-	);
-};
 
 const PlanFeaturesActionsButton = ( {
 	availableForPurchase = true,
@@ -29,7 +21,9 @@ const PlanFeaturesActionsButton = ( {
 	planType,
 	primaryUpgrade = false,
 	translate,
+	busyOnUpgradeClick = false,
 } ) => {
+	const [ isBusy, setIsBusy ] = useState( false );
 	const classes = classNames(
 		'plan-features__actions-button',
 		{
@@ -49,12 +43,20 @@ const PlanFeaturesActionsButton = ( {
 			upgrading_to: planType,
 		} );
 
+		if ( busyOnUpgradeClick ) {
+			setIsBusy( true );
+		}
 		onUpgradeClick();
 	};
 
 	if ( ( availableForPurchase || isPlaceholder ) && ! isLaunchPage && isInSignup ) {
 		return (
-			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+			<Button
+				className={ classes }
+				onClick={ handleUpgradeButtonClick }
+				busy={ isBusy }
+				disabled={ isPlaceholder }
+			>
 				{ translate( 'Select', {
 					args: {
 						plan: planName,
@@ -66,7 +68,12 @@ const PlanFeaturesActionsButton = ( {
 
 	if ( ( availableForPurchase || isPlaceholder ) && isLaunchPage && ! freePlan ) {
 		return (
-			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+			<Button
+				className={ classes }
+				onClick={ handleUpgradeButtonClick }
+				busy={ isBusy }
+				disabled={ isPlaceholder }
+			>
 				{ translate( 'Select %(plan)s', {
 					args: {
 						plan: planName,
@@ -81,7 +88,12 @@ const PlanFeaturesActionsButton = ( {
 
 	if ( ( availableForPurchase || isPlaceholder ) && isLaunchPage && freePlan ) {
 		return (
-			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
+			<Button
+				className={ classes }
+				onClick={ handleUpgradeButtonClick }
+				busy={ isBusy }
+				disabled={ isPlaceholder }
+			>
 				{ translate( 'Keep this plan', {
 					comment:
 						'A selection to keep the current plan. Check screenshot - https://cloudup.com/cb_9FMG_R01',
@@ -91,6 +103,16 @@ const PlanFeaturesActionsButton = ( {
 	}
 
 	return null;
+};
+
+const PlanFeaturesComparisonActions = ( props ) => {
+	return (
+		<div className="plan-features-comparison__actions">
+			<div className="plan-features-comparison__actions-buttons">
+				<PlanFeaturesActionsButton { ...props } />
+			</div>
+		</div>
+	);
 };
 
 PlanFeaturesComparisonActions.propTypes = {
@@ -104,6 +126,7 @@ PlanFeaturesComparisonActions.propTypes = {
 	onUpgradeClick: PropTypes.func,
 	planType: PropTypes.string,
 	primaryUpgrade: PropTypes.bool,
+	busyOnUpgradeClick: PropTypes.bool,
 };
 
 export default localize( PlanFeaturesComparisonActions );

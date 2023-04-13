@@ -135,7 +135,7 @@
 	}
 
 	.button:not(.social-buttons__button) {
-		border-radius: 4px;
+		border-radius: 8px; /* stylelint-disable-line scales/radii */
 		border: 2px solid $woo-purple-60;
 		text-decoration: none;
 		width: auto;
@@ -144,6 +144,7 @@
 	}
 
 	.button.is-primary,
+	.button.is-primary[disabled],
 	.login .button.is-primary {
 		background: $woo-purple-60;
 		border: none;
@@ -151,7 +152,8 @@
 		width: 100%;
 
 		&:disabled {
-			opacity: 0.5;
+			background-color: var(--studio-gray-0);
+			color: var(--studio-gray-20);
 		}
 	}
 
@@ -237,9 +239,10 @@
 		line-height: 24px;
 
 		a {
-			color: var(--studio-gray-100);
+			color: $woo-purple-70;
 			font-weight: 400;
 			font-size: 1rem;
+			text-decoration: none;
 		}
 
 		@media screen and ( max-width: 660px ) {
@@ -310,15 +313,6 @@
 		padding-left: 0;
 		padding-right: 0;
 		background-color: initial;
-		&.gdpr-banner {
-			background-color: var(--color-neutral-70);
-			padding-left: 24px;
-			padding-right: 24px;
-			.gdpr-banner__buttons button {
-				border: none;
-				background-color: #fff;
-			}
-		}
 	}
 
 	.magic-login {
@@ -430,7 +424,7 @@
 
 			.continue-as-user__username {
 				font-size: 1rem;
-				font-weight: 500;
+				font-weight: 600;
 				line-height: 24px;
 				color: var(--color-gray-100);
 				grid-area: username;
@@ -532,8 +526,9 @@
 		}
 
 		a {
-			color: var(--color-gray-100);
+			color: $woo-purple-70;
 			font-size: $font-body;
+			text-decoration: none;
 		}
 
 		@media screen and ( max-width: 660px ) {

@@ -6,8 +6,8 @@ import getSiteFrontPage from 'calypso/state/sites/selectors/get-site-front-page'
 /**
  * Gets the editor URL for the current site's home page
  *
- * @param {object} state  Global state tree
- * @param {object} siteId Site ID
+ * @param {Object} state  Global state tree
+ * @param {Object} siteId Site ID
  * @returns {(boolean|string)} false if there is no homepage set, the editor URL if there is one
  */
 export default function getFrontPageEditorUrl( state, siteId ) {

@@ -4,6 +4,9 @@ import {
 	SITE_DELETE_RECEIVE,
 	JETPACK_DISCONNECT_RECEIVE,
 	JETPACK_SITE_DISCONNECT_REQUEST,
+	JETPACK_SITES_FEATURES_FETCH,
+	JETPACK_SITES_FEATURES_FETCH_FAILURE,
+	JETPACK_SITES_FEATURES_FETCH_SUCCESS,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -18,10 +21,10 @@ import {
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
+	UPDATE_STATS_NOTICE_STATUS_DIRECT,
 } from 'calypso/state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
-import connection from './connection/reducer';
 import domains from './domains/reducer';
 import { featuresReducer as features } from './features/reducer';
 import introOffers from './intro-offers/reducer';
@@ -32,9 +35,9 @@ import { sitesSchema, hasAllSitesListSchema } from './schema';
 /**
  * Tracks all known site objects, indexed by site ID.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( sitesSchema, ( state = null, action ) => {
 	if ( state === null && action.type !== SITE_RECEIVE && action.type !== SITES_RECEIVE ) {
@@ -264,6 +267,21 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 				},
 			};
 		}
+
+		case UPDATE_STATS_NOTICE_STATUS_DIRECT: {
+			const { id, status, siteId } = action;
+
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					stats_notices: {
+						...state[ siteId ].stats_notices,
+						[ id ]: ! [ 'dismissed', 'postponed' ].includes( status ),
+					},
+				},
+			};
+		}
 	}
 
 	return state;
@@ -274,9 +292,9 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
  * Requesting state tracks whether a network request is in progress for all
  * sites.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @returns {Object}        Updated state
  */
 export const requestingAll = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -295,9 +313,9 @@ export const requestingAll = ( state = false, action ) => {
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a network request is in progress for a site.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @returns {Object}        Updated state
  */
 export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -321,9 +339,9 @@ export const requesting = ( state = {}, action ) => {
 /**
  * Tracks whether all sites have been fetched.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @returns {Object}        Updated state
  */
 export const hasAllSitesList = withSchemaValidation(
 	hasAllSitesListSchema,
@@ -341,9 +359,9 @@ export const hasAllSitesList = withSchemaValidation(
  * Returns the updated disconnected state after an action has been dispatched.
  * Tracks whether a network request is completed or not.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @returns {Object}        Updated state
  */
 export const jetpackSiteDisconnected = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -357,8 +375,19 @@ export const jetpackSiteDisconnected = ( state = false, action ) => {
 	return state;
 };
 
+export const isRequestingJetpackSitesFeatures = ( state = false, action ) => {
+	switch ( action.type ) {
+		case JETPACK_SITES_FEATURES_FETCH:
+			return true;
+		case JETPACK_SITES_FEATURES_FETCH_SUCCESS:
+		case JETPACK_SITES_FEATURES_FETCH_FAILURE:
+			return false;
+	}
+
+	return state;
+};
+
 export default combineReducers( {
-	connection,
 	domains,
 	requestingAll,
 	introOffers,
@@ -369,4 +398,5 @@ export default combineReducers( {
 	requesting,
 	hasAllSitesList,
 	jetpackSiteDisconnected,
+	isRequestingJetpackSitesFeatures,
 } );

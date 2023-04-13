@@ -16,15 +16,7 @@ const request =
 		dispatch( requestProductsList( props ) );
 	};
 
-/**
- *
- * @param {object} props 			The list of component props.
- * @param {string} [props.type] 	The type of products to request:
- *									"jetpack" for Jetpack products only, or undefined for all products.
- * @param {boolean} [props.persist] Set to true to persist the products list in the store.
- * @returns {null} 					No visible output.
- */
-export default function QueryProductsList( { type = 'all', persist } ) {
+export function useQueryProductsList( { type = 'all', persist } = {} ) {
 	const dispatch = useDispatch();
 
 	// Only runs on mount.
@@ -33,4 +25,16 @@ export default function QueryProductsList( { type = 'all', persist } ) {
 	}, [ dispatch, type, persist ] );
 
 	return null;
+}
+
+/**
+ *
+ * @param {Object} props 			The list of component props.
+ * @param {string} [props.type] 	The type of products to request:
+ *									"jetpack" for Jetpack products only, or undefined for all products.
+ * @param {boolean} [props.persist] Set to true to persist the products list in the store.
+ * @returns {null} 					No visible output.
+ */
+export default function QueryProductsList( { type = 'all', persist } ) {
+	return useQueryProductsList( { type, persist } );
 }

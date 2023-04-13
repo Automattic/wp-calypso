@@ -1,7 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { IMPORT_FOCUSED_FLOW } from '@automattic/onboarding';
-import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
@@ -20,9 +18,12 @@ import ImporterMedium from './internals/steps-repository/importer-medium';
 import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
 import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
+import MigrationHandler from './internals/steps-repository/migration-handler';
 import PatternAssembler from './internals/steps-repository/pattern-assembler';
 import ProcessingStep from './internals/steps-repository/processing-step';
+import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import { Flow, ProvidedDependencies } from './internals/types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 const importFlow: Flow = {
 	name: IMPORT_FOCUSED_FLOW,
@@ -43,6 +44,8 @@ const importFlow: Flow = {
 			{ slug: 'designSetup', component: DesignSetup },
 			{ slug: 'patternAssembler', component: PatternAssembler },
 			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'siteCreationStep', component: SiteCreationStep },
+			{ slug: 'migrationHandler', component: MigrationHandler },
 		];
 	},
 
@@ -50,10 +53,12 @@ const importFlow: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const urlQueryParams = useQuery();
 		const siteSlugParam = useSiteSlugParam();
-		const isDesktop = useViewportMatch( 'large' );
 		const { setPendingAction } = useDispatch( ONBOARD_STORE );
-		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
-		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import', '' );
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
+		const flowProgress = useSiteSetupFlowProgress( _currentStep, 'import' );
 
 		if ( flowProgress ) {
 			setStepProgress( flowProgress );
@@ -71,6 +76,28 @@ const importFlow: Flow = {
 			} );
 
 			return navigate( 'processing' );
+		};
+
+		const handleMigrationRedirects = ( providedDependencies: ProvidedDependencies = {} ) => {
+			const from = urlQueryParams.get( 'from' );
+			// If there's any errors, we redirct them to the siteCreationStep for a clean start
+			if ( providedDependencies?.hasError ) {
+				return navigate( 'siteCreationStep' );
+			}
+			if ( providedDependencies?.status === 'inactive' ) {
+				// This means they haven't kick off the migration before, so we send them to create a new site
+				if ( ! providedDependencies?.targetBlogId ) {
+					return navigate( 'siteCreationStep' );
+				}
+				// For some reason, the admin role is mismatch, we want to create a new site for them as well
+				if ( providedDependencies?.isAdminOnTarget === false ) {
+					return navigate( 'siteCreationStep' );
+				}
+			}
+			// For those who hasn't paid or in the middle of the migration process, we sent them to the importerWordPress step
+			return navigate(
+				`importerWordpress?siteSlug=${ providedDependencies?.targetBlogSlug }&from=${ from }&option=everything`
+			);
 		};
 
 		const submit = ( providedDependencies: ProvidedDependencies = {} ) => {
@@ -106,10 +133,8 @@ const importFlow: Flow = {
 				}
 
 				case 'designSetup': {
-					if (
-						isDesktop &&
-						isBlankCanvasDesign( providedDependencies?.selectedDesign as Design )
-					) {
+					const _selectedDesign = providedDependencies?.selectedDesign as Design;
+					if ( _selectedDesign?.design_type === 'assembler' ) {
 						return navigate( 'patternAssembler' );
 					}
 
@@ -119,16 +144,25 @@ const importFlow: Flow = {
 				case 'patternAssembler':
 					return navigate( 'processing' );
 
+				case 'siteCreationStep':
+					return navigate( 'processing' );
+
 				case 'processing': {
+					if ( providedDependencies?.siteSlug ) {
+						const from = urlQueryParams.get( 'from' );
+						return ! from
+							? navigate( `import?siteSlug=${ providedDependencies?.siteSlug }` )
+							: navigate( `import?siteSlug=${ providedDependencies?.siteSlug }&from=${ from }` );
+					}
 					// End of Pattern Assembler flow
-					if (
-						isEnabled( 'signup/design-picker-pattern-assembler' ) &&
-						isBlankCanvasDesign( selectedDesign as Design )
-					) {
+					if ( isBlankCanvasDesign( selectedDesign ) ) {
 						return exitFlow( `/site-editor/${ siteSlugParam }` );
 					}
 
 					return exitFlow( `/home/${ siteSlugParam }` );
+				}
+				case 'migrationHandler': {
+					return handleMigrationRedirects( providedDependencies );
 				}
 			}
 		};
@@ -157,7 +191,7 @@ const importFlow: Flow = {
 				case 'importerSquarespace':
 				case 'importerWordpress':
 				case 'designSetup':
-					return navigate( 'import' );
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 			}
 		};
 
@@ -174,6 +208,8 @@ const importFlow: Flow = {
 			switch ( step ) {
 				case 'goals':
 					return exitFlow( `/setup/site-setup/goals?siteSlug=${ siteSlugParam }` );
+				case 'import':
+					return navigate( `import?siteSlug=${ siteSlugParam }` );
 				default:
 					return navigate( step );
 			}

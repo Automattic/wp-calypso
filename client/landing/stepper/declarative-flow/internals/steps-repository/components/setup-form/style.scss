@@ -38,9 +38,9 @@
 		background-repeat: no-repeat;
 		background-position: 95%;
 		&:focus {
-			border-color: var(--wp-admin-theme-color);
-			box-shadow: 0 0 0 1px var(--wp-admin-theme-color);
-			outline: 2px solid transparent;
+			border-color: var(--studio-gray-10);
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+			outline: none;
 		}
 	}
 
@@ -73,18 +73,30 @@
 		font-size: 0.875rem;
 		padding: 0.875rem 1rem;
 		height: 44px;
+
+		&:focus {
+			border-color: var(--studio-gray-10);
+			box-shadow: 0 0 0 2px var(--color-primary-10);
+			outline: none;
+		}
 	}
 
 	.setup-form__submit {
-		color: var(--color-surface);
+		border: none;
 		background-color: var(--studio-blue-50);
 		border-radius: 4px;
+		color: var(--color-surface);
 		font-weight: 500;
 		width: 100%;
 		// adds +2 px of padding to the button to match the input field height
 		padding: 10px 14px;
 		margin-top: 16px;
-
+		&:focus {
+			box-shadow: none;
+			outline: 2px solid var(--studio-blue-60);
+			outline-offset: 1px;
+			background: var(--studio-blue-60);
+		}
 		&:hover:not([disabled]) {
 			background-color: var(--wp-admin-theme-color-darker-10);
 		}

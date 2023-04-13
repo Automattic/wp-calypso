@@ -7,10 +7,7 @@ import {
 	ContactInformation,
 	LabelBlock,
 } from 'calypso/signup/accordion-form/form-components';
-import {
-	BBE_WEBSITE_CONTENT_FILLING_STEP,
-	useTranslatedPageDescriptions,
-} from 'calypso/signup/difm/translation-hooks';
+import { useTranslatedPageDescriptions } from 'calypso/signup/difm/translation-hooks';
 import {
 	MediaUploadData,
 	WordpressMediaUpload,
@@ -24,7 +21,7 @@ import {
 } from 'calypso/state/signup/steps/website-content/actions';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { PageDetailsParams } from './default-page-details';
-import type { ContactPageData } from 'calypso/state/signup/steps/website-content/schema';
+import type { ContactPageData } from 'calypso/state/signup/steps/website-content/types';
 
 export const CONTENT_SUFFIX = 'Content';
 export const IMAGE_PREFIX = 'Image';
@@ -32,6 +29,7 @@ export const IMAGE_PREFIX = 'Image';
 export function ContactPageDetails( {
 	page,
 	formErrors,
+	context,
 	onChangeField,
 }: PageDetailsParams< ContactPageData > ) {
 	const translate = useTranslate();
@@ -39,7 +37,7 @@ export function ContactPageDetails( {
 	const site = useSelector( getSelectedSite );
 	const pageTitle = page.title;
 	const pageID = page.id;
-	const description = useTranslatedPageDescriptions( pageID, BBE_WEBSITE_CONTENT_FILLING_STEP );
+	const description = useTranslatedPageDescriptions( pageID, context );
 
 	const onMediaUploadFailed = ( { mediaIndex }: MediaUploadData ) => {
 		dispatch(
@@ -99,7 +97,7 @@ export function ContactPageDetails( {
 				fieldValue: value,
 			} )
 		);
-		onChangeField && onChangeField( e );
+		onChangeField?.( e );
 	};
 	const fieldName = page.id + CONTENT_SUFFIX;
 	return (

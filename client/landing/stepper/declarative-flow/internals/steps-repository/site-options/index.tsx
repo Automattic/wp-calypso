@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import React, { useEffect } from 'react';
 import siteOptionsUrl from 'calypso/assets/images/onboarding/site-options.svg';
 import storeImageUrl from 'calypso/assets/images/onboarding/store-onboarding.svg';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -18,21 +19,26 @@ import { tip } from 'calypso/signup/icons';
 import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
-	const [ currentSiteTitle, currentTagling ] = useSelect( ( select ) => {
-		return [
-			select( ONBOARD_STORE ).getSelectedSiteTitle(),
-			select( ONBOARD_STORE ).getSelectedSiteDescription(),
-		];
-	} );
+	const { currentSiteTitle, currentTagling } = useSelect(
+		( select ) => ( {
+			currentSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+			currentTagling: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteDescription(),
+		} ),
+		[]
+	);
 
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( currentSiteTitle ?? '' );
 	const [ tagline, setTagline ] = React.useState( currentTagling ?? '' );
 	const [ formTouched, setFormTouched ] = React.useState( false );
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
 	const translate = useTranslate();
 	const site = useSite();
 	const isVideoPressFlow = 'videopress' === flow;
@@ -201,27 +207,30 @@ const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
 	);
 
 	return (
-		<StepContainer
-			stepName="site-options"
-			shouldHideNavButtons={ isVideoPressFlow }
-			className={ `is-step-${ intent }` }
-			headerImageUrl={ headerImage }
-			skipButtonAlign="top"
-			goBack={ goBack }
-			goNext={ goNext }
-			isHorizontalLayout={ ! isVideoPressFlow }
-			formattedHeader={
-				<FormattedHeader
-					id="site-options-header"
-					headerText={ headerText }
-					align="left"
-					subHeaderText={ subHeaderText }
-				/>
-			}
-			stepContent={ stepContent }
-			recordTracksEvent={ recordTracksEvent }
-			showVideoPressPowered={ isVideoPressFlow }
-		/>
+		<>
+			<DocumentHead title={ headerText } />
+			<StepContainer
+				stepName="site-options"
+				shouldHideNavButtons={ isVideoPressFlow }
+				className={ `is-step-${ intent }` }
+				headerImageUrl={ headerImage }
+				hideSkip={ true }
+				goBack={ goBack }
+				goNext={ goNext }
+				isHorizontalLayout={ ! isVideoPressFlow }
+				formattedHeader={
+					<FormattedHeader
+						id="site-options-header"
+						headerText={ headerText }
+						align="left"
+						subHeaderText={ subHeaderText }
+					/>
+				}
+				stepContent={ stepContent }
+				recordTracksEvent={ recordTracksEvent }
+				showVideoPressPowered={ isVideoPressFlow }
+			/>
+		</>
 	);
 };
 

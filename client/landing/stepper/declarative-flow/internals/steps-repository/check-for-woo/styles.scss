@@ -1,0 +1,20 @@
+.plugin-bundle.check-for-woo {
+	padding: 1.5em;
+	max-width: 540px;
+	text-align: center;
+	margin: 0 auto;
+
+	.step-container {
+		display: flex;
+	}
+
+	.step-container__content {
+		width: 100%;
+		margin-top: 16vh;
+	}
+
+	.wpcom__loading-ellipsis {
+		display: block;
+		margin: 0 auto;
+	}
+}

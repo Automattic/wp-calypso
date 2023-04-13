@@ -3,7 +3,7 @@ import 'calypso/state/currency-code/init';
 /**
  * Returns the currency code for the current user.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @returns {?string}        Current currency code
  */
 export function getCurrentUserCurrencyCode( state ) {

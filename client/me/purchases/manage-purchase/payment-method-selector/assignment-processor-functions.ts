@@ -4,6 +4,7 @@ import {
 	makeSuccessResponse,
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
+import { ManagedContactDetails } from '@automattic/wpcom-checkout';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import wp from 'calypso/lib/wp';
@@ -35,11 +36,25 @@ const wpcomCreatePayPalAgreement = (
 	success_url: string,
 	cancel_url: string,
 	tax_country_code: string,
-	tax_postal_code: string
+	tax_postal_code: string,
+	tax_address: string,
+	tax_organization: string,
+	tax_city: string,
+	tax_subdivision_code: string
 ): Promise< string > =>
 	wp.req.post( {
 		path: '/payment-methods/create-paypal-agreement',
-		body: { subscription_id, success_url, cancel_url, tax_postal_code, tax_country_code },
+		body: {
+			subscription_id,
+			success_url,
+			cancel_url,
+			tax_postal_code,
+			tax_country_code,
+			tax_address,
+			tax_organization,
+			tax_city,
+			tax_subdivision_code,
+		},
 		apiVersion: '1',
 	} );
 
@@ -76,9 +91,18 @@ export async function assignNewCardProcessor(
 			throw new Error( 'Cannot assign payment method if there is no card number' );
 		}
 
-		const { name, countryCode, postalCode, useForAllSubscriptions } = submitData;
+		const {
+			name,
+			countryCode,
+			postalCode,
+			state,
+			city,
+			organization,
+			address,
+			useForAllSubscriptions,
+		} = submitData;
 
-		const contactValidationResponse = await getTaxValidationResult( {
+		const contactInfo: ManagedContactDetails = {
 			countryCode: {
 				value: countryCode,
 				isTouched: true,
@@ -89,7 +113,36 @@ export async function assignNewCardProcessor(
 				isTouched: true,
 				errors: [],
 			},
-		} );
+		};
+		if ( state ) {
+			contactInfo.state = {
+				value: state,
+				isTouched: true,
+				errors: [],
+			};
+		}
+		if ( city ) {
+			contactInfo.city = {
+				value: city,
+				isTouched: true,
+				errors: [],
+			};
+		}
+		if ( organization ) {
+			contactInfo.organization = {
+				value: organization,
+				isTouched: true,
+				errors: [],
+			};
+		}
+		if ( address ) {
+			contactInfo.address1 = {
+				value: address,
+				isTouched: true,
+				errors: [],
+			};
+		}
+		const contactValidationResponse = await getTaxValidationResult( contactInfo );
 		if ( ! contactValidationResponse.success ) {
 			const errorMessage =
 				contactValidationResponse.messages_simple.length > 0
@@ -130,6 +183,10 @@ export async function assignNewCardProcessor(
 				eventSource,
 				postalCode,
 				countryCode,
+				state,
+				city,
+				organization,
+				address,
 			} );
 
 			return makeSuccessResponse( result );
@@ -142,6 +199,10 @@ export async function assignNewCardProcessor(
 			eventSource,
 			postalCode,
 			countryCode,
+			state,
+			city,
+			organization,
+			address,
 		} );
 
 		return makeSuccessResponse( result );
@@ -188,6 +249,10 @@ interface NewCardSubmitData {
 	name?: string;
 	countryCode: string;
 	postalCode?: string;
+	state?: string;
+	city?: string;
+	organization?: string;
+	address?: string;
 	useForAllSubscriptions: boolean;
 }
 
@@ -224,6 +289,10 @@ interface ExistingCardSubmitData {
 interface PayPalSubmitData {
 	postalCode?: string;
 	countryCode: string;
+	address?: string;
+	organization?: string;
+	city?: string;
+	state?: string;
 }
 
 function isValidPayPalData( data: unknown ): data is PayPalSubmitData {
@@ -249,7 +318,11 @@ export async function assignPayPalProcessor(
 			addQueryArgs( window.location.href, { success: 'true' } ),
 			window.location.href,
 			submitData.countryCode,
-			submitData.postalCode ?? ''
+			submitData.postalCode ?? '',
+			submitData.address ?? '',
+			submitData.organization ?? '',
+			submitData.city ?? '',
+			submitData.state ?? ''
 		);
 		return makeRedirectResponse( data );
 	} catch ( error ) {

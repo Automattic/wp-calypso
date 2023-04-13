@@ -36,6 +36,7 @@ const ProviderWrappedLoggedOutLayout = ( {
 	currentQuery,
 	primary,
 	secondary,
+	headerSection,
 	redirectUri,
 	i18n,
 	showGdprBanner,
@@ -51,6 +52,7 @@ const ProviderWrappedLoggedOutLayout = ( {
 					<LayoutLoggedOut
 						primary={ primary }
 						secondary={ secondary }
+						headerSection={ headerSection }
 						redirectUri={ redirectUri }
 						showGdprBanner={ showGdprBanner }
 					/>
@@ -61,7 +63,7 @@ const ProviderWrappedLoggedOutLayout = ( {
 );
 
 /**
- * @param { object } context -- Middleware context
+ * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  *
  * Produce a `LayoutLoggedOut` element in `context.layout`, using
@@ -75,6 +77,7 @@ export const ssrSetupLocale = ssrSetupLocaleMiddleware();
  * These functions are not used by Node. It is here to provide an APi compatible with `./index.web.js`
  */
 export const redirectLoggedOut = () => {};
+export const redirectLoggedOutToSignup = () => {};
 export const redirectWithoutLocaleParamIfLoggedIn = () => {};
 // eslint-disable-next-line no-unused-vars
 export const render = ( context ) => {};

@@ -11,6 +11,7 @@ export default function ConnectDomainStepSwitchSetupInfoLink( {
 	baseClassName,
 	currentStep,
 	currentMode,
+	supportsDomainConnect,
 	isSubdomain,
 	setPage,
 } ) {
@@ -24,25 +25,27 @@ export default function ConnectDomainStepSwitchSetupInfoLink( {
 		setPage( isSubdomain ? stepSlug.SUBDOMAIN_ADVANCED_START : stepSlug.ADVANCED_START );
 	const switchToSuggestedSetup = () =>
 		setPage( isSubdomain ? stepSlug.SUBDOMAIN_SUGGESTED_START : stepSlug.SUGGESTED_START );
+	const switchToDomainConnectSetup = () => setPage( stepSlug.DC_START );
 
-	const switchToAdvancedSetupMessage = isSubdomain
-		? __( "Can't set NS records for your subdomain? Switch to our <a>advanced setup</a>." )
-		: __( 'Switch to our <a>advanced setup</a>.' );
-
-	const message =
-		modeType.ADVANCED === currentMode ? (
-			<span className={ baseClassName + '__text' }>
-				{ createInterpolateElement( __( 'Switch to our <a>suggested setup</a>.' ), {
-					a: createElement( 'a', { onClick: switchToSuggestedSetup } ),
-				} ) }
-			</span>
-		) : (
-			<span className={ baseClassName + '__text' }>
-				{ createInterpolateElement( switchToAdvancedSetupMessage, {
-					a: createElement( 'a', { onClick: switchToAdvancedSetup } ),
-				} ) }
-			</span>
-		);
+	const getMessage = () => {
+		// Domain Connect does not support subdomains so we don't need to check for that
+		if ( supportsDomainConnect ) {
+			if ( currentMode === modeType.DC ) {
+				return __( 'Switch to our <asug>manual setup</asug> or <aadv>advanced setup</aadv>.' );
+			} else if ( currentMode === modeType.SUGGESTED ) {
+				return __( 'Switch to our <adc>simple setup</adc> or <aadv>advanced setup</aadv>.' );
+			}
+			return __( 'Switch to our <adc>simple setup</adc> or <asug>manual setup</asug>.' );
+		}
+		if ( currentMode === modeType.SUGGESTED && isSubdomain ) {
+			return __(
+				"Can't set NS records for your subdomain? Switch to our <aadv>advanced setup</aadv>."
+			);
+		} else if ( currentMode === modeType.ADVANCED ) {
+			return __( 'Switch to our <asug>suggested setup</asug>.' );
+		}
+		return __( 'Switch to our <aadv>advanced setup</aadv>.' );
+	};
 
 	const classes = classNames( baseClassName + '__switch-setup', baseClassName + '__info-links' );
 
@@ -53,7 +56,13 @@ export default function ConnectDomainStepSwitchSetupInfoLink( {
 				icon="pages"
 				size={ 16 } /* eslint-disable-line */
 			/>{ ' ' }
-			{ message }
+			<span className={ baseClassName + '__text' }>
+				{ createInterpolateElement( getMessage(), {
+					asug: createElement( 'a', { onClick: switchToSuggestedSetup } ),
+					aadv: createElement( 'a', { onClick: switchToAdvancedSetup } ),
+					adc: createElement( 'a', { onClick: switchToDomainConnectSetup } ),
+				} ) }
+			</span>
 		</div>
 	);
 }
@@ -62,5 +71,6 @@ ConnectDomainStepSwitchSetupInfoLink.propTypes = {
 	baseClassName: PropTypes.string.isRequired,
 	currentMode: PropTypes.oneOf( Object.values( modeType ) ).isRequired,
 	currentStep: PropTypes.oneOf( Object.values( stepType ) ).isRequired,
+	supportsDomainConnect: PropTypes.bool.isRequired,
 	setPage: PropTypes.func.isRequired,
 };

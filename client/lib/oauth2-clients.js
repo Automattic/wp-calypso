@@ -19,3 +19,7 @@ export const isJetpackCloudOAuth2Client = ( oauth2Client ) => {
 	// 68663 => Jetpack Cloud Dev,
 	return oauth2Client && [ 68663, 69040, 69041 ].includes( oauth2Client.id );
 };
+
+export const isIntenseDebateOAuth2Client = ( oauth2Client ) => {
+	return oauth2Client?.id === 2665;
+};

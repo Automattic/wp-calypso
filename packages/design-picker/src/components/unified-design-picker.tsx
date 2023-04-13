@@ -1,7 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
@@ -9,6 +8,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { useInView } from 'calypso/lib/use-in-view'; // eslint-disable-line no-restricted-imports
 import {
 	SHOW_ALL_SLUG,
 	SHOW_GENERATED_DESIGNS_SLUG,
@@ -39,12 +39,14 @@ interface DesignPreviewImageProps {
 	design: Design;
 	locale: string;
 	verticalId?: string;
+	styleVariation?: StyleVariation;
 }
 
 const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	design,
 	locale,
 	verticalId,
+	styleVariation,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
@@ -54,11 +56,12 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 				language: locale,
 				vertical_id: design.verticalizable ? verticalId : undefined,
 				use_screenshot_overrides: true,
+				style_variation: styleVariation,
 			} ) }
 			aria-labelledby={ makeOptionId( design ) }
 			alt=""
-			options={ getMShotOptions( { scrollable: true, highRes: false, isMobile } ) }
-			scrollable={ true }
+			options={ getMShotOptions( { scrollable: false, highRes: ! isMobile, isMobile } ) }
+			scrollable={ false }
 		/>
 	);
 };
@@ -121,6 +124,7 @@ const useTrackDesignView = ( {
 					is_premium: design.is_premium,
 					is_premium_available: isPremiumThemeAvailable,
 					slug: design.slug,
+					is_virtual: design.is_virtual,
 				} );
 
 				if ( category ) {
@@ -143,30 +147,43 @@ const useTrackDesignView = ( {
 interface DesignButtonProps {
 	design: Design;
 	locale: string;
+	onSelect: ( design: Design ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
+	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	isPremiumThemeAvailable?: boolean;
 	hasPurchasedTheme?: boolean;
 	onCheckout?: any;
 	verticalId?: string;
 	currentPlanFeatures?: string[];
+	shouldLimitGlobalStyles?: boolean;
 }
 
 const DesignButton: React.FC< DesignButtonProps > = ( {
 	locale,
 	onPreview,
+	onChangeVariation,
 	design,
 	isPremiumThemeAvailable = false,
 	hasPurchasedTheme = false,
 	verticalId,
 	currentPlanFeatures,
+	shouldLimitGlobalStyles,
 } ) => {
 	const { __ } = useI18n();
-	const { style_variations = [], is_premium: isPremium = false } = design;
-	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
-	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
+	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
-	const designIsBundledWithWoo =
-		isEnabled( 'themes/plugin-bundling' ) && design.is_bundled_with_woo_commerce;
+	const { style_variations = [] } = design;
+	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
+	const designIsBundledWithWoo = design.is_bundled_with_woo_commerce;
+
+	const isDefaultVariation = ! selectedStyleVariation || selectedStyleVariation.slug === 'default';
+
+	const title = isDefaultVariation
+		? design.title
+		: `${ design.title } – ${ selectedStyleVariation.title }`;
+
+	const isPremium = design.is_premium || ( shouldLimitGlobalStyles && ! isDefaultVariation );
+	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
 	function getPricingDescription() {
 		let text: React.ReactNode = null;
@@ -189,10 +206,16 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		if ( designIsBundledWithWoo ) {
 			badge = <WooCommerceBundledBadge />;
 		} else if ( isPremium ) {
+			const showStyleVariationTooltip =
+				! isDefaultVariation && shouldUpgrade && ! design.is_premium;
+			const tooltipText = showStyleVariationTooltip
+				? __( 'Unlock this style, and tons of other features, by upgrading to a Premium plan.' )
+				: undefined;
 			badge = (
 				<PremiumBadge
 					tooltipPosition="bottom right"
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
+					tooltipContent={ tooltipText }
 				/>
 			);
 		}
@@ -209,7 +232,7 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		<div className="design-picker__design-option">
 			<button
 				data-e2e-button={ isPremium ? 'paidOption' : 'freeOption' }
-				onClick={ () => onPreview( design ) }
+				onClick={ () => onPreview( design, selectedStyleVariation ) }
 			>
 				<span
 					className={ classnames(
@@ -220,36 +243,46 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 					) }
 				>
 					<div className="design-picker__image-frame-inside">
-						<DesignPreviewImage design={ design } locale={ locale } verticalId={ verticalId } />
+						<DesignPreviewImage
+							design={ design }
+							locale={ locale }
+							verticalId={ verticalId }
+							styleVariation={ selectedStyleVariation }
+						/>
 					</div>
 				</span>
-				<span className="design-picker__option-overlay">
-					<span id={ makeOptionId( design ) } className="design-picker__option-meta">
-						<span className="design-picker__option-name">{ design.title }</span>
-						{ style_variations.length > 0 && (
-							<div className="design-picker__options-style-variations">
-								<StyleVariationBadges
-									variations={ style_variations }
-									onClick={ ( variation ) => onPreview( design, variation ) }
-								/>
-							</div>
-						) }
-					</span>
-				</span>
-				{ getPricingDescription() }
 			</button>
+			<span className="design-picker__option-overlay">
+				<span id={ makeOptionId( design ) } className="design-picker__option-meta">
+					<span className="design-picker__option-name">{ title }</span>
+					{ style_variations.length > 0 && (
+						<div className="design-picker__options-style-variations">
+							<StyleVariationBadges
+								variations={ style_variations }
+								onClick={ ( variation ) => {
+									onChangeVariation( design, variation );
+									setSelectedStyleVariation( variation );
+								} }
+								selectedVariation={ selectedStyleVariation }
+								onMoreClick={ () => onPreview( design ) }
+							/>
+						</div>
+					) }
+				</span>
+			</span>
+			{ getPricingDescription() }
 		</div>
 	);
 };
 
 interface DesignButtonContainerProps extends DesignButtonProps {
 	category?: string | null;
-	onSelect: ( design: Design ) => void;
+	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 }
 
 const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	category,
-	onSelect,
+	onSelectBlankCanvas,
 	...props
 } ) => {
 	const trackingDivRef = useTrackDesignView( {
@@ -259,7 +292,13 @@ const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
 	} );
 
 	if ( isBlankCanvasDesign( props.design ) ) {
-		return <PatternAssemblerCta onButtonClick={ () => onSelect( props.design ) } />;
+		return (
+			<PatternAssemblerCta
+				onButtonClick={ ( shouldGoToAssemblerStep ) =>
+					onSelectBlankCanvas( props.design, shouldGoToAssemblerStep )
+				}
+			/>
+		);
 	}
 
 	return (
@@ -357,7 +396,9 @@ interface DesignPickerProps {
 	locale: string;
 	verticalId?: string;
 	onSelect: ( design: Design ) => void;
+	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
+	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	staticDesigns: Design[];
 	generatedDesigns: Design[];
 	categorization?: Categorization;
@@ -365,12 +406,15 @@ interface DesignPickerProps {
 	onCheckout?: any;
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
+	shouldLimitGlobalStyles?: boolean;
 }
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
 	onSelect,
+	onSelectBlankCanvas,
 	onPreview,
+	onChangeVariation,
 	staticDesigns,
 	generatedDesigns,
 	categorization,
@@ -379,6 +423,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	verticalId,
 	purchasedThemes,
 	currentPlanFeatures,
+	shouldLimitGlobalStyles,
 } ) => {
 	const hasCategories = !! categorization?.categories.length;
 	const filteredStaticDesigns = useMemo( () => {
@@ -399,31 +444,35 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				/>
 			) }
 			<div className="design-picker__grid">
-				{ filteredStaticDesigns.map( ( design ) => (
+				{ filteredStaticDesigns.map( ( design, index ) => (
 					<DesignButtonContainer
 						category={ categorization?.selection }
-						key={ design.slug }
+						key={ index }
 						design={ design }
 						locale={ locale }
 						onSelect={ onSelect }
+						onSelectBlankCanvas={ onSelectBlankCanvas }
 						onPreview={ onPreview }
+						onChangeVariation={ onChangeVariation }
 						isPremiumThemeAvailable={ isPremiumThemeAvailable }
 						onCheckout={ onCheckout }
 						verticalId={ verticalId }
 						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 						currentPlanFeatures={ currentPlanFeatures }
+						shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 					/>
 				) ) }
-				{ generatedDesigns.map( ( design ) => (
-					<GeneratedDesignButtonContainer
-						key={ `generated-design__${ design.slug }` }
-						design={ design }
-						locale={ locale }
-						verticalId={ verticalId }
-						isShowing={ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG }
-						onPreview={ onPreview }
-					/>
-				) ) }
+				{ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG &&
+					generatedDesigns.map( ( design ) => (
+						<GeneratedDesignButtonContainer
+							key={ `generated-design__${ design.slug }` }
+							design={ design }
+							locale={ locale }
+							verticalId={ verticalId }
+							isShowing
+							onPreview={ onPreview }
+						/>
+					) ) }
 			</div>
 		</div>
 	);
@@ -433,7 +482,10 @@ export interface UnifiedDesignPickerProps {
 	locale: string;
 	verticalId?: string;
 	onSelect: ( design: Design ) => void;
+	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
+	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
+	onViewAllDesigns: () => void;
 	generatedDesigns: Design[];
 	staticDesigns: Design[];
 	categorization?: Categorization;
@@ -442,12 +494,16 @@ export interface UnifiedDesignPickerProps {
 	onCheckout?: any;
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
+	shouldLimitGlobalStyles?: boolean;
 }
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
 	onSelect,
+	onSelectBlankCanvas,
 	onPreview,
+	onChangeVariation,
+	onViewAllDesigns,
 	verticalId,
 	staticDesigns,
 	generatedDesigns,
@@ -457,11 +513,16 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	onCheckout,
 	purchasedThemes,
 	currentPlanFeatures,
+	shouldLimitGlobalStyles,
 } ) => {
 	const translate = useTranslate();
 	const hasCategories = !! categorization?.categories.length;
 	const hasGeneratedDesigns = generatedDesigns.length > 0;
 	const isShowAll = ! categorization?.selection || categorization?.selection === SHOW_ALL_SLUG;
+
+	// Track as if user has scrolled to bottom of the design picker
+	const ref = useInView< HTMLDivElement >( onViewAllDesigns, {}, [ categorization?.selection ] );
+	const bottomAnchorContent = <div className="design-picker__bottom_anchor" ref={ ref }></div>;
 
 	return (
 		<div
@@ -479,7 +540,9 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 				<DesignPicker
 					locale={ locale }
 					onSelect={ onSelect }
+					onSelectBlankCanvas={ onSelectBlankCanvas }
 					onPreview={ onPreview }
+					onChangeVariation={ onChangeVariation }
 					staticDesigns={ staticDesigns }
 					generatedDesigns={ generatedDesigns }
 					categorization={ categorization }
@@ -488,7 +551,9 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					onCheckout={ onCheckout }
 					purchasedThemes={ purchasedThemes }
 					currentPlanFeatures={ currentPlanFeatures }
+					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 				/>
+				{ ( ! isShowAll || ! hasGeneratedDesigns ) && bottomAnchorContent }
 			</div>
 			{ hasGeneratedDesigns && (
 				<div
@@ -510,6 +575,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 						verticalId={ verticalId }
 						onPreview={ onPreview }
 					/>
+					{ isShowAll && bottomAnchorContent }
 				</div>
 			) }
 		</div>

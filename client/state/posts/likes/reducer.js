@@ -13,9 +13,9 @@ import itemSchema from './schema';
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID, post ID keys to the post's likes.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const itemReducer = withSchemaValidation(
 	itemSchema,

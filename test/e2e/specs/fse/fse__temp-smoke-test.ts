@@ -1,6 +1,7 @@
 /**
  * @group calypso-pr
  * @group gutenberg
+ * @group jetpack-wpcom-integration
  */
 
 import {
@@ -23,7 +24,7 @@ declare const browser: Browser;
  * The goal here is to catch major breaks with the integration -- i.e. Calypso navigation no long working,
  * or getting a WSOD when trying to load the editor.
  */
-describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () {
+describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	let page: Page;
 	let fullSiteEditorPage: FullSiteEditorPage;
 
@@ -44,16 +45,21 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Editor endpoint loads', async function () {
-		await page.waitForURL( /.*site-editor.*/ );
+		await page.waitForURL( /site-editor/ );
+	} );
+
+	it( 'Open the Page template', async function () {
+		fullSiteEditorPage = new FullSiteEditorPage( page );
+
+		await fullSiteEditorPage.prepareForInteraction();
+
+		await fullSiteEditorPage.ensureNavigationTopLevel();
+		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Templates' );
+		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Page' );
+		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );
 	} );
 
 	it( 'Editor canvas loads', async function () {
-		// Because this is a temporary smoke test, adding the needed FSE selectors here instead of
-		// spinning up a POM class that we will later needed to redo.
-		// This should ensure the editor hasn't done a WSoD.
-		await page.waitForLoadState( 'networkidle', { timeout: 30 * 1000 } );
-
-		fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
 		await fullSiteEditorPage.waitUntilLoaded();
 	} );
 } );

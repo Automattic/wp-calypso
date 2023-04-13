@@ -18,7 +18,7 @@ export { default as setUserSetting } from './thunks/set-user-setting';
 /**
  * Fetch user settings from WordPress.com API and store them in UserSettings instance
  *
- * @returns {object} Action object
+ * @returns {Object} Action object
  */
 export const fetchUserSettings = () => ( {
 	type: USER_SETTINGS_REQUEST,
@@ -27,8 +27,8 @@ export const fetchUserSettings = () => ( {
 /**
  * Used in signalling that requesting user settings was not successful
  *
- * @param {object} error Error object received from the API
- * @returns {object} Action object
+ * @param {Object} error Error object received from the API
+ * @returns {Object} Action object
  */
 export const fetchUserSettingsFailure = ( error ) => ( {
 	type: USER_SETTINGS_REQUEST_FAILURE,
@@ -38,8 +38,8 @@ export const fetchUserSettingsFailure = ( error ) => ( {
 /**
  * Used in signalling that requesting user settings was successful.
  *
- * @param {object} settingValues Object containing fetched user settings
- * @returns {object} Action object
+ * @param {Object} settingValues Object containing fetched user settings
+ * @returns {Object} Action object
  */
 export const fetchUserSettingsSuccess = ( settingValues ) => ( {
 	type: USER_SETTINGS_REQUEST_SUCCESS,
@@ -49,8 +49,8 @@ export const fetchUserSettingsSuccess = ( settingValues ) => ( {
 /**
  * Post settings to WordPress.com API at /me/settings endpoint
  *
- * @param {object} settingsOverride - default settings object
- * @returns {object} Action object
+ * @param {Object} settingsOverride - default settings object
+ * @returns {Object} Action object
  */
 export const saveUserSettings = ( settingsOverride ) => ( {
 	type: USER_SETTINGS_SAVE,
@@ -60,8 +60,8 @@ export const saveUserSettings = ( settingsOverride ) => ( {
 /**
  * Returns an action object signalling the settings have been received from server.
  *
- * @param  {object} settingValues Setting values (the subset of keys to be updated)
- * @returns {object}               Action object
+ * @param  {Object} settingValues Setting values (the subset of keys to be updated)
+ * @returns {Object}               Action object
  */
 export const saveUserSettingsSuccess = ( settingValues ) => ( {
 	type: USER_SETTINGS_SAVE_SUCCESS,

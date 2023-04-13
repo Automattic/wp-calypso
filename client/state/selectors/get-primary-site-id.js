@@ -4,7 +4,7 @@ import { getCurrentUser } from 'calypso/state/current-user/selectors';
 /**
  * Returns the current user's primary site's ID.
  *
- * @param  {object}  state Global state tree
+ * @param  {Object}  state Global state tree
  * @returns {?number}       The current user's primary site's ID
  */
 export default function getPrimarySiteId( state ) {

@@ -29,7 +29,7 @@ function MultipleChoiceQuestionExamples( { translate } ) {
 					} }
 					primary
 				>
-					{ 'The Stork Button' }
+					The Stork Button
 				</Button>
 			),
 		},
@@ -45,7 +45,7 @@ function MultipleChoiceQuestionExamples( { translate } ) {
 						notices.success( 'The Extra Button was clicked', { duration: 5000 } );
 					} }
 				>
-					{ 'The Extra Button' }
+					The Extra Button
 				</Button>
 			),
 		},
@@ -55,13 +55,13 @@ function MultipleChoiceQuestionExamples( { translate } ) {
 		<div>
 			<MultipleChoiceQuestion
 				answers={ answers }
-				question={ 'Please choose one of the following:' }
+				question="Please choose one of the following:"
 				onAnswerChange={ ( answer, text ) => {
 					setSelectedAnswer( answer );
 					setAnswerText( text || '' );
 				} }
 			/>
-			<h2>{ 'Selected Answer' }</h2>
+			<h2>Selected Answer</h2>
 			<p>
 				<b>Selected Answer is: </b>
 				{ selectedAnswer ? selectedAnswer : 'No Answer Currently Selected' }

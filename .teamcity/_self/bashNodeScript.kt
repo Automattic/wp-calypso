@@ -30,6 +30,7 @@ fun BuildSteps.bashNodeScript(init: ScriptBuildStep.() -> Unit): ScriptBuildStep
 		# Existing script content set by caller:
 		${result.scriptContent}
 	""".trimIndent()
+
 	result.dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 	result.dockerPull = true
 	result.dockerImage = result.dockerImage ?: "%docker_image%"

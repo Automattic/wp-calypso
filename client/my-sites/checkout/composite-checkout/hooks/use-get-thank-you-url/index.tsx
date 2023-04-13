@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 import type { ResponseDomain } from 'calypso/lib/domains/types';
 import type { PostCheckoutUrlArguments } from 'calypso/my-sites/checkout/get-thank-you-page-url';
 
@@ -30,11 +31,11 @@ export default function useGetThankYouUrl( {
 	purchaseId,
 	feature,
 	cart,
+	sitelessCheckoutType,
 	isJetpackNotAtomic,
 	productAliasFromUrl,
 	hideNudge,
 	isInModal,
-	isJetpackCheckout = false,
 	domains,
 }: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
@@ -49,11 +50,11 @@ export default function useGetThankYouUrl( {
 			purchaseId,
 			feature,
 			cart,
+			sitelessCheckoutType,
 			isJetpackNotAtomic,
 			productAliasFromUrl,
 			hideNudge,
 			isInModal,
-			isJetpackCheckout,
 			domains,
 		};
 
@@ -73,7 +74,7 @@ export default function useGetThankYouUrl( {
 		purchaseId,
 		cart,
 		hideNudge,
-		isJetpackCheckout,
+		sitelessCheckoutType,
 		domains,
 	] );
 	return getThankYouUrl;
@@ -85,10 +86,10 @@ export interface GetThankYouUrlProps {
 	purchaseId?: number | undefined;
 	feature?: string | undefined;
 	cart: ResponseCart;
-	isJetpackNotAtomic?: boolean;
+	sitelessCheckoutType: SitelessCheckoutType;
 	productAliasFromUrl?: string | undefined;
 	hideNudge?: boolean;
 	isInModal?: boolean;
-	isJetpackCheckout?: boolean;
+	isJetpackNotAtomic?: boolean;
 	domains: ResponseDomain[] | undefined;
 }

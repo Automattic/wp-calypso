@@ -1,3 +1,5 @@
+// Must be included in root style.scss of /stats, /store, and /google-my-business/stats
+
 @use "sass:math";
 @import "@automattic/components/src/highlight-cards/variables.scss";
 
@@ -20,26 +22,41 @@ $sidebar-appearance-break-point: 783px;
 
 	// Ensures vertical padding for certain sections.
 	> .highlight-cards,
-	> .stats__all-time-highlights-section {
+	> .stats__all-time-highlights-section,
+	> .stats__all-time-views-section,
+	> .stats__post-detail-highlights-section,
+	> .stats__post-detail-table-section,
+	> .stats__gmb-location-wrapper {
 		padding-top: $vertical-margin;
 		padding-bottom: $vertical-margin;
 	}
 
 	// Ensures horizontal padding for all sections.
-	@media ( min-width: $custom-mobile-breakpoint ) {
-		> * {
-			padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
+	> * {
+		padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
+
+		@media ( max-width: $custom-mobile-breakpoint ) {
+			padding-left: 0;
+			padding-right: 0;
 		}
 	}
 
-	> .stats-banner-wrapper {
-		padding-bottom: 1em;
+	> .stats-banner-wrapper .jetpack-backup-creds-banner {
+		// .jetpack-backup-creds-banner has a bottom margin of 16px. This overrides it since we want it to be 32px
+		margin-bottom: 32px;
+	}
+
+	&.has-fixed-nav {
+		padding-top: 44px;
 	}
 }
 
-// this overrides the default .layout__content that adds unwanted padding
 .is-section-stats,
-.is-section-woocommerce {
+.is-section-woocommerce,
+.is-section-google-my-business {
+	background: var(--studio-white);
+
+	// this overrides the default .layout__content that adds unwanted padding
 	& .layout__content,
 	&.theme-default .focus-content .layout__content {
 		padding: $stats-layout-contnet-padding-top 0 0 0;
@@ -53,26 +70,5 @@ $sidebar-appearance-break-point: 783px;
 			padding-bottom: $vertical-margin;
 			margin-top: 0;
 		}
-	}
-}
-
-// Overrides paddings for WP Admin pages.
-.wp-admin {
-	& .layout__content,
-	&.theme-default .focus-content .layout__content {
-		padding-top: 0;
-		padding-left: 1px;
-	}
-	// Fixed header doesn't work well for WP-Admin, as the masterbar isn't fixed.
-	& .is-section-stats .has-fixed-nav .fixed-navigation-header__header {
-		position: relative;
-		top: initial;
-		left: initial;
-	}
-	& .is-section-stats .has-fixed-nav {
-		padding-top: 0;
-	}
-	#wpcontent {
-		padding-left: 1px;
 	}
 }

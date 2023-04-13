@@ -5,8 +5,9 @@ import { errorNotice, successNotice, warningNotice } from 'calypso/state/notices
 import 'calypso/state/data-layer/wpcom/sites/memberships';
 import 'calypso/state/memberships/init';
 
-export const requestSettings = ( siteId ) => ( {
+export const requestSettings = ( siteId, source ) => ( {
 	siteId,
+	source,
 	type: MEMBERSHIPS_SETTINGS,
 } );
 

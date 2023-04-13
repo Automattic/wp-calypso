@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .onboarding-hooray {
 	text-align: center;
 
@@ -10,6 +13,10 @@
 		font-size: 3rem;
 		color: var(--studio-gray-100);
 		margin-bottom: 0.75rem;
+
+		@media ( max-width: 1080px ) {
+			line-height: 1;
+		}
 	}
 
 	.onboarding-subtitle {
@@ -17,9 +24,11 @@
 		margin-bottom: 1.5em;
 	}
 
-	.components-button.action-buttons__next.is-primary {
+	.components-button.action-buttons__next {
 		min-width: 100px;
-		padding: 0;
+		padding: 10px 24px !important;
+		margin: 0 0.75em 0.75em 0.75em;
+		border-radius: 4px;
 	}
 }
 

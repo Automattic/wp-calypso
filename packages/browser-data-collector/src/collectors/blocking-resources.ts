@@ -3,7 +3,9 @@ import { getResources } from '../api/resources-timing';
 
 export const collector: Collector = ( report ) => {
 	const domContentLoaded = getDomContentLoadedEventStart() - getNavigationStart();
-	if ( domContentLoaded <= 0 ) return report;
+	if ( domContentLoaded <= 0 ) {
+		return report;
+	}
 
 	/**
 	 * Fetch resources that

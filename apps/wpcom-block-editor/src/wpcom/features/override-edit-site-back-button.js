@@ -14,7 +14,9 @@ const editSitePackage = require( '@wordpress/edit-site' );
  * both wp-admin and the calypso iframe.
  */
 function overrideBackToDashboardButton() {
-	if ( ! editSitePackage?.__experimentalMainDashboardButton ) return;
+	if ( ! editSitePackage?.__experimentalMainDashboardButton ) {
+		return;
+	}
 
 	const SiteEditorDashboardFill = editSitePackage.__experimentalMainDashboardButton;
 	const siteSlug = window.location.hostname;

@@ -5,6 +5,7 @@
 import { render } from '@testing-library/react';
 import { translate } from 'i18n-calypso';
 import nock from 'nock';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -13,6 +14,18 @@ import SiteTable from '../index';
 import type { SiteData } from '../../types';
 
 describe( '<SiteTable>', () => {
+	beforeAll( () => {
+		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
+			return {
+				matches: true,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(),
+				removeListener: jest.fn(),
+			};
+		} );
+	} );
+
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/rest/v1.1/jetpack-blogs/1234/test-connection?is_stale_connection_healthy=true' )
@@ -90,20 +103,25 @@ describe( '<SiteTable>', () => {
 				isPartnerOAuthTokenLoaded: true,
 			},
 		},
+		sites: {
+			items: {
+				[ blogId ]: siteObj,
+			},
+		},
 	};
 	const mockStore = configureStore();
 	const store = mockStore( initialState );
 	const queryClient = new QueryClient();
 
-	const { getByTestId } = render(
-		<Provider store={ store }>
-			<QueryClientProvider client={ queryClient }>
-				<SiteTable { ...props } />
-			</QueryClientProvider>
-		</Provider>
-	);
-
 	test( 'should render correctly and have href and status for each row', () => {
+		const { getByTestId } = render(
+			<Provider store={ store }>
+				<QueryClientProvider client={ queryClient }>
+					<SiteTable { ...props } />
+				</QueryClientProvider>
+			</Provider>
+		);
+
 		const backupEle = getByTestId( `row-${ blogId }-backup` );
 		expect( backupEle.getAttribute( 'href' ) ).toEqual( `/backup/${ siteUrl }` );
 		expect( backupEle.getElementsByClassName( 'sites-overview__badge' )[ 0 ].textContent ).toEqual(
@@ -114,14 +132,6 @@ describe( '<SiteTable>', () => {
 		expect( scanEle.getAttribute( 'href' ) ).toEqual( `/scan/${ siteUrl }` );
 		expect( scanEle.getElementsByClassName( 'sites-overview__badge' )[ 0 ].textContent ).toEqual(
 			`${ scanThreats } Threats`
-		);
-
-		const monitorEle = getByTestId( `row-${ blogId }-monitor` );
-		expect( monitorEle.getAttribute( 'href' ) ).toEqual(
-			`https://jptools.wordpress.com/debug/?url=${ siteUrl }`
-		);
-		expect( monitorEle.getElementsByClassName( 'sites-overview__badge' )[ 0 ].textContent ).toEqual(
-			'Site Down'
 		);
 
 		const pluginEle = getByTestId( `row-${ blogId }-plugin` );

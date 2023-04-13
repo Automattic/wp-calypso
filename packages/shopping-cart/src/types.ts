@@ -196,7 +196,6 @@ export interface RequestCart {
 	tax: RequestCartTaxData;
 	coupon: string;
 	temporary: false;
-	create_new_blog?: boolean;
 }
 
 export type RequestCartTaxData = null | {
@@ -204,6 +203,10 @@ export type RequestCartTaxData = null | {
 		country_code: string | undefined;
 		postal_code: string | undefined;
 		subdivision_code: string | undefined;
+		vat_id?: string;
+		organization?: string;
+		address?: string;
+		city?: string;
 	};
 };
 
@@ -221,14 +224,13 @@ export type MinimalRequestCartProduct = Partial< RequestCartProduct > &
 
 export interface ResponseCart< P = ResponseCartProduct > {
 	blog_id: number | string;
-	create_new_blog: boolean;
 	cart_key: CartKey;
 	products: P[];
 
 	/**
 	 * The amount of tax collected.
 	 *
-	 * @deprecated This is a float and is unreliable. Use total_tax_integer or total_tax_display.
+	 * @deprecated This is a float and is unreliable. Use total_tax_integer.
 	 */
 	total_tax: string;
 
@@ -238,11 +240,6 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	total_tax_integer: number;
 
 	/**
-	 * The amount of tax collected formatted for the locale and currency.
-	 */
-	total_tax_display: string;
-
-	/**
 	 * The amount of tax collected per product.
 	 */
 	total_tax_breakdown: TaxBreakdownItem[];
@@ -250,7 +247,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	/**
 	 * The cart's total cost.
 	 *
-	 * @deprecated This is a float and is unreliable. Use total_cost_integer or total_cost_display.
+	 * @deprecated This is a float and is unreliable. Use total_cost_integer.
 	 */
 	total_cost: number;
 
@@ -258,11 +255,6 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	 * The cart's total cost in the currency's smallest unit.
 	 */
 	total_cost_integer: number;
-
-	/**
-	 * The cart's total cost formatted for the locale and currency.
-	 */
-	total_cost_display: string;
 
 	/**
 	 * The difference between `cost_before_coupon` and the actual price for all
@@ -274,23 +266,9 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	coupon_savings_total_integer: number;
 
 	/**
-	 * The difference between `cost_before_coupon` and the actual price for all
-	 * products formatted for the locale and currency.
-	 *
-	 * Note that the difference may be caused by many factors, not just coupons.
-	 * It's best not to rely on it.
-	 */
-	coupon_savings_total_display: string;
-
-	/**
 	 * The subtotal with taxes included in the currency's smallest unit.
 	 */
 	sub_total_with_taxes_integer: number;
-
-	/**
-	 * The subtotal with taxes included formatted for the locale and currency.
-	 */
-	sub_total_with_taxes_display: string;
 
 	/**
 	 * The subtotal without taxes included in the currency's smallest unit.
@@ -298,19 +276,9 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	sub_total_integer: number;
 
 	/**
-	 * The subtotal without taxes included formatted for the locale and currency.
-	 */
-	sub_total_display: string;
-
-	/**
 	 * The number of credits available in the currency's smallest unit.
 	 */
 	credits_integer: number;
-
-	/**
-	 * The number of credits available formatted for the locale and currency.
-	 */
-	credits_display: string;
 
 	/**
 	 * Gift Details
@@ -335,7 +303,6 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	next_domain_is_free: boolean;
 	next_domain_condition: '' | 'blog';
 	bundled_domain?: string;
-	has_bundle_credit?: boolean;
 	terms_of_service?: TermsOfServiceRecord[];
 	has_pending_payment?: boolean;
 }
@@ -345,6 +312,10 @@ export interface ResponseCartTaxData {
 		country_code?: string;
 		postal_code?: string;
 		subdivision_code?: string;
+		vat_id?: string;
+		organization?: string;
+		address?: string;
+		city?: string;
 	};
 	display_taxes: boolean;
 }
@@ -352,7 +323,6 @@ export interface ResponseCartTaxData {
 export interface TaxBreakdownItem {
 	tax_collected: number;
 	tax_collected_integer: number;
-	tax_collected_display: string;
 	label?: string;
 	rate: number;
 	rate_display: string;
@@ -368,6 +338,7 @@ export type TempResponseCart = ResponseCart< RequestCartProduct >;
 export interface ResponseCartMessages {
 	errors?: ResponseCartMessage[];
 	success?: ResponseCartMessage[];
+	persistent_errors?: ResponseCartMessage[];
 }
 
 export interface ResponseCartMessage {
@@ -390,30 +361,11 @@ export interface ResponseCartProduct {
 	product_cost_integer: number;
 
 	/**
-	 * The cart item's original price formatted for the locale with currency.
-	 *
-	 * @deprecated Use item_original_cost_display or item_original_subtotal_display.
-	 */
-	product_cost_display: string;
-
-	/**
 	 * The cart item's original price without volume in the currency's smallest unit.
 	 *
 	 * Discounts and volume are not included, but quantity is included.
 	 */
 	item_original_cost_integer: number;
-
-	/**
-	 * The cart item's original price without volume formatted for the locale with currency.
-	 *
-	 * Discounts and volume are not included, but quantity is included.
-	 */
-	item_original_cost_display: string;
-
-	/**
-	 * The monthly term subtotal of a cart item formatted for the locale with currency.
-	 */
-	item_subtotal_monthly_cost_display: string;
 
 	/**
 	 * The monthly term subtotal of a cart item in the currency's smallest unit.
@@ -428,13 +380,6 @@ export interface ResponseCartProduct {
 	item_original_subtotal_integer: number;
 
 	/**
-	 * The cart item's original price with volume formatted for the locale with currency.
-	 *
-	 * Discounts are not included, but volume and quantity are included.
-	 */
-	item_original_subtotal_display: string;
-
-	/**
 	 * The cart item's original price for quantity 1 in the currency's smallest unit.
 	 *
 	 * Discounts are not included, but volume is included.
@@ -442,26 +387,14 @@ export interface ResponseCartProduct {
 	item_original_cost_for_quantity_one_integer: number;
 
 	/**
-	 * The cart item's original price for quantity 1 formatted for the locale with currency.
-	 *
-	 * Discounts are not included, but volume is included.
-	 */
-	item_original_cost_for_quantity_one_display: string;
-
-	/**
 	 * The cart item's subtotal in the currency's smallest unit.
 	 */
 	item_subtotal_integer: number;
 
 	/**
-	 * The cart item's subtotal formatted for the locale with currency.
-	 */
-	item_subtotal_display: string;
-
-	/**
 	 * The cart item's subtotal without volume.
 	 *
-	 * @deprecated This is a float and is unreliable. Use item_subtotal_integer or item_subtotal_display.
+	 * @deprecated This is a float and is unreliable. Use item_subtotal_integer
 	 */
 	cost: number;
 
@@ -474,7 +407,7 @@ export interface ResponseCartProduct {
 	 * other price changes (eg: domain discounts). It's best not to rely on it.
 	 *
 	 * @deprecated This is a float and is unreliable. Use
-	 * item_original_subtotal_integer or item_original_subtotal_display if you
+	 * item_original_subtotal_integer if you
 	 * can, although those have slightly different meanings.
 	 */
 	cost_before_coupon?: number;
@@ -485,17 +418,9 @@ export interface ResponseCartProduct {
 	 * Note that the difference may be caused by many factors, not just coupons.
 	 * It's best not to rely on it.
 	 *
-	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer or coupon_savings_display.
+	 * @deprecated This is a float and is unreliable. Use coupon_savings_integer
 	 */
 	coupon_savings?: number;
-
-	/**
-	 * The difference between `cost_before_coupon` and the actual price formatted for the locale with currency.
-	 *
-	 * Note that the difference may be caused by many factors, not just coupons.
-	 * It's best not to rely on it.
-	 */
-	coupon_savings_display?: string;
 
 	/**
 	 * The difference between `cost_before_coupon` and the actual price in the currency's smallest unit.
@@ -571,9 +496,23 @@ export interface ResponseCartProduct {
 	 */
 	is_gift_purchase?: boolean;
 
+	product_variants: ResponseCartProductVariant[];
+
 	// Temporary optional properties for the monthly pricing test
 	related_monthly_plan_cost_display?: string;
 	related_monthly_plan_cost_integer?: number;
+}
+
+export interface ResponseCartProductVariant {
+	product_id: number;
+	bill_period_in_months: number;
+	product_slug: string;
+	currency: string;
+	price_integer: number;
+	price_before_discounts_integer: number;
+	introductory_offer_terms:
+		| Record< string, never >
+		| Pick< IntroductoryOfferTerms, 'interval_unit' | 'interval_count' >;
 }
 
 export interface IntroductoryOfferTerms {
@@ -589,6 +528,10 @@ export interface CartLocation {
 	countryCode?: string;
 	postalCode?: string;
 	subdivisionCode?: string;
+	vatId?: string;
+	organization?: string;
+	address?: string;
+	city?: string;
 }
 
 export interface ResponseCartProductExtra {
@@ -616,7 +559,17 @@ export interface ResponseCartProductExtra {
 
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
+	isAkismetSitelessCheckout?: boolean;
+
+	/**
+	 * Marketplace properties
+	 *
+	 * These extra properties are always set for marketplace products.
+	 * `product_slug` is for identifying the product, and `product_type` is for identifying the type of the product.
+	 */
 	is_marketplace_product?: boolean;
+	product_slug?: string;
+	product_type?: 'marketplace_plugin' | 'marketplace_theme';
 }
 
 export interface ResponseCartGiftDetails {
@@ -627,6 +580,7 @@ export interface ResponseCartGiftDetails {
 
 export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
+	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;
@@ -637,6 +591,7 @@ export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	site_title?: string;
 	signup_flow?: string;
 	signup?: boolean;
+	headstart_theme?: string;
 }
 
 export interface GSuiteProductUser {

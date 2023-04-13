@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import type { Plan } from '@automattic/calypso-products';
-import type { translate } from 'i18n-calypso';
 
 interface Props {
 	currencyCode: string;
@@ -9,7 +8,6 @@ interface Props {
 	price?: number;
 	originalPrice?: number;
 	onClick?: ( productSlug: string ) => void;
-	translate: typeof translate;
 }
 
 const PriceContainer = styled.div`
@@ -37,7 +35,6 @@ export const PlansComparisonColCTA: React.FunctionComponent< Props > = ( {
 	price,
 	originalPrice,
 	children,
-	translate,
 } ) => {
 	const isDiscounted = typeof originalPrice === 'number';
 
@@ -50,25 +47,18 @@ export const PlansComparisonColCTA: React.FunctionComponent< Props > = ( {
 							currencyCode={ currencyCode }
 							rawPrice={ originalPrice }
 							displayFlatPrice={ true }
-							translate={ translate }
 							original
 						/>
 						<PlanPrice
 							currencyCode={ currencyCode }
 							displayFlatPrice={ true }
 							rawPrice={ price }
-							translate={ translate }
 							discounted
 						/>
 					</>
 				) }
 				{ ! isDiscounted && (
-					<PlanPrice
-						currencyCode={ currencyCode }
-						displayFlatPrice={ true }
-						rawPrice={ price }
-						translate={ translate }
-					/>
+					<PlanPrice currencyCode={ currencyCode } displayFlatPrice={ true } rawPrice={ price } />
 				) }
 			</PriceContainer>
 			<BillingTimeFrame>{ plan.getBillingTimeFrame() }</BillingTimeFrame>

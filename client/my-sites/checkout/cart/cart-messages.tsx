@@ -23,13 +23,20 @@ function CartMessage( { message }: { message: ResponseCartMessage } ) {
 	return <>{ getPrettyMessage( message ) }</>;
 }
 
-export default function CartMessages(): null {
+export default function CartMessages( {
+	shouldShowPersistentErrors,
+}: {
+	/**
+	 * Persistent errors like "Purchases are disabled for this site" are returned
+	 * during cart fetch (regular cart errors are transient and only are returned
+	 * when changing the cart). We want to display these errors only in certain
+	 * contexts where they will make sense (like checkout), not in every place
+	 * that happens to render this component (like the plans page).
+	 */
+	shouldShowPersistentErrors?: boolean;
+} ): null {
 	const cartKey = useCartKey();
-	const {
-		responseCart: cart,
-		isLoading: isLoadingCart,
-		clearMessages,
-	} = useShoppingCart( cartKey );
+	const { responseCart: cart, isLoading: isLoadingCart } = useShoppingCart( cartKey );
 	const reduxDispatch = useDispatch();
 
 	const showErrorMessages = useCallback(
@@ -48,10 +55,10 @@ export default function CartMessages(): null {
 
 	useDisplayCartMessages( {
 		cart,
-		clearMessages,
 		isLoadingCart,
 		showErrorMessages,
 		showSuccessMessages,
+		shouldShowPersistentErrors: shouldShowPersistentErrors ?? false,
 	} );
 
 	return null;

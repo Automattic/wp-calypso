@@ -1,6 +1,7 @@
 @import "../style";
 
-.link-in-bio.patterns {
+.link-in-bio.patterns,
+.link-in-bio-tld.patterns {
 	height: 100vh;
 
 	@supports ( height: 100svh ) {
@@ -19,6 +20,7 @@
 
 		@include break-small {
 			height: auto;
+			padding-top: 2px;
 		}
 
 		@include onboarding-break-mobile-landscape {
@@ -32,9 +34,9 @@
 
 		.step-container__header {
 			margin-bottom: 20px;
-
 			@include break-medium {
 				margin-bottom: 32px;
+				margin-top: 54px;
 			}
 
 			@include onboarding-break-mobile-landscape {

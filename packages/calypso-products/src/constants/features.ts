@@ -9,14 +9,20 @@ import {
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
+	PRODUCT_JETPACK_BOOST,
+	PRODUCT_JETPACK_BOOST_MONTHLY,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_BASIC,
+	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 } from './jetpack';
 
 export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
@@ -48,6 +54,7 @@ export const FEATURE_CLOUDFLARE_ANALYTICS = 'cloudflare-analytics';
 export const FEATURE_GOOGLE_MY_BUSINESS = 'google-my-business';
 export const FEATURE_SFTP = 'sftp';
 export const FEATURE_SSH = 'ssh';
+export const FEATURE_SITE_STAGING_SITES = 'staging-sites';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
@@ -176,8 +183,15 @@ export const FEATURE_JETPACK_VIDEOPRESS_STORAGE = 'jetpack-videopress-storage';
 export const FEATURE_JETPACK_VIDEOPRESS_UNBRANDED = 'jetpack-videopress-unbranded';
 export const FEATURE_JETPACK_CRM = PRODUCT_JETPACK_CRM;
 export const FEATURE_JETPACK_CRM_MONTHLY = PRODUCT_JETPACK_CRM_MONTHLY;
+export const FEATURE_JETPACK_BOOST = PRODUCT_JETPACK_BOOST;
+export const FEATURE_JETPACK_BOOST_MONTHLY = PRODUCT_JETPACK_BOOST_MONTHLY;
 export const FEATURE_CLOUD_CRITICAL_CSS = 'cloud-critical-css';
-export const SOCIAL_SHARES_1000 = 'social-shares-1000';
+export const FEATURE_JETPACK_SOCIAL_ADVANCED = PRODUCT_JETPACK_SOCIAL_ADVANCED;
+export const FEATURE_JETPACK_SOCIAL_ADVANCED_MONTHLY = PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY;
+export const FEATURE_JETPACK_SOCIAL_BASIC = PRODUCT_JETPACK_SOCIAL_BASIC;
+export const FEATURE_JETPACK_SOCIAL_BASIC_MONTHLY = PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY;
+export const FEATURE_SOCIAL_SHARES_1000 = 'social-shares-1000';
+export const FEATURE_SOCIAL_ENHANCED_PUBLISHING = 'social-enhanced-publishing';
 
 // Jetpack tiered product features
 export const FEATURE_JETPACK_10GB_BACKUP_STORAGE = 'jetpack-10gb-backup-storage';
@@ -224,6 +238,7 @@ export const WPCOM_FEATURES_BACKUPS_RESTORE = 'restore';
 export const WPCOM_FEATURES_CDN = 'cdn';
 export const WPCOM_FEATURES_CLASSIC_SEARCH = 'search';
 export const WPCOM_FEATURES_CLOUDFLARE_CDN = 'cloudflare-cdn';
+export const WPCOM_FEATURES_COPY_SITE = 'copy-site';
 export const WPCOM_FEATURES_FULL_ACTIVITY_LOG = 'full-activity-log';
 export const WPCOM_FEATURES_INSTALL_PLUGINS = 'install-plugins';
 export const WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS = 'install-purchased-plugins';
@@ -265,3 +280,76 @@ export const FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS = 'customize-themes-buttons
 export const FEATURE_TRACK_VIEWS_CLICKS = 'track-views-clicks';
 export const FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO = 'collect-payments-link-in-bio';
 export const FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION = 'link-in-bio-themes-customization';
+
+// Pricing Grid 2023 Features
+export const FEATURE_BEAUTIFUL_THEMES = 'beautiful-themes';
+export const FEATURE_PAGES = 'pages-v1';
+export const FEATURE_USERS = 'users-v1';
+export const FEATURE_NEWSLETTERS_RSS = 'newsletter-rss';
+export const FEATURE_POST_EDITS_HISTORY = 'post-edits-history';
+export const FEATURE_SECURITY_BRUTE_FORCE = 'security-brute-force';
+export const FEATURE_SMART_REDIRECTS = 'smart-redirects';
+export const FEATURE_ALWAYS_ONLINE = 'always-online';
+export const FEATURE_FAST_DNS = 'fast-dns';
+export const FEATURE_STYLE_CUSTOMIZATION = 'style-customization';
+export const FEATURE_SUPPORT_EMAIL = 'support-email-v1';
+export const FEATURE_DESIGN_TOOLS = 'design-tools';
+export const FEATURE_PREMIUM_THEMES_V2 = 'premium-themes-v2';
+export const FEATURE_WORDADS = 'wordads-v2';
+export const FEATURE_PLUGINS_THEMES = 'plugins-themes-v1';
+export const FEATURE_BANDWIDTH = 'bandwidth-v1';
+export const FEATURE_BURST = 'burst-v1';
+export const FEATURE_WAF_V2 = 'waf-v2';
+export const FEATURE_CDN = 'cdn-v1';
+export const FEATURE_CPUS = 'cpus-v1';
+export const FEATURE_DATACENTRE_FAILOVER = 'datacentre-failover';
+export const FEATURE_ISOLATED_INFRA = 'isolated-infra';
+export const FEATURE_SECURITY_MALWARE = 'security-malware';
+export const FEATURE_SECURITY_DDOS = 'security-ddos';
+export const FEATURE_DEV_TOOLS = 'dev-tools';
+export const FEATURE_WP_UPDATES = 'wp-updates';
+export const FEATURE_MULTI_SITE = 'multi-site';
+export const FEATURE_SELL_SHIP = 'sell-ship';
+export const FEATURE_SELL_INTERNATIONALLY = 'sell-internationally';
+export const FEATURE_AUTOMATIC_SALES_TAX = 'automatic-sales-tax';
+export const FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN = 'automated-backups-security-scan';
+export const FEATURE_INTEGRATED_SHIPMENT_TRACKING = 'integrated-shipment-tracking';
+export const FEATURE_SELL_EGIFTS_AND_VOUCHERS = 'sell-e-gifts-and-vouchers';
+export const FEATURE_EMAIL_MARKETING = 'email-marketing';
+export const FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION =
+	'marketplace-sync-social-media-integration';
+export const FEATURE_BACK_IN_STOCK_NOTIFICATIONS = 'back-in-stock-notifications';
+export const FEATURE_MARKETING_AUTOMATION = 'marketing-automation';
+export const FEATURE_AUTOMATED_EMAIL_TRIGGERS = 'automated-email-triggers';
+export const FEATURE_CART_ABANDONMENT_EMAILS = 'cart-abandonment-emails';
+export const FEATURE_REFERRAL_PROGRAMS = 'referral-programs';
+export const FEATURE_CUSTOMER_BIRTHDAY_EMAILS = 'customer-birthday-emails';
+export const FEATURE_LOYALTY_POINTS_PROGRAMS = 'loyalty-points-programs';
+export const FEATURE_OFFER_BULK_DISCOUNTS = 'offer-bulk-discounts';
+export const FEATURE_RECOMMEND_ADD_ONS = 'recommend-add-ons';
+export const FEATURE_ASSEMBLED_PRODUCTS_AND_KITS = 'assembled-products-and-kits';
+export const FEATURE_MIN_MAX_ORDER_QUANTITY = 'min-max-order-quantity';
+export const FEATURE_CUSTOM_STORE = 'custom-store';
+export const FEATURE_INVENTORY = 'inventory';
+export const FEATURE_CHECKOUT = 'checkout-v1';
+export const FEATURE_ACCEPT_PAYMENTS_V2 = 'accept-payments-v2';
+export const FEATURE_SALES_REPORTS = 'sales-reports';
+export const FEATURE_EXTENSIONS = 'extensions-v1';
+export const FEATURE_STATS_JP = 'stats-jp';
+export const FEATURE_SPAM_JP = 'spam-jp';
+export const FEATURE_LTD_SOCIAL_MEDIA_JP = 'ltd-social-media-jp';
+export const FEATURE_SHARES_SOCIAL_MEDIA_JP = 'shares-social-media-jp';
+export const FEATURE_CONTACT_FORM_JP = 'contact-form-jp';
+export const FEATURE_PAID_SUBSCRIBERS_JP = 'paid-subscribers-jp';
+export const FEATURE_VIDEOPRESS_JP = 'videopress-jp';
+export const FEATURE_UNLTD_SOCIAL_MEDIA_JP = 'unltd-social-media-jp';
+export const FEATURE_SEO_JP = 'seo-jp';
+export const FEATURE_BRUTE_PROTECT_JP = 'brute-protect-jp';
+export const FEATURE_REALTIME_BACKUPS_JP = 'realtime-backups-jp';
+export const FEATURE_UPTIME_MONITOR_JP = 'uptime-monitor-jp';
+export const FEATURE_GLOBAL_EDGE_CACHING = 'global-edge-caching';
+export const FEATURE_ES_SEARCH_JP = 'es-search-jp';
+export const FEATURE_PLUGIN_AUTOUPDATE_JP = 'plugin-autoupdate-jp';
+export const FEATURE_PREMIUM_CONTENT_JP = 'premium-content-jp';
+export const FEATURE_SITE_ACTIVITY_LOG_JP = 'site-activity-log-jp';
+export const FEATURE_AUTOMATTIC_DATACENTER_FAILOVER = 'automattic-datacenter-fail-over';

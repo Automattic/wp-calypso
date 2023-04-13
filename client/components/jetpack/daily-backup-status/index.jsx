@@ -14,9 +14,12 @@ import {
 	getBackupErrorCode,
 } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
-import { useIsDateVisible } from 'calypso/my-sites/backup/hooks';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
-import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
+import {
+	getInProgressBackupForSite,
+	getRewindStorageUsageLevel,
+} from 'calypso/state/rewind/selectors';
+import { StorageUsageLevels } from 'calypso/state/rewind/storage/types';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupFailed from './status-card/backup-failed';
@@ -26,7 +29,6 @@ import BackupScheduled from './status-card/backup-scheduled';
 import BackupSuccessful from './status-card/backup-successful';
 import NoBackupsOnSelectedDate from './status-card/no-backups-on-selected-date';
 import NoBackupsYet from './status-card/no-backups-yet';
-import VisibleDaysLimit from './status-card/visible-days-limit';
 
 import './style.scss';
 
@@ -39,6 +41,7 @@ const DailyBackupStatus = ( {
 	deltas,
 } ) => {
 	const siteId = useSelector( getSelectedSiteId );
+	const usageLevel = useSelector( ( state ) => getRewindStorageUsageLevel( state, siteId ) );
 
 	const moment = useLocalizedMoment();
 	const today = useDateWithOffset( moment() );
@@ -65,14 +68,6 @@ const DailyBackupStatus = ( {
 			backupPreviouslyInProgress.current = backupCurrentlyInProgress;
 		}
 	}, [ backupCurrentlyInProgress ] );
-
-	// If display rules are enabled,
-	// and we're looking at a date that should not be visible,
-	// display a status to reflect this.
-	const isDateVisible = useIsDateVisible( siteId );
-	if ( ! isDateVisible( selectedDate ) ) {
-		return <VisibleDaysLimit selectedDate={ selectedDate } />;
-	}
 
 	// The backup "period" property is represented by
 	// an integer number of seconds since the Unix epoch
@@ -126,8 +121,11 @@ const DailyBackupStatus = ( {
 			<BackupFailed backup={ backup } />
 		);
 	}
-
 	if ( lastBackupDate ) {
+		// if the storage is full, don't show backup is schdeuled or delayed message to the user.
+		if ( StorageUsageLevels.Full === usageLevel ) {
+			return null;
+		}
 		const selectedToday = selectedDate.isSame( today, 'day' );
 		return selectedToday ? (
 			<BackupScheduled lastBackupDate={ lastBackupDate } />

@@ -6,6 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import * as React from 'react';
 import { DOMAIN_SUGGESTIONS_STORE } from '../../constants';
+import type { DomainSuggestionsSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -23,8 +24,9 @@ const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, s
 		onSelect( slug );
 	};
 
-	const domainCategories = useSelect( ( select ) =>
-		select( DOMAIN_SUGGESTIONS_STORE ).getCategories()
+	const domainCategories = useSelect(
+		( select ) => ( select( DOMAIN_SUGGESTIONS_STORE ) as DomainSuggestionsSelect ).getCategories(),
+		[]
 	);
 
 	const allCategoriesLabel = __( 'All Categories', __i18n_text_domain__ );

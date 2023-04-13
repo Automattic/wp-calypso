@@ -120,7 +120,7 @@ export function getLanguageRouteParam( name = 'lang', optional = true ) {
  * Matches and returns language from config.languages based on the given localeSlug
  *
  * @param   {string} langSlug locale slug of the language to match
- * @returns {object|undefined} An object containing the locale data or undefined.
+ * @returns {Object | undefined} An object containing the locale data or undefined.
  */
 export function getLanguage( langSlug: string | undefined ): Language | undefined {
 	langSlug = getMappedLanguageSlug( langSlug );
@@ -186,8 +186,8 @@ export function removeLocaleFromPath( path: string ): string {
 /**
  * Filter out unexpected values from the given language revisions object.
  *
- * @param {object} languageRevisions A candidate language revisions object for filtering.
- * @returns {object} A valid language revisions object derived from the given one.
+ * @param {Object} languageRevisions A candidate language revisions object for filtering.
+ * @returns {Object} A valid language revisions object derived from the given one.
  */
 export function filterLanguageRevisions( languageRevisions: Record< string, string > ) {
 	const langSlugs = getLanguageSlugs();
@@ -225,4 +225,49 @@ export function isMagnificentLocale( locale: string ): boolean {
  */
 export function isTranslatedIncompletely( locale: string ) {
 	return getLanguage( locale )?.isTranslatedIncompletely === true;
+}
+
+/**
+ * Removes the locale slug in the start of the path, if it is present.
+ * '/en/themes' => '/themes', '/themes' => '/themes', '/fr/plugins' => '/plugins'
+ *
+ * @param  path - original path
+ * @returns original path minus locale slug
+ */
+export function removeLocaleFromPathLocaleInFront( path: string ): string {
+	// Remove the first '/'.
+	path = path.slice( 1 );
+
+	const urlParts = getUrlParts( path );
+	const queryString = urlParts.search || '';
+	const parts = getPathParts( urlParts.pathname );
+	const locale = parts.shift();
+
+	if ( 'undefined' === typeof getLanguage( locale ) ) {
+		parts.unshift( locale as string );
+	}
+
+	return '/' + parts.join( '/' ) + queryString;
+}
+
+/**
+ * Retreive the locale slug in the start of the path, if it is present.
+ * '/en/themes' => 'en', '/themes' => 'en', '/fr/plugins' => 'fr'
+ *
+ * @param  path - original path
+ * @returns locale
+ */
+export function retrieveLocaleFromPathLocaleInFront( path: string ): string {
+	// Remove the first '/'.
+	path = path.slice( 1 );
+
+	const urlParts = getUrlParts( path );
+	const parts = getPathParts( urlParts.pathname );
+	const locale = parts.shift();
+
+	if ( locale && getLanguage( locale ) ) {
+		return locale;
+	}
+
+	return 'en';
 }

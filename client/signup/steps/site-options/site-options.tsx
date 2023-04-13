@@ -14,11 +14,14 @@ import './site-options.scss';
 interface Props {
 	defaultSiteTitle: string;
 	defaultTagline: string;
+	defaultSearchTerms?: string;
 	siteTitleLabel: ReactChild;
 	siteTitleExplanation?: ReactChild;
 	taglineExplanation?: ReactChild;
+	searchTermsExplanation?: ReactChild;
 	isSiteTitleRequired?: boolean;
 	isTaglineRequired?: boolean;
+	acceptSearchTerms?: boolean;
 	onSubmit: ( siteOptionsFormValues: SiteOptionsFormValues ) => void;
 	translate: LocalizeProps[ 'translate' ];
 }
@@ -26,17 +29,21 @@ interface Props {
 const SiteOptions: React.FC< Props > = ( {
 	defaultSiteTitle = '',
 	defaultTagline = '',
+	defaultSearchTerms = '',
 	siteTitleLabel,
 	siteTitleExplanation,
+	searchTermsExplanation,
 	taglineExplanation,
 	isSiteTitleRequired,
 	isTaglineRequired,
+	acceptSearchTerms,
 	onSubmit,
 	translate,
 } ) => {
 	const [ formValues, setFormValues ] = React.useState( {
 		siteTitle: defaultSiteTitle,
 		tagline: defaultTagline,
+		searchTerms: defaultSearchTerms,
 	} );
 
 	const [ siteTitleError, setSiteTitleError ] = useState< TranslateResult | null >( null );
@@ -104,6 +111,25 @@ const SiteOptions: React.FC< Props > = ( {
 					</FormSettingExplanation>
 				) }
 			</FormFieldset>
+			{ acceptSearchTerms && (
+				<FormFieldset className="site-options__form-fieldset">
+					<FormLabel htmlFor="searchTerms" optional={ true }>
+						{ translate( 'Search terms' ) }
+					</FormLabel>
+					<FormInput
+						name="searchTerms"
+						id="searchTerms"
+						value={ formValues.searchTerms }
+						onChange={ onChange }
+					/>
+					{ searchTermsExplanation && (
+						<FormSettingExplanation>
+							<Icon className="site-options__form-icon" icon={ tip } size={ 20 } />
+							{ searchTermsExplanation }
+						</FormSettingExplanation>
+					) }
+				</FormFieldset>
+			) }
 			<Button className="site-options__submit-button" type="submit" primary>
 				{ translate( 'Continue' ) }
 			</Button>

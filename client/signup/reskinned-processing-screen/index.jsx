@@ -10,7 +10,7 @@ import './style.scss';
 // Default estimated time to perform "loading"
 const DURATION_IN_MS = 6000;
 
-const flowsWithDesignPicker = [ 'setup-site', 'do-it-for-me' ];
+const flowsWithDesignPicker = [ 'setup-site', 'do-it-for-me', 'do-it-for-me-store' ];
 
 const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => {
 	const { __ } = useI18n();
@@ -25,14 +25,6 @@ const useSteps = ( { flowName, hasPaidDomain, isDestinationSetupSiteFlow } ) => 
 			break;
 		case 'site-content-collection':
 			steps = [ { title: __( 'Saving your content' ) }, { title: __( 'Closing the loop' ) } ];
-			break;
-		case 'newsletter':
-			steps = [
-				{ title: __( 'Saving your preferences' ) },
-				{ title: __( 'Getting your Domain' ) },
-				{ title: __( 'Adding your Plan' ) },
-				{ title: __( 'Preparing Checkout' ) },
-			];
 			break;
 		case 'onboarding-with-email':
 			steps = [

@@ -1,4 +1,3 @@
-import { isGoodDefaultDomainQuery } from '@automattic/domain-utils';
 import type { State } from './reducer';
 export const getAnchorPodcastId = ( state: State ) => state.anchorPodcastId;
 export const getAnchorEpisodeId = ( state: State ) => state.anchorEpisodeId;
@@ -6,6 +5,7 @@ export const getAnchorSpotifyUrl = ( state: State ) => state.anchorSpotifyUrl;
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getPlanProductId = ( state: State ) => state.planProductId;
 export const getPlanCartItem = ( state: State ) => state.planCartItem;
+export const getProductCartItems = ( state: State ) => state.productCartItems;
 export const getLastLocation = ( state: State ) => state.lastLocation;
 export const getRandomizedDesigns = ( state: State ) => state.randomizedDesigns;
 export const getSelectedDesign = ( state: State ) => state.selectedDesign;
@@ -46,10 +46,6 @@ export const hasPaidDomain = ( state: State ): boolean => {
 export const hasSiteTitle = ( state: State ) => state.siteTitle.trim().length > 1; // for valid domain results, we need at least 2 characters
 
 // Selectors dependent on other selectors (cannot be put in alphabetical order)
-export const getDomainSearch = ( state: State ) =>
-	state.domainSearch ||
-	( isGoodDefaultDomainQuery( getSelectedSiteTitle( state ) ) && getSelectedSiteTitle( state ) ) ||
-	undefined;
 
 export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
 
@@ -61,3 +57,6 @@ export const getEditEmail = ( state: State ) => state.editEmail;
 export const getDomainForm = ( state: State ) => state.domainForm;
 export const getDomainCartItem = ( state: State ) => state.domainCartItem;
 export const getHideFreePlan = ( state: State ) => state.hideFreePlan;
+export const getIsMigrateFromWp = ( state: State ) => state.isMigrateFromWp;
+export const getPluginsToVerify = ( state: State ) => state.pluginsToVerify;
+export const getProfilerData = ( state: State ) => state.profilerData;

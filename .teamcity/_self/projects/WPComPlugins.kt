@@ -2,6 +2,7 @@ package _self.projects
 
 import _self.bashNodeScript
 import _self.lib.wpcom.WPComPluginBuild
+import _self.lib.utils.mergeTrunk
 import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildType
 import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
@@ -26,6 +27,7 @@ object WPComPlugins : Project({
 		)
 	}
 
+	buildType(CalypsoApps)
 	buildType(EditingToolkit)
 	buildType(WpcomBlockEditor)
 	buildType(Notifications)
@@ -57,6 +59,67 @@ object WPComPlugins : Project({
 			dataToKeep = everything()
 			applyPerEachBranch = true
 			preserveArtifactsDependencies = true
+		}
+	}
+})
+
+object CalypsoApps: BuildType({
+	id("calypso_WPComPlugins_Build_Plugins")
+	uuid = "8453b8fe-226f-4e91-b5cc-8bdad15e0814"
+	name = "CalypsoApps"
+	description = "Test description"
+
+	vcs {
+		root(Settings.WpCalypso)
+		cleanCheckout = true
+	}
+
+	artifactRules = """
+		apps/happy-blocks/release-files => happy-blocks.zip
+		apps/notifications/dist => notifications.zip
+	""".trimIndent()
+
+	steps {
+		mergeTrunk()
+
+		bashNodeScript {
+			name = "Prepare environment"
+			scriptContent = """
+				set -x
+
+				# Update composer
+				composer install
+
+				# Install dependencies
+				yarn
+			"""
+		}
+
+		bashNodeScript {
+			name = "Build artifacts"
+			scriptContent = """
+				# Run `yarn build-ci` script for the plugins specified in the glob.
+				# `build-ci` is a specialized build for CI environment.
+				yarn workspaces foreach --verbose --parallel --include '{happy-blocks,@automattic/notifications}' run build-ci
+			"""
+		}
+
+		bashNodeScript {
+			name = "Process artifact"
+			scriptContent = """
+				export tc_auth="%system.teamcity.auth.userId%:%system.teamcity.auth.password%"
+				export git_branch="%teamcity.build.branch%"
+				export build_id="%teamcity.build.id%"
+				export GH_TOKEN="%matticbot_oauth_token%"
+				export is_default_branch="%teamcity.build.branch.is_default%"
+				export skip_build_diff="%skip_release_diff%"
+				export mc_auth_secret="%mc_auth_secret%"
+				export commit_sha="%build.vcs.number%"
+				export mc_post_root="%mc_post_root%"
+				export tc_sever_url="%teamcity.serverUrl%"
+
+				node ./bin/process-calypso-app-artifacts.mjs
+			"""
 		}
 	}
 })
@@ -116,6 +179,24 @@ private object WpcomBlockEditor : WPComPluginBuild(
 	docsLink = "PCYsg-l4k-p2",
 )
 
+private object Happychat : WPComPluginBuild(
+	buildId = "WPComPlugins_Happychat",
+	buildName = "Happychat",
+	pluginSlug = "happychat",
+	archiveDir = "./dist/",
+	docsLink = "TODO",
+	withPRNotify = "false",
+)
+
+private object InlineHelp : WPComPluginBuild(
+	buildId = "WPComPlugins_InlineHelp",
+	buildName = "Inline Help",
+	pluginSlug = "inline-help",
+	archiveDir = "./dist/",
+	docsLink = "TODO",
+	withPRNotify = "false",
+)
+
 private object Notifications : WPComPluginBuild(
 	buildId = "WPComPlugins_Notifications",
 	buildName = "Notifications",
@@ -157,7 +238,19 @@ private object OdysseyStats : WPComPluginBuild(
 	buildName = "Odyssey Stats",
 	pluginSlug = "odyssey-stats",
 	archiveDir = "./dist/",
-	docsLink = "PCYsg-elI-p2",
+	withPRNotify = "false",
+	docsLink = "PejTkB-3N-p2",
+	buildSteps = {
+		bashNodeScript {
+			name = "Translate Odyssey Stats"
+			scriptContent = """
+				cd apps/odyssey-stats
+
+				# generate language files
+				yarn translate
+			"""
+		}
+	}
 )
 
 private object O2Blocks : WPComPluginBuild(
@@ -195,33 +288,11 @@ private object HappyBlocks : WPComPluginBuild(
 			scriptContent = """
 				cd apps/happy-blocks
 
-				# Copy existing dist files to release directory
-				mkdir release-files
-				cp -r dist release-files/dist/
-
-				# Add index.php file
-				cp index.php release-files/
+				# Run build release script
+				yarn build-ci
 			"""
 		}
 	}
-)
-
-private object Happychat : WPComPluginBuild(
-	buildId = "WPComPlugins_Happychat",
-	buildName = "Happychat",
-	pluginSlug = "happychat",
-	archiveDir = "./dist/",
-	docsLink = "TODO",
-	withPRNotify = "false",
-)
-
-private object InlineHelp : WPComPluginBuild(
-	buildId = "WPComPlugins_InlineHelp",
-	buildName = "Inline Help",
-	pluginSlug = "inline-help",
-	archiveDir = "./dist/",
-	docsLink = "TODO",
-	withPRNotify = "false",
 )
 
 private object GutenbergUploadSourceMapsToSentry: BuildType() {

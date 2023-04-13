@@ -108,8 +108,9 @@
 .licensing-activation__title {
 	font-style: normal;
 	font-weight: bold;
-	font-size: $font-headline-small;
-	line-height: 44px;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	font-size: 44px;
+	line-height: 52px;
 
 	margin-bottom: 24px;
 }

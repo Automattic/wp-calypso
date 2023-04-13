@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { PLAN_FREE, PLAN_JETPACK_FREE } from '@automattic/calypso-products';
 import { removeQueryArgs } from '@wordpress/url';
 import i18n from 'i18n-calypso';
 import { some, startsWith } from 'lodash';
@@ -36,6 +37,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
+	emailManagementAddEmailForwards,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
 	emailManagementInbox,
@@ -60,15 +62,22 @@ import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progre
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
-import { getSite, getSiteId, getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
+import {
+	getSite,
+	getSiteId,
+	getSiteOption,
+	getSitePlanSlug,
+	getSiteSlug,
+} from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-
 /*
  * @FIXME Shorthand, but I might get rid of this.
  */
@@ -196,6 +205,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		domainManagementTransferOut,
 		domainManagementTransferToOtherSite,
 		emailManagement,
+		emailManagementAddEmailForwards,
 		emailManagementAddGSuiteUsers,
 		emailManagementForwarding,
 		emailManagementInbox,
@@ -253,7 +263,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
  * @param {string} path The path to be checked
  * @param {string} slug The site slug
  * @param {Array} domains The list of site domains
- * @param {object} contextParams Context parameters
+ * @param {Object} contextParams Context parameters
  * @returns {boolean} true if the path is allowed, false otherwise
  */
 function isPathAllowedForDIFMInProgressSite( path, slug, domains, contextParams ) {
@@ -281,6 +291,30 @@ function onSelectedSiteAvailable( context ) {
 	if ( isMigrationInProgress && ! startsWith( context.pathname, '/migrate/' ) ) {
 		page.redirect( `/migrate/${ selectedSite.slug }` );
 		return false;
+	}
+
+	// If we had an eCommerce trial, and the user doesn't have an active paid plan,
+	// redirect to
+	if ( wasEcommerceTrialSite( state, selectedSite.ID ) ) {
+		// Use getSitePlanSlug() as it ignores expired plans.
+		const currentPlanSlug = getSitePlanSlug( state, selectedSite.ID );
+
+		if ( [ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug ) ) {
+			const permittedPathPrefixes = [
+				'/checkout/',
+				'/domains/',
+				'/email/',
+				'/plans/my-plan/trial-expired/',
+				'/purchases/',
+			];
+
+			if ( ! permittedPathPrefixes.some( ( prefix ) => context.pathname.startsWith( prefix ) ) ) {
+				page.redirect( `/plans/my-plan/trial-expired/${ selectedSite.slug }` );
+				return false;
+			}
+
+			context.hideLeftNavigation = true;
+		}
 	}
 
 	const primaryDomain = getPrimaryDomainBySiteId( state, selectedSite.ID );
@@ -343,8 +377,8 @@ export function updateRecentSitesPreferences( context ) {
 /**
  * Returns the site-picker react element.
  *
- * @param {object} context -- Middleware context
- * @returns {object} A site-picker React element
+ * @param {Object} context -- Middleware context
+ * @returns {Object} A site-picker React element
  */
 function createSitesComponent( context ) {
 	const contextPath = sectionify( context.path );
@@ -416,9 +450,16 @@ export function noSite( context, next ) {
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
 	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
+	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
 
-	if ( ! isDomainOnlyFlow && ! isJetpackCheckoutFlow && ! isGiftCheckoutFlow && hasSite ) {
+	if (
+		! isDomainOnlyFlow &&
+		! isJetpackCheckoutFlow &&
+		! isAkismetCheckoutFlow &&
+		! isGiftCheckoutFlow &&
+		hasSite
+	) {
 		siteSelection( context, next );
 		return;
 	}
@@ -441,15 +482,20 @@ export function siteSelection( context, next ) {
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
 
+	// Making sure non-connected users get redirected to user connection flow.
+	// Details: p9dueE-6Hf-p2
+	const isUnlinkedCheckout =
+		'1' === context.query?.unlinked && context.pathname.match( /^\/checkout\/[^/]+\/jetpack_/i );
+
 	// The user doesn't have any sites: render `NoSitesMessage`
-	if ( currentUser && currentUser.site_count === 0 ) {
+	if ( currentUser && currentUser.site_count === 0 && ! isUnlinkedCheckout ) {
 		renderEmptySites( context );
 		recordNoSitesPageView( context, siteFragment );
 		return;
 	}
 
 	// The user has all sites set as hidden: render help message with how to make them visible
-	if ( currentUser && currentUser.visible_site_count === 0 ) {
+	if ( currentUser && currentUser.visible_site_count === 0 && ! isUnlinkedCheckout ) {
 		renderNoVisibleSites( context );
 		recordNoVisibleSitesPageView( context, siteFragment );
 		return;
@@ -500,13 +546,31 @@ export function siteSelection( context, next ) {
 	}
 
 	const siteId = getSiteId( getState(), siteFragment );
-	if ( siteId ) {
+
+	const isUnlinkedCheckoutNotBoost =
+		isUnlinkedCheckout && ! context.pathname.includes( 'jetpack_boost' );
+
+	if ( siteId && ! isUnlinkedCheckoutNotBoost ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
-		if ( onSelectedSiteAvailable( context ) ) {
-			next();
-		}
+
+		const currentPlanSlug = getSitePlanSlug( getState(), siteId );
+		const shouldUpdateStateAfterUpgrade =
+			context.pathname.startsWith( '/plans/my-plan/trial-upgraded/' ) &&
+			[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug );
+
+		// This will fetch the site and update the state after the plan is upgraded if the site is on the trial-upgraded flow.
+		const promise = shouldUpdateStateAfterUpgrade
+			? dispatch( requestSite( siteId ) ).catch( () => {
+					return null;
+			  } )
+			: Promise.resolve();
+		promise.then( () => {
+			if ( onSelectedSiteAvailable( context ) ) {
+				next();
+			}
+		} );
 	} else {
 		// Fetch the site by siteFragment and then try to select again
 		dispatch( requestSite( siteFragment ) )
@@ -519,7 +583,8 @@ export function siteSelection( context, next ) {
 					const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
 
 					if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
-						return page.redirect( context.path.replace( siteFragment, siteSlug ) );
+						const hash = context.hashstring ? `#${ context.hashstring }` : '';
+						return page.redirect( context.path.replace( siteFragment, siteSlug ) + hash );
 					}
 				}
 
@@ -533,7 +598,9 @@ export function siteSelection( context, next ) {
 					freshSiteId = getSiteId( getState(), wpcomStagingFragment );
 				}
 
-				if ( freshSiteId ) {
+				// If the user is presumably not connected to WPCOM, we ignore the site ID we found.
+				// Details: p9dueE-6Hf-p2
+				if ( freshSiteId && ! isUnlinkedCheckoutNotBoost ) {
 					// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 					// to wp-admin. In that case, don't continue handling the route.
 					dispatch( setSelectedSiteId( freshSiteId ) );
@@ -545,10 +612,7 @@ export function siteSelection( context, next ) {
 				} else {
 					// If the site has loaded but siteId is still invalid then redirect to allSitesPath.
 					const siteFragmentOffset = context.path.indexOf( `/${ siteFragment }` );
-					const allSitesPath = addQueryArgs(
-						{ site: siteFragment },
-						context.path.substring( 0, siteFragmentOffset )
-					);
+					const allSitesPath = context.path.substring( 0, siteFragmentOffset );
 					page.redirect( allSitesPath );
 				}
 			} );
@@ -585,14 +649,16 @@ export function redirectToPrimary( context, primarySiteSlug ) {
 
 export function navigation( context, next ) {
 	// Render the My Sites navigation in #secondary
-	context.secondary = createNavigation( context );
+	if ( ! context.hideLeftNavigation ) {
+		context.secondary = createNavigation( context );
+	}
 	next();
 }
 
 /**
  * Middleware that adds the site selector screen to the layout.
  *
- * @param {object} context -- Middleware context
+ * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
 export function sites( context, next ) {
@@ -626,13 +692,32 @@ export function redirectWithoutSite( redirectPath ) {
 }
 
 /**
+ * Use this middleware to prevent navigation to pages which are not supported by staging sites.
+ *
+ * @param {Object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function stagingSiteNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if ( selectedSite && isSiteWpcomStaging( store.getState(), selectedSite.ID ) ) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
+}
+
+/**
  * Use this middleware to prevent navigation to pages which are not supported by the P2 project but only
  * if the P2+ paid plan is disabled for the specific environment (ie development vs production).
  *
  * If you need to prevent navigation to pages for the P2 project in general,
  * see `wpForTeamsP2PlusNotSupportedRedirect`.
  *
- * @param {object} context -- Middleware context
+ * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
 export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
@@ -656,7 +741,7 @@ export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
  * For P2s, only hubs can have a plan. If we are on P2 a site that is a site under
  * a hub, we redirect the hub's plans page.
  *
- * @param {object} context -- Middleware context
+ * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
 export function p2RedirectToHubPlans( context, next ) {
@@ -685,7 +770,7 @@ export function p2RedirectToHubPlans( context, next ) {
  * If you need to prevent navigation to pages based on whether the P2+ paid plan is enabled or disabled,
  * see `wpForTeamsP2PlusNotSupportedRedirect`.
  *
- * @param {object} context -- Middleware context
+ * @param {Object} context -- Middleware context
  * @param {Function} next -- Call next middleware in chain
  */
 export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
@@ -704,8 +789,8 @@ export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
 /**
  * Whether we need to redirect user to the Jetpack site for authorization.
  *
- * @param {object} context -- The context object.
- * @param {object} site -- The site information.
+ * @param {Object} context -- The context object.
+ * @param {Object} site -- The site information.
  * @returns {boolean} shouldRedirect -- Whether we need to redirect user to the Jetpack site for authorization.
  */
 export function shouldRedirectToJetpackAuthorize( context, site ) {
@@ -715,8 +800,8 @@ export function shouldRedirectToJetpackAuthorize( context, site ) {
 /**
  * Get redirect URL to the Jetpack site for authorization.
  *
- * @param {object} context -- The context object.
- * @param {object} site -- The site information.
+ * @param {Object} context -- The context object.
+ * @param {Object} site -- The site information.
  * @returns {string} redirectURL -- The redirect URL.
  */
 export function getJetpackAuthorizeURL( context, site ) {

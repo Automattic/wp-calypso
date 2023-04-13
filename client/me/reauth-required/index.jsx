@@ -34,8 +34,6 @@ class ReauthRequired extends Component {
 			code: '', // User's generated 2fa code
 			smsRequestsAllowed: true, // Can the user request another SMS code?
 			twoFactorAuthType: 'authenticator',
-			isReauthRequired: props.twoStepAuthorization.isReauthRequired(),
-			isTwoStepInitialized: props.twoStepAuthorization.initialized,
 		};
 	}
 
@@ -49,9 +47,7 @@ class ReauthRequired extends Component {
 	}
 
 	update = () => {
-		this.setState( {
-			isReauthRequired: this.props.twoStepAuthorization.isReauthRequired(),
-		} );
+		this.forceUpdate();
 	};
 
 	getClickHandler = ( action, callback ) => () => {
@@ -254,7 +250,7 @@ class ReauthRequired extends Component {
 				autoFocus={ false }
 				className="reauth-required__dialog"
 				isFullScreen={ false }
-				isVisible={ this.state.isReauthRequired }
+				isVisible={ this.props?.twoStepAuthorization.isReauthRequired() }
 			>
 				{ isSecurityKeySupported && twoFactorAuthType === 'webauthn' ? (
 					<SecurityKeyForm
@@ -282,8 +278,8 @@ class ReauthRequired extends Component {
 		return (
 			<>
 				{ this.renderDialog() }
-				{ this.state.isTwoStepInitialized &&
-					! this.state.isReauthRequired &&
+				{ this.props.twoStepAuthorization.initialized &&
+					! this.props.twoStepAuthorization.isReauthRequired() &&
 					this.props.children?.() }
 			</>
 		);

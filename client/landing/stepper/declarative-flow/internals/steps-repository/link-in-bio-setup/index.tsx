@@ -1,7 +1,7 @@
 import { StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import React, { FormEvent, useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -9,19 +9,20 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
 const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const { submit } = navigation;
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const site = useSite();
 
 	const linkInBioFormText = {
-		titlePlaceholder: __( 'My Link in Bio' ),
-		titleMissing: __( `Oops. Looks like your Link in Bio doesn't have a name yet.` ),
-		taglinePlaceholder: __( 'Add a short biography here' ),
-		iconPlaceholder: __( 'Upload a profile image' ),
+		titlePlaceholder: translate( 'My Link in Bio' ),
+		titleMissing: translate( `Oops. Looks like your Link in Bio doesn't have a name yet.` ),
+		taglinePlaceholder: translate( 'Add a short biography here' ),
+		iconPlaceholder: translate( 'Upload a profile image' ),
 	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = React.useState( false );
@@ -30,7 +31,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 	const [ siteTitle, setComponentSiteTitle ] = React.useState( '' );
 	const [ tagline, setTagline ] = React.useState( '' );
 	const { setSiteTitle, setSiteDescription, setSiteLogo } = useDispatch( ONBOARD_STORE );
-	const state = useSelect( ( select ) => select( ONBOARD_STORE ) ).getState();
+	const state = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] ).getState();
 
 	useEffect( () => {
 		const { siteTitle, siteDescription, siteLogo } = state;
@@ -81,7 +82,7 @@ const LinkInBioSetup: Step = function LinkInBioSetup( { navigation } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="link-in-bio-setup-header"
-					headerText={ createInterpolateElement( __( 'Personalize your<br />Link in Bio' ), {
+					headerText={ createInterpolateElement( translate( 'Personalize your<br />Link in Bio' ), {
 						br: <br />,
 					} ) }
 					align="center"

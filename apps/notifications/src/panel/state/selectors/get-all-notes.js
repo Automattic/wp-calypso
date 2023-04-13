@@ -16,8 +16,8 @@ const byId = ( a, b ) => a.id - b.id;
  * small we are copying over this non-ideal
  * code until more formal refactorings.
  *
- * @param {object} notesState
- * @returns {object[]} list of notification objects
+ * @param {Object} notesState
+ * @returns {Object[]} list of notification objects
  */
 export const getAllNotes = ( notesState ) => {
 	const nextAllNotes = notesState.allNotes;

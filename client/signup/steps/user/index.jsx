@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import { isNewsletterFlow } from '@automattic/onboarding';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -31,8 +31,6 @@ import {
 	getStepUrl,
 	isP2Flow,
 	isVideoPressFlow,
-	getVideoPressOnboardingTotalSteps,
-	getVideoPressOnboardingStepNumber,
 } from 'calypso/signup/utils';
 import VideoPressStepWrapper from 'calypso/signup/videopress-step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -179,10 +177,11 @@ export class UserStep extends Component {
 						  );
 			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
 				subHeaderText = translate(
-					"First, let's create your account. Already registered? {{a}}Log in{{/a}}",
+					'All Woo stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 					{
 						components: {
 							a: <a href={ loginUrl } />,
+							br: <br />,
 						},
 						comment:
 							'Link displayed on the Signup page to users having account to log in WooCommerce via WordPress.com',
@@ -227,12 +226,20 @@ export class UserStep extends Component {
 		}
 
 		if ( isReskinned && 0 === positionInFlow ) {
-			subHeaderText = translate(
-				'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
-				{
+			const { queryObject } = this.props;
+
+			if ( queryObject?.variationName && isNewsletterFlow( queryObject.variationName ) ) {
+				subHeaderText = translate( 'Already have a WordPress.com account? {{a}}Log in{{/a}}', {
 					components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
-				}
-			);
+				} );
+			} else {
+				subHeaderText = translate(
+					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+					{
+						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+					}
+				);
+			}
 		}
 
 		if ( this.props.userLoggedIn ) {
@@ -295,7 +302,11 @@ export class UserStep extends Component {
 			},
 		};
 
-		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', analyticsData );
+		this.props.recordTracksEvent( 'calypso_signup_user_step_submit', {
+			flow: this.props.flowName,
+			step: this.props.stepName,
+			...analyticsData,
+		} );
 
 		const isRecaptchaLoaded = typeof this.state.recaptchaClientId === 'number';
 
@@ -335,7 +346,7 @@ export class UserStep extends Component {
 	 * @param {string} access_token An OAuth2 acccess token
 	 * @param {string} id_token     (Optional) a JWT id_token which contains the signed user info
 	 *                              So our server doesn't have to request the user profile on its end.
-	 * @param {object} userData     (Optional) extra user information that can be used to create a new account
+	 * @param {Object} userData     (Optional) extra user information that can be used to create a new account
 	 */
 	handleSocialResponse = ( service, access_token, id_token = null, userData = null ) => {
 		const { translate, initialContext } = this.props;
@@ -347,12 +358,18 @@ export class UserStep extends Component {
 			return;
 		}
 
+		const query = initialContext?.query || {};
+		if ( typeof window !== 'undefined' && window.sessionStorage.getItem( 'signup_redirect_to' ) ) {
+			query.redirect_to = window.sessionStorage.getItem( 'signup_redirect_to' );
+			window.sessionStorage.removeItem( 'signup_redirect_to' );
+		}
+
 		this.submit( {
 			service,
 			access_token,
 			id_token,
 			userData,
-			queryArgs: initialContext?.query || {},
+			queryArgs: query,
 		} );
 	};
 
@@ -386,7 +403,7 @@ export class UserStep extends Component {
 
 			return (
 				<div className={ classNames( 'signup-form__woo-wrapper' ) }>
-					<h3>{ translate( 'Get started in minutes' ) }</h3>
+					<h3>{ translate( "Let's get started" ) }</h3>
 				</div>
 			);
 		}
@@ -438,7 +455,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isReskinned } = this.props;
+		const { oauth2Client, isReskinned, isPasswordless } = this.props;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -468,7 +485,7 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
-					isPasswordless={ isMobile() }
+					isPasswordless={ isMobile() || isPasswordless }
 					queryArgs={ this.props.initialContext?.query || {} }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }
@@ -493,8 +510,8 @@ export class UserStep extends Component {
 				subHeaderText={ this.getSubHeaderText() }
 				stepIndicator={ this.props.translate( 'Step %(currentStep)s of %(totalSteps)s', {
 					args: {
-						currentStep: getVideoPressOnboardingStepNumber( this.props.stepName ),
-						totalSteps: getVideoPressOnboardingTotalSteps(),
+						currentStep: 1,
+						totalSteps: 1,
 					},
 				} ) }
 			>
@@ -544,7 +561,6 @@ export class UserStep extends Component {
 		// TODO: decouple hideBack flag from the flow name.
 		return (
 			<StepWrapper
-				hideBack={ this.props.flowName === LINK_IN_BIO_TLD_FLOW }
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				headerText={ this.getHeaderText() }

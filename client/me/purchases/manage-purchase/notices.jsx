@@ -8,6 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, minBy } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -101,7 +102,7 @@ class PurchaseNotice extends Component {
 	/**
 	 * Returns appropriate warning text for a purchase that is expiring but where the expiration is not imminent.
 	 *
-	 * @param  {object} purchase  The purchase object
+	 * @param  {Object} purchase  The purchase object
 	 * @param  {Component} autoRenewingUpgradesLink  An optional link component, for linking to other purchases on the site that are auto-renewing rather than expiring
 	 * @returns  {string}  Translated text for the warning message.
 	 */
@@ -287,7 +288,10 @@ class PurchaseNotice extends Component {
 		const currentPurchase = usePlanInsteadOfIncludedPurchase ? purchaseAttachedTo : purchase;
 		const includedPurchase = purchase;
 
-		if ( ! isExpiring( currentPurchase ) ) {
+		if (
+			! isExpiring( currentPurchase ) ||
+			'ecommerce-trial-bundle-monthly' === currentPurchase?.productSlug
+		) {
 			return null;
 		}
 
@@ -815,8 +819,8 @@ class PurchaseNotice extends Component {
 	/**
 	 * Returns an object with credit card details suitable for use as translation arguments.
 	 *
-	 * @param {object} purchase - the purchase to get credit card details from
-	 * @returns {object}  Translation arguments containing information on the card type, number, and expiry
+	 * @param {Object} purchase - the purchase to get credit card details from
+	 * @returns {Object}  Translation arguments containing information on the card type, number, and expiry
 	 */
 	creditCardDetails = ( purchase ) => {
 		const { moment } = this.props;
@@ -999,16 +1003,48 @@ class PurchaseNotice extends Component {
 		);
 	}
 
+	renderECommerceTrialNotice() {
+		const { moment, purchase, selectedSite, translate } = this.props;
+		const onClick = () => {
+			return page( `/plans/${ selectedSite?.slug }` );
+		};
+		const expiry = moment( purchase.expiryDate );
+		const daysToExpiry = moment( expiry.diff( moment() ) ).format( 'D' );
+
+		return (
+			<Notice
+				showDismiss={ false }
+				status="is-info"
+				text={ translate(
+					'You have %(expiry)s days remaining on your free trial. Upgrade your plan to keep your ecommerce features.',
+					{
+						args: {
+							expiry: daysToExpiry,
+						},
+					}
+				) }
+			>
+				<NoticeAction onClick={ onClick }>{ translate( 'Upgrade Now' ) }</NoticeAction>
+			</Notice>
+		);
+	}
+
 	render() {
+		const { purchase } = this.props;
+
 		if ( this.props.isDataLoading ) {
 			return null;
 		}
 
-		if ( isDomainTransfer( this.props.purchase ) ) {
+		if ( isDomainTransfer( purchase ) ) {
 			return null;
 		}
 
-		if ( this.props.purchase.isLocked && this.props.purchase.isInAppPurchase ) {
+		if ( purchase.productSlug === 'ecommerce-trial-bundle-monthly' ) {
+			return this.renderECommerceTrialNotice();
+		}
+
+		if ( purchase.isLocked && purchase.isInAppPurchase ) {
 			return this.renderInAppPurchaseNotice();
 		}
 
@@ -1030,7 +1066,7 @@ class PurchaseNotice extends Component {
 			return expiredNotice;
 		}
 
-		if ( isPartnerPurchase( this.props.purchase ) ) {
+		if ( isPartnerPurchase( purchase ) ) {
 			return null;
 		}
 

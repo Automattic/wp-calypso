@@ -33,7 +33,7 @@ export default class SitePostType {
 	/**
 	 * Get a list of taxonomies for the post type
 	 *
-	 * @param {object} query - query object
+	 * @param {Object} query - query object
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */

@@ -1,0 +1,44 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.confirmation-task__card {
+	--subtitle-font-size: 0.8125rem;
+	border-radius: 2px;
+	box-shadow: 0 0 0 1px var(--color-neutral-5);
+
+	margin: 0;
+	text-align: center;
+
+	&.card.is-card-link {
+		padding: 40px 25px;
+
+		@media (max-width: $break-mobile) {
+			padding: 32px;
+		}
+	}
+
+	&:hover {
+		box-shadow: 0 0 0 2px var(--color-accent-50);
+	}
+
+	.card__link-indicator {
+		display: none;
+	}
+
+	.confirmation-task__illustration {
+		width: 124px;
+		display: block;
+		margin: auto;
+	}
+
+	.confirmation-task__title {
+		margin-top: 24px;
+		font-size: $font-body-small;
+		font-weight: 600;
+	}
+
+	.confirmation-task__subtitle {
+		margin-top: 6px;
+		font-size: var(--subtitle-font-size);
+		color: var(--color-neutral-40);
+	}
+}

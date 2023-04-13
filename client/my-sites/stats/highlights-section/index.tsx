@@ -34,8 +34,10 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 
 	return (
 		<HighlightCards
+			className="has-odyssey-stats-bg-color"
 			counts={ counts }
 			previousCounts={ previousCounts }
+			showValueTooltip={ true }
 			onClickComments={ () => null }
 			onClickLikes={ () => null }
 			onClickViews={ () => null }

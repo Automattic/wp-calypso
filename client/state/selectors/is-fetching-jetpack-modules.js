@@ -7,7 +7,7 @@ import 'calypso/state/jetpack/init';
  * modules on the site. False otherwise.
  * Returns null if the status for queried site and module is unknown.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId The ID of the site we're querying
  * @returns {?boolean}         Whether the list is being requested
  */

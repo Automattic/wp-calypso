@@ -31,6 +31,8 @@ export function recordSignupComplete(
 		isNewUser,
 		isBlankCanvas,
 		hasCartItems,
+		planProductSlug,
+		domainProductSlug,
 		isNew7DUserSite,
 		theme,
 		intent,
@@ -51,6 +53,8 @@ export function recordSignupComplete(
 				isNewUser,
 				isBlankCanvas,
 				hasCartItems,
+				planProductSlug,
+				domainProductSlug,
 				isNew7DUserSite,
 				theme,
 				intent,
@@ -71,6 +75,8 @@ export function recordSignupComplete(
 		is_new_site: isNewSite,
 		is_blank_canvas: isBlankCanvas,
 		has_cart_items: hasCartItems,
+		plan_product_slug: planProductSlug,
+		domain_product_slug: domainProductSlug,
 		theme,
 		intent,
 		starting_point: startingPoint,
@@ -109,6 +115,8 @@ export function recordSignupComplete(
 		is_new_site: isNewSite,
 		is_blank_canvas: isBlankCanvas,
 		has_cart_items: hasCartItems,
+		plan_product_slug: planProductSlug,
+		domain_product_slug: domainProductSlug,
 		theme,
 		intent,
 		starting_point: startingPoint,
@@ -139,8 +147,8 @@ export function recordSignupInvalidStep( flow, step ) {
 /**
  * Records registration event.
  *
- * @param {object} param {}
- * @param {object} param.userData User data
+ * @param {Object} param {}
+ * @param {Object} param.userData User data
  * @param {string} param.flow Registration flow
  * @param {string} param.type Registration type
  */

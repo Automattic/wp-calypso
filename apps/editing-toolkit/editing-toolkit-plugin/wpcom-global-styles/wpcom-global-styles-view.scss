@@ -1,13 +1,18 @@
 /* stylelint-disable declaration-property-unit-allowed-list */
 
+.launch-bar-global-styles-button {
+	position: relative;
+}
+
 .launch-bar-global-styles-popover {
 	position: absolute;
 	width: 260px;
 	top: 48px;
 	font-size: 14px;
+	left: 50%;
+	transform: translateX(-50%);
 	background-color: #fff;
 	padding: 16px;
-	margin-left: -70px;
 	line-height: 20px;
 	color: #24282d;
 	box-shadow: 0 3px 10px rgb(0 0 0 / 20%);
@@ -15,15 +20,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-
-	@media screen and ( max-width: 960px ) {
-		margin-left: -100px;
-	}
-	@media screen and ( max-width: 550px ) {
-		width: 70%;
-		margin-left: 10%;
-		left: 0;
-	}
+	box-sizing: border-box;
 
 	.launch-bar-global-styles-upgrade-button {
 		font-size: 14px;
@@ -34,6 +31,7 @@
 		border-radius: 2px;
 		width: 100%;
 		justify-content: center;
+		height: auto;
 
 		&:hover {
 			background: #006ba1;
@@ -47,10 +45,24 @@
 		color: #0675c4;
 		font-weight: 500;
 		font-size: 12px;
+		height: auto;
 
 		&:hover {
 			background: #fff;
 			color: #044b7a;
 		}
+	}
+}
+
+@media screen and (max-width: 460px) {
+	.launch-bar-global-styles-button {
+		position: static;
+	}
+
+	.launch-bar-global-styles-popover {
+		width: auto;
+		left: 20px;
+		right: 20px;
+		transform: none;
 	}
 }

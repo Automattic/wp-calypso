@@ -225,8 +225,8 @@ class ActivityLog extends Component {
 	 * Adjust a moment by the site timezone or gmt offset. Use the resulting function wherever log
 	 * times need to be formatted for display to ensure all times are displayed as site times.
 	 *
-	 * @param   {object} date Moment to adjust.
-	 * @returns {object}      Moment adjusted for site timezone or gmtOffset.
+	 * @param   {Object} date Moment to adjust.
+	 * @returns {Object}      Moment adjusted for site timezone or gmtOffset.
 	 */
 	applySiteOffset = ( date ) => {
 		const { timezone, gmtOffset } = this.props;
@@ -242,7 +242,7 @@ class ActivityLog extends Component {
 	/**
 	 * Render a card showing the progress of a restore.
 	 *
-	 * @returns {object} Component showing progress.
+	 * @returns {Object} Component showing progress.
 	 */
 	renderActionProgress() {
 		const { siteId, restoreProgress, backupProgress } = this.props;
@@ -281,9 +281,9 @@ class ActivityLog extends Component {
 	 * Display the status of the operation currently being performed.
 	 *
 	 * @param   {number} siteId         Id of the site where the operation is performed.
-	 * @param   {object}  actionProgress Current status of operation performed.
+	 * @param   {Object}  actionProgress Current status of operation performed.
 	 * @param   {string}  action         Action type. Allows to set the right text without waiting for data.
-	 * @returns {object}                 Card showing progress.
+	 * @returns {Object}                 Card showing progress.
 	 */
 	getProgressBanner( siteId, actionProgress, action ) {
 		const { percent, progress, restoreId, downloadId, status, timestamp, rewindId, context } =
@@ -308,8 +308,8 @@ class ActivityLog extends Component {
 	 * Display a success or error card based on the last status of operation.
 	 *
 	 * @param   {number} siteId   Id of the site where the operation was performed.
-	 * @param   {object}  progress Last status of operation.
-	 * @returns {object}           Card showing success or error.
+	 * @param   {Object}  progress Last status of operation.
+	 * @returns {Object}           Card showing success or error.
 	 */
 	getEndBanner( siteId, progress ) {
 		const {

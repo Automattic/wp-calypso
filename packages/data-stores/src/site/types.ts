@@ -1,6 +1,7 @@
-import type { DispatchFromMap } from '../mapped-types';
-import type { FeatureId } from '../wpcom-features';
+import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
+import type { FeatureId } from '../shared-types';
 
 export interface Dispatch {
 	dispatch: DispatchFromMap< ActionCreators >;
@@ -69,6 +70,7 @@ export interface CreateSiteParams {
 		wpcom_public_coming_soon?: number;
 		anchor_fm_podcast_id?: string;
 		is_blank_canvas?: boolean;
+		is_videopress_initial_purchase?: boolean;
 	};
 }
 
@@ -112,6 +114,7 @@ export interface SiteDetails {
 	is_private?: boolean;
 	is_vip?: boolean;
 	is_wpcom_atomic?: boolean;
+	is_wpcom_staging_site?: boolean;
 	jetpack: boolean;
 	lang?: string;
 	launch_status: string;
@@ -126,6 +129,7 @@ export interface SiteDetails {
 	site_owner?: number;
 	slug: string;
 	visible?: boolean;
+	was_ecommerce_trial?: boolean;
 	wpcom_url?: string;
 	user_interactions?: string[];
 }
@@ -229,6 +233,9 @@ export interface SiteDetailsOptions {
 	wordads?: boolean;
 	launchpad_screen?: false | 'off' | 'full' | 'minimized';
 	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses;
+	wpcom_production_blog_id?: number;
+	wpcom_staging_blog_ids?: number[];
+	can_blaze?: boolean;
 }
 
 export type SiteOption = keyof SiteDetails[ 'options' ];
@@ -247,7 +254,6 @@ export interface Cart {
 	coupon_discounts: unknown[];
 	coupon_discounts_integer: unknown[];
 	is_coupon_applied: boolean;
-	has_bundle_credit: boolean;
 	next_domain_is_free: boolean;
 	next_domain_condition: string;
 	products: unknown[];
@@ -267,7 +273,6 @@ export interface Cart {
 	credits_display: string;
 	credits_integer: number;
 	allowed_payment_methods: unknown[];
-	create_new_blog: boolean;
 	messages: Record< 'errors' | 'success', unknown >;
 }
 
@@ -442,6 +447,7 @@ interface PaletteColor {
 }
 
 export interface GlobalStyles {
+	title?: string;
 	settings: {
 		color: {
 			palette: {
@@ -450,13 +456,18 @@ export interface GlobalStyles {
 			};
 		};
 	};
+	styles: {
+		[ key: string ]: unknown;
+	};
 }
 
 export interface LaunchPadCheckListTasksStatuses {
 	first_post_published?: boolean;
 	links_edited?: boolean;
 	site_launched?: boolean;
+	site_edited?: boolean;
 	video_uploaded?: boolean;
+	publish_first_course?: boolean;
 }
 
 export interface ThemeSetupOptions {
@@ -465,4 +476,27 @@ export interface ThemeSetupOptions {
 	pattern_ids?: number[] | string[];
 	header_pattern_ids?: number[] | string[];
 	footer_pattern_ids?: number[] | string[];
+	posts_source_site_id?: number;
+}
+
+export interface ActiveTheme {
+	stylesheet: string;
+	_links: {
+		'wp:user-global-styles': { href: string }[];
+	};
+	global_styles_id: number | null;
+}
+
+export interface CurrentTheme {
+	id: string;
+}
+
+export type SiteSelect = SelectFromMap< typeof selectors >;
+
+export interface SourceSiteMigrationDetails {
+	status: string;
+	target_blog_id?: number;
+	is_target_blog_admin?: boolean;
+	is_target_blog_upgraded?: boolean;
+	target_blog_slug?: string;
 }

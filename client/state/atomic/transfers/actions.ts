@@ -24,29 +24,33 @@ export interface AtomicTransferError {
 	code: string; // "no_transfer_record"
 }
 
+export interface InitiateTransfer {
+	softwareSet?: string | 'woo-on-plans';
+	themeSlug?: string;
+	pluginSlug?: string;
+	pluginFile?: File;
+	themeFile?: File;
+}
+
 /**
  * Initiate Atomic transfer, optionally with software set install.
  *
  * @param {string} siteId Site ID.
- * @param {object} options Transfer options.
- * @param {string} options.softwareSet Software set to install.
- * @returns {object} An action object.
+ * @param {InitiateTransfer} initiateTransfer The InitiateTransfer parameters.
+ * @returns {Object} An action object.
  */
-export const initiateAtomicTransfer = (
-	siteId: number,
-	{ softwareSet }: { softwareSet: string }
-) =>
+export const initiateAtomicTransfer = ( siteId: number, initiateTransfer: InitiateTransfer ) =>
 	( {
 		type: ATOMIC_TRANSFER_INITIATE_TRANSFER,
 		siteId,
-		softwareSet,
+		...initiateTransfer,
 	} as const );
 
 /**
  * Fetch transfer.
  *
  * @param {string} siteId Site ID.
- * @returns {object} An action object.
+ * @returns {Object} An action object.
  */
 export const requestLatestAtomicTransfer = ( siteId: number ) =>
 	( {
@@ -58,8 +62,8 @@ export const requestLatestAtomicTransfer = ( siteId: number ) =>
  * Set the transfer.
  *
  * @param {number} siteId The site id to which the status belongs.
- * @param {object} transfer The new status of the transfer.
- * @returns {object} An action object
+ * @param {Object} transfer The new status of the transfer.
+ * @returns {Object} An action object
  */
 export const setLatestAtomicTransfer = ( siteId: number, transfer: AtomicTransfer ) =>
 	( {

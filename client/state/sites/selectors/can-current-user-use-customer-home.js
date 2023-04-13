@@ -8,7 +8,7 @@ import getSite from './get-site';
 /**
  * Returns true if the current user should be able to use the customer home screen
  *
- * @param  {object}   state  Global state tree
+ * @param  {Object}   state  Global state tree
  * @param  {?number}  siteId Site ID
  * @returns {?boolean}        Whether the site can use the customer home screen
  */

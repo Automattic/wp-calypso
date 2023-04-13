@@ -51,7 +51,8 @@
 	display: flex;
 }
 
-.site-card__expanded-content-value {
+.site-card__expanded-content-value,
+.site-card__expanded-content-status {
 	position: absolute;
 	right: 16px;
 	top: 50%;
@@ -76,4 +77,19 @@
 	border-style: solid;
 	border-color: var(--studio-gray-5);
 	box-shadow: 0 0 20px rgba(0, 0, 0, 0.16);
+}
+
+.site-card__expanded-column {
+	width: 20px;
+
+	button {
+		display: flex;
+		position: relative;
+		left: 16px;
+		top: 2px;
+	}
+}
+
+.site-card__expanded-content-header {
+	position: relative;
 }

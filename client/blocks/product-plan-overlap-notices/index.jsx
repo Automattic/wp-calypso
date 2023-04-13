@@ -2,6 +2,7 @@ import {
 	isJetpackProduct,
 	planHasFeature,
 	planHasSuperiorFeature,
+	JETPACK_SEARCH_PRODUCTS,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -58,8 +59,10 @@ class ProductPlanOverlapNotices extends Component {
 		// Does the current plan include the current product as a feature, or have a superior version of it?
 		return currentProductSlugs.filter(
 			( productSlug ) =>
-				planHasFeature( currentPlanSlug, productSlug ) ||
-				planHasSuperiorFeature( currentPlanSlug, productSlug )
+				// Skip the check for search products, they are included only partially (up to 100k records/requests)
+				! JETPACK_SEARCH_PRODUCTS.includes( productSlug ) &&
+				( planHasFeature( currentPlanSlug, productSlug ) ||
+					planHasSuperiorFeature( currentPlanSlug, productSlug ) )
 		);
 	}
 

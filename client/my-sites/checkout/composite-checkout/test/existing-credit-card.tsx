@@ -24,7 +24,7 @@ function TestWrapper( { paymentMethods, paymentProcessors = undefined } ) {
 			<QueryClientProvider client={ queryClient }>
 				<CheckoutProvider
 					paymentMethods={ paymentMethods }
-					initiallySelectedPaymentMethodId={ paymentMethods[ 0 ].id }
+					selectFirstAvailablePaymentMethod
 					paymentProcessors={ paymentProcessors ?? {} }
 				>
 					<CheckoutStepGroup>
@@ -76,6 +76,10 @@ function mockTaxLocationEndpoint( { isSet = false } = {} ) {
 }
 
 describe( 'Existing credit card payment methods', () => {
+	beforeEach( () => {
+		nock.cleanAll();
+	} );
+
 	it( 'renders an existing card option for a stored card', async () => {
 		mockTaxLocationEndpoint();
 		const existingCard = getExistingCardPaymentMethod();

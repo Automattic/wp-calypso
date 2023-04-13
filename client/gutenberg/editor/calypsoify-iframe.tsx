@@ -10,6 +10,7 @@ import { Component, Fragment } from 'react';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
+import DomainUpsellCallout from 'calypso/components/domains/domain-upsell-callout';
 import { BlockEditorSettings } from 'calypso/data/block-editor/use-block-editor-settings-query';
 import withBlockEditorSettings from 'calypso/data/block-editor/with-block-editor-settings';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
@@ -79,6 +80,7 @@ interface Props {
 	stripeConnectSuccess: 'gutenberg' | null;
 	showDraftPostModal: boolean;
 	blockEditorSettings: BlockEditorSettings;
+	completedFlow?: string;
 }
 
 interface CheckoutModalOptions extends RequestCart {
@@ -124,6 +126,7 @@ enum EditorActions {
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
 	GetIsAppBannerVisible = 'getIsAppBannerVisible',
+	NavigateToHome = 'navigateToHome',
 }
 
 type ComponentProps = Props &
@@ -488,6 +491,10 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				this.appBannerPort = ports[ 0 ];
 			}
 		}
+
+		if ( EditorActions.NavigateToHome === action ) {
+			page( `/home/${ this.props.siteSlug }` );
+		}
 	};
 
 	handlePostStatusChange = ( status: string ) => {
@@ -706,6 +713,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<div className="main main-column calypsoify is-iframe" role="main">
 					{ ! isIframeLoaded && <Placeholder /> }
+					{ isIframeLoaded && this.props.editorType !== 'site' && (
+						<DomainUpsellCallout trackEvent="site_editor_domain_upsell_callout" />
+					) }
 					{ ( shouldLoadIframe || isIframeLoaded ) && (
 						<Iframe
 							className={ isIframeLoaded ? 'is-loaded' : '' }
@@ -725,6 +735,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 							// This styling hides the iframe until it loads or
 							// the redirect is executed.
 							style={ isIframeLoaded ? undefined : { opacity: 0 } }
+							// Allow clipboard access for the iframe origin.
+							// This will still require users' permissions.
+							allow="clipboard-read; clipboard-write"
 						/>
 					) }
 				</div>
@@ -777,6 +790,7 @@ const mapStateToProps = (
 		showDraftPostModal,
 		pressThisData,
 		blockEditorSettings,
+		completedFlow,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -803,6 +817,8 @@ const mapStateToProps = (
 		showDraftPostModal,
 		...pressThisData,
 		answer_prompt: getQueryArg( window.location.href, 'answer_prompt' ),
+		completedFlow,
+		canvas: getQueryArg( window.location.href, 'canvas' ), // Site editor can initially load with or without nav sidebar (Gutenberg v15.0.0)
 	} );
 
 	// needed for loading the editor in SU sessions

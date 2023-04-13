@@ -12,6 +12,7 @@
  */
 body {
 	--color-body-background: #fdfdfd;
+	--wooexpress-purple: #7f54b3;
 	background-color: var(--color-body-background);
 }
 
@@ -67,8 +68,14 @@ button {
 .anchor-fm,
 .subscribers,
 .ecommerce,
+.wooexpress,
+.copy-site,
 .intro,
-.free-setup {
+.free-setup,
+.free-post-setup,
+.free,
+.with-theme-assembler,
+.update-design {
 	padding: 60px 0 0;
 	box-sizing: border-box;
 
@@ -139,14 +146,27 @@ button {
 	.step-container {
 		--color-accent: #117ac9;
 		--color-accent-60: #0e64a5;
+
+		.form-fieldset {
+			label {
+				text-transform: none;
+			}
+		}
+	}
+}
+
+.intro {
+	.signup-header {
+		z-index: 0 !important; /* set to 0 to prevent it from covering top of intro modal */
 	}
 }
 
 /**
  * Tailored flow stylings
  */
-.newsletter,
-.link-in-bio:not(.domains) {
+.newsletter:not(.domains),
+.link-in-bio:not(.domains),
+.link-in-bio-tld:not(.domains) {
 	&:not(.launchpad):not(.subscribers) {
 		@include onboarding-break-mobile-landscape {
 			padding: 40px 0 0;
@@ -166,8 +186,10 @@ button {
 	}
 }
 
+.store-profiler__form,
 .newsletter,
 .link-in-bio,
+.link-in-bio-tld,
 .setup-form__form {
 	button {
 		&[type="submit"] {
@@ -181,7 +203,7 @@ button {
 			border: 1px solid rgba($color: #000, $alpha: 0.2);
 
 			&.site-icon-with-picker__upload-button {
-				border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				border-radius: 50%;
 				font-family: "SF Pro Text", $sans;
 				transition: ease 300ms;
 
@@ -231,6 +253,7 @@ button {
 		label {
 			font-size: $font-body;
 			color: var(--studio-gray-60);
+			font-weight: 500;
 		}
 	}
 
@@ -264,6 +287,14 @@ button {
 	}
 }
 
+.free,
+.free-post-setup,
+.update-design {
+	.signup-header h1 {
+		display: none;
+	}
+}
+
 /**
  * Global notices
  */
@@ -286,4 +317,91 @@ button {
 			bottom: 74px;
 		}
 	}
+}
+
+.wooexpress,
+.copy-site,
+.ecommerce {
+	.step-container.processing-step {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		margin-top: 25vh;
+	}
+}
+
+.assign-trial-plan,
+.processing {
+	&.wooexpress,
+	&.ecommerce {
+		padding: 60px 0;
+		min-height: 100%;
+		min-width: 100%;
+		width: 100%;
+		height: auto;
+		position: fixed;
+		top: 0;
+		left: 0;
+		background-color: #fff;
+		background-image:
+			url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg),
+			url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg);
+		background-position-y: -40px, 110%;
+		/*!rtl:ignore*/
+		background-position-x: 109%, -10%;
+		background-repeat: no-repeat, no-repeat;
+		background-attachment: fixed;
+		background-size: auto 15%, auto 25%;
+		padding-top: 0;
+
+		@include break-huge {
+			background-size: auto 15%, auto 35%, auto 50%;
+			background-position-x: 65%, -100px, 120%;
+			background-position-y: 5%, 85%, 125%;
+			background-image:
+				url(calypso/assets/images/onboarding/ecommerce-intro-1.jpg),
+				url(calypso/assets/images/onboarding/ecommerce-intro-2.jpg),
+				url(calypso/assets/images/onboarding/ecommerce-intro-3.jpg);
+		}
+	}
+}
+
+.wooexpress {
+	.step-container .step-container__content h1 {
+		font-family: proxima-nova, sans-serif;
+		font-weight: 600;
+		font-size: $font-title-large;
+	}
+	.flow-progress.progress-bar {
+		display: none;
+	}
+	.loading-bar {
+		background-color: var(--studio-woocommerce-purple-5);
+		width: 520px;
+		max-width: 100%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	p.processing-step__subtitle {
+		font-family: "SF Pro Text", $sans;
+		font-weight: 400;
+
+		.woo-inline-purple-heart {
+			width: 18px;
+			height: 15px;
+			margin-bottom: -2px; // bring visual center inline with the text
+		}
+
+		strong {
+			font-weight: 500;
+		}
+	}
+	.loading-bar::before {
+		background: var(--wooexpress-purple);
+	}
+	.signup-header .wordpress-logo {
+		display: block;
+		width: 500px;
+	}
+
 }

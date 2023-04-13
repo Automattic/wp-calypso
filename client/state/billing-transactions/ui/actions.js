@@ -12,7 +12,7 @@ import 'calypso/state/billing-transactions/init';
  *
  * @param {string} transactionType - transaction type: 'past' or 'upcoming'
  * @param {string} app - app filter value
- * @returns {object} action
+ * @returns {Object} action
  */
 export const setApp = ( transactionType, app ) => ( {
 	type: BILLING_TRANSACTIONS_FILTER_SET_APP,
@@ -27,7 +27,7 @@ export const setApp = ( transactionType, app ) => ( {
  * @param {string} transactionType - transaction type: 'past' or 'upcoming'
  * @param {string} month - month in format 'YYYY-MM'
  * @param {string} operator - operator for the month. One of: equal, before
- * @returns {object} action
+ * @returns {Object} action
  */
 export const setDate = ( transactionType, month, operator ) => ( {
 	type: BILLING_TRANSACTIONS_FILTER_SET_MONTH,
@@ -41,7 +41,7 @@ export const setDate = ( transactionType, month, operator ) => ( {
  *
  * @param {string} transactionType - transaction type: 'past' or 'upcoming'
  * @param {number} page - page number, starting at 1
- * @returns {object} action
+ * @returns {Object} action
  */
 export const setPage = ( transactionType, page ) => ( {
 	type: BILLING_TRANSACTIONS_FILTER_SET_PAGE,
@@ -54,7 +54,7 @@ export const setPage = ( transactionType, page ) => ( {
  *
  * @param {string} transactionType - transaction type: 'past' or 'upcoming'
  * @param {string} query - string query
- * @returns {object} action
+ * @returns {Object} action
  */
 export const setQuery = ( transactionType, query ) => ( {
 	type: BILLING_TRANSACTIONS_FILTER_SET_QUERY,

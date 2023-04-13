@@ -14,7 +14,7 @@ describe( DataHelper.createSuiteTitle( 'Marketing: SEO Preview' ), function () {
 	beforeAll( async () => {
 		page = await browser.newPage();
 
-		const testAccount = new TestAccount( 'eCommerceUser' );
+		const testAccount = new TestAccount( 'atomicUser' );
 		await testAccount.authenticate( page );
 	} );
 

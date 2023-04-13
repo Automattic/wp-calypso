@@ -15,6 +15,7 @@ const selectors = {
 		`[data-testid="review-order-step--visible"] .checkout-line-item >> text=${ itemName.trim() }`,
 	removeCartItemButton: ( itemName: string ) =>
 		`[data-testid="review-order-step--visible"] button[aria-label*="Remove ${ itemName.trim() } from cart"]`,
+	cartItems: `[data-testid="review-order-step--visible"] .checkout-line-item`,
 
 	// Order Summary
 	editOrderButton: 'button[aria-label="Edit your order"]',
@@ -122,6 +123,19 @@ export class CartCheckoutPage {
 	}
 
 	/**
+	 * Validates that the cart contains the expected number of items.
+	 */
+	async validateCartItemsCount( totalItems: number ): Promise< void > {
+		await this.page.waitForSelector( selectors.cartItems );
+		const cartItemsLocator = this.page.locator( selectors.cartItems );
+		const itemsCount = await cartItemsLocator.count();
+		console.log( itemsCount, totalItems );
+		if ( itemsCount !== totalItems ) {
+			throw new Error( `Expected ${ totalItems } items in cart, but found ${ itemsCount }` );
+		}
+	}
+
+	/**
 	 * Obtains the text content of the payment button.
 	 *
 	 * @returns {string} Content of the payment button.
@@ -183,14 +197,16 @@ export class CartCheckoutPage {
 	 * If optional parameter `rawString` is specified, the string as obtained is returned.
 	 *
 	 * @param param0 Object parameter.
-	 * @param {boolean} param0.rawString If true, the raw string is returned.
+	 * @param {boolean} param0.rawString If true, the string as displayed is returned.
 	 * @returns {Promise<number|string>} Total value of items in cart.
 	 */
 	async getCheckoutTotalAmount( { rawString = false }: { rawString?: boolean } = {} ): Promise<
 		number | string
 	> {
-		const elementHandle = await this.page.waitForSelector( selectors.totalAmount );
-		const stringAmount = await elementHandle.innerText();
+		const totalAmountLocator = this.page.locator( selectors.totalAmount );
+		await totalAmountLocator.waitFor( { timeout: 20 * 1000 } );
+
+		const stringAmount = await totalAmountLocator.innerText();
 		if ( rawString ) {
 			// Returns the raw string.
 			return stringAmount;
@@ -284,7 +300,7 @@ export class CartCheckoutPage {
 	 */
 	async purchase( { timeout }: { timeout?: number } = {} ): Promise< void > {
 		await Promise.all( [
-			this.page.waitForNavigation( { timeout: timeout } ),
+			this.page.waitForResponse( /.*me\/transactions.*/, { timeout: timeout } ),
 			this.page.click( selectors.purchaseButton ),
 		] );
 	}

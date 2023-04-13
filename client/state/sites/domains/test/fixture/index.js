@@ -76,6 +76,8 @@ export const DOMAIN_PRIMARY = {
 	manualTransferRequired: false,
 	mustRemovePrivacyBeforeContactUpdate: false,
 	name: 'retronevergiveup.me',
+	nominetDomainSuspended: false,
+	nominetPendingContactVerificationRequest: false,
 	owner: 'John Doe',
 	partnerDomain: false,
 	pendingRegistration: false,
@@ -169,6 +171,8 @@ export const DOMAIN_NOT_PRIMARY = {
 	manualTransferRequired: false,
 	mustRemovePrivacyBeforeContactUpdate: false,
 	name: 'retronevergiveup.wordpress.me',
+	nominetDomainSuspended: false,
+	nominetPendingContactVerificationRequest: false,
 	owner: typeof undefined,
 	partnerDomain: false,
 	pendingRegistration: false,
@@ -404,7 +408,7 @@ export const ACTION_SITE_DOMAIN_REQUEST_FAILURE = {
 /**
  * Return a whole state with domains data structure
  *
- * @returns {object} an state instance
+ * @returns {Object} an state instance
  *
  * - first site-domians is not requesting
  * - second site-domians is requesting

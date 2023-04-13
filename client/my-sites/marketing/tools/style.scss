@@ -117,7 +117,8 @@
 
 .tools__feature-list-item-body-image {
 	margin: 10px 20px 0 0;
-	max-width: 150px;
+	max-width: 75px;
+	max-height: 75px;
 	width: 16%;
 
 	@include breakpoint-deprecated( ">1040px" ) {

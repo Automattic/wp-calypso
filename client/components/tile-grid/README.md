@@ -38,10 +38,10 @@ class MyExampleComponent extends PureComponent {
 		return (
 			<TileGrid>
 				<Tile
-					buttonLabel={ 'Start with a blog' }
-					description={ 'To share your ideas, stories, and photographs with your followers.' }
-					image={ '/calypso/images/illustrations/type-blog.svg' }
-					href={ 'https://wordpress.com/start' }
+					buttonLabel="Start with a blog"
+					description="To share your ideas, stories, and photographs with your followers."
+					image="/calypso/images/illustrations/type-blog.svg"
+					href="https://wordpress.com/start"
 				/>
 			</TileGrid>
 		);

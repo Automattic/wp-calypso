@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import { find, includes } from 'lodash';
@@ -7,12 +8,12 @@ import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import SectionHeader from 'calypso/components/section-header';
+import PromoCards from 'calypso/my-sites/stats/promo-cards';
 import ErrorPanel from 'calypso/my-sites/stats/stats-error';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-
 import './style.scss';
 
 class AnnualSiteStats extends Component {
@@ -141,7 +142,7 @@ class AnnualSiteStats extends Component {
 	}
 
 	render() {
-		const { years, translate, moment, isWidget, siteId, siteSlug } = this.props;
+		const { isOdysseyStats, isWidget, moment, siteId, siteSlug, translate, years } = this.props;
 		const strings = this.getStrings();
 		const now = moment();
 		const currentYear = now.format( 'YYYY' );
@@ -167,8 +168,11 @@ class AnnualSiteStats extends Component {
 				{ isWidget && (
 					<SectionHeader
 						href={ viewAllLink }
-						label={ translate( 'Annual site stats', { args: [ currentYear ] } ) }
+						label={ translate( 'Annual insights', { args: [ currentYear ] } ) }
 					/>
+				) }
+				{ ! isWidget && (
+					<h1 className="highlight-cards-heading">{ translate( 'All-time annual insights' ) }</h1>
 				) }
 				<Card className="stats-module">
 					<StatsModulePlaceholder isLoading={ isLoading } />
@@ -186,6 +190,11 @@ class AnnualSiteStats extends Component {
 						</div>
 					) }
 				</Card>
+				<PromoCards
+					isOdysseyStats={ isOdysseyStats }
+					pageSlug="annual-insights"
+					slug={ siteSlug }
+				/>
 			</div>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -195,12 +204,12 @@ class AnnualSiteStats extends Component {
 export default connect( ( state ) => {
 	const statType = 'statsInsights';
 	const siteId = getSelectedSiteId( state );
-	const siteSlug = getSiteSlug( state, siteId );
 	const insights = getSiteStatsNormalizedData( state, siteId, statType, {} );
 
 	return {
-		years: insights.years,
+		isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
 		siteId,
-		siteSlug,
+		siteSlug: getSiteSlug( state, siteId ),
+		years: insights.years,
 	};
 } )( localize( withLocalizedMoment( AnnualSiteStats ) ) );

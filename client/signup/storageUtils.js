@@ -21,16 +21,16 @@ export const clearSignupDestinationCookie = () => {
 };
 
 export const getSignupCompleteSlug = () =>
-	sessionStorage.getItem( 'wpcom_signup_complete_site_slug' );
+	sessionStorage?.getItem( 'wpcom_signup_complete_site_slug' );
 export const setSignupCompleteSlug = ( value ) =>
-	sessionStorage.setItem( 'wpcom_signup_complete_site_slug', value );
+	sessionStorage?.setItem( 'wpcom_signup_complete_site_slug', value );
 export const wasSignupCheckoutPageUnloaded = () =>
-	sessionStorage.getItem( 'was_signup_checkout_page_unloaded' );
+	sessionStorage?.getItem( 'was_signup_checkout_page_unloaded' );
 export const setSignupCheckoutPageUnloaded = ( value ) =>
-	sessionStorage.setItem( 'was_signup_checkout_page_unloaded', value );
+	sessionStorage?.setItem( 'was_signup_checkout_page_unloaded', value );
 export const getSignupCompleteFlowName = () =>
-	sessionStorage.getItem( 'wpcom_signup_complete_flow_name' );
+	sessionStorage?.getItem( 'wpcom_signup_complete_flow_name' );
 export const setSignupCompleteFlowName = ( value ) =>
-	sessionStorage.setItem( 'wpcom_signup_complete_flow_name', value );
+	sessionStorage?.setItem( 'wpcom_signup_complete_flow_name', value );
 export const clearSignupCompleteFlowName = () =>
-	sessionStorage.removeItem( 'wpcom_signup_complete_flow_name' );
+	sessionStorage?.removeItem( 'wpcom_signup_complete_flow_name' );

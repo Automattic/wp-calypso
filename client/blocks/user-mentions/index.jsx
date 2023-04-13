@@ -7,8 +7,8 @@ import connectUserMentions from './connect';
  * withUserMentions is a higher-order component that adds connected user mention support to whatever input it wraps.
  *
  * @example withUserMentions( Component )
- * @param {object} WrappedComponent - React component to wrap
- * @returns {object} the enhanced component
+ * @param {Object} WrappedComponent - React component to wrap
+ * @returns {Object} the enhanced component
  */
 const withUserMentions = ( WrappedComponent ) => {
 	class TextInputWrapper extends PureComponent {

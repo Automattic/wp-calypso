@@ -33,7 +33,7 @@ const environmentKeys = fs
 	.filter( ( filename ) => ! /secrets/g.test( filename ) ) // secret tokens not part of this system
 	.map( ( filename ) => [ filename, Object.keys( parseConfig( filename ) ) ] );
 
-/** @type {object} config data in the shared config file (defaults) */
+/** @type {Object} config data in the shared config file (defaults) */
 const sharedConfig = parseConfig( '_shared.json' );
 
 /**

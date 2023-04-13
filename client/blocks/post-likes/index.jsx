@@ -33,14 +33,14 @@ class PostLikes extends PureComponent {
 				className="post-likes__item"
 				onClick={ likeUrl ? this.trackLikeClick : null }
 			>
-				<Gravatar user={ like } alt={ like.login } title={ like.login } size={ 24 } />
+				<Gravatar user={ like } alt={ like.login } title={ like.login } size={ 32 } />
 				{ showDisplayNames && <span className="post-likes__display-name">{ like.name }</span> }
 			</LikeWrapper>
 		);
 	};
 
 	renderExtraCount() {
-		const { likes, likeCount, showDisplayNames, translate, numberFormat } = this.props;
+		const { likes, likeCount, translate, numberFormat } = this.props;
 
 		if ( ! likes || likeCount <= likes.length ) {
 			return null;
@@ -48,15 +48,9 @@ class PostLikes extends PureComponent {
 
 		const extraCount = likeCount - likes.length;
 
-		let message;
-		if ( showDisplayNames ) {
-			message = translate( '+ %(extraCount)s more', '+ %(extraCount)s more', {
-				count: extraCount,
-				args: { extraCount: numberFormat( extraCount ) },
-			} );
-		} else {
-			message = '+ ' + numberFormat( extraCount );
-		}
+		const message = translate( '%(extraCount)s more', {
+			args: { extraCount: numberFormat( extraCount ) },
+		} );
 
 		return (
 			<span key="placeholder" className="post-likes__count">
@@ -86,14 +80,18 @@ class PostLikes extends PureComponent {
 			noLikesLabel = translate( 'There are no likes on this post yet.' );
 		}
 
-		const isLoading = ! likes;
+		// Prevent loading for postId `0`
+		const isLoading = !! postId && ! likes;
 
-		const classes = classnames( 'post-likes', { 'has-display-names': showDisplayNames } );
+		const classes = classnames( 'post-likes', {
+			'has-display-names': showDisplayNames,
+			'no-likes': ! likeCount,
+		} );
 		const extraProps = { onMouseEnter, onMouseLeave };
 
 		return (
 			<div className={ classes } { ...extraProps }>
-				<QueryPostLikes siteId={ siteId } postId={ postId } needsLikers={ true } />
+				{ !! postId && <QueryPostLikes siteId={ siteId } postId={ postId } needsLikers={ true } /> }
 				{ isLoading && (
 					<span key="placeholder" className="post-likes__count is-loading">
 						…
@@ -101,7 +99,7 @@ class PostLikes extends PureComponent {
 				) }
 				{ likes && likes.map( this.renderLike ) }
 				{ this.renderExtraCount() }
-				{ likeCount === 0 && noLikesLabel }
+				{ ! isLoading && ! likeCount && noLikesLabel }
 			</div>
 		);
 	}

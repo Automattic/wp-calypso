@@ -286,8 +286,15 @@ export default {
 
 		// Set referral parameter in signup dependency store so we can retrieve it in getSignupDestination().
 		const refParameter = query && query.ref;
-		if ( refParameter ) {
-			context.store.dispatch( updateDependencies( { refParameter } ) );
+		// Set theme parameter in signup depencency store so we can retrieve it in getChecklistThemeDestination().
+		const themeParameter = query && query.theme;
+
+		const additionalDependencies = {
+			...( refParameter && { refParameter } ),
+			...( themeParameter && { themeParameter } ),
+		};
+		if ( ! isEmpty( additionalDependencies ) ) {
+			context.store.dispatch( updateDependencies( additionalDependencies ) );
 		}
 
 		context.primary = createElement( SignupComponent, {

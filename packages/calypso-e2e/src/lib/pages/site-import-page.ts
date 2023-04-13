@@ -1,6 +1,6 @@
 import { Page } from 'playwright';
 
-export type SourceService = typeof SiteImportPage.services[ number ];
+export type SourceService = ( typeof SiteImportPage.services )[ number ];
 
 const selectors = {
 	// Listing

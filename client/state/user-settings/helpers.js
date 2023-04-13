@@ -1,7 +1,7 @@
 /**
  * Set a (nested) value in an object. Will create keys if they're not existent.
  *
- * @param {object} obj Object to operate on
+ * @param {Object} obj Object to operate on
  * @param {string | Array} path Key to set. Can be an array to represent nested values
  * @param {string} value Value which key should be set to
  */
@@ -21,7 +21,7 @@ export function setValue( obj, path, value ) {
 /**
  * Remove a (nested) value from an object. It will clean up empty objects in the tree.
  *
- * @param {object} obj Object to operate on
+ * @param {Object} obj Object to operate on
  * @param {string | Array} path Key to remove. Can be an array to represent nested values
  */
 export function removeValue( obj, path ) {

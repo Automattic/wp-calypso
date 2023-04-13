@@ -23,8 +23,11 @@ import {
 	TESTIMONIALS_PAGE,
 	PRICING_PAGE,
 	TEAM_PAGE,
+	SHOP_PAGE,
 } from 'calypso/signup/difm/constants';
 import {
+	BBE_ONBOARDING_PAGE_PICKER_STEP,
+	BBE_STORE_ONBOARDING_PAGE_PICKER_STEP,
 	useTranslatedPageDescriptions,
 	useTranslatedPageTitles,
 } from 'calypso/signup/difm/translation-hooks';
@@ -35,6 +38,7 @@ import { getSiteId } from 'calypso/state/sites/selectors';
 import ShoppingCartForDIFM from './shopping-cart-for-difm';
 import useCartForDIFM from './use-cart-for-difm';
 import type { PageId } from 'calypso/signup/difm/constants';
+import type { BBETranslationContext } from 'calypso/signup/difm/translation-hooks';
 import type { Dependencies } from 'calypso/signup/types';
 
 import './style.scss';
@@ -115,14 +119,15 @@ interface PageCellType {
 	onClick: ( pageId: string ) => void;
 	popular?: boolean;
 	required?: boolean;
+	context: BBETranslationContext;
 }
 
-function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCellType ) {
+function PageCell( { pageId, popular, required, selectedPages, context, onClick }: PageCellType ) {
 	const translate = useTranslate();
 	const selectedIndex = selectedPages.indexOf( pageId );
 	const isSelected = Boolean( selectedIndex > -1 );
 	const title = useTranslatedPageTitles()[ pageId ];
-	const description = useTranslatedPageDescriptions( pageId );
+	const description = useTranslatedPageDescriptions( pageId, context );
 
 	return (
 		<GridCellContainer isSelected={ isSelected } isClickDisabled={ false }>
@@ -148,14 +153,16 @@ function PageCell( { pageId, popular, required, selectedPages, onClick }: PageCe
 function PageSelector( {
 	selectedPages,
 	setSelectedPages,
+	isStoreFlow,
 }: {
 	selectedPages: string[];
 	setSelectedPages: ( pages: string[] ) => void;
+	isStoreFlow: boolean;
 } ) {
 	const onPageClick = ( pageId: string ) => {
 		const isPageSelected = selectedPages.includes( pageId );
 		// The home page cannot be touched and is always included
-		if ( pageId !== HOME_PAGE ) {
+		if ( ! [ HOME_PAGE, SHOP_PAGE ].includes( pageId ) ) {
 			if ( isPageSelected ) {
 				// Unselect selected page
 				setSelectedPages( selectedPages.filter( ( page ) => page !== pageId ) );
@@ -165,21 +172,37 @@ function PageSelector( {
 		}
 	};
 
+	const context = isStoreFlow
+		? BBE_STORE_ONBOARDING_PAGE_PICKER_STEP
+		: BBE_ONBOARDING_PAGE_PICKER_STEP;
+
 	return (
 		<PageGrid>
 			<PageCell
+				context={ context }
 				required
 				pageId={ HOME_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
+			{ isStoreFlow && (
+				<PageCell
+					context={ context }
+					required
+					pageId={ SHOP_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) }
 			<PageCell
+				context={ context }
 				popular
 				pageId={ ABOUT_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
 			<PageCell
+				context={ context }
 				popular
 				pageId={ CONTACT_PAGE }
 				selectedPages={ selectedPages }
@@ -187,6 +210,7 @@ function PageSelector( {
 			/>
 
 			<PageCell
+				context={ context }
 				popular
 				pageId={ BLOG_PAGE }
 				selectedPages={ selectedPages }
@@ -194,40 +218,78 @@ function PageSelector( {
 			/>
 
 			<PageCell
+				context={ context }
 				pageId={ PHOTO_GALLERY_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
+			{ isStoreFlow ? (
+				<PageCell
+					context={ context }
+					popular
+					pageId={ FAQ_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) : (
+				<PageCell
+					context={ context }
+					popular
+					pageId={ SERVICES_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) }
 			<PageCell
-				popular
-				pageId={ SERVICES_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			<PageCell
+				context={ context }
 				pageId={ VIDEO_GALLERY_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
+			{ ! isStoreFlow && (
+				<PageCell
+					context={ context }
+					popular
+					pageId={ PRICING_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) }
 			<PageCell
-				popular
-				pageId={ PRICING_PAGE }
+				context={ context }
+				pageId={ PORTFOLIO_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
-			<PageCell pageId={ PORTFOLIO_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+			{ isStoreFlow ? (
+				<PageCell
+					context={ context }
+					pageId={ SERVICES_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) : (
+				<PageCell
+					context={ context }
+					popular
+					pageId={ FAQ_PAGE }
+					selectedPages={ selectedPages }
+					onClick={ onPageClick }
+				/>
+			) }
 			<PageCell
-				popular
-				pageId={ FAQ_PAGE }
-				selectedPages={ selectedPages }
-				onClick={ onPageClick }
-			/>
-			<PageCell
+				context={ context }
+				popular={ isStoreFlow }
 				pageId={ TESTIMONIALS_PAGE }
 				selectedPages={ selectedPages }
 				onClick={ onPageClick }
 			/>
-			<PageCell pageId={ TEAM_PAGE } selectedPages={ selectedPages } onClick={ onPageClick } />
+			<PageCell
+				context={ context }
+				pageId={ TEAM_PAGE }
+				selectedPages={ selectedPages }
+				onClick={ onPageClick }
+			/>
 		</PageGrid>
 	);
 }
@@ -235,6 +297,7 @@ function PageSelector( {
 interface StepProps {
 	stepSectionName: string | null;
 	stepName: string;
+	flowName: string;
 	goToStep: () => void;
 	goToNextStep: () => void;
 	signupDependencies: Dependencies;
@@ -260,15 +323,17 @@ function DIFMPagePicker( props: StepProps ) {
 		stepName,
 		goToNextStep,
 		signupDependencies: { siteId, siteSlug, newOrExistingSiteChoice },
+		flowName,
 	} = props;
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isStoreFlow = 'do-it-for-me-store' === flowName;
 	const [ isCheckoutPressed, setIsCheckoutPressed ] = useState( false );
-	const [ selectedPages, setSelectedPages ] = useState< string[] >( [
-		HOME_PAGE,
-		ABOUT_PAGE,
-		CONTACT_PAGE,
-	] );
+	const [ selectedPages, setSelectedPages ] = useState< string[] >(
+		isStoreFlow
+			? [ HOME_PAGE, SHOP_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
+			: [ HOME_PAGE, ABOUT_PAGE, CONTACT_PAGE ]
+	);
 	const cartKey = useSelector( ( state ) => getSiteId( state, siteSlug ?? siteId ) );
 
 	const { replaceProductsInCart } = useShoppingCart( cartKey ?? undefined );
@@ -279,7 +344,7 @@ function DIFMPagePicker( props: StepProps ) {
 		isProductsLoading,
 		isFormattedCurrencyLoading,
 		effectiveCurrencyCode,
-	} = useCartForDIFM( selectedPages );
+	} = useCartForDIFM( selectedPages, isStoreFlow );
 
 	const difmLiteProduct = useSelector( ( state ) => getProductBySlug( state, WPCOM_DIFM_LITE ) );
 	let difmTieredPriceDetails = null;
@@ -308,31 +373,58 @@ function DIFMPagePicker( props: StepProps ) {
 		components: { wbr: <wbr /> },
 	} );
 
-	const subHeaderText = translate(
-		'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}Your site build includes up to %(freePageCount)s pages, add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.',
-		{
-			components: {
-				br: <br />,
-				PriceWrapper:
-					difmTieredPriceDetails?.perExtraPagePrice && ! isFormattedCurrencyLoading ? (
-						<span />
-					) : (
-						<Placeholder />
-					),
-			},
-			args: {
-				freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
-				extraPagePrice: formatCurrency(
-					difmTieredPriceDetails?.perExtraPagePrice ?? 0,
-					effectiveCurrencyCode ?? '',
-					{
-						stripZeros: true,
-						isSmallestUnit: true,
-					}
-				),
-			},
-		}
-	);
+	const subHeaderText = isStoreFlow
+		? translate(
+				'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}Your site build includes up to %(freePageCount)s pages, add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.' +
+					'{{br}}{{/br}}{{br}}{{/br}}A cart and checkout are also included with your site.{{br}}{{/br}}You can add products later with the WordPress editor.',
+				{
+					components: {
+						br: <br />,
+						PriceWrapper:
+							difmTieredPriceDetails?.perExtraPagePrice && ! isFormattedCurrencyLoading ? (
+								<span />
+							) : (
+								<Placeholder />
+							),
+					},
+					args: {
+						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
+						extraPagePrice: formatCurrency(
+							difmTieredPriceDetails?.perExtraPagePrice ?? 0,
+							effectiveCurrencyCode ?? '',
+							{
+								stripZeros: true,
+								isSmallestUnit: true,
+							}
+						),
+					},
+				}
+		  )
+		: translate(
+				'Select your desired pages by clicking the thumbnails. {{br}}{{/br}}Your site build includes up to %(freePageCount)s pages, add additional pages for {{PriceWrapper}}%(extraPagePrice)s{{/PriceWrapper}} each.',
+				{
+					components: {
+						br: <br />,
+						PriceWrapper:
+							difmTieredPriceDetails?.perExtraPagePrice && ! isFormattedCurrencyLoading ? (
+								<span />
+							) : (
+								<Placeholder />
+							),
+					},
+					args: {
+						freePageCount: difmTieredPriceDetails?.numberOfIncludedPages,
+						extraPagePrice: formatCurrency(
+							difmTieredPriceDetails?.perExtraPagePrice ?? 0,
+							effectiveCurrencyCode ?? '',
+							{
+								stripZeros: true,
+								isSmallestUnit: true,
+							}
+						),
+					},
+				}
+		  );
 
 	const isExistingSite = newOrExistingSiteChoice === 'existing-site';
 
@@ -343,7 +435,11 @@ function DIFMPagePicker( props: StepProps ) {
 			subHeaderText={ subHeaderText }
 			fallbackSubHeaderText={ subHeaderText }
 			stepContent={
-				<PageSelector selectedPages={ selectedPages } setSelectedPages={ setSelectedPages } />
+				<PageSelector
+					isStoreFlow={ isStoreFlow }
+					selectedPages={ selectedPages }
+					setSelectedPages={ setSelectedPages }
+				/>
 			}
 			hideSkip
 			align="left"
@@ -366,7 +462,9 @@ function DIFMPagePicker( props: StepProps ) {
 					{ translate( 'Go to Checkout' ) }
 				</StyledButton>
 			}
-			headerContent={ <ShoppingCartForDIFM selectedPages={ selectedPages } /> }
+			headerContent={
+				<ShoppingCartForDIFM selectedPages={ selectedPages } isStoreFlow={ isStoreFlow } />
+			}
 			{ ...props }
 		/>
 	);

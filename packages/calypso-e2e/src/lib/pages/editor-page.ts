@@ -26,8 +26,10 @@ import type {
 
 const selectors = {
 	// iframe and editor
-	editorFrame: 'iframe.is-loaded',
+	editorFrame: 'iframe.is-loaded', // Gutenframe/Calypsofy iframe, only on Simple sites.
 	editor: 'body.block-editor-page',
+	editorCanvasFrame: 'iframe[name="editor-canvas"]', // Editor canvas (inner) iframe introduced in Gutenberg 14.9.1 for block-based themes.
+
 	editorTitle: '.editor-post-title__input',
 
 	// Within the editor body.
@@ -39,14 +41,16 @@ const selectors = {
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 };
-const EXTENDED_TIMEOUT = 90 * 1000;
+export const EXTENDED_EDITOR_WAIT_TIMEOUT = 20 * 1000;
+export const EXTENDED_EDITOR_WAIT_ATOMIC_TIMEOUT = 60 * 1000;
 
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
  */
 export class EditorPage {
 	private page: Page;
-	private editor: Locator;
+	private editorWindow: Locator;
+	private editorCanvas: Locator;
 	private target: SiteType;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
@@ -65,37 +69,65 @@ export class EditorPage {
 	 * @param {Page} page The underlying page.
 	 * @param param0 Keyed object parameter.
 	 * @param param0.target Target editor type. Defaults to 'simple'.
+	 * @param param0.blockTheme Whether block-based theme is used. Defaults to 'false'.
 	 */
-	constructor( page: Page, { target = 'simple' }: { target?: SiteType } = {} ) {
+	constructor(
+		page: Page,
+		{ target = 'simple', blockTheme = false }: { target?: SiteType; blockTheme?: boolean } = {}
+	) {
+		// The first step is to determine whether the test site is running a
+		// Gutenframe, otherwise known as a Calypsofy iframe.
+		// Typically, a Gutenframe is found on Simple sites and encapsulates the
+		// entire editor window.
+		// Atomic sites typically do not feature a Gutenframe and thus the editor
+		// window is exposed in the DOM.
+		// For both Simple and Atomic, the relevant `body` root element is used when resolving
+		// the Locator. This is to present a unified behavior when other methods reference the
+		// `editorWindow`.
 		if ( target === 'atomic' ) {
-			// For Atomic editors, there is no iFrame - the editor is
-			// part of the page DOM and is thus accessible directly.
-			this.editor = page.locator( selectors.editor );
+			this.editorWindow = page.locator( selectors.editor );
 		} else {
-			// For Simple editors, the editor is located within an iFrame
-			// and thus it must first be extracted.
-			this.editor = page.frameLocator( selectors.editorFrame ).locator( selectors.editor );
+			this.editorWindow = page.frameLocator( selectors.editorFrame ).locator( selectors.editor );
+		}
+
+		// The second step is to locate the iframe that exists within the
+		// editor canvas as of Gutenberg 14.9.1 when using newer block-based themes.
+		// If the parameter `blockTheme` is true, the editor canvas is hidden inside a new
+		// iframe and must be pierced to be visible.
+		if ( blockTheme ) {
+			this.editorCanvas = this.editorWindow
+				.frameLocator( selectors.editorCanvasFrame )
+				.locator( 'body' );
+		} else {
+			this.editorCanvas = this.editorWindow;
 		}
 
 		this.page = page;
 		this.target = target;
 
 		// Instantiate the subcomponent classes that build up the editor experience.
-		this.editorGutenbergComponent = new EditorGutenbergComponent( page, this.editor );
-		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
-		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
-		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
-		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
-		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
-		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
+		this.editorGutenbergComponent = new EditorGutenbergComponent(
+			page,
+			this.editorWindow,
+			this.editorCanvas
+		);
+		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editorWindow );
+		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent(
+			page,
+			this.editorWindow
+		);
+		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editorWindow );
+		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editorWindow );
+		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editorWindow );
+		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editorWindow );
+		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editorWindow );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
 			page,
-			this.editor
+			this.editorWindow
 		);
 		this.editorInlineBlockInserterComponent = new EditorInlineBlockInserterComponent(
 			page,
-			this.editor
+			this.editorWindow
 		);
 	}
 
@@ -120,36 +152,19 @@ export class EditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< void > {
-		// Once https://github.com/Automattic/wp-calypso/issues/57660 is resolved,
-		// the next line should be removed.
-		const editor = await this.getEditorHandle();
+		const timeout =
+			this.target === 'atomic' ? EXTENDED_EDITOR_WAIT_ATOMIC_TIMEOUT : EXTENDED_EDITOR_WAIT_TIMEOUT;
 
-		const titleLocator = editor.locator( selectors.editorTitle );
-		await titleLocator.waitFor( { timeout: EXTENDED_TIMEOUT } );
+		// In a typical loading scenario, this request is one of the last to fire.
+		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
+		// it is a fairly good stand-in.
+		await Promise.all( [
+			this.page.waitForURL( /(post|page|post-new.php)/ ),
+			this.page.waitForResponse( /.*posts.*/, { timeout: timeout } ),
+		] );
 
+		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
-	}
-
-	/**
-	 * Return the editor frame. Could be the top-level frame (i.e WPAdmin).
-	 * an iframe (Calypso/Gutenframe).
-	 *
-	 * @returns {Promise<Frame>} frame holding the editor.
-	 */
-	async getEditorHandle(): Promise< Frame | Page > {
-		// Return the page object as Atomic editor permits direct
-		// access.
-		if ( this.target === 'atomic' ) {
-			return this.page;
-		}
-
-		// Framed editors need to extract the Frame.
-		const calypsoEditorLocator = this.page.locator( selectors.editorFrame );
-		const elementHandle = await calypsoEditorLocator.elementHandle( { timeout: EXTENDED_TIMEOUT } );
-		if ( ! elementHandle ) {
-			throw new Error( 'Could not locate editor iFrame.' );
-		}
-		return ( await elementHandle?.contentFrame() ) as Frame;
 	}
 
 	// TODO: in the future, this should replace the handle method above, as everything should be based on locators.
@@ -159,8 +174,47 @@ export class EditorPage {
 	 *
 	 * @returns A pointer to frame-safe, top-level locator within the editor.
 	 */
-	getEditorLocator(): Locator {
-		return this.editor;
+	getEditorWindowLocator(): Locator {
+		return this.editorWindow;
+	}
+
+	/**
+	 * Returns the locator to the editor canvas.
+	 *
+	 * Editor canvas here refers only to the visible block editor portion.
+	 * The editor canvas may be accessible directly (non-block-based theme) or
+	 * may be wrapped inside an iframe (block-based theme).
+	 *
+	 * @returns {Locator} Locator to the Editor Canvas.
+	 */
+	getEditorCanvasLocator(): Locator {
+		return this.editorCanvas;
+	}
+
+	/**
+	 * Returns a locator to the element specified by the selector.
+	 *
+	 * This method first looks into the editor window for a matching element
+	 * to the selector. If no elements are found, this method then looks into
+	 * the editor canvas.
+	 *
+	 * If no elements matching the selector is found anywhere, this method
+	 * returns null.
+	 *
+	 * The distinction of editor window and editor canvas exists due to the
+	 * presence of inner iframes for block-based themes as of Gutenberg 14.9.1.
+	 *
+	 * @param {string} selector Selector to an element.
+	 * @returns {Promise<Locator|null>} Locator if this method finds a match. null otherwise.
+	 */
+	async getLocatorToSelector( selector: string ): Promise< Locator | null > {
+		if ( await this.editorWindow.locator( selector ).count() ) {
+			return this.editorWindow.locator( selector );
+		}
+		if ( await this.editorCanvas.locator( selector ).count() ) {
+			return this.editorCanvas.locator( selector );
+		}
+		return null;
 	}
 
 	/**
@@ -186,7 +240,7 @@ export class EditorPage {
 	 * @returns {Locator} Locator corresponding to the selector.
 	 */
 	getLocator( selector: string ): Locator {
-		return this.editor.locator( selector );
+		return this.editorWindow.locator( selector );
 	}
 
 	//#endregion
@@ -257,11 +311,14 @@ export class EditorPage {
 	 */
 	async addBlockFromSidebar(
 		blockName: string,
-		blockEditorSelector: string
+		blockEditorSelector: string,
+		{ noSearch }: { noSearch?: boolean } = {}
 	): Promise< ElementHandle > {
 		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
-		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent );
+		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent, {
+			noSearch: noSearch,
+		} );
 
 		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
 			blockEditorSelector
@@ -311,7 +368,7 @@ export class EditorPage {
 		openInlineInserter: OpenInlineInserter
 	): Promise< ElementHandle > {
 		// First, launch the inline inserter in the way expected by the script.
-		await openInlineInserter( this.editor );
+		await openInlineInserter( this.editorWindow );
 		await this.addBlockFromInserter( blockName, this.editorInlineBlockInserterComponent );
 
 		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
@@ -330,9 +387,12 @@ export class EditorPage {
 	 */
 	private async addBlockFromInserter(
 		blockName: string,
-		inserter: BlockInserter
+		inserter: BlockInserter,
+		{ noSearch }: { noSearch?: boolean } = {}
 	): Promise< void > {
-		await inserter.searchBlockInserter( blockName );
+		if ( ! noSearch ) {
+			await inserter.searchBlockInserter( blockName );
+		}
 		await inserter.selectBlockInserterResult( blockName );
 	}
 
@@ -356,24 +416,22 @@ export class EditorPage {
 	/**
 	 * Adds a pattern from the inline block inserter panel.
 	 *
-	 * Because there are so many different ways to open the inline inserter, this function accepts a function to run first
-	 * that should open the inserter. This allows specs to get to the inserter in the way they need.
+	 * Because there are so many different ways to open the inline inserter,
+	 * this function accepts a Locator to the element that should open the inserter.
 	 *
-	 * The name is expected to be formatted in the same manner as it
-	 * appears on the label when visible in the block inserter panel.
+	 * The name is expected to be formatted identically (including case) to how it
+	 * appears on the label when viewing in the block inserter panel.
 	 *
-	 * Example:
-	 * 		- Two images side by side
-	 *
+	 * @example
+	 * 	- About Me Card
+	 * 	- Contact Info with Map
 	 * @param {string} patternName Name of the pattern to insert as it matches the label in the inserter.
-	 * @param {OpenInlineInserter} openInlineInserter Function to open the inline inserter.
+	 * @param {Locator} inserterLocator Locator to the element that will open the pattern/block inserter when clicked.
 	 */
-	async addPatternInline(
-		patternName: string,
-		openInlineInserter: OpenInlineInserter
-	): Promise< void > {
-		// First, launch the inline inserter in the way expected by the script.
-		await openInlineInserter( this.editor );
+	async addPatternInline( patternName: string, inserterLocator: Locator ): Promise< void > {
+		// Perform a click action on the locator.
+		await inserterLocator.click();
+		// Add the specified pattern from the inserter.
 		await this.addPatternFromInserter( patternName, this.editorInlineBlockInserterComponent );
 	}
 
@@ -389,8 +447,7 @@ export class EditorPage {
 	): Promise< void > {
 		await inserter.searchBlockInserter( patternName );
 		await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
-
-		const insertConfirmationToastLocator = this.editor.locator(
+		const insertConfirmationToastLocator = this.editorWindow.locator(
 			`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
 		);
 		await insertConfirmationToastLocator.waitFor();
@@ -527,7 +584,7 @@ export class EditorPage {
 			this.editorSettingsSidebarComponent.clickTab( 'Page' ),
 			this.editorSettingsSidebarComponent.clickTab( 'Post' ),
 		] );
-		await this.editorSettingsSidebarComponent.expandSection( 'Permalink' );
+		await this.editorSettingsSidebarComponent.expandSection( 'Summary' );
 		await this.editorSettingsSidebarComponent.enterUrlSlug( slug );
 	}
 
@@ -563,39 +620,56 @@ export class EditorPage {
 	//#region Publish, Draft & Schedule
 
 	/**
-	 * Publishes the post or page.
+	 * Publishes the post or page and returns the resulting URL.
+	 *
+	 * If the optional parameter `visit` parameter is specified, the page is navigated
+	 * to the published article.
 	 *
 	 * @param {boolean} visit Whether to then visit the page.
 	 * @returns {URL} Published article's URL.
 	 */
 	async publish( { visit = false }: { visit?: boolean } = {} ): Promise< URL > {
-		// Click on the main publish action button on the toolbar.
-		await this.editorToolbarComponent.clickPublish();
+		const publishButtonText = await this.editorToolbarComponent.getPublishButtonText();
+		const actionsArray = [];
 
-		if ( await this.editorPublishPanelComponent.panelIsOpen() ) {
-			// Invoke the second stage of the publish step which handles the
-			// publish checklist panel if it is present.
-			await this.editorPublishPanelComponent.publish();
+		// Every publish action requires at least one click on the EditorToolbarComponent.
+		actionsArray.push( this.editorToolbarComponent.clickPublish() );
+
+		// Determine whether the post/page is yet to be published or the post/page
+		// is merely being updated.
+		// If not yet published, a second click on the EditorPublishPanelComponent
+		// is added to the array of actions.
+		if ( publishButtonText.toLowerCase() !== 'update' ) {
+			actionsArray.push( this.editorPublishPanelComponent.publish() );
 		}
 
-		// In some cases the post may be published but the EditorPublishPanelComponent
-		// is either not present or forcibly dismissed due to a bug.
-		// eg. publishing a post with some of the Jetpack Earn blocks.
-		// By racing the two methods of obtaining the published article's URL, we can
-		// guarantee that one or the other works.
-		const publishedURL: URL = await Promise.race( [
-			this.editorPublishPanelComponent.getPublishedURL(),
-			this.getPublishedURLFromToast(),
+		// Resolve the promises.
+		const [ response ] = await Promise.all( [
+			// First URL matches Atomic requests while the second matches Simple requests.
+			Promise.race( [
+				this.page.waitForResponse( /v2\/(posts|pages)\/[\d]+/ ),
+				this.page.waitForResponse( /.*v2\/sites\/[\d]+\/(posts|pages)\/[\d]+.*/ ),
+			] ),
+			...actionsArray,
 		] );
 
-		if ( ! publishedURL ) {
-			throw new Error( 'Could not retrieve published post URL' );
+		const json = await response.json();
+
+		// AT and Simple sites have slightly differing response from the API.
+		let publishedURL: string;
+		if ( json.link ) {
+			publishedURL = json.link;
+		} else if ( json.body.link ) {
+			publishedURL = json.body.link;
+		} else {
+			throw new Error( 'No published article URL found in response.' );
 		}
 
 		if ( visit ) {
-			await this.visitPublishedPost( publishedURL.href );
+			await this.visitPublishedPost( publishedURL );
 		}
-		return publishedURL;
+
+		return new URL( publishedURL );
 	}
 
 	/**
@@ -621,28 +695,23 @@ export class EditorPage {
 	async unpublish(): Promise< void > {
 		await this.editorToolbarComponent.switchToDraft();
 
-		const frame = await this.getEditorHandle();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
-		await frame.click( `div[role="dialog"] button:has-text("OK")` );
+		await this.editorWindow.getByRole( 'button' ).getByText( 'OK' ).click();
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
-		await frame.waitForSelector(
-			'.components-editor-notices__snackbar :has-text("Post reverted to draft.")'
-		);
+		await this.editorWindow.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
 	}
 
 	/**
-	 * Obtains the published article's URL from post-publish panels.
+	 * Obtains the published article's URL from the post-publish toast.
 	 *
-	 * This method is only able to obtain the published article's URL if immediately
-	 * preceded by the action of publishing the article *and* the post-publish panel
-	 * being visible.
+	 * This method is only able to obtain the published article's URL if the
+	 * post-publish toast is still visible on the page.
 	 *
+	 * @deprecated Please use the return value from `EditorPage.publish` where possible.
 	 * @returns {URL} Published article's URL.
 	 */
 	async getPublishedURLFromToast(): Promise< URL > {
-		const frame = await this.getEditorHandle();
-
-		const toastLocator = frame.locator( selectors.toastViewPostLink );
+		const toastLocator = this.editorWindow.locator( selectors.toastViewPostLink );
 		const publishedURL = ( await toastLocator.getAttribute( 'href' ) ) as string;
 		return new URL( publishedURL );
 	}
@@ -770,6 +839,7 @@ export class EditorPage {
 			this.page.waitForNavigation( { url: '**/posts/**' } ),
 			this.page.waitForNavigation( { url: '**/pages/**' } ),
 			this.page.waitForNavigation( { url: '**/wp-admin/edit**' } ),
+			this.page.waitForNavigation( { url: '**/write/launchpad**' } ),
 		] );
 		const actions: Promise< unknown >[] = [ navigationPromise ];
 
@@ -797,13 +867,6 @@ export class EditorPage {
 		this.page.once( 'dialog', async ( dialog ) => {
 			await dialog.accept();
 		} );
-	}
-
-	/**
-	 * Opens the post details popover (i.e. number of character, words, etc.).
-	 */
-	async openDetailsPopover(): Promise< void > {
-		await this.editorToolbarComponent.openDetailsPopover();
 	}
 
 	/**

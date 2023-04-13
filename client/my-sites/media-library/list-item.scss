@@ -17,7 +17,6 @@
 		transition: color 90ms ease;
 		box-shadow: 0 0 8px rgba(var(--color-neutral-70-rgb), 0.4);
 		background: var(--color-accent);
-		/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 		border-radius: 50%;
 		font-size: $font-body-small;
 		line-height: 28px;
@@ -97,6 +96,21 @@
 
 .media-library__list-item-spinner .spinner__border {
 	fill: transparent;
+}
+
+.media-library__list-item-progress {
+	position: inherit;
+	z-index: z-index(".media-library__list-item", ".media-library__list-item-progress");
+
+	.progress-bar {
+		display: block;
+		border-radius: 0;
+
+		.progress-bar__progress {
+			border-radius: 0;
+			background-color: var(--color-accent);
+		}
+	}
 }
 
 .media-library__list-item-centered {

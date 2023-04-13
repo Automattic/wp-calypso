@@ -15,3 +15,8 @@
 	font-size: $font-body-extra-small;
 	color: var(--color-text-subtle);
 }
+
+.form-setting-explanation.with-icon svg {
+	position: relative;
+	top: 7px;
+}

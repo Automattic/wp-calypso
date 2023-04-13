@@ -43,16 +43,38 @@ export type NavigationControls = {
 	exitFlow?: ( to: string ) => void;
 };
 
-export type StepperStep = {
+export type DeprecatedStepperStep = {
 	/**
 	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
 	 */
 	slug: string;
 	/**
-	 * The component that will be rendered for this step
+	 * @deprecated Use asyncComponent instead. The component that will be rendered for this step. This variation is deprecated and will be removed in the future. Please use async loaded steps instead
+	 *
+	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
 	 */
 	component: React.FC< StepProps >;
 };
+
+export type AsyncStepperStep = {
+	/**
+	 * The step slug is what appears as part of the pathname. Eg the intro in /setup/link-in-bio/intro
+	 */
+	slug: string;
+	/**
+	 * The Async loaded component that will be rendered for this step
+	 *
+	 * It should look like this: component: () => import( './internals/steps-repository/newsletter-setup' )
+	 */
+	asyncComponent: () => Promise< { default: React.FC< StepProps > } >;
+};
+
+export type StepperStep = DeprecatedStepperStep | AsyncStepperStep;
+
+export type Navigate< FlowSteps extends StepperStep[] > = (
+	stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
+	extraData?: any
+) => void;
 
 /**
  * This is the return type of useSteps hook
@@ -61,17 +83,23 @@ export type UseStepsHook = () => StepperStep[];
 
 export type UseStepNavigationHook< FlowSteps extends StepperStep[] > = (
 	currentStepSlug: FlowSteps[ number ][ 'slug' ],
-	navigate: (
-		stepName: FlowSteps[ number ][ 'slug' ] | `${ FlowSteps[ number ][ 'slug' ] }?${ string }`,
-		extraData?: any
-	) => void,
+	navigate: Navigate< FlowSteps >,
 	steps?: FlowSteps[ number ][ 'slug' ][]
 ) => NavigationControls;
 
 export type UseAssertConditionsHook = () => AssertConditionResult;
 
+export type UseSideEffectHook< FlowSteps extends StepperStep[] > = (
+	currentStepSlug: FlowSteps[ number ][ 'slug' ],
+	navigate: Navigate< FlowSteps >
+) => void;
+
 export type Flow = {
 	name: string;
+	/**
+	 * If this flow extends another flow, the variant slug will be added as a class name to the root element of the flow.
+	 */
+	variantSlug?: string;
 	title?: string;
 	classnames?: string | [ string ];
 	useSteps: UseStepsHook;
@@ -80,13 +108,17 @@ export type Flow = {
 	/**
 	 * A hook that is called in the flow's root at every render. You can use this hook to setup side-effects, call other hooks, etc..
 	 */
-	useSideEffect?: () => void;
+	useSideEffect?: UseSideEffectHook< ReturnType< Flow[ 'useSteps' ] > >;
 };
 
 export type StepProps = {
 	navigation: NavigationControls;
-	stepName?: string | null;
+	stepName: string;
 	flow: string | null;
+	/**
+	 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
+	 */
+	variantSlug?: string;
 	data?: Record< string, unknown >;
 };
 
@@ -104,3 +136,17 @@ export type AssertConditionResult = {
 	state: AssertConditionState;
 	message?: string;
 };
+
+export interface Plugin {
+	slug: string;
+}
+
+export interface PluginsResponse {
+	plugins: Plugin[];
+}
+
+export interface FailureInfo {
+	type: string;
+	code: number | string;
+	error: string;
+}

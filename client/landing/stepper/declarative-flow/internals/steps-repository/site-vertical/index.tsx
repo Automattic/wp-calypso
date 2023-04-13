@@ -12,6 +12,7 @@ import { useSite } from '../../../../hooks/use-site';
 import { SITE_STORE } from '../../../../stores';
 import SiteVerticalForm from './form';
 import type { Step } from '../../types';
+import type { SiteSelect } from '@automattic/data-stores';
 import type { Vertical } from 'calypso/components/select-vertical/types';
 
 const SiteVertical: Step = function SiteVertical( { navigation } ) {
@@ -21,7 +22,9 @@ const SiteVertical: Step = function SiteVertical( { navigation } ) {
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 	const site = useSite();
 	const siteVertical = useSelect(
-		( select ) => ( site && select( SITE_STORE ).getSiteVerticalId( site?.ID ) ) || undefined
+		( select ) =>
+			( site && ( select( SITE_STORE ) as SiteSelect ).getSiteVerticalId( site?.ID ) ) || undefined,
+		[ site ]
 	);
 	const translate = useTranslate();
 	const headerText = translate( 'What’s your website about?' );

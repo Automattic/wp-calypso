@@ -6,18 +6,18 @@ export default { title: 'wpcom-tour-kit' };
 
 const References = () => {
 	return (
-		<div className={ 'storybook__tourkit-references' }>
-			<div className={ 'storybook__tourkit-references-container' }>
-				<div className={ 'storybook__tourkit-references-a' }>
+		<div className="storybook__tourkit-references">
+			<div className="storybook__tourkit-references-container">
+				<div className="storybook__tourkit-references-a">
 					<p>Reference A</p>
 				</div>
-				<div className={ 'storybook__tourkit-references-b' }>
+				<div className="storybook__tourkit-references-b">
 					<p>Reference B</p>
 				</div>
-				<div className={ 'storybook__tourkit-references-c' }>
+				<div className="storybook__tourkit-references-c">
 					<p>Reference C</p>
 				</div>
-				<div className={ 'storybook__tourkit-references-d' }>
+				<div className="storybook__tourkit-references-d">
 					<p>Reference D</p>
 				</div>
 			</div>

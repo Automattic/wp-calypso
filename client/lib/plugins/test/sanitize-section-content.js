@@ -12,7 +12,7 @@ import {
  * Attempts to create a DOM node from given HTML
  *
  * @param {string} html expected HTML to create node
- * @returns {object | null} possible node described by HTML
+ * @returns {Object | null} possible node described by HTML
  */
 const jsdomWindow = new JSDOM().window;
 const cleanNode = ( html ) => {

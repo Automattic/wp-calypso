@@ -5,6 +5,7 @@ import debugFactory from 'debug';
 import { useCallback, useContext } from 'react';
 import CheckoutContext from '../lib/checkout-context';
 import joinClasses from '../lib/join-classes';
+import { useAvailablePaymentMethodIds } from '../lib/payment-methods';
 import {
 	useAllPaymentMethods,
 	usePaymentMethod,
@@ -132,6 +133,7 @@ function PaymentMethod( {
 	ariaLabel,
 	summary,
 }: PaymentMethodProps ) {
+	const availablePaymentMethodIds = useAvailablePaymentMethodIds();
 	const { formStatus } = useFormStatus();
 	if ( summary ) {
 		return <>{ inactiveContent && inactiveContent }</>;
@@ -144,6 +146,7 @@ function PaymentMethod( {
 			id={ id }
 			checked={ checked }
 			disabled={ formStatus !== FormStatus.READY }
+			hidden={ ! availablePaymentMethodIds.includes( id ) }
 			onChange={ onClick ? () => onClick( id ) : undefined }
 			ariaLabel={ ariaLabel }
 			label={ label }

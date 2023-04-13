@@ -5,7 +5,7 @@ import 'calypso/state/purchases/init';
 /**
  * Return the details of any premium themes the user has purchased
  *
- * @param  {object}  state       global state
+ * @param  {Object}  state       global state
  * @returns {Array} Details of any premium themes the user has purchased
  */
 export const getUserPurchasedPremiumThemes = ( state ) => {

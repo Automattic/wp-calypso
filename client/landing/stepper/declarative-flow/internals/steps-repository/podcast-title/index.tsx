@@ -9,12 +9,13 @@ import { useState, useRef, useEffect } from 'react';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInput from 'calypso/components/forms/form-text-input';
-import getTextWidth from 'calypso/landing/gutenboarding/onboarding-block/acquire-intent/get-text-width';
 import usePodcastTitle from 'calypso/landing/stepper/hooks/use-podcast-title';
 import { ONBOARD_STORE, USER_STORE } from 'calypso/landing/stepper/stores';
+import getTextWidth from 'calypso/landing/stepper/utils/get-text-width';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { tip } from 'calypso/signup/icons';
 import type { Step } from '../../types';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 import './style.scss';
 
 const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
@@ -24,9 +25,18 @@ const PodcastTitleStep: Step = function PodcastTitleStep( { navigation } ) {
 	const PodcastTitleForm: React.FC = () => {
 		//Get the podcast title from the API
 		const podcastTitle = usePodcastTitle();
-		const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
-		const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-		const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
+		const { siteTitle } = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getState(),
+			[]
+		);
+		const currentUser = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+			[]
+		);
+		const newUser = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).getNewUser(),
+			[]
+		);
 		const hasSiteTitle = siteTitle.length > 0;
 		const { setSiteTitle } = useDispatch( ONBOARD_STORE );
 		const [ formTouched, setFormTouched ] = useState( false );

@@ -17,9 +17,6 @@ export const plansSlugs = [
 	TIMELESS_PLAN_ECOMMERCE,
 ] as const;
 
-// order of the plans used to determine recommended plan based on features
-export const plansOrder = plansSlugs;
-
 export const DEFAULT_PAID_PLAN = TIMELESS_PLAN_PREMIUM;
 
 // plan products constants
@@ -33,6 +30,7 @@ export const PLAN_PERSONAL_MONTHLY = 'personal-bundle-monthly';
 export const PLAN_PREMIUM_MONTHLY = 'value_bundle_monthly';
 export const PLAN_BUSINESS_MONTHLY = 'business-bundle-monthly';
 export const PLAN_ECOMMERCE_MONTHLY = 'ecommerce-bundle-monthly';
+export const PLAN_ECOMMERCE_TRIAL_MONTHLY = 'ecommerce-trial-bundle-monthly';
 
 export const annualSlugs = [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ] as const;
 
@@ -41,6 +39,7 @@ export const monthlySlugs = [
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 ] as const;
 
 export const plansProductSlugs = [ PLAN_FREE, ...annualSlugs, ...monthlySlugs ] as const;
@@ -50,3 +49,15 @@ export const FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN = [
 	'support-live',
 	'priority-support',
 ];
+
+export const PLAN_MONTHLY_PERIOD = 31;
+export const PLAN_ANNUAL_PERIOD = 365;
+export const PLAN_BIENNIAL_PERIOD = 730;
+export const PLAN_TRIENNIAL_PERIOD = 1095;
+
+export const PERIOD_LIST = [
+	PLAN_MONTHLY_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
+] as const;

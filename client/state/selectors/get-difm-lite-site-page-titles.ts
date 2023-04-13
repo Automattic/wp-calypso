@@ -6,7 +6,7 @@ import type { AppState, SiteId } from 'calypso/types';
  * Returns the pages selected by the user in the DIFM Lite
  * signup flow.  Returns null if the the data is no available
  *
- * @param  {object}   state  Global state tree
+ * @param  {Object}   state  Global state tree
  * @param  {number}   siteId Site ID
  * @returns {Array}   The selected site category
  */

@@ -12,7 +12,7 @@ export function getSignupProgress( state: any ): ProgressState {
 /**
  * Returns true if a plans step exists and is skipped in the current signup progress
  *
- * @param   {object}  state The current client state
+ * @param   {Object}  state The current client state
  * @returns  {boolean} denoting whether the plans step existed AND it was skipped
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

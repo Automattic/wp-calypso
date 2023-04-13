@@ -2,7 +2,7 @@
  * Does a domain have a G Suite account where the terms of service
  * need to be accepted.
  *
- * @param {object} domain - domain object
+ * @param {Object} domain - domain object
  * @returns {boolean} - Does domain have a G Suite account pending ToS acceptance
  */
 export function isPendingGSuiteTOSAcceptance( domain ) {

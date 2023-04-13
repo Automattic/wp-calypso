@@ -1,10 +1,11 @@
 import 'calypso/state/signup/init';
-import { initialState, WebsiteContentCollection, MEDIA_UPLOAD_STATES } from './schema';
+import { initialState, MEDIA_UPLOAD_STATES } from './constants';
+import type { WebsiteContentCollectionState } from './types';
 
 export interface WebsiteContentStateModel {
 	signup: {
 		steps: {
-			websiteContentCollection: WebsiteContentCollection;
+			websiteContentCollection: WebsiteContentCollectionState;
 		};
 	};
 }
@@ -32,4 +33,8 @@ export function isMediaUploadInProgress( state: WebsiteContentStateModel ) {
 		Object.values( pageImages )
 	);
 	return allStates.some( ( s ) => MEDIA_UPLOAD_STATES.UPLOAD_STARTED === s );
+}
+
+export function hasUnsavedChanges( state: WebsiteContentStateModel ): boolean {
+	return state.signup?.steps?.websiteContentCollection?.hasUnsavedChanges;
 }

@@ -7,7 +7,7 @@ import 'calypso/state/themes/init';
 /**
  * Returns the URL for purchasing the given theme for the given site.
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {number}  siteId  Site ID for which to buy the theme
  * @returns {?string}         Theme purchase URL

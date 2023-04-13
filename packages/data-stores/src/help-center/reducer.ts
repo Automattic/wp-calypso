@@ -1,24 +1,14 @@
+import { InitialEntry } from '@remix-run/router';
 import { combineReducers } from '@wordpress/data';
 import { SiteDetails } from '../site';
 import type { HelpCenterAction } from './actions';
-import type { Location, HelpCenterSite } from './types';
+import type { HelpCenterSite } from './types';
 import type { Reducer } from 'redux';
 
 const showHelpCenter: Reducer< boolean | undefined, HelpCenterAction > = ( state, action ) => {
 	switch ( action.type ) {
 		case 'HELP_CENTER_SET_SHOW':
 			return action.show;
-	}
-	return state;
-};
-
-const hasSeenPromotionalPopover: Reducer< boolean | undefined, HelpCenterAction > = (
-	state,
-	action
-) => {
-	switch ( action.type ) {
-		case 'HELP_CENTER_SET_SEEN_PROMOTIONAL_POPOVER':
-			return action.value;
 	}
 	return state;
 };
@@ -78,6 +68,15 @@ const message: Reducer< string | undefined, HelpCenterAction > = ( state, action
 	return state;
 };
 
+const chatTag: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
+		return undefined;
+	} else if ( action.type === 'HELP_CENTER_SET_CHAT_TAG' ) {
+		return action.chatTag;
+	}
+	return state;
+};
+
 const userDeclaredSiteUrl: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_RESET_STORE' ) {
 		return undefined;
@@ -111,13 +110,9 @@ const iframe: Reducer< HTMLIFrameElement | undefined | null, HelpCenterAction > 
 	return state;
 };
 
-const routerState: Reducer< { history: Location[] | undefined; index: number | undefined } > = (
-	state = { history: undefined, index: undefined },
-	action
-) => {
-	switch ( action.type ) {
-		case 'HELP_CENTER_SET_ROUTER_STATE':
-			return { history: action.history, index: action.index };
+const initialRoute: Reducer< InitialEntry | undefined, HelpCenterAction > = ( state, action ) => {
+	if ( action.type === 'HELP_CENTER_SET_INITIAL_ROUTE' ) {
+		return action.route;
 	}
 	return state;
 };
@@ -127,14 +122,14 @@ const reducer = combineReducers( {
 	site,
 	subject,
 	message,
+	chatTag,
 	userDeclaredSite,
 	userDeclaredSiteUrl,
-	hasSeenPromotionalPopover,
 	hasSeenWhatsNewModal,
 	isMinimized,
 	unreadCount,
 	iframe,
-	routerState,
+	initialRoute,
 } );
 
 export type State = ReturnType< typeof reducer >;

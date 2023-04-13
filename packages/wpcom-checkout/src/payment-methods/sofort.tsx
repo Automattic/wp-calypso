@@ -16,20 +16,15 @@ import type {
 	StoreState,
 } from '../payment-method-store';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:sofort-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-type StoreKey = 'sofort';
 type NounsInStore = 'customerName';
 type SofortStore = PaymentMethodStore< NounsInStore >;
-
-declare module '@wordpress/data' {
-	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
-	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
-}
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
@@ -43,6 +38,17 @@ const selectors: StoreSelectorsWithState< NounsInStore > = {
 	},
 };
 
+function useCustomerName() {
+	const { customerName } = useSelect( ( select ) => {
+		const store = select( 'sofort' ) as StoreSelectors< NounsInStore >;
+		return {
+			customerName: store.getCustomerName(),
+		};
+	}, [] );
+
+	return customerName;
+}
+
 export function createSofortPaymentMethodStore(): SofortStore {
 	debug( 'creating a new sofort payment method store' );
 	const store = registerStore( 'sofort', {
@@ -50,7 +56,7 @@ export function createSofortPaymentMethodStore(): SofortStore {
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
-			action
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
@@ -80,7 +86,7 @@ export function createSofortMethod( { store }: { store: SofortStore } ): Payment
 function SofortFields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'sofort' ).getCustomerName() );
+	const customerName = useCustomerName();
 	const { changeCustomerName } = useDispatch( 'sofort' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -142,7 +148,7 @@ function SofortPayButton( {
 } ) {
 	const total = useTotal();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'sofort' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -186,7 +192,7 @@ function ButtonContents( { formStatus, total }: { formStatus: FormStatus; total:
 }
 
 function SofortSummary() {
-	const customerName = useSelect( ( select ) => select( 'sofort' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	return (
 		<SummaryDetails>

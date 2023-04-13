@@ -30,7 +30,7 @@ const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
 	const locale = useLocale();
 
 	const { data, isLoading } = useQuery< WhatsNewAnnouncement[] >(
-		'WhatsNewAnnouncements',
+		[ 'WhatsNewAnnouncements' ],
 		async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {

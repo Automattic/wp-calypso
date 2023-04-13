@@ -19,7 +19,7 @@ import { getSitePost } from 'calypso/state/posts/selectors';
  * @param   {string}           commentText     text of the comment
  * @param   {number}           postId          post identifier
  * @param   {number|undefined} parentCommentId parent comment identifier
- * @returns {object}                           comment placeholder
+ * @returns {Object}                           comment placeholder
  */
 export const createPlaceholderComment = ( commentText, postId, parentCommentId ) => ( {
 	ID: 'placeholder-' + new Date().getTime(),
@@ -38,7 +38,7 @@ export const createPlaceholderComment = ( commentText, postId, parentCommentId )
  * We need placeholder id to be unique in the context of siteId and postId for that specific user,
  * date milliseconds will do for that purpose.
  *
- * @param {object}   action   redux action
+ * @param {Object}   action   redux action
  * @param {string}   path     comments resource path
  * @returns {Array}	actions
  */
@@ -76,7 +76,7 @@ export const dispatchNewCommentRequest = ( action, path ) => {
  * updates the placeholder comments with server values
  *
  * @param {Function} dispatch redux dispatcher
- * @param {object}   comment  updated comment from the request response
+ * @param {Object}   comment  updated comment from the request response
  * @returns {Function} thunk
  */
 export const updatePlaceholderComment = (
@@ -113,12 +113,12 @@ export const updatePlaceholderComment = (
 /**
  * dispatches a error notice if creating a new comment request failed
  *
- * @param {object}   action   redux action
+ * @param {Object}   action   redux action
  * @param {number} action.siteId
  * @param {number} action.postId
  * @param {number} action.parentCommentId
  * @param {number} action.placeholderId
- * @param {object} rawError plain error object
+ * @param {Object} rawError plain error object
  * @returns {Function} thunk
  */
 export const handleWriteCommentFailure =

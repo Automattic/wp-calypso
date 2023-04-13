@@ -27,7 +27,7 @@ describe( 'Theme', () => {
 		describe( 'with default display buttonContents', () => {
 			test( 'should render an element with a className of "theme"', () => {
 				const { container } = render( <Theme { ...props } /> );
-				expect( container.firstChild ).toHaveClass( 'theme', 'is-actionable' );
+				expect( container.firstChild ).toHaveClass( 'theme-card--is-actionable' );
 				expect( container.getElementsByTagName( 'h2' )[ 0 ] ).toHaveTextContent(
 					'Twenty Seventeen'
 				);
@@ -95,15 +95,6 @@ describe( 'Theme', () => {
 			const { container } = render( <Theme { ...props } theme={ theme } isPlaceholder /> );
 
 			expect( container.firstChild ).toHaveClass( 'is-placeholder' );
-		} );
-	} );
-
-	describe( 'when the theme has a price', () => {
-		test( 'should show a price', () => {
-			const { container } = render( <Theme { ...props } price="$50" active /> );
-			expect( container.getElementsByClassName( 'theme__badge-price' )[ 0 ].textContent ).toBe(
-				'$50'
-			);
 		} );
 	} );
 

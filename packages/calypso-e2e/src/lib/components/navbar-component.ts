@@ -59,11 +59,6 @@ export class NavbarComponent {
 	async openNotificationsPanel( {
 		useKeyboard = false,
 	}: { useKeyboard?: boolean } = {} ): Promise< void > {
-		await Promise.all( [
-			this.page.waitForLoadState( 'networkidle', { timeout: 20 * 1000 } ),
-			this.page.waitForResponse( /async-load-calypso-blocks-jitm.*/, { timeout: 20 * 1000 } ),
-		] );
-
 		if ( useKeyboard ) {
 			return await this.page.keyboard.type( 'n' );
 		}

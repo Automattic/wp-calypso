@@ -5,7 +5,7 @@ import { isJetpackSite } from 'calypso/state/sites/selectors';
 /**
  * Returns true if the user has one or more Jetpack sites, and false otherwise.
  *
- * @param {object} state  Global state tree
+ * @param {Object} state  Global state tree
  * @returns {boolean} Whether Jetpack sites exist or not
  */
 export default createSelector( ( state ) => {

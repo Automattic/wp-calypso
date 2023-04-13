@@ -8,7 +8,7 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
  * means of retrieving full purchase information based on a site and its plan information.
  * Caution! It _does not_ retrieve the ID from a purchase.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
  * @returns {?number}        Purchase ID if known
  */

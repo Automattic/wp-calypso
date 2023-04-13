@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import AddOnCard from './add-ons-card';
-import type { AddOnMeta } from '../hooks/use-add-ons';
 import type { Props as CardProps } from './add-ons-card';
+import type { AddOnMeta } from '../hooks/use-add-ons';
 
 interface Props extends Omit< CardProps, 'addOnMeta' > {
 	addOns: ( AddOnMeta | null )[];

@@ -53,18 +53,20 @@ exports[`JetpackAuthorize renders as expected 1`] = `
             class="formatted-header"
             id=""
           >
-            <h1
-              class="formatted-header__title"
-            >
-              Create an account to set up Jetpack
-               
-              
-            </h1>
-            <p
-              class="formatted-header__subtitle"
-            >
-              You are moments away from a better WordPress.
-            </p>
+            <div>
+              <h1
+                class="formatted-header__title"
+              >
+                Create an account to set up Jetpack
+                 
+                
+              </h1>
+              <p
+                class="formatted-header__subtitle"
+              >
+                You are moments away from a better WordPress.
+              </p>
+            </div>
           </header>
           <div
             class="card jetpack-connect__site is-compact"

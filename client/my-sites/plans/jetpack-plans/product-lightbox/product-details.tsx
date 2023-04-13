@@ -1,9 +1,8 @@
-import config from '@automattic/calypso-config';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
 import { useLayoutEffect, useRef, useState } from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
-import getIncludedProductDescriptionMap from '../product-store/utils/get-included-product-description-map';
+import { useIncludedProductDescriptionMap } from '../product-store/hooks/use-included-product-description-map';
 import { SelectorProduct } from '../types';
 import DescriptionList from './description-list';
 import IncludedProductList from './included-product-list';
@@ -29,17 +28,14 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 		setContentStyle( { maxHeight: `${ height }px` } );
 	}, [ setContentStyle ] );
 
-	// Should be removed once translations are ready.
-	const isEnglishLocale = config< Array< string | undefined > >( 'english_locales' ).includes(
-		translate.localeSlug
-	);
+	const descriptionMap = useIncludedProductDescriptionMap( product.productSlug );
 
 	return (
 		<>
-			{ product.productsIncluded && isEnglishLocale ? (
+			{ product.productsIncluded ? (
 				<IncludedProductList
 					products={ product.productsIncluded }
-					descriptionMap={ getIncludedProductDescriptionMap( product.productSlug ) }
+					descriptionMap={ descriptionMap }
 				/>
 			) : (
 				productDetails.map( ( { type, title, items }, index, infoList ) => (

@@ -1,0 +1,32 @@
+.help-center .inline-help__launchpad-container {
+
+	display: block;
+	margin-bottom: 24px;
+	border-radius: 2px;
+	border: 1px solid var(--studio-gray-10);
+	cursor: pointer;
+
+	&:hover {
+		background: #f9f9f9;
+	}
+
+	.inline-help__launchpad-link {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 16px;
+		text-decoration: none;
+		color: var(--studio-gray-100);
+		padding: 16px;
+
+		.circular__progress-bar {
+			.circular__progress-bar-text {
+				display: none;
+			}
+		}
+
+		.inline-help-launchpad-link-text {
+			font-size: 0.875rem;
+		}
+	}
+}

@@ -4,7 +4,6 @@ import {
 	isWpComMonthlyPlan,
 } from '@automattic/calypso-products';
 import { WPCOM_FEATURES_BACKUPS } from '@automattic/calypso-products/src';
-import { getCurrencyDefaults } from '@automattic/format-currency';
 import { SUPPORT_HAPPYCHAT } from '@automattic/help-center';
 import { Button as GutenbergButton, CheckboxControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
@@ -301,7 +300,11 @@ class CancelPurchaseForm extends Component {
 	getRefundAmount = () => {
 		const { purchase } = this.props;
 		const { refundOptions, currencyCode } = purchase;
-		const { precision } = getCurrencyDefaults( currencyCode );
+		const defaultFormatter = new Intl.NumberFormat( 'en-US', {
+			style: 'currency',
+			currency: currencyCode,
+		} );
+		const precision = defaultFormatter.resolvedOptions().maximumFractionDigits;
 		const refundAmount =
 			isRefundable( purchase ) && refundOptions?.[ 0 ]?.refund_amount
 				? refundOptions[ 0 ].refund_amount
@@ -648,6 +651,37 @@ class CancelPurchaseForm extends Component {
 		return translate( 'Cancel product' );
 	}
 
+	getCanceledProduct() {
+		const {
+			purchase: { productSlug, productName, meta },
+			site: { slug },
+			translate,
+		} = this.props;
+		const headerTitle = this.getHeaderTitle();
+		switch ( productSlug ) {
+			case 'domain_map':
+				/* 	Translators: If canceled product is domain connection,
+					displays canceled product and domain connection being canceled
+					eg: "Remove product: Domain Connection for externaldomain.com" */
+				return translate( '%(headerTitle)s: %(productName)s for %(purchaseMeta)s', {
+					args: { headerTitle, productName, purchaseMeta: meta },
+				} );
+			case 'offsite_redirect':
+				/* 	Translators: If canceled product is site redirect,
+					displays canceled product and domain site is being directed to 
+					eg: "Remove product: Site Redirect to redirectedsite.com" */
+				return translate( '%(headerTitle)s: %(productName)s to %(purchaseMeta)s', {
+					args: { headerTitle, productName, purchaseMeta: meta },
+				} );
+			default:
+				/* Translators: If canceled product is site plan or other product,
+					displays plan or product being canceled and primary address of product being canceled 
+					eg: "Cancel plan: WordPress.com Business for primarydomain.com" */
+				return translate( '%(headerTitle)s: %(productName)s for %(siteSlug)s', {
+					args: { headerTitle, productName, siteSlug: slug },
+				} );
+		}
+	}
 	render() {
 		const { isChatActive, isChatAvailable, purchase, site, supportVariation } = this.props;
 		const { surveyStep } = this.state;
@@ -666,8 +700,11 @@ class CancelPurchaseForm extends Component {
 				{ this.props.isVisible && (
 					<BlankCanvas className="cancel-purchase-form">
 						<BlankCanvas.Header onBackClick={ this.closeDialog }>
-							{ this.getHeaderTitle() }
-							<span className="cancel-purchase-form__site-slug">{ site.slug }</span>
+							{ site && (
+								<span className="cancel-purchase-form__site-slug">
+									{ this.getCanceledProduct() }
+								</span>
+							) }
 							{ shouldShowChatButton && (
 								<PrecancellationChatButton
 									icon="chat_bubble"

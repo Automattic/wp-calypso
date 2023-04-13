@@ -6,7 +6,8 @@ import { sprintf } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import classnames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
-import React, { ChangeEvent, FormEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -31,6 +32,22 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	const [ submitted, setSubmitted ] = useState( false );
 	const exampleInputWebsite = 'www.artfulbaker.blog';
 	const showValidationMsg = hasError || ( submitted && ! isValid );
+	const { search } = useLocation();
+
+	useEffect( () => checkInitSubmissionState(), [] );
+
+	function checkInitSubmissionState() {
+		const urlValue = new URLSearchParams( search ).get( 'from' ) || '';
+		if ( urlValue ) {
+			const isValid = CAPTURE_URL_RGX.test( urlValue );
+			if ( isValid ) {
+				onInputEnter( urlValue );
+				setSubmitted( true );
+			} else {
+				setUrlValue( urlValue );
+			}
+		}
+	}
 
 	function validateUrl( url: string ) {
 		const isValid = CAPTURE_URL_RGX.test( url );

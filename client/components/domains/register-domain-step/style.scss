@@ -271,6 +271,11 @@ body.is-section-signup.is-white-signup {
 			@include break-mobile {
 				padding: 0.65em 2.8em;
 			}
+
+			&:focus {
+				border-color: var(--color-primary);
+				box-shadow: 0 0 0 2px var(--color-primary-light);
+			}
 		}
 	}
 }
@@ -347,3 +352,29 @@ body.is-section-signup.is-white-signup {
 	overflow: hidden;
 }
 
+.is-domain-plan-package-flow {
+
+	.register-domain-step {
+		box-shadow: none;
+		background: var(--color-body-background);
+	}
+
+	.search-filters__dropdown-filters {
+		border-color: transparent;
+	}
+
+	.register-domain-step__domains-quickfilter-group {
+
+		@include break-large {
+			display: flex;
+		}
+
+		.components-button {
+			&.is-pressed {
+				&::before {
+					border-radius: 4px;
+				}
+			}
+		}
+	}
+}

@@ -6,9 +6,9 @@ import 'calypso/state/themes/init';
  * Returns the last queryable page of themes for the given query, or null if the
  * total number of queryable themes if unknown.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId Site ID
- * @param  {object}  query  Theme query object
+ * @param  {Object}  query  Theme query object
  * @returns {?number}        Last themes page
  */
 export function getThemesLastPageForQuery( state, siteId, query ) {

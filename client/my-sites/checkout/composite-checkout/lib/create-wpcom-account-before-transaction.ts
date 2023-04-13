@@ -10,11 +10,33 @@ export async function createWpcomAccountBeforeTransaction(
 	const isJetpackUserLessCheckout = transactionCart.products.some(
 		( product ) => product.extra.isJetpackCheckout
 	);
+	const isAkismetUserLessCheckout = transactionCart.products.some(
+		( product ) => product.extra.isAkismetSitelessCheckout
+	);
+	const isGiftingCheckout = transactionCart.products.some(
+		( product ) => product.extra.isGiftPurchase
+	);
 
+	const signupFlowName = ( () => {
+		if ( isJetpackUserLessCheckout ) {
+			return 'jetpack-userless-checkout';
+		}
+		if ( isAkismetUserLessCheckout ) {
+			return 'akismet-userless-checkout';
+		}
+		if ( isGiftingCheckout ) {
+			return 'gifting-userless-checkout';
+		}
+
+		return 'onboarding-registrationless';
+	} )();
+
+	/*
+	 * We treat Gifting as jetpack-userless-checkout to create and verify the user
+	 * on success checkout.
+	 */
 	return createAccount( {
-		signupFlowName: isJetpackUserLessCheckout
-			? 'jetpack-userless-checkout'
-			: 'onboarding-registrationless',
+		signupFlowName,
 		email: transactionOptions.contactDetails?.email?.value,
 		siteId: transactionOptions.siteId,
 		recaptchaClientId: transactionOptions.recaptchaClientId,
@@ -38,7 +60,6 @@ export async function createWpcomAccountBeforeTransaction(
 			...transactionCart,
 			blog_id: siteId ? String( siteId ) : '0',
 			cart_key: ( siteId ? siteId : 'no-site' ) as CartKey,
-			create_new_blog: siteId ? false : true,
 		};
 	} );
 }

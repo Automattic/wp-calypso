@@ -18,6 +18,7 @@ import {
 	CheckoutFormSubmit,
 	PaymentMethodStep,
 } from '@automattic/composite-checkout';
+import { isHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -34,18 +35,24 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
+import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
@@ -64,7 +71,7 @@ import WPContactFormSummary from './wp-contact-form-summary';
 import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { CountryListItem, ManagedContactDetails } from '@automattic/wpcom-checkout';
+import type { CountryListItem } from '@automattic/wpcom-checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -143,6 +150,7 @@ export default function WPCheckout( {
 	areThereErrors,
 	isInitialCartLoading,
 	customizedPreviousPath,
+	useVariantPickerRadioButtons,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changePlanLength: OnChangeItemVariant;
@@ -159,6 +167,8 @@ export default function WPCheckout( {
 	areThereErrors: boolean;
 	isInitialCartLoading: boolean;
 	customizedPreviousPath?: string;
+	// This is just for unit tests.
+	useVariantPickerRadioButtons?: boolean;
 } ) {
 	const cartKey = useCartKey();
 	const {
@@ -178,18 +188,15 @@ export default function WPCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo: ManagedContactDetails = useSelect( ( sel ) =>
-		sel( 'wpcom-checkout' ).getContactInfo()
-	);
+	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 
-	const {
-		touchContactFields,
-		applyDomainContactValidationResults,
-		clearDomainContactErrorMessages,
-	} = useDispatch( 'wpcom-checkout' );
+	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
+	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
+
+	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
-		useState( false );
+		useState( true );
 
 	// The "Summary" view is displayed in the sidebar at desktop (wide) widths
 	// and before the first step at mobile (smaller) widths. At smaller widths it
@@ -218,12 +225,12 @@ export default function WPCheckout( {
 		? String( translate( 'Updating cart…' ) )
 		: String( translate( 'Please wait…' ) );
 
-	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
+	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
 	const previousPath = useSelector( getPreviousRoute );
 	const goToPreviousPage = () =>
 		leaveCheckout( {
 			siteSlug: siteUrl,
-			jetpackCheckoutBackUrl,
+			forceCheckoutBackUrl,
 			previousPath: customizedPreviousPath || previousPath,
 			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
 		} );
@@ -245,6 +252,16 @@ export default function WPCheckout( {
 		return true;
 	};
 
+	if ( ! checkoutActions ) {
+		return null;
+	}
+
+	const {
+		touchContactFields,
+		applyDomainContactValidationResults,
+		clearDomainContactErrorMessages,
+	} = checkoutActions;
+
 	const isWcMobile = isWcMobileApp();
 
 	if ( transactionStatus === TransactionStatus.COMPLETE ) {
@@ -253,6 +270,7 @@ export default function WPCheckout( {
 			<MainContentWrapper>
 				<NonCheckoutContentWrapper>
 					<NonCheckoutContentInnerWrapper>
+						<PerformanceTrackerStop />
 						<CheckoutCompleteRedirecting />
 						<SubmitButtonWrapper>
 							<Button buttonType="primary" fullWidth isBusy disabled>
@@ -279,6 +297,7 @@ export default function WPCheckout( {
 			<MainContentWrapper>
 				<NonCheckoutContentWrapper>
 					<NonCheckoutContentInnerWrapper>
+						<PerformanceTrackerStop />
 						<EmptyCart />
 						<SubmitButtonWrapper>
 							<Button buttonType="primary" fullWidth onClick={ goToPreviousPage }>
@@ -311,7 +330,7 @@ export default function WPCheckout( {
 								{ total.amount.displayValue }
 							</CheckoutSummaryTitlePrice>
 						</CheckoutSummaryTitleLink>
-						<CheckoutSummaryBody>
+						<CheckoutSummaryBody className="checkout__summary-body">
 							<WPCheckoutOrderSummary
 								siteId={ siteId }
 								onChangePlanLength={ changePlanLength }
@@ -330,6 +349,7 @@ export default function WPCheckout( {
 				</CheckoutSummaryArea>
 			}
 		>
+			<PerformanceTrackerStop />
 			{ infoMessage }
 			<CheckoutStepBody
 				onError={ onReviewError }
@@ -340,11 +360,11 @@ export default function WPCheckout( {
 				titleContent={ <OrderReviewTitle /> }
 				completeStepContent={
 					<WPCheckoutOrderReview
+						useVariantPickerRadioButtons={ useVariantPickerRadioButtons }
 						removeProductFromCart={ removeProductFromCart }
 						couponFieldStateProps={ couponFieldStateProps }
 						onChangePlanLength={ changePlanLength }
 						siteUrl={ siteUrl }
-						siteId={ siteId }
 						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 					/>
 				}
@@ -354,9 +374,8 @@ export default function WPCheckout( {
 				<CheckoutStep
 					stepId="contact-form"
 					isCompleteCallback={ async () => {
-						setShouldShowContactDetailsValidationErrors( true );
 						// Touch the fields so they display validation errors
-						touchContactFields();
+						shouldShowContactDetailsValidationErrors && touchContactFields();
 						const validationResponse = await validateContactDetails(
 							contactInfo,
 							isLoggedOutCart,
@@ -366,16 +385,43 @@ export default function WPCheckout( {
 							clearDomainContactErrorMessages,
 							reduxDispatch,
 							translate,
-							true
+							shouldShowContactDetailsValidationErrors
 						);
 						if ( validationResponse ) {
+							// When the contact details change, update the VAT details on the server.
+							try {
+								if (
+									vatDetailsInForm.id &&
+									! areVatDetailsSame( vatDetailsInForm, vatDetailsFromServer )
+								) {
+									await setVatDetails( vatDetailsInForm );
+								}
+							} catch ( error ) {
+								reduxDispatch( removeNotice( 'vat_info_notice' ) );
+								if ( shouldShowContactDetailsValidationErrors ) {
+									reduxDispatch(
+										errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
+									);
+								}
+								return false;
+							}
+							reduxDispatch( removeNotice( 'vat_info_notice' ) );
+
 							// When the contact details change, update the cart's tax location to match.
-							await updateCartContactDetailsForCheckout(
-								countriesList,
-								responseCart,
-								updateLocation,
-								contactInfo
-							);
+							try {
+								await updateCartContactDetailsForCheckout(
+									countriesList,
+									responseCart,
+									updateLocation,
+									contactInfo,
+									vatDetailsInForm
+								);
+							} catch {
+								// If updating the cart fails, we should not continue. No need
+								// to do anything else, though, because CartMessages will
+								// display the error.
+								return false;
+							}
 
 							// When the contact details change, update the cached contact details on
 							// the server. This can fail if validation fails but we will silently
@@ -400,6 +446,9 @@ export default function WPCheckout( {
 							shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
 							contactDetailsType={ contactDetailsType }
 							isLoggedOutCart={ isLoggedOutCart }
+							setShouldShowContactDetailsValidationErrors={
+								setShouldShowContactDetailsValidationErrors
+							}
 						/>
 					}
 					completeStepContent={
@@ -537,6 +586,12 @@ const CheckoutSummaryBody = styled.div`
 		max-width: 328px;
 		position: fixed;
 		width: 100%;
+		overflow-y: auto;
+		height: 100vh;
+		& .card {
+			border-left: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+			border-right: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
+		}
 	}
 `;
 
@@ -565,7 +620,9 @@ const SubmitButtonFooter = () => {
 		isJetpackPurchasableItem( product.product_slug )
 	);
 
-	if ( ! hasCartJetpackProductsOnly ) {
+	const signupFlowName = getSignupCompleteFlowName();
+
+	if ( ! hasCartJetpackProductsOnly && ! isHostingFlow( signupFlowName ) ) {
 		return null;
 	}
 

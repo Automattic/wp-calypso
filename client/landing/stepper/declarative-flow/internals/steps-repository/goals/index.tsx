@@ -9,6 +9,7 @@ import { getQueryArgs } from 'calypso/lib/query-args';
 import { GoalsCaptureContainer } from './goals-capture-container';
 import SelectGoals from './select-goals';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 type TracksGoalsSelectEventProperties = {
@@ -30,7 +31,6 @@ const { serializeGoals, goalsToIntent } = Onboard.utils;
 
 const refGoals: Record< string, Onboard.SiteGoal[] > = {
 	'create-blog-lp': [ SiteGoal.Write ],
-	'smp-import': [ SiteGoal.Import ],
 };
 
 /**
@@ -42,7 +42,10 @@ const GoalsStep: Step = ( { navigation } ) => {
 	const whatAreYourGoalsText = translate( 'What are your goals?' );
 	const subHeaderText = translate( 'Tell us what would you like to accomplish with your website.' );
 
-	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
+	const goals = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+		[]
+	);
 	const { setGoals, setIntent, resetIntent } = useDispatch( ONBOARD_STORE );
 	const refParameter = getQueryArgs()?.ref as string;
 

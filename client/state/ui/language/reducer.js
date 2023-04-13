@@ -9,9 +9,9 @@ const initialState = {
 /**
  * Tracks the state of the ui locale
  *
- * @param {object} state  Current state
- * @param {object} action Action payload
- * @returns {object} Updated state
+ * @param {Object} state  Current state
+ * @param {Object} action Action payload
+ * @returns {Object} Updated state
  */
 export default function language( state = initialState, action ) {
 	switch ( action.type ) {

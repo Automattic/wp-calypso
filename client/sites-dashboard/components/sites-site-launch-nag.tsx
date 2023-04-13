@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
-import { useInView } from 'calypso/lib/use-in-view';
+import { useInView } from 'react-intersection-observer';
 import { getDashboardUrl, getLaunchpadUrl } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -85,7 +85,9 @@ const recordNagView = () => {
 
 export const SiteLaunchNag = ( { site }: SiteLaunchNagProps ) => {
 	const { __ } = useI18n();
-	const ref = useInView< HTMLAnchorElement >( recordNagView );
+	const { ref } = useInView( {
+		onChange: ( inView ) => inView && recordNagView(),
+	} );
 
 	// Don't show nag to all Coming Soon sites, only those that are "unlaunched"
 	// That's because sites that have been previously launched before going back to

@@ -21,9 +21,11 @@ object DesktopApp : Project({
 
 	params {
 		text("docker_image_desktop", "registry.a8c.com/calypso/ci-e2e:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
-		password("CALYPSO_SECRETS_ENCRYPTION_KEY", "credentialsJSON:ff451a7d-df79-4635-b6e8-cbd6ec18ddd8", description = "password for encrypting/decrypting certificates and general secrets for the wp-desktop and simplenote-electron repo", display = ParameterDisplay.HIDDEN)
-		password("E2EGUTENBERGUSER", "credentialsJSON:27ca9d7b-c6b5-4e84-94d5-ea43879d8184", display = ParameterDisplay.HIDDEN)
-		password("E2EPASSWORD", "credentialsJSON:2c4425c4-07d2-414c-9f18-b64da307bdf2", display = ParameterDisplay.HIDDEN)
+		// Note: this decrypts the secrets.json.enc file used by the Desktop app.
+		password("DESKTOP_SECRETS_ENCRYPTION_KEY", "credentialsJSON:15357c22-385b-456a-a18a-10cb42b9adc1", description = "password for encrypting/decrypting certificates and general secrets for the wp-desktop and simplenote-electron repo", display = ParameterDisplay.HIDDEN)
+		// For the root user, see the `desktopAppUser` entry in `calypso-e2e/src/secrets`.
+		password("E2EGUTENBERGUSER", "credentialsJSON:aea14d11-dc0e-41fa-9887-6a979ee66785", display = ParameterDisplay.HIDDEN)
+		password("E2EPASSWORD", "credentialsJSON:3b242d15-0954-452d-8077-249acc79e44e", display = ParameterDisplay.HIDDEN)
 	}
 })
 
@@ -56,7 +58,7 @@ object E2ETests : BuildType({
 				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
 
 				# Decript certs
-				openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "%CALYPSO_SECRETS_ENCRYPTION_KEY%"
+				openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "%DESKTOP_SECRETS_ENCRYPTION_KEY%"
 
 				# Install modules
 				${_self.yarn_install_cmd}

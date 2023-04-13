@@ -27,18 +27,7 @@ const BackupTips: React.FC< BackupTipsProps > = ( { location } ) => {
 								<b>{ translate( 'Did you know' ) }</b>
 							</div>
 							{ translate(
-								'The initial backup time depends on the size of your site and the stability of the connection. Subsequent backups are usually faster! {{link}}Learn more{{/link}}',
-								{
-									components: {
-										link: (
-											<a
-												href="https://jetpack.com/support/backup/"
-												target="_blank"
-												rel="noopener noreferrer"
-											/>
-										),
-									},
-								}
+								"We store your site backups securely in the cloud, with multiple copies saved across our global server network, so you'll never lose your content."
 							) }
 						</div>
 					)

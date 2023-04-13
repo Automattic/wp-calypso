@@ -2,6 +2,19 @@
 
 $font-family: "SF Pro Text", $sans;
 
+.wooexpress {
+	.site-creation-step {
+		padding: 1em;
+		max-width: 540px;
+		text-align: center;
+		margin: 16vh auto 0;
+
+		.step-container__content {
+			margin: auto;
+		}
+	}
+}
+
 .link-in-bio-setup,
 .free-setup {
 	.step-container__content {

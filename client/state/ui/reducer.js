@@ -20,9 +20,9 @@ import section from './section/reducer';
 /**
  * Tracks the currently selected site ID.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const selectedSiteId = withSchemaValidation(
 	{ type: [ 'number', 'null' ] },
@@ -59,10 +59,10 @@ export function isSectionLoading( state = false, action ) {
 /**
  * Tracks if the notifications panel is open
  *
- * @param   {object} state       Current state
- * @param   {object} action      Action payload
+ * @param   {Object} state       Current state
+ * @param   {Object} action      Action payload
  * @param   {string} action.type The action type identifier. In this case it's looking for NOTIFICATIONS_PANEL_TOGGLE
- * @returns {object}             Updated state
+ * @returns {Object}             Updated state
  */
 export function isNotificationsOpen( state = false, { type } ) {
 	if ( type === NOTIFICATIONS_PANEL_TOGGLE ) {

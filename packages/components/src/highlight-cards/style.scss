@@ -1,8 +1,35 @@
 @use "sass:math";
 @import "@wordpress/base-styles/breakpoints";
 @import "@automattic/typography/styles/variables";
-@import "../styles/typography";
+@import "@automattic/components/src/styles/typography";
+@import "@automattic/components/src/styles/mixins";
 @import "./variables.scss";
+
+$header-margin-bottom: math.div($vertical-margin, 2);
+
+$highlight-card-count-font: $brand-serif !default;
+$highlight-card-heading-font: $sans !default;
+$highlight-card-tooltip-font: Inter, $sans !default;
+
+@font-face {
+	font-family: Inter;
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src:
+		url(https://s0.wp.com/i/fonts/inter/Inter-Regular.woff2?v=3.19) format("woff2"),
+		url(https://s0.wp.com/i/fonts/inter/Inter-Regular.woff?v=3.19) format("woff");
+}
+
+@font-face {
+	font-family: Inter;
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src:
+		url(https://s0.wp.com/i/fonts/inter/Inter-Medium.woff2?v=3.19) format("woff2"),
+		url(https://s0.wp.com/i/fonts/inter/Inter-Medium.woff?v=3.19) format("woff");
+}
 
 .highlight-cards {
 	color: var(--studio-gray-100);
@@ -13,26 +40,42 @@
 
 .highlight-cards a.highlight-cards-heading-wrapper {
 	color: var(--color-text);
-	transition: color 100ms linear;
+	text-decoration: underline solid rgba(var(--color-link-rgb), 0);
+	transition: color 100ms linear, text-decoration-color 100ms linear;
 	&:focus,
 	&:hover {
 		color: var(--color-link);
+		text-decoration-color: var(--color-link);
 	}
 }
 
 .highlight-cards-heading {
-	font-size: 32px; // stylelint-disable-line declaration-property-unit-allowed-list
-	font-weight: 400;
-	line-height: 40px;
-	font-family: $font-recoleta;
-	margin-bottom: math.div($vertical-margin, 2);
+	@include stats-section-header;
+
+	margin-bottom: $header-margin-bottom;
+
 	small {
-		font-family: $sans;
+		font-family: $highlight-card-heading-font;
 		font-size: $font-body-small;
 		line-height: 1.5;
 		color: var(--studio-gray-50);
 		font-weight: 400;
+
+		@media ( max-width: $break-mobile ) {
+			display: block;
+		}
 	}
+
+	svg {
+		fill: var(--studio-gray-50);
+	}
+}
+
+.highlight-cards-heading-icon {
+	display: inline-flex;
+	width: 24px;
+	height: 24px;
+	cursor: pointer;
 }
 
 .highlight-cards-list {
@@ -71,7 +114,7 @@
 .highlight-card-heading {
 	font-weight: 500;
 	line-height: 20px;
-	font-family: $sans;
+	font-family: $highlight-card-heading-font;
 	margin-bottom: 4px;
 }
 
@@ -82,10 +125,14 @@
 	font-size: 36px; // stylelint-disable-line declaration-property-unit-allowed-list
 	font-weight: 400;
 	line-height: 40px;
+
+	&.is-pointer {
+		cursor: pointer;
+	}
 }
 
 .highlight-card-count-value {
-	font-family: $font-recoleta;
+	font-family: $highlight-card-count-font;
 	line-height: 1;
 	margin-right: 8px;
 }
@@ -114,6 +161,72 @@
 .highlight-card-difference-absolute-value {
 	margin-right: 2px;
 }
+.highlight-year-navigation {
+	display: flex;
+	justify-content: space-between;
+
+	.stats-period-navigation {
+		margin: 0;
+		align-self: stretch;
+		margin-bottom: $header-margin-bottom;
+	}
+}
+.tooltip.popover.highlight-card-tooltip { // overload tooltip's styles
+	.popover__inner {
+		padding: 16px 24px;
+		width: 244px;
+		box-sizing: border-box;
+		border-radius: 5px; // stylelint-disable-line scales/radii
+	}
+}
+.highlight-card-tooltip-content {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: $font-body-small;
+	font-weight: 500;
+	line-height: 20px;
+	font-family: $highlight-card-tooltip-font;
+
+	&.comparing-info {
+		display: block;
+
+		& > p {
+			margin-bottom: 10px;
+		}
+
+		& > div {
+			height: 66px;
+			text-align: center;
+		}
+
+		.comparing-info-chart {
+			& > small {
+				display: block;
+				font-family: $font-sf-pro-text;
+				font-weight: 400;
+				color: var(--studio-gray-0);
+				margin-bottom: -8px;
+				letter-spacing: -0.02em;
+
+				& > span {
+					color: var(--studio-gray-30);
+					margin: 0 6px;
+				}
+			}
+		}
+	}
+
+	.highlight-card-tooltip-label {
+		display: flex;
+		align-items: center;
+	}
+	.highlight-card-tooltip-icon {
+		fill: var(--studio-white);
+		display: flex;
+		padding-right: 8px;
+	}
+}
 
 @media ( max-width: $custom-mobile-breakpoint ) {
 	.highlight-cards-heading {
@@ -140,11 +253,6 @@
 
 	.card.highlight-card {
 		padding: 16px 24px;
-	}
-
-	.highlight-cards-heading {
-		display: flex;
-		flex-flow: column;
 	}
 
 	.highlight-card-icon {

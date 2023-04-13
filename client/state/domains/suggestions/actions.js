@@ -13,8 +13,8 @@ import 'calypso/state/domains/init';
  * has been received.
  *
  * @param   {Array}    suggestions              domain suggestions
- * @param   {object}   queryObject              domain suggestions queryObject
- * @returns {object}   Action object
+ * @param   {Object}   queryObject              domain suggestions queryObject
+ * @returns {Object}   Action object
  */
 export function receiveDomainsSuggestions( suggestions, queryObject ) {
 	return {
@@ -27,7 +27,7 @@ export function receiveDomainsSuggestions( suggestions, queryObject ) {
 /**
  * Triggers a network request to find domain suggestions
  *
- * @param   {object}   queryObject                          domain suggestions queryObject
+ * @param   {Object}   queryObject                          domain suggestions queryObject
  * @param   {string}   queryObject.query                    domainQuery
  * @param   {number}   queryObject.quantity                 max results
  * @param   {string}   queryObject.vendor                   vendor

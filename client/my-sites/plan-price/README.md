@@ -7,7 +7,7 @@ flexbox container.
 
 ## Usage
 
-PlanPrice can take a `productDisplayPrice` or a `rawPrice` (deprecated) prop, though `productDisplayPrice` is the preferred option.
+PlanPrice can take a `productDisplayPrice` or a `rawPrice` prop.
 
 A `productDisplayPrice` can be retrieved from the `/purchases` or `/plans` REST endpoints and are stored in Redux; for example:
 
@@ -18,12 +18,6 @@ function MyComponent( { purchaseId } ) {
 }
 ```
 
-`productDisplayPrice` is preferred because it provides an HTML wrapped, geo-IDed, and properly formatted currency string. Whereas, `rawPrice` is not geo-IDed and requires extra work to format correctly on the front end.
-
-You can pass along `rawPrice` (not required) with `productDisplayPrice` and when available the `productDisplayPrice` will be used by default.
-
-**Preferred usage**
-
 ```jsx
 <PlanPrice
 	productDisplayPrice={ purchase.productDisplayPrice }
@@ -31,8 +25,6 @@ You can pass along `rawPrice` (not required) with `productDisplayPrice` and when
 	isOnSale={ !! purchase.saleAmount }
 />;
 ```
-
-**Backwards compatible usage**
 
 ```jsx
 <PlanPrice
@@ -68,15 +60,3 @@ export default class extends React.Component {
 	}
 }
 ```
-
-## Props
-
-| Prop                | Type           | Description                                             |
-| ------------------- | -------------- | ------------------------------------------------------- |
-| productDisplayPrice | number         | HTML wrapped display price                              |
-| rawPrice            | number / array | Price or price range of the plan                        |
-| original            | bool           | Is the price discounted and this is the original one?   |
-| discounted          | bool           | Is the price discounted and this is the discounted one? |
-| isOnSale            | bool           | Is the product this price is for on sale?               |
-| currencyCode        | string         | Currency of the price                                   |
-| className           | string         | If you need to add additional classes                   |

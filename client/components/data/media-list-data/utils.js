@@ -38,9 +38,9 @@ export default {
 	/**
 	 * Return's a media query suitable for Google Photos.
 	 *
-	 * @param {object} query The existing query object
-	 * @param {object} props Media library request props
-	 * @returns {object} Modified query for Google Photos
+	 * @param {Object} query The existing query object
+	 * @param {Object} props Media library request props
+	 * @returns {Object} Modified query for Google Photos
 	 */
 	getGoogleQuery: function ( query, props ) {
 		const { categoryFilter, filter } = props;

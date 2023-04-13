@@ -15,6 +15,8 @@ interface StarterDesignsQueryParams {
 	intent: string;
 	seed?: string;
 	_locale: string;
+	include_virtual_designs?: boolean;
+	include_pattern_virtual_designs?: boolean;
 }
 
 interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
@@ -37,6 +39,7 @@ interface StaticDesign {
 	price?: string;
 	style_variations?: StyleVariation[];
 	software_sets?: SoftwareSet[];
+	is_virtual: boolean;
 }
 
 interface GeneratedDesign {
@@ -111,6 +114,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		software_sets,
 		design_type: is_premium ? 'premium' : 'standard',
 		style_variations,
+		is_virtual: design.is_virtual && !! design.recipe?.pattern_ids?.length,
 		// Deprecated; used for /start flow
 		features: [],
 		template: '',

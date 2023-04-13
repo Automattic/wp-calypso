@@ -6,6 +6,7 @@ import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-
 
 const getAllowedHosts = ( siteSlug?: string ) => {
 	const basicHosts = [
+		'akismet.com',
 		'jetpack.com',
 		'jetpack.cloud.localhost',
 		'cloud.jetpack.com',
@@ -24,6 +25,12 @@ const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undef
 
 	return useMemo( () => {
 		if ( ! checkoutBackUrl ) {
+			// For akismet specific checkout, if navigated with direct link
+			// We shouldn't be navigated to `start\domain` but to `akismet\plans`
+			const isAkismetCheckout = window.location.pathname.startsWith( '/checkout/akismet' );
+			if ( ! siteSlug && isAkismetCheckout ) {
+				return 'https://akismet.com/pricing';
+			}
 			return undefined;
 		}
 

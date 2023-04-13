@@ -9,12 +9,12 @@ import { postRequest } from 'calypso/lib/i18n-utils/glotpress';
 /**
  * Prepares and triggers a request to get GP string
  *
- * @param {object} locale and item from `languages` array in config/_shared.json
- * @param {object} originalStringData GP string information { singular, context, plural }
+ * @param {Object} locale and item from `languages` array in config/_shared.json
+ * @param {Object} originalStringData GP string information { singular, context, plural }
  * @param {string} apiBaseUrl Base API url to get translations
  * @param {string} project GP project
  * @param {Function} post see postRequest()
- * @returns {object} request object
+ * @returns {Object} request object
  */
 export function getSingleTranslationData(
 	locale,
@@ -40,12 +40,12 @@ export function getSingleTranslationData(
  * Prepares and triggers a request to get GP string
  *
  * @param {string} originalId GP original string id
- * @param {object} translationObject GP string information { singular, context, plural }
- * @param {object} locale and item from `languages` array in config/_shared.json
+ * @param {Object} translationObject GP string information { singular, context, plural }
+ * @param {Object} locale and item from `languages` array in config/_shared.json
  * @param {string} apiBaseUrl Base API url to get translations
  * @param {string} project GP project
  * @param {Function} post see postRequest()
- * @returns {object} request object
+ * @returns {Object} request object
  */
 export function submitTranslation(
 	originalId,
@@ -75,8 +75,8 @@ export function submitTranslation(
 /**
  * Normalizes raw data from GP API
  *
- * @param {object} glotPressData raw API response
- * @returns {object} normalized data
+ * @param {Object} glotPressData raw API response
+ * @returns {Object} normalized data
  */
 export function normalizeDetailsFromTranslationData( glotPressData ) {
 	const translationDetails = find( glotPressData.translations, {
@@ -96,7 +96,7 @@ export function normalizeDetailsFromTranslationData( glotPressData ) {
  * Normalizes raw data from GP API
  *
  * @param {string} originalId GP original string id
- * @param {object} locale and item from `languages` array in config/_shared.json
+ * @param {Object} locale and item from `languages` array in config/_shared.json
  * @param {string} project GP project
  * @returns {string} the permalink to the translation on GlotPress
  */

@@ -21,7 +21,8 @@
 		"dev-server": "NODE_ENV=development webpack serve",
 		"start": "yarn run clean && yarn run build:notifications && yarn run dev-server",
 		"dev": "yarn run calypso-apps-builder --localPath dist --remotePath /home/wpcom/public_html/widgets.wp.com/notifications",
-		"build": "NODE_ENV=production yarn dev"
+		"build": "NODE_ENV=production yarn dev",
+		"build-ci": "yarn build"
 	},
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "workspace:^",
@@ -49,7 +50,6 @@
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"enzyme": "^3.11.0",
 		"html-webpack-plugin": "^5.0.0-beta.4",
 		"jest": "^27.3.1",
 		"postcss": "^8.4.5",

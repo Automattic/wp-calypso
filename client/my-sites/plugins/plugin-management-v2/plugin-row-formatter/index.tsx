@@ -10,6 +10,7 @@ import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-t
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import UpdatePlugin from 'calypso/my-sites/plugins/plugin-management-v2/update-plugin';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
 import {
 	isPluginActionInProgress,
 	getPluginOnSite,
@@ -44,6 +45,8 @@ export default function PluginRowFormatter( {
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+
+	const billingPeriod = useSelector( getBillingInterval );
 
 	const PluginDetailsButton = (
 		props: PropsWithChildren< { className: string; onClick?: MouseEventHandler } >
@@ -101,9 +104,15 @@ export default function PluginRowFormatter( {
 
 	const allStatuses = getPluginActionStatuses( state );
 
-	const currentSiteStatuses = allStatuses.filter(
+	let currentSiteStatuses = allStatuses.filter(
 		( status ) => status.pluginId === item.id && status.action !== UPDATE_PLUGIN
 	);
+
+	if ( 'site-name' === columnKey ) {
+		currentSiteStatuses = currentSiteStatuses.filter(
+			( status ) => parseInt( status.siteId ) === selectedSite?.ID
+		);
+	}
 
 	const pluginActionStatus =
 		currentSiteStatuses.length > 0 ? (
@@ -120,6 +129,9 @@ export default function PluginRowFormatter( {
 					<span className="plugin-row-formatter__site-name">{ selectedSite?.domain }</span>
 					{ /* Overlay for small screen is added in the card component */ }
 					{ ! isSmallScreen && <span className="plugin-row-formatter__overlay"></span> }
+					{ pluginActionStatus && (
+						<div className="plugin-row-formatter__action-status">{ pluginActionStatus }</div>
+					) }
 				</span>
 			);
 		case 'plugin':
@@ -246,6 +258,7 @@ export default function PluginRowFormatter( {
 						selectedSite={ selectedSite }
 						plugin={ item }
 						isInstalling={ installInProgress }
+						billingPeriod={ billingPeriod }
 					/>
 				</div>
 			);

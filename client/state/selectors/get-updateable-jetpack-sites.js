@@ -4,7 +4,7 @@ import { canJetpackSiteUpdateFiles } from 'calypso/state/sites/selectors';
 /**
  * Retrieves all Jetpack sites that are allowed to be updated.
  *
- * @param   {object} state Global state tree
+ * @param   {Object} state Global state tree
  * @returns {Array}        Array of updateable Jetpack sites
  */
 export default function getUpdateableJetpackSites( state ) {

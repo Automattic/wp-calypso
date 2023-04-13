@@ -6,7 +6,7 @@ import { getSiteSlug } from 'calypso/state/sites/selectors';
 /**
  * Gets the URL for the close button for the block editor, dependent previous referral state
  *
- * @param {object} state  Global state tree
+ * @param {Object} state  Global state tree
  * @param {number|string|undefined|null} siteId Site ID
  * @param {string} postType The type of the current post being edited
  * @returns {{url: string; label: string}} The URL that should be used when the block editor close button is clicked
@@ -20,6 +20,19 @@ export default function getEditorCloseConfig( state, siteId, postType ) {
 	const lastNonEditorRoute = getLastNonEditorRoute( state );
 
 	const doesRouteMatch = ( matcher ) => lastNonEditorRoute.match( matcher );
+
+	const currentSiteId = state?.ui?.selectedSiteId;
+	const currentSite = state?.sites?.items[ currentSiteId ];
+
+	// Redirect user to Launchpad screen if launchpad is enabled
+	if ( currentSite?.options?.launchpad_screen === 'full' ) {
+		const siteSlug = getSiteSlug( state, currentSiteId );
+		const flow = currentSite?.options?.site_intent;
+		return {
+			url: `/setup/${ flow }/launchpad?siteSlug=${ siteSlug }`,
+			label: translate( 'Next steps' ),
+		};
+	}
 
 	// Back to the themes list.
 	if ( doesRouteMatch( /^\/themes\/?/ ) ) {

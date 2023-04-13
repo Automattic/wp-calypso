@@ -6,7 +6,7 @@ import 'calypso/state/plugins/init';
  * Indicates whether a plugin upload is currently in progress
  * for the given site.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {number} siteId the site ID
  * @returns {boolean} true if plugin upload is in progress
  */

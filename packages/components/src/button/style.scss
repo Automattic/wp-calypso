@@ -24,6 +24,7 @@
 	padding: 8px 14px;
 	appearance: none;
 
+
 	.rtl & {
 		font-family: $a8c-font-family-sans-rtl;
 	}
@@ -113,6 +114,11 @@
 		animation: button__busy-animation 3000ms infinite linear;
 		background-size: 120px 100%;
 		background-image: linear-gradient(-45deg, var(--color-neutral-0) 28%, var(--color-surface) 28%, var(--color-surface) 72%, var(--color-neutral-0) 72%);
+	}
+
+	&.dashicons {
+		/* stylelint-disable-next-line font-family-no-missing-generic-family-keyword */
+		font-family: dashicons;
 	}
 }
 

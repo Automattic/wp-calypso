@@ -15,7 +15,10 @@ export default function useShoppingCart( cartKey: CartKey | undefined ): UseShop
 	useRefetchOnFocus( finalCartKey );
 
 	useEffect( () => {
-		manager.fetchInitialCart();
+		manager.fetchInitialCart().catch( () => {
+			// The consumer of the cart data can display any errors returned by the
+			// endpoint, so we will ignore them here.
+		} );
 	}, [ manager ] );
 
 	const isMounted = useRef( true );

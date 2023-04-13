@@ -1,5 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Button, Card } from '@automattic/components';
+import classnames from 'classnames';
 import { localize, withRtl } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -41,14 +42,22 @@ class CurrentSite extends Component {
 		const { selectedSite, translate, anySiteSelected } = this.props;
 
 		if ( ! anySiteSelected.length || ( ! selectedSite && ! this.props.hasAllSitesList ) ) {
+			const hasNoSites = this.props.hasAllSitesList && ! anySiteSelected.length;
 			/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/anchor-is-valid */
 			return (
-				<Card className="current-site is-loading">
+				<Card
+					className={ classnames( 'current-site', {
+						'is-no-sites': hasNoSites,
+						'is-loading': ! this.props.hasAllSitesList,
+					} ) }
+				>
 					<div className="site">
 						<a className="site__content">
 							<div className="site-icon" />
 							<div className="site__info">
-								<span className="site__title">{ translate( 'Loading My Sites…' ) }</span>
+								<span className="site__title">
+									{ hasNoSites ? translate( 'No Sites' ) : translate( 'Loading My Sites…' ) }
+								</span>
 							</div>
 						</a>
 					</div>

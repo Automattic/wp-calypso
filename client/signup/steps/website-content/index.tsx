@@ -7,26 +7,34 @@ import { useEffect, useState, ChangeEvent, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import errorIllustration from 'calypso/assets/images/customer-home/disconnected.svg';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
-import wpcom from 'calypso/lib/wp';
 import AccordionForm from 'calypso/signup/accordion-form/accordion-form';
-import { ValidationErrors } from 'calypso/signup/accordion-form/types';
-import { useTranslatedPageTitles } from 'calypso/signup/difm/translation-hooks';
+import {
+	BBE_STORE_WEBSITE_CONTENT_FILLING_STEP,
+	BBE_WEBSITE_CONTENT_FILLING_STEP,
+	useTranslatedPageTitles,
+} from 'calypso/signup/difm/translation-hooks';
 import StepWrapper from 'calypso/signup/step-wrapper';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { saveSignupStep } from 'calypso/state/signup/progress/actions';
 import {
-	initializePages,
+	changesSaved,
+	initializeWebsiteContentForm,
 	updateWebsiteContentCurrentIndex,
 } from 'calypso/state/signup/steps/website-content/actions';
+import { useGetWebsiteContentQuery } from 'calypso/state/signup/steps/website-content/hooks/use-get-website-content-query';
+import { useSaveWebsiteContentMutation } from 'calypso/state/signup/steps/website-content/hooks/use-save-website-content-mutation';
 import {
 	getWebsiteContent,
 	getWebsiteContentDataCollectionIndex,
 	isMediaUploadInProgress,
 	WebsiteContentStateModel,
+	hasUnsavedChanges as hasUnsavedWebsiteContentChanges,
 } from 'calypso/state/signup/steps/website-content/selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
-import { SiteId } from 'calypso/types';
 import { sectionGenerator } from './section-generator';
-import type { PageId } from 'calypso/signup/difm/constants';
+import type { ValidationErrors } from 'calypso/signup/accordion-form/types';
+import type { WebsiteContentServerState } from 'calypso/state/signup/steps/website-content/types';
+import type { SiteId } from 'calypso/types';
 
 import './style.scss';
 
@@ -77,8 +85,8 @@ interface WebsiteContentStepProps {
 	flowName: string;
 	stepName: string;
 	positionInFlow: string;
-	pageTitles: PageId[];
 	siteId: SiteId | null;
+	websiteContentServerState: WebsiteContentServerState;
 }
 
 function WebsiteContentStep( {
@@ -86,8 +94,8 @@ function WebsiteContentStep( {
 	stepName,
 	submitSignupStep,
 	goToNextStep,
-	pageTitles,
 	siteId,
+	websiteContentServerState,
 }: WebsiteContentStepProps ) {
 	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 	const dispatch = useDispatch();
@@ -97,19 +105,44 @@ function WebsiteContentStep( {
 	const isImageUploading = useSelector( ( state ) =>
 		isMediaUploadInProgress( state as WebsiteContentStateModel )
 	);
+	const hasUnsavedChanges = useSelector( hasUnsavedWebsiteContentChanges );
 
 	const [ isConfirmDialogOpen, setIsConfirmDialogOpen ] = useState( false );
 	const translatedPageTitles = useTranslatedPageTitles();
+	const context = websiteContentServerState.isStoreFlow
+		? BBE_STORE_WEBSITE_CONTENT_FILLING_STEP
+		: BBE_WEBSITE_CONTENT_FILLING_STEP;
+
+	const { isLoading: isSaving, mutateAsync } = useSaveWebsiteContentMutation(
+		siteId,
+		websiteContent
+	);
+
+	const saveFormValues = async () => {
+		try {
+			await mutateAsync();
+			dispatch( changesSaved() );
+			dispatch(
+				successNotice( translate( 'Changes saved successfully!' ), {
+					id: 'website-content-save-notice',
+					duration: 3000,
+				} )
+			);
+		} catch ( error ) {
+			dispatch(
+				errorNotice(
+					translate( 'Failed to save your content. Please check your internet connection.' )
+				)
+			);
+		}
+	};
 
 	useEffect( () => {
-		if ( siteId && pageTitles && pageTitles.length > 0 ) {
-			const pages = pageTitles.map( ( pageTitle ) => ( {
-				id: pageTitle,
-				name: translatedPageTitles[ pageTitle ],
-			} ) );
-			dispatch( initializePages( pages, siteId ) );
+		const { selectedPageTitles } = websiteContentServerState;
+		if ( siteId && selectedPageTitles && selectedPageTitles.length > 0 ) {
+			dispatch( initializeWebsiteContentForm( websiteContentServerState, translatedPageTitles ) );
 		}
-	}, [ dispatch, pageTitles, siteId, translatedPageTitles ] );
+	}, [ dispatch, siteId, translatedPageTitles, websiteContentServerState ] );
 
 	useEffect( () => {
 		dispatch( saveSignupStep( { stepName } ) );
@@ -137,9 +170,10 @@ function WebsiteContentStep( {
 				translate,
 				formValues: websiteContent,
 				formErrors: formErrors,
+				context,
 				onChangeField,
 			} ),
-		[ translate, websiteContent, formErrors, onChangeField ]
+		[ translate, websiteContent, formErrors, context, onChangeField ]
 	);
 	const generatedSections = generatedSectionsCallback();
 
@@ -172,13 +206,16 @@ function WebsiteContentStep( {
 			<AccordionForm
 				generatedSections={ generatedSections }
 				onErrorUpdates={ ( errors ) => setFormErrors( errors ) }
-				formValuesInitialState={ websiteContent }
+				formValues={ websiteContent }
 				currentIndex={ currentIndex }
 				updateCurrentIndex={ ( currentIndex ) => {
 					dispatch( updateWebsiteContentCurrentIndex( currentIndex ) );
 				} }
 				onSubmit={ () => setIsConfirmDialogOpen( true ) }
+				saveFormValues={ saveFormValues }
 				blockNavigation={ isImageUploading }
+				isSaving={ isSaving }
+				hasUnsavedChanges={ hasUnsavedChanges }
 			/>
 		</>
 	);
@@ -207,44 +244,31 @@ export default function WrapperWebsiteContent(
 ) {
 	const { flowName, stepName, positionInFlow, queryObject } = props;
 	const translate = useTranslate();
-	const headerText = translate( 'Website Content' );
-	const subHeaderText = translate(
-		'Provide content for your website build. You will be able to edit all content later using the WordPress editor.'
-	);
 	const siteId = useSelector( ( state ) => getSiteId( state, queryObject.siteSlug as string ) );
 
-	const [ pageTitles, setPageTitles ] = useState< PageId[] >( [] );
-	const [ isLoading, setIsLoading ] = useState( true );
+	const { isLoading, isError, data } = useGetWebsiteContentQuery( queryObject.siteSlug );
+
+	const headerText = translate( 'Website Content' );
+	const subHeaderText = data?.isStoreFlow
+		? translate(
+				'Provide content for your website build. You can add products later with the WordPress editor.'
+		  )
+		: translate(
+				'Provide content for your website build. You will be able to edit all content later using the WordPress editor.'
+		  );
 
 	useEffect( () => {
-		async function fetchSelectedPageTitles() {
-			try {
-				const response: { selected_page_titles: PageId[]; is_website_content_submitted: boolean } =
-					await wpcom.req.get( {
-						path: `/sites/${ queryObject.siteSlug }/do-it-for-me/website-content`,
-						apiNamespace: 'wpcom/v2',
-					} );
-
-				setIsLoading( false );
-				setPageTitles( response.selected_page_titles );
-
-				if ( response.is_website_content_submitted ) {
-					debug( 'Website content content already submitted, redirecting to home' );
-					page( `/home/${ queryObject.siteSlug }` );
-				}
-			} catch ( error ) {
-				setIsLoading( false );
-			}
+		if ( data?.isWebsiteContentSubmitted ) {
+			debug( 'Website content content already submitted, redirecting to home' );
+			page( `/home/${ queryObject.siteSlug }` );
 		}
-
-		fetchSelectedPageTitles();
-	}, [ queryObject.siteSlug ] );
+	}, [ data, queryObject.siteSlug ] );
 
 	if ( isLoading ) {
 		return <Loader />;
 	}
 
-	if ( ! ( pageTitles && pageTitles.length ) ) {
+	if ( isError || ! ( data?.selectedPageTitles && data?.selectedPageTitles.length ) ) {
 		return (
 			<PagesNotAvailable>
 				<img src={ errorIllustration } alt="" />
@@ -274,7 +298,7 @@ export default function WrapperWebsiteContent(
 			stepName={ stepName }
 			positionInFlow={ positionInFlow }
 			stepContent={
-				<WebsiteContentStep { ...props } pageTitles={ pageTitles } siteId={ siteId } />
+				<WebsiteContentStep { ...props } websiteContentServerState={ data } siteId={ siteId } />
 			}
 			goToNextStep={ false }
 			hideFormattedHeader={ false }

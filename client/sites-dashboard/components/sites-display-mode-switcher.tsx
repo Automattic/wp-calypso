@@ -2,6 +2,7 @@ import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/css';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
+import { useCallback, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { useAsyncPreference } from 'calypso/state/preferences/use-async-preference';
@@ -31,6 +32,35 @@ export const SitesDisplayModeSwitcher = ( {
 	onDisplayModeChange,
 }: SitesDisplayModeSwitcherProps ) => {
 	const { __ } = useI18n();
+	const tileRef = useRef< HTMLButtonElement >( null );
+	const listRef = useRef< HTMLButtonElement >( null );
+
+	const handleKeyDown = useCallback(
+		( event: React.KeyboardEvent, currentMode: SitesDisplayMode ) => {
+			if (
+				[
+					'Up',
+					'ArrowUp',
+					'Left',
+					'ArrowLeft',
+					'Down',
+					'ArrowDown',
+					'Right',
+					'ArrowRight',
+				].includes( event.key )
+			) {
+				event.preventDefault();
+				const newMode = currentMode === 'tile' ? 'list' : 'tile';
+				if ( newMode === 'tile' ) {
+					tileRef.current?.focus();
+				} else {
+					listRef.current?.focus();
+				}
+				onDisplayModeChange( newMode );
+			}
+		},
+		[ onDisplayModeChange ]
+	);
 
 	return (
 		<div className={ container } role="radiogroup" aria-label={ __( 'Sites display mode' ) }>
@@ -40,7 +70,13 @@ export const SitesDisplayModeSwitcher = ( {
 				title={ __( 'Switch to tile view' ) }
 				onClick={ () => onDisplayModeChange( 'tile' ) }
 				icon={ <Gridicon icon="grid" /> }
-				isPressed={ displayMode === 'tile' }
+				ref={ tileRef }
+				onKeyDown={ ( event: React.KeyboardEvent ) => handleKeyDown( event, 'tile' ) }
+				aria-checked={ displayMode === 'tile' }
+				tabIndex={ displayMode === 'tile' ? 0 : -1 }
+				// aria-checked is the correct attribute to show a radio button is selected, but we
+				// still want to use the Button component's built in isPressed styling.
+				className={ displayMode === 'tile' ? 'is-pressed' : '' }
 			/>
 			<Button
 				role="radio"
@@ -48,7 +84,11 @@ export const SitesDisplayModeSwitcher = ( {
 				title={ __( 'Switch to list view' ) }
 				onClick={ () => onDisplayModeChange( 'list' ) }
 				icon={ <Gridicon icon="list-unordered" /> }
-				isPressed={ displayMode === 'list' }
+				ref={ listRef }
+				onKeyDown={ ( event: React.KeyboardEvent ) => handleKeyDown( event, 'list' ) }
+				aria-checked={ displayMode === 'list' }
+				tabIndex={ displayMode === 'list' ? 0 : -1 }
+				className={ displayMode === 'list' ? 'is-pressed' : '' }
 			/>
 		</div>
 	);

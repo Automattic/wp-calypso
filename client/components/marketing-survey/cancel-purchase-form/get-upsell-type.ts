@@ -5,6 +5,7 @@ import {
 	isWpComPremiumPlan,
 	isWpComAnnualPlan,
 	isWpComBiennialPlan,
+	isWpComTriennialPlan,
 	isWpComEcommercePlan,
 } from '@automattic/calypso-products';
 
@@ -59,7 +60,9 @@ export function getUpsellType( reason: string, opts: UpsellOptions ): UpsellType
 
 			if (
 				canRefund &&
-				( isWpComAnnualPlan( productSlug ) || isWpComBiennialPlan( productSlug ) )
+				( isWpComAnnualPlan( productSlug ) ||
+					isWpComBiennialPlan( productSlug ) ||
+					isWpComTriennialPlan( productSlug ) )
 			) {
 				return 'downgrade-monthly';
 			}

@@ -2,8 +2,6 @@ import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import './internals/videopress.scss';
@@ -15,6 +13,7 @@ import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteOptions from './internals/steps-repository/site-options';
 import VideomakerSetup from './internals/steps-repository/videomaker-setup';
 import type { Flow, ProvidedDependencies } from './internals/types';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 
 const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
@@ -22,14 +21,10 @@ const videopress: Flow = {
 		return translate( 'Video' );
 	},
 	useSteps() {
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
-		}, [] );
-
 		return [
 			{ slug: 'intro', component: Intro },
-			{ slug: 'options', component: SiteOptions },
 			{ slug: 'videomakerSetup', component: VideomakerSetup },
+			{ slug: 'options', component: SiteOptions },
 			{ slug: 'chooseADomain', component: ChooseADomain },
 			{ slug: 'chooseAPlan', component: ChooseAPlan },
 			{ slug: 'processing', component: ProcessingStep },
@@ -62,8 +57,14 @@ const videopress: Flow = {
 		const flowProgress = useFlowProgress( { stepName: _currentStep, flowName: name } );
 		setStepProgress( flowProgress );
 		const _siteSlug = useSiteSlug();
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const _siteTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedSiteTitle() );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+		const _siteTitle = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+			[]
+		);
 		const locale = useLocale();
 
 		const clearOnboardingSiteOptions = () => {
@@ -110,6 +111,9 @@ const videopress: Flow = {
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( _currentStep ) {
 				case 'intro':
+					return navigate( 'videomakerSetup' );
+
+				case 'videomakerSetup':
 					if ( userIsLoggedIn ) {
 						return navigate( 'options' );
 					}
@@ -122,10 +126,6 @@ const videopress: Flow = {
 					const { siteTitle, tagline } = providedDependencies;
 					setSiteTitle( siteTitle as string );
 					setSiteDescription( tagline as string );
-					return navigate( 'videomakerSetup' );
-				}
-
-				case 'videomakerSetup': {
 					return navigate( 'chooseADomain' );
 				}
 

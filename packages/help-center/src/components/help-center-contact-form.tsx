@@ -4,7 +4,7 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
+import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
 import { Button, FormInputValidation, Popover } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
@@ -25,8 +25,10 @@ import { Icon, info } from '@wordpress/icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
+import { isWcMobileApp } from 'calypso/lib/mobile-app';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import { getCurrentUserEmail, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSectionName } from 'calypso/state/ui/selectors';
 /**
@@ -38,6 +40,7 @@ import { SitePicker } from '../types';
 import { BackButton } from './back-button';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
@@ -149,7 +152,7 @@ export const HelpCenterContactForm = () => {
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
 	const overflow = params.get( 'overflow' ) === 'true';
-	const history = useHistory();
+	const navigate = useNavigate();
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
@@ -164,13 +167,14 @@ export const HelpCenterContactForm = () => {
 		'CURRENT_SITE'
 	);
 	const { currentSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
-			currentSite: select( HELP_CENTER_STORE ).getSite(),
-			subject: select( HELP_CENTER_STORE ).getSubject(),
-			message: select( HELP_CENTER_STORE ).getMessage(),
-			userDeclaredSiteUrl: select( HELP_CENTER_STORE ).getUserDeclaredSiteUrl(),
+			currentSite: helpCenterSelect.getSite(),
+			subject: helpCenterSelect.getSubject(),
+			message: helpCenterSelect.getMessage(),
+			userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
 		};
-	} );
+	}, [] );
 
 	const {
 		setSite,
@@ -185,7 +189,7 @@ export const HelpCenterContactForm = () => {
 		const supportVariation = getSupportVariationFromMode( mode );
 		recordTracksEvent( 'calypso_inlinehelp_contact_view', {
 			support_variation: supportVariation,
-			forceSiteId: true,
+			force_site_id: true,
 			location: 'help-center',
 			section: sectionName,
 		} );
@@ -244,11 +248,10 @@ export const HelpCenterContactForm = () => {
 	);
 
 	const showingSibylResults = params.get( 'show-results' ) === 'true';
-
 	function handleCTA() {
 		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
 			params.set( 'show-results', 'true' );
-			history.push( {
+			navigate( {
 				pathname: '/contact-form',
 				search: params.toString(),
 			} );
@@ -265,19 +268,19 @@ export const HelpCenterContactForm = () => {
 				if ( supportSite ) {
 					recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 						support_variation: 'happychat',
-						forceSiteId: true,
+						force_site_id: true,
 						location: 'help-center',
 						section: sectionName,
 					} );
 
 					recordTracksEvent( 'calypso_help_live_chat_begin', {
 						site_plan_product_id: productId,
-						is_automated_transfer: supportSite.is_wpcom_atomic,
-						forceSiteId: true,
+						is_automated_transfer: supportSite?.is_wpcom_atomic,
+						force_site_id: true,
 						location: 'help-center',
 						section: sectionName,
 					} );
-					history.push( '/inline-chat' );
+					navigate( '/inline-chat' );
 					break;
 				}
 				break;
@@ -288,6 +291,14 @@ export const HelpCenterContactForm = () => {
 						'Site I need help with: ' + supportSite.URL,
 						`Plan: ${ productId } - ${ productName } (${ productTerm })`,
 					];
+
+					if ( getQueryArgs()?.ref === 'woocommerce-com' ) {
+						ticketMeta.push(
+							`Created during store setup on ${
+								isWcMobileApp() ? 'Woo mobile app' : 'Woo browser'
+							}`
+						);
+					}
 
 					const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
 
@@ -303,11 +314,11 @@ export const HelpCenterContactForm = () => {
 						.then( () => {
 							recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 								support_variation: 'kayako',
-								forceSiteId: true,
+								force_site_id: true,
 								location: 'help-center',
 								section: sectionName,
 							} );
-							history.push( '/success' );
+							navigate( '/success' );
 							resetStore();
 							// reset support-history cache
 							setTimeout( () => {
@@ -334,11 +345,11 @@ export const HelpCenterContactForm = () => {
 					.then( ( response ) => {
 						recordTracksEvent( 'calypso_inlinehelp_contact_submit', {
 							support_variation: 'forums',
-							forceSiteId: true,
+							force_site_id: true,
 							location: 'help-center',
 							section: sectionName,
 						} );
-						history.push( `/success?forumTopic=${ encodeURIComponent( response.topic_URL ) }` );
+						navigate( `/success?forumTopic=${ encodeURIComponent( response.topic_URL ) }` );
 						resetStore();
 					} )
 					.catch( () => {
@@ -462,7 +473,12 @@ export const HelpCenterContactForm = () => {
 			{ ! userWithNoSites && (
 				<section>
 					<HelpCenterSitePicker
-						enabled={ mode === 'FORUM' }
+						enabled={
+							mode === 'FORUM' &&
+							( ( supportSite?.plan?.product_slug &&
+								isFreePlanProduct( { product_slug: supportSite.plan?.product_slug } ) ) ||
+								userWithNoSites )
+						}
 						currentSite={ currentSite }
 						onSelect={ ( id: string | number ) => {
 							if ( id !== 0 ) {

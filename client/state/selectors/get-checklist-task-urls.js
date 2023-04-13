@@ -47,6 +47,7 @@ export default createSelector(
 			staff_info_added: frontPageUrl,
 			product_list_added: frontPageUrl,
 			woocommerce_setup: getSiteUrl( state, siteId ) + '/wp-admin/admin.php?page=wc-admin',
+			sensei_setup: getSiteUrl( state, siteId ) + '/wp-admin/admin.php?page=sensei',
 		};
 	},
 	( state, siteId ) => [

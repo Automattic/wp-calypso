@@ -9,6 +9,9 @@ import {
 
 import 'calypso/state/plugins/init';
 
+// TODO: Much of the functionality in this file is duplicated with selectors.js
+// which needs to be removed when this file is complete.
+
 const _filters = {
 	none: function () {
 		return false;
@@ -66,7 +69,7 @@ export function requestPluginsError( state ) {
 	return state.plugins.installed.requestError;
 }
 
-export function getPlugins( state, siteIds, pluginFilter ) {
+function getPluginsSelector( state, siteIds, pluginFilter ) {
 	let pluginList = reduce(
 		siteIds,
 		( memo, siteId ) => {
@@ -105,6 +108,18 @@ export function getPlugins( state, siteIds, pluginFilter ) {
 	return sortBy( pluginList, ( item ) => item.slug.toLowerCase() );
 }
 
+export const getPlugins = createSelector(
+	getPluginsSelector,
+	( state, siteIds ) => [
+		state.plugins.installed.plugins,
+		isRequestingForAllSites( state ),
+		...siteIds.map( ( siteId ) => isRequesting( state, siteId ) ),
+	],
+	( state, siteIds, pluginFilter ) => {
+		return [ siteIds, pluginFilter ].flat().join( '-' );
+	}
+);
+
 export function getPluginsWithUpdates( state, siteIds ) {
 	return filter( getPlugins( state, siteIds ), _filters.updates ).map( ( plugin ) => ( {
 		...plugin,
@@ -128,6 +143,10 @@ export function getPluginOnSites( state, siteIds, pluginSlug ) {
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );
 	return find( pluginList, ( plugin ) => isEqualSlugOrId( pluginSlug, plugin ) );
+}
+
+export function getPluginsOnSite( state, siteId, pluginSlugs ) {
+	return pluginSlugs.map( ( pluginSlug ) => getPluginOnSite( state, siteId, pluginSlug ) );
 }
 
 export function getSitesWithPlugin( state, siteIds, pluginSlug ) {
@@ -187,7 +206,7 @@ export function getStatusForPlugin( state, siteId, pluginId ) {
 /**
  * Whether the plugin's status for one or more recent actions matches a specified status.
  *
- * @param  {object}       state    Global state tree
+ * @param  {Object}       state    Global state tree
  * @param  {number}       siteId   ID of the site
  * @param  {string}       pluginId ID of the plugin
  * @param  {string|Array} action   Action, or array of actions of interest
@@ -207,7 +226,7 @@ export function isPluginActionStatus( state, siteId, pluginId, action, status ) 
 /**
  * Whether the plugin's status for one or more recent actions is in progress.
  *
- * @param  {object}       state    Global state tree
+ * @param  {Object}       state    Global state tree
  * @param  {number}       siteId   ID of the site
  * @param  {string}       pluginId ID of the plugin
  * @param  {string|Array} action   Action, or array of actions of interest
@@ -220,7 +239,7 @@ export function isPluginActionInProgress( state, siteId, pluginId, action ) {
 /**
  * Retrieve all plugin statuses of a certain type.
  *
- * @param  {object} state    Global state tree
+ * @param  {Object} state    Global state tree
  * @param  {string} status   Status of interest
  * @returns {Array}          Array of plugin status objects
  */

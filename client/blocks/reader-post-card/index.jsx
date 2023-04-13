@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import DailyPostButton from 'calypso/blocks/daily-post-button';
 import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
+import TagPost from 'calypso/blocks/reader-post-card/tag-post';
 import DiscoverFollowButton from 'calypso/reader/discover/follow-button';
 import {
 	getDiscoverBlogName,
@@ -16,9 +17,9 @@ import {
 } from 'calypso/reader/discover/helper';
 import { isEligibleForUnseen } from 'calypso/reader/get-helpers';
 import * as stats from 'calypso/reader/stats';
-import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
 import { hasReaderFollowOrganization } from 'calypso/state/reader/follows/selectors';
 import DisplayTypes from 'calypso/state/reader/posts/display-types';
+import { expandCard as expandCardAction } from 'calypso/state/reader-ui/card-expansions/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import isFeedWPForTeams from 'calypso/state/selectors/is-feed-wpforteams';
 import isReaderCardExpanded from 'calypso/state/selectors/is-reader-card-expanded';
@@ -144,6 +145,7 @@ class ReaderPostCard extends Component {
 		const isVideo = !! ( post.display_type & DisplayTypes.FEATURED_VIDEO ) && ! compact;
 		const isDiscover = post.is_discover;
 		const title = truncate( post.title, { length: 140, separator: /,? +/ } );
+		const isReaderTagPage = currentRoute.startsWith( '/tag/' );
 		const classes = classnames( 'reader-post-card', {
 			'has-thumbnail': !! post.canonical_media,
 			'is-photo': isPhotoPost,
@@ -153,6 +155,7 @@ class ReaderPostCard extends Component {
 			'is-seen': isSeen,
 			'is-expanded-video': isVideo && isExpanded,
 			'is-compact': compact,
+			'is-tag-post': isReaderTagPage,
 		} );
 
 		let discoverFollowButton;
@@ -233,6 +236,18 @@ class ReaderPostCard extends Component {
 					onClick={ this.handleCardClick }
 				/>
 			);
+		} else if ( isReaderTagPage ) {
+			readerPostCard = (
+				<TagPost
+					post={ post }
+					title={ title }
+					isDiscover={ isDiscover }
+					isExpanded={ isExpanded }
+					expandCard={ expandCard }
+					site={ site }
+					postKey={ postKey }
+				></TagPost>
+			);
 		} else if ( isPhotoPost ) {
 			readerPostCard = (
 				<PhotoPost
@@ -282,7 +297,7 @@ class ReaderPostCard extends Component {
 		const onClick = ! isPhotoPost && ! compact ? this.handleCardClick : noop;
 		return (
 			<Card className={ classes } onClick={ onClick } tagName="article">
-				{ ! compact && postByline }
+				{ ! compact && ! isReaderTagPage && postByline }
 				{ readerPostCard }
 				{ this.props.children }
 			</Card>

@@ -24,8 +24,21 @@ global.CSS = {
 	supports: jest.fn(),
 };
 
+global.fetch = jest.fn( () =>
+	Promise.resolve( {
+		json: () => Promise.resolve(),
+	} )
+);
+
 // Don't need to mock specific functions for any tests, but mocking
 // module because it accesses the `document` global.
 jest.mock( 'wpcom-proxy-request', () => ( {
 	__esModule: true,
 } ) );
+
+// TODO: structuredClone wasn't available in Jest before verson 28 so this creates
+// a version to be used for the tests. Once Jest is upgraded to 28 this should
+// be removed.
+global.structuredClone = jest.fn( ( value ) => {
+	return JSON.parse( JSON.stringify( value ) );
+} );

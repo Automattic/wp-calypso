@@ -10,9 +10,9 @@ import { combineReducers } from 'calypso/state/utils';
 /**
  * Tracks all WordAds request status, indexed by site ID.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function requesting( state = {}, action ) {
 	switch ( action.type ) {
@@ -29,9 +29,9 @@ export function requesting( state = {}, action ) {
 /**
  * Keeps track of all WordAds errors, indexed by siteId
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function requestErrors( state = {}, action ) {
 	switch ( action.type ) {
@@ -52,9 +52,9 @@ export function requestErrors( state = {}, action ) {
 /**
  * Keeps track of all WordAds request successes, indexed by siteId
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function requestSuccess( state = {}, action ) {
 	switch ( action.type ) {

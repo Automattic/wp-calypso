@@ -77,7 +77,7 @@ export function fullAddressFieldsRules() {
  * Returns country/processor specific validation rule sets for defined fields.
  *
  * @param {string} country two-letter country code to determine the required fields
- * @returns {object} the ruleset
+ * @returns {Object} the ruleset
  */
 export function countrySpecificFieldRules( country ) {
 	const countryFields = PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ country ].fields || [];

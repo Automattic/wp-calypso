@@ -35,7 +35,7 @@ class SiteTaxonomy {
 	/**
 	 * Get a list of Terms for the Taxonomy
 	 *
-	 * @param {object} [query] - query object
+	 * @param {Object} [query] - query object
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */

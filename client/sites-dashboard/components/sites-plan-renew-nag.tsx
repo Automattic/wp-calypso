@@ -1,17 +1,18 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Gridicon } from '@automattic/components';
-import { SiteDetailsPlan } from '@automattic/launch/src/stores';
+import { Site } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
-import { useInView } from 'calypso/lib/use-in-view';
+import { useInView } from 'react-intersection-observer';
 import { PLAN_RENEW_NAG_EVENT_NAMES } from '../utils';
 
 interface PlanRenewProps {
-	plan: SiteDetailsPlan;
+	plan: Site.SiteDetailsPlan;
 	isSiteOwner: boolean;
 	checkoutUrl: string;
+	hideRenewLink?: boolean;
 }
 
 const PlanRenewContainer = styled.div( {
@@ -49,7 +50,12 @@ const PlanRenewNoticeExpireText = styled.div( {
 	overflow: 'hidden',
 } );
 
-export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps ) => {
+export const PlanRenewNag = ( {
+	isSiteOwner,
+	plan,
+	checkoutUrl,
+	hideRenewLink,
+}: PlanRenewProps ) => {
 	const { __ } = useI18n();
 	const trackCallback = useCallback(
 		() =>
@@ -60,7 +66,9 @@ export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps
 			} ),
 		[ isSiteOwner, plan.product_slug ]
 	);
-	const ref = useInView< HTMLDivElement >( trackCallback );
+	const { ref } = useInView( {
+		onChange: ( inView ) => inView && trackCallback(),
+	} );
 
 	const renewText = __( 'Renew plan' );
 	return (
@@ -79,7 +87,7 @@ export const PlanRenewNag = ( { isSiteOwner, plan, checkoutUrl }: PlanRenewProps
 						) }
 					</PlanRenewNoticeExpireText>
 				</PlanRenewNoticeTextContainer>
-				{ isSiteOwner && (
+				{ isSiteOwner && ! hideRenewLink && (
 					<PlanRenewLink
 						onClick={ () => {
 							recordTracksEvent( PLAN_RENEW_NAG_EVENT_NAMES.ON_CLICK, {

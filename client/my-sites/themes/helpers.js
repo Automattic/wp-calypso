@@ -1,4 +1,4 @@
-import { isMagnificentLocale } from '@automattic/i18n-utils';
+import { isMagnificentLocale, addLocaleToPath } from '@automattic/i18n-utils';
 import { mapValues } from 'lodash';
 import titlecase from 'to-title-case';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -16,9 +16,9 @@ function appendActionTracking( option, name ) {
 	const { action } = option;
 
 	return Object.assign( {}, option, {
-		action: ( t ) => {
+		action: ( t, context ) => {
 			action && action( t );
-			trackClick( 'more button', name );
+			context && trackClick( context, name );
 		},
 	} );
 }
@@ -52,7 +52,38 @@ export function getAnalyticsData( path, { filter, vertical, tier, site_id } ) {
 }
 
 export function localizeThemesPath( path, locale, isLoggedOut = true ) {
-	const shouldPrefix = isLoggedOut && isMagnificentLocale( locale ) && path.startsWith( '/theme' );
+	const shouldLocalizePath = isLoggedOut && isMagnificentLocale( locale );
 
-	return shouldPrefix ? `/${ locale }${ path }` : path;
+	if ( ! shouldLocalizePath ) {
+		return path;
+	}
+
+	if ( path.startsWith( '/theme' ) ) {
+		return `/${ locale }${ path }`;
+	}
+
+	if ( path.startsWith( '/start/with-theme' ) ) {
+		return addLocaleToPath( path, locale );
+	}
+
+	return path;
+}
+
+/**
+ * Creates the billing product slug for a given theme ID.
+ *
+ * @param themeId Theme ID
+ * @returns string
+ */
+export function marketplaceThemeBillingProductSlug( themeId ) {
+	return `wp-mp-theme-${ themeId }`;
+}
+
+export function getSubjectsFromTermTable( filterToTermTable ) {
+	return Object.keys( filterToTermTable )
+		.filter( ( key ) => key.indexOf( 'subject:' ) !== -1 )
+		.reduce( ( obj, key ) => {
+			obj[ key ] = filterToTermTable[ key ];
+			return obj;
+		}, {} );
 }

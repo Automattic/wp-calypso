@@ -7,6 +7,12 @@
 	.components-combobox-control__suggestions-container {
 		width: unset;
 		border-color: var(--color-neutral-10);
+		.components-flex {
+			padding-bottom: 5px;
+		}
+		.components-combobox-control__reset {
+			margin-top: 5px;
+		}
 	}
 	.step-container__header {
 		flex: 1;

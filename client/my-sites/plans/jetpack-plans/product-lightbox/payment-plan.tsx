@@ -1,3 +1,4 @@
+import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
@@ -13,11 +14,15 @@ type PaymentPlanProps = {
 	isMultiSiteIncompatible?: boolean;
 	siteId: number | null;
 	product: SelectorProduct;
+	showPlansOneBelowTheOther?: boolean;
+	isActive?: boolean;
 };
 const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 	isMultiSiteIncompatible,
 	siteId,
 	product,
+	showPlansOneBelowTheOther = false,
+	isActive = true,
 } ) => {
 	const translate = useTranslate();
 	const { containerRef, isCompact } = useItemPriceCompact();
@@ -61,9 +66,14 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 				/>
 			) : (
 				<>
-					<p>{ translate( 'Payment plan:' ) }</p>
+					{ ! showPlansOneBelowTheOther && <p>{ translate( 'Payment plan:' ) }</p> }
 
-					<div className="product-lightbox__variants-plan-card">
+					<div
+						className={ classNames(
+							'product-lightbox__variants-plan-card',
+							! isActive && 'product-lightbox__variants-plan-card inactive'
+						) }
+					>
 						<div className={ labelClass } ref={ containerRef }>
 							<span className="product-lightbox__variants-plan-card-price">
 								<PlanPrice rawPrice={ currentPrice } currencyCode={ currencyCode } />
@@ -73,7 +83,13 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 									'is-compact': isCompact,
 								} ) }
 							>
-								<TimeFrame billingTerm={ billingTerm } />
+								<TimeFrame
+									billingTerm={ billingTerm }
+									discountedPriceDuration={ discountedPriceDuration }
+									formattedOriginalPrice={ formatCurrency( originalPrice, currencyCode, {
+										stripZeros: true,
+									} ) }
+								/>
 							</div>
 						</div>
 						{ discountedPrice && (

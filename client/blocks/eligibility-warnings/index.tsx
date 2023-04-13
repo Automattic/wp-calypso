@@ -52,6 +52,7 @@ interface ExternalProps {
 	currentContext?: string;
 	isMarketplace?: boolean;
 	showDataCenterPicker?: boolean;
+	disableContinueButton?: boolean;
 }
 
 type Props = ExternalProps & ReturnType< typeof mergeProps > & LocalizeProps;
@@ -79,6 +80,7 @@ export const EligibilityWarnings = ( {
 	launchSite: launch,
 	makeSitePublic,
 	translate,
+	disableContinueButton,
 }: Props ) => {
 	const warnings = eligibilityData.eligibilityWarnings || [];
 	const listHolds = eligibilityData.eligibilityHolds || [];
@@ -115,7 +117,11 @@ export const EligibilityWarnings = ( {
 		if ( siteRequiresUpgrade( listHolds ) ) {
 			recordUpgradeClick( ctaName, feature );
 			const planSlug = eligibleForProPlan ? PLAN_WPCOM_PRO : PLAN_BUSINESS;
-			page.redirect( `/checkout/${ siteSlug }/${ planSlug }` );
+			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
+			if ( context === 'plugins-upload' ) {
+				redirectUrl = `${ redirectUrl }?redirect_to=/plugins/upload/${ siteSlug }`;
+			}
+			page.redirect( redirectUrl );
 			return;
 		}
 		if ( siteRequiresLaunch( listHolds ) ) {
@@ -235,9 +241,10 @@ export const EligibilityWarnings = ( {
 						disabled={
 							isProceedButtonDisabled( isEligible, listHolds ) ||
 							siteIsSavingSettings ||
-							siteIsLaunching
+							siteIsLaunching ||
+							disableContinueButton
 						}
-						busy={ siteIsLaunching || siteIsSavingSettings }
+						busy={ siteIsLaunching || siteIsSavingSettings || disableContinueButton }
 						onClick={ logEventAndProceed }
 					>
 						{ getProceedButtonText( listHolds, translate, context ) }
@@ -412,7 +419,7 @@ function mergeProps(
 			: FEATURE_INSTALL_PLUGINS;
 		ctaName = 'calypso-plugin-details-eligibility-upgrade-nudge';
 	} else if ( includes( ownProps.backUrl, 'plugins' ) ) {
-		context = 'plugins';
+		context = 'plugins-upload';
 		feature = FEATURE_UPLOAD_PLUGINS;
 		ctaName = 'calypso-plugin-eligibility-upgrade-nudge';
 	} else if ( includes( ownProps.backUrl, 'themes' ) ) {

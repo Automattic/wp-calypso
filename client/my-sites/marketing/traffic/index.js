@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { connect } from 'react-redux';
-import wordpressSeoIllustration from 'calypso/assets/images/illustrations/wordpress-seo-premium.svg';
+import blazeIllustration from 'calypso/assets/images/customer-home/illustration--blaze.svg';
 import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
@@ -21,6 +21,7 @@ import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form'
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isBlazeEnabled from 'calypso/state/ui/selectors/is-blaze-enabled';
 
 import './style.scss';
 
@@ -37,6 +38,7 @@ const SiteSettingsTraffic = ( {
 	setFieldValue,
 	siteId,
 	siteSlug,
+	shouldShowAdvertisingOption,
 	translate,
 } ) => (
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -49,18 +51,18 @@ const SiteSettingsTraffic = ( {
 			/>
 		) }
 		<JetpackDevModeNotice />
-		{ isAdmin && (
+		{ isAdmin && shouldShowAdvertisingOption && (
 			<PromoCardBlock
-				productSlug="wordpress-seo-premium"
-				impressionEvent="calypso_traffic_wordpress_seo_premium_banner_view"
-				clickEvent="calypso_traffic_wordpress_seo_premium_banner_click"
-				headerText={ translate( 'Increase site visitors with Yoast SEO Premium' ) }
+				productSlug="blaze"
+				impressionEvent="calypso_marketing_traffic_blaze_banner_view"
+				clickEvent="calypso_marketing_traffic_blaze_banner_click"
+				headerText={ translate( 'Reach new readers and customers' ) }
 				contentText={ translate(
-					'Purchase Yoast SEO Premium to ensure that more people find your incredible content.'
+					'Use WordPress Blaze to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. '
 				) }
-				ctaText={ translate( 'Learn more' ) }
-				image={ wordpressSeoIllustration }
-				href={ `/plugins/wordpress-seo-premium/${ siteSlug || '' }` }
+				ctaText={ translate( 'Get started' ) }
+				image={ blazeIllustration }
+				href={ `/advertising/${ siteSlug || '' }` }
 			/>
 		) }
 		{ isAdmin && <SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } /> }
@@ -74,7 +76,7 @@ const SiteSettingsTraffic = ( {
 		{ isAdmin && (
 			<RelatedPosts
 				onSubmitForm={ handleSubmitForm }
-				handleAutosavingToggle={ handleAutosavingToggle }
+				handleToggle={ handleAutosavingToggle }
 				isSavingSettings={ isSavingSettings }
 				isRequestingSettings={ isRequestingSettings }
 				fields={ fields }
@@ -121,6 +123,7 @@ const connectComponent = connect( ( state ) => {
 	const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isJetpackAdmin = isJetpack && isAdmin;
+	const shouldShowAdvertisingOption = isBlazeEnabled( state );
 
 	return {
 		siteId,
@@ -128,6 +131,7 @@ const connectComponent = connect( ( state ) => {
 		isAdmin,
 		isJetpack,
 		isJetpackAdmin,
+		shouldShowAdvertisingOption,
 	};
 } );
 
@@ -140,6 +144,8 @@ const getFormSettings = ( settings ) =>
 		'roles',
 		'jetpack_relatedposts_allowed',
 		'jetpack_relatedposts_enabled',
+		'jetpack_relatedposts_show_context',
+		'jetpack_relatedposts_show_date',
 		'jetpack_relatedposts_show_headline',
 		'jetpack_relatedposts_show_thumbnails',
 		'blog_public',

@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -10,17 +11,23 @@ import {
 import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partner/selectors';
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
+import SiteExpandedContent from '../site-expanded-content';
+import SitePhpVersion from '../site-expanded-content/site-php-version';
 import SiteStatusContent from '../site-status-content';
+import SiteTableExpand from '../site-table-expand';
 import type { SiteData, SiteColumns } from '../types';
 
 import './style.scss';
 
 interface Props {
+	index: number;
 	columns: SiteColumns;
 	item: SiteData;
+	setExpanded: () => void;
+	isExpanded: boolean;
 }
 
-export default function SiteTableRow( { columns, item }: Props ) {
+export default function SiteTableRow( { index, columns, item, setExpanded, isExpanded }: Props ) {
 	const dispatch = useDispatch();
 
 	const site = item.site;
@@ -44,12 +51,18 @@ export default function SiteTableRow( { columns, item }: Props ) {
 	const shouldDisableLicenseSelection =
 		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
+	const hasSiteError = site.error || ! isSiteConnected;
+
+	const isExpandedContentEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
+
 	return (
 		<Fragment>
 			<tr
 				className={ classNames( 'site-table__table-row', {
 					'site-table__table-row-disabled': shouldDisableLicenseSelection,
 					'site-table__table-row-active': currentSiteHasSelectedLicenses,
+					'site-table__table-row-site-error': hasSiteError,
+					'is-expanded': isExpanded,
 				} ) }
 				onClick={ ( event ) => {
 					if ( ! shouldDisableLicenseSelection ) {
@@ -63,10 +76,17 @@ export default function SiteTableRow( { columns, item }: Props ) {
 			>
 				{ columns.map( ( column ) => {
 					const row = item[ column.key ];
+					if ( hasSiteError && column.key !== 'site' ) {
+						return null;
+					}
+					const isCritical = 'critical' === row.status;
 					if ( row.type ) {
 						return (
 							<td
-								className={ classNames( site.error && 'site-table__td-with-error' ) }
+								className={ classNames( column.className, {
+									'site-table__td-without-border-bottom': isExpanded,
+									'site-table__td-critical': isCritical,
+								} ) }
 								key={ `table-data-${ row.type }-${ blogId }` }
 							>
 								<SiteStatusContent
@@ -79,22 +99,46 @@ export default function SiteTableRow( { columns, item }: Props ) {
 						);
 					}
 				} ) }
+				{ /* Show error content when there is a site error */ }
+				{ hasSiteError && (
+					<td
+						className={ classNames( 'site-table__error', {
+							'site-table__td-without-border-bottom': isExpanded,
+							'padding-0': isExpandedContentEnabled,
+						} ) }
+						// If there is an error, we need to span the whole row because we don't show any column.
+						colSpan={ columns.length - 1 }
+					>
+						<SiteErrorContent siteUrl={ site.value.url } />
+					</td>
+				) }
 				<td
-					className={ classNames(
-						site.error && 'site-table__td-with-error',
-						'site-table__actions'
-					) }
+					className={ classNames( 'site-table__actions', {
+						'site-table__td-without-border-bottom': isExpanded,
+						'site-table__actions-button': isExpandedContentEnabled,
+					} ) }
 				>
 					<SiteActions isLargeScreen site={ site } siteError={ siteError } />
 				</td>
+				{ /* Show expand buttons only when the feature is enabled */ }
+				{ isExpandedContentEnabled && (
+					<SiteTableExpand
+						index={ index }
+						isExpanded={ isExpanded }
+						setExpanded={ setExpanded }
+						siteId={ site.value.blog_id }
+					/>
+				) }
 			</tr>
-			{ site.error || ! isSiteConnected ? (
-				<tr className="site-table__connection-error">
+			{ /* Show expanded content when expandable block is enabled. */ }
+			{ isExpanded && (
+				<tr className="site-table__table-row-expanded">
 					<td colSpan={ Object.keys( item ).length + 1 }>
-						<SiteErrorContent siteUrl={ site.value.url } />
+						<SiteExpandedContent site={ site.value } hasError={ hasSiteError } />
+						<SitePhpVersion phpVersion={ site.value.php_version_num } />
 					</td>
 				</tr>
-			) : null }
+			) }
 		</Fragment>
 	);
 }

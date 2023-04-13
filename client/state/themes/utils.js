@@ -17,7 +17,7 @@ const SEARCH_TAXONOMIES = [ 'feature' ];
 /**
  * Whether a given theme object is premium.
  *
- * @param  {object} theme Theme object
+ * @param  {Object} theme Theme object
  * @returns {boolean}      True if the theme is premium
  */
 export function isPremium( theme ) {
@@ -28,8 +28,8 @@ export function isPremium( theme ) {
 /**
  * Normalizes a theme obtained via the WordPress.com REST API from a Jetpack site
  *
- * @param  {object} theme  Theme object
- * @returns {object}        Normalized theme object
+ * @param  {Object} theme  Theme object
+ * @returns {Object}        Normalized theme object
  */
 export function normalizeJetpackTheme( theme = {} ) {
 	if ( ! theme.tags ) {
@@ -48,8 +48,8 @@ export function normalizeJetpackTheme( theme = {} ) {
 /**
  * Normalizes a theme obtained from the WordPress.com REST API
  *
- * @param  {object} theme  Theme object
- * @returns {object}        Normalized theme object
+ * @param  {Object} theme  Theme object
+ * @returns {Object}        Normalized theme object
  */
 export function normalizeWpcomTheme( theme ) {
 	const attributesMap = {
@@ -64,8 +64,8 @@ export function normalizeWpcomTheme( theme ) {
 /**
  * Normalizes a theme obtained from the WordPress.org REST API
  *
- * @param  {object} theme  Theme object
- * @returns {object}        Normalized theme object
+ * @param  {Object} theme  Theme object
+ * @returns {Object}        Normalized theme object
  */
 export function normalizeWporgTheme( theme ) {
 	const attributesMap = {
@@ -119,8 +119,8 @@ export function getThemeIdFromStylesheet( stylesheet ) {
  * Returns a normalized themes query, excluding any values which match the
  * default theme query.
  *
- * @param  {object} query Themes query
- * @returns {object}       Normalized themes query
+ * @param  {Object} query Themes query
+ * @returns {Object}       Normalized themes query
  */
 export function getNormalizedThemesQuery( query ) {
 	return omitBy( query, ( value, key ) => DEFAULT_THEME_QUERY[ key ] === value );
@@ -129,7 +129,7 @@ export function getNormalizedThemesQuery( query ) {
 /**
  * Returns a serialized themes query
  *
- * @param  {object} query  Themes query
+ * @param  {Object} query  Themes query
  * @param  {number} siteId Optional site ID
  * @returns {string}        Serialized themes query
  */
@@ -149,7 +149,7 @@ export function getSerializedThemesQuery( query = {}, siteId ) {
  * The object will include siteId and/or query object, if can be parsed.
  *
  * @param  {string} serializedQuery Serialized themes query
- * @returns {object}                 Deserialized themes query details
+ * @returns {Object}                 Deserialized themes query details
  */
 export function getDeserializedThemesQueryDetails( serializedQuery ) {
 	let siteId;
@@ -169,7 +169,7 @@ export function getDeserializedThemesQueryDetails( serializedQuery ) {
 /**
  * Returns a serialized themes query, excluding any page parameter
  *
- * @param  {object} query  Themes query
+ * @param  {Object} query  Themes query
  * @param  {number} siteId Optional site ID
  * @returns {string}        Serialized themes query
  */
@@ -180,8 +180,8 @@ export function getSerializedThemesQueryWithoutPage( query, siteId ) {
 /**
  * Returns true if the theme matches the given query, or false otherwise.
  *
- * @param  {object}  query Query object
- * @param  {object}  theme Item to consider
+ * @param  {Object}  query Query object
+ * @param  {Object}  theme Item to consider
  * @returns {boolean}       Whether theme matches query
  */
 export function isThemeMatchingQuery( query, theme ) {
@@ -234,7 +234,7 @@ export function isThemeMatchingQuery( query, theme ) {
 /**
  * Returns the slugs of the theme's given taxonomy.
  *
- * @param  {object} theme    The theme object.
+ * @param  {Object} theme    The theme object.
  * @param  {string} taxonomy The taxonomy items to get.
  * @returns {Array}           An array of theme taxonomy slugs.
  */

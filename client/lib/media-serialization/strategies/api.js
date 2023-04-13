@@ -6,7 +6,7 @@ import { MediaTypes } from '../constants';
  * normalized deserialized media object.
  *
  * @param  {*}      node Media object to parse
- * @returns {object}      Normalized object
+ * @returns {Object}      Normalized object
  */
 export function deserialize( node ) {
 	const normalized = {

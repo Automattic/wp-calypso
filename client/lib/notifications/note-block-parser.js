@@ -8,11 +8,11 @@ import { compact, find } from 'lodash';
  *   - it starts before the other
  *   - it has the same start but ends before the other
  *
- * @param {object} rangeA                  First range
+ * @param {Object} rangeA                  First range
  * @param {Array}  rangeA.indices          Start and end of the first range
  * @param {number} rangeA.indices.0 aStart Start index of first range
  * @param {number} rangeA.indices.1 aEnd   End index of first range
- * @param {object} rangeB                  Second range
+ * @param {Object} rangeB                  Second range
  * @param {Array}  rangeB.indices          Start and end of the second range
  * @param {number} rangeB.indices.0 aStart Start index of second range
  * @param {number} rangeB.indices.1 aEnd   End index of second range
@@ -49,7 +49,7 @@ const rangeSort = ( { indices: [ aStart, aEnd ] }, { indices: [ bStart, bEnd ] }
  *
  * The initial "invisible token" ranges are not enclosed
  *
- * @param {object} range                      Range
+ * @param {Object} range                      Range
  * @param {Array}  range.indices              Start and end of the range
  * @param {number} range.indices.0 innerStart Start index of the range
  * @param {number} range.indices.1 innerEnd   End index of the range
@@ -60,9 +60,11 @@ const encloses =
 	/**
 	 * Indicates if the given range encloses the first "inner" range
 	 *
-	 * @param {number} outerStart start of possibly-outer range
-	 * @param {number} outerEnd end of possibly-outer range
-	 * @returns {boolean} whether the "outer" range encloses the "inner" range
+	 * @param {Object} range                      Range
+	 * @param {Array}  range.indices              Start and end of the range
+	 * @param {number} range.indices.0 innerStart Start index of the range
+	 * @param {number} range.indices.1 innerEnd   End index of the range
+	 * @returns {Function({indices: Number[]}): boolean} performs the check
 	 */
 	( { indices: [ outerStart, outerEnd ] = [ 0, 0 ] } ) =>
 		innerStart !== 0 && innerEnd !== 0 && outerStart <= innerStart && outerEnd >= innerEnd;
@@ -82,9 +84,9 @@ const encloses =
  *
  * A range is a parent of another if it "encloses" the range.
  *
- * @param {object[]} ranges the tree of ranges
- * @param {object} range the range to add
- * @returns {object[]} the new tree
+ * @param {Object[]} ranges the tree of ranges
+ * @param {Object} range the range to add
+ * @returns {Object[]} the new tree
  */
 const addRange = ( ranges, range ) => {
 	const parent = find( ranges, encloses( range ) );
@@ -210,8 +212,8 @@ const nodeMappings = ( type ) => {
  * Creates a node with appropriate properties
  * extracted from text and range information
  *
- * @param {object|string} text original text message
- * @param {object} range contains type and meta information
+ * @param {Object | string} text original text message
+ * @param {Object} range contains type and meta information
  * @returns {{children: *[]}} new node
  */
 const newNode = ( text, range = {} ) => ( {
@@ -250,7 +252,7 @@ const joinResults = ( [ reduced, remainder ] ) =>
  * @param {Array}  reducer.0 Previously parsed results
  * @param {string} reducer.1 Remaining text to parse
  * @param {number} reducer.2 Current index into text string
- * @param {object} nextRange Next range from formatted block
+ * @param {Object} nextRange Next range from formatted block
  * @returns {Array} parsed results: text and nodes
  */
 const parse = ( [ prev, text, offset ], nextRange ) => {
@@ -283,7 +285,7 @@ const parse = ( [ prev, text, offset ], nextRange ) => {
  * prep work on the list of block ranges.
  *
  * @see parse
- * @param {object} block the block to parse
+ * @param {Object} block the block to parse
  * @returns {Array} list of text and node segments with children
  */
 export const parseBlock = ( block ) =>

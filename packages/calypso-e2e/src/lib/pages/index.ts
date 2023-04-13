@@ -1,4 +1,5 @@
 export * from './account-closed-page';
+export * from './add-people-page';
 export * from './cart-checkout-page';
 export * from './checkout-thank-you-page';
 export * from './domains-page';
@@ -29,6 +30,7 @@ export * from './themes-page';
 export * from './use-a-domain-i-own-page';
 export * from './woocommerce-landing-page';
 export * from './writing-settings-page';
+export * from './wp-admin-media-settings-page';
 
 export * from './external';
 export * from './me';

@@ -1,32 +1,24 @@
-import { Frame, Page } from 'playwright';
+import { Locator, Page } from 'playwright';
 import { envVariables } from '../..';
 
 type TemplateCategory = 'About';
-
-const selectors = {
-	templateCategoryButton: ( category: TemplateCategory ) =>
-		`.page-pattern-modal__category-list button:has-text("${ category }")`,
-	mobileTemplateCategorySelectBox: '.page-pattern-modal__mobile-category-dropdown',
-	template: ( label: string ) => `button.pattern-selector-item__label:has-text("${ label }")`,
-	blankPageButton: 'button:has-text("Blank page")',
-};
 
 /**
  * Represents the page template selection modal when first loading a new page in the editor.
  */
 export class PageTemplateModalComponent {
 	private page: Page;
-	private editorFrame: Page | Frame;
+	private editorWindow: Locator;
 
 	/**
 	 * Creates an instance of the page.
 	 *
-	 * @param {Page | Frame} editorFrame Frame for the gutenberg editor.
 	 * @param {Page} page Object representing the base page.
+	 * @param {Locator} editorWindow Locator to the editor window.
 	 */
-	constructor( editorFrame: Page | Frame, page: Page ) {
+	constructor( page: Page, editorWindow: Locator ) {
 		this.page = page;
-		this.editorFrame = editorFrame;
+		this.editorWindow = editorWindow;
 	}
 
 	/**
@@ -34,15 +26,13 @@ export class PageTemplateModalComponent {
 	 *
 	 * @param {TemplateCategory} category Name of the category to select.
 	 */
-	async selectTemplateCatagory( category: TemplateCategory ): Promise< void > {
+	async selectTemplateCategory( category: TemplateCategory ): Promise< void > {
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			await this.editorFrame.selectOption(
-				selectors.mobileTemplateCategorySelectBox,
-				category.toLowerCase()
-			);
+			await this.editorWindow
+				.locator( '.page-pattern-modal__mobile-category-dropdown' )
+				.selectOption( category.toLowerCase() );
 		} else {
-			const locator = this.editorFrame.locator( selectors.templateCategoryButton( category ) );
-			await locator.click();
+			await this.editorWindow.getByRole( 'menuitem', { name: category, exact: true } ).click();
 		}
 	}
 
@@ -52,15 +42,13 @@ export class PageTemplateModalComponent {
 	 * @param {string} label Label for the template (the string underneath the preview).
 	 */
 	async selectTemplate( label: string ): Promise< void > {
-		const locator = this.editorFrame.locator( selectors.template( label ) );
-		await locator.click();
+		await this.editorWindow.getByRole( 'option', { name: label, exact: true } ).click();
 	}
 
 	/**
 	 * Select a blank page as your template.
 	 */
 	async selectBlankPage(): Promise< void > {
-		const locator = this.editorFrame.locator( selectors.blankPageButton );
-		await locator.click();
+		await this.editorWindow.getByRole( 'button', { name: 'Blank page' } ).click();
 	}
 }

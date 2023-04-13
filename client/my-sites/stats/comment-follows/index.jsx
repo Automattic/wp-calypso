@@ -49,7 +49,7 @@ class StatsCommentFollows extends Component {
 				/>
 
 				<div id="my-stats-content">
-					<HeaderCake onClick={ this.goBack }>{ translate( 'Comments Followers' ) }</HeaderCake>
+					<HeaderCake onClick={ this.goBack }>{ translate( 'Comments Subscribers' ) }</HeaderCake>
 					<Followers
 						path="comment-follow-summary"
 						page={ this.props.page }

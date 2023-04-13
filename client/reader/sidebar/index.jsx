@@ -14,19 +14,25 @@ import SidebarItem from 'calypso/layout/sidebar/item';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import SidebarRegion from 'calypso/layout/sidebar/region';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
+import ReaderA8cConversationsIcon from 'calypso/reader/components/icons/a8c-conversations-icon';
+import ReaderConversationsIcon from 'calypso/reader/components/icons/conversations-icon';
+import ReaderDiscoverIcon from 'calypso/reader/components/icons/discover-icon';
+import ReaderFollowingIcon from 'calypso/reader/components/icons/following-icon';
+import ReaderLikesIcon from 'calypso/reader/components/icons/likes-icon';
+import ReaderNotificationsIcon from 'calypso/reader/components/icons/notifications-icon';
+import ReaderSearchIcon from 'calypso/reader/components/icons/search-icon';
 import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getTagStreamUrl } from 'calypso/reader/route';
-import ReaderSidebarFollowedSites from 'calypso/reader/sidebar/reader-sidebar-followed-sites';
 import { recordAction, recordGaEvent } from 'calypso/reader/stats';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
+import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import {
 	toggleReaderSidebarLists,
 	toggleReaderSidebarTags,
 } from 'calypso/state/reader-ui/sidebar/actions';
 import { isListsOpen, isTagsOpen } from 'calypso/state/reader-ui/sidebar/selectors';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { getSubscribedLists } from 'calypso/state/reader/lists/selectors';
-import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getReaderTeams } from 'calypso/state/teams/selectors';
 import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import ReaderSidebarHelper from './helper';
@@ -37,19 +43,6 @@ import ReaderSidebarOrganizations from './reader-sidebar-organizations';
 import ReaderSidebarTags from './reader-sidebar-tags';
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 import './style.scss';
-
-const A8CConversationsIcon = () => (
-	<svg
-		className="sidebar__menu-icon"
-		width="24"
-		height="24"
-		xmlns="http://www.w3.org/2000/svg"
-		viewBox="0 0 24 24"
-	>
-		<path d="M12.2 7.1c.5.3.6 1 .3 1.4L10 12.4c-.3.5-1 .7-1.4.3-.6-.3-.8-1-.4-1.5l2.5-3.9c.3-.4 1-.5 1.5-.2zM17.3 21.2h2.8c1 0 1.9-.8 1.9-1.9v-4.7c0-1-.8-1.9-1.9-1.9h-7.6c-1 .1-1.7.9-1.7 1.9v4.7c0 1 .8 1.8 1.7 1.9h2V24l2.8-2.8z" />
-		<path d="M8.8 15.2c-2.7-.7-4.1-2.9-4.1-5.2 0-5.8 5.8-5.7 5.8-5.7 5.8 0 5.8 5.7 5.8 5.7 0 .3 0 .6-.1.8H19v-.7C19 1.6 10.4 2 10.4 2c-8.6 0-8.5 8.1-8.5 8.1 0 3.5 2.7 6.8 6.9 7.5v-2.4z" />
-	</svg>
-);
 
 export class ReaderSidebar extends Component {
 	state = {};
@@ -115,6 +108,12 @@ export class ReaderSidebar extends Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_conversations_clicked' );
 	};
 
+	handleReaderSidebarNotificationsClicked = () => {
+		recordAction( 'clicked_reader_sidebar_notifications' );
+		recordGaEvent( 'Clicked Reader Sidebar Notifications' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_sidebar_notifications_clicked' );
+	};
+
 	handleReaderSidebarA8cConversationsClicked = () => {
 		recordAction( 'clicked_reader_sidebar_a8c_conversations' );
 		recordGaEvent( 'Clicked Reader Sidebar A8C Conversations' );
@@ -150,12 +149,15 @@ export class ReaderSidebar extends Component {
 				<SidebarItem
 					label={ translate( 'Search' ) }
 					onNavigate={ this.handleReaderSidebarSearchClicked }
-					materialIcon="search"
+					customIcon={ <ReaderSearchIcon /> }
 					link="/read/search"
 					className={ ReaderSidebarHelper.itemLinkClass( '/read/search', path, {
 						'sidebar-streams__search': true,
 					} ) }
 				/>
+
+				<SidebarSeparator />
+
 				{ isDiscoverEnabled() && (
 					<SidebarItem
 						className={ ReaderSidebarHelper.itemLinkClass( '/discover', path, {
@@ -163,19 +165,30 @@ export class ReaderSidebar extends Component {
 						} ) }
 						label={ translate( 'Discover' ) }
 						onNavigate={ this.handleReaderSidebarDiscoverClicked }
-						icon="my-sites"
+						customIcon={ <ReaderDiscoverIcon /> }
 						link="/discover"
 					/>
 				) }
 
-				<SidebarSeparator />
-				<li>
-					<ReaderSidebarFollowedSites path={ path } />
-				</li>
-				<li>
-					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
-				</li>
-				<SidebarSeparator />
+				<SidebarItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/read', path, {
+						'sidebar-streams__following': true,
+					} ) }
+					label={ translate( 'Following' ) }
+					onNavigate={ this.handleReaderSidebarFollowedSitesClicked }
+					customIcon={ <ReaderFollowingIcon /> }
+					link="/read"
+				/>
+
+				<SidebarItem
+					label={ translate( 'Likes' ) }
+					onNavigate={ this.handleReaderSidebarLikeActivityClicked }
+					customIcon={ <ReaderLikesIcon /> }
+					link="/activities/likes"
+					className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
+						'sidebar-activity__likes': true,
+					} ) }
+				/>
 
 				<SidebarItem
 					className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations', path, {
@@ -183,29 +196,8 @@ export class ReaderSidebar extends Component {
 					} ) }
 					label={ translate( 'Conversations' ) }
 					onNavigate={ this.handleReaderSidebarConversationsClicked }
-					materialIcon="question_answer"
+					customIcon={ <ReaderConversationsIcon /> }
 					link="/read/conversations"
-				/>
-				{ isAutomatticTeamMember( teams ) && (
-					<SidebarItem
-						className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations/a8c', path, {
-							'sidebar-streams__conversations': true,
-						} ) }
-						label="A8C Conversations"
-						onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
-						link="/read/conversations/a8c"
-						customIcon={ <A8CConversationsIcon /> }
-					/>
-				) }
-
-				<SidebarItem
-					label={ translate( 'My Likes' ) }
-					onNavigate={ this.handleReaderSidebarLikeActivityClicked }
-					materialIcon="star_border"
-					link="/activities/likes"
-					className={ ReaderSidebarHelper.itemLinkClass( '/activities/likes', path, {
-						'sidebar-activity__likes': true,
-					} ) }
 				/>
 
 				{ ( this.props.subscribedLists?.length > 0 || isEnabled( 'reader/list-management' ) ) && (
@@ -226,6 +218,34 @@ export class ReaderSidebar extends Component {
 					onClick={ this.props.toggleTagsVisibility }
 					onFollowTag={ this.highlightNewTag }
 					currentTag={ this.state.currentTag }
+				/>
+
+				<SidebarSeparator />
+
+				<li>
+					<ReaderSidebarOrganizations organizations={ this.props.organizations } path={ path } />
+				</li>
+
+				{ isAutomatticTeamMember( teams ) && (
+					<SidebarItem
+						className={ ReaderSidebarHelper.itemLinkClass( '/read/conversations/a8c', path, {
+							'sidebar-streams__conversations': true,
+						} ) }
+						label="A8C Conversations"
+						onNavigate={ this.handleReaderSidebarA8cConversationsClicked }
+						link="/read/conversations/a8c"
+						customIcon={ <ReaderA8cConversationsIcon /> }
+					/>
+				) }
+
+				<SidebarItem
+					className={ ReaderSidebarHelper.itemLinkClass( '/read/notifications', path, {
+						'sidebar-streams__notifications': true,
+					} ) }
+					label={ translate( 'Notifications' ) }
+					onNavigate={ this.handleReaderSidebarNotificationsClicked }
+					customIcon={ <ReaderNotificationsIcon /> }
+					link="/read/notifications"
 				/>
 			</SidebarMenu>
 		);

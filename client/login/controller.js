@@ -203,6 +203,8 @@ export function redirectJetpack( context, next ) {
 	const isUserComingFromPricingPage =
 		redirect_to?.includes( 'source=jetpack-plans' ) ||
 		redirect_to?.includes( 'source=jetpack-connect-plans' );
+	const isUserComingFromMigrationPlugin = redirect_to?.includes( 'wpcom-migration' );
+
 	/**
 	 * Send arrivals from the jetpack connect process or jetpack's pricing page
 	 * (when site user email matches a wpcom account) to the jetpack branded login.
@@ -211,9 +213,21 @@ export function redirectJetpack( context, next ) {
 	 * because the iOS app relies on seeing a request to /log-in$ to show its
 	 * native credentials form.
 	 */
+
+	// 2023-01-23: For some reason (yet unknown), the path replacement below
+	// is happening twice. Until we determine and fix the root cause, this
+	// guard exists to stop it from happening.
+	const pathAlreadyUpdated = context.path.includes( 'log-in/jetpack' );
+	if ( pathAlreadyUpdated ) {
+		next();
+		return;
+	}
+
 	if (
-		isJetpack !== 'jetpack' &&
-		( redirect_to?.includes( 'jetpack/connect' ) || isUserComingFromPricingPage )
+		( isJetpack !== 'jetpack' &&
+			redirect_to?.includes( 'jetpack/connect' ) &&
+			! isUserComingFromMigrationPlugin ) ||
+		isUserComingFromPricingPage
 	) {
 		return context.redirect( context.path.replace( 'log-in', 'log-in/jetpack' ) );
 	}

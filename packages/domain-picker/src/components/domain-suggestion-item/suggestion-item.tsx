@@ -26,6 +26,7 @@ interface Props {
 	isLoading?: boolean;
 	cost?: string;
 	hstsRequired?: boolean;
+	isDotGayNoticeRequired?: boolean;
 	isFree?: boolean;
 	isExistingSubdomain?: boolean;
 	isRecommended?: boolean;
@@ -44,6 +45,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 	cost,
 	railcarId,
 	hstsRequired = false,
+	isDotGayNoticeRequired = false,
 	isFree = false,
 	isExistingSubdomain = false,
 	isRecommended = false,
@@ -156,7 +158,7 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 				<div className="domain-picker__suggestion-item-name-inner">
 					<span
 						className={ classnames( 'domain-picker__domain-wrapper', {
-							'with-margin': ! hstsRequired,
+							'with-margin': ! ( hstsRequired || isDotGayNoticeRequired ),
 						} ) }
 					>
 						<span className="domain-picker__domain-sub-domain">{ domainName }</span>
@@ -188,6 +190,18 @@ const DomainPickerSuggestionItem: React.FC< Props > = ( {
 										/>
 									),
 								}
+							) }
+						</InfoTooltip>
+					) }
+					{ isDotGayNoticeRequired && (
+						<InfoTooltip
+							position={ isMobile ? 'bottom center' : 'middle right' }
+							noArrow={ false }
+							className="domain-picker__info-tooltip"
+						>
+							{ __(
+								'Any anti-LGBTQ content is prohibited and can result in registration termination. The registry will donate 20% of all registration revenue to LGBTQ non-profit organizations.',
+								__i18n_text_domain__
 							) }
 						</InfoTooltip>
 					) }

@@ -3,7 +3,6 @@
 
 .item-price .display-price {
 	display: block;
-	min-height: 48px;
 
 	.plan-price__currency-symbol,
 	.plan-price__integer,
@@ -73,11 +72,15 @@
 	}
 
 	.display-price__billing-time-frame {
-		margin-top: 3px;
+		display: flex;
+		align-items: center;
+		margin: 0;
 	}
 }
 
 .item-price .display-price.is-placeholder {
+	display: inline-flex;
+	align-items: center;
 	max-height: 24px;
 
 	.plan-price {
@@ -85,7 +88,8 @@
 	}
 
 	.display-price__billing-time-frame {
-		line-height: 20px;
+		max-height: 40px;
+		margin-top: 0;
 	}
 }
 
@@ -109,18 +113,32 @@ Hack to fix line-through not showing in the middle of the text in firefox browse
 
 .item-price__message {
 	font-size: $font-body-extra-small;
-	color: var(--studio-jetpack-green-50);
+	color: var(--studio-gray-30);
 	font-weight: 600;
 	display: flex;
 	align-items: center;
+
+	.item-price__message--dot {
+		background: var(--studio-gray-30);
+		display: inline-block;
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		margin-inline-end: 4px;
+	}
+
+	&--active {
+		color: var(--studio-jetpack-green-50);
+		.item-price__message--dot {
+			background: var(--studio-jetpack-green-50);
+		}
+	}
+
+	&--error {
+		color: var(--color-error-50);
+		.item-price__message--dot {
+			background: var(--color-error-50);
+		}
+	}
 }
 
-.item-price__message--dot {
-	display: inline-block;
-	width: 8px;
-	height: 8px;
-	background: var(--studio-jetpack-green-50);
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	border-radius: 50%;
-	margin-inline-end: 4px;
-}

@@ -12,9 +12,11 @@ import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_BUSINESS_3_YEARS,
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
 	PLAN_FREE,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -33,20 +35,24 @@ import {
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
+	PLAN_JETPACK_GOLDEN_TOKEN,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_PERSONAL_3_YEARS,
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
+	PLAN_PREMIUM_3_YEARS,
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_PRO_MONTHLY,
 	PLAN_WPCOM_STARTER,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	TERM_MONTHLY,
 	TYPE_BUSINESS,
 	TYPE_PERSONAL,
@@ -55,6 +61,12 @@ import {
 	TYPE_FREE,
 	PLAN_P2_PLUS,
 	PLAN_P2_FREE,
+	PLAN_ENTERPRISE_GRID_WPCOM,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 } from '../src/constants';
 import {
 	getPlan,
@@ -78,8 +90,10 @@ import {
 	isWpComPremiumPlan,
 	isWpComBloggerPlan,
 	isWpComFreePlan,
+	isWpcomEnterpriseGridPlan,
 	isWpComAnnualPlan,
 	isWpComBiennialPlan,
+	isWpComTriennialPlan,
 	isWpComMonthlyPlan,
 	planMatches,
 	findSimilarPlansKeys,
@@ -151,6 +165,7 @@ describe( 'isPersonalPlan', () => {
 	test( 'should return true for personal plans', () => {
 		expect( isPersonalPlan( PLAN_PERSONAL ) ).toEqual( true );
 		expect( isPersonalPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( true );
+		expect( isPersonalPlan( PLAN_PERSONAL_3_YEARS ) ).toEqual( true );
 		expect( isPersonalPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( true );
 		expect( isPersonalPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( true );
 	} );
@@ -170,12 +185,14 @@ describe( 'isPremiumPlan', () => {
 	test( 'should return true for premium plans', () => {
 		expect( isPremiumPlan( PLAN_PREMIUM ) ).toEqual( true );
 		expect( isPremiumPlan( PLAN_PREMIUM_2_YEARS ) ).toEqual( true );
+		expect( isPremiumPlan( PLAN_PREMIUM_3_YEARS ) ).toEqual( true );
 		expect( isPremiumPlan( PLAN_JETPACK_PREMIUM ) ).toEqual( true );
 		expect( isPremiumPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).toEqual( true );
 	} );
 	test( 'should return false for non-premium plans', () => {
 		expect( isPremiumPlan( PLAN_PERSONAL ) ).toEqual( false );
 		expect( isPremiumPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( false );
+		expect( isPremiumPlan( PLAN_PERSONAL_3_YEARS ) ).toEqual( false );
 		expect( isPremiumPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
 		expect( isPremiumPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( false );
 		expect( isPremiumPlan( PLAN_BUSINESS ) ).toEqual( false );
@@ -189,12 +206,14 @@ describe( 'isBusinessPlan', () => {
 	test( 'should return true for business plans', () => {
 		expect( isBusinessPlan( PLAN_BUSINESS ) ).toEqual( true );
 		expect( isBusinessPlan( PLAN_BUSINESS_2_YEARS ) ).toEqual( true );
+		expect( isBusinessPlan( PLAN_BUSINESS_3_YEARS ) ).toEqual( true );
 		expect( isBusinessPlan( PLAN_JETPACK_BUSINESS ) ).toEqual( true );
 		expect( isBusinessPlan( PLAN_JETPACK_BUSINESS_MONTHLY ) ).toEqual( true );
 	} );
 	test( 'should return false for non-business plans', () => {
 		expect( isBusinessPlan( PLAN_PERSONAL ) ).toEqual( false );
 		expect( isBusinessPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( false );
+		expect( isBusinessPlan( PLAN_PERSONAL_3_YEARS ) ).toEqual( false );
 		expect( isBusinessPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
 		expect( isBusinessPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( false );
 		expect( isBusinessPlan( PLAN_PREMIUM ) ).toEqual( false );
@@ -242,12 +261,14 @@ describe( 'isWpComPersonalPlan', () => {
 	test( 'should return true for personal plans', () => {
 		expect( isWpComPersonalPlan( PLAN_PERSONAL ) ).toEqual( true );
 		expect( isWpComPersonalPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( true );
+		expect( isWpComPersonalPlan( PLAN_PERSONAL_3_YEARS ) ).toEqual( true );
 	} );
 	test( 'should return false for non-personal plans', () => {
 		expect( isWpComPersonalPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
 		expect( isWpComPersonalPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( false );
 		expect( isWpComPersonalPlan( PLAN_PREMIUM ) ).toEqual( false );
 		expect( isWpComPersonalPlan( PLAN_PREMIUM_2_YEARS ) ).toEqual( false );
+		expect( isWpComPersonalPlan( PLAN_PREMIUM_3_YEARS ) ).toEqual( false );
 		expect( isWpComPersonalPlan( PLAN_JETPACK_PREMIUM ) ).toEqual( false );
 		expect( isWpComPersonalPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).toEqual( false );
 		expect( isWpComPersonalPlan( PLAN_BUSINESS ) ).toEqual( false );
@@ -278,12 +299,14 @@ describe( 'isWpComPremiumPlan', () => {
 	test( 'should return true for premium plans', () => {
 		expect( isWpComPremiumPlan( PLAN_PREMIUM ) ).toEqual( true );
 		expect( isWpComPremiumPlan( PLAN_PREMIUM_2_YEARS ) ).toEqual( true );
+		expect( isWpComPremiumPlan( PLAN_PREMIUM_3_YEARS ) ).toEqual( true );
 	} );
 	test( 'should return false for non-premium plans', () => {
 		expect( isWpComPremiumPlan( PLAN_JETPACK_PREMIUM ) ).toEqual( false );
 		expect( isWpComPremiumPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).toEqual( false );
 		expect( isWpComPremiumPlan( PLAN_PERSONAL ) ).toEqual( false );
 		expect( isWpComPremiumPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( false );
+		expect( isWpComPremiumPlan( PLAN_PERSONAL_3_YEARS ) ).toEqual( false );
 		expect( isWpComPremiumPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
 		expect( isWpComPremiumPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( false );
 		expect( isWpComPremiumPlan( PLAN_BUSINESS ) ).toEqual( false );
@@ -297,12 +320,14 @@ describe( 'isWpComBusinessPlan', () => {
 	test( 'should return true for business plans', () => {
 		expect( isWpComBusinessPlan( PLAN_BUSINESS ) ).toEqual( true );
 		expect( isWpComBusinessPlan( PLAN_BUSINESS_2_YEARS ) ).toEqual( true );
+		expect( isWpComBusinessPlan( PLAN_BUSINESS_3_YEARS ) ).toEqual( true );
 	} );
 	test( 'should return false for non-business plans', () => {
 		expect( isWpComBusinessPlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
 		expect( isWpComBusinessPlan( PLAN_JETPACK_BUSINESS_MONTHLY ) ).toEqual( false );
 		expect( isWpComBusinessPlan( PLAN_PERSONAL ) ).toEqual( false );
 		expect( isWpComBusinessPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( false );
+		expect( isWpComBusinessPlan( PLAN_PERSONAL_3_YEARS ) ).toEqual( false );
 		expect( isWpComBusinessPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
 		expect( isWpComBusinessPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( false );
 		expect( isWpComBusinessPlan( PLAN_PREMIUM ) ).toEqual( false );
@@ -316,19 +341,40 @@ describe( 'isWpComEcommercePlan', () => {
 	test( 'should return true for eCommerc plans', () => {
 		expect( isWpComEcommercePlan( PLAN_ECOMMERCE ) ).toEqual( true );
 		expect( isWpComEcommercePlan( PLAN_ECOMMERCE_2_YEARS ) ).toEqual( true );
+		expect( isWpComEcommercePlan( PLAN_ECOMMERCE_3_YEARS ) ).toEqual( true );
 	} );
 	test( 'should return false for non-business plans', () => {
 		expect( isWpComEcommercePlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
 		expect( isWpComEcommercePlan( PLAN_JETPACK_BUSINESS_MONTHLY ) ).toEqual( false );
 		expect( isWpComEcommercePlan( PLAN_PERSONAL ) ).toEqual( false );
 		expect( isWpComEcommercePlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( false );
+		expect( isWpComEcommercePlan( PLAN_PERSONAL_3_YEARS ) ).toEqual( false );
 		expect( isWpComEcommercePlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
 		expect( isWpComEcommercePlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( false );
 		expect( isWpComEcommercePlan( PLAN_PREMIUM ) ).toEqual( false );
 		expect( isWpComEcommercePlan( PLAN_JETPACK_PREMIUM ) ).toEqual( false );
 		expect( isWpComEcommercePlan( PLAN_BUSINESS ) ).toEqual( false );
 		expect( isWpComEcommercePlan( PLAN_BUSINESS_2_YEARS ) ).toEqual( false );
+		expect( isWpComEcommercePlan( PLAN_BUSINESS_3_YEARS ) ).toEqual( false );
 		expect( isWpComEcommercePlan( 'non-exisWpComting plan' ) ).toEqual( false );
+	} );
+} );
+
+describe( 'isWpComEnterpriseGridPlan', () => {
+	test( 'should return true for enterprise grid plan', () => {
+		expect( isWpcomEnterpriseGridPlan( PLAN_ENTERPRISE_GRID_WPCOM ) ).toEqual( true );
+	} );
+	test( 'should return false for non-business plans', () => {
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_BUSINESS_MONTHLY ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_PERSONAL ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_PREMIUM ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_JETPACK_PREMIUM ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isWpcomEnterpriseGridPlan( 'non-exisWpComting plan' ) ).toEqual( false );
 	} );
 } );
 
@@ -408,6 +454,30 @@ describe( 'isWpComBiennialPlan', () => {
 	} );
 } );
 
+describe( 'isWpComTriennialPlan', () => {
+	test( 'should return true for triennial plans', () => {
+		expect( isWpComTriennialPlan( PLAN_PERSONAL_3_YEARS ) ).toEqual( true );
+		expect( isWpComTriennialPlan( PLAN_PREMIUM_3_YEARS ) ).toEqual( true );
+		expect( isWpComTriennialPlan( PLAN_BUSINESS_3_YEARS ) ).toEqual( true );
+		expect( isWpComTriennialPlan( PLAN_ECOMMERCE_3_YEARS ) ).toEqual( true );
+	} );
+	test( 'should return false for non-triennial plans', () => {
+		expect( isWpComTriennialPlan( PLAN_WPCOM_PRO ) ).toEqual( false );
+		expect( isWpComTriennialPlan( PLAN_WPCOM_STARTER ) ).toEqual( false );
+		expect( isWpComTriennialPlan( PLAN_PERSONAL ) ).toEqual( false );
+		expect( isWpComTriennialPlan( PLAN_PREMIUM ) ).toEqual( false );
+		expect( isWpComTriennialPlan( PLAN_BUSINESS ) ).toEqual( false );
+		expect( isWpComTriennialPlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isWpComTriennialPlan( PLAN_PERSONAL_MONTHLY ) ).toEqual( false );
+		expect( isWpComTriennialPlan( PLAN_PREMIUM_2_YEARS ) ).toEqual( false );
+		expect( isWpComTriennialPlan( PLAN_PREMIUM_MONTHLY ) ).toEqual( false );
+		expect( isWpComTriennialPlan( PLAN_BUSINESS_MONTHLY ) ).toEqual( false );
+		expect( isWpComTriennialPlan( PLAN_ECOMMERCE_MONTHLY ) ).toEqual( false );
+		expect( isWpComTriennialPlan( PLAN_ECOMMERCE_2_YEARS ) ).toEqual( false );
+		expect( isWpComTriennialPlan( PLAN_FREE ) ).toEqual( false );
+	} );
+} );
+
 describe( 'isWpComMonthlyPlan', () => {
 	test( 'should return true for monthly plans', () => {
 		expect( isWpComMonthlyPlan( PLAN_PERSONAL_MONTHLY ) ).toEqual( true );
@@ -425,6 +495,7 @@ describe( 'isWpComMonthlyPlan', () => {
 		expect( isWpComMonthlyPlan( PLAN_ECOMMERCE ) ).toEqual( false );
 		expect( isWpComMonthlyPlan( PLAN_FREE ) ).toEqual( false );
 		expect( isWpComMonthlyPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( false );
+		expect( isWpComMonthlyPlan( PLAN_PERSONAL_3_YEARS ) ).toEqual( false );
 		expect( isWpComMonthlyPlan( PLAN_PREMIUM_2_YEARS ) ).toEqual( false );
 		expect( isWpComMonthlyPlan( PLAN_BUSINESS_2_YEARS ) ).toEqual( false );
 		expect( isWpComMonthlyPlan( PLAN_ECOMMERCE_2_YEARS ) ).toEqual( false );
@@ -576,6 +647,7 @@ describe( 'getPlanClass', () => {
 		expect( getPlanClass( PLAN_BUSINESS_2_YEARS ) ).toEqual( 'is-business-plan' );
 		expect( getPlanClass( PLAN_ECOMMERCE ) ).toEqual( 'is-ecommerce-plan' );
 		expect( getPlanClass( PLAN_ECOMMERCE_2_YEARS ) ).toEqual( 'is-ecommerce-plan' );
+		expect( getPlanClass( PLAN_ENTERPRISE_GRID_WPCOM ) ).toEqual( 'is-wpcom-enterprise-grid-plan' );
 		expect( getPlanClass( PLAN_JETPACK_BUSINESS ) ).toEqual( 'is-business-plan' );
 		expect( getPlanClass( PLAN_JETPACK_BUSINESS_MONTHLY ) ).toEqual( 'is-business-plan' );
 	} );
@@ -617,6 +689,19 @@ describe( 'findSimilarPlansKeys', () => {
 			PLAN_ECOMMERCE_2_YEARS,
 		] );
 
+		expect( findSimilarPlansKeys( PLAN_PERSONAL, { term: TERM_TRIENNIALLY } ) ).toEqual( [
+			PLAN_PERSONAL_3_YEARS,
+		] );
+		expect( findSimilarPlansKeys( PLAN_PREMIUM, { term: TERM_TRIENNIALLY } ) ).toEqual( [
+			PLAN_PREMIUM_3_YEARS,
+		] );
+		expect( findSimilarPlansKeys( PLAN_BUSINESS, { term: TERM_TRIENNIALLY } ) ).toEqual( [
+			PLAN_BUSINESS_3_YEARS,
+		] );
+		expect( findSimilarPlansKeys( PLAN_ECOMMERCE, { term: TERM_TRIENNIALLY } ) ).toEqual( [
+			PLAN_ECOMMERCE_3_YEARS,
+		] );
+
 		expect( findSimilarPlansKeys( PLAN_PREMIUM_2_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
 			PLAN_PREMIUM,
 		] );
@@ -627,6 +712,21 @@ describe( 'findSimilarPlansKeys', () => {
 			PLAN_PERSONAL,
 		] );
 		expect( findSimilarPlansKeys( PLAN_BUSINESS_2_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
+			PLAN_BUSINESS,
+		] );
+
+		expect( findSimilarPlansKeys( PLAN_PREMIUM_3_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
+			PLAN_PREMIUM,
+		] );
+		expect( findSimilarPlansKeys( PLAN_ECOMMERCE_3_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
+			PLAN_ECOMMERCE,
+			PLAN_WOOEXPRESS_MEDIUM,
+			PLAN_WOOEXPRESS_SMALL,
+		] );
+		expect( findSimilarPlansKeys( PLAN_PERSONAL_3_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
+			PLAN_PERSONAL,
+		] );
+		expect( findSimilarPlansKeys( PLAN_BUSINESS_3_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( [
 			PLAN_BUSINESS,
 		] );
 
@@ -817,6 +917,12 @@ describe( 'findPlansKeys', () => {
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_ECOMMERCE_2_YEARS,
 		] );
+		expect( findPlansKeys( { term: TERM_TRIENNIALLY } ) ).toEqual( [
+			PLAN_PERSONAL_3_YEARS,
+			PLAN_PREMIUM_3_YEARS,
+			PLAN_BUSINESS_3_YEARS,
+			PLAN_ECOMMERCE_3_YEARS,
+		] );
 		expect( findPlansKeys( { term: TERM_ANNUALLY } ) ).toEqual( [
 			PLAN_FREE,
 			PLAN_BLOGGER,
@@ -824,6 +930,9 @@ describe( 'findPlansKeys', () => {
 			PLAN_PREMIUM,
 			PLAN_BUSINESS,
 			PLAN_ECOMMERCE,
+			PLAN_WOOEXPRESS_MEDIUM,
+			PLAN_WOOEXPRESS_SMALL,
+			PLAN_ENTERPRISE_GRID_WPCOM,
 			PLAN_JETPACK_FREE,
 			PLAN_JETPACK_PREMIUM,
 			PLAN_JETPACK_PERSONAL,
@@ -833,6 +942,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_COMPLETE,
 			PLAN_JETPACK_SECURITY_T1_YEARLY,
 			PLAN_JETPACK_SECURITY_T2_YEARLY,
+			PLAN_JETPACK_GOLDEN_TOKEN,
 			PLAN_P2_FREE,
 			PLAN_WPCOM_STARTER,
 			PLAN_WPCOM_FLEXIBLE,
@@ -843,6 +953,8 @@ describe( 'findPlansKeys', () => {
 			PLAN_PREMIUM_MONTHLY,
 			PLAN_BUSINESS_MONTHLY,
 			PLAN_ECOMMERCE_MONTHLY,
+			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+			PLAN_WOOEXPRESS_SMALL_MONTHLY,
 			PLAN_JETPACK_PREMIUM_MONTHLY,
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -853,6 +965,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_T2_MONTHLY,
 			PLAN_P2_PLUS,
 			PLAN_WPCOM_PRO_MONTHLY,
+			PLAN_ECOMMERCE_TRIAL_MONTHLY,
 		] );
 	} );
 
@@ -870,6 +983,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_PERSONAL_MONTHLY,
 			PLAN_PERSONAL,
 			PLAN_PERSONAL_2_YEARS,
+			PLAN_PERSONAL_3_YEARS,
 			PLAN_JETPACK_PERSONAL,
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 		] );
@@ -877,6 +991,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_PREMIUM_MONTHLY,
 			PLAN_PREMIUM,
 			PLAN_PREMIUM_2_YEARS,
+			PLAN_PREMIUM_3_YEARS,
 			PLAN_JETPACK_PREMIUM,
 			PLAN_JETPACK_PREMIUM_MONTHLY,
 		] );
@@ -884,6 +999,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_BUSINESS_MONTHLY,
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
+			PLAN_BUSINESS_3_YEARS,
 			PLAN_JETPACK_BUSINESS,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
 		] );
@@ -897,21 +1013,31 @@ describe( 'findPlansKeys', () => {
 			PLAN_PERSONAL_MONTHLY,
 			PLAN_PERSONAL,
 			PLAN_PERSONAL_2_YEARS,
+			PLAN_PERSONAL_3_YEARS,
 			PLAN_PREMIUM_MONTHLY,
 			PLAN_PREMIUM,
 			PLAN_PREMIUM_2_YEARS,
+			PLAN_PREMIUM_3_YEARS,
 			PLAN_BUSINESS_MONTHLY,
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
+			PLAN_BUSINESS_3_YEARS,
 			PLAN_ECOMMERCE_MONTHLY,
 			PLAN_ECOMMERCE,
 			PLAN_ECOMMERCE_2_YEARS,
+			PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+			PLAN_WOOEXPRESS_MEDIUM,
+			PLAN_WOOEXPRESS_SMALL_MONTHLY,
+			PLAN_WOOEXPRESS_SMALL,
+			PLAN_ENTERPRISE_GRID_WPCOM,
+			PLAN_ECOMMERCE_3_YEARS,
 			PLAN_P2_PLUS,
 			PLAN_P2_FREE,
 			PLAN_WPCOM_STARTER,
 			PLAN_WPCOM_FLEXIBLE,
 			PLAN_WPCOM_PRO,
 			PLAN_WPCOM_PRO_MONTHLY,
+			PLAN_ECOMMERCE_TRIAL_MONTHLY,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK } ) ).toEqual( [
 			PLAN_JETPACK_FREE,
@@ -931,6 +1057,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_T1_MONTHLY,
 			PLAN_JETPACK_SECURITY_T2_YEARLY,
 			PLAN_JETPACK_SECURITY_T2_MONTHLY,
+			PLAN_JETPACK_GOLDEN_TOKEN,
 		] );
 	} );
 	test( 'all matching plans keys - by group and type', () => {
@@ -942,16 +1069,19 @@ describe( 'findPlansKeys', () => {
 			PLAN_PERSONAL_MONTHLY,
 			PLAN_PERSONAL,
 			PLAN_PERSONAL_2_YEARS,
+			PLAN_PERSONAL_3_YEARS,
 		] );
 		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } ) ).toEqual( [
 			PLAN_PREMIUM_MONTHLY,
 			PLAN_PREMIUM,
 			PLAN_PREMIUM_2_YEARS,
+			PLAN_PREMIUM_3_YEARS,
 		] );
 		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BUSINESS } ) ).toEqual( [
 			PLAN_BUSINESS_MONTHLY,
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
+			PLAN_BUSINESS_3_YEARS,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK, type: TYPE_BLOGGER } ) ).toEqual( [] );
 		expect( findPlansKeys( { group: GROUP_JETPACK, type: TYPE_PERSONAL } ) ).toEqual( [
@@ -979,11 +1109,13 @@ describe( 'planMatches - personal', () => {
 	test( 'should return true for matching queries', () => {
 		expect( planMatches( PLAN_PERSONAL, { type: TYPE_PERSONAL } ) ).toEqual( true );
 		expect( planMatches( PLAN_PERSONAL_2_YEARS, { type: TYPE_PERSONAL } ) ).toEqual( true );
+		expect( planMatches( PLAN_PERSONAL_3_YEARS, { type: TYPE_PERSONAL } ) ).toEqual( true );
 		expect( planMatches( PLAN_JETPACK_PERSONAL, { type: TYPE_PERSONAL } ) ).toEqual( true );
 		expect( planMatches( PLAN_JETPACK_PERSONAL_MONTHLY, { type: TYPE_PERSONAL } ) ).toEqual( true );
 
 		expect( planMatches( PLAN_PERSONAL, { group: GROUP_WPCOM } ) ).toEqual( true );
 		expect( planMatches( PLAN_PERSONAL_2_YEARS, { group: GROUP_WPCOM } ) ).toEqual( true );
+		expect( planMatches( PLAN_PERSONAL_3_YEARS, { group: GROUP_WPCOM } ) ).toEqual( true );
 		expect( planMatches( PLAN_JETPACK_PERSONAL, { group: GROUP_JETPACK } ) ).toEqual( true );
 		expect( planMatches( PLAN_JETPACK_PERSONAL_MONTHLY, { group: GROUP_JETPACK } ) ).toEqual(
 			true
@@ -991,12 +1123,15 @@ describe( 'planMatches - personal', () => {
 
 		expect( planMatches( PLAN_PERSONAL, { term: TERM_ANNUALLY } ) ).toEqual( true );
 		expect( planMatches( PLAN_PERSONAL_2_YEARS, { term: TERM_BIENNIALLY } ) ).toEqual( true );
+		expect( planMatches( PLAN_PERSONAL_3_YEARS, { term: TERM_TRIENNIALLY } ) ).toEqual( true );
+
 		expect( planMatches( PLAN_JETPACK_PERSONAL, { term: TERM_ANNUALLY } ) ).toEqual( true );
 		expect( planMatches( PLAN_JETPACK_PERSONAL_MONTHLY, { term: TERM_MONTHLY } ) ).toEqual( true );
 	} );
 	test( 'should return false for non-matching queries', () => {
 		expect( planMatches( PLAN_PERSONAL, { type: TYPE_BUSINESS } ) ).toEqual( false );
 		expect( planMatches( PLAN_PERSONAL_2_YEARS, { type: TYPE_BUSINESS } ) ).toEqual( false );
+		expect( planMatches( PLAN_PERSONAL_3_YEARS, { type: TYPE_BUSINESS } ) ).toEqual( false );
 		expect( planMatches( PLAN_JETPACK_PERSONAL, { type: TYPE_BUSINESS } ) ).toEqual( false );
 		expect( planMatches( PLAN_JETPACK_PERSONAL_MONTHLY, { type: TYPE_BUSINESS } ) ).toEqual(
 			false
@@ -1004,11 +1139,14 @@ describe( 'planMatches - personal', () => {
 
 		expect( planMatches( PLAN_PERSONAL, { group: GROUP_JETPACK } ) ).toEqual( false );
 		expect( planMatches( PLAN_PERSONAL_2_YEARS, { group: GROUP_JETPACK } ) ).toEqual( false );
+		expect( planMatches( PLAN_PERSONAL_3_YEARS, { group: GROUP_JETPACK } ) ).toEqual( false );
 		expect( planMatches( PLAN_JETPACK_PERSONAL, { group: GROUP_WPCOM } ) ).toEqual( false );
 		expect( planMatches( PLAN_JETPACK_PERSONAL_MONTHLY, { group: GROUP_WPCOM } ) ).toEqual( false );
 
 		expect( planMatches( PLAN_PERSONAL, { term: TERM_MONTHLY } ) ).toEqual( false );
 		expect( planMatches( PLAN_PERSONAL_2_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( false );
+		expect( planMatches( PLAN_PERSONAL_3_YEARS, { term: TERM_BIENNIALLY } ) ).toEqual( false );
+
 		expect( planMatches( PLAN_JETPACK_PERSONAL, { term: TERM_MONTHLY } ) ).toEqual( false );
 		expect( planMatches( PLAN_JETPACK_PERSONAL_MONTHLY, { term: TERM_ANNUALLY } ) ).toEqual(
 			false
@@ -1020,11 +1158,13 @@ describe( 'planMatches - business', () => {
 	test( 'should return true for matching queries', () => {
 		expect( planMatches( PLAN_BUSINESS, { type: TYPE_BUSINESS } ) ).toEqual( true );
 		expect( planMatches( PLAN_BUSINESS_2_YEARS, { type: TYPE_BUSINESS } ) ).toEqual( true );
+		expect( planMatches( PLAN_BUSINESS_3_YEARS, { type: TYPE_BUSINESS } ) ).toEqual( true );
 		expect( planMatches( PLAN_JETPACK_BUSINESS, { type: TYPE_BUSINESS } ) ).toEqual( true );
 		expect( planMatches( PLAN_JETPACK_BUSINESS_MONTHLY, { type: TYPE_BUSINESS } ) ).toEqual( true );
 
 		expect( planMatches( PLAN_BUSINESS, { group: GROUP_WPCOM } ) ).toEqual( true );
 		expect( planMatches( PLAN_BUSINESS_2_YEARS, { group: GROUP_WPCOM } ) ).toEqual( true );
+		expect( planMatches( PLAN_BUSINESS_3_YEARS, { group: GROUP_WPCOM } ) ).toEqual( true );
 		expect( planMatches( PLAN_JETPACK_BUSINESS, { group: GROUP_JETPACK } ) ).toEqual( true );
 		expect( planMatches( PLAN_JETPACK_BUSINESS_MONTHLY, { group: GROUP_JETPACK } ) ).toEqual(
 			true
@@ -1032,6 +1172,8 @@ describe( 'planMatches - business', () => {
 
 		expect( planMatches( PLAN_BUSINESS, { term: TERM_ANNUALLY } ) ).toEqual( true );
 		expect( planMatches( PLAN_BUSINESS_2_YEARS, { term: TERM_BIENNIALLY } ) ).toEqual( true );
+		expect( planMatches( PLAN_BUSINESS_3_YEARS, { term: TERM_TRIENNIALLY } ) ).toEqual( true );
+
 		expect( planMatches( PLAN_JETPACK_BUSINESS, { term: TERM_ANNUALLY } ) ).toEqual( true );
 		expect( planMatches( PLAN_JETPACK_BUSINESS_MONTHLY, { term: TERM_MONTHLY } ) ).toEqual( true );
 
@@ -1048,6 +1190,7 @@ describe( 'planMatches - business', () => {
 	test( 'should return false for non-matching queries', () => {
 		expect( planMatches( PLAN_BUSINESS, { type: TYPE_PERSONAL } ) ).toEqual( false );
 		expect( planMatches( PLAN_BUSINESS_2_YEARS, { type: TYPE_PERSONAL } ) ).toEqual( false );
+		expect( planMatches( PLAN_BUSINESS_3_YEARS, { type: TYPE_PERSONAL } ) ).toEqual( false );
 		expect( planMatches( PLAN_JETPACK_BUSINESS, { type: TYPE_PERSONAL } ) ).toEqual( false );
 		expect( planMatches( PLAN_JETPACK_BUSINESS_MONTHLY, { type: TYPE_PERSONAL } ) ).toEqual(
 			false
@@ -1055,11 +1198,13 @@ describe( 'planMatches - business', () => {
 
 		expect( planMatches( PLAN_BUSINESS, { group: GROUP_JETPACK } ) ).toEqual( false );
 		expect( planMatches( PLAN_BUSINESS_2_YEARS, { group: GROUP_JETPACK } ) ).toEqual( false );
+		expect( planMatches( PLAN_BUSINESS_3_YEARS, { group: GROUP_JETPACK } ) ).toEqual( false );
 		expect( planMatches( PLAN_JETPACK_BUSINESS, { group: GROUP_WPCOM } ) ).toEqual( false );
 		expect( planMatches( PLAN_JETPACK_BUSINESS_MONTHLY, { group: GROUP_WPCOM } ) ).toEqual( false );
 
 		expect( planMatches( PLAN_BUSINESS, { term: TERM_MONTHLY } ) ).toEqual( false );
 		expect( planMatches( PLAN_BUSINESS_2_YEARS, { term: TERM_ANNUALLY } ) ).toEqual( false );
+		expect( planMatches( PLAN_BUSINESS_3_YEARS, { term: TERM_BIENNIALLY } ) ).toEqual( false );
 		expect( planMatches( PLAN_JETPACK_BUSINESS, { term: TERM_MONTHLY } ) ).toEqual( false );
 		expect( planMatches( PLAN_JETPACK_BUSINESS_MONTHLY, { term: TERM_ANNUALLY } ) ).toEqual(
 			false

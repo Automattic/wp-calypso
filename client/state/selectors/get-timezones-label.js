@@ -5,7 +5,7 @@ import 'calypso/state/timezones/init';
 /**
  * Return timezone `label` according to the given timezone key (value)
  *
- * @param {object}  state - Global state tree
+ * @param {Object}  state - Global state tree
  * @param {string} key - timezone value
  * @returns {string} the timezone label
  */

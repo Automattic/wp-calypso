@@ -3,6 +3,9 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import {
+	isExternallyManagedTheme,
+	isFullSiteEditingTheme,
+	isMarketplaceThemeSubscribed,
 	isPremiumThemeAvailable,
 	isThemeActive,
 	isThemeGutenbergFirst,
@@ -12,10 +15,14 @@ import {
 
 import 'calypso/state/themes/init';
 
+function shouldShowSiteEditor( state, themeId ) {
+	return isThemeGutenbergFirst( state, themeId ) || isFullSiteEditingTheme( state, themeId );
+}
+
 /**
  * Returns whether we should hide the "Try & Customize" action for a theme.
  *
- * @param {object} state   Global state tree
+ * @param {Object} state   Global state tree
  * @param {string} themeId Theme ID to activate in the site.
  * @param {string} siteId  Site ID.
  * @returns {boolean}      True if the theme should show the Try & Customize action. Otherwise, false.
@@ -26,6 +33,24 @@ export function shouldShowTryAndCustomize( state, themeId, siteId ) {
 	 */
 	if ( siteId && ! canCurrentUser( state, siteId, 'edit_theme_options' ) ) {
 		return false;
+	}
+
+	/*
+	 * If this is a Marketplace theme, i.e. externally managed,
+	 * we should only show the customizer if _all_ of the following are true:
+	 *  - the site is Atomic
+	 *  - the site has a subscription for the theme
+	 *  - the theme is not Gutenberg-first
+	 *  - the theme is not the currently active theme
+	 */
+	if ( isExternallyManagedTheme( state, themeId ) ) {
+		return (
+			siteId &&
+			isSiteWpcomAtomic( state, siteId ) &&
+			isMarketplaceThemeSubscribed( state, themeId, siteId ) &&
+			! shouldShowSiteEditor( state, themeId ) &&
+			! isThemeActive( state, themeId, siteId )
+		);
 	}
 
 	/*
@@ -50,7 +75,7 @@ export function shouldShowTryAndCustomize( state, themeId, siteId ) {
 
 	return (
 		isUserLoggedIn( state ) && // User is logged in
-		! isThemeGutenbergFirst( state, themeId ) && // Theme is not Gutenberg first
+		! shouldShowSiteEditor( state, themeId ) && // We shouldn't show the site editor for the theme
 		! isThemeActive( state, themeId, siteId ) // Theme is not currently active
 	);
 }

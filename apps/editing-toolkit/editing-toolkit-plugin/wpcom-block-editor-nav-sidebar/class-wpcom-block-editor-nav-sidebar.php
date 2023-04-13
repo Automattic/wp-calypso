@@ -75,6 +75,7 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 			'wpcomBlockEditorNavSidebar',
 			array(
 				'postIdsToExclude' => $post_ids_to_exclude,
+				'currentSite'      => $this->get_current_site(),
 			)
 		);
 
@@ -97,6 +98,16 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 		$site_slug                               = preg_replace( '|^https?:\/\/|', '', home_url() );
 		$settings['__experimentalDashboardLink'] = 'https://wordpress.com/home/' . $site_slug;
 		return $settings;
+	}
+
+	/**
+	 * Get current site details.
+	 */
+	public function get_current_site() {
+		return array(
+			'launchpad_screen' => get_option( 'launchpad_screen' ),
+			'site_intent'      => get_option( 'site_intent' ),
+		);
 	}
 }
 add_action( 'init', array( __NAMESPACE__ . '\WPCOM_Block_Editor_Nav_Sidebar', 'init' ) );

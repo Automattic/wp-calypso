@@ -54,8 +54,8 @@ export function fetchSiteProducts( siteId ) {
  * the products for a given site have been received.
  *
  * @param {number} siteId - identifier of the site
- * @param {object} products - list of products received from the API
- * @returns {object} the corresponding action object
+ * @param {Object} products - list of products received from the API
+ * @returns {Object} the corresponding action object
  */
 export function fetchSiteProductsCompleted( siteId, products ) {
 	return {

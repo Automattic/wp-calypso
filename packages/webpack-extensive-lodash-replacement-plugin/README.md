@@ -4,8 +4,8 @@ Replaces most usage of `lodash` with `lodash-es`:
 
 ```js
 import { get } from 'lodash';
-import camelCase from 'lodash.camelcase';
 import map from 'lodash/map';
+import camelCase from 'lodash.camelcase';
 ```
 
 Becomes:

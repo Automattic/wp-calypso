@@ -7,8 +7,7 @@ const { defaults } = require( 'jest-config' );
 
 module.exports = {
 	resolver: require.resolve( './src/module-resolver.js' ),
-	setupFilesAfterEnv: [ require.resolve( './src/setup.js' ), 'jest-enzyme' ],
-	snapshotSerializers: [ 'enzyme-to-json/serializer' ],
+	setupFilesAfterEnv: [ require.resolve( './src/setup.js' ) ],
 	testEnvironment: 'node',
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/.eslintrc.*' ],
 	transform: {
