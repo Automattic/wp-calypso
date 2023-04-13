@@ -51,6 +51,7 @@ import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { useIsPlanUpgradeCreditVisible } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-is-plan-upgrade-credit-visible';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -132,6 +133,7 @@ type PlanFeatures2023GridConnectedProps = {
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	manageHref: string;
 	selectedSiteSlug: string | null;
+	isPlanUpgradeCreditEligible: boolean;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -332,6 +334,7 @@ export class PlanFeatures2023Grid extends Component<
 						className="plan-features-2023-grid__plan-comparison-grid-container"
 					>
 						<PlanComparisonGrid
+							siteId={ siteId }
 							planTypeSelectorProps={ planTypeSelectorProps }
 							planProperties={ planProperties }
 							intervalType={ intervalType }
@@ -494,7 +497,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, isLargeCurrency, translate } = this.props;
+		const { isReskinned, isLargeCurrency, translate, isPlanUpgradeCreditEligible } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -515,6 +518,7 @@ export class PlanFeatures2023Grid extends Component<
 					>
 						{ ! hasNoPrice && (
 							<PlanFeatures2023GridHeaderPrice
+								isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 								planProperties={ properties }
 								is2023OnboardingPricingGrid={ true }
 								isLargeCurrency={ isLargeCurrency }
@@ -901,7 +905,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
 		const selectedSiteSlug = getSiteSlug( state, siteId );
 
-		const planProperties: PlanProperties[] = plans.map( ( plan: string ) => {
+		const planProperties: PlanProperties[] = plans.map( ( plan: PlanSlug ) => {
 			let isPlaceholder = false;
 			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 			const planProductId = planConstantObj.getProductId();
@@ -1044,13 +1048,23 @@ const ConnectedPlanFeatures2023Grid = connect(
 /* eslint-enable wpcalypso/redux-no-bound-selectors */
 
 const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
+	const isPlanUpgradeCreditEligible = useIsPlanUpgradeCreditVisible( props.siteId, props.plans );
+
 	if ( props.isInSignup ) {
-		return <ConnectedPlanFeatures2023Grid { ...props } />;
+		return (
+			<ConnectedPlanFeatures2023Grid
+				{ ...props }
+				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+			/>
+		);
 	}
 
 	return (
 		<CalypsoShoppingCartProvider>
-			<ConnectedPlanFeatures2023Grid { ...props } />
+			<ConnectedPlanFeatures2023Grid
+				{ ...props }
+				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+			/>
 		</CalypsoShoppingCartProvider>
 	);
 };
