@@ -288,11 +288,23 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 	// WPCom
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		if ( null !== wpcomJetpackCartInfo.wpcomCostUSD && wpcomJetpackCartInfo.wpcomCostUSD > 0 ) {
+			const cartItemsArray = wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => {
+				return {
+					product_slug: product.product_slug ?? '',
+					product_name: product.product_name ?? '',
+					bill_period: product.bill_period ?? 0,
+					is_sale_coupon_applied: product.is_sale_coupon_applied ?? false,
+					is_bundled: product.is_bundled ?? false,
+					is_domain_registration: product.is_domain_registration ?? false,
+					value: product.cost ?? 0,
+				};
+			} );
 			const params = [
-				'trackSingle',
+				'trackSingle', // Allows sending to a single pixel when multiple are loaded on the page.
 				TRACKING_IDS.facebookInit,
 				'Purchase',
 				{
+					contents: cartItemsArray.length > 0 ? cartItemsArray : [],
 					product_slug: wpcomJetpackCartInfo.wpcomProducts
 						.map( ( product ) => product.product_slug )
 						.join( ', ' ),
