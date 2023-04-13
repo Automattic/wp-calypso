@@ -70,7 +70,11 @@ export const useWPCOMPluginsList = (
 	type: Type,
 	searchTerm?: string,
 	tag?: string,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: UseQueryOptions< any > = {}
 ): UseQueryResult => {
 	return useQuery( ...getWPCOMPluginsQueryParams( type, searchTerm, tag ), {
 		enabled: enabled,

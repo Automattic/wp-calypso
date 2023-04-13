@@ -102,7 +102,7 @@ const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
 export const useESPlugin = (
 	slug: string,
 	fields?: Array< string >,
-	{ enabled = true, staleTime = ONE_DAY_IN_MS, refetchOnMount = true }: UseQueryOptions = {}
+	{ enabled = true, staleTime = ONE_DAY_IN_MS, refetchOnMount = true }: UseQueryOptions< any > = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 
@@ -139,7 +139,7 @@ export const getESPluginsInfiniteQueryParams = (
 
 export const useESPluginsInfinite = (
 	options: PluginQueryOptions,
-	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
+	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions< any > = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 
