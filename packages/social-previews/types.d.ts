@@ -19,3 +19,5 @@ declare module '@wordpress/rich-text' {
 		text: string;
 	}
 }
+
+declare module '*.png';
