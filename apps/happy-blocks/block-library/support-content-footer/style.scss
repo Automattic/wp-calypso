@@ -168,7 +168,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 			button.support-content-subscribe-submit {
 				background-color: var(--color-primary);
 				border-radius: 4px !important;
-				border-width: 1px;
+				border: 0;
 				color: var(--color-primary-0);
 				font-size: 1rem;
 				line-height: 1.3;
