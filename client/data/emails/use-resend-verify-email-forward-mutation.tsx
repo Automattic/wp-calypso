@@ -27,7 +27,7 @@ export default function useResendVerifyEmailForwardMutation(
 	const suppliedOnError = mutationOptions.onError;
 	const suppliedOnSuccess = mutationOptions.onSuccess;
 
-	mutationOptions.mutationKey = MUTATION_KEY;
+	mutationOptions.mutationKey = [ MUTATION_KEY ];
 
 	mutationOptions.onSuccess = ( data, emailForward, context ) => {
 		suppliedOnSuccess?.( data, emailForward, context );

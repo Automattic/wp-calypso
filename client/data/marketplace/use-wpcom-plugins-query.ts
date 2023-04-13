@@ -114,19 +114,19 @@ export const useWPCOMPlugin = (
 };
 
 export const useWPCOMPlugins = ( slugs: Array< string > ): Array< UseQueryResult< any > > => {
-	return useQueries(
-		slugs.map( ( slug ) => {
+	return useQueries( {
+		queries: slugs.map( ( slug ) => {
 			const [ cacheKey, fetchFn ] = getWPCOMPluginQueryParams( slug );
 
 			return {
 				queryKey: cacheKey,
 				queryFn: fetchFn,
 			};
-		} )
-	);
+		} ),
+	} );
 };
 
-export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< any[] > ] => {
+export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction ] => {
 	const cacheKey = [ 'plugins-featured-list-normalized' ];
 	const fetchFn = () =>
 		wpcom.req
