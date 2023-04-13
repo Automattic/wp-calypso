@@ -55,6 +55,10 @@ body {
 		border: 1px solid $studio-gray-10;
 		border-radius: 2px;
 
+		@media (max-width: $break-small) {
+			visibility: hidden;
+		}
+
 		.subscriptions-manager__search-icon {
 			margin-left: 18.5px;
 			margin-right: 14px;
