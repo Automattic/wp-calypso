@@ -139,13 +139,7 @@ function PluginDetails( props ) {
 	const isSaasProduct = useSelector( ( state ) =>
 		isSaasProductSelector( state, props.pluginSlug )
 	);
-	const isWpcomPreinstalled =
-		PREINSTALLED_PLUGINS.includes( props.pluginSlug ) ||
-		AUTOMOMANAGED_PLUGINS.includes( props.pluginSlug );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
-	const marketplacePluginHasSubscription = !! (
-		isMarketplaceProduct && getPluginPurchased( plugin, purchases )?.active
-	);
+
 	// Fetch WPorg plugin data if needed
 	useEffect( () => {
 		if ( isProductListFetched && ! isMarketplaceProduct && ! isWporgPluginFetched ) {
@@ -191,6 +185,14 @@ function PluginDetails( props ) {
 		isMarketplaceProduct,
 		isSaasProduct,
 	] );
+
+	const isWpcomPreinstalled =
+		PREINSTALLED_PLUGINS.includes( props.pluginSlug ) ||
+		AUTOMOMANAGED_PLUGINS.includes( props.pluginSlug );
+	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
+	const marketplacePluginHasSubscription = !! (
+		isMarketplaceProduct && getPluginPurchased( fullPlugin, purchases )?.active
+	);
 
 	const existingPlugin = useMemo( () => {
 		if (
@@ -342,7 +344,7 @@ function PluginDetails( props ) {
 					</NoticeAction>
 				</Notice>
 			) }
-			{ plugin?.active && ! marketplacePluginHasSubscription && ! isWpcomPreinstalled && (
+			{ fullPlugin?.active && ! marketplacePluginHasSubscription && ! isWpcomPreinstalled && (
 				<Notice
 					icon="notice"
 					showDismiss={ false }
