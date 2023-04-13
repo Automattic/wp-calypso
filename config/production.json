@@ -18,6 +18,7 @@
 	"features": {
 		"ad-tracking": true,
 		"akismet/siteless-checkout": false,
+		"anchor/sunset-integration": false,
 		"bilmur-script": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
@@ -160,7 +161,6 @@
 		"upsell/concierge-session": true,
 		"use-translation-chunks": true,
 		"user-management-revamp": true,
-		"virtual-themes/onboarding": true,
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,

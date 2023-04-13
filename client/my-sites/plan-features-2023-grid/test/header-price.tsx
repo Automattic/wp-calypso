@@ -15,11 +15,11 @@ jest.mock( 'react-redux', () => ( {
 	...jest.requireActual( 'react-redux' ),
 	useSelector: jest.fn(),
 } ) );
-jest.mock( '../../plans/hooks/use-plan-prices', () => jest.fn() );
+jest.mock( 'calypso/my-sites/plans/hooks/use-plan-prices', () => jest.fn() );
 
 import { render } from '@testing-library/react';
 import React from 'react';
-import usePlanPrices, { PlanPrices } from '../../plans/hooks/use-plan-prices';
+import usePlanPrices, { PlanPrices } from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import PlanFeatures2023GridHeaderPrice from '../header-price';
 import { PlanProperties } from '../types';
 

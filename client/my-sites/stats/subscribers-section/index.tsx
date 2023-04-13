@@ -1,4 +1,5 @@
 import UplotChart from '@automattic/components/src/chart-uplot';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
@@ -50,6 +51,7 @@ export default function SubscribersSection( {
 	}: UseQueryResult< SubscribersDataResult > = useSubscribersQuery( period, quantity );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const legendRef = useRef< HTMLDivElement >( null );
+	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( isError ) {

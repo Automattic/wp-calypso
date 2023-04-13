@@ -106,7 +106,7 @@ export const MarketingTools: FunctionComponent = () => {
 				>
 					<Button
 						onClick={ handleBuiltByWpClick }
-						href="https://builtbywp.com/?utm_medium=automattic_referred&utm_source=WordPresscom&utm_campaign=tools"
+						href="https://wordpress.com/built-by/?ref=tools-banner"
 						target="_blank"
 					>
 						{ translate( 'Get started' ) }
