@@ -42,7 +42,7 @@ const Comments = () => {
 		<TabView errorMessage="" isLoading={ false }>
 			<div className="subscriptions-manager__list-actions-bar">
 				<SearchInput
-					placeholder={ translate( 'Search by post name...' ) }
+					placeholder={ translate( 'Search by post name…' ) }
 					searchIcon={ <SearchIcon /> }
 					onSearch={ noop }
 				/>
