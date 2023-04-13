@@ -742,6 +742,7 @@ __metadata:
   resolution: "@automattic/global-styles@workspace:packages/global-styles"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@tanstack/react-query": ^4.29.1
     "@wordpress/block-editor": ^10.5.0
     "@wordpress/components": ^22.1.0
     "@wordpress/compose": ^5.20.0
@@ -751,7 +752,6 @@ __metadata:
     i18n-calypso: "workspace:^"
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-query: ^3.32.1
     tslib: ^2.3.0
     typescript: ^4.7.4
     wpcom-proxy-request: "workspace:^"
@@ -6444,6 +6444,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:4.29.1":
+  version: 4.29.1
+  resolution: "@tanstack/query-core@npm:4.29.1"
+  checksum: 38fb775e370e7cd43fa4084620d855a08cb02e52adc8c3dd9eaea92ca4aa6ba3ae3a0ab627162e2f4a974f629478b660dc6f1a77723e7aaaf7408ab7c1840847
+  languageName: node
+  linkType: hard
+
 "@tanstack/query-persist-client-core@npm:4.26.1":
   version: 4.26.1
   resolution: "@tanstack/query-persist-client-core@npm:4.26.1"
@@ -6504,6 +6511,25 @@ __metadata:
     react-native:
       optional: true
   checksum: 1b7a01f69d91ce3c894b9565fac24ddbc16183b53b187420adabc19b4112079b99ed1fee478e71695f1061d3795b962822fe7187d9c2a35f2bd522152c413534
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^4.29.1":
+  version: 4.29.1
+  resolution: "@tanstack/react-query@npm:4.29.1"
+  dependencies:
+    "@tanstack/query-core": 4.29.1
+    use-sync-external-store: ^1.2.0
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-native: "*"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+  checksum: a267bb4e5192ef3518aa0313c8f9a92bb0ea902caeb5598e2ea0d542d7253a99f438dcbb1a58eb40e3ad54ca52a06b024188dc1864e1d153ad1a6a4f54d088ba
   languageName: node
   linkType: hard
 
