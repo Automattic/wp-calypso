@@ -6,6 +6,7 @@ import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import './internals/videopress.scss';
 import ChooseADomain from './internals/steps-repository/choose-a-domain';
+import ChooseAPlan from './internals/steps-repository/choose-a-plan';
 import Intro from './internals/steps-repository/intro';
 import Launchpad from './internals/steps-repository/launchpad';
 import ProcessingStep from './internals/steps-repository/processing-step';
@@ -25,6 +26,7 @@ const videopress: Flow = {
 			{ slug: 'videomakerSetup', component: VideomakerSetup },
 			{ slug: 'options', component: SiteOptions },
 			{ slug: 'chooseADomain', component: ChooseADomain },
+			{ slug: 'chooseAPlan', component: ChooseAPlan },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'launchpad', component: Launchpad },
 		];
@@ -101,6 +103,7 @@ const videopress: Flow = {
 				stepValidateUserIsLoggedIn();
 				break;
 			case 'chooseADomain':
+			case 'chooseAPlan':
 				stepValidateSiteTitle();
 				break;
 		}
@@ -127,6 +130,10 @@ const videopress: Flow = {
 				}
 
 				case 'chooseADomain': {
+					return navigate( 'chooseAPlan' );
+				}
+
+				case 'chooseAPlan': {
 					return navigate( 'processing' );
 				}
 

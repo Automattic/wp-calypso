@@ -80,6 +80,11 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 			await Promise.all( [ page.waitForNavigation(), page.click( 'text=Decide later' ) ] );
 		} );
 
+		it( 'Navigate to choose a plan', async function () {
+			await page.waitForURL( /.*chooseAPlan.*/ );
+			await page.click( 'button.plan-item__select-button' );
+		} );
+
 		it( 'Land in checkout cart', async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
 			const totalAmount = await cartCheckoutPage.getCheckoutTotalAmount();
