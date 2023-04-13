@@ -17,6 +17,7 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
+import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
@@ -64,7 +65,6 @@ const excludesSidebar = [
 	'custom_recs_posts_with_images',
 	'list',
 	'p2',
-	'tag',
 ];
 
 class ReaderStream extends Component {
@@ -500,7 +500,13 @@ class ReaderStream extends Component {
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				/>
 			);
-			const sidebarContent = <ReaderListFollowedSites path={ path } />;
+
+			let sidebarContent;
+			if ( path.startsWith( '/tag/' ) ) {
+				sidebarContent = <ReaderTagSidebar />;
+			} else {
+				sidebarContent = <ReaderListFollowedSites path={ path } />;
+			}
 
 			if ( excludesSidebar.includes( streamType ) ) {
 				body = bodyContent;
