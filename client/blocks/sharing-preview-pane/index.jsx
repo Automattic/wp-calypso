@@ -111,7 +111,13 @@ class SharingPreviewPane extends PureComponent {
 
 		switch ( selectedService ) {
 			case 'facebook':
-				return <FacebookSharePreview { ...previewProps } />;
+				return (
+					<FacebookSharePreview
+						{ ...previewProps }
+						articleExcerpt={ post.excerpt }
+						articleContent={ post.content }
+					/>
+				);
 			case 'tumblr':
 				return <TumblrSharePreview { ...previewProps } />;
 			case 'linkedin':

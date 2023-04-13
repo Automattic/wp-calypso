@@ -1,5 +1,7 @@
-import UplotLineChart from '@automattic/components/src/chart-uplot';
-import { useEffect, useState } from 'react';
+import config from '@automattic/calypso-config';
+import UplotChart from '@automattic/components/src/chart-uplot';
+import { useTranslate } from 'i18n-calypso';
+import { useEffect, useRef, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import StatsModulePlaceholder from '../stats-module/placeholder';
@@ -29,7 +31,14 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 	return [ x, y ];
 }
 
-export default function SubscribersSection( { siteId }: { siteId: string } ) {
+export default function SubscribersSection( {
+	siteId,
+	siteSlug,
+}: {
+	siteId: string;
+	siteSlug: string;
+} ) {
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const period = 'month';
 	const quantity = 30;
 	const {
@@ -40,6 +49,8 @@ export default function SubscribersSection( { siteId }: { siteId: string } ) {
 		status,
 	}: UseQueryResult< SubscribersDataResult > = useSubscribersQuery( siteId, period, quantity );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const legendRef = useRef< HTMLDivElement >( null );
+	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( isError ) {
@@ -51,14 +62,32 @@ export default function SubscribersSection( { siteId }: { siteId: string } ) {
 
 	return (
 		<div className="subscribers-section">
-			<h1 className="highlight-cards-heading">Subscribers</h1>
+			{ /* TODO: Remove highlight-cards class and use a highlight cards heading component instead. */ }
+			<div className="subscribers-section-heading highlight-cards">
+				<h1 className="highlight-cards-heading">
+					{ translate( 'Subscribers' ) }{ ' ' }
+					{ isOdysseyStats ? null : (
+						<small>
+							<a
+								className="highlight-cards-heading-wrapper"
+								href={ '/people/subscribers/' + siteSlug }
+							>
+								{ translate( 'View all subscribers' ) }
+							</a>
+						</small>
+					) }
+				</h1>
+				<div className="subscribers-section-legend" ref={ legendRef }></div>
+			</div>
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isLoading && chartData.length === 0 && (
-				<p className="subscribers-section__no-data">No data availble for the specified period.</p>
+				<p className="subscribers-section__no-data">
+					{ translate( 'No data availble for the specified period.' ) }
+				</p>
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
 			{ ! isLoading && chartData.length !== 0 && (
-				<UplotLineChart data={ chartData } options={ { legend: { show: false } } } />
+				<UplotChart data={ chartData } legendContainer={ legendRef } />
 			) }
 		</div>
 	);

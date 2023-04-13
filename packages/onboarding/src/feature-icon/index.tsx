@@ -1,9 +1,18 @@
 import { SVG, Path } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
 import * as React from 'react';
-import type { WPCOMFeatures } from '@automattic/data-stores';
 
-export const iconList: Record< WPCOMFeatures.FeatureId, React.ReactElement > = {
+type FeatureId =
+	| 'domain'
+	| 'store'
+	| 'seo'
+	| 'plugins'
+	| 'ad-free'
+	| 'image-storage'
+	| 'video-storage'
+	| 'support';
+
+export const iconList: Record< FeatureId, React.ReactElement > = {
 	domain: (
 		<SVG viewBox="0 0 24 24">
 			<Path
@@ -83,7 +92,7 @@ export const iconList: Record< WPCOMFeatures.FeatureId, React.ReactElement > = {
 };
 
 interface Props {
-	featureId: WPCOMFeatures.FeatureId;
+	featureId: FeatureId;
 }
 
 const FeatureIcon: React.FunctionComponent< Props > = ( { featureId } ) => (

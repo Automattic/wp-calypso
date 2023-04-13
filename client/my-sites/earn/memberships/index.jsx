@@ -23,6 +23,7 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -53,7 +54,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH, LAUNCHPAD_HASH } from './constants';
+import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 
 import './style.scss';
 
@@ -67,24 +68,14 @@ class MembershipsSection extends Component {
 		disconnectedConnectedAccountId: null,
 	};
 	componentDidMount() {
-		this.navigateToLaunchpad();
 		this.fetchNextSubscriberPage( false, true );
 	}
 	componentDidUpdate( prevProps ) {
-		this.navigateToLaunchpad();
 		if ( prevProps.siteId !== this.props.siteId ) {
 			// Site Id changed
 			this.fetchNextSubscriberPage( false, true );
 		}
 	}
-
-	navigateToLaunchpad() {
-		const shouldGoToLaunchpad = this.props?.query?.stripe_connect_success === 'launchpad';
-		if ( shouldGoToLaunchpad ) {
-			window.location.assign( `/setup/newsletter/launchpad?siteSlug=${ this.props.siteSlug }` );
-		}
-	}
-
 	renderEarnings() {
 		const { commission, currency, forecast, lastMonth, siteId, total, translate } = this.props;
 		return (
@@ -710,30 +701,21 @@ class MembershipsSection extends Component {
 				<QueryMembershipsSettings siteId={ this.props.siteId } source={ this.props.source } />
 				{ this.props.connectedAccountId && this.renderStripeConnected() }
 				{ this.props.connectUrl && ! this.props.connectedAccountId && this.renderConnectStripe() }
+
+				{ ! this.props.connectedAccountId && ! this.props.connectUrl && (
+					<div className="earn__payments-loading">
+						<LoadingEllipsis />
+					</div>
+				) }
 			</div>
 		);
 	}
 }
 
-/**
- * Source is used to add data to the Stripe Connect URL. On a successful
- * connection, this source is used to redirect the user the appropriate place.
- */
-const getSource = () => {
-	if ( window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH ) {
-		return 'earn-newsletter';
-	}
-	if ( window.location.hash === LAUNCHPAD_HASH ) {
-		return 'launchpad';
-	}
-	return 'calypso';
-};
-
 const mapStateToProps = ( state ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
 	const earnings = getEarningsWithDefaultsForSiteId( state, siteId );
-	const source = getSource();
 
 	return {
 		site,
@@ -754,7 +736,8 @@ const mapStateToProps = ( state ) => {
 			siteHasFeature( state, siteId, FEATURE_DONATIONS ) ||
 			siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		isJetpack: isJetpackSite( state, siteId ),
-		source,
+		source:
+			window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH ? 'earn-newsletter' : 'calypso',
 	};
 };
 

@@ -42,6 +42,7 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
+import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
@@ -288,30 +289,7 @@ class StatsSite extends Component {
 							showSummaryLink
 						/>
 						{ config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats && (
-							<>
-								<StatsModule
-									additionalColumns={ {
-										header: (
-											<>
-												<span>{ translate( 'Opens' ) }</span>
-											</>
-										),
-										body: ( item ) => (
-											<>
-												<span>{ item.opens }</span>
-											</>
-										),
-									} }
-									path="emails"
-									moduleStrings={ moduleStrings.emails }
-									period={ this.props.period }
-									query={ query }
-									statType="statsEmailsSummary"
-									mainItemLabel={ translate( 'Latest Emails' ) }
-									metricLabel={ translate( 'Clicks' ) }
-									showSummaryLink
-								/>
-							</>
+							<StatsModuleEmails period={ this.props.period } query={ query } />
 						) }
 						{
 							// File downloads are not yet supported in Jetpack Stats

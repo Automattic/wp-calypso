@@ -37,13 +37,13 @@ import {
 	isUpsellCardDisplayed as isUpsellCardDisplayedSelector,
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
+import EligibilityWarningModal from './atomic-transfer-dialog';
 import { addTracking, getSubjectsFromTermTable, trackClick, localizeThemesPath } from './helpers';
 import InstallThemeButton from './install-theme-button';
 import ThemePreview from './theme-preview';
 import ThemesHeader from './themes-header';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
-
 import './theme-showcase.scss';
 
 const optionShape = PropTypes.shape( {
@@ -383,16 +383,16 @@ class ThemeShowcase extends Component {
 			// these are from the time we rely on the redirect.
 			// See p2-pau2Xa-4nq#comment-12480
 			let location = 'theme-banner';
-			let utmCampaign = 'built-by-wordpress-com-redirect';
+			let refURLParam = 'built-by-wordpress-com-redirect';
 
 			// See p2-pau2Xa-4nq#comment-12458 for the context regarding the utm campaign value.
 			switch ( tabKey ) {
 				case staticFilters.ALL.key:
 					location = 'all-theme-banner';
-					utmCampaign = 'theme-all';
+					refURLParam = 'themes';
 			}
 
-			return <UpworkBanner location={ location } utmCampaign={ utmCampaign } />;
+			return <UpworkBanner location={ location } refURLParam={ refURLParam } />;
 		}
 
 		return upsellBanner;
@@ -558,6 +558,7 @@ class ThemeShowcase extends Component {
 					<QueryProductsList />
 					<ThanksModal source="list" />
 					<AutoLoadingHomepageModal source="list" />
+					<EligibilityWarningModal />
 					<ThemePreview />
 				</div>
 			</div>

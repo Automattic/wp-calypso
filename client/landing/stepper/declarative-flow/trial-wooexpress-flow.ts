@@ -4,11 +4,11 @@ import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress'
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import AssignTrialPlanStep, {
-	AssignTrialResult,
-} from './internals/steps-repository/assign-trial-plan';
+import AssignTrialPlanStep from './internals/steps-repository/assign-trial-plan';
+import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
 import ErrorStep from './internals/steps-repository/error-step';
-import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
+import ProcessingStep from './internals/steps-repository/processing-step';
+import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
 import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
@@ -72,11 +72,6 @@ const wooexpress: Flow = {
 			}
 
 			return `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
-
-			// Initial URL approach
-			const baseUrl = '/start/account/user' + ( locale && locale !== 'en' ? `/${ locale }` : '' );
-
-			return baseUrl + `?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
 		};
 
 		if ( ! userIsLoggedIn ) {

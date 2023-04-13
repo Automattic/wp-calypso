@@ -7,7 +7,7 @@ const StagingSiteNotice = () => {
 	return (
 		<CelebrateNotice
 			description={ __(
-				'This is a staging site that you can use to try out new plugins and themes, debug and troubleshoot changes, and fine-tune every aspect of your website without worrying about breaking your live site.'
+				'This is a staging site that you can use to try out new plugins and themes, debug and troubleshoot changes, and fine-tune every aspect of your website without worrying about breaking your production site.'
 			) }
 			noticeId={ NOTICE_STAGING_SITE }
 			title={ __( 'Staging site' ) }

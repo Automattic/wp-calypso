@@ -1,9 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
-import {
-	PLAN_ECOMMERCE_MONTHLY,
-	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
-} from '@automattic/calypso-products';
+import { PLAN_WOOEXPRESS_MEDIUM_MONTHLY } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
@@ -46,9 +42,7 @@ const ECommerceTrialCurrentPlan = () => {
 	const isMobile = useMediaQuery( '(max-width: 480px)' );
 	const displayAllIncluded = ! isMobile || showAllTrialFeaturesInMobileView;
 
-	const targetPlan = isEnabled( 'plans/wooexpress-medium' )
-		? PLAN_WOOEXPRESS_MEDIUM_MONTHLY
-		: PLAN_ECOMMERCE_MONTHLY;
+	const targetPlan = PLAN_WOOEXPRESS_MEDIUM_MONTHLY;
 
 	/**
 	 * Redirects to the checkout page with Plan on cart.

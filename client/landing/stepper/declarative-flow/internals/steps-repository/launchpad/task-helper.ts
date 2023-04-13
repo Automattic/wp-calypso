@@ -43,16 +43,10 @@ export function getEnhancedTasks(
 
 	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
 
-	const stripeAccountConnected =
-		site?.options?.launchpad_checklist_tasks_statuses?.stripe_connected || false;
-
-	const newsletterPlanCreated =
-		site?.options?.launchpad_checklist_tasks_statuses?.newsletter_plan_created || false;
-
 	const allowUpdateDesign =
 		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
 
-	const isPaidPlan = ! site?.plan?.is_free;
+	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
@@ -337,10 +331,10 @@ export function getEnhancedTasks(
 				case 'domain_upsell':
 					taskData = {
 						title: translate( 'Choose a domain' ),
-						completed: isPaidPlan,
+						completed: domainUpsellCompleted,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, isPaidPlan, task.id );
-							const destinationUrl = isPaidPlan
+							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
+							const destinationUrl = domainUpsellCompleted
 								? `/domains/manage/${ siteSlug }`
 								: addQueryArgs( '/setup/domain-upsell/domains', {
 										siteSlug,
@@ -349,7 +343,7 @@ export function getEnhancedTasks(
 								  } );
 							window.location.assign( destinationUrl );
 						},
-						badgeText: isPaidPlan ? '' : translate( 'Upgrade plan' ),
+						badgeText: domainUpsellCompleted ? '' : translate( 'Upgrade plan' ),
 					};
 					break;
 				case 'verify_email':
@@ -358,35 +352,17 @@ export function getEnhancedTasks(
 						title: translate( 'Confirm Email (Check Your Inbox)' ),
 					};
 					break;
-				case 'stripe_account_connected':
-					taskData = {
-						title: translate( 'Connect Stripe Account' ),
-						completed: stripeAccountConnected,
-						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign( `/earn/payments/${ siteSlug }#launchpad` );
-						},
-					};
-					break;
-				case 'newsletter_plan_created':
-					taskData = {
-						title: translate( 'Create a Paid Newsletter' ),
-						completed: newsletterPlanCreated,
-						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							if ( newsletterPlanCreated ) {
-								return;
-							}
-							window.location.assign(
-								`/earn/payments-plans/${ siteSlug }?launchpad=add-product#add-newsletter-payment-plan`
-							);
-						},
-					};
-					break;
 			}
 			enhancedTaskList.push( { ...task, ...taskData } );
 		} );
 	return enhancedTaskList;
+}
+
+function isDomainUpsellCompleted(
+	site: SiteDetails | null,
+	checklistStatuses: LaunchpadStatuses
+): boolean {
+	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
 }
 
 // Records a generic task click Tracks event

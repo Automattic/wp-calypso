@@ -3,54 +3,71 @@ import {
 	isWpcomEnterpriseGridPlan,
 	PLAN_BIENNIAL_PERIOD,
 	PLAN_ANNUAL_PERIOD,
+	PlanSlug,
+	getPlanSlugForTermVariant,
+	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
+import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 
 interface Props {
 	planName: string;
 	billingTimeframe: TranslateResult;
 	billingPeriod: number | null | undefined;
-	rawPrice: number | null;
-	maybeDiscountedFullTermPrice: number | null;
-	annualPricePerMonth: number | null;
 	isMonthlyPlan: boolean;
 }
 
 function usePerMonthDescription( {
-	rawPrice,
-	maybeDiscountedFullTermPrice,
-	annualPricePerMonth,
 	isMonthlyPlan,
 	planName,
 	billingPeriod,
 }: Omit< Props, 'billingTimeframe' > ) {
 	const translate = useTranslate();
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
+	const planPrices = usePlanPrices( {
+		planSlug: planName as PlanSlug,
+		returnMonthly: isMonthlyPlan,
+	} );
+	const planYearlyVariantPricesPerMonth = usePlanPrices( {
+		planSlug:
+			getPlanSlugForTermVariant( planName as PlanSlug, TERM_ANNUALLY ) ?? ( '' as PlanSlug ),
+		returnMonthly: true,
+	} );
 
 	if ( isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
 		return null;
 	}
 
 	if ( isMonthlyPlan ) {
-		if ( null !== rawPrice && null !== annualPricePerMonth ) {
-			if ( annualPricePerMonth < rawPrice ) {
-				return translate( `Save %(discountRate)s%% by paying annually`, {
-					args: {
-						discountRate: Math.floor( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice ),
-					},
-				} );
-			}
+		// We want `yearlyVariantMaybeDiscountedPricePerMonth` to be the raw price the user
+		// would pay if they choose an annual plan instead of the monthly one. So pro-rated
+		// (or site-plan specific) credits should not be taken into account.
+		const yearlyVariantMaybeDiscountedPricePerMonth =
+			planYearlyVariantPricesPerMonth.discountedRawPrice ||
+			planYearlyVariantPricesPerMonth.rawPrice;
+
+		if ( yearlyVariantMaybeDiscountedPricePerMonth < planPrices.rawPrice ) {
+			return translate( `Save %(discountRate)s%% by paying annually`, {
+				args: {
+					discountRate: Math.floor(
+						( 100 * ( planPrices.rawPrice - yearlyVariantMaybeDiscountedPricePerMonth ) ) /
+							planPrices.rawPrice
+					),
+				},
+			} );
 		}
 	}
 
 	if ( ! isMonthlyPlan ) {
+		const maybeDiscountedPrice =
+			planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
 		const fullTermPriceText =
-			currencyCode && null !== maybeDiscountedFullTermPrice
-				? formatCurrency( maybeDiscountedFullTermPrice, currencyCode, { stripZeros: true } )
+			currencyCode && maybeDiscountedPrice
+				? formatCurrency( maybeDiscountedPrice, currencyCode, { stripZeros: true } )
 				: null;
 
 		if ( fullTermPriceText ) {
@@ -66,8 +83,6 @@ function usePerMonthDescription( {
 				} );
 			}
 		}
-
-		return null;
 	}
 
 	return null;
@@ -76,7 +91,6 @@ function usePerMonthDescription( {
 const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props ) => {
 	const { planName, billingTimeframe } = props;
 	const translate = useTranslate();
-
 	const perMonthDescription = usePerMonthDescription( props ) || billingTimeframe;
 	const price = formatCurrency( 25000, 'USD' );
 

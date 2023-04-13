@@ -2,8 +2,8 @@ import { isWpcomEnterpriseGridPlan, PlanSlug } from '@automattic/calypso-product
 import styled from '@emotion/styled';
 import { useSelector } from 'react-redux';
 import PlanPrice from 'calypso/my-sites/plan-price';
+import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import usePlanPrices from '../plans/hooks/use-plan-prices';
 import { PlanProperties } from './types';
 
 interface PlanFeatures2023GridHeaderPriceProps {
@@ -92,7 +92,7 @@ const HeaderPriceContainer = styled.div`
 
 	.plan-price.is-large-currency {
 		.plan-price__integer {
-			font-size: 38px;
+			font-size: 30px;
 		}
 		&.is-original {
 			.plan-price__integer {

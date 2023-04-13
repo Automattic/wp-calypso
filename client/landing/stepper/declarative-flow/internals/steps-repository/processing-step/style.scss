@@ -34,28 +34,6 @@
 	width: 100%;
 }
 
-.is-videopress-stepper.is-processing-step {
-	padding: 0;
-	color: #fff;
-
-	.processing-step__progress-bar {
-		background-color: #fff3;
-		border-radius: 4px;
-		&::before {
-			background-color: #ffe61c;
-		}
-	}
-
-	@include break-medium {
-		background-size: auto 50%, auto 50%;
-	}
-
-	@include break-large {
-		background-position-y: 50%, 100%;
-		background-position-x: 0, 100%;
-	}
-}
-
 .processing-step__subtitle {
 	font-size: 1rem;
 	line-height: 21px;
@@ -82,13 +60,41 @@
 	}
 }
 
-.processing.link-in-bio-domain {
-	.wordpress-logo {
-		position: absolute;
-		inset-inline-start: 20px;
-		inset-block-start: 20px;
-		fill: var(--color-text);
-		stroke: var(--color-text);
-		transform-origin: 0 0;
+.processing {
+	.signup-header {
+		.wordpress-logo {
+			position: absolute;
+			inset-inline-start: 20px;
+			inset-block-start: 20px;
+			fill: var(--color-text);
+			stroke: none;
+			transform-origin: 0 0;
+		}
+	}
+
+}
+
+.is-videopress-stepper.is-processing-step {
+	padding: 0;
+	color: #fff;
+
+	.processing-step__content {
+		background-color: #fff3;
+		border-radius: 4px;
+		.loading-bar {
+			background-color: #fff3;
+			&::before {
+				background-color: #ffe61c;
+			}
+		}
+	}
+
+	@include break-medium {
+		background-size: auto 50%, auto 50%;
+	}
+
+	@include break-large {
+		background-position-y: 50%, 100%;
+		background-position-x: 0, 100%;
 	}
 }

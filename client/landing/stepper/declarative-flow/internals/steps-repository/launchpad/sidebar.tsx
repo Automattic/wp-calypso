@@ -1,12 +1,12 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { useRef, useState } from '@wordpress/element';
+import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
-import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -69,7 +69,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
-	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
+	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks(
 		tasks,
@@ -112,10 +112,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	return (
 		<div className="launchpad__sidebar">
-			<div className="launchpad__sidebar-header">
-				<WordPressLogo className="launchpad__sidebar-header-logo" size={ 24 } />
-				<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
-			</div>
 			<div className="launchpad__sidebar-content-container">
 				<div className="launchpad__progress-bar-container">
 					<CircularProgressBar
@@ -149,7 +145,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 									onMouseLeave={ () => setClipboardCopied( false ) }
 									ref={ clipboardButtonEl }
 								>
-									<Gridicon icon="clipboard" />
+									<Icon icon={ copy } size={ 18 } />
 								</ClipboardButton>
 								<Tooltip
 									context={ clipboardButtonEl.current }

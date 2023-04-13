@@ -99,16 +99,6 @@ export const tasks: Task[] = [
 		completed: false,
 		disabled: true,
 	},
-	{
-		id: 'stripe_account_connected',
-		completed: false,
-		disabled: false,
-	},
-	{
-		id: 'newsletter_plan_created',
-		completed: false,
-		disabled: false,
-	},
 ];
 
 const linkInBioTaskList = [
@@ -125,8 +115,6 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'plan_selected',
 		'subscribers_added',
 		'verify_email',
-		'stripe_account_connected',
-		'newsletter_plan_created',
 		'first_post_published_newsletter',
 	],
 	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
