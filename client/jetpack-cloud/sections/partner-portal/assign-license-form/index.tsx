@@ -9,7 +9,7 @@ import SearchCard from 'calypso/components/search-card';
 import { SITE_CARDS_PER_PAGE } from 'calypso/jetpack-cloud/sections/partner-portal/assign-license-form/constants';
 import { useAssignMultipleLicenses } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { addQueryArgs } from 'calypso/lib/url';
-import { isMultisiteCompatibleLicenseKeys } from '../utils';
+import { areLicenseKeysMultisiteCompatible } from '../utils';
 import './style.scss';
 
 function setPage( pageNumber: number ): void {
@@ -53,7 +53,7 @@ export default function AssignLicenseForm( {
 	};
 	const [ assignLicenses, isLoading ] = useAssignMultipleLicenses( licenseKeysArray, selectedSite );
 
-	let results = isMultisiteCompatibleLicenseKeys( licenseKeysArray )
+	let results = areLicenseKeysMultisiteCompatible( licenseKeysArray )
 		? sites
 		: sites.filter( ( site: any ) => ! site.is_multisite );
 
