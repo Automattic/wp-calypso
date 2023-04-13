@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import UplotChart from '@automattic/components/src/chart-uplot';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
@@ -39,6 +40,7 @@ export default function SubscribersSection( {
 	slug?: string;
 	period?: string;
 } ) {
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const quantity = 30;
 	const {
 		isLoading,
@@ -73,11 +75,13 @@ export default function SubscribersSection( {
 			<div className="subscribers-section-heading highlight-cards">
 				<h1 className="highlight-cards-heading">
 					{ translate( 'Subscribers' ) }{ ' ' }
-					<small>
-						<a className="highlight-cards-heading-wrapper" href={ '/people/subscribers/' + slug }>
-							{ translate( 'View all subscribers' ) }
-						</a>
-					</small>
+					{ isOdysseyStats ? null : (
+						<small>
+							<a className="highlight-cards-heading-wrapper" href={ '/people/subscribers/' + slug }>
+								{ translate( 'View all subscribers' ) }
+							</a>
+						</small>
+					) }
 				</h1>
 				<div className="subscribers-section-duration-control-with-legend">
 					<StatsPeriodHeader>

@@ -12,6 +12,7 @@ $max-list-width: 1300px;
 
 .subscription-manager__comment-list {
 	max-width: $max-list-width;
+	min-width: 300px;
 
 	.row-wrapper {
 		border-bottom: 1px solid var(--color-border-subtle);
@@ -23,6 +24,7 @@ $max-list-width: 1300px;
 		flex-direction: row;
 		margin-top: 20px;
 		margin-bottom: 20px;
+		justify-content: space-between;
 
 		* {
 			flex: 1;
@@ -34,27 +36,36 @@ $max-list-width: 1300px;
 		}
 
 		.post {
-			max-width: 403px;
-			min-width: 350px;
+			flex: 0 0 403px;
 			font-size: $font-body-small;
 			line-height: 20px;
 
 			.title {
-				font-weight: 500;
 				@extend %ellipsis;
+
+				a {
+					font-weight: 500;
+					color: $studio-gray-100;
+
+					&:hover {
+						text-decoration: underline;
+					}
+				}
 			}
 
 			.excerpt {
 				max-width: 350px;
 				font-weight: 400;
 				color: $studio-gray-60;
+				margin-top: 4px;
 				@extend %ellipsis;
 			}
 		}
 
 		@media (max-width: $break-small) {
 			.post {
-				min-width: 0;
+				flex: 1 1;
+				max-width: calc(100% - 54px);
 			}
 		}
 
