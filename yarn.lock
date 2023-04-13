@@ -1653,6 +1653,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/typography": "workspace:^"
+    "@tanstack/react-query": ^4.29.1
     "@wordpress/components": ^22.1.0
     "@wordpress/element": ^4.20.0
     "@wordpress/i18n": ^4.22.0
