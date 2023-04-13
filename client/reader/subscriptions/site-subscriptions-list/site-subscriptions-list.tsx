@@ -5,7 +5,7 @@ import { Notice } from 'calypso/landing/subscriptions/components/notice';
 import { SiteList } from 'calypso/landing/subscriptions/components/site-list';
 import './styles.scss';
 
-const UserSitesList = () => {
+const SiteSubscriptionsList = () => {
 	const translate = useTranslate();
 	const { data: sites, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery();
 
@@ -25,4 +25,4 @@ const UserSitesList = () => {
 	return <SiteList sites={ sites } />;
 };
 
-export default UserSitesList;
+export default SiteSubscriptionsList;
