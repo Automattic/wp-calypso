@@ -77,12 +77,7 @@ export default function SubscribersSection( {
 					<div>
 						<StatsPeriodHeader>
 							<StatsPeriodNavigation date={ date } period={ period } url={ pathTemplate }>
-								<DatePicker
-									period={ period }
-									date={ date }
-									statsType="statsTopPosts"
-									showQueryDate
-								/>
+								<DatePicker period={ period } date={ date } showQueryDate />
 							</StatsPeriodNavigation>
 							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
 						</StatsPeriodHeader>
