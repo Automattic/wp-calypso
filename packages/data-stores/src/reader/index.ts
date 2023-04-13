@@ -1,5 +1,6 @@
 import { useSubscriberEmailAddress } from './hooks';
 import {
+	usePostUnfollowMutation,
 	useSiteDeliveryFrequencyMutation,
 	useSiteUnfollowMutation,
 	useUserSettingsMutation,
@@ -11,6 +12,7 @@ import {
 } from './queries';
 
 export const SubscriptionManager = {
+	usePostUnfollowMutation,
 	useSiteDeliveryFrequencyMutation,
 	useSiteSubscriptionsQuery,
 	useSiteUnfollowMutation,
