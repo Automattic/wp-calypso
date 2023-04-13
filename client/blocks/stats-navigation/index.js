@@ -64,7 +64,7 @@ class StatsNavigation extends Component {
 		return (
 			<div className={ wrapperClass }>
 				<SectionNav selectedText={ label }>
-					<NavTabs label="Stats" selectedText={ label }>
+					<NavTabs selectedText={ label }>
 						{ Object.keys( navItems )
 							.filter( this.isValidItem )
 							.map( ( item ) => {
