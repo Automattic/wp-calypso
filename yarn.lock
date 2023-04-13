@@ -86,13 +86,13 @@ __metadata:
   resolution: "@automattic/block-renderer@workspace:packages/block-renderer"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@tanstack/react-query": ^4.29.1
     "@wordpress/block-editor": ^10.5.0
     "@wordpress/compose": ^5.20.0
     "@wordpress/edit-site": ^4.19.0
     classnames: ^2.3.1
     react: ^17.0.2
     react-dom: ^17.0.2
-    react-query: ^3.32.1
     tslib: ^2.3.0
     typescript: ^4.7.4
     utility-types: ^3.10.0
