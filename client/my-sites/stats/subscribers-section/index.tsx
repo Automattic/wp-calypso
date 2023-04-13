@@ -4,10 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { UseQueryResult } from 'react-query';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
-import DatePicker from '../stats-date-picker';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
-import StatsPeriodNavigation from '../stats-period-navigation';
 import type uPlot from 'uplot';
 
 import './style.scss';
@@ -81,17 +79,12 @@ export default function SubscribersSection( {
 						</a>
 					</small>
 				</h1>
-				{ ! isLoading && (
-					<div>
-						<StatsPeriodHeader>
-							<StatsPeriodNavigation date={ date } period={ period } url={ pathTemplate }>
-								<DatePicker period={ period } date={ date } showQueryDate />
-							</StatsPeriodNavigation>
-							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
-						</StatsPeriodHeader>
-					</div>
-				) }
-				<div className="subscribers-section-legend" ref={ legendRef }></div>
+				<div className="subscribers-section-duration-control-with-legend">
+					<StatsPeriodHeader>
+						<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
+					</StatsPeriodHeader>
+					<div className="subscribers-section-legend" ref={ legendRef }></div>
+				</div>
 			</div>
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isLoading && chartData.length === 0 && (
