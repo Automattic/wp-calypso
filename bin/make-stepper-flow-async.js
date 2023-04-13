@@ -5,6 +5,11 @@ const prettier = require( 'prettier' );
 
 convertFlow();
 
+/**
+ * Processes a Stepper flow to make it load its steps asynchronously.
+ *
+ * Usage: `node bin/make-stepper-flow-async.js <flow-name>`
+ */
 function convertFlow() {
 	const passedFlowName = process.argv[ 2 ];
 	const flowsDir = resolve( __dirname, '../client/landing/stepper/declarative-flow' );
