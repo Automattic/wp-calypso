@@ -13,6 +13,7 @@ const posts: PostSubscription[] = [
 		title: 'Alone at the Edge of the World',
 		excerpt:
 			'Susie Goodall wanted to circumnavigate the globe in a sailboat. She did it, but not without a few hiccups along the way.',
+		url: 'https://testsite2022.wordpress.com/2021/03/29/alone-at-the-edge-of-the-world/',
 		site_title: 'Test Site 2022',
 		site_icon: 'https://www.gravatar.com/avatar/',
 		site_url: 'https://testsite2022.wordpress.com',
@@ -23,6 +24,7 @@ const posts: PostSubscription[] = [
 		title: '50 Years Ago, Stevie Wonder Heard the Future',
 		excerpt:
 			'On the anniversary of the landmark 1972 album “Talking Book,” the singer-songwriter reflects on the making of his masterpiece.',
+		url: 'https://testsite2023.wordpress.com/2021/03/29/50-years-ago-stevie-wonder-heard-the-future/',
 		site_icon: 'https://www.gravatar.com/avatar/',
 		site_title: 'April Site',
 		site_url: 'https://testsite2023.wordpress.com',
