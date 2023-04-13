@@ -14,22 +14,26 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 	ElementHelper,
+	RestAPIClient,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function () {
+describe( `Editor: Advanced Post Flow`, function () {
+	// Authentication setup.
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( features, [
 		{ gutenberg: 'stable', siteType: 'simple', accountName: 'simpleSitePersonalPlanUser' },
 	] );
 
+	// Post content setup.
 	const postTitle = `Post Life Cycle: ${ DataHelper.getTimestamp() }`;
 	const originalContent = DataHelper.getRandomPhrase();
 	const additionalContent = 'Updated post content';
 
 	let page: Page;
+	let testAccount: TestAccount;
 	let editorPage: EditorPage;
 	let postsPage: PostsPage;
 	let paragraphBlock: ParagraphBlock;
@@ -38,19 +42,19 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 	beforeAll( async function () {
 		page = await browser.newPage();
 
-		const testAccount = new TestAccount( accountName );
+		testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
-
-		postsPage = new PostsPage( page );
-		await postsPage.visit();
-		await postsPage.newPost();
-	} );
-
-	beforeAll( async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
 	} );
 
 	describe( 'Publish post', function () {
+		beforeAll( async function () {
+			postsPage = new PostsPage( page );
+			await postsPage.visit();
+			await postsPage.newPost();
+
+			editorPage = new EditorPage( page, { target: features.siteType } );
+		} );
+
 		it( 'Enter post title', async function () {
 			await editorPage.enterTitle( postTitle );
 		} );
@@ -73,12 +77,13 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		 * Validates post in the same tab to work around an issue with AT caching.
 		 *
 		 * @see https://github.com/Automattic/wp-calypso/pull/67964
+		 *
+		 * Retries due to possible cache issue.
+		 * @see https://github.com/Automattic/wp-calypso/issues/57503
 		 */
 		it( 'Validate post', async function () {
 			await page.goto( postURL.href );
 
-			// Work around issue:
-			// https://github.com/Automattic/wp-calypso/issues/57503
 			await ElementHelper.reloadAndRetry( page, validatePublishedPage );
 
 			async function validatePublishedPage(): Promise< void > {
@@ -89,8 +94,11 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 
 	describe( 'Edit published post', function () {
 		beforeAll( async () => {
-			// See: https://github.com/Automattic/wp-calypso/issues/74925
-			await page.goBack();
+			// // See: https://github.com/Automattic/wp-calypso/issues/74925
+			// await page.goBack();
+			await postsPage.visit();
+			await postsPage.clickPost( postTitle );
+			editorPage = new EditorPage( page );
 		} );
 
 		it( 'Editor is shown', async function () {
@@ -115,15 +123,33 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 		 * Validates post in the same tab to work around an issue with AT caching.
 		 *
 		 * @see https://github.com/Automattic/wp-calypso/pull/67964
+		 *
+		 * Retries due to possible cache issue.
+		 * @see https://github.com/Automattic/wp-calypso/issues/57503
 		 */
 		it( 'Ensure published post contains additional content', async function () {
 			await page.goto( postURL.href );
-			await ParagraphBlock.validatePublishedContent( page, [ originalContent, additionalContent ] );
-			await page.goBack();
+
+			await ElementHelper.reloadAndRetry( page, validatePublishedPage );
+
+			async function validatePublishedPage(): Promise< void > {
+				await ParagraphBlock.validatePublishedContent( page, [
+					originalContent,
+					additionalContent,
+				] );
+			}
 		} );
 	} );
 
 	describe( 'Revert post to draft', function () {
+		beforeAll( async () => {
+			// See: https://github.com/Automattic/wp-calypso/issues/74925
+			// await page.goBack();
+			await postsPage.visit();
+			await postsPage.clickPost( postTitle );
+			editorPage = new EditorPage( page );
+		} );
+
 		it( 'Switch to draft', async function () {
 			await editorPage.unpublish();
 		} );
@@ -176,5 +202,9 @@ describe( DataHelper.createSuiteTitle( `Editor: Advanced Post Flow` ), function 
 				type: 'Success',
 			} );
 		} );
+	} );
+
+	afterAll( async function () {
+		const restAPIClient = new RestAPIClient( testAccount.credentials );
 	} );
 } );
