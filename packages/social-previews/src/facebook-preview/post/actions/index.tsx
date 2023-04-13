@@ -3,38 +3,31 @@ import FacebookPostIcon from '../icons';
 
 import './styles.scss';
 
-const FacebookPostActions: React.FC = () => {
-	return (
-		<ul className="facebook-preview__post-actions">
-			<li>
-				<FacebookPostIcon name="like" />
-				<span>
-					{
-						// translators: Facebook "Like" action
-						__( 'Like', 'facebook-preview' )
-					}
-				</span>
+const FacebookPostActions: React.FC = () => (
+	<ul className="facebook-preview__post-actions">
+		{ [
+			{
+				icon: 'like',
+				// translators: Facebook "Like" action
+				label: __( 'Like', 'facebook-preview' ),
+			},
+			{
+				icon: 'comment',
+				// translators: Facebook "Comment" action
+				label: __( 'Comment', 'facebook-preview' ),
+			},
+			{
+				icon: 'share',
+				// translators: Facebook "Share" action
+				label: __( 'Share', 'facebook-preview' ),
+			},
+		].map( ( { icon, label } ) => (
+			<li key={ icon }>
+				<FacebookPostIcon name={ icon } />
+				<span>{ label }</span>
 			</li>
-			<li>
-				<FacebookPostIcon name="comment" />
-				<span>
-					{
-						// translators: Facebook "Comment" action
-						__( 'Comment', 'facebook-preview' )
-					}
-				</span>
-			</li>
-			<li>
-				<FacebookPostIcon name="share" />
-				<span>
-					{
-						// translators: Facebook "Share" action
-						__( 'Share', 'facebook-preview' )
-					}
-				</span>
-			</li>
-		</ul>
-	);
-};
+		) ) }
+	</ul>
+);
 
 export default FacebookPostActions;
