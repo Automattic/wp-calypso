@@ -10,6 +10,7 @@ import type { PremiumGlobalStylesUpgradeModalProps } from 'calypso/components/pr
 
 interface Props {
 	flowName: string;
+	stepName: string;
 	hasSelectedColorVariation?: boolean;
 	hasSelectedFontVariation?: boolean;
 	onCheckout?: () => void;
@@ -18,6 +19,7 @@ interface Props {
 
 const useGlobalStylesUpgradeModal = ( {
 	flowName,
+	stepName,
 	hasSelectedColorVariation = false,
 	hasSelectedFontVariation = false,
 	onCheckout,
@@ -68,6 +70,7 @@ const useGlobalStylesUpgradeModal = ( {
 
 		goToCheckout( {
 			flowName,
+			stepName,
 			siteSlug: siteUrl,
 			destination: redirectUrl,
 			plan: 'premium',

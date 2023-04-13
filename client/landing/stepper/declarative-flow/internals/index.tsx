@@ -10,8 +10,8 @@ import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
 import {
-	getSignupCompleteFlowName,
-	clearSignupCompleteFlowName,
+	getSignupCompleteFlowNameAndClear,
+	getSignupCompleteStepNameAndClear,
 } from 'calypso/signup/storageUtils';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
@@ -115,12 +115,12 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 			return;
 		}
 
-		const signupCompleteFlowName = getSignupCompleteFlowName();
-		const isReEnteringFlow = signupCompleteFlowName === flow.name;
-		if ( ! isReEnteringFlow ) {
+		const signupCompleteFlowName = getSignupCompleteFlowNameAndClear();
+		const signupCompleteStepName = getSignupCompleteStepNameAndClear();
+		const isReEnteringStep =
+			signupCompleteFlowName === flow.name && signupCompleteStepName === currentStepRoute;
+		if ( ! isReEnteringStep ) {
 			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
-		} else {
-			clearSignupCompleteFlowName();
 		}
 
 		// Also record page view for data and analytics

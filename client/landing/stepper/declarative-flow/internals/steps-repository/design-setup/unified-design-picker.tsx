@@ -59,7 +59,7 @@ import type { Design, StyleVariation } from '@automattic/design-picker';
 const SiteIntent = Onboard.SiteIntent;
 const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
 
-const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
+const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { goBack, submit, exitFlow } = navigation;
 
 	const reduxDispatch = useReduxDispatch();
@@ -375,6 +375,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 			goToCheckout( {
 				flowName: flow,
+				stepName,
 				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 				destination: destString,
 				plan,
@@ -407,7 +408,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 	}
 
-	function goToCheckoutForPremiumGlobalStyles() {
+	function handleCheckoutForPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
 		if ( selectedDesign && selectedStyleVariation && siteSlugOrId ) {
 			recordTracksEvent(
@@ -430,6 +431,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 
 			goToCheckout( {
 				flowName: flow,
+				stepName,
 				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
 				destination: destString,
 				plan: 'premium',
@@ -643,10 +645,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					slug={ selectedDesign.slug }
 					isOpen={ showUpgradeModal }
 					closeModal={ closeUpgradeModal }
-					checkout={ goToCheckout }
+					checkout={ handleCheckout }
 				/>
 				<PremiumGlobalStylesUpgradeModal
-					checkout={ goToCheckoutForPremiumGlobalStyles }
+					checkout={ handleCheckoutForPremiumGlobalStyles }
 					closeModal={ closePremiumGlobalStylesModal }
 					isOpen={ showPremiumGlobalStylesModal }
 					tryStyle={ tryPremiumGlobalStyles }

@@ -380,6 +380,7 @@ const PatternAssembler = ( {
 		globalStylesUpgradeModalProps,
 	} = useGlobalStylesUpgradeModal( {
 		flowName: flow,
+		stepName,
 		hasSelectedColorVariation: !! colorVariation,
 		hasSelectedFontVariation: !! fontVariation,
 		onCheckout: snapshotRecipe,

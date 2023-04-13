@@ -34,3 +34,19 @@ export const setSignupCompleteFlowName = ( value ) =>
 	sessionStorage?.setItem( 'wpcom_signup_complete_flow_name', value );
 export const clearSignupCompleteFlowName = () =>
 	sessionStorage?.removeItem( 'wpcom_signup_complete_flow_name' );
+export const getSignupCompleteFlowNameAndClear = () => {
+	const value = getSignupCompleteFlowName();
+	clearSignupCompleteFlowName();
+	return value;
+};
+export const getSignupCompleteStepName = () =>
+	sessionStorage?.getItem( 'wpcom_signup_complete_step_name' );
+export const setSignupCompleteStepName = ( value ) =>
+	sessionStorage?.setItem( 'wpcom_signup_complete_step_name', value );
+export const clearSignupCompleteStepName = () =>
+	sessionStorage?.removeItem( 'wpcom_signup_complete_step_name' );
+export const getSignupCompleteStepNameAndClear = () => {
+	const value = getSignupCompleteStepName();
+	clearSignupCompleteStepName();
+	return value;
+};

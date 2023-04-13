@@ -2,17 +2,25 @@ import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
+	setSignupCompleteStepName,
 } from 'calypso/signup/storageUtils';
 
 interface GoToCheckoutProps {
 	flowName: string;
+	stepName: string;
 	siteSlug: string;
 	destination: string;
 	plan?: string;
 }
 
 const useCheckout = () => {
-	const goToCheckout = ( { flowName, siteSlug, destination, plan }: GoToCheckoutProps ) => {
+	const goToCheckout = ( {
+		flowName,
+		stepName,
+		siteSlug,
+		destination,
+		plan,
+	}: GoToCheckoutProps ) => {
 		const relativeCurrentPath = window.location.href.replace( window.location.origin, '' );
 		const params = new URLSearchParams( {
 			redirect_to: destination,
@@ -23,6 +31,7 @@ const useCheckout = () => {
 		persistSignupDestination( destination );
 		setSignupCompleteSlug( siteSlug );
 		setSignupCompleteFlowName( flowName );
+		setSignupCompleteStepName( stepName );
 
 		let checkoutUrl = `/checkout/${ encodeURIComponent( siteSlug ) }`;
 		if ( plan ) {
