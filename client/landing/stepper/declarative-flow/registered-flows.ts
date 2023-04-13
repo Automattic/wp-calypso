@@ -1,4 +1,4 @@
-import { LINK_IN_BIO_DOMAIN_FLOW } from '@automattic/onboarding';
+import { LINK_IN_BIO_DOMAIN_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
 import type { Flow } from '../declarative-flow/internals/types';
 
 const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
@@ -20,7 +20,7 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	videopress: () =>
 		import( /* webpackChunkName: "videopress-flow" */ '../declarative-flow/videopress' ),
 
-	'link-in-bio': () =>
+	'link-in-dusty': () =>
 		import( /* webpackChunkName: "link-in-bio-flow" */ '../declarative-flow/link-in-bio' ),
 
 	[ LINK_IN_BIO_DOMAIN_FLOW ]: () =>
@@ -71,6 +71,9 @@ const availableFlows: Record< string, () => Promise< { default: Flow } > > = {
 	write: () => import( /* webpackChunkName: "write-flow" */ '../declarative-flow/write' ),
 
 	sensei: () => import( /* webpackChunkName: "sensei-flow" */ '../declarative-flow/sensei' ),
+
+	[ START_WRITING_FLOW ]: () =>
+		import( /* webpackChunkName: "start-writing-flow" */ './start-writing' ),
 };
 
 availableFlows[ 'plugin-bundle' ] = () =>
