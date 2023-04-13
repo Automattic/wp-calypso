@@ -44,7 +44,7 @@ const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 						>
 							{ image && (
 								<img
-									alt={ __( 'Facebook Preview Thumbnail' ) }
+									alt={ __( 'Facebook Preview Thumbnail', 'facebook-preview' ) }
 									src={ image }
 									onLoad={ handleImageLoad }
 								/>
@@ -62,7 +62,7 @@ const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 								{ isArticle &&
 									! description &&
 									// translators: Default description for a Facebook post
-									__( 'Visit the post for more.' ) }
+									__( 'Visit the post for more.', 'facebook-preview' ) }
 							</div>
 							<div className="facebook-preview__info">
 								<FacebookPostIcon name="info" />

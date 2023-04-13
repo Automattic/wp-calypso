@@ -11,7 +11,7 @@ const FacebookPostActions: React.FC = () => {
 				<span>
 					{
 						// translators: Facebook "Like" action
-						__( 'Like' )
+						__( 'Like', 'facebook-preview' )
 					}
 				</span>
 			</li>
@@ -20,7 +20,7 @@ const FacebookPostActions: React.FC = () => {
 				<span>
 					{
 						// translators: Facebook "Comment" action
-						__( 'Comment' )
+						__( 'Comment', 'facebook-preview' )
 					}
 				</span>
 			</li>
@@ -29,7 +29,7 @@ const FacebookPostActions: React.FC = () => {
 				<span>
 					{
 						// translators: Facebook "Share" action
-						__( 'Share' )
+						__( 'Share', 'facebook-preview' )
 					}
 				</span>
 			</li>

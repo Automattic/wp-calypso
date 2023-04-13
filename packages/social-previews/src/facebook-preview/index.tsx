@@ -11,11 +11,11 @@ const FacebookPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 				<h3 className="social-preview__section-heading">
 					{
 						// translators: refers to a social post on Facebook
-						__( 'Your post' )
+						__( 'Your post', 'facebook-preview' )
 					}
 				</h3>
 				<p className="social-preview__section-desc">
-					{ __( 'This is what your social post will look like on Facebook:' ) }
+					{ __( 'This is what your social post will look like on Facebook:', 'facebook-preview' ) }
 				</p>
 				<FacebookLinkPreview { ...props } />
 			</section>
