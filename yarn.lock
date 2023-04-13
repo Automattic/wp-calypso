@@ -798,10 +798,10 @@ __metadata:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
+    "@tanstack/react-query": ^4.29.1
     debug: 4.3.3
     i18n-calypso: "workspace:^"
     react: ^17.0.2
-    react-query: ^3.32.1
     socket.io-client: 2.3.0
     typescript: ^4.7.4
     wpcom-proxy-request: "workspace:^"
