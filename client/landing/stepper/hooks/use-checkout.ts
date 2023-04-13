@@ -40,7 +40,7 @@ const useCheckout = () => {
 			if ( plan ) {
 				checkoutUrl += `/${ plan }`;
 			}
-	
+
 			// The theme upsell link does not work with siteId and requires a siteSlug.
 			// See https://github.com/Automattic/wp-calypso/pull/64899
 			window.location.href = `${ checkoutUrl }?${ params }`;
