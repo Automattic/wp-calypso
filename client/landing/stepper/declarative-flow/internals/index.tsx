@@ -9,6 +9,10 @@ import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
+import {
+	getSignupCompleteFlowName,
+	clearSignupCompleteFlowName,
+} from 'calypso/signup/storageUtils';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
 import recordStepStart from './analytics/record-step-start';
@@ -107,14 +111,22 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
-		if ( currentStepRoute ) {
-			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
-
-			// Also record page view for data and analytics
-			const pathname = window.location.pathname || '';
-			const pageTitle = `Setup > ${ flow.name } > ${ currentStepRoute }`;
-			recordPageView( pathname, pageTitle );
+		if ( ! currentStepRoute ) {
+			return;
 		}
+
+		const signupCompleteFlowName = getSignupCompleteFlowName();
+		const isReEnteringFlow = signupCompleteFlowName === flow.name;
+		if ( ! isReEnteringFlow ) {
+			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
+		} else {
+			clearSignupCompleteFlowName();
+		}
+
+		// Also record page view for data and analytics
+		const pathname = window.location.pathname || '';
+		const pageTitle = `Setup > ${ flow.name } > ${ currentStepRoute }`;
+		recordPageView( pathname, pageTitle );
 
 		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// This causes the intent to become empty, and thus this event being fired again.

@@ -2,12 +2,14 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { urlToSlug } from 'calypso/lib/url';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
+import useCheckout from '../../../../../hooks/use-checkout';
 import { useSite } from '../../../../../hooks/use-site';
 import { useSiteSlugParam } from '../../../../../hooks/use-site-slug-param';
 import { PATTERN_ASSEMBLER_EVENTS } from '../events';
 import type { PremiumGlobalStylesUpgradeModalProps } from 'calypso/components/premium-global-styles-upgrade-modal';
 
 interface Props {
+	flowName: string;
 	hasSelectedColorVariation?: boolean;
 	hasSelectedFontVariation?: boolean;
 	onCheckout?: () => void;
@@ -15,6 +17,7 @@ interface Props {
 }
 
 const useGlobalStylesUpgradeModal = ( {
+	flowName,
 	hasSelectedColorVariation = false,
 	hasSelectedFontVariation = false,
 	onCheckout,
@@ -27,6 +30,7 @@ const useGlobalStylesUpgradeModal = ( {
 	const siteUrl = siteSlug || urlToSlug( site?.URL || '' ) || '';
 	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 	const translate = useTranslate();
+	const { goToCheckout } = useCheckout();
 
 	const customizeDescription = ( description: JSX.Element ) => {
 		return (
@@ -60,15 +64,14 @@ const useGlobalStylesUpgradeModal = ( {
 		onCheckout?.();
 
 		// When the user is done with checkout, send them back to the current url
-		const destUrl = new URL( window.location.href );
-		const redirectUrl = destUrl.toString().replace( window.location.origin, '' );
-		const params = new URLSearchParams( {
-			redirect_to: redirectUrl,
-		} );
+		const redirectUrl = window.location.href.replace( window.location.origin, '' );
 
-		// The theme upsell link does not work with siteId and requires a siteSlug.
-		// See https://github.com/Automattic/wp-calypso/pull/64899
-		window.location.href = `/checkout/${ encodeURIComponent( siteUrl ) }/premium?${ params }`;
+		goToCheckout( {
+			flowName,
+			siteSlug: siteUrl,
+			destination: redirectUrl,
+			plan: 'premium',
+		} );
 	};
 
 	const upgradeLater = () => {
