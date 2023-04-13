@@ -12,6 +12,7 @@ type CommentRowProps = PostSubscription & {
 const CommentRow = ( {
 	title,
 	excerpt,
+	url,
 	site_title,
 	site_icon,
 	site_url,
@@ -30,7 +31,11 @@ const CommentRow = ( {
 		<div style={ style } ref={ forwardedRef } className="row-wrapper">
 			<div className="row" role="row">
 				<span className="post" role="cell">
-					<div className="title">{ title }</div>
+					<div className="title">
+						<a href={ url } target="_blank" rel="noreferrer noopener">
+							{ title }
+						</a>
+					</div>
 					<div className="excerpt">{ excerpt }</div>
 				</span>
 				<a href={ site_url } rel="noreferrer noopener" className="title-box" target="_blank">
