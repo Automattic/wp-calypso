@@ -261,23 +261,6 @@ export const post = ( context, next ) => {
 	return next();
 };
 
-export const siteEditor = ( context, next ) => {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-
-	context.primary = (
-		<CalypsoifyIframe
-			// This key is added as a precaution due to it's oberserved necessity in the above post editor.
-			// It will force the component to remount completely when the Id changes.
-			key={ siteId }
-			editorType="site"
-			completedFlow={ getSessionStorageOneTimeValue( 'wpcom_signup_completed_flow' ) }
-		/>
-	);
-
-	return next();
-};
-
 export const exitPost = ( context, next ) => {
 	const postId = getPostID( context );
 	const siteId = getSelectedSiteId( context.store.getState() );
