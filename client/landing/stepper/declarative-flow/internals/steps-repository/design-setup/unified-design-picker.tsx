@@ -380,6 +380,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				destination: destString,
 				plan,
 			} );
+
+			setShowUpgradeModal( false );
 		}
 	}
 
@@ -436,6 +438,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				destination: destString,
 				plan: 'premium',
 			} );
+
+			setShowPremiumGlobalStylesModal( false );
 		}
 	}
 

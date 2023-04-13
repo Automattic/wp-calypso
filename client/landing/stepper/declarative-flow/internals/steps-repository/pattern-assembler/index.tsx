@@ -478,6 +478,10 @@ const PatternAssembler = ( {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_DONE_CLICK );
 	};
 
+	if ( ! site?.ID || ! selectedDesign ) {
+		return null;
+	}
+
 	const stepContent = (
 		<NavigatorProvider
 			initialPath={ NAVIGATOR_PATHS.MAIN }
@@ -599,10 +603,6 @@ const PatternAssembler = ( {
 			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />
 		</NavigatorProvider>
 	);
-
-	if ( ! site?.ID || ! selectedDesign ) {
-		return null;
-	}
 
 	return (
 		<StepContainer
