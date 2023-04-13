@@ -20,12 +20,13 @@ const TermExperimentPlanTypeSelector: React.FunctionComponent< {
 				return <PlanSelectorLoadingEllipsis />;
 			}
 
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const variationName = experimentData?.variationName;
 
 			const propsWithBiannualToggle = {
 				...planTypeSelectorProps,
 				showBiannualToggle:
-					variationName === 'toggle_and_checkout' || variationName === 'toggle_only',
+					( true && variationName === 'toggle_and_checkout' ) || variationName === 'toggle_only',
 			};
 
 			return <PlanTypeSelector { ...propsWithBiannualToggle } kind={ kind } plans={ plans } />;
