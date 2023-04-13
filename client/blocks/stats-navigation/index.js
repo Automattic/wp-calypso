@@ -87,7 +87,7 @@ class StatsNavigation extends Component {
 					{ isLegacy && showIntervals && (
 						<Intervals selected={ interval } pathTemplate={ pathTemplate } />
 					) }
-					<SubscribersCount />
+					{ ! config.isEnabled( 'stats/subscribers-section' ) && <SubscribersCount /> }
 				</SectionNav>
 				{ isLegacy && showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />
