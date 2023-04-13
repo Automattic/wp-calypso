@@ -6,7 +6,7 @@ import { ConnectedThemesSelection } from './themes-selection';
 
 const FseThemes = localize( ( { translate, ...restProps } ) => {
 	const { data, error, isLoading } = useQuery(
-		'fse-themes',
+		[ 'fse-themes' ],
 		() =>
 			wpcom.req.get( '/themes', {
 				filter: 'full-site-editing',

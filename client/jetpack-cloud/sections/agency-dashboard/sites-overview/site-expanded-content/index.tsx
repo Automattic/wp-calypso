@@ -13,6 +13,7 @@ interface Props {
 	site: Site;
 	columns?: AllowedTypes[];
 	isSmallScreen?: boolean;
+	hasError: boolean;
 }
 
 const defaultColumns: AllowedTypes[] = siteColumns.map( ( { key } ) => key );
@@ -21,6 +22,7 @@ export default function SiteExpandedContent( {
 	site,
 	columns = defaultColumns,
 	isSmallScreen = false,
+	hasError,
 }: Props ) {
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( [ site ], ! isSmallScreen );
 
@@ -53,13 +55,19 @@ export default function SiteExpandedContent( {
 					siteUrlWithScheme={ siteUrlWithScheme }
 					hasBoost={ site.has_boost }
 					trackEvent={ trackEvent }
+					hasError={ hasError }
 				/>
 			) }
 			{ columns.includes( 'backup' ) && stats && (
-				<BackupStorage site={ site } trackEvent={ trackEvent } />
+				<BackupStorage site={ site } trackEvent={ trackEvent } hasError={ hasError } />
 			) }
 			{ columns.includes( 'monitor' ) && (
-				<MonitorActivity hasMonitor={ hasMonitor } site={ site } trackEvent={ trackEvent } />
+				<MonitorActivity
+					hasMonitor={ hasMonitor }
+					site={ site }
+					trackEvent={ trackEvent }
+					hasError={ hasError }
+				/>
 			) }
 		</div>
 	);

@@ -1486,7 +1486,9 @@ describe( 'themes selectors', () => {
 				'twentysixteen'
 			);
 
-			expect( signupUrl ).toEqual( '/start/with-theme?ref=calypshowcase&theme=twentysixteen' );
+			expect( signupUrl ).toEqual(
+				'/start/with-theme?ref=calypshowcase&theme=twentysixteen&theme_type=free'
+			);
 		} );
 
 		test( 'given a premium theme, should return the correct signup URL', () => {
@@ -1503,7 +1505,9 @@ describe( 'themes selectors', () => {
 				'mood'
 			);
 
-			expect( signupUrl ).toEqual( '/start/with-theme?ref=calypshowcase&theme=mood&premium=true' );
+			expect( signupUrl ).toEqual(
+				'/start/with-theme?ref=calypshowcase&theme=mood&premium=true&theme_type=premium'
+			);
 		} );
 	} );
 

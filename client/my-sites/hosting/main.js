@@ -47,6 +47,7 @@ import RestorePlanSoftwareCard from './restore-plan-software-card';
 import SFTPCard from './sftp-card';
 import SiteBackupCard from './site-backup-card';
 import StagingSiteCard from './staging-site-card';
+import StagingSiteProductionCard from './staging-site-card/staging-site-production-card';
 import SupportCard from './support-card';
 import WebServerLogsCard from './web-server-logs-card';
 import WebServerSettingsCard from './web-server-settings-card';
@@ -197,6 +198,9 @@ class Hosting extends Component {
 								<PhpMyAdminCard disabled={ isDisabled } />
 								{ isStagingSiteEnabled && ! isWpcomStagingSite && hasStagingSitesFeature && (
 									<StagingSiteCard disabled={ isDisabled } />
+								) }
+								{ isWpcomStagingSite && siteId && (
+									<StagingSiteProductionCard siteId={ siteId } disabled={ isDisabled } />
 								) }
 								{ isGithubIntegrationEnabled && <GitHubCard /> }
 								<WebServerSettingsCard disabled={ isDisabled } />

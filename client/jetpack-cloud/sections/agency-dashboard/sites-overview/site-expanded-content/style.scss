@@ -278,3 +278,8 @@ $color-yellow: var(--studio-yellow-50);
 .expanded-card__loading {
 	opacity: 0.5;
 }
+
+.expanded-card__error {
+	opacity: 0.5;
+	cursor: not-allowed;
+}

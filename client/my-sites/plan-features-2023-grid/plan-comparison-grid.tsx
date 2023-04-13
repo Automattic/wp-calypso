@@ -7,6 +7,7 @@ import {
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	getPlanFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';
@@ -19,6 +20,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import TermExperimentPlanTypeSelector from 'calypso/my-sites/plans-features-main/term-experiment-plan-type-selector';
+import useIsLargeCurrency from '../plans/hooks/use-is-large-currency';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
 import PopularBadge from './components/popular-badge';
@@ -420,8 +422,8 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 } ) => {
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 
-	const isLargeCurrency = displayedPlansProperties.some(
-		( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
+	const isLargeCurrency = useIsLargeCurrency(
+		displayedPlansProperties.map( ( properties ) => properties.planName as PlanSlug )
 	);
 
 	return (
@@ -515,7 +517,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 					) }
 					{ hasConditionalFeature && feature?.getConditionalTitle && (
 						<span className="plan-comparison-grid__plan-conditional-title">
-							{ feature?.getConditionalTitle() }
+							{ feature?.getConditionalTitle( planName ) }
 						</span>
 					) }
 					{ hasFeature && feature?.getCompareSubtitle && (
@@ -523,7 +525,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 							{ feature.getCompareSubtitle() }
 						</span>
 					) }
-					{ hasFeature && <Gridicon icon="checkmark" color="#0675C4" /> }
+					{ hasFeature && ! hasConditionalFeature && <Gridicon icon="checkmark" color="#0675C4" /> }
 					{ ! hasFeature && ! hasConditionalFeature && (
 						<Gridicon icon="minus-small" color="#C3C4C7" />
 					) }
@@ -709,7 +711,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					const { planName } = plan;
 					const planObject = applyTestFiltersToPlansList( planName, undefined );
 					const jetpackFeatures = planObject.get2023PricingGridSignupJetpackFeatures?.() ?? [];
-					return jetpackFeatures;
+					const additionalJetpackFeatures =
+						planObject.get2023PlanComparisonJetpackFeatureOverride?.() ?? [];
+					return jetpackFeatures.concat( ...additionalJetpackFeatures );
 				} )
 				.flat()
 		);

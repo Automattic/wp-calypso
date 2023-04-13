@@ -28,6 +28,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
+		"anchor/sunset-integration": true,
 		"block-editor/un-iframed-site-editor": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
@@ -186,7 +187,6 @@
 		"subscription-management": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/premium": true,
-		"themes/showcase-i4/details-and-preview": true,
 		"themes/subscription-purchases": true,
 		"themes/theme-switch-persist-template": false,
 		"titan/iframe-control-panel": false,

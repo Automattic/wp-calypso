@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { mapValues, pickBy, flowRight as compose } from 'lodash';
 import { connect } from 'react-redux';
@@ -22,7 +21,6 @@ import {
 	getTheme,
 	getThemeDemoUrl,
 	getThemeDetailsUrl,
-	getThemeHelpUrl,
 	getThemePurchaseUrl,
 	getThemeSignupUrl,
 	isPremiumThemeAvailable,
@@ -255,11 +253,6 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		getUrl: getThemeDetailsUrl,
 	};
 
-	const help = {
-		label: translate( 'Support' ),
-		getUrl: getThemeHelpUrl,
-	};
-
 	return {
 		customize,
 		preview,
@@ -274,7 +267,6 @@ function getAllThemeOptions( { translate, isFSEActive } ) {
 		signup,
 		separator,
 		info,
-		...( ! isEnabled( 'themes/showcase-i4/details-and-preview' ) && { help } ),
 	};
 }
 
