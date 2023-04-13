@@ -498,6 +498,7 @@ __metadata:
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@remix-run/router": ^1.5.0
+    "@tanstack/react-query": ^4.29.1
     "@types/validator": ^13.7.1
     "@wordpress/api-fetch": ^6.19.0
     "@wordpress/data-controls": ^2.22.0
