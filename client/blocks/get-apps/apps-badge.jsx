@@ -18,7 +18,7 @@ const APP_STORE_BADGE_URLS = {
 		src: 'https://linkmaker.itunes.apple.com/assets/shared/badges/{localeSlug}/appstore-lrg.svg',
 		tracksEvent: 'calypso_app_download_ios_click',
 		getStoreLink: ( utm_source ) => {
-			return `https://apps.apple.com/app/apple-store/id$1565481562?pt=299112&ct=${ utm_source }&mt=8`;
+			return `https://apps.apple.com/app/apple-store/id1565481562?pt=299112&ct=${ utm_source }&mt=8`;
 		},
 		getTitleText: () => translate( 'Download the Jetpack iOS mobile app.' ),
 		getAltText: () => translate( 'Apple App Store download badge' ),

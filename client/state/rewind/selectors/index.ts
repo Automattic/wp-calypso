@@ -14,3 +14,4 @@ export { default as getRewindStorageUsageLevel } from './get-rewind-storage-usag
 export { default as getBackupRetentionDays } from './get-backup-retention-days';
 export { default as getBackupCurrentSiteSize } from './get-backup-current-site-size';
 export { default as getBackupRetentionUpdateRequestStatus } from './get-backup-retention-update-status';
+export { default as getBackupStoppedFlag } from './get-backup-stopped-flag';

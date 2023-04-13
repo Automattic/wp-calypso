@@ -16,6 +16,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
+		"anchor/sunset-integration": false,
 		"block-editor/un-iframed-site-editor": true,
 		"calypso/help-center": true,
 		"calypsoify/plugins": true,
@@ -156,7 +157,9 @@
 		"subscriber-importer": true,
 		"subscription-gifting": true,
 		"subscription-management": true,
+		"subscription-management-comments-view": false,
 		"themes/atomic-homepage-replace": true,
+		"themes/display-thank-you-page": false,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
 		"themes/theme-switch-persist-template": false,
@@ -171,7 +174,6 @@
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
 		"yolo/staging-sites-i1": true,
-		"virtual-themes/onboarding": true,
 		"woa-logging": true,
 		"woa-logging-moved": true
 	},

@@ -138,7 +138,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			intent,
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
-			include_pattern_virtual_designs: isEnabled( 'virtual-themes/onboarding' ),
+			include_pattern_virtual_designs: true,
 		},
 		{
 			enabled: true,

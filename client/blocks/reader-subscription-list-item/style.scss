@@ -81,7 +81,7 @@
 .reader-subscription-list-item__site-excerpt,
 .reader-subscription-list-item__site-url-timestamp {
 	display: block;
-	max-height: 16px * 2.5;
+	max-height: 16px * 3;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	position: relative;
@@ -115,7 +115,7 @@
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
-	max-height: 16px * 3.2;
+	max-height: 16px * 6.2;
 	min-width: 100%;
 
 	@include breakpoint-deprecated( "<960px" ) {

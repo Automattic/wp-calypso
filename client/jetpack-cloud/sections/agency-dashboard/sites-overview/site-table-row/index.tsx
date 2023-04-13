@@ -117,8 +117,6 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 						'site-table__td-without-border-bottom': isExpanded,
 						'site-table__actions-button': isExpandedContentEnabled,
 					} ) }
-					// If there is an error, we need to span the whole row because we don't show the expand buttons.
-					colSpan={ isExpandedContentEnabled ? 2 : 1 }
 				>
 					<SiteActions isLargeScreen site={ site } siteError={ siteError } />
 				</td>

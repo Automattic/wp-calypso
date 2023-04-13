@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
-import { useInView } from 'calypso/lib/use-in-view';
+import { useInView } from 'react-intersection-observer';
 import { PLAN_RENEW_NAG_EVENT_NAMES } from '../utils';
 
 interface PlanRenewProps {
@@ -66,7 +66,9 @@ export const PlanRenewNag = ( {
 			} ),
 		[ isSiteOwner, plan.product_slug ]
 	);
-	const ref = useInView< HTMLDivElement >( trackCallback );
+	const { ref } = useInView( {
+		onChange: ( inView ) => inView && trackCallback(),
+	} );
 
 	const renewText = __( 'Renew plan' );
 	return (

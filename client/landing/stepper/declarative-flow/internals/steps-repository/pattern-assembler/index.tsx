@@ -495,6 +495,7 @@ const PatternAssembler = ( {
 						isDismissedGlobalStylesUpgradeModal={ isDismissedGlobalStylesUpgradeModal }
 						onSelect={ onMainItemSelect }
 						onContinueClick={ onContinueClick }
+						recordTracksEvent={ recordTracksEvent }
 					/>
 				</NavigatorScreen>
 
