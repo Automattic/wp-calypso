@@ -95,6 +95,9 @@ export const Swipeable = ( {
 
 	useLayoutEffect( () => {
 		if ( ! updateEnabled ) {
+			if ( pagesStyle?.height ) {
+				setPagesStyle( { ...pagesStyle, height: false } );
+			}
 			return;
 		}
 		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
