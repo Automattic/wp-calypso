@@ -61,8 +61,9 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		user: 2,
 		options: 3,
 		chooseADomain: 4,
-		processing: 5,
-		launchpad: 6,
+		chooseAPlan: 5,
+		processing: 6,
+		launchpad: 7,
 	},
 	sensei: {
 		senseiSetup: 1,
