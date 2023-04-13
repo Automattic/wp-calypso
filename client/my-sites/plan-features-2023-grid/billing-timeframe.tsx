@@ -63,23 +63,59 @@ function usePerMonthDescription( {
 	}
 
 	if ( ! isMonthlyPlan ) {
-		const maybeDiscountedPrice =
-			planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
-		const fullTermPriceText =
-			currencyCode && maybeDiscountedPrice
-				? formatCurrency( maybeDiscountedPrice, currencyCode, { stripZeros: true } )
+		const discountedPrice = planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice;
+		const fullTermDiscountedPriceText =
+			currencyCode && discountedPrice
+				? formatCurrency( discountedPrice, currencyCode, { stripZeros: true } )
 				: null;
-
-		if ( fullTermPriceText ) {
+		const rawPrice =
+			currencyCode && planPrices.rawPrice
+				? formatCurrency( planPrices.rawPrice, currencyCode, { stripZeros: true } )
+				: null;
+		if ( fullTermDiscountedPriceText ) {
 			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
-				return translate( 'per month, %(fullTermPriceText)s billed annually', {
-					args: { fullTermPriceText },
+				//per month, $96 billed annually $84 for the first year
+
+				return translate(
+					'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year',
+					{
+						args: { fullTermDiscountedPriceText, rawPrice },
+						components: {
+							discount: (
+								<span
+									style={ { color: 'var(--studio-gray-20)', textDecoration: 'line-through' } }
+								/>
+							),
+						},
+					}
+				);
+			}
+
+			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
+				return translate(
+					'per month, {{discount}} %(rawPrice)s billed annually{{/discount}} %(fullTermDiscountedPriceText)s for the first year',
+					{
+						args: { fullTermDiscountedPriceText, rawPrice },
+						components: {
+							discount: (
+								<span
+									style={ { color: 'var(--studio-gray-20)', textDecoration: 'line-through' } }
+								/>
+							),
+						},
+					}
+				);
+			}
+		} else if ( rawPrice ) {
+			if ( PLAN_ANNUAL_PERIOD === billingPeriod ) {
+				return translate( 'per month, %(rawPrice)s billed annually.', {
+					args: { rawPrice },
 				} );
 			}
 
 			if ( PLAN_BIENNIAL_PERIOD === billingPeriod ) {
-				return translate( 'per month, %(fullTermPriceText)s billed every two years', {
-					args: { fullTermPriceText },
+				return translate( 'per month, %(rawPrice)s billed every two years.', {
+					args: { rawPrice },
 				} );
 			}
 		}
@@ -106,7 +142,7 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 		);
 	}
 
-	return <div>{ perMonthDescription }</div>;
+	return <div style={ { textAlign: 'left', minWidth: '55px' } }>{ perMonthDescription }</div>;
 };
 
 export default localize( PlanFeatures2023GridBillingTimeframe );
