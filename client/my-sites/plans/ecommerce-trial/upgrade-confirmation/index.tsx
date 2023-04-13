@@ -7,16 +7,17 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConfirmationTask from './confirmation-task';
-import { getConfirmationTasks } from './confirmation-tasks';
+import { GetConfirmationTasks } from './confirmation-tasks';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 
 const TrialUpgradeConfirmation = () => {
 	const selectedSite = useSelector( getSelectedSite );
 	const translate = useTranslate();
-
-	const tasks = getConfirmationTasks( { translate } );
+	const siteSlug = selectedSite?.slug;
+	const tasks = GetConfirmationTasks( { translate, siteSlug } );
 
 	const taskActionUrlProps = {
 		siteName: selectedSite?.name ?? '',
@@ -38,6 +39,7 @@ const TrialUpgradeConfirmation = () => {
 		<>
 			<BodySectionCssClass bodyClass={ [ 'ecommerce-trial-upgraded' ] } />
 			<QuerySitePlans siteId={ selectedSite?.ID ?? 0 } />
+			<QueryJetpackPlugins siteIds={ [ selectedSite?.ID ?? 0 ] } />
 			<Main wideLayout>
 				<PageViewTracker
 					path="/plans/my-plan/trial-upgraded/:site"

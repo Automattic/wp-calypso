@@ -1,13 +1,17 @@
 import { translate as i18nTranslate } from 'i18n-calypso';
+import { useSelector } from 'react-redux';
 import customDomain from 'calypso/assets/images/plans/wpcom/custom-domain.png';
 import customize from 'calypso/assets/images/plans/wpcom/customize.png';
 import launch from 'calypso/assets/images/plans/wpcom/launch-store.png';
 import manageWooCommerce from 'calypso/assets/images/plans/wpcom/manage-woocommerce.png';
 import promote from 'calypso/assets/images/plans/wpcom/promote.png';
 import wayToPay from 'calypso/assets/images/plans/wpcom/way-to-pay.png';
+import isPluginActive from 'calypso/state/selectors/is-plugin-active';
+import { getSiteId } from 'calypso/state/sites/selectors';
 
 type ConfirmationTasksProps = {
 	translate: typeof i18nTranslate;
+	siteSlug?: string | number;
 };
 
 export interface GetActionUrlProps {
@@ -17,7 +21,12 @@ export interface GetActionUrlProps {
 	wpAdminUrl: string;
 }
 
-export const getConfirmationTasks = ( { translate }: ConfirmationTasksProps ) => {
+export const GetConfirmationTasks = ( { translate, siteSlug }: ConfirmationTasksProps ) => {
+	const siteId = useSelector( ( state ) => siteSlug && getSiteId( state, siteSlug ) );
+	const hasWCPay = useSelector(
+		( state ) => siteId && isPluginActive( state, siteId, 'woocommerce-payments' )
+	);
+
 	return [
 		{
 			id: 'launch-store',
@@ -41,7 +50,7 @@ export const getConfirmationTasks = ( { translate }: ConfirmationTasksProps ) =>
 				'Set up one or more payment methods to make it easy for your customers to pay.'
 			),
 			getActionUrl: ( { wooAdminUrl }: GetActionUrlProps ) =>
-				`${ wooAdminUrl }&path=${ encodeURIComponent( '/payments/connect' ) }`,
+				`${ wooAdminUrl }${ hasWCPay ? '&path=' + encodeURIComponent( '/payments/connect' ) : '' }`,
 		},
 		{
 			id: 'custom-domain',
