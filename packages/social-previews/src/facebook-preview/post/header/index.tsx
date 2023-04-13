@@ -34,11 +34,7 @@ const FacebookPostHeader: React.FC< { user?: FacebookUser } > = ( { user } ) => 
 					</div>
 				</div>
 			</div>
-			<ul className="facebook-preview__post-header-more">
-				<li></li>
-				<li></li>
-				<li></li>
-			</ul>
+			<div className="facebook-preview__post-header-more"></div>
 		</div>
 	);
 };
