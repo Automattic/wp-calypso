@@ -827,6 +827,7 @@ __metadata:
     "@popperjs/core": ^2.10.2
     "@storybook/addon-backgrounds": ^6.4.19
     "@storybook/react": ^6.4.19
+    "@tanstack/react-query": ^4.29.1
     "@wordpress/base-styles": ^4.13.0
     "@wordpress/components": ^22.1.0
     "@wordpress/i18n": ^4.22.0
