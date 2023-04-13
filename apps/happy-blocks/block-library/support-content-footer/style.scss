@@ -8,7 +8,7 @@ $recoleta-font-family: "Recoleta", sans-serif;
 $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI", "Roboto",
 	"Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
 
-.support-content-footer {
+.happy-blocks-support-content-footer {
 	max-width: none !important;
 	align-items: normal !important;
 	box-sizing: border-box;
@@ -138,6 +138,13 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 			color: var(--studio-gray-60);
 			font-size: 0.75rem;
 			line-height: 26px;
+
+			a {
+				color: inherit;
+				font-size: inherit;
+				line-height: inherit;
+				text-decoration: underline;
+			}
 		}
 
 		.support-content-subscribe form {

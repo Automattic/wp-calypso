@@ -14,7 +14,7 @@ if ( ! isset( $args ) ) {
 $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-library/support-content-footer/build/assets';
 ?>
 
-<div class="support-content-footer">
+<div class="happy-blocks-support-content-footer">
 	<div class="support-content-cta">
 		<div class="support-content-cta-left">
 			<h4 class="support-content-resource__title">
@@ -127,7 +127,10 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 				</button>
 			</form>
 			<p class="support-content-subscribe-disclaimer">
-				<?php esc_html_e( 'Your information will be used in accordance with WordPress.com privacy policy.', 'happy-blocks' ); ?>
+				<?php
+					// translators: %s: 'WordPress.com privacy policy'.
+					echo sprintf( esc_html__( 'Your information will be used in accordance with %s.', 'happy-blocks' ), '<a href="https://automattic.com/privacy/">' . esc_html__( 'WordPress.com privacy policy', 'happy-blocks' ) . '</a>' );
+				?>
 			</p>
 		</div>
 	</div>
