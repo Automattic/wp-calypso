@@ -46,7 +46,7 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Add two plugins to the cart' ),
 	describe( 'Plugin: Purchase', function () {
 		let cartCheckoutPage: CartCheckoutPage;
 
-		beforeAll( async function () {
+		it( `Clear Shopping Cart`, async function () {
 			await restApiClient.clearShoppingCart( siteId );
 			await page.reload();
 		} );
