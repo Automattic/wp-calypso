@@ -30,7 +30,7 @@ jest.mock( 'react-redux', () => ( {
 
 jest.mock( '@tanstack/react-query', () => ( {
 	__esModule: true,
-	...jest.requireActual( 'react-query' ),
+	...jest.requireActual( '@tanstack/react-query' ),
 	useQueryClient: () => ( {
 		invalidateQueries: jest.fn(),
 	} ),
