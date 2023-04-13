@@ -2,6 +2,7 @@ import { IncompleteWPcomPlan } from '@automattic/calypso-products';
 import {
 	NEWSLETTER_FLOW,
 	isLinkInBioFlow,
+	isHostingFlow,
 	isNewsletterOrLinkInBioFlow,
 } from '@automattic/onboarding';
 
@@ -11,6 +12,10 @@ const newsletterFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 
 const linkInBioFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	return isLinkInBioFlow( flowName ) && plan.getLinkInBioSignupFeatures;
+};
+
+const hostingFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
+	return isHostingFlow( flowName ) && plan.getHostingSignupFeatures;
 };
 
 const signupFlowDefaultFeatures = (
@@ -39,6 +44,7 @@ export const getPlanFeatureAccessor = ( {
 	return [
 		newsletterFeatures( flowName, plan ),
 		linkInBioFeatures( flowName, plan ),
+		hostingFeatures( flowName, plan ),
 		signupFlowDefaultFeatures( flowName, plan, isInVerticalScrollingPlansExperiment ),
 	].find( ( accessor ) => {
 		return accessor instanceof Function;
@@ -53,10 +59,15 @@ const linkInBioHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPl
 	return isLinkInBioFlow( flowName ) && plan.getLinkInBioHighlightedFeatures;
 };
 
+const hostingHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
+	return isLinkInBioFlow( flowName ) && plan.getHostingHighlightedFeatures;
+};
+
 export const getHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
 	const accessor = [
 		newsletterHighlightedFeatures( flowName, plan ),
 		linkInBioHighlightedFeatures( flowName, plan ),
+		hostingHighlightedFeatures( flowName, plan ),
 	].find( ( accessor ) => {
 		return accessor instanceof Function;
 	} );
