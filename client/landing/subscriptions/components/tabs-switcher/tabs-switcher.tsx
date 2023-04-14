@@ -27,12 +27,12 @@ const TabsSwitcher = () => {
 
 	const getFullPath = ( subpath: string ) =>
 		`/subscriptions/${ subpath }${ locale !== 'en' ? '/' + locale : '' }`;
-  const [ sitesPath, commentsPath, pendingPath, settingsPath ] = [
-    'sites',
-    'comments',
-    'pending',
-    'settings',
-  ].map( getFullPath );
+	const [ sitesPath, commentsPath, pendingPath, settingsPath ] = [
+		'sites',
+		'comments',
+		'pending',
+		'settings',
+	].map( getFullPath );
 
 	return (
 		<>
