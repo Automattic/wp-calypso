@@ -451,7 +451,7 @@ const PatternAssembler = ( {
 	const onScreenColorsSelect = ( variation: GlobalStylesObject | null ) => {
 		setColorVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_PREVIEW_CLICK, {
-			title: variation?.title,
+			color_variation_title: variation?.title,
 		} );
 	};
 
@@ -466,7 +466,7 @@ const PatternAssembler = ( {
 	const onScreenFontsSelect = ( variation: GlobalStylesObject | null ) => {
 		setFontVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_PREVIEW_CLICK, {
-			title: variation?.title,
+			font_variation_title: variation?.title,
 		} );
 	};
 
