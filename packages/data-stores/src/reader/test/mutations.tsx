@@ -10,6 +10,7 @@ import useSiteDeliveryFrequencyMutation from '../mutations/use-site-delivery-fre
 // Mock the useIsLoggedIn function
 jest.mock( '../hooks', () => ( {
 	useIsLoggedIn: jest.fn().mockReturnValue( { isLoggedIn: true } ),
+	useCacheKey: jest.fn(),
 } ) );
 
 // Mock the entire Helpers module
