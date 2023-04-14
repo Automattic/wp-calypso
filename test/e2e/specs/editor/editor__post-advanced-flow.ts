@@ -93,8 +93,12 @@ describe( `Editor: Advanced Post Flow`, function () {
 
 	describe( 'Edit published post', function () {
 		beforeAll( async () => {
-			// // See: https://github.com/Automattic/wp-calypso/issues/74925
-			// await page.goBack();
+			// Redefine the `EditorPage` without the `target`
+			// optional parameter.
+			// This is critical because even AT sites load with
+			// an iframe when the post is opened from the
+			// PostsPage.
+			// See: https://github.com/Automattic/wp-calypso/issues/74925
 			await postsPage.visit();
 			await postsPage.clickPost( postTitle );
 			editorPage = new EditorPage( page );
@@ -143,7 +147,6 @@ describe( `Editor: Advanced Post Flow`, function () {
 	describe( 'Revert post to draft', function () {
 		beforeAll( async () => {
 			// See: https://github.com/Automattic/wp-calypso/issues/74925
-			// await page.goBack();
 			await postsPage.visit();
 			await postsPage.clickPost( postTitle );
 			editorPage = new EditorPage( page );
