@@ -354,7 +354,7 @@ export default connect(
 
 				const featureAccessor = getPlanFeatureAccessor( { flowName, plan: planConstantObj } );
 				if ( featureAccessor ) {
-					planFeatures = getPlanFeaturesObject( featureAccessor() );
+					planFeatures = getPlanFeaturesObject( featureAccessor );
 				}
 
 				const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );

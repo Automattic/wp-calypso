@@ -986,7 +986,7 @@ const ConnectedPlanFeatures = connect(
 						isInVerticalScrollingPlansExperiment,
 					} );
 					if ( featureAccessor ) {
-						planFeatures = getPlanFeaturesObject( featureAccessor() );
+						planFeatures = getPlanFeaturesObject( featureAccessor );
 					}
 
 					const highlightedFeatures = getHighlightedFeatures( flowName, planConstantObj );
