@@ -8,6 +8,7 @@ import type { Ref } from 'react';
 import './style.scss';
 
 interface ThemeCardProps {
+	className?: string;
 	name: string;
 	description?: string;
 	image: React.ReactNode;
@@ -31,6 +32,7 @@ interface ThemeCardProps {
 const ThemeCard = forwardRef(
 	(
 		{
+			className,
 			name,
 			description,
 			image,
@@ -66,7 +68,11 @@ const ThemeCard = forwardRef(
 		} );
 
 		return (
-			<Card className={ themeClasses } onClick={ onClick } data-e2e-theme={ e2eName }>
+			<Card
+				className={ classnames( themeClasses, className ) }
+				onClick={ onClick }
+				data-e2e-theme={ e2eName }
+			>
 				<div ref={ forwardedRef } className="theme-card__content">
 					{ banner && <div className="theme-card__banner">{ banner }</div> }
 					<div className="theme-card__image-container">
@@ -114,7 +120,9 @@ const ThemeCard = forwardRef(
 						</div>
 					) }
 					<div className={ themeInfoClasses }>
-						<h2 className="theme-card__info-title">{ name }</h2>
+						<h2 className="theme-card__info-title">
+							<span>{ name }</span>
+						</h2>
 						{ isActive && (
 							<span className="theme-card__info-badge theme-card__info-badge-active">
 								{ translate( 'Active', {

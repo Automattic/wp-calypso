@@ -1,5 +1,3 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { MShotsImage } from '@automattic/onboarding';
@@ -226,6 +224,7 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 
 	return (
 		<ThemeCard
+			className="design-button-container"
 			ref={ trackingDivRef }
 			name={
 				isDefaultVariation ? design.title : `${ design.title } – ${ selectedStyleVariation.title }`
@@ -488,6 +487,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 
 	// Track as if user has scrolled to bottom of the design picker
 	const ref = useInView< HTMLDivElement >( onViewAllDesigns, {}, [ categorization?.selection ] );
+	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	const bottomAnchorContent = <div className="design-picker__bottom_anchor" ref={ ref }></div>;
 
 	return (

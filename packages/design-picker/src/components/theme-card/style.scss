@@ -297,14 +297,14 @@ $theme-card-info-margin-top: 16px;
 		vertical-align: middle;
 
 		svg {
-			height: auto;
 			padding: 0;
+			transform: none;
 			width: auto;
 		}
 	}
 
 	.premium-badge svg {
-		transform: none;
+		height: auto;
 	}
 }
 
