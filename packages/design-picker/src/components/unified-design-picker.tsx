@@ -250,39 +250,6 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	);
 };
 
-interface DesignButtonContainerProps extends DesignCardProps {
-	category?: string | null;
-	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
-}
-
-const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
-	category,
-	onSelectBlankCanvas,
-	...props
-} ) => {
-	if ( isBlankCanvasDesign( props.design ) ) {
-		return (
-			<PatternAssemblerCta
-				onButtonClick={ ( shouldGoToAssemblerStep ) =>
-					onSelectBlankCanvas( props.design, shouldGoToAssemblerStep )
-				}
-			/>
-		);
-	}
-
-	return (
-		<DesignCard
-			category={ category }
-			design={ props.design }
-			locale={ props.locale }
-			verticalId={ props.verticalId }
-			isPremiumThemeAvailable={ props.isPremiumThemeAvailable }
-			onChangeVariation={ props.onChangeVariation }
-			onPreview={ props.onPreview }
-		/>
-	);
-};
-
 interface GeneratedDesignButtonContainerProps {
 	locale: string;
 	design: Design;
@@ -415,22 +382,34 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				/>
 			) }
 			<div className="design-picker__grid">
-				{ filteredStaticDesigns.map( ( design, index ) => (
-					<DesignButtonContainer
-						category={ categorization?.selection }
-						key={ index }
-						design={ design }
-						locale={ locale }
-						onSelectBlankCanvas={ onSelectBlankCanvas }
-						onPreview={ onPreview }
-						onChangeVariation={ onChangeVariation }
-						isPremiumThemeAvailable={ isPremiumThemeAvailable }
-						verticalId={ verticalId }
-						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
-						currentPlanFeatures={ currentPlanFeatures }
-						shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-					/>
-				) ) }
+				{ filteredStaticDesigns.map( ( design, index ) => {
+					if ( isBlankCanvasDesign( design ) ) {
+						return (
+							<PatternAssemblerCta
+								key={ index }
+								onButtonClick={ ( shouldGoToAssemblerStep ) =>
+									onSelectBlankCanvas( design, shouldGoToAssemblerStep )
+								}
+							/>
+						);
+					}
+
+					return (
+						<DesignCard
+							key={ index }
+							categories={ categorization?.categories }
+							design={ design }
+							locale={ locale }
+							verticalId={ verticalId }
+							currentPlanFeatures={ currentPlanFeatures }
+							hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
+							isPremiumThemeAvailable={ isPremiumThemeAvailable }
+							shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+							onChangeVariation={ onChangeVariation }
+							onPreview={ onPreview }
+						/>
+					);
+				} ) }
 				{ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG &&
 					generatedDesigns.map( ( design ) => (
 						<GeneratedDesignButtonContainer
