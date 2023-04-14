@@ -463,12 +463,8 @@ class Login extends Component {
 			);
 		}
 
-		if ( isWhiteLogin ) {
-			preHeader = isGravatar ? (
-				<div className="login__form-gravatar-logo">
-					<img src={ oauth2Client.icon } alt={ oauth2Client.title } />
-				</div>
-			) : (
+		if ( isWhiteLogin && ! isGravatar ) {
+			preHeader = (
 				<div className="login__form-gutenboarding-wordpress-logo">
 					<svg
 						aria-hidden="true"

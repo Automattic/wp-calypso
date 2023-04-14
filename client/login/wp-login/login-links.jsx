@@ -127,7 +127,7 @@ export class LoginLinks extends Component {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			( this.props.isWhiteLogin && ! this.props.isGravatar ) ||
+			this.props.isWhiteLogin ||
 			this.props.isP2Login ||
 			this.props.isPartnerSignup
 		) {

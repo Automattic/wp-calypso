@@ -233,7 +233,10 @@ export default withCurrentRoute(
 		const isWhiteLogin =
 			isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart ) || isGravatar;
 		const noMasterbarForRoute =
-			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
+			isJetpackLogin ||
+			( isWhiteLogin && ! isPartnerSignup & ! isGravatar ) ||
+			isJetpackWooDnaFlow ||
+			isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
 		const noMasterbarForSection =
 			! isWooOAuth2Client( oauth2Client ) &&
