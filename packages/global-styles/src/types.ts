@@ -39,3 +39,8 @@ export interface GlobalStylesObject {
 		typography?: Typography;
 	};
 }
+
+export enum VariationType {
+	Free = 'free',
+	Premium = 'premium',
+}
