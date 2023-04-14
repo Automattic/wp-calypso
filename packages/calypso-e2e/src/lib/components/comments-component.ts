@@ -87,6 +87,7 @@ export class CommentsComponent {
 		}
 
 		await this.page.getByText( comment ).scrollIntoViewIfNeeded();
+		await likeButton.waitFor();
 		await likeButton.click();
 		await likedStatus.waitFor();
 	}
@@ -118,6 +119,7 @@ export class CommentsComponent {
 		}
 
 		await this.page.getByText( comment ).scrollIntoViewIfNeeded();
+		await unlikeButton.waitFor();
 		await unlikeButton.click();
 		await unlikedStatus.waitFor();
 	}
