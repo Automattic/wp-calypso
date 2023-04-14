@@ -1,8 +1,8 @@
 import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
-import { useGetWordPressSubdomain } from '../hooks/use-get-wordpress-subdomain';
+import { useTranslate } from 'i18n-calypso';
+import { useGetWordPressSubdomain } from './hooks/use-get-wordpress-subdomain';
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject } from '../types';
@@ -13,6 +13,10 @@ const SubdomainSuggestion = styled.div`
 		top: -15px;
 		color: var( --studio-gray-50 );
 		text-decoration: line-through;
+		max-width: 80%;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
 	}
 `;
 
@@ -42,6 +46,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	domainName: string;
 	hideUnavailableFeatures: boolean;
 } > = ( { features, planName, domainName, hideUnavailableFeatures } ) => {
+	const translate = useTranslate();
 	return (
 		<>
 			{ features.map( ( currentFeature, featureIndex ) => {
@@ -74,7 +79,14 @@ const PlanFeatures2023GridFeatures: React.FC< {
 							<span className={ spanClasses } key={ key }>
 								<span className={ itemTitleClasses }>
 									{ isFreePlanAndCustomDomainFeature ? (
-										<FreePlanCustomDomainFeature key={ key } domainName={ domainName } />
+										<Plans2023Tooltip
+											text={ translate( '%s is not included', {
+												args: [ domainName ],
+												comment: '%s is a domain name.',
+											} ) }
+										>
+											<FreePlanCustomDomainFeature key={ key } domainName={ domainName } />
+										</Plans2023Tooltip>
 									) : (
 										<Plans2023Tooltip text={ currentFeature.getDescription?.() }>
 											{ currentFeature.getTitle( domainName ) }
@@ -90,4 +102,4 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	);
 };
 
-export default localize( PlanFeatures2023GridFeatures );
+export default PlanFeatures2023GridFeatures;

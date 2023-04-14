@@ -18,11 +18,12 @@ const StyledTooltip = styled( Tooltip )`
 		font-size: 1em;
 		padding: 8px 10px;
 		top: -8px;
+		overflow-wrap: break-word;
 	}
 `;
 
 export const Plans2023Tooltip = ( props: PropsWithChildren< { text?: TranslateResult } > ) => {
-	const [ isVisible, setIsVisible ] = useState( false );
+	const [ isVisible, setIsVisible ] = useState();
 	const tooltipRef = useRef< HTMLDivElement >( null );
 
 	if ( ! props.text ) {
