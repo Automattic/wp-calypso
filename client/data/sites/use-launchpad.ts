@@ -5,8 +5,8 @@ export const fetchLaunchpad = ( siteSlug: string | null ) => {
 	const slug = encodeURIComponent( siteSlug as string );
 
 	return wpcom.req.get( {
-		path: `/sites/${ slug }/launchpad`,
-		apiNamespace: 'wpcom/v2',
+		path: `/sites/${ slug }/settings`,
+		apiNamespace: 'wp/v2',
 	} );
 };
 
@@ -23,8 +23,8 @@ export const updateLaunchpadSettings = (
 	return wpcom.req
 		.post(
 			{
-				path: `/sites/${ slug }/launchpad`,
-				apiNamespace: 'wpcom/v2',
+				path: `/sites/${ slug }/settings`,
+				apiNamespace: 'wp/v2',
 			},
 			settings
 		)
