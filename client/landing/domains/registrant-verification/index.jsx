@@ -92,7 +92,13 @@ class RegistrantVerificationPage extends Component {
 	};
 
 	getExpiredState = () => {
-		const { translate } = this.props;
+		const { reseller, translate } = this.props;
+
+		if ( reseller ) {
+			return {
+				message: translate( 'This email has expired.' ),
+			};
+		}
 
 		return {
 			message: translate(
