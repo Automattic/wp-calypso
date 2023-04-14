@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query';
 import { callApi } from '../helpers';
-import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
-import useCacheKey from '../hooks/use-cache-key';
+import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SubscriptionManagerUserSettings, EmailSettingsAPIResponse } from '../types';
 
 const useUserSettingsQuery = () => {

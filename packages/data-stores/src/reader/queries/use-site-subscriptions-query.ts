@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { callApi } from '../helpers';
-import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
-import useCacheKey from '../hooks/use-cache-key';
+import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SiteSubscription } from '../types';
 
 type SubscriptionManagerSiteSubscriptions = {

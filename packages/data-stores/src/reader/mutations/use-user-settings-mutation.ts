@@ -1,7 +1,7 @@
 import { translate } from 'i18n-calypso';
 import { useMutation, useQueryClient } from 'react-query';
 import { callApi } from '../helpers';
-import { useIsLoggedIn } from '../hooks';
+import { useCacheKey, useIsLoggedIn } from '../hooks';
 import type { SubscriptionManagerUserSettings, EmailSettingsAPIResponse } from '../types';
 
 type MutationContext = {
@@ -11,7 +11,7 @@ type MutationContext = {
 const useUserSettingsMutation = () => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
-	const emailSettingsCacheKey = [ 'read', 'email-settings' ];
+	const emailSettingsCacheKey = useCacheKey( [ 'read', 'email-settings' ] );
 	return useMutation< SubscriptionManagerUserSettings, Error, SubscriptionManagerUserSettings >(
 		async ( data: SubscriptionManagerUserSettings ) => {
 			const { settings } = await callApi< EmailSettingsAPIResponse >( {

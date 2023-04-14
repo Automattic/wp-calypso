@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { callApi, applyCallbackToPages } from '../helpers';
-import { useIsLoggedIn } from '../hooks';
-import useCacheKey from '../hooks/use-cache-key';
+import { useCacheKey, useIsLoggedIn } from '../hooks';
 import type {
 	PagedQueryResult,
 	SiteSubscription,
