@@ -15,7 +15,7 @@ type PostSubscriptionUnfollowResponse = {
 };
 
 const usePostUnfollowMutation = () => {
-	const isLoggedIn = useIsLoggedIn();
+	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
 	return useMutation(
 		async ( params: PostSubscriptionUnfollowParams ) => {
