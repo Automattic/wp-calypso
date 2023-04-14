@@ -54,7 +54,7 @@ export interface WPComPlan extends Plan {
 	getPathSlug: () => string;
 	getAnnualPlansOnlyFeatures?: () => string[];
 	get2023PricingGridSignupWpcomFeatures?: () => Feature[];
-	getHostingSignupFeatures?: () => Feature[];
+	getHostingSignupFeatures?: ( term?: Product[ 'term' ] ) => () => Feature[];
 	getHostingHighlightedFeatures?: () => Feature[];
 }
 
