@@ -29,12 +29,12 @@ describe( 'Likes: Comment', function () {
 			accountName: 'simpleSitePersonalPlanUser',
 		},
 	] );
-	const comment = DataHelper.getRandomPhrase();
 	const postContent =
 		'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 	let page: Page;
 	let newPost: PostResponse;
-	let newComment: NewCommentResponse;
+	let commentToBeLiked: NewCommentResponse;
+	let commentToBeUnliked: NewCommentResponse;
 	let restAPIClient: RestAPIClient;
 	let testAccount: TestAccount;
 
@@ -53,10 +53,28 @@ describe( 'Likes: Comment', function () {
 			}
 		);
 
-		newComment = await restAPIClient.createComment(
+		commentToBeLiked = await restAPIClient.createComment(
 			testAccount.credentials.testSites?.primary.id as number,
 			newPost.ID,
-			comment
+			DataHelper.getRandomPhrase()
+		);
+		commentToBeUnliked = await restAPIClient.createComment(
+			testAccount.credentials.testSites?.primary.id as number,
+			newPost.ID,
+			DataHelper.getRandomPhrase()
+		);
+
+		// Establish proper state for the respective comments.
+		await restAPIClient.commentAction(
+			'unlike',
+			testAccount.credentials.testSites?.primary.id as number,
+			commentToBeLiked.ID
+		);
+
+		await restAPIClient.commentAction(
+			'like',
+			testAccount.credentials.testSites?.primary.id as number,
+			commentToBeUnliked.ID
 		);
 
 		await testAccount.authenticate( page );
@@ -70,13 +88,6 @@ describe( 'Likes: Comment', function () {
 		let commentsComponent: CommentsComponent;
 
 		beforeAll( async function () {
-			// Establish proper state.
-			await restAPIClient.commentAction(
-				'unlike',
-				testAccount.credentials.testSites?.primary.id as number,
-				newComment.ID
-			);
-
 			async function closure( page: Page ) {
 				await page.getByText( 'Loading...' ).last().waitFor( { state: 'hidden' } );
 			}
@@ -85,32 +96,25 @@ describe( 'Likes: Comment', function () {
 
 		it( 'Like the comment', async function () {
 			commentsComponent = new CommentsComponent( page );
-			await commentsComponent.like( comment );
-		} );
-	} );
-
-	describe( 'Unlike', function () {
-		let commentsComponent: CommentsComponent;
-
-		beforeAll( async function () {
-			// Establish proper state.
-			await restAPIClient.commentAction(
-				'like',
-				testAccount.credentials.testSites?.primary.id as number,
-				newComment.ID
-			);
-
-			async function closure( page: Page ) {
-				await page.getByText( 'Loading...' ).last().waitFor( { state: 'hidden' } );
-			}
-			await ElementHelper.reloadAndRetry( page, closure );
+			await commentsComponent.like( commentToBeLiked.raw_content );
 		} );
 
 		it( 'Unlike the comment', async function () {
 			commentsComponent = new CommentsComponent( page );
-			await commentsComponent.unlike( comment );
+			await commentsComponent.unlike( commentToBeUnliked.raw_content );
 		} );
 	} );
+
+	// describe( 'Unlike', function () {
+	// 	let commentsComponent: CommentsComponent;
+
+	// beforeAll( async function () {
+	// 	async function closure( page: Page ) {
+	// 		await page.getByText( 'Loading...' ).last().waitFor( { state: 'hidden' } );
+	// 	}
+	// 	await ElementHelper.reloadAndRetry( page, closure );
+	// } );
+	// } );
 
 	afterAll( async function () {
 		if ( ! newPost ) {
