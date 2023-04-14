@@ -310,13 +310,16 @@ export function site( context, next ) {
 	const chartTab = validTabs.includes( queryOptions.tab ) ? queryOptions.tab : 'views';
 
 	context.primary = (
-		<StatsSite
-			path={ context.pathname }
-			date={ date }
-			chartTab={ chartTab }
-			context={ context }
-			period={ rangeOfPeriod( activeFilter.period, date ) }
-		/>
+		<>
+			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />;
+			<StatsSite
+				path={ context.pathname }
+				date={ date }
+				chartTab={ chartTab }
+				context={ context }
+				period={ rangeOfPeriod( activeFilter.period, date ) }
+			/>
+		</>
 	);
 
 	next();
