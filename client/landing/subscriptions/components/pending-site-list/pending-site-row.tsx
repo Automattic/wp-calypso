@@ -1,9 +1,13 @@
 import { Gridicon } from '@automattic/components';
+import { SubscriptionManager } from '@automattic/data-stores';
 import { useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
+import { PendingSiteSettings } from '../settings-popover';
 import type { PendingSiteSubscription } from '@automattic/data-stores/src/reader/types';
 
 export default function PendingSiteRow( {
+	id,
+	activation_key,
 	site_title,
 	site_icon,
 	site_url,
@@ -16,6 +20,11 @@ export default function PendingSiteRow( {
 		}
 		return <Gridicon className="icon" icon="globe" size={ 48 } />;
 	}, [ site_icon, site_title ] );
+
+	const { mutate: confirmPendingSubscription, isLoading: confirmingPendingSubscription } =
+		SubscriptionManager.usePendingSiteConfirmMutation();
+	const { mutate: deletePendingSubscription, isLoading: deletingPendingSubscription } =
+		SubscriptionManager.usePendingSiteDeleteMutation();
 
 	return (
 		<li className="row" role="row">
@@ -31,7 +40,14 @@ export default function PendingSiteRow( {
 			<span className="date" role="cell">
 				<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
 			</span>
-			<span className="actions" role="cell"></span>
+			<span className="actions" role="cell">
+				<PendingSiteSettings
+					onConfirm={ () => confirmPendingSubscription( { id, activation_key } ) }
+					onDelete={ () => deletePendingSubscription( { id } ) }
+					confirming={ confirmingPendingSubscription }
+					deleting={ deletingPendingSubscription }
+				/>
+			</span>
 		</li>
 	);
 }

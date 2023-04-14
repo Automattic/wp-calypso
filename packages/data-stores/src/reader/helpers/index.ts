@@ -3,7 +3,7 @@ import wpcomRequest from 'wpcom-proxy-request';
 
 type callApiParams = {
 	path: string;
-	method?: 'GET' | 'POST';
+	method?: 'GET' | 'POST' | 'DELETE';
 	body?: object;
 	isLoggedIn?: boolean;
 	apiVersion?: string;
@@ -48,7 +48,7 @@ async function callApi< ReturnType >( {
 		path: apiPath,
 		apiVersion,
 		method,
-		body: method === 'POST' ? JSON.stringify( body ) : undefined,
+		body: method === 'POST' || method === 'DELETE' ? JSON.stringify( body ) : undefined,
 		credentials: 'same-origin',
 		headers: {
 			Authorization: `X-WPSUBKEY ${ encodeURIComponent( subkey ) }`,
