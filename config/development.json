@@ -159,6 +159,7 @@
 		"reader/full-errors": true,
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
+		"reader/subscription-management": true,
 		"recommend-plugins": true,
 		"redirect-fallback-browsers": false,
 		"rum-tracking/logstash": true,
