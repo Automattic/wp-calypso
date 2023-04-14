@@ -39,7 +39,7 @@ export default function getFlowPlanFeatures(
 	}
 
 	const highlightedFeatures = getHighlightedFeatures( flowName, planConstantObj );
-	let featuresObject = getPlanFeaturesObject( featureAccessor );
+	let featuresObject = getPlanFeaturesObject( featureAccessor() );
 
 	if ( isMonthly( planConstantObj.getStoreSlug() ) ) {
 		const annualOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() ?? [];
