@@ -22,6 +22,7 @@ import {
 	PlanSlug,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
+import { isHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -381,6 +382,7 @@ export class PlanFeatures2023Grid extends Component<
 					<tr>{ this.renderPlanPrice( planPropertiesObj ) }</tr>
 					<tr>{ this.renderBillingTimeframe( planPropertiesObj ) }</tr>
 					<tr>{ this.renderTopButtons( planPropertiesObj ) }</tr>
+					<tr>{ this.maybeRenderRefundNotice( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPreviousFeaturesIncludedTitle( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanFeaturesList( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanStorageOptions( planPropertiesObj ) }</tr>
@@ -447,6 +449,7 @@ export class PlanFeatures2023Grid extends Component<
 						{ this.renderBillingTimeframe( [ properties ], { isMobile: true } ) }
 						{ this.renderMobileFreeDomain( properties.planName, properties.isMonthlyPlan ) }
 						{ this.renderTopButtons( [ properties ], { isMobile: true } ) }
+						{ this.maybeRenderRefundNotice( [ properties ], { isMobile: true } ) }
 						<CardContainer
 							header={ translate( 'Show all features' ) }
 							planName={ properties.planName }
@@ -689,6 +692,36 @@ export class PlanFeatures2023Grid extends Component<
 					</Container>
 				);
 			} );
+	}
+
+	maybeRenderRefundNotice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
+		const { translate, flowName } = this.props;
+
+		if ( ! isHostingFlow( flowName ) ) {
+			return false;
+		}
+
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( planProperties ) => (
+				<Container
+					key={ planProperties.planName }
+					className="plan-features-2023-grid__table-item"
+					isMobile={ options?.isMobile }
+				>
+					<div
+						className={ `plan-features-2023-grid__refund-notice ${ getPlanClass(
+							planProperties.planName
+						) }` }
+					>
+						{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
+							args: {
+								dayCount: planProperties.billingPeriod === 365 ? 14 : 7,
+							},
+						} ) }
+					</div>
+				</Container>
+			) );
 	}
 
 	renderEnterpriseClientLogos() {
