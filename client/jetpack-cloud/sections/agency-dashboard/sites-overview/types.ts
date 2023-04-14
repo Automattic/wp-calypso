@@ -57,7 +57,7 @@ export interface Site {
 	has_scan: boolean;
 	has_backup: boolean;
 	has_boost: boolean;
-	latest_scan_threats_found: Array< any >;
+	latest_scan_threats_found: Array< string >;
 	latest_backup_status: string;
 	is_connection_healthy: boolean;
 	awaiting_plugin_updates: Array< string >;
@@ -74,7 +74,7 @@ export interface SiteNode {
 	value: Site;
 	error: boolean;
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
+	status: AllowedStatusTypes;
 }
 
 export interface StatsNode {
@@ -90,13 +90,13 @@ export interface BoostNode {
 }
 export interface BackupNode {
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
+	status: AllowedStatusTypes;
 	value: ReactChild;
 }
 
 export interface ScanNode {
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
+	status: AllowedStatusTypes;
 	value: ReactChild;
 	threats: number;
 }
@@ -109,7 +109,7 @@ interface PluginNode {
 }
 export interface MonitorNode {
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
+	status: AllowedStatusTypes;
 	value: ReactChild;
 	error?: boolean;
 	settings?: MonitorSettings;
@@ -123,7 +123,8 @@ export interface SiteData {
 	plugin: PluginNode;
 	monitor: MonitorNode;
 	isFavorite?: boolean;
-	[ key: string ]: any;
+	isSelected?: boolean;
+	onSelect?: () => void;
 }
 
 export interface RowMetaData {
