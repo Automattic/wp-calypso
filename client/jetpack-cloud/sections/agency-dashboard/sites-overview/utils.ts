@@ -190,7 +190,7 @@ const pluginEventNames: StatusEventNames = {
 // Returns event name needed for all the feature state clicks on the agency dashboard
 const getRowEventName = (
 	type: AllowedTypes,
-	status: AllowedStatusTypes | string,
+	status: AllowedStatusTypes,
 	isLargeScreen: boolean
 ) => {
 	const deviceKey = isLargeScreen ? 'large_screen' : 'small_screen';
@@ -237,7 +237,7 @@ const pluginTooltips: StatusTooltip = {
 	success: translate( 'No plugin updates found' ),
 };
 
-const getTooltip = ( type: AllowedTypes, status: string ) => {
+const getTooltip = ( type: AllowedTypes, status: AllowedStatusTypes ) => {
 	switch ( type ) {
 		case 'backup': {
 			return backupTooltips?.[ status ];

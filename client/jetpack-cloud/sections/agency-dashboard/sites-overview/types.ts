@@ -66,7 +66,7 @@ export interface Site {
 	monitor_last_status_change: string;
 	isSelected?: boolean;
 	site_stats: SiteStats;
-	onSelect?: ( value: boolean ) => void;
+	onSelect?: () => void;
 	jetpack_boost_scores: BoostData;
 	php_version_num: number;
 }
@@ -130,7 +130,7 @@ export interface SiteData {
 export interface RowMetaData {
 	row: {
 		value: Site | SiteStats | BoostData | ReactChild;
-		status: AllowedStatusTypes | string;
+		status: AllowedStatusTypes;
 		error?: boolean;
 	};
 	link: string;
@@ -150,11 +150,11 @@ export type Preference = {
 };
 
 export type StatusEventNames = {
-	[ key in AllowedStatusTypes | string ]: { small_screen: string; large_screen: string };
+	[ key in AllowedStatusTypes ]?: { small_screen: string; large_screen: string };
 };
 
 export type StatusTooltip = {
-	[ key in AllowedStatusTypes | string ]: ReactChild;
+	[ key in AllowedStatusTypes ]?: ReactChild;
 };
 
 export type AllowedActionTypes = 'issue_license' | 'view_activity' | 'view_site' | 'visit_wp_admin';
@@ -190,7 +190,7 @@ export type AgencyDashboardFilterOption =
 	| 'plugin_updates';
 
 export type AgencyDashboardFilter = {
-	issueTypes: Array< AgencyDashboardFilterOption | string >;
+	issueTypes: Array< AgencyDashboardFilterOption >;
 	showOnlyFavorites: boolean;
 };
 
