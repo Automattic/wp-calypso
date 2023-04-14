@@ -31,7 +31,9 @@ const startWriting: Flow = {
 					return navigate( 'processing' );
 				case 'processing': {
 					if ( providedDependencies?.siteSlug ) {
-						return redirect( `https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php` );
+						return redirect(
+							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?showLaunchpad=true`
+						);
 					}
 				}
 			}
