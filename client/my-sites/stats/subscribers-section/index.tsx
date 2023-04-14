@@ -82,7 +82,7 @@ export default function SubscribersSection( {
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isLoading && chartData.length === 0 && (
 				<p className="subscribers-section__no-data">
-					{ translate( 'No data availble for the specified period.' ) }
+					{ translate( 'No data available for the specified period.' ) }
 				</p>
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
