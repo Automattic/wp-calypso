@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { callApi } from '../helpers';
-import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
+import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { CommentSubscription } from '../types';
 
 type SubscriptionManagerCommentSubscriptions = {
@@ -23,12 +23,13 @@ const useCommentSubscriptionsQuery = ( {
 	sort = defaultSort,
 	number = 100,
 }: SubscriptionManagerCommentSubscriptionsQueryProps = {} ) => {
-	const isLoggedIn = useIsLoggedIn();
+	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
+	const cacheKey = useCacheKey( [ 'read', 'comment-subscriptions' ] );
 
 	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage, ...rest } =
 		useInfiniteQuery< SubscriptionManagerCommentSubscriptions >(
-			[ 'read', 'comment-subscriptions', isLoggedIn ],
+			cacheKey,
 			async ( { pageParam = 1 } ) => {
 				return await callApi< SubscriptionManagerCommentSubscriptions >( {
 					path: `/post-comment-subscriptions?per_page=${ number }&page=${ pageParam }`,
