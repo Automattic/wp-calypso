@@ -39,6 +39,7 @@ export class LoginLinks extends Component {
 		twoFactorAuthType: PropTypes.string,
 		usernameOrEmail: PropTypes.string,
 		isPartnerSignup: PropTypes.bool,
+		isGravatarLogin: PropTypes.bool,
 	};
 
 	constructor( props ) {

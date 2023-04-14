@@ -50,6 +50,7 @@ export class Login extends Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
 		action: PropTypes.string,
+		isGravatarLogin: PropTypes.bool,
 	};
 
 	static defaultProps = { isJetpack: false, isWhiteLogin: false, isLoginView: true };

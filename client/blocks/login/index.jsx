@@ -94,6 +94,7 @@ class Login extends Component {
 		isPartnerSignup: PropTypes.bool,
 		loginEmailAddress: PropTypes.string,
 		action: PropTypes.string,
+		isGravatarLogin: PropTypes.bool,
 	};
 
 	state = {
