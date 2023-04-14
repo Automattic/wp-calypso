@@ -39,7 +39,7 @@ const useUserSettingsMutation = () => {
 				const previousSettings =
 					queryClient.getQueryData< SubscriptionManagerUserSettings >( emailSettingsCacheKey );
 
-				queryClient.setQueryData< SubscriptionManagerUserSettings >( [ 'read', 'email-settings' ], {
+				queryClient.setQueryData< SubscriptionManagerUserSettings >( emailSettingsCacheKey, {
 					...previousSettings,
 					...data,
 				} );
