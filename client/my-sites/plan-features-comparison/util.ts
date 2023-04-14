@@ -1,4 +1,4 @@
-import { IncompleteWPcomPlan, isMonthly } from '@automattic/calypso-products';
+import { IncompleteWPcomPlan } from '@automattic/calypso-products';
 import {
 	NEWSLETTER_FLOW,
 	isLinkInBioFlow,
@@ -54,21 +54,7 @@ export const getPlanFeatureAccessor = ( {
 		return planFeatureAccessor;
 	}
 
-	const planSlug = plan.getStoreSlug?.();
-
-	if ( ! planSlug || ! isMonthly( planSlug ) ) {
-		return planFeatureAccessor();
-	}
-
-	const annualOnlyFeatures = plan.getAnnualPlansOnlyFeatures?.() ?? [];
-
-	if ( annualOnlyFeatures.length === 0 ) {
-		return planFeatureAccessor();
-	}
-
-	return planFeatureAccessor().filter( ( feature ) => {
-		return ! annualOnlyFeatures.includes( feature );
-	} );
+	return planFeatureAccessor();
 };
 
 const newsletterHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
