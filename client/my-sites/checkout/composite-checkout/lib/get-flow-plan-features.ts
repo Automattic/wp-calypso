@@ -33,7 +33,7 @@ export default function getFlowPlanFeatures(
 	}
 
 	const highlightedFeatures = getHighlightedFeatures( flowName, planConstantObj );
-	return getPlanFeaturesObject( featureAccessor() ).map( ( feature ) => {
+	return getPlanFeaturesObject( featureAccessor ).map( ( feature ) => {
 		return {
 			...feature,
 			isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
