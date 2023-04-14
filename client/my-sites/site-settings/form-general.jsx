@@ -373,6 +373,31 @@ export class SiteSettingsFormGeneral extends Component {
 			}
 		);
 		const showPreviewLink = isComingSoon && hasSitePreviewLink;
+
+		const PublicFormRadio = () => (
+			<FormLabel className="site-settings__visibility-label is-public">
+				<FormRadio
+					name="blog_public"
+					value="1"
+					checked={
+						( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+						( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
+						blogPublic === 1
+					}
+					onChange={ () =>
+						this.handleVisibilityOptionChange( {
+							blog_public: isWpcomStagingSite ? 0 : 1,
+							wpcom_coming_soon: 0,
+							wpcom_public_coming_soon: 0,
+						} )
+					}
+					disabled={ isRequestingSettings }
+					onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+					label={ translate( 'Public' ) }
+				/>
+			</FormLabel>
+		);
+
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
@@ -415,52 +440,9 @@ export class SiteSettingsFormGeneral extends Component {
 							) }
 						</>
 					) }
-				{ ! isNonAtomicJetpackSite && ! isWpcomStagingSite && (
-					<FormLabel className="site-settings__visibility-label is-public">
-						<FormRadio
-							name="blog_public"
-							value="1"
-							checked={
-								( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-								( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
-								blogPublic === 1
-							}
-							onChange={ () =>
-								this.handleVisibilityOptionChange( {
-									blog_public: 1,
-									wpcom_coming_soon: 0,
-									wpcom_public_coming_soon: 0,
-								} )
-							}
-							disabled={ isRequestingSettings }
-							onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-							label={ translate( 'Public' ) }
-						/>
-					</FormLabel>
-				) }
 				{ isWpcomStagingSite && (
 					<>
-						<FormLabel className="site-settings__visibility-label is-public">
-							<FormRadio
-								name="blog_public"
-								value="0"
-								checked={
-									( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
-									( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
-									blogPublic === 1
-								}
-								onChange={ () =>
-									this.handleVisibilityOptionChange( {
-										blog_public: 0,
-										wpcom_coming_soon: 0,
-										wpcom_public_coming_soon: 0,
-									} )
-								}
-								disabled={ isRequestingSettings }
-								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-								label={ translate( 'Public' ) }
-							/>
-						</FormLabel>
+						<PublicFormRadio />
 						<FormSettingExplanation>
 							{ translate(
 								'Your site is visible to everyone, but search engines are discouraged from indexing staging sites.'
@@ -468,6 +450,7 @@ export class SiteSettingsFormGeneral extends Component {
 						</FormSettingExplanation>
 					</>
 				) }
+				{ ! isNonAtomicJetpackSite && ! isWpcomStagingSite && <PublicFormRadio /> }
 				{ ! isWpcomStagingSite && (
 					<>
 						<FormSettingExplanation>
