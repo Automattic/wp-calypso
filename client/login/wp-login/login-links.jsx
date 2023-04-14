@@ -126,7 +126,7 @@ export class LoginLinks extends Component {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			this.props.isWhiteLogin ||
+			( this.props.isWhiteLogin && ! this.props.isGravatarLogin ) ||
 			this.props.isP2Login ||
 			this.props.isPartnerSignup
 		) {
@@ -315,6 +315,7 @@ export class LoginLinks extends Component {
 		const {
 			currentRoute,
 			isP2Login,
+			isGravatarLogin,
 			locale,
 			oauth2Client,
 			pathname,
@@ -322,6 +323,10 @@ export class LoginLinks extends Component {
 			translate,
 			usernameOrEmail,
 		} = this.props;
+
+		if ( isGravatarLogin ) {
+			return null;
+		}
 
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl = this.props.signupUrl
@@ -361,6 +366,7 @@ export class LoginLinks extends Component {
 			<div
 				className={ classnames( 'wp-login__links', {
 					'has-2fa-links': this.props.twoFactorAuthType,
+					'is-gravatar-login-links': this.props.isGravatarLogin,
 				} ) }
 			>
 				{ this.renderSignUpLink() }
