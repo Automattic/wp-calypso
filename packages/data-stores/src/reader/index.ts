@@ -11,6 +11,7 @@ import {
 	usePostSubscriptionsQuery,
 	useSubscriptionsCountQuery,
 	useUserSettingsQuery,
+	usePendingSiteSubscriptionsQuery,
 } from './queries';
 
 export const SubscriptionManager = {
@@ -24,6 +25,7 @@ export const SubscriptionManager = {
 	useSubscriberEmailAddress,
 	useUserSettingsQuery,
 	useUserSettingsMutation,
+	usePendingSiteSubscriptionsQuery,
 };
 
 // Types
