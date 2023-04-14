@@ -103,6 +103,7 @@ const Home = ( {
 				align="left"
 				hasScreenOptions
 			/>
+
 			<div className="customer-home__site-content">
 				<SiteIcon site={ site } size={ 58 } />
 				<div className="customer-home__site-info">
@@ -116,6 +117,7 @@ const Home = ( {
 					</ExternalLink>
 				</div>
 			</div>
+
 			<div className="customer-home__view-site-button">
 				<Button href={ site.URL } onClick={ trackViewSiteAction } target="_blank">
 					{ translate( 'Visit site' ) }
