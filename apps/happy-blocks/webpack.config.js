@@ -47,7 +47,7 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 				patterns: [
 					ifExists( {
 						from: path.resolve( blockPath, 'assets' ),
-						to: path.resolve( blockPath, 'build', '[name][ext]' ),
+						to: path.resolve( blockPath, 'build/assets', '[name][ext]' ),
 					} ),
 					ifExists( {
 						from: path.resolve( blockPath, 'index.php' ),
