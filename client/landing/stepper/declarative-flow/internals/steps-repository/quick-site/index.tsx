@@ -1,25 +1,22 @@
 import config from '@automattic/calypso-config';
-import { Visibility } from '@automattic/data-stores';
+import { getUrlParts } from '@automattic/calypso-url';
+import { NewSiteSuccessResponse, Visibility } from '@automattic/data-stores';
 import { getLanguage, guessTimezone } from '@automattic/i18n-utils';
 import { useDispatch } from '@wordpress/data';
 import { getLocaleSlug } from 'i18n-calypso';
 import { useEffect } from 'react';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import wpcomRequest from 'wpcom-proxy-request';
+import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
-import wpcom from 'calypso/lib/wp';
 import type { Step } from '../../types';
 
-const wait = ( ms: number ) => new Promise( ( res ) => setTimeout( res, ms ) );
+import './style.scss';
 
 const QuickSite: Step = function QuickSite( { navigation } ) {
 	const { submit } = navigation;
-	const urlQueryParams = useQuery();
-	const siteSlug = urlQueryParams.get( 'siteSlug' );
-	const { setPendingAction, setProgress } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	useEffect( () => {
-		// eslint-disable-next-line no-console
-		console.log( 'QuickSite useEffect' );
 		async function createSite() {
 			const locale = getLocaleSlug();
 			const data = {
@@ -39,20 +36,34 @@ const QuickSite: Step = function QuickSite( { navigation } ) {
 				find_available_url: true,
 			};
 
-			await wpcom.req.post( '/sites/new', data );
+			const siteCreationResponse: NewSiteSuccessResponse = await wpcomRequest( {
+				path: '/sites/new',
+				apiVersion: '1.1',
+				method: 'POST',
+				body: {
+					...data,
+				},
+			} );
+
+			if ( ! siteCreationResponse.success ) {
+				// Something went wrong. Redirect /home so the user is not stuck in the flow.
+				redirect( '/home' );
+			}
+
+			const parsedBlogURL = getUrlParts( siteCreationResponse?.blog_details.url );
+			const siteSlug = parsedBlogURL.hostname;
+
+			return {
+				siteSlug,
+			};
 		}
-		createSite();
+
 		setPendingAction( async () => {
-			setProgress( 10 );
-
-			await wait( 6000 );
-
-			submit?.();
-
-			return { finishedQuickCreate: true, siteSlug };
+			return await createSite();
 		} );
 
 		submit?.();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
 	return null;

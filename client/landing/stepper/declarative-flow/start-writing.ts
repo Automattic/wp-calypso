@@ -1,38 +1,48 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
-import Processing from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step';
+import { useSelector } from 'react-redux';
+import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import QuickSite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/quick-site';
-import { USER_STORE } from '../stores';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { redirect } from './internals/steps-repository/import/util';
-import { AssertConditionResult, AssertConditionState, Flow } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
+import ProcessingStep from './internals/steps-repository/processing-step';
+import {
+	AssertConditionResult,
+	AssertConditionState,
+	Flow,
+	ProvidedDependencies,
+} from './internals/types';
 
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
 	useSteps() {
 		return [
 			{ slug: 'quick-site', component: QuickSite },
-			{ slug: 'processing', component: Processing },
+			{ slug: 'processing', component: ProcessingStep },
 		];
 	},
 
-	useStepNavigation() {
-		// const submit = () => {
-		// 	switch ( currentStep ) {
-		// 		case 'quick-site':
-		// 			return navigate( 'processing' );
-		// 	}
-		// };
-		return {};
+	useStepNavigation( currentStep, navigate ) {
+		const flowName = this.name;
+		function submit( providedDependencies: ProvidedDependencies = {} ) {
+			recordSubmitStep( providedDependencies, '', flowName, currentStep );
+			switch ( currentStep ) {
+				case 'quick-site':
+					return navigate( 'processing' );
+				case 'processing': {
+					if ( providedDependencies?.siteSlug ) {
+						// return redirect( `https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php` );
+					}
+				}
+			}
+		}
+		return { submit };
 	},
 
 	useAssertConditions(): AssertConditionResult {
 		const flowName = this.name;
-		const userIsLoggedIn = useSelect(
-			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
-			[]
-		);
+		const isLoggedIn = useSelector( isUserLoggedIn );
+		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const locale = useLocale();
 
 		const logInUrl =
@@ -42,12 +52,18 @@ const startWriting: Flow = {
 
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		if ( ! userIsLoggedIn ) {
+		if ( ! isLoggedIn ) {
 			redirect( logInUrl );
 			result = {
 				state: AssertConditionState.CHECKING,
-				message: 'writing requires a logged in user',
+				message: `${ flowName } requires a logged in user`,
 			};
+		} else if ( currentUserSiteCount && currentUserSiteCount > 0 ) {
+			// redirect( '/post?showLaunchpad=true' );
+			// result = {
+			// 	state: AssertConditionState.CHECKING,
+			// 	message: `${ flowName } requires no preexisting sites`,
+			// };
 		}
 
 		return result;
