@@ -57,12 +57,15 @@ const useSiteSubscriptionsQuery = ( {
 
 	// Flatten all the pages into a single array containing all subscriptions
 	const flattenedData = data?.pages?.map( ( page ) => page.subscriptions ).flat();
-	// Transform the dates into Date objects
-	const transformedData = flattenedData?.map( ( subscription ) => ( {
-		...subscription,
-		last_updated: new Date( subscription.last_updated ),
-		date_subscribed: new Date( subscription.date_subscribed ),
-	} ) );
+
+	// Transform the dates into Date objects, when no subscriptions are present, the data is null, so filter it
+	const transformedData = flattenedData
+		?.filter( ( item ) => item !== null )
+		.map( ( subscription ) => ( {
+			...subscription,
+			last_updated: new Date( subscription.last_updated ),
+			date_subscribed: new Date( subscription.date_subscribed ),
+		} ) );
 
 	return {
 		data: transformedData?.filter( filter ).sort( sort ),
