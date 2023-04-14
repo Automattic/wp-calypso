@@ -2,21 +2,21 @@ import { Gridicon } from '@automattic/components';
 import { memo, useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
 import { CommentSettings } from '../settings-popover';
-import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
+import type { CommentSubscription } from '@automattic/data-stores/src/reader/types';
 
-type CommentRowProps = PostSubscription & {
+type CommentRowProps = CommentSubscription & {
 	forwardedRef: React.Ref< HTMLDivElement >;
 	style: React.CSSProperties;
 };
 
 const CommentRow = ( {
-	title,
-	excerpt,
-	url,
+	post_title,
+	post_excerpt,
+	post_url,
 	site_title,
 	site_icon,
 	site_url,
-	date_subscribed,
+	subscription_date,
 	forwardedRef,
 	style,
 }: CommentRowProps ) => {
@@ -32,11 +32,11 @@ const CommentRow = ( {
 			<div className="row" role="row">
 				<span className="post" role="cell">
 					<div className="title">
-						<a href={ url } target="_blank" rel="noreferrer noopener">
-							{ title }
+						<a href={ post_url } target="_blank" rel="noreferrer noopener">
+							{ post_title }
 						</a>
 					</div>
-					<div className="excerpt">{ excerpt }</div>
+					<div className="excerpt">{ post_excerpt }</div>
 				</span>
 				<a href={ site_url } rel="noreferrer noopener" className="title-box" target="_blank">
 					<span className="title-box" role="cell">
@@ -48,7 +48,7 @@ const CommentRow = ( {
 					</span>
 				</a>
 				<span className="date" role="cell">
-					<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
+					<TimeSince date={ subscription_date.toISOString?.() ?? subscription_date } />
 				</span>
 				<span className="actions" role="cell">
 					<CommentSettings onUnfollow={ () => undefined } unfollowing={ false } />
