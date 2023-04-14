@@ -335,13 +335,10 @@ export class PlanFeatures2023Grid extends Component<
 							replacePaidDomainWithFreeDomain( freeDomainSuggestion );
 							onUpgradeClick( null );
 						} }
-						onPlanSelected={ () =>
-							this.handleUpgradeClick(
-								planProperties.find(
-									( { planName } ) => planName === PLAN_PERSONAL
-								) as PlanProperties
-							)
-						}
+						onPlanSelected={ () => {
+							const cartItemForPlan = getCartItemForPlan( PLAN_PERSONAL );
+							onUpgradeClick( cartItemForPlan );
+						} }
 					/>
 				) }
 				<div className="plan-features">
