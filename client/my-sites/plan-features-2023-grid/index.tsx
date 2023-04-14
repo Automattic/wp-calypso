@@ -704,7 +704,11 @@ export class PlanFeatures2023Grid extends Component<
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( planProperties ) => (
-				<Container key={ planProperties.planName } isMobile={ options?.isMobile }>
+				<Container
+					key={ planProperties.planName }
+					className="plan-features-2023-grid__table-item"
+					isMobile={ options?.isMobile }
+				>
 					<div
 						className={ `plan-features-2023-grid__refund-notice ${ getPlanClass(
 							planProperties.planName
