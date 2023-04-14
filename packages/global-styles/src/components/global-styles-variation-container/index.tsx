@@ -13,6 +13,7 @@ interface Props {
 	inlineCss?: string;
 	containerResizeListener: JSX.Element;
 	children: JSX.Element;
+	onFocusOut?: () => void;
 }
 
 const GlobalStylesVariationContainer = ( {
@@ -21,6 +22,7 @@ const GlobalStylesVariationContainer = ( {
 	inlineCss,
 	containerResizeListener,
 	children,
+	onFocusOut,
 	...props
 }: Props ) => {
 	const [ styles ] = useGlobalStylesOutput();
@@ -60,16 +62,16 @@ const GlobalStylesVariationContainer = ( {
 			contentRef={ useRefEffect( ( bodyElement ) => {
 				// Disable moving focus to the writing flow wrapper if the focus disappears
 				// See https://github.com/WordPress/gutenberg/blob/aa8e1c52c7cb497e224a479673e584baaca97113/packages/block-editor/src/components/writing-flow/use-tab-nav.js#L136
-				const onFocusOut = ( event: Event ) => {
+				const handleFocusOut = ( event: Event ) => {
 					event.stopImmediatePropagation();
 
-					// Explicitly call blur handler, if available.
-					props.onBlur?.();
+					// Explicitly call the focusOut handler, if available.
+					onFocusOut?.();
 				};
 
-				bodyElement.addEventListener( 'focusout', onFocusOut );
+				bodyElement.addEventListener( 'focusout', handleFocusOut );
 				return () => {
-					bodyElement.removeEventListener( 'focusout', onFocusOut );
+					bodyElement.removeEventListener( 'focusout', handleFocusOut );
 				};
 			}, [] ) }
 			scrolling="no"
