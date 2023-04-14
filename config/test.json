@@ -84,6 +84,7 @@
 		"plugins/ssr-landing": true,
 		"post-list/qr-code-link": false,
 		"press-this": true,
+		"promote-post/redesign-i2": false,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"reader": true,

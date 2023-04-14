@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -357,7 +358,11 @@ export class LoginLinks extends Component {
 
 	render() {
 		return (
-			<div className="wp-login__links">
+			<div
+				className={ classnames( 'wp-login__links', {
+					'has-2fa-links': this.props.twoFactorAuthType,
+				} ) }
+			>
 				{ this.renderSignUpLink() }
 				{ this.renderLostPhoneLink() }
 				{ this.renderHelpLink() }

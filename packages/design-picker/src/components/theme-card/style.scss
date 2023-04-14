@@ -13,6 +13,10 @@ $theme-card-info-margin-top: 16px;
 	transition: all 100ms ease-in-out;
 
 	&--is-active {
+		.theme-card__image-container {
+			border: 0;
+		}
+
 		.theme-card__info {
 			align-items: center;
 			background: var(--color-primary);
@@ -52,10 +56,23 @@ $theme-card-info-margin-top: 16px;
 	position: relative;
 }
 
+.theme-card__image-container {
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.05));
+	overflow: hidden;
+	padding-top: 74%;
+	position: relative;
+}
+
 .theme-card__image {
 	cursor: default;
+	height: 100%;
+	left: 0;
 	opacity: 1;
+	position: absolute;
+	top: 0;
 	transition: all 200ms ease-in-out;
+	width: 100%;
 
 	&:hover,
 	&:focus {
@@ -85,19 +102,20 @@ $theme-card-info-margin-top: 16px;
 		pointer-events: none;
 		position: absolute;
 		text-transform: uppercase;
-		top: 36%;
+		top: 45%;
 		transform: translate(-50%, 0);
 		z-index: 1;
 	}
 
 	img {
-		aspect-ratio: 4/3;
-		border: 1px solid rgba(0, 0, 0, 0.1);
 		box-sizing: border-box;
 		display: block;
-		filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.05));
+		height: auto;
+		left: 0;
 		padding: 0;
-		position: relative;
+		position: absolute;
+		right: 0;
+		top: 0;
 		width: 100%;
 	}
 }
@@ -263,6 +281,7 @@ $theme-card-info-margin-top: 16px;
 	display: flex;
 	flex-basis: 100%;
 	font-size: 0;
+	gap: 10px;
 	line-height: 20px;
 	padding: 0;
 
@@ -276,13 +295,16 @@ $theme-card-info-margin-top: 16px;
 	.woocommerce-bundled-badge {
 		margin: 0;
 		vertical-align: middle;
+
+		svg {
+			padding: 0;
+			transform: none;
+			width: auto;
+		}
 	}
 
 	.premium-badge svg {
 		height: auto;
-		padding: 0;
-		transform: none;
-		width: auto;
 	}
 }
 

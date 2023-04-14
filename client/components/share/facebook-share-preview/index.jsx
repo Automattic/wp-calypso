@@ -1,119 +1,52 @@
-import { FacebookPreview } from '@automattic/social-previews';
-import { localize } from 'i18n-calypso';
+import { FacebookPreview, TYPE_ARTICLE } from '@automattic/social-previews';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
-
-import './style.scss';
+import striptags from 'striptags';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 export class FacebookSharePreview extends PureComponent {
 	static propTypes = {
+		articleExcerpt: PropTypes.string,
 		articleContent: PropTypes.string,
-		articleSummary: PropTypes.string,
 		articleUrl: PropTypes.string,
-		externalName: PropTypes.string,
 		externalProfilePicture: PropTypes.string,
-		externalProfileUrl: PropTypes.string,
 		imageUrl: PropTypes.string,
 		message: PropTypes.string,
 		seoTitle: PropTypes.string,
-		siteIcon: PropTypes.string,
 	};
-
-	state = {
-		isProfileImageBroken: false,
-	};
-
-	setBrokenProfileImage = () => this.setState( { isProfileImageBroken: true } );
 
 	render() {
 		const {
+			articleExcerpt,
 			articleContent,
-			articleSummary,
 			articleUrl,
 			externalDisplay,
 			externalProfilePicture,
-			externalProfileUrl,
 			imageUrl,
 			message,
 			seoTitle,
-			siteIcon,
-			translate,
 		} = this.props;
-		const { isProfileImageBroken } = this.state;
+
+		// The post object in the state has a default excerpt, which is the first words of the
+		// content and an ellipsis. To match Facebook's preview behaviour we need to know
+		// when an excerpt has been actually set by the user. The original excerpt below
+		// is empty if the user hasn't set a custom excerpt.
+		const rawContent = striptags( articleContent ).trim();
+		const rawExcerpt = striptags( articleExcerpt.replace( '[&hellip;]', '' ) ).trim();
+		const originalExcerpt = rawContent.indexOf( rawExcerpt ) === 0 ? '' : articleExcerpt;
+
 		return (
-			<div className="facebook-share-preview">
-				<div className="facebook-share-preview__content">
-					<div className="facebook-share-preview__header">
-						<div className="facebook-share-preview__profile-picture-part">
-							{ ! isProfileImageBroken && (
-								<img
-									className="facebook-share-preview__profile-picture"
-									src={ externalProfilePicture }
-									onError={ this.setBrokenProfileImage }
-									alt={ externalDisplay }
-								/>
-							) }
-						</div>
-
-						<div className="facebook-share-preview__profile-line-part">
-							<div className="facebook-share-preview__profile-line">
-								<a className="facebook-share-preview__profile-name" href={ externalProfileUrl }>
-									{ externalDisplay }
-								</a>
-								<span>
-									{ translate( 'published an article on {{a}}WordPress{{/a}}.', {
-										components: {
-											a: <span className="facebook-share-preview__application-link" />,
-										},
-									} ) }
-								</span>
-							</div>
-							<div className="facebook-share-preview__meta-line">
-								{ translate( 'Just now', {
-									comment: 'Facebook relative time for just published posts.',
-								} ) }
-								<span> &middot; </span>
-								<a href="https://wordpress.com">{ translate( 'WordPress' ) }</a>
-							</div>
-						</div>
-					</div>
-
-					<div className="facebook-share-preview__body">
-						<div className="facebook-share-preview__message">
-							{ message ? message : articleSummary }
-						</div>
-						<div className="facebook-share-preview__article-url-line">
-							<a className="facebook-share-preview__article-url" href={ articleUrl }>
-								{ articleUrl }
-							</a>
-						</div>
-
-						{ imageUrl !== null && (
-							<div className="facebook-share-preview__image-wrapper">
-								<img
-									alt="Facebook Preview Thumbnail"
-									className="facebook-share-preview__image"
-									src={ imageUrl }
-								/>
-							</div>
-						) }
-
-						{ imageUrl === null && (
-							<div className="facebook-share-preview__card-wrapper">
-								<FacebookPreview
-									title={ seoTitle }
-									type="website"
-									description={ articleContent }
-									image={ siteIcon }
-									author="WORDPRESS"
-								/>
-							</div>
-						) }
-					</div>
-				</div>
-			</div>
+			<FacebookPreview
+				url={ articleUrl }
+				title={ decodeEntities( seoTitle ) }
+				description={ decodeEntities( originalExcerpt || articleContent ) }
+				image={ imageUrl }
+				customText={ decodeEntities( message || originalExcerpt || articleContent || seoTitle ) }
+				user={ { displayName: externalDisplay, avatarUrl: externalProfilePicture } }
+				type={ TYPE_ARTICLE }
+			/>
 		);
 	}
 }
 
-export default localize( FacebookSharePreview );
+export default FacebookSharePreview;

@@ -6,7 +6,12 @@ import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-
 import Nav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import { Comments, Settings, Sites } from 'calypso/landing/subscriptions/components/tab-views';
+import {
+	Comments,
+	Settings,
+	Sites,
+	Pending,
+} from 'calypso/landing/subscriptions/components/tab-views';
 import './styles.scss';
 
 const TabsSwitcher = () => {
@@ -17,13 +22,17 @@ const TabsSwitcher = () => {
 	const locale = useLocale();
 	const shouldEnableCommentsTab =
 		config.isEnabled( 'subscription-management-comments-view' ) && locale === 'en';
+	const shouldEnablePendingTab =
+		config.isEnabled( 'subscription-management-pending-view' ) && locale === 'en';
 
 	const getFullPath = ( subpath: string ) =>
 		`/subscriptions/${ subpath }${ locale !== 'en' ? '/' + locale : '' }`;
-
-	const [ sitesPath, commentsPath, settingsPath ] = [ 'sites', 'comments', 'settings' ].map(
-		getFullPath
-	);
+  const [ sitesPath, commentsPath, pendingPath, settingsPath ] = [
+    'sites',
+    'comments',
+    'pending',
+    'settings',
+  ].map( getFullPath );
 
 	return (
 		<>
@@ -51,6 +60,24 @@ const TabsSwitcher = () => {
 						{ translate( 'Comments' ) }
 					</NavItem>
 
+					{ shouldEnablePendingTab && counts?.pending ? (
+						<NavItem
+							onClick={ () => {
+								shouldEnablePendingTab
+									? navigate( pendingPath )
+									: window.location.replace(
+											'https://wordpress.com/email-subscriptions/?option=pending'
+									  );
+							} }
+							count={ counts?.pending || undefined }
+							selected={ pathname.startsWith( pendingPath ) }
+						>
+							{ translate( 'Pending' ) }
+						</NavItem>
+					) : (
+						''
+					) }
+
 					<NavItem
 						onClick={ () => navigate( settingsPath ) }
 						selected={ pathname.startsWith( settingsPath ) }
@@ -64,6 +91,7 @@ const TabsSwitcher = () => {
 				<Route index element={ <Navigate to="sites" /> } />
 				<Route path="sites/*" element={ <Sites /> } />
 				<Route path="comments/*" element={ <Comments /> } />
+				<Route path="pending/*" element={ <Pending /> } />
 				<Route path="settings/*" element={ <Settings /> } />
 			</Routes>
 		</>

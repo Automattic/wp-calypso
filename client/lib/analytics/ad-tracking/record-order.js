@@ -137,6 +137,12 @@ export async function recordOrder( cart, orderId, sitePlanSlug ) {
 		window.lintrk( 'track', params );
 	}
 
+	if ( mayWeTrackByTracker( 'twitter' ) && wpcomJetpackCartInfo.containsJetpackProducts ) {
+		const params = [ 'event', 'tw-odlje-oekzo', { value: wpcomJetpackCartInfo.jetpackCostUSD } ];
+		debug( 'recordOrder: [Twitter]', params );
+		window.twq( ...params );
+	}
+
 	// Uses JSON.stringify() to print the expanded object because during localhost or .live testing after firing this
 	// event we redirect the user to wordpress.com which causes a domain change preventing the expanding and inspection
 	// of any object in the JS console since they are no longer available.
