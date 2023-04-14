@@ -1,4 +1,4 @@
-import { getPlan } from '@automattic/calypso-products';
+import { applyTestFiltersToPlansList, getPlan, isMonthly } from '@automattic/calypso-products';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import {
@@ -8,15 +8,21 @@ import {
 
 export default function getFlowPlanFeatures(
 	flowName: string,
-	plan: ResponseCartProduct | undefined
+	product: ResponseCartProduct | undefined
 ) {
-	const productSlug = plan?.product_slug;
+	const productSlug = product?.product_slug;
 
 	if ( ! productSlug ) {
 		return [];
 	}
 
-	const planConstantObj = getPlan( productSlug );
+	const plan = getPlan( productSlug );
+
+	if ( ! plan ) {
+		return [];
+	}
+
+	const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 
 	if ( ! planConstantObj ) {
 		return [];
@@ -33,7 +39,19 @@ export default function getFlowPlanFeatures(
 	}
 
 	const highlightedFeatures = getHighlightedFeatures( flowName, planConstantObj );
-	return getPlanFeaturesObject( featureAccessor ).map( ( feature ) => {
+	let featuresObject = getPlanFeaturesObject( featureAccessor );
+
+	if ( isMonthly( planConstantObj.getStoreSlug() ) ) {
+		const annualOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() ?? [];
+
+		if ( annualOnlyFeatures.length > 0 ) {
+			featuresObject = featuresObject.filter( ( feature ) => {
+				return ! annualOnlyFeatures.includes( feature.getSlug() );
+			} );
+		}
+	}
+
+	return featuresObject.map( ( feature ) => {
 		return {
 			...feature,
 			isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
