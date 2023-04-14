@@ -28,7 +28,7 @@ const useCommentSubscriptionsQuery = ( {
 
 	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage, ...rest } =
 		useInfiniteQuery< SubscriptionManagerCommentSubscriptions >(
-			[ 'readAA', 'comment-subscriptions', isLoggedIn ],
+			[ 'read', 'comment-subscriptions', isLoggedIn ],
 			async ( { pageParam = 1 } ) => {
 				return await callApi< SubscriptionManagerCommentSubscriptions >( {
 					path: `/post-comment-subscriptions?per_page=${ number }&page=${ pageParam }`,
