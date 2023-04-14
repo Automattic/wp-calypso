@@ -51,6 +51,8 @@ body {
 
 	.search-component {
 		max-width: 500px;
+		height: 48px;
+		box-sizing: border-box;
 
 		border: 1px solid $studio-gray-10;
 		border-radius: 2px;
@@ -64,10 +66,9 @@ body {
 			margin-right: 14px;
 		}
 
-		input.search-component__input[type="search"] {
-			::placeholder {
-				color: $studio-gray-50;
-			}
+		input.search-component__input[type="search"]::placeholder {
+			color: $studio-gray-50;
+
 		}
 	}
 }
