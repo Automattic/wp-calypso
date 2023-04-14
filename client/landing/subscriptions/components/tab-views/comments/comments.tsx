@@ -1,4 +1,7 @@
+import SearchInput from '@automattic/search';
+import { useTranslate } from 'i18n-calypso';
 import { CommentList } from 'calypso/landing/subscriptions/components/comment-list';
+import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import TabView from '../tab-view';
 import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
 
@@ -31,10 +34,22 @@ const posts: PostSubscription[] = [
 const repeat = ( arr: PostSubscription[], times: number ) =>
 	Array.from( { length: times }, () => arr ).flat() as PostSubscription[];
 
-const Comments = () => (
-	<TabView errorMessage="" isLoading={ false }>
-		<CommentList posts={ repeat( posts, 500 ) } />
-	</TabView>
-);
+const Comments = () => {
+	const translate = useTranslate();
+	return (
+		<TabView errorMessage="" isLoading={ false }>
+			<div className="subscriptions-manager__list-actions-bar">
+				<SearchInput
+					placeholder={ translate( 'Search by post name…' ) }
+					searchIcon={ <SearchIcon size={ 18 } /> }
+					// eslint-disable-next-line @typescript-eslint/no-empty-function -- until we implement search
+					onSearch={ () => {} }
+				/>
+			</div>
+
+			<CommentList posts={ repeat( posts, 500 ) } />
+		</TabView>
+	);
+};
 
 export default Comments;
