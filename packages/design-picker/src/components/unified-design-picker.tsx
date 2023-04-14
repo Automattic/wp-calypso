@@ -397,7 +397,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 					return (
 						<DesignCard
 							key={ index }
-							categories={ categorization?.categories }
+							category={ categorization?.categories }
 							design={ design }
 							locale={ locale }
 							verticalId={ verticalId }
