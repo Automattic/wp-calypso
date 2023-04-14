@@ -12,6 +12,7 @@ interface Props {
 export interface IntroContent {
 	title: WPElement | string;
 	text?: WPElement | string;
+	secondaryText?: WPElement | string;
 	buttonText: string;
 	modal?: IntroModal;
 }
@@ -28,7 +29,7 @@ export interface IntroModal {
 
 const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 	const [ showModal, setShowModal ] = useState( false );
-	const { title, text, buttonText, modal } = introContent;
+	const { title, text, buttonText, modal, secondaryText } = introContent;
 
 	const modalClasses = classNames( 'intro__more-modal', {
 		show: showModal,
@@ -62,6 +63,7 @@ const Intro: React.FC< Props > = ( { onSubmit, introContent } ) => {
 						</Button>
 					) }
 				</div>
+				{ secondaryText && <div className="intro__secondary-text">{ secondaryText }</div> }
 			</div>
 			{ modal && (
 				<div className={ modalClasses }>

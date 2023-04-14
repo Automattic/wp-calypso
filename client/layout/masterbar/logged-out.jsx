@@ -150,7 +150,7 @@ class MasterbarLoggedOut extends Component {
 
 		return (
 			<Masterbar>
-				<Item className="masterbar__item-logo">
+				<Item className="masterbar__item-logo masterbar__item--always-show-content">
 					<WordPressLogo className="masterbar__wpcom-logo" />
 					<WordPressWordmark className="masterbar__wpcom-wordmark" />
 				</Item>

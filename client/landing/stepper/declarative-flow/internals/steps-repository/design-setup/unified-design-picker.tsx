@@ -29,6 +29,7 @@ import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-gl
 import { setActiveTheme } from 'calypso/state/themes/actions';
 import { getPurchasedThemes } from 'calypso/state/themes/selectors/get-purchased-themes';
 import { isThemePurchased } from 'calypso/state/themes/selectors/is-theme-purchased';
+import useCheckout from '../../../../hooks/use-checkout';
 import { useIsPluginBundleEligible } from '../../../../hooks/use-is-plugin-bundle-eligible';
 import { useQuery } from '../../../../hooks/use-query';
 import { useSite } from '../../../../hooks/use-site';
@@ -58,7 +59,7 @@ import type { Design, StyleVariation } from '@automattic/design-picker';
 const SiteIntent = Onboard.SiteIntent;
 const SITE_ASSEMBLER_AVAILABLE_INTENTS: string[] = [ SiteIntent.Build, SiteIntent.Write ];
 
-const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
+const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { goBack, submit, exitFlow } = navigation;
 
 	const reduxDispatch = useReduxDispatch();
@@ -86,6 +87,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		[ site ]
 	);
 	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+
+	const { goToCheckout } = useCheckout();
 
 	const isAtomic = useSelect(
 		( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
@@ -341,7 +344,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		setShowUpgradeModal( false );
 	}
 
-	function goToCheckout() {
+	function handleCheckout() {
 		recordTracksEvent( 'calypso_signup_design_upgrade_modal_checkout_button_click', {
 			theme: selectedDesign?.slug,
 		} );
@@ -358,8 +361,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 
 		if ( siteSlugOrId ) {
-			const params = new URLSearchParams();
-
 			// When the user is done with checkout, send them back to the current url
 			const destUrl = new URL( window.location.href );
 			const destSearchP = destUrl.searchParams;
@@ -371,13 +372,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			}
 
 			const destString = destUrl.toString().replace( window.location.origin, '' );
-			params.append( 'redirect_to', destString );
 
-			// The theme upsell link does not work with siteId and requires a siteSlug.
-			// See https://github.com/Automattic/wp-calypso/pull/64899
-			window.location.href = `/checkout/${ encodeURIComponent(
-				siteSlug || urlToSlug( site?.URL || '' ) || ''
-			) }/${ plan }?${ params.toString() }`;
+			goToCheckout( {
+				flowName: flow,
+				stepName,
+				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
+				destination: destString,
+				plan,
+			} );
 		}
 	}
 
@@ -406,15 +408,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 		}
 	}
 
-	function goToCheckoutForPremiumGlobalStyles() {
+	function handleCheckoutForPremiumGlobalStyles() {
 		// These conditions should be true at this point, but just in case...
 		if ( selectedDesign && selectedStyleVariation && siteSlugOrId ) {
 			recordTracksEvent(
 				'calypso_signup_design_global_styles_gating_modal_checkout_button_click',
 				getEventPropsByDesign( selectedDesign, selectedStyleVariation )
 			);
-
-			const params = new URLSearchParams();
 
 			// When the user is done with checkout, send them back to the current url
 			const destUrl = new URL( window.location.href );
@@ -428,13 +428,14 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			}
 
 			const destString = destUrl.toString().replace( window.location.origin, '' );
-			params.append( 'redirect_to', destString );
 
-			// The theme upsell link does not work with siteId and requires a siteSlug.
-			// See https://github.com/Automattic/wp-calypso/pull/64899
-			window.location.href = `/checkout/${ encodeURIComponent(
-				siteSlug || urlToSlug( site?.URL || '' ) || ''
-			) }/premium?${ params.toString() }`;
+			goToCheckout( {
+				flowName: flow,
+				stepName,
+				siteSlug: siteSlug || urlToSlug( site?.URL || '' ) || '',
+				destination: destString,
+				plan: 'premium',
+			} );
 		}
 	}
 
@@ -644,10 +645,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 					slug={ selectedDesign.slug }
 					isOpen={ showUpgradeModal }
 					closeModal={ closeUpgradeModal }
-					checkout={ goToCheckout }
+					checkout={ handleCheckout }
 				/>
 				<PremiumGlobalStylesUpgradeModal
-					checkout={ goToCheckoutForPremiumGlobalStyles }
+					checkout={ handleCheckoutForPremiumGlobalStyles }
 					closeModal={ closePremiumGlobalStylesModal }
 					isOpen={ showPremiumGlobalStylesModal }
 					tryStyle={ tryPremiumGlobalStyles }
@@ -740,12 +741,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			staticDesigns={ staticDesigns }
 			verticalId={ siteVerticalId }
 			locale={ locale }
-			onSelect={ pickDesign }
 			onSelectBlankCanvas={ pickBlankCanvasDesign }
 			onPreview={ previewDesign }
 			onChangeVariation={ onChangeVariation }
 			onViewAllDesigns={ trackAllDesignsView }
-			onCheckout={ goToCheckout }
 			heading={ heading }
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
