@@ -40,7 +40,7 @@ export interface GlobalStylesObject {
 	};
 }
 
-export enum VariationType {
+export enum GlobalStylesVariationType {
 	Free = 'free',
 	Premium = 'premium',
 }
