@@ -5,12 +5,12 @@
 /* eslint-disable jest/no-conditional-expect */
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import moment from 'moment';
 import {
 	FacebookPreview as Facebook,
 	TwitterPreview as Twitter,
 	SearchPreview as Search,
 } from '../src';
+import { formatTweetDate } from '../src/helpers';
 
 const DEFAULT_POST_TITLE = 'Hello World';
 const DEFAULT_POST_URL = 'https://example.com/new-entry';
@@ -245,7 +245,7 @@ describe( 'Twitter previews', () => {
 			screenName
 		);
 		expect( tweetWrapper.querySelector( '.twitter-preview__date' ) ).toHaveTextContent(
-			moment( date ).format( 'MMM D' )
+			formatTweetDate( date )
 		);
 	} );
 

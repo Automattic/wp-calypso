@@ -1,5 +1,3 @@
-import { find } from 'lodash';
-
 type Formatter = ( arg0: string ) => string;
 type AugmentFormatterReturnType< T extends Formatter, TNewReturn > = (
 	...a: Parameters< T >
@@ -27,7 +25,7 @@ export const hardTruncation: ( n: number ) => Formatter = ( limit ) => ( title )
 export const firstValid: ( ...args: ConditionalFormatter[] ) => NullableFormatter =
 	( ...predicates ) =>
 	( a ) =>
-		( find( predicates, ( p ) => false !== p( a ) ) as Formatter )?.( a );
+		( predicates.find( ( p ) => false !== p( a ) ) as Formatter )?.( a );
 
 export const stripHtmlTags: Formatter = ( description ) =>
 	description ? description.replace( /(<([^>]+)>)/gi, '' ) : '';
