@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import SectionHeading from '../shared/section-heading';
 import FacebookLinkPreview from './link-preview';
 import type { FacebookPreviewProps } from './types';
 
@@ -8,12 +9,12 @@ const FacebookPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 	return (
 		<div className="social-preview facebook-preview">
 			<section className="social-preview__section facebook-preview__section">
-				<h3 className="social-preview__section-heading">
+				<SectionHeading level={ props.headingsLevel }>
 					{
 						// translators: refers to a social post on Facebook
 						__( 'Your post', 'facebook-preview' )
 					}
-				</h3>
+				</SectionHeading>
 				<p className="social-preview__section-desc">
 					{ __( 'This is what your social post will look like on Facebook:', 'facebook-preview' ) }
 				</p>
