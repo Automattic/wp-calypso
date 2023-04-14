@@ -9,8 +9,9 @@ type MutationContext = {
 };
 
 const useUserSettingsMutation = () => {
-	const isLoggedIn = useIsLoggedIn();
+	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
+	const emailSettingsCacheKey = [ 'read', 'email-settings' ];
 	return useMutation< SubscriptionManagerUserSettings, Error, SubscriptionManagerUserSettings >(
 		async ( data: SubscriptionManagerUserSettings ) => {
 			const { settings } = await callApi< EmailSettingsAPIResponse >( {
@@ -34,17 +35,14 @@ const useUserSettingsMutation = () => {
 		},
 		{
 			onMutate: async ( data ) => {
-				await queryClient.cancelQueries( [ 'read', 'email-settings', isLoggedIn ] );
-				const previousSettings = queryClient.getQueryData< SubscriptionManagerUserSettings >( [
-					'read',
-					'email-settings',
-					isLoggedIn,
-				] );
+				await queryClient.cancelQueries( emailSettingsCacheKey );
+				const previousSettings =
+					queryClient.getQueryData< SubscriptionManagerUserSettings >( emailSettingsCacheKey );
 
-				queryClient.setQueryData< SubscriptionManagerUserSettings >(
-					[ 'read', 'email-settings', isLoggedIn ],
-					{ ...previousSettings, ...data }
-				);
+				queryClient.setQueryData< SubscriptionManagerUserSettings >( [ 'read', 'email-settings' ], {
+					...previousSettings,
+					...data,
+				} );
 				return { previousSettings: previousSettings };
 			},
 			onError: ( error, variables, context ) => {
@@ -52,13 +50,14 @@ const useUserSettingsMutation = () => {
 				// That's why we're using the `as MutationContext` cast here
 				if ( ( context as MutationContext )?.previousSettings ) {
 					queryClient.setQueryData< SubscriptionManagerUserSettings >(
-						[ 'read', 'email-settings', isLoggedIn ],
+						emailSettingsCacheKey,
 						( context as MutationContext ).previousSettings
 					);
 				}
 			},
 			onSettled: () => {
-				queryClient.invalidateQueries( [ 'read', 'email-settings', isLoggedIn ] );
+				// pass in a more minimal key, everything to the right will be invalidated
+				queryClient.invalidateQueries( [ 'read', 'email-settings' ] );
 			},
 		}
 	);

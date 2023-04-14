@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { callApi } from '../helpers';
 import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
+import useCacheKey from '../hooks/use-cache-key';
 import type { SiteSubscription } from '../types';
 
 type SubscriptionManagerSiteSubscriptions = {
@@ -24,12 +25,13 @@ const useSiteSubscriptionsQuery = ( {
 	sort = defaultSort,
 	number = 100,
 }: SubscriptionManagerSiteSubscriptionsQueryProps = {} ) => {
-	const isLoggedIn = useIsLoggedIn();
+	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
+	const cacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
 
 	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching, ...rest } =
 		useInfiniteQuery< SubscriptionManagerSiteSubscriptions >(
-			[ 'read', 'site-subscriptions', isLoggedIn ],
+			cacheKey,
 			async ( { pageParam = 1 } ) => {
 				return await callApi< SubscriptionManagerSiteSubscriptions >( {
 					path: `/read/following/mine?number=${ number }&page=${ pageParam }`,
