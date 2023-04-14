@@ -188,7 +188,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					image={ imgBusinessPlan }
 				>
 					{
-						/* Translators: %(discountRate)d%% is a discount percentage like 20% or 25%, followed by an escaped percentage sign %% */
+						/* translators: %(discountRate)d%% is a discount percentage like 20% or 25%, followed by an escaped percentage sign %% */
 						translate(
 							'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com Business plan? ' +
 								'Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. ' +
