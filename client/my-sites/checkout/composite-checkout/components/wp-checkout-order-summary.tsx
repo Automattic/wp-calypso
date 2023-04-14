@@ -194,7 +194,13 @@ function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
+function CheckoutSummaryRefundWindows( {
+	cart,
+	highlight = false,
+}: {
+	cart: ResponseCart;
+	highlight?: boolean;
+} ) {
 	const translate = useTranslate();
 
 	const refundPolicies = getRefundPolicies( cart );
@@ -291,7 +297,7 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 	return (
 		<CheckoutSummaryFeaturesListItem>
 			<WPCheckoutCheckIcon id="features-list-refund-text" />
-			{ text }
+			{ highlight ? <strong>{ text }</strong> : text }
 		</CheckoutSummaryFeaturesListItem>
 	);
 }
@@ -378,7 +384,9 @@ function CheckoutSummaryFlowFeaturesList( { flowName }: { flowName: string } ) {
 					</CheckoutSummaryFeaturesListItem>
 				);
 			} ) }
-			{ isHostingFlow( flowName ) && <CheckoutSummaryRefundWindows cart={ responseCart } /> }
+			{ isHostingFlow( flowName ) && (
+				<CheckoutSummaryRefundWindows cart={ responseCart } highlight />
+			) }
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
