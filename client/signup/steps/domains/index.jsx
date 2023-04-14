@@ -573,6 +573,11 @@ class DomainsStep extends Component {
 					isReskinned={ this.props.isReskinned }
 					reskinSideContent={ this.getSideContent() }
 					isInLaunchFlow={ 'launch-site' === this.props.flowName }
+					promptText={
+						this.isHostingFlow()
+							? this.props.translate( 'Stand out with a short and memorable domain' )
+							: undefined
+					}
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -627,6 +632,8 @@ class DomainsStep extends Component {
 		);
 	};
 
+	isHostingFlow = () => isHostingFlow( this.props.flowName );
+
 	getSubHeaderText() {
 		const { flowName, isAllDomains, siteType, stepSectionName, isReskinned, translate } =
 			this.props;
@@ -653,7 +660,7 @@ class DomainsStep extends Component {
 			);
 		}
 
-		if ( isHostingFlow( flowName ) ) {
+		if ( this.isHostingFlow() ) {
 			const components = {
 				span: (
 					<button
@@ -665,7 +672,7 @@ class DomainsStep extends Component {
 			};
 
 			return translate(
-				'Enter some descriptive keywords to get started. Not sure yet? {{span}}Decide later{{/span}}.',
+				'Find the perfect domain for your exciting new project or {{span}}decide later{{/span}}.',
 				{ components }
 			);
 		}

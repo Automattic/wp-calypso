@@ -1293,11 +1293,11 @@ class RegisterDomainStep extends Component {
 	};
 
 	renderBestNamesPrompt() {
-		const { translate } = this.props;
+		const { translate, promptText } = this.props;
 		return (
 			<div className="register-domain-step__example-prompt">
 				<Icon icon={ tip } size={ 20 } />
-				{ translate( 'The best names are short and memorable' ) }
+				{ promptText ?? translate( 'The best names are short and memorable' ) }
 			</div>
 		);
 	}
