@@ -16,7 +16,6 @@ interface ThemeCardProps {
 	banner?: React.ReactNode;
 	badge?: React.ReactNode;
 	styleVariations: StyleVariation[];
-	selectedStyleVariation?: StyleVariation;
 	optionsMenu?: React.ReactNode;
 	isActive?: boolean;
 	isInstalling?: boolean;
@@ -24,8 +23,7 @@ interface ThemeCardProps {
 	isSoftLaunched?: boolean;
 	onClick?: () => void;
 	onImageClick?: () => void;
-	onStyleVariationClick?: ( styleVariation: StyleVariation ) => void;
-	onStyleVariationMoreClick?: () => void;
+	onStyleVariationClick?: () => void;
 }
 
 const ThemeCard = forwardRef(
@@ -39,7 +37,6 @@ const ThemeCard = forwardRef(
 			banner,
 			badge,
 			styleVariations = [],
-			selectedStyleVariation,
 			optionsMenu,
 			isActive,
 			isInstalling,
@@ -48,7 +45,6 @@ const ThemeCard = forwardRef(
 			onClick,
 			onImageClick,
 			onStyleVariationClick,
-			onStyleVariationMoreClick,
 		}: ThemeCardProps,
 		forwardedRef: Ref< any > // eslint-disable-line @typescript-eslint/no-explicit-any
 	) => {
@@ -69,28 +65,18 @@ const ThemeCard = forwardRef(
 			<Card className={ themeClasses } onClick={ onClick } data-e2e-theme={ e2eName }>
 				<div ref={ forwardedRef } className="theme-card__content">
 					{ banner && <div className="theme-card__banner">{ banner }</div> }
-					<div className="theme-card__image-container">
-						<a
-							ref={ imageRef }
-							className="theme-card__image"
-							href={ imageClickUrl || '#' }
-							aria-label={ name }
-							onClick={ ( e ) => {
-								if ( ! imageClickUrl ) {
-									e.preventDefault();
-								}
-
-								onImageClick?.();
-							} }
-							onMouseEnter={ () => setIsShowTooltip( true ) }
-							onMouseLeave={ () => setIsShowTooltip( false ) }
-						>
-							{ isActionable && imageActionLabel && (
-								<div className="theme-card__image-label">{ imageActionLabel }</div>
-							) }
-							{ image }
-						</a>
-					</div>
+					<a
+						ref={ imageRef }
+						className="theme-card__image"
+						href={ imageClickUrl || 'javascript:;' /* fallback for a11y */ }
+						aria-label={ name }
+						onClick={ onImageClick }
+						onMouseEnter={ () => setIsShowTooltip( true ) }
+						onMouseLeave={ () => setIsShowTooltip( false ) }
+					>
+						{ isActionable && <div className="theme-card__image-label">{ imageActionLabel }</div> }
+						{ image }
+					</a>
 					{ isInstalling && (
 						<div className="theme-card__installing">
 							<div className="theme-card__installing-dot" />
@@ -126,8 +112,7 @@ const ThemeCard = forwardRef(
 							<div className="theme-card__info-style-variations">
 								<StyleVariationBadges
 									variations={ styleVariations }
-									selectedVariation={ selectedStyleVariation }
-									onMoreClick={ onStyleVariationMoreClick }
+									onMoreClick={ onStyleVariationClick }
 									onClick={ onStyleVariationClick }
 								/>
 							</div>
