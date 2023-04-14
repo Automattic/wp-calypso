@@ -6,5 +6,3 @@ export type PreviewProps = {
 	image?: string;
 	headingsLevel?: number;
 };
-
-export type TextFormatter = ( text: string ) => string;
