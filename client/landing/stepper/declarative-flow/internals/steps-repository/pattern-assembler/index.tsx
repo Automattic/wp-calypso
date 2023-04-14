@@ -599,6 +599,7 @@ const PatternAssembler = ( {
 				onMoveDownSection={ onMoveDownSection }
 				onDeleteHeader={ onDeleteHeader }
 				onDeleteFooter={ onDeleteFooter }
+				recordTracksEvent={ recordTracksEvent }
 			/>
 			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />
 		</NavigatorProvider>
