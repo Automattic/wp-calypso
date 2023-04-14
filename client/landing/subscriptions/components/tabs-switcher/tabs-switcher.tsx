@@ -14,14 +14,6 @@ import {
 } from 'calypso/landing/subscriptions/components/tab-views';
 import './styles.scss';
 
-const getFullPath = ( subpath: string ) => `/subscriptions/${ subpath }`;
-const [ sitesPath, commentsPath, pendingPath, settingsPath ] = [
-	'sites',
-	'comments',
-	'pending',
-	'settings',
-].map( getFullPath );
-
 const TabsSwitcher = () => {
 	const translate = useTranslate();
 	const navigate = useNavigate();
@@ -32,6 +24,15 @@ const TabsSwitcher = () => {
 		config.isEnabled( 'subscription-management-comments-view' ) && locale === 'en';
 	const shouldEnablePendingTab =
 		config.isEnabled( 'subscription-management-pending-view' ) && locale === 'en';
+
+	const getFullPath = ( subpath: string ) =>
+		`/subscriptions/${ subpath }${ locale !== 'en' ? '/' + locale : '' }`;
+	const [ sitesPath, commentsPath, pendingPath, settingsPath ] = [
+		'sites',
+		'comments',
+		'pending',
+		'settings',
+	].map( getFullPath );
 
 	return (
 		<>
@@ -88,10 +89,10 @@ const TabsSwitcher = () => {
 
 			<Routes>
 				<Route index element={ <Navigate to="sites" /> } />
-				<Route path="sites*" element={ <Sites /> } />
-				<Route path="comments*" element={ <Comments /> } />
-				<Route path="pending*" element={ <Pending /> } />
-				<Route path="settings" element={ <Settings /> } />
+				<Route path="sites/*" element={ <Sites /> } />
+				<Route path="comments/*" element={ <Comments /> } />
+				<Route path="pending/*" element={ <Pending /> } />
+				<Route path="settings/*" element={ <Settings /> } />
 			</Routes>
 		</>
 	);
