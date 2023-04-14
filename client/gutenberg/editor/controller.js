@@ -292,14 +292,29 @@ export const redirectSiteEditor = async ( context ) => {
 	// Calling replace to avoid adding an entry to the browser history upon redirect.
 	return location.replace( siteEditorUrl );
 };
-
+/**
+ * Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
+ *
+ * @param {Object} context Shared context in the route.
+ * @param {Function} next  Next registered callback for the route.
+ * @returns {*}            Whatever the next callback returns.
+ */
 export function redirectToPermalinkIfLoggedOut( context, next ) {
 	if ( isUserLoggedIn( context.store.getState() ) ) {
 		return next();
 	}
 	const siteFragment = context.params.site || getSiteFragment( context.path );
-	// Redirect the user to the permalink of the post,page, custom post type if the post is published.
-	// else the endpoint will send the user to the login page.
-	window.location = `https://public-api.wordpress.com/wpcom/v2/redirect?path=${ context.path }&site=${ siteFragment }`;
+	const CONFIGURABLE_TYPES = [ 'jetpack-portfolio', 'jetpack-testimonial' ];
+	const explodedPath = context.path.split( '/' );
+	if (
+		context.path &&
+		explodedPath[ 1 ] === 'edit' &&
+		! CONFIGURABLE_TYPES.includes( explodedPath[ 2 ] )
+	) {
+		return next();
+	}
+	// Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
+	// else the endpoint will redirect the user to the login page.
+	window.location = `https://public-api.wordpress.com/wpcom/v2/sites/${ siteFragment }/redirect?path=${ context.path }`;
 	return;
 }
