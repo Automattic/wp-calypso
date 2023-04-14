@@ -50,7 +50,7 @@ export class Login extends Component {
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
 		action: PropTypes.string,
-		isGravatarLogin: PropTypes.bool,
+		isGravatar: PropTypes.bool,
 	};
 
 	static defaultProps = { isJetpack: false, isWhiteLogin: false, isLoginView: true };
@@ -224,7 +224,7 @@ export class Login extends Component {
 			isJetpack,
 			isWhiteLogin,
 			isP2Login,
-			isGravatarLogin,
+			isGravatar,
 			oauth2Client,
 			privateSite,
 			socialConnect,
@@ -261,7 +261,7 @@ export class Login extends Component {
 						twoFactorAuthType={ twoFactorAuthType }
 						isWhiteLogin={ isWhiteLogin }
 						isP2Login={ isP2Login }
-						isGravatarLogin={ isGravatarLogin }
+						isGravatar={ isGravatar }
 						signupUrl={ signupUrl }
 						usernameOrEmail={ this.state.usernameOrEmail }
 						oauth2ClientId={ this.props.oauth2Client?.id }
@@ -281,7 +281,7 @@ export class Login extends Component {
 				isJetpack={ isJetpack }
 				isWhiteLogin={ isWhiteLogin }
 				isP2Login={ isP2Login }
-				isGravatarLogin={ isGravatarLogin }
+				isGravatar={ isGravatar }
 				oauth2Client={ oauth2Client }
 				socialService={ socialService }
 				socialServiceResponse={ socialServiceResponse }

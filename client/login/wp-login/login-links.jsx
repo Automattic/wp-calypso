@@ -39,7 +39,7 @@ export class LoginLinks extends Component {
 		twoFactorAuthType: PropTypes.string,
 		usernameOrEmail: PropTypes.string,
 		isPartnerSignup: PropTypes.bool,
-		isGravatarLogin: PropTypes.bool,
+		isGravatar: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -127,7 +127,7 @@ export class LoginLinks extends Component {
 		if (
 			isCrowdsignalOAuth2Client( this.props.oauth2Client ) ||
 			isJetpackCloudOAuth2Client( this.props.oauth2Client ) ||
-			( this.props.isWhiteLogin && ! this.props.isGravatarLogin ) ||
+			( this.props.isWhiteLogin && ! this.props.isGravatar ) ||
 			this.props.isP2Login ||
 			this.props.isPartnerSignup
 		) {
@@ -316,7 +316,7 @@ export class LoginLinks extends Component {
 		const {
 			currentRoute,
 			isP2Login,
-			isGravatarLogin,
+			isGravatar,
 			locale,
 			oauth2Client,
 			pathname,
@@ -325,7 +325,7 @@ export class LoginLinks extends Component {
 			usernameOrEmail,
 		} = this.props;
 
-		if ( isGravatarLogin ) {
+		if ( isGravatar ) {
 			return null;
 		}
 
@@ -367,7 +367,7 @@ export class LoginLinks extends Component {
 			<div
 				className={ classnames( 'wp-login__links', {
 					'has-2fa-links': this.props.twoFactorAuthType,
-					'is-gravatar-links': this.props.isGravatarLogin,
+					'is-gravatar-links': this.props.isGravatar,
 				} ) }
 			>
 				{ this.renderSignUpLink() }

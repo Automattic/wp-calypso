@@ -94,7 +94,7 @@ class Login extends Component {
 		isPartnerSignup: PropTypes.bool,
 		loginEmailAddress: PropTypes.string,
 		action: PropTypes.string,
-		isGravatarLogin: PropTypes.bool,
+		isGravatar: PropTypes.bool,
 	};
 
 	state = {
@@ -260,7 +260,7 @@ class Login extends Component {
 			isWhiteLogin,
 			isJetpackWooCommerceFlow,
 			isP2Login,
-			isGravatarLogin,
+			isGravatar,
 			wccomFrom,
 			isManualRenewalImmediateLoginAttempt,
 			linkingSocialService,
@@ -464,7 +464,7 @@ class Login extends Component {
 		}
 
 		if ( isWhiteLogin ) {
-			preHeader = isGravatarLogin ? (
+			preHeader = isGravatar ? (
 				<div className="login__form-gravatar-logo">
 					<img src={ oauth2Client.icon } alt={ oauth2Client.title } />
 				</div>

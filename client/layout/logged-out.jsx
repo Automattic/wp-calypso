@@ -41,7 +41,7 @@ const LayoutLoggedOut = ( {
 	isJetpackWooCommerceFlow,
 	isJetpackWooDnaFlow,
 	isP2Login,
-	isGravatarLogin,
+	isGravatar,
 	wccomFrom,
 	masterbarIsHidden,
 	oauth2Client,
@@ -91,7 +91,7 @@ const LayoutLoggedOut = ( {
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 		'is-p2-login': isP2Login,
-		'is-gravatar': isGravatarLogin,
+		'is-gravatar': isGravatar,
 	};
 
 	let masterbar = null;
@@ -106,7 +106,7 @@ const LayoutLoggedOut = ( {
 		} else if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			masterbar = null;
 		} else {
-			if ( ! isGravatarLogin ) {
+			if ( ! isGravatar ) {
 				classes.dops = true;
 				// Using .is-gravatar instead of .gravatar to avoid style conflicts with the Gravatar component
 				classes[ oauth2Client.name ] = true;
@@ -224,14 +224,14 @@ export default withCurrentRoute(
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
 		const oauth2Client = getCurrentOAuth2Client( state );
-		const isGravatarLogin = isGravatarOAuth2Client( oauth2Client );
+		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isReskinLoginRoute =
 			currentRoute.startsWith( '/log-in' ) &&
 			! isJetpackLogin &&
 			! isP2Login &&
 			Boolean( currentQuery?.client_id ) === false;
 		const isWhiteLogin =
-			isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart ) || isGravatarLogin;
+			isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart ) || isGravatar;
 		const noMasterbarForRoute =
 			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
@@ -250,7 +250,7 @@ export default withCurrentRoute(
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
 			isP2Login,
-			isGravatarLogin,
+			isGravatar,
 			wccomFrom,
 			masterbarIsHidden,
 			sectionGroup,
