@@ -38,6 +38,10 @@
 	border-top: $facebook-preview-body-border;
 	border-bottom: $facebook-preview-body-border;
 
+	&.is-loading {
+		visibility: hidden;
+	}
+
 	&.is-portrait {
 		flex-direction: row;
 	}
