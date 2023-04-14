@@ -32,11 +32,22 @@ const useSiteSubscriptionsQuery = ( {
 		useInfiniteQuery< SubscriptionManagerSiteSubscriptions >(
 			cacheKey,
 			async ( { pageParam = 1 } ) => {
-				return await callApi< SubscriptionManagerSiteSubscriptions >( {
+				const data = await callApi< SubscriptionManagerSiteSubscriptions >( {
 					path: `/read/following/mine?number=${ number }&page=${ pageParam }`,
 					isLoggedIn,
 					apiVersion: '1.2',
 				} );
+
+				return {
+					...data,
+					subscriptions: data.subscriptions
+						? data.subscriptions.map( ( subscription ) => ( {
+								...subscription,
+								last_updated: new Date( subscription.last_updated ),
+								date_subscribed: new Date( subscription.date_subscribed ),
+						  } ) )
+						: [],
+				};
 			},
 			{
 				enabled,
@@ -58,17 +69,12 @@ const useSiteSubscriptionsQuery = ( {
 	// Flatten all the pages into a single array containing all subscriptions
 	const flattenedData = data?.pages?.map( ( page ) => page.subscriptions ).flat();
 
-	// Transform the dates into Date objects, when no subscriptions are present, the data is null, so filter it
-	const transformedData = flattenedData
-		?.filter( ( item ) => item !== null )
-		.map( ( subscription ) => ( {
-			...subscription,
-			last_updated: new Date( subscription.last_updated ),
-			date_subscribed: new Date( subscription.date_subscribed ),
-		} ) );
-
 	return {
-		data: transformedData?.filter( filter ).sort( sort ),
+		data:
+			flattenedData
+				?.filter( ( item ) => item !== null )
+				?.filter( filter )
+				.sort( sort ) ?? [],
 		isFetchingNextPage,
 		isFetching,
 		hasNextPage,
