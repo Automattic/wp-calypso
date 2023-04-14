@@ -2,11 +2,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { applyCallbackToPages, callApi } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
 import useCacheKey from '../hooks/use-cache-key';
-import {
-	PagedQueryResult,
-	SiteSubscription,
-	SubscriptionManagerSubscriptionsCount,
-} from '../types';
+import { SiteSubscription, SubscriptionManagerSubscriptionsCount } from '../types';
 
 type SiteSubscriptionUnfollowParams = {
 	blog_id: number | string;
