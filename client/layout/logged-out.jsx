@@ -91,7 +91,7 @@ const LayoutLoggedOut = ( {
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 		'is-p2-login': isP2Login,
-		'is-gravatar-login': isGravatarLogin,
+		'is-gravatar': isGravatarLogin,
 	};
 
 	let masterbar = null;
@@ -108,7 +108,7 @@ const LayoutLoggedOut = ( {
 		} else {
 			if ( ! isGravatarLogin ) {
 				classes.dops = true;
-				// Using .is-gravatar-login instead of .gravatar to avoid style conflicts with the Gravatar component
+				// Using .is-gravatar instead of .gravatar to avoid style conflicts with the Gravatar component
 				classes[ oauth2Client.name ] = true;
 			}
 

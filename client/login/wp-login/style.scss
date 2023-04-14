@@ -387,7 +387,7 @@ $image-height: 47px;
 		}
 	}
 	.wp-login__links > .button:first-of-type,
-	.wp-login__links:not(.has-2fa-links):not(.is-gravatar-login-links) > a:first-of-type {
+	.wp-login__links:not(.has-2fa-links):not(.is-gravatar-links) > a:first-of-type {
 		/* Note: Matches secondary button used in /start (signup). Should probably turn this into a button. */
 		background: transparent;
 		margin: 0;
@@ -542,7 +542,7 @@ $image-height: 47px;
 	}
 }
 
-.layout.is-gravatar-login {
+.layout.is-gravatar {
 	.wp-login__main {
 		max-width: 640px;
 	}

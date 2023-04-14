@@ -367,7 +367,7 @@ export class LoginLinks extends Component {
 			<div
 				className={ classnames( 'wp-login__links', {
 					'has-2fa-links': this.props.twoFactorAuthType,
-					'is-gravatar-login-links': this.props.isGravatarLogin,
+					'is-gravatar-links': this.props.isGravatarLogin,
 				} ) }
 			>
 				{ this.renderSignUpLink() }
