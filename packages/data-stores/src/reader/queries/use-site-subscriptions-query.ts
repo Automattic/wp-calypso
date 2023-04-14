@@ -65,6 +65,9 @@ const useSiteSubscriptionsQuery = ( {
 
 	return {
 		data: transformedData?.filter( filter ).sort( sort ),
+		isFetchingNextPage,
+		isFetching,
+		hasNextPage,
 		...rest,
 	};
 };
