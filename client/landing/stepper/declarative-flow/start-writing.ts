@@ -31,7 +31,7 @@ const startWriting: Flow = {
 					return navigate( 'processing' );
 				case 'processing': {
 					if ( providedDependencies?.siteSlug ) {
-						// return redirect( `https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php` );
+						return redirect( `https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php` );
 					}
 				}
 			}
@@ -59,11 +59,11 @@ const startWriting: Flow = {
 				message: `${ flowName } requires a logged in user`,
 			};
 		} else if ( currentUserSiteCount && currentUserSiteCount > 0 ) {
-			// redirect( '/post?showLaunchpad=true' );
-			// result = {
-			// 	state: AssertConditionState.CHECKING,
-			// 	message: `${ flowName } requires no preexisting sites`,
-			// };
+			redirect( '/post?showLaunchpad=true' );
+			result = {
+				state: AssertConditionState.CHECKING,
+				message: `${ flowName } requires no preexisting sites`,
+			};
 		}
 
 		return result;
