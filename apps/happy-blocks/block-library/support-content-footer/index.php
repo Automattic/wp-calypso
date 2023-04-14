@@ -49,7 +49,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 			<div class="resource-link">
 				<p>
 					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
-						<?php esc_html_e( 'Search Guides', 'full-site-editing' ); ?>
+						<?php esc_html_e( 'Search Guides', 'happy-blocks' ); ?>
 						<figure><img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
 					</a>
 				</p>
@@ -116,7 +116,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 		<div class="support-content-subscribe">
 			<p><?php esc_html_e( 'Sign up for educational resources updates:', 'happy-blocks' ); ?></p>
 			<form action="https://subscribe.wordpress.com" method="post" accept-charset="utf-8" data-blog="<?php echo get_current_blog_id(); ?>" data-post_access_level="everybody" id="subscribe-blog">
-				<input class="support-content-subscribe-email" required="required" type="email" name="email" placeholder="<?php esc_html_e( 'Enter your email address', 'full-site-editing' ); ?>"  id="subscribe-field">
+				<input class="support-content-subscribe-email" required="required" type="email" name="email" placeholder="<?php esc_html_e( 'Enter your email address', 'happy-blocks' ); ?>"  id="subscribe-field">
 				<input type="hidden" name="action" value="subscribe">
 				<input type="hidden" name="blog_id" value="<?php echo get_current_blog_id(); ?>">
 				<input type="hidden" name="sub-type" value="subscribe-block">
