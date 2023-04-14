@@ -44,6 +44,13 @@ type SiteSubscriptionDeliveryMethods = {
 	};
 };
 
+export type PagedQueryResult< TDataType, TKey extends string > = {
+	pages: {
+		[ K in TKey ]: TDataType[];
+	}[];
+	pageParams: number;
+};
+
 export type SiteSubscription = {
 	ID: string;
 	blog_ID: string;
