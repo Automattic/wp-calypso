@@ -89,6 +89,7 @@ const PaymentPlan: React.FC< PaymentPlanProps > = ( {
 									formattedOriginalPrice={ formatCurrency( originalPrice, currencyCode, {
 										stripZeros: true,
 									} ) }
+									isDiscounted={ !! discountedPrice }
 								/>
 							</div>
 						</div>
