@@ -41,7 +41,7 @@ export const getPlanFeatureAccessor = ( {
 	isInVerticalScrollingPlansExperiment?: boolean;
 	plan: IncompleteWPcomPlan;
 } ) => {
-	const planFeatureAccessor = [
+	return [
 		newsletterFeatures( flowName, plan ),
 		linkInBioFeatures( flowName, plan ),
 		hostingFeatures( flowName, plan ),
@@ -49,12 +49,6 @@ export const getPlanFeatureAccessor = ( {
 	].find( ( accessor ) => {
 		return accessor instanceof Function;
 	} );
-
-	if ( ! planFeatureAccessor ) {
-		return planFeatureAccessor;
-	}
-
-	return planFeatureAccessor();
 };
 
 const newsletterHighlightedFeatures = ( flowName: string, plan: IncompleteWPcomPlan ) => {
