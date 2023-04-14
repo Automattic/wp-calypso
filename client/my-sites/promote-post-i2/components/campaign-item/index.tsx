@@ -87,7 +87,7 @@ export default function CampaignItem( props: Props ) {
 			<td>{ budgetString }</td>
 			<td>{ formatNumber( impressions_total ) }</td>
 			<td>{ formatNumber( clicks_total ) }</td>
-			<td>{ campaignContainsData && <Button icon={ chevronRight } onClick={ () => {} } /> }</td>
+			<td>{ campaignContainsData && <Button icon={ chevronRight } /> }</td>
 		</tr>
 	);
 }

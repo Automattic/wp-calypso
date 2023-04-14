@@ -4,7 +4,7 @@ import './style.scss';
 import Gridicon from 'calypso/../packages/components/src/gridicon';
 import Search from 'calypso/components/search';
 import SelectDropdown from 'calypso/components/select-dropdown';
-import CampaignsFilter, { CampaignsFilterType } from '../campaigns-filter';
+import CampaignsFilter from '../campaigns-filter';
 
 interface Props {
 	mode: 'campaigns' | 'posts';
@@ -22,7 +22,6 @@ export default function SearchBar( props: Props ) {
 	const translate = useTranslate();
 	const [ searchInput, setSearchInput ] = React.useState( '' );
 	const [ currentSortOption, setSortOption ] = React.useState( sortOptions[ 0 ].value );
-	const [ campaignFilter, setCampaignFilter ] = React.useState< CampaignsFilterType >( 'all' );
 
 	const onSearch = () => {
 		return;
@@ -32,11 +31,8 @@ export default function SearchBar( props: Props ) {
 		setSearchInput( '' );
 	};
 
-	const [ data, setData ] = React.useState( [] );
-
-	const onChangeFilter = ( type: CampaignsFilterType ) => {
+	const onChangeFilter = () => {
 		setSearchInput( '' );
-		setCampaignFilter( type );
 	};
 
 	return (

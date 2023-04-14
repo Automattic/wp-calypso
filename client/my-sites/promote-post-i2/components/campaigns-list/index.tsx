@@ -5,7 +5,6 @@ import ListEnd from 'calypso/components/list-end';
 import Notice from 'calypso/components/notice';
 import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
-import CampaignItem from 'calypso/my-sites/promote-post/components/campaign-item';
 import './style.scss';
 import CampaignsEmpty from 'calypso/my-sites/promote-post/components/campaigns-empty';
 import CampaignsTable from '../campaigns-table';
@@ -27,8 +26,6 @@ export default function CampaignsList( {
 	isError,
 	hasLocalUser,
 	campaigns,
-	expandedCampaigns,
-	setExpandedCampaigns,
 }: {
 	isLoading: boolean;
 	hasLocalUser: boolean;
@@ -60,14 +57,6 @@ export default function CampaignsList( {
 	if ( ! memoCampaigns.length ) {
 		return <EmptyPromotionList type="campaigns" />;
 	}
-
-	const handleClickCampaign = ( isExpanded: boolean, campaign: Campaign ) => {
-		if ( isExpanded ) {
-			setExpandedCampaigns( [ ...expandedCampaigns, campaign.campaign_id ] );
-		} else {
-			setExpandedCampaigns( expandedCampaigns.filter( ( id ) => id !== campaign.campaign_id ) );
-		}
-	};
 
 	return (
 		<>
