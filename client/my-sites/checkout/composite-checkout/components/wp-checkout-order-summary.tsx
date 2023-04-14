@@ -378,6 +378,7 @@ function CheckoutSummaryFlowFeaturesList( { flowName }: { flowName: string } ) {
 					</CheckoutSummaryFeaturesListItem>
 				);
 			} ) }
+			{ isHostingFlow( flowName ) && <CheckoutSummaryRefundWindows cart={ responseCart } /> }
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }
