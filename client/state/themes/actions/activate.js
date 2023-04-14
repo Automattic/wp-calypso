@@ -10,10 +10,10 @@ import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-the
 import {
 	getTheme,
 	hasAutoLoadingHomepageModalAccepted,
-	isThemePremium,
 	themeHasAutoLoadingHomepage,
 	wasAtomicTransferDialogAccepted,
 	isExternallyManagedTheme,
+	doesThemeBundleSoftwareSet,
 } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
@@ -75,18 +75,24 @@ export function activate(
 		}
 
 		/**
-		 * Check if its a free dotcom theme, if so, dispatch the activate action
+		 * Check if its a free or premium dotcom theme, if so, dispatch the activate action
 		 * and redirect to the Marketplace Thank You Page.
 		 *
-		 * A theme is considered free when its not premium and not externally managed.
+		 * A theme is considered free or premium when it is not:
+		 * - ExternallyManaged
+		 * - A software bundle (like woo-on-plans)
 		 *
 		 * Currently a feature flag check is also being applied.
 		 */
-		const isPremiumTheme = isThemePremium( getState(), themeId );
 		const isExternallyManaged = isExternallyManagedTheme( getState(), themeId );
-		const isFreeTheme = ! isPremiumTheme && ! isExternallyManaged;
+		const isWooTheme = doesThemeBundleSoftwareSet( getState(), themeId );
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
-		if ( isFreeTheme && isDotComTheme && isEnabled( 'themes/display-thank-you-page' ) ) {
+		if (
+			isDotComTheme &&
+			isEnabled( 'themes/display-thank-you-page' ) &&
+			! isWooTheme &&
+			! isExternallyManaged
+		) {
 			dispatchActivateAction(
 				dispatch,
 				getState,

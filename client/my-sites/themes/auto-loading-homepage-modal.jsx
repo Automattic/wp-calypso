@@ -1,10 +1,8 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { isEnabled } from '@automattic/calypso-config';
 import { Dialog, Gridicon, Spinner } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
-import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -102,10 +100,13 @@ class AutoLoadingHomepageModal extends Component {
 					theme: installingThemeId,
 					keep_current_homepage: keepCurrentHomepage,
 				} );
-				this.props.activateTheme( installingThemeId, siteId, source, false, keepCurrentHomepage );
-				if ( isEnabled( 'themes/display-thank-you-page' ) ) {
-					page.redirect( `/marketplace/thank-you/${ siteId }?themes=${ installingThemeId }` );
-				}
+				return this.props.activateTheme(
+					installingThemeId,
+					siteId,
+					source,
+					false,
+					keepCurrentHomepage
+				);
 			} else if ( 'keepCurrentTheme' === action ) {
 				recordTracksEvent( 'calypso_theme_autoloading_homepage_modal_dismiss', {
 					action: 'button',
