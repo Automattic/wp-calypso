@@ -77,7 +77,7 @@ export class Tweet extends PureComponent {
 			? text.substring( 0, text.lastIndexOf( cardUrl ) )
 			: text;
 
-		let __html = stripHtmlTags( deCardedText ).replace( /\n/g, '<br/>' );
+		let __html = stripHtmlTags( deCardedText );
 
 		// Convert URLs to hyperlinks.
 		__html = __html.replace(
@@ -91,6 +91,9 @@ export class Tweet extends PureComponent {
 			/(^|\s)#(\w+)/g,
 			'$1<a href="https://twitter.com/hashtag/$2" rel="noopener noreferrer" target="_blank">#$2</a>'
 		);
+
+		// Convert newlines to <br> tags.
+		__html = __html.replace( /\n/g, '<br/>' );
 
 		// We can enable dangerouslySetInnerHTML here, since the text we're using is stripped
 		// of all HTML tags, then only has safe tags added in createTweetMarkup().
