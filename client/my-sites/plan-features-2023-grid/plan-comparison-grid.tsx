@@ -4,8 +4,10 @@ import {
 	getPlanClass,
 	isWpcomEnterpriseGridPlan,
 	isFreePlan,
+	isWooExpressPlan,
 	FEATURE_GROUP_ESSENTIAL_FEATURES,
 	getPlanFeaturesGrouped,
+	getWooExpressFeaturesGrouped,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PlanSlug,
 } from '@automattic/calypso-products';
@@ -495,7 +497,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 				<>
 					<span className="plan-comparison-grid__plan-title">{ translate( 'Storage' ) }</span>
 					<StorageButton className="plan-features-2023-grid__storage-button" key={ planName }>
-						{ storageFeature.getCompareTitle?.() }
+						{ storageFeature?.getCompareTitle?.() }
 					</StorageButton>
 				</>
 			) : (
@@ -604,7 +606,18 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	onUpgradeClick,
 } ) => {
 	const translate = useTranslate();
-	const featureGroupMap = getPlanFeaturesGrouped();
+	// Check to see if we have at least one Woo Express plan we're comparing.
+	const hasWooExpressFeatures = useMemo( () => {
+		const plans = ( planProperties ?? [] ).filter(
+			( { planName, isVisible } ) => isVisible && isWooExpressPlan( planName )
+		);
+
+		return plans.length > 0;
+	}, [ planProperties ] );
+	// If we have a Woo Express plan, use the Woo Express feature groups, otherwise use the regular feature groups.
+	const featureGroupMap = hasWooExpressFeatures
+		? getWooExpressFeaturesGrouped()
+		: getPlanFeaturesGrouped();
 	const displayedPlansProperties = useMemo(
 		() =>
 			( planProperties ?? [] ).filter(
@@ -673,7 +686,9 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 
 			const annualOnlyFeatures = planObject.getAnnualPlansOnlyFeatures?.() ?? [];
 
-			let featuresAvailable = [ ...wpcomFeatures, ...jetpackFeatures ];
+			let featuresAvailable = isWooExpressPlan( planName )
+				? [ ...wpcomFeatures ]
+				: [ ...wpcomFeatures, ...jetpackFeatures ];
 			if ( isMonthly ) {
 				// Filter out features only available annually
 				featuresAvailable = featuresAvailable.filter(
