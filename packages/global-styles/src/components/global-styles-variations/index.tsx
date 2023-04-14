@@ -59,8 +59,6 @@ const GlobalStylesVariation = ( {
 				'is-active': isActive,
 			} ) }
 			role="button"
-			onBlur={ () => setIsFocused( false ) }
-			onFocus={ () => setIsFocused( true ) }
 			onClick={ onSelect }
 			onKeyDown={ selectOnEnter }
 			tabIndex={ 0 }
@@ -79,6 +77,8 @@ const GlobalStylesVariation = ( {
 						title={ globalStylesVariation.title }
 						inlineCss={ globalStylesVariation.inline_css }
 						isFocused={ isFocused || showOnlyHoverView }
+						onBlur={ () => setIsFocused( false ) }
+						onFocus={ () => setIsFocused( true ) }
 					/>
 				</GlobalStylesContext.Provider>
 			</div>
