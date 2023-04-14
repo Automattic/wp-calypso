@@ -703,7 +703,7 @@ export class PlanFeatures2023Grid extends Component<
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( planProperties ) => (
-				<td>
+				<td key={ planProperties.planName }>
 					<div
 						className={ `plan-features-2023-grid__refund-notice ${ getPlanClass(
 							planProperties.planName
