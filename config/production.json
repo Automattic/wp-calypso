@@ -143,7 +143,6 @@
 		"ssr/prefetch-timebox": true,
 		"ssr/sample-log-cache-misses": true,
 		"stats/horizontal-bars-everywhere": true,
-		"stats/insights-page-grid": true,
 		"stats/new-video-summary": false,
 		"stats/subscribers-section": false,
 		"stepper-woocommerce-poc": true,
