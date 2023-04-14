@@ -22,6 +22,7 @@ import {
 	PlanSlug,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
+import { isHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -381,6 +382,7 @@ export class PlanFeatures2023Grid extends Component<
 					<tr>{ this.renderPlanPrice( planPropertiesObj ) }</tr>
 					<tr>{ this.renderBillingTimeframe( planPropertiesObj ) }</tr>
 					<tr>{ this.renderTopButtons( planPropertiesObj ) }</tr>
+					<tr>{ this.maybeRenderRefundNotice( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPreviousFeaturesIncludedTitle( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanFeaturesList( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanStorageOptions( planPropertiesObj ) }</tr>
@@ -689,6 +691,32 @@ export class PlanFeatures2023Grid extends Component<
 					</Container>
 				);
 			} );
+	}
+
+	maybeRenderRefundNotice( planPropertiesObj: PlanProperties[] ) {
+		const { translate, flowName } = this.props;
+
+		if ( ! isHostingFlow( flowName ) ) {
+			return false;
+		}
+
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( planProperties ) => (
+				<td>
+					<div
+						className={ `plan-features-2023-grid__refund-notice ${ getPlanClass(
+							planProperties.planName
+						) }` }
+					>
+						{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
+							args: {
+								dayCount: planProperties.billingPeriod === 365 ? 14 : 7,
+							},
+						} ) }
+					</div>
+				</td>
+			) );
 	}
 
 	renderEnterpriseClientLogos() {
