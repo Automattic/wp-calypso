@@ -9,12 +9,13 @@ import useSiteDeliveryFrequencyMutation from '../mutations/use-site-delivery-fre
 
 // Mock the useIsLoggedIn function
 jest.mock( '../hooks', () => ( {
-	useIsLoggedIn: jest.fn().mockReturnValue( true ),
+	useIsLoggedIn: jest.fn().mockReturnValue( { isLoggedIn: true } ),
 } ) );
 
 // Mock the entire Helpers module
 jest.mock( '../helpers', () => ( {
 	callApi: jest.fn(),
+	applyCallbackToPages: jest.fn(),
 } ) );
 
 const client = new QueryClient();

@@ -2,7 +2,11 @@ import { useMutation, useQueryClient } from 'react-query';
 import { applyCallbackToPages, callApi } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
 import useCacheKey from '../hooks/use-cache-key';
-import { SiteSubscription, SubscriptionManagerSubscriptionsCount } from '../types';
+import {
+	PagedQueryResult,
+	SiteSubscription,
+	SubscriptionManagerSubscriptionsCount,
+} from '../types';
 
 type SiteSubscriptionUnfollowParams = {
 	blog_id: number | string;
@@ -18,7 +22,7 @@ const useSiteUnfollowMutation = () => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
 	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
-	const subscriptionsCountCacheKey = [ 'read', 'subscriptions-count' ];
+	const subscriptionsCountCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 
 	return useMutation(
 		async ( params: SiteSubscriptionUnfollowParams ) => {
