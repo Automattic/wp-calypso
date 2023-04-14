@@ -16,7 +16,6 @@ import {
 	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
-	PLAN_BIENNIAL_PERIOD,
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
 	isWooExpressPlan,
