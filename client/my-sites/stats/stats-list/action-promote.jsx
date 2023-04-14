@@ -10,7 +10,7 @@ import {
 	PromoteWidgetStatus,
 } from 'calypso/lib/promote-post';
 import { useRouteModal } from 'calypso/lib/route-modal';
-import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const PromotePost = ( props ) => {
 	const { moduleName, postId, onToggleVisibility } = props;
@@ -22,11 +22,7 @@ const PromotePost = ( props ) => {
 	const { isModalOpen, value, openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
 	const selectedSiteId = useSelector( getSelectedSiteId );
-
-	const site = useSelector( getSelectedSite );
-	const { is_private, is_coming_soon } = site;
-	const showPromotePost =
-		usePromoteWidget() === PromoteWidgetStatus.ENABLED && ! is_private && ! is_coming_soon;
+	const showPromotePost = usePromoteWidget() === PromoteWidgetStatus.ENABLED;
 
 	const showDSPWidget = async ( event ) => {
 		event.stopPropagation();

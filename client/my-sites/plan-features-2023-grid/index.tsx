@@ -1,7 +1,6 @@
 import {
 	applyTestFiltersToPlansList,
 	getMonthlyPlanByYearly,
-	getYearlyPlanByMonthly,
 	findPlansKeys,
 	getPlan as getPlanFromKey,
 	getPlanClass,
@@ -17,16 +16,23 @@ import {
 	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
-	PLAN_BIENNIAL_PERIOD,
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
 	isWooExpressPlan,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
+import { isHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
-import { localize, LocalizeProps, TranslateResult, useTranslate } from 'i18n-calypso';
+import {
+	localize,
+	LocalizedComponent,
+	LocalizeProps,
+	TranslateResult,
+	useTranslate,
+} from 'i18n-calypso';
 import { last } from 'lodash';
 import page from 'page';
 import { Component, createRef } from 'react';
@@ -62,15 +68,10 @@ import {
 	getPlanBySlug,
 	getPlanRawPrice,
 	getPlanSlug,
-	getDiscountedRawPrice,
 } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import {
-	getCurrentPlan,
-	isCurrentUserCurrentPlanOwner,
-	getPlanDiscountedRawPrice,
-} from 'calypso/state/sites/plans/selectors';
+import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import {
 	getSiteSlug,
@@ -80,6 +81,7 @@ import {
 	isJetpackSite,
 } from 'calypso/state/sites/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
+import useIsLargeCurrency from '../plans/hooks/use-is-large-currency';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
@@ -151,7 +153,9 @@ type PlanFeatures2023GridConnectedProps = {
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
-	PlanFeatures2023GridConnectedProps & { children?: React.ReactNode };
+	PlanFeatures2023GridConnectedProps & { children?: React.ReactNode } & {
+		isLargeCurrency: boolean;
+	};
 
 type PlanFeatures2023GridState = {
 	showPlansComparisonGrid: boolean;
@@ -378,6 +382,7 @@ export class PlanFeatures2023Grid extends Component<
 					<tr>{ this.renderPlanPrice( planPropertiesObj ) }</tr>
 					<tr>{ this.renderBillingTimeframe( planPropertiesObj ) }</tr>
 					<tr>{ this.renderTopButtons( planPropertiesObj ) }</tr>
+					<tr>{ this.maybeRenderRefundNotice( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPreviousFeaturesIncludedTitle( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanFeaturesList( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanStorageOptions( planPropertiesObj ) }</tr>
@@ -444,6 +449,7 @@ export class PlanFeatures2023Grid extends Component<
 						{ this.renderBillingTimeframe( [ properties ], { isMobile: true } ) }
 						{ this.renderMobileFreeDomain( properties.planName, properties.isMonthlyPlan ) }
 						{ this.renderTopButtons( [ properties ], { isMobile: true } ) }
+						{ this.maybeRenderRefundNotice( [ properties ], { isMobile: true } ) }
 						<CardContainer
 							header={ translate( 'Show all features' ) }
 							planName={ properties.planName }
@@ -489,11 +495,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, is2023OnboardingPricingGrid } = this.props;
-
-		const isLargeCurrency = planPropertiesObj.some(
-			( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
-		);
+		const { isReskinned, isLargeCurrency } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -514,7 +516,7 @@ export class PlanFeatures2023Grid extends Component<
 						{ ! hasNoPrice && (
 							<PlanFeatures2023GridHeaderPrice
 								planProperties={ properties }
-								is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+								is2023OnboardingPricingGrid={ true }
 								isLargeCurrency={ isLargeCurrency }
 							/>
 						) }
@@ -527,15 +529,7 @@ export class PlanFeatures2023Grid extends Component<
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
-				const {
-					planConstantObj,
-					planName,
-					rawPrice,
-					maybeDiscountedFullTermPrice,
-					annualPricePerMonth,
-					isMonthlyPlan,
-					billingPeriod,
-				} = properties;
+				const { planConstantObj, planName, isMonthlyPlan, billingPeriod } = properties;
 
 				const classes = classNames(
 					'plan-features-2023-grid__table-item',
@@ -545,9 +539,6 @@ export class PlanFeatures2023Grid extends Component<
 				return (
 					<Container className={ classes } isMobile={ options?.isMobile } key={ planName }>
 						<PlanFeatures2023GridBillingTimeframe
-							rawPrice={ rawPrice }
-							maybeDiscountedFullTermPrice={ maybeDiscountedFullTermPrice }
-							annualPricePerMonth={ annualPricePerMonth }
 							isMonthlyPlan={ isMonthlyPlan }
 							planName={ planName }
 							billingTimeframe={ planConstantObj.getBillingTimeFrame() }
@@ -701,6 +692,36 @@ export class PlanFeatures2023Grid extends Component<
 					</Container>
 				);
 			} );
+	}
+
+	maybeRenderRefundNotice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
+		const { translate, flowName } = this.props;
+
+		if ( ! isHostingFlow( flowName ) ) {
+			return false;
+		}
+
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( planProperties ) => (
+				<Container
+					key={ planProperties.planName }
+					className="plan-features-2023-grid__table-item"
+					isMobile={ options?.isMobile }
+				>
+					<div
+						className={ `plan-features-2023-grid__refund-notice ${ getPlanClass(
+							planProperties.planName
+						) }` }
+					>
+						{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
+							args: {
+								dayCount: planProperties.billingPeriod === 365 ? 14 : 7,
+							},
+						} ) }
+					</div>
+				</Container>
+			) );
 	}
 
 	renderEnterpriseClientLogos() {
@@ -1008,6 +1029,15 @@ export class PlanFeatures2023Grid extends Component<
 	}
 }
 
+const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures2023Grid > ) => {
+	return function ( props: PlanFeatures2023GridType ) {
+		const isLargeCurrency = useIsLargeCurrency(
+			( props.planProperties || [] ).map( ( properties ) => properties.planName as PlanSlug )
+		);
+		return <Component { ...props } isLargeCurrency={ isLargeCurrency } />;
+	};
+};
+
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 const ConnectedPlanFeatures2023Grid = connect(
 	( state: IAppState, ownProps: PlanFeatures2023GridProps ) => {
@@ -1048,26 +1078,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 			);
 
 			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );
-			const isMonthlyObj = { returnMonthly: showMonthlyPrice };
-
-			const discountPrice = siteId
-				? getPlanDiscountedRawPrice( state, siteId, plan, isMonthlyObj )
-				: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
-
-			let annualPricePerMonth = discountPrice || rawPrice;
-			if ( isMonthlyPlan ) {
-				// Get annual price per month for comparison
-				const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
-				if ( yearlyPlan ) {
-					const yearlyPlanDiscount = getDiscountedRawPrice(
-						state,
-						yearlyPlan.product_id,
-						showMonthlyPrice
-					);
-					annualPricePerMonth =
-						yearlyPlanDiscount || getPlanRawPrice( state, yearlyPlan.product_id, showMonthlyPrice );
-				}
-			}
 
 			const monthlyPlanKey = findPlansKeys( {
 				group: planConstantObj.group,
@@ -1109,11 +1119,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				);
 			}
 
-			const maybeDiscountedFullTermPrice =
-				null !== discountPrice
-					? discountPrice * ( PLAN_BIENNIAL_PERIOD === billingPeriod ? 24 : 12 )
-					: getPlanRawPrice( state, planProductId, false );
-
 			const tagline = planConstantObj.getPlanTagline?.() ?? '';
 			const product_name_short =
 				isWpcomEnterpriseGridPlan( plan ) && planConstantObj.getPathSlug
@@ -1126,7 +1131,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
 			const isCurrentPlan = isCurrentSitePlan( state, siteId, planProductId ) ?? false;
-			const isVisible = visiblePlans.indexOf( plan ) !== -1;
+			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
 
 			return {
 				availableForPurchase,
@@ -1144,10 +1149,8 @@ const ConnectedPlanFeatures2023Grid = connect(
 				product_name_short,
 				hideMonthly: false,
 				rawPrice,
-				maybeDiscountedFullTermPrice,
 				rawPriceForMonthlyPlan,
 				relatedMonthlyPlan,
-				annualPricePerMonth,
 				isMonthlyPlan,
 				tagline,
 				storageOptions,
@@ -1186,7 +1189,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 	{
 		recordTracksEvent,
 	}
-)( localize( PlanFeatures2023Grid ) );
+)( withIsLargeCurrency( localize( PlanFeatures2023Grid ) ) );
 /* eslint-enable wpcalypso/redux-no-bound-selectors */
 
 const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {

@@ -131,7 +131,7 @@ export const PureUniversalNavbarFooter = ( {
 								</li>
 								<li>
 									<a
-										href={ localizeUrl( 'https://wordpress.com/do-it-for-me/?ref=footer_pricing' ) }
+										href={ localizeUrl( 'https://wordpress.com/built-by/?ref=footer_pricing' ) }
 										title="WordPress Website Building Service"
 										target="_self"
 									>

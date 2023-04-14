@@ -4,6 +4,7 @@ import {
 	getBackupCurrentSiteSize,
 	getBackupRetentionDays,
 	getBackupRetentionUpdateRequestStatus,
+	getBackupStoppedFlag,
 } from '../selectors';
 import { StorageUsageLevels } from '../storage/types';
 
@@ -143,5 +144,28 @@ describe( 'getBackupRetentionUpdateRequestStatus()', () => {
 		expect( getBackupRetentionUpdateRequestStatus( state, TEST_SITE_ID ) ).toEqual(
 			BACKUP_RETENTION_UPDATE_REQUEST.PENDING
 		);
+	} );
+} );
+describe( 'getBackupStoppedFlag()', () => {
+	const TEST_SITE_ID = 123;
+
+	test( 'should default to false when the state does not contain the flag.', () => {
+		const state = {
+			rewind: {
+				[ TEST_SITE_ID ]: {},
+			},
+		};
+		expect( getBackupStoppedFlag( state, TEST_SITE_ID ) ).toEqual( false );
+	} );
+
+	test( 'should return the value as is when the state contains the value for flag.', () => {
+		const state = {
+			rewind: {
+				[ TEST_SITE_ID ]: {
+					size: { backupsStopped: true },
+				},
+			},
+		};
+		expect( getBackupStoppedFlag( state, TEST_SITE_ID ) ).toEqual( true );
 	} );
 } );

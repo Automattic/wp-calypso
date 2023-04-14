@@ -1,16 +1,17 @@
 import { isEnabled } from '@automattic/calypso-config';
-import page from 'page';
-import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
+import { showAtomicTransferDialog } from 'calypso/state/themes/actions/show-atomic-transfer-dialog';
 import { showAutoLoadingHomepageWarning } from 'calypso/state/themes/actions/show-auto-loading-homepage-warning';
 import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-theme-id-for-install';
 import {
 	getTheme,
 	hasAutoLoadingHomepageModalAccepted,
 	themeHasAutoLoadingHomepage,
+	wasAtomicTransferDialogAccepted,
+	isExternallyManagedTheme,
 } from 'calypso/state/themes/selectors';
 
 import 'calypso/state/themes/init';
@@ -46,6 +47,19 @@ export function activate(
 		}
 
 		/**
+		 * Make sure to show the Atomic transfer dialog if the theme requires
+		 * an Atomic site. If the dialog has been accepted, we can continue.
+		 */
+		if (
+			isExternallyManagedTheme( getState(), themeId ) &&
+			! isJetpackSite( getState(), siteId ) &&
+			! isSiteAtomic( getState(), siteId ) &&
+			! wasAtomicTransferDialogAccepted( getState(), themeId )
+		) {
+			return dispatch( showAtomicTransferDialog( themeId ) );
+		}
+
+		/**
 		 * Let's check if the theme will change the homepage of the site,
 		 * before to definitely start the theme-activating process,
 		 * allowing cancel it if it's desired.
@@ -56,15 +70,6 @@ export function activate(
 			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
 		) {
 			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
-		}
-
-		// Check if the theme is a .org Theme and redirect it to the Marketplace theme installation page
-		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
-		if ( isDotOrgTheme ) {
-			const siteSlug = getSiteSlug( getState(), siteId );
-
-			dispatch( productToBeInstalled( themeId, siteSlug ) );
-			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {

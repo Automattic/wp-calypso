@@ -2,7 +2,6 @@ import './style.scss';
 import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import moment from 'moment';
-import page from 'page';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -18,7 +17,6 @@ import useCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-post-c
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import { usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
@@ -166,10 +164,6 @@ export default function PromotedPosts( { tab }: Props ) {
 	const isLoadingByCommentsQuery = useSelector( ( state ) =>
 		isRequestingPostsForQuery( state, selectedSiteId, queryPageAndPostsByComments )
 	);
-
-	if ( usePromoteWidget() === PromoteWidgetStatus.DISABLED ) {
-		page( '/' );
-	}
 
 	const subtitle = translate(
 		'Reach new readers and customers with WordPress Blaze. Promote a post or a page on our network of millions blogs and web sites. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',

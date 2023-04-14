@@ -26,6 +26,8 @@ const insights = {
 	path: '/stats/insights',
 	showIntervals: false,
 };
+// TODO: Consider adding subscriber counts into this nav item in the future.
+// See client/blocks/subscribers-count/index.jsx.
 const subscribers = {
 	label: translate( 'Subscribers' ),
 	path: '/stats/subscribers',

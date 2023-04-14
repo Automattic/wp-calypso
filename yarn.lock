@@ -494,7 +494,6 @@ __metadata:
   resolution: "@automattic/data-stores@workspace:packages/data-stores"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/domain-utils": "workspace:^"
     "@automattic/format-currency": "workspace:^"
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
@@ -659,14 +658,6 @@ __metadata:
     react: ^17.0.2
     reakit-utils: ^0.15.1
     redux: ^4.1.2
-  languageName: unknown
-  linkType: soft
-
-"@automattic/domain-utils@workspace:^, @automattic/domain-utils@workspace:packages/domain-utils":
-  version: 0.0.0-use.local
-  resolution: "@automattic/domain-utils@workspace:packages/domain-utils"
-  dependencies:
-    typescript: ^4.7.4
   languageName: unknown
   linkType: soft
 
@@ -1137,10 +1128,12 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
+    "@automattic/components": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
+    "@wordpress/data": ^7.6.0
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
@@ -1448,6 +1441,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/social-previews@workspace:packages/social-previews"
   dependencies:
+    "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@emotion/react": ^11.4.1
     "@testing-library/jest-dom": ^5.16.2
@@ -1457,9 +1451,11 @@ __metadata:
     classnames: ^2.3.1
     lodash: ^4.17.21
     moment: ^2.26.0
+    postcss: ^8.4.5
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
+    webpack: ^5.68.0
   peerDependencies:
     "@babel/runtime": ^7
     react: ^17.0.2
@@ -11624,7 +11620,6 @@ __metadata:
     "@automattic/design-picker": "workspace:^"
     "@automattic/design-preview": "workspace:^"
     "@automattic/domain-picker": "workspace:^"
-    "@automattic/domain-utils": "workspace:^"
     "@automattic/explat-client": "workspace:^"
     "@automattic/explat-client-react-helpers": "workspace:^"
     "@automattic/format-currency": "workspace:^"

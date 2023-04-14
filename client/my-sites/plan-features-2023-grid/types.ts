@@ -24,10 +24,8 @@ export type PlanProperties = {
 	product_name_short: string;
 	hideMonthly?: boolean;
 	rawPrice: number | null;
-	maybeDiscountedFullTermPrice: number | null;
 	rawPriceForMonthlyPlan: number | null;
 	relatedMonthlyPlan: null | PricedAPIPlan | undefined;
-	annualPricePerMonth: number | null;
 	isMonthlyPlan: boolean;
 	tagline: string;
 	storageOptions: string[];

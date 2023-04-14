@@ -20,6 +20,7 @@ import titlecase from 'to-title-case';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AsyncLoad from 'calypso/components/async-load';
 import Badge from 'calypso/components/badge';
+import Banner from 'calypso/components/banner';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
@@ -37,7 +38,6 @@ import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import StickyPanel from 'calypso/components/sticky-panel';
-import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -48,12 +48,13 @@ import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import ThemePreview from 'calypso/my-sites/themes/theme-preview';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import productionSiteForWpcomStaging from 'calypso/state/selectors/get-production-site-for-wpcom-staging';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -86,6 +87,7 @@ import {
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import ThemeDownloadCard from './theme-download-card';
 import ThemeFeaturesCard from './theme-features-card';
 import ThemeNotFoundError from './theme-not-found-error';
@@ -340,9 +342,20 @@ class ThemeSheet extends Component {
 		return preview.action( this.props.themeId );
 	};
 
+	shouldRenderForStaging() {
+		// isExternallyManagedTheme determines if a theme is paid or not
+		const { isExternallyManagedTheme, isWpcomStaging } = this.props;
+		return isExternallyManagedTheme && isWpcomStaging;
+	}
+
 	shouldRenderPreviewButton() {
 		const { isWPForTeamsSite } = this.props;
-		return this.isThemeAvailable() && ! this.isThemeCurrentOne() && ! isWPForTeamsSite;
+		return (
+			this.isThemeAvailable() &&
+			! this.isThemeCurrentOne() &&
+			! isWPForTeamsSite &&
+			! this.shouldRenderForStaging()
+		);
 	}
 
 	shouldRenderUnlockStyleButton() {
@@ -436,7 +449,7 @@ class ThemeSheet extends Component {
 			/>
 		);
 
-		if ( this.isThemeAvailable() ) {
+		if ( this.isThemeAvailable() && ! this.shouldRenderForStaging() ) {
 			return (
 				<a
 					className="theme__sheet-screenshot is-active"
@@ -526,14 +539,8 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	renderSectionContent = ( section ) => {
-		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
+	renderSectionContent = () => {
 		const { isPremium, isWpcomTheme, supportDocumentation } = this.props;
-		const activeSection = {
-			'': this.renderOverviewTab(),
-			setup: this.renderSetupTab(),
-			support: this.renderSupportTab(),
-		}[ section ];
 
 		return (
 			<div className="theme__sheet-content">
@@ -544,27 +551,13 @@ class ThemeSheet extends Component {
 						messagePath="calypso:theme:admin_notices"
 					/>
 				) }
-				{ ! isNewDetailsAndPreview ? (
+				{ this.isLoaded() && (
 					<>
-						{ this.renderSectionNav( section ) }
-						{ activeSection }
+						{ this.renderOverviewTab() }
+						{ ! isPremium && supportDocumentation && this.renderSetupTab() }
+						{ this.renderSupportTab() }
+						{ isWpcomTheme && this.renderNextTheme() }
 					</>
-				) : (
-					<>
-						{ this.isLoaded() && (
-							<>
-								{ this.renderOverviewTab() }
-								{ ! isPremium && supportDocumentation && this.renderSetupTab() }
-								{ this.renderSupportTab() }
-								{ isNewDetailsAndPreview && isWpcomTheme && this.renderNextTheme() }
-							</>
-						) }
-					</>
-				) }
-				{ ! isNewDetailsAndPreview && (
-					<div className="theme__sheet-footer-line">
-						<Gridicon icon="my-sites" />
-					</div>
 				) }
 			</div>
 		);
@@ -576,7 +569,10 @@ class ThemeSheet extends Component {
 		const title = name || placeholder;
 		const tag = author ? translate( 'by %(author)s', { args: { author: author } } ) : placeholder;
 		const shouldRenderButton =
-			! retired && ! this.hasWpOrgThemeUpsellBanner() && ! isWPForTeamsSite;
+			! retired &&
+			! this.hasWpOrgThemeUpsellBanner() &&
+			! isWPForTeamsSite &&
+			! this.shouldRenderForStaging();
 
 		return (
 			<div className="theme__sheet-header">
@@ -637,6 +633,28 @@ class ThemeSheet extends Component {
 		return <div>{ this.props.description }</div>;
 	};
 
+	renderStagingPaidThemeNotice = () => {
+		if ( ! this.shouldRenderForStaging() ) {
+			return null;
+		}
+		const { translate, productionSiteSlug, themeId } = this.props;
+
+		let url = '';
+		if ( productionSiteSlug ) {
+			url = `/theme/${ themeId }/${ productionSiteSlug }`;
+		}
+
+		return (
+			<Banner
+				disableHref={ url === '' }
+				icon="notice"
+				href={ url }
+				title={ translate( 'Paid themes are not available' ) }
+				description={ translate( 'Paid themes are only available for production sites.' ) }
+			/>
+		);
+	};
+
 	renderNextTheme = () => {
 		const { next, siteSlug, translate, locale, isLoggedIn } = this.props;
 		const sitePart = siteSlug ? `/${ siteSlug }` : '';
@@ -655,7 +673,6 @@ class ThemeSheet extends Component {
 	};
 
 	renderOverviewTab = () => {
-		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const { download, isWpcomTheme, siteSlug, taxonomies, isPremium } = this.props;
 
 		return (
@@ -670,7 +687,6 @@ class ThemeSheet extends Component {
 					/>
 				</div>
 				{ download && ! isPremium && <ThemeDownloadCard href={ download } /> }
-				{ ! isNewDetailsAndPreview && isWpcomTheme && this.renderNextTheme() }
 			</div>
 		);
 	};
@@ -1136,7 +1152,6 @@ class ThemeSheet extends Component {
 			isBundledSoftwareSet,
 			isSiteBundleEligible,
 			translate,
-			isWPForTeamsSite,
 			isLoggedIn,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
@@ -1198,11 +1213,14 @@ class ThemeSheet extends Component {
 		let previewUpsellBanner;
 
 		// Show theme upsell banner on Simple sites.
-		const hasWpComThemeUpsellBanner = this.hasWpComThemeUpsellBanner();
+		const hasWpComThemeUpsellBanner =
+			this.hasWpComThemeUpsellBanner() && ! this.shouldRenderForStaging();
 		// Show theme upsell banner on Jetpack sites.
-		const hasWpOrgThemeUpsellBanner = this.hasWpOrgThemeUpsellBanner();
+		const hasWpOrgThemeUpsellBanner =
+			this.hasWpOrgThemeUpsellBanner() && ! this.shouldRenderForStaging();
 		// Show theme upsell banner on Atomic sites.
-		const hasThemeUpsellBannerAtomic = this.hasThemeUpsellBannerAtomic();
+		const hasThemeUpsellBannerAtomic =
+			this.hasThemeUpsellBannerAtomic() && ! this.shouldRenderForStaging();
 
 		const hasUpsellBanner =
 			hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic;
@@ -1247,12 +1265,11 @@ class ThemeSheet extends Component {
 		}
 
 		if ( hasWpOrgThemeUpsellBanner || hasThemeUpsellBannerAtomic ) {
-			const themeInstallationURL = `/marketplace/theme/${ themeId }/install/${ siteSlug }`;
+			const thisPageUrl = `/theme/${ themeId }/${ siteSlug }`;
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_BUSINESS }
 					className="theme__page-upsell-banner"
-					onClick={ () => this.props.setProductToBeInstalled( themeId, siteSlug ) }
 					title={ translate( 'Access this third-party theme with the Business plan!' ) }
 					description={ preventWidows(
 						translate(
@@ -1264,7 +1281,7 @@ class ThemeSheet extends Component {
 					forceDisplay
 					href={
 						siteId
-							? `/checkout/${ siteSlug }/business?redirect_to=${ themeInstallationURL }`
+							? `/checkout/${ siteSlug }/business?redirect_to=${ thisPageUrl }`
 							: localizeUrl( 'https://wordpress.com/start/business' )
 					}
 					showIcon
@@ -1281,19 +1298,17 @@ class ThemeSheet extends Component {
 			} );
 		}
 
-		const isNewDetailsAndPreview = config.isEnabled( 'themes/showcase-i4/details-and-preview' );
 		const isRemoved = this.isRemoved();
 
-		const className = classNames( 'theme__sheet', { 'is-with-upsell-banner': hasUpsellBanner } );
+		const className = classNames( 'theme__sheet', {
+			'is-with-upsell-banner': hasUpsellBanner,
+		} );
 		const columnsClassName = classNames( 'theme__sheet-columns', {
 			'is-removed': isRemoved,
 		} );
 
 		return (
 			<Main className={ className }>
-				<BodySectionCssClass
-					bodyClass={ [ ...( isNewDetailsAndPreview ? [ 'is-section-theme-i4' ] : [] ) ] }
-				/>
 				<QueryCanonicalTheme themeId={ this.props.themeId } siteId={ siteId } />
 				<QueryProductsList />
 				<QueryUserPurchases />
@@ -1310,43 +1325,30 @@ class ThemeSheet extends Component {
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
-				{ ! isNewDetailsAndPreview && this.renderBar() }
 				<QueryActiveTheme siteId={ siteId } />
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<AutoLoadingHomepageModal source="details" />
-				{ ! isNewDetailsAndPreview && pageUpsellBanner }
 				<div className="theme__sheet-action-bar-container">
 					<HeaderCake
 						className="theme__sheet-action-bar"
-						backText={
-							isNewDetailsAndPreview ? translate( 'Back to themes' ) : translate( 'All Themes' )
-						}
+						backText={ translate( 'Back to themes' ) }
 						onClick={ this.goBack }
-						alwaysShowBackText={ isNewDetailsAndPreview }
-					>
-						{ ! isNewDetailsAndPreview &&
-							! retired &&
-							! hasWpOrgThemeUpsellBanner &&
-							! isWPForTeamsSite &&
-							this.renderButton() }
-					</HeaderCake>
+						alwaysShowBackText
+					/>
 				</div>
 				<div className={ columnsClassName }>
-					{ isNewDetailsAndPreview && (
-						<div className="theme__sheet-column-header">
-							{ pageUpsellBanner }
-							{ this.renderHeader() }
-						</div>
-					) }
+					<div className="theme__sheet-column-header">
+						{ pageUpsellBanner }
+						{ this.renderStagingPaidThemeNotice() }
+						{ this.renderHeader() }
+					</div>
 					<div className="theme__sheet-column-left">
 						{ ! retired && this.renderSectionContent( section ) }
 						{ retired && this.renderRetired() }
 					</div>
 					{ ! isRemoved && (
 						<div className="theme__sheet-column-right">
-							{ isNewDetailsAndPreview && styleVariations.length
-								? this.renderWebPreview()
-								: this.renderScreenshot() }
+							{ styleVariations.length ? this.renderWebPreview() : this.renderScreenshot() }
 						</div>
 					) }
 				</div>
@@ -1366,6 +1368,7 @@ class ThemeSheet extends Component {
 						onFailure={ this.onAtomicThemeActiveFailure }
 					/>
 				) }
+				<EligibilityWarningModal />
 			</Main>
 		);
 	};
@@ -1465,6 +1468,9 @@ export default connect(
 		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, themeId );
 
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
+		const isWpcomStaging = isSiteWpcomStaging( state, siteId );
+		const productionSite = productionSiteForWpcomStaging( state, siteId );
+		const productionSiteSlug = getSiteSlug( state, productionSite?.ID );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isStandaloneJetpack = isJetpack && ! isAtomic;
 
@@ -1487,6 +1493,8 @@ export default connect(
 			isCurrentUserPaid,
 			isWpcomTheme,
 			isWporg: isWporgTheme( state, themeId ),
+			isWpcomStaging,
+			productionSiteSlug,
 			isLoggedIn: isUserLoggedIn( state ),
 			isActive: isThemeActive( state, themeId, siteId ),
 			isJetpack,
@@ -1523,6 +1531,5 @@ export default connect(
 		recordTracksEvent,
 		themeStartActivationSync: themeStartActivationSyncAction,
 		errorNotice,
-		setProductToBeInstalled: productToBeInstalled,
 	}
 )( withSiteGlobalStylesStatus( localize( ThemeSheetWithOptions ) ) );

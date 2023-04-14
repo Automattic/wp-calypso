@@ -6,7 +6,6 @@ const patternCategoriesOrder = [
 	'posts',
 	'text',
 	'gallery',
-	'images',
 	'call-to-action',
 	'banner',
 ];

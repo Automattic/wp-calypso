@@ -63,7 +63,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 									</SiteSort>
 								</th>
 							) ) }
-							<th colSpan={ isExpandedBlockEnabled ? 2 : 1 }>
+							<th colSpan={ isExpandedBlockEnabled ? 3 : 1 }>
 								<div className="plugin-common-table__bulk-actions">
 									<EditButton isLargeScreen sites={ items } />
 								</div>
@@ -85,11 +85,12 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 						</td>
 					</tr>
 				) : (
-					items.map( ( item ) => {
+					items.map( ( item, index ) => {
 						const blogId = item.site.value.blog_id;
 
 						return (
 							<SiteTableRow
+								index={ index }
 								item={ item }
 								columns={ columns }
 								key={ `table-row-${ blogId }` }
