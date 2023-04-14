@@ -23,7 +23,7 @@ const StyledTooltip = styled( Tooltip )`
 `;
 
 export const Plans2023Tooltip = ( props: PropsWithChildren< { text?: TranslateResult } > ) => {
-	const [ isVisible, setIsVisible ] = useState();
+	const [ isVisible, setIsVisible ] = useState( false );
 	const tooltipRef = useRef< HTMLDivElement >( null );
 
 	if ( ! props.text ) {
