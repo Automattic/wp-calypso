@@ -740,10 +740,12 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow } ) => {
 			staticDesigns={ staticDesigns }
 			verticalId={ siteVerticalId }
 			locale={ locale }
+			onSelect={ pickDesign }
 			onSelectBlankCanvas={ pickBlankCanvasDesign }
 			onPreview={ previewDesign }
 			onChangeVariation={ onChangeVariation }
 			onViewAllDesigns={ trackAllDesignsView }
+			onCheckout={ goToCheckout }
 			heading={ heading }
 			categorization={ categorization }
 			isPremiumThemeAvailable={ isPremiumThemeAvailable }
