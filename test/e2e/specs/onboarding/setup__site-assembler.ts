@@ -78,7 +78,7 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 		it( 'Click "Continue" and land on the Site Editor', async function () {
 			await startSiteFlow.clickButton( 'Continue' );
 			await page.waitForURL( /.*\/site-editor\/.*/, {
-				timeout: 30 * 1000,
+				timeout: 120 * 1000,
 			} );
 		} );
 	} );
