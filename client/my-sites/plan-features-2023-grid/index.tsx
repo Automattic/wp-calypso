@@ -449,6 +449,7 @@ export class PlanFeatures2023Grid extends Component<
 						{ this.renderBillingTimeframe( [ properties ], { isMobile: true } ) }
 						{ this.renderMobileFreeDomain( properties.planName, properties.isMonthlyPlan ) }
 						{ this.renderTopButtons( [ properties ], { isMobile: true } ) }
+						{ this.maybeRenderRefundNotice( [ properties ], { isMobile: true } ) }
 						<CardContainer
 							header={ translate( 'Show all features' ) }
 							planName={ properties.planName }
@@ -693,7 +694,7 @@ export class PlanFeatures2023Grid extends Component<
 			} );
 	}
 
-	maybeRenderRefundNotice( planPropertiesObj: PlanProperties[] ) {
+	maybeRenderRefundNotice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { translate, flowName } = this.props;
 
 		if ( ! isHostingFlow( flowName ) ) {
@@ -703,7 +704,7 @@ export class PlanFeatures2023Grid extends Component<
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( planProperties ) => (
-				<td key={ planProperties.planName }>
+				<Container key={ planProperties.planName } isMobile={ options?.isMobile }>
 					<div
 						className={ `plan-features-2023-grid__refund-notice ${ getPlanClass(
 							planProperties.planName
@@ -715,7 +716,7 @@ export class PlanFeatures2023Grid extends Component<
 							},
 						} ) }
 					</div>
-				</td>
+				</Container>
 			) );
 	}
 
