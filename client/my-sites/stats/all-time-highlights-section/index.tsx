@@ -156,7 +156,7 @@ export default function AllTimeHighlightsSection( {
 			<h2 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h2>
 			<DotPager>
 				<Card className="highlight-card">
-					<div className="highlight-card-heading">{ translate( 'All-time stats' ) }</div>
+					<h3 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h3>
 					<div className="highlight-card-info-item-list">
 						{ infoItems
 							.filter( ( i ) => ! i.hidden )
@@ -182,7 +182,7 @@ export default function AllTimeHighlightsSection( {
 				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
 					return (
 						<Card key={ card.id } className="highlight-card">
-							<div className="highlight-card-heading">{ card.heading }</div>
+							<h3 className="highlight-card-heading">{ card.heading }</h3>
 							<div className="highlight-card-detail-item-list">
 								{ card.items.map( ( item ) => {
 									return (
@@ -211,7 +211,7 @@ export default function AllTimeHighlightsSection( {
 
 			<div className="highlight-cards-list">
 				<Card className="highlight-card">
-					<div className="highlight-card-heading">{ translate( 'All-time stats' ) }</div>
+					<h3 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h3>
 					<div className="highlight-card-info-item-list">
 						{ infoItems
 							.filter( ( i ) => ! i.hidden )
@@ -237,7 +237,7 @@ export default function AllTimeHighlightsSection( {
 				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
 					return (
 						<Card key={ card.id } className="highlight-card">
-							<div className="highlight-card-heading">{ card.heading }</div>
+							<h3 className="highlight-card-heading">{ card.heading }</h3>
 							<div className="highlight-card-detail-item-list">
 								{ card.items.map( ( item ) => {
 									return (
