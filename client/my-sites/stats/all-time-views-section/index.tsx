@@ -48,7 +48,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 				<div className="highlight-cards-list">
 					<Card className="highlight-card">
 						<div className="highlight-card-heading">
-							<span>{ translate( 'Total views' ) }</span>
+							<h3>{ translate( 'Total views' ) }</h3>
 							{ viewData && (
 								<SimplifiedSegmentedControl options={ monthViewOptions } onSelect={ toggleViews } />
 							) }
