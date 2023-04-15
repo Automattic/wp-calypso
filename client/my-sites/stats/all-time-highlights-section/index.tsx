@@ -153,7 +153,7 @@ export default function AllTimeHighlightsSection( {
 
 	const mobileCards = (
 		<div className="highlight-cards-mobile">
-			<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
+			<h2 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h2>
 			<DotPager>
 				<Card className="highlight-card">
 					<div className="highlight-card-heading">{ translate( 'All-time stats' ) }</div>
@@ -207,7 +207,7 @@ export default function AllTimeHighlightsSection( {
 
 	const highlightCards = (
 		<div className="highlight-cards">
-			<h1 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h1>
+			<h2 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h2>
 
 			<div className="highlight-cards-list">
 				<Card className="highlight-card">
