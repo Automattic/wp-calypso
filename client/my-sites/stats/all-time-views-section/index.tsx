@@ -43,7 +43,7 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 			{ siteId && <QuerySiteStats statType="statsVisits" siteId={ siteId } query={ query } /> }
 
 			<div className="highlight-cards">
-				<h1 className="highlight-cards-heading">{ translate( 'All-time insights' ) }</h1>
+				<h2 className="highlight-cards-heading">{ translate( 'All-time insights' ) }</h2>
 
 				<div className="highlight-cards-list">
 					<Card className="highlight-card">
