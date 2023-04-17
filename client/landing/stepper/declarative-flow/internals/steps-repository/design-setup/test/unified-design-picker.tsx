@@ -21,7 +21,6 @@ import UnifiedDesignPickerStep from '../unified-design-picker';
 jest.mock( '@wordpress/compose', () => ( {
 	...jest.requireActual( '@wordpress/compose' ),
 	useViewportMatch: jest.fn( () => false ),
-	useMediaQuery: jest.fn( () => true ),
 } ) );
 
 jest.mock( 'react-router-dom', () => ( {

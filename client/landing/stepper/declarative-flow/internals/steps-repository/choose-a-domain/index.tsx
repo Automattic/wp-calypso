@@ -27,21 +27,19 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		[]
 	);
 	const { setDomain } = useDispatch( ONBOARD_STORE );
-
-	const onSkip = () => {
-		setDomain( domain );
-		submit?.( { domain: domain } );
-	};
-
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
-	const getVideoPressFlowStepContent = () => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const onAddDomain = ( selectedDomain: any ) => {
-			setDomain( selectedDomain );
-			submit?.( { domain: selectedDomain } );
-		};
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const onAddDomain = ( selectedDomain: any ) => {
+		setDomain( selectedDomain );
+		submit?.( { domain: selectedDomain } );
+	};
 
+	const onSkip = () => {
+		onAddDomain( null );
+	};
+
+	const getVideoPressFlowStepContent = () => {
 		const domainSuggestion = domain ? domain.domain_name : siteTitle;
 
 		return (

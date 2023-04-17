@@ -386,6 +386,12 @@ const sections = [
 		trackLoadPerformance: true,
 	},
 	{
+		name: 'reader',
+		paths: [ '/read/subscriptions' ],
+		module: 'calypso/reader/subscriptions',
+		group: 'reader',
+	},
+	{
 		name: 'help',
 		paths: [ '/help' ],
 		module: 'calypso/me/help',

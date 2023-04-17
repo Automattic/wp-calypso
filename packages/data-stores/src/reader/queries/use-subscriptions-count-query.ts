@@ -1,14 +1,15 @@
 import { useQuery } from 'react-query';
 import { callApi } from '../helpers';
-import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
+import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SubscriptionManagerSubscriptionsCount } from '../types';
 
 const useSubscriptionsCountQuery = () => {
-	const isLoggedIn = useIsLoggedIn();
+	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
+	const cacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 
 	return useQuery< SubscriptionManagerSubscriptionsCount >(
-		[ 'read', 'subscriptions-count', isLoggedIn ],
+		cacheKey,
 		async () => {
 			return await callApi< SubscriptionManagerSubscriptionsCount >( {
 				path: '/read/subscriptions-count',

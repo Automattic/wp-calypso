@@ -3,12 +3,12 @@ import { Notice } from '../notice';
 import './styles.scss';
 
 type TabViewProps = {
-	children: JSX.Element;
-	errorMessage: string;
-	isLoading: boolean;
+	children: React.ReactNode;
+	errorMessage?: string;
+	isLoading?: boolean;
 };
 
-const TabView = ( { children, errorMessage, isLoading }: TabViewProps ) => {
+const TabView = ( { children, errorMessage, isLoading = false }: TabViewProps ) => {
 	if ( errorMessage ) {
 		return <Notice type="error">{ errorMessage }</Notice>;
 	}
@@ -21,7 +21,7 @@ const TabView = ( { children, errorMessage, isLoading }: TabViewProps ) => {
 		);
 	}
 
-	return children;
+	return <>{ children }</>;
 };
 
 export default TabView;

@@ -2,19 +2,21 @@
  * @jest-environment jsdom
  */
 import { render, waitFor } from '@testing-library/react';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { callApi } from '../helpers';
-import useSiteDeliveryFrequencyMutation from '../mutations/use-site-delivery-frequency-mutation';
+import { callApi } from '../../helpers';
+import useSiteDeliveryFrequencyMutation from '../../mutations/use-site-delivery-frequency-mutation';
 
 // Mock the useIsLoggedIn function
-jest.mock( '../hooks', () => ( {
-	useIsLoggedIn: jest.fn().mockReturnValue( true ),
+jest.mock( '../../hooks', () => ( {
+	useIsLoggedIn: jest.fn().mockReturnValue( { isLoggedIn: true } ),
+	useCacheKey: jest.fn(),
 } ) );
 
 // Mock the entire Helpers module
-jest.mock( '../helpers', () => ( {
+jest.mock( '../../helpers', () => ( {
 	callApi: jest.fn(),
+	applyCallbackToPages: jest.fn(),
 } ) );
 
 const client = new QueryClient();
@@ -22,7 +24,7 @@ const Parent = ( { children } ) => (
 	<QueryClientProvider client={ client }>{ children }</QueryClientProvider>
 );
 
-describe( 'useSubscriptionManagerSiteDeliveryFrequencyMutation()', () => {
+describe( 'useSiteDeliveryFrequencyMutation()', () => {
 	it( 'calls the right API', async () => {
 		const Skeleton = () => {
 			const { mutate } = useSiteDeliveryFrequencyMutation();

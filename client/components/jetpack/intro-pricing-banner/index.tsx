@@ -7,7 +7,10 @@ import CloudCart from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar/cl
 import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { preventWidows } from 'calypso/lib/formatting';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { GUARANTEE_DAYS } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import {
+	GUARANTEE_DAYS,
+	INTRO_PRICING_DISCOUNT_PERCENTAGE,
+} from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { isConnectStore } from 'calypso/my-sites/plans/jetpack-plans/product-grid/utils';
 import './style.scss';
 import { isJetpackCloudCartEnabled } from 'calypso/state/sites/selectors';
@@ -15,6 +18,7 @@ import guaranteeBadge from './14-day-badge.svg';
 import useBoundingClientRect from './hooks/use-bounding-client-rect';
 import { usePrevious } from './hooks/use-previous';
 import people from './people.svg';
+import rocket from './rocket.svg';
 
 const CALYPSO_MASTERBAR_HEIGHT = 47;
 const CLOUD_MASTERBAR_HEIGHT = 47;
@@ -68,6 +72,16 @@ const IntroPricingBanner: React.FC = () => {
 			<div className="intro-pricing-banner__viewport-sentinel" { ...outerDivProps }></div>
 			<div className={ `intro-pricing-banner ${ classModifier }` }>
 				<div className="intro-pricing-banner__content">
+					<div className="intro-pricing-banner__item">
+						<img className="intro-pricing-banner__item-icon" src={ rocket } alt="" />
+						<span className="intro-pricing-banner__item-label">
+							{ preventWidows(
+								translate( 'Get %(percent)d% off your first year', {
+									args: { percent: INTRO_PRICING_DISCOUNT_PERCENTAGE },
+								} )
+							) }
+						</span>
+					</div>
 					<div className="intro-pricing-banner__item">
 						<img className="intro-pricing-banner__item-icon" src={ guaranteeBadge } alt="" />
 						<span className="intro-pricing-banner__item-label">
