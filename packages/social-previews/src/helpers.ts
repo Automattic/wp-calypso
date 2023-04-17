@@ -1,4 +1,4 @@
-type Formatter = ( arg0: string ) => string;
+export type Formatter = ( text: string, options?: any ) => string;
 type AugmentFormatterReturnType< T extends Formatter, TNewReturn > = (
 	...a: Parameters< T >
 ) => ReturnType< T > | TNewReturn;
@@ -27,8 +27,17 @@ export const firstValid: ( ...args: ConditionalFormatter[] ) => NullableFormatte
 	( a ) =>
 		( predicates.find( ( p ) => false !== p( a ) ) as Formatter )?.( a );
 
-export const stripHtmlTags: Formatter = ( description ) =>
-	description ? description.replace( /(<([^>]+)>)/gi, '' ) : '';
+export const stripHtmlTags: Formatter = ( description, allowedTags = [] ) => {
+	const pattern = new RegExp( `(<([^${ allowedTags.join( '' ) }>]+)>)`, 'gi' );
+
+	return description ? description.replace( pattern, '' ) : '';
+};
+
+export const hasTag = ( text: string, tag: string ): boolean => {
+	const pattern = new RegExp( `<${ tag }[^>]*>`, 'gi' );
+
+	return pattern.test( text );
+};
 
 export const formatTweetDate: DateFormatter = new Intl.DateTimeFormat( 'en-US', {
 	// Result: "Apr 7", "Dec 31"

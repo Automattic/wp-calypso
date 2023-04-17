@@ -1,7 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { useCallback, useState } from 'react';
 import { TYPE_ARTICLE } from '../constants';
-import { baseDomain, facebookTitle, facebookDescription, facebookCustomText } from './helpers';
+import CustomText from './custom-text';
+import { baseDomain, facebookTitle, facebookDescription } from './helpers';
 import FacebookPostActions from './post/actions';
 import FacebookPostHeader from './post/header';
 import FacebookPostIcon from './post/icons';
@@ -38,9 +39,7 @@ const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 		<div className="facebook-preview__post">
 			<FacebookPostHeader user={ user } />
 			<div className="facebook-preview__content">
-				{ customText && (
-					<p className="facebook-preview__custom-text">{ facebookCustomText( customText ) }</p>
-				) }
+				{ customText && <CustomText text={ customText } url={ url } /> }
 				<div
 					className={ `facebook-preview__body ${ modeClass } ${
 						isLoadingImage ? 'is-loading' : ''
