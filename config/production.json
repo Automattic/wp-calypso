@@ -152,6 +152,7 @@
 		"subscription-gifting": true,
 		"subscription-management": true,
 		"subscription-management-comments-view": false,
+		"subscription-management-sites-search": false,
 		"themes/atomic-homepage-replace": true,
 		"themes/display-thank-you-page": false,
 		"themes/premium": true,

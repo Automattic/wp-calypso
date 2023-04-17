@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
@@ -7,6 +8,8 @@ import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice } from 'calypso/landing/subscriptions/components/notice';
 import { SiteList } from 'calypso/landing/subscriptions/components/site-list';
 import TabView from '../tab-view';
+
+const isSearchEnabled = config.isEnabled( 'subscription-management-sites-search' );
 
 const Sites = () => {
 	const translate = useTranslate();
@@ -29,13 +32,15 @@ const Sites = () => {
 
 	return (
 		<TabView errorMessage={ errorMessage } isLoading={ isLoading }>
-			<div className="subscriptions-manager__list-actions-bar">
-				<SearchInput
-					placeholder={ translate( 'Search by site name or address…' ) }
-					searchIcon={ <SearchIcon size={ 18 } /> }
-					onSearch={ handleSearch }
-				/>
-			</div>
+			{ isSearchEnabled && (
+				<div className="subscriptions-manager__list-actions-bar">
+					<SearchInput
+						placeholder={ translate( 'Search by site name or address…' ) }
+						searchIcon={ <SearchIcon size={ 18 } /> }
+						onSearch={ handleSearch }
+					/>
+				</div>
+			) }
 
 			<SiteList sites={ subscriptions } />
 
