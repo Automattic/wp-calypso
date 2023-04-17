@@ -58,7 +58,7 @@ const usePostUnfollowMutation = () => {
 					queryClient.setQueryData< PostSubscription[] >(
 						[ [ 'read', 'post-subscriptions', isLoggedIn ] ],
 						previousPostSubscriptions.filter(
-							( postSubscription ) => postSubscription.id !== params.post_id
+							( postSubscription ) => postSubscription.post_id !== params.post_id
 						)
 					);
 				}

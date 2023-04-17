@@ -69,7 +69,7 @@ export type SiteSubscription = {
 
 export type SiteSubscriptionDeliveryFrequency = 'instantly' | 'daily' | 'weekly';
 
-export type CommentSubscription = {
+export type PostSubscription = {
 	blog_id: string;
 	subscription_date: Date;
 	site_id: string;

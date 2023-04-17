@@ -7,7 +7,7 @@ import {
 } from './mutations';
 import {
 	useSiteSubscriptionsQuery,
-	useCommentSubscriptionsQuery,
+	usePostSubscriptionsQuery,
 	useSubscriptionsCountQuery,
 	useUserSettingsQuery,
 } from './queries';
@@ -16,7 +16,7 @@ export const SubscriptionManager = {
 	usePostUnfollowMutation,
 	useSiteDeliveryFrequencyMutation,
 	useSiteSubscriptionsQuery,
-	useCommentSubscriptionsQuery,
+	usePostSubscriptionsQuery,
 	useSiteUnfollowMutation,
 	useSubscriptionsCountQuery,
 	useSubscriberEmailAddress,

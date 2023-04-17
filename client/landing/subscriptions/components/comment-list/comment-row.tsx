@@ -2,9 +2,9 @@ import { Gridicon } from '@automattic/components';
 import { memo, useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
 import { CommentSettings } from '../settings-popover';
-import type { CommentSubscription } from '@automattic/data-stores/src/reader/types';
+import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
 
-type CommentRowProps = CommentSubscription & {
+type CommentRowProps = PostSubscription & {
 	forwardedRef: React.Ref< HTMLDivElement >;
 	style: React.CSSProperties;
 };

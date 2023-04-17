@@ -2,36 +2,36 @@ import { useEffect } from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
-import type { CommentSubscription } from '../types';
+import type { PostSubscription } from '../types';
 
-type SubscriptionManagerCommentSubscriptions = {
-	comment_subscriptions: CommentSubscription[];
+type SubscriptionManagerPostSubscriptions = {
+	comment_subscriptions: PostSubscription[];
 	total_comment_subscriptions_count: number;
 };
 
-type SubscriptionManagerCommentSubscriptionsQueryProps = {
-	filter?: ( item?: CommentSubscription ) => boolean;
-	sort?: ( a?: CommentSubscription, b?: CommentSubscription ) => number;
+type SubscriptionManagerPostSubscriptionsQueryProps = {
+	filter?: ( item?: PostSubscription ) => boolean;
+	sort?: ( a?: PostSubscription, b?: PostSubscription ) => number;
 	number?: number;
 };
 
 const defaultFilter = () => true;
 const defaultSort = () => 0;
 
-const useCommentSubscriptionsQuery = ( {
+const usePostSubscriptionsQuery = ( {
 	filter = defaultFilter,
 	sort = defaultSort,
 	number = 100,
-}: SubscriptionManagerCommentSubscriptionsQueryProps = {} ) => {
+}: SubscriptionManagerPostSubscriptionsQueryProps = {} ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
-	const cacheKey = useCacheKey( [ 'read', 'comment-subscriptions' ] );
+	const cacheKey = useCacheKey( [ 'read', 'post-subscriptions' ] );
 
 	const { data, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage, ...rest } =
-		useInfiniteQuery< SubscriptionManagerCommentSubscriptions >(
+		useInfiniteQuery< SubscriptionManagerPostSubscriptions >(
 			cacheKey,
 			async ( { pageParam = 1 } ) => {
-				return await callApi< SubscriptionManagerCommentSubscriptions >( {
+				return await callApi< SubscriptionManagerPostSubscriptions >( {
 					path: `/post-comment-subscriptions?per_page=${ number }&page=${ pageParam }`,
 					isLoggedIn,
 					apiVersion: '2',
@@ -71,4 +71,4 @@ const useCommentSubscriptionsQuery = ( {
 	};
 };
 
-export default useCommentSubscriptionsQuery;
+export default usePostSubscriptionsQuery;

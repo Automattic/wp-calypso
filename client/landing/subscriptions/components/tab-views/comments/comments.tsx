@@ -2,13 +2,13 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { CommentList } from 'calypso/landing/subscriptions/components/comment-list';
-import { Notice } from 'calypso/landing/subscriptions/components/notice';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
+import { Notice } from 'calypso/landing/subscriptions/components/notice';
 import TabView from '../tab-view';
 
 const Comments = () => {
 	const translate = useTranslate();
-	const { data: posts, isLoading, error } = SubscriptionManager.useCommentSubscriptionsQuery();
+	const { data: posts, isLoading, error } = SubscriptionManager.usePostSubscriptionsQuery();
 
 	// todo: translate when we have agreed on the error message
 	const errorMessage = error ? 'An error occurred while fetching your subscriptions.' : '';

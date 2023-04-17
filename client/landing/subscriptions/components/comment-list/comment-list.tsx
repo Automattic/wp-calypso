@@ -2,10 +2,10 @@ import { useTranslate } from 'i18n-calypso';
 import { VirtualizedList } from '../virtualized-list';
 import CommentRow from './comment-row';
 import './styles.scss';
-import type { CommentSubscription } from '@automattic/data-stores/src/reader/types';
+import type { PostSubscription } from '@automattic/data-stores/src/reader/types';
 
 type CommentListProps = {
-	posts?: CommentSubscription[];
+	posts?: PostSubscription[];
 };
 
 const CommentList = ( { posts }: CommentListProps ) => {
