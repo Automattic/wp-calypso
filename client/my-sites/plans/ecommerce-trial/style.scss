@@ -18,4 +18,8 @@ body.is-section-plans.is-ecommerce-trial-plan {
 	.current-plan {
 		background-color: #fff;
 	}
+
+	.formatted-header__title {
+		font-family: $woo-title-font;
+	}
 }

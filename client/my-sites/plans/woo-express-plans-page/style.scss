@@ -15,6 +15,10 @@ body.is-section-plans.is-woo-express-plan {
 		background-color: #fff;
 	}
 
+	.formatted-header__title {
+		font-family: $woo-title-font;
+	}
+
 	.woo-express-plans-page__section-title {
 		font-size: $woo-font-title-medium;
 		text-align: center;
