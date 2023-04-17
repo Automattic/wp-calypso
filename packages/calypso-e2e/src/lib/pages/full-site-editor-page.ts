@@ -24,10 +24,7 @@ import {
 import { getIdFromBlock } from '../../element-helper';
 import envVariables from '../../env-variables';
 
-const wpAdminPath = 'wp-admin/site-editor.php';
-
 const selectors = {
-	editorIframe: `iframe.is-loaded[src*="${ wpAdminPath }"]`,
 	editorRoot: 'body.block-editor-page',
 	editorCanvasIframe: 'iframe[name="editor-canvas"]',
 	editorCanvasRoot: 'body.block-editor-iframe__body',
