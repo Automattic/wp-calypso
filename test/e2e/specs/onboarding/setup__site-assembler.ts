@@ -57,15 +57,12 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 		} );
 
 		it( 'Select "Header"', async function () {
-			// await startSiteFlow.selectHeader();
 			await startSiteFlow.selectLayoutComponent( 'Header', 1 );
 			await startSiteFlow.clickButton( 'Save' );
 			expect( await assembledPreviewLocator.count() ).toBe( 1 );
 		} );
 
 		it( 'Select "Footer"', async function () {
-			// await startSiteFlow.selectFooter();
-			await startSiteFlow.selectLayoutComponent( 'Footer', 1 );
 			await startSiteFlow.clickButton( 'Save' );
 			expect( await assembledPreviewLocator.count() ).toBe( 2 );
 		} );
