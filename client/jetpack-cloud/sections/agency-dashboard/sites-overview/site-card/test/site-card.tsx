@@ -52,14 +52,14 @@ describe( '<SiteCard>', () => {
 				value: siteObj,
 				error: true,
 				type: 'site',
-				status: '',
+				status: 'active',
 			},
 			backup: {
 				type: 'backup',
-				status: '',
+				status: 'inactive',
 				value: '',
 			},
-			monitor: { error: false, type: 'monitor', status: '', value: '' },
+			monitor: { error: false, type: 'monitor', status: 'inactive', value: '' },
 			scan: { threats: 3, type: 'scan', status: 'failed', value: '3 Threats' },
 			plugin: { updates: 3, type: 'plugin', status: 'warning', value: '3 Available' },
 		};

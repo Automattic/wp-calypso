@@ -190,7 +190,7 @@ const pluginEventNames: StatusEventNames = {
 // Returns event name needed for all the feature state clicks on the agency dashboard
 const getRowEventName = (
 	type: AllowedTypes,
-	status: AllowedStatusTypes | string,
+	status: AllowedStatusTypes,
 	isLargeScreen: boolean
 ) => {
 	const deviceKey = isLargeScreen ? 'large_screen' : 'small_screen';
@@ -237,7 +237,7 @@ const pluginTooltips: StatusTooltip = {
 	success: translate( 'No plugin updates found' ),
 };
 
-const getTooltip = ( type: AllowedTypes, status: string ) => {
+const getTooltip = ( type: AllowedTypes, status: AllowedStatusTypes ) => {
 	switch ( type ) {
 		case 'backup': {
 			return backupTooltips?.[ status ];
@@ -362,14 +362,14 @@ const formatBoostData = ( site: Site ) => {
 };
 
 const formatBackupData = ( site: Site ) => {
-	const backup: BackupNode = {
+	const backup = {
 		value: '',
 		status: '',
 		type: 'backup',
 	};
 	if ( ! site.has_backup ) {
 		backup.status = 'inactive';
-		return backup;
+		return backup as BackupNode;
 	}
 	switch ( site.latest_backup_status ) {
 		case 'rewind_backup_complete':
@@ -392,11 +392,11 @@ const formatBackupData = ( site: Site ) => {
 			backup.status = 'progress';
 			break;
 	}
-	return backup;
+	return backup as BackupNode;
 };
 
 const formatScanData = ( site: Site ) => {
-	const scan: ScanNode = {
+	const scan = {
 		value: '',
 		status: '',
 		type: 'scan',
@@ -416,16 +416,16 @@ const formatScanData = ( site: Site ) => {
 					threats: scanThreats,
 				},
 			}
-		);
+		) as string;
 		scan.threats = scanThreats;
 	} else {
 		scan.status = 'success';
 	}
-	return scan;
+	return scan as ScanNode;
 };
 
 const formatMonitorData = ( site: Site ) => {
-	const monitor: MonitorNode = {
+	const monitor = {
 		value: '',
 		status: '',
 		type: 'monitor',
@@ -448,7 +448,7 @@ const formatMonitorData = ( site: Site ) => {
 	} else {
 		monitor.status = 'success';
 	}
-	return monitor;
+	return monitor as MonitorNode;
 };
 
 /**
@@ -461,7 +461,7 @@ export const formatSites = ( sites: Array< Site > = [] ): Array< SiteData > | []
 			site: {
 				value: site,
 				error: ! site.is_connection_healthy,
-				status: '',
+				status: 'active',
 				type: 'site',
 			},
 			stats: formatStatsData( site ),

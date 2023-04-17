@@ -83,6 +83,10 @@ export class PluginsList extends Component {
 			return true;
 		}
 
+		if ( this.props.filter !== nextProps.filter ) {
+			return true;
+		}
+
 		if ( this.state.bulkManagementActive !== nextState.bulkManagementActive ) {
 			return true;
 		}
@@ -569,6 +573,7 @@ export class PluginsList extends Component {
 					isLoading={ this.props.isLoading }
 					selectedSite={ this.props.selectedSite }
 					searchTerm={ this.props.searchTerm }
+					filter={ this.props.filter }
 					isBulkManagementActive={ this.state.bulkManagementActive }
 					toggleBulkManagement={ this.toggleBulkManagement }
 					removePluginNotice={ this.removePluginDialog }

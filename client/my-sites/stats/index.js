@@ -58,6 +58,7 @@ export default function () {
 	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
 		// Stat Subscribers Page (do not cofuse with people/subscribers/)
 		statsPage( '/stats/subscribers/:site', subscribers );
+		statsPage( `/stats/subscribers/:period(${ validPeriods })/:site`, subscribers );
 	}
 
 	// Stat Site Pages

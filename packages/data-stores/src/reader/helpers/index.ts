@@ -52,4 +52,26 @@ async function callApi< ReturnType >( {
 	} as APIFetchOptions );
 }
 
-export { callApi, getSubkey };
+interface PagedResult< T > {
+	pages: T[];
+	pageParams: number;
+}
+
+type KeyedObject< K extends string, T > = {
+	[ key in K ]: T[];
+};
+
+const applyCallbackToPages = < K extends string, T >(
+	pagedResult: PagedResult< KeyedObject< K, T > > | undefined,
+	callback: ( page: KeyedObject< K, T > ) => KeyedObject< K, T >
+): PagedResult< KeyedObject< K, T > > | undefined => {
+	if ( ! pagedResult ) {
+		return undefined;
+	}
+	return {
+		pages: pagedResult.pages.map( ( page ) => callback( page ) ),
+		pageParams: pagedResult.pageParams,
+	};
+};
+
+export { callApi, applyCallbackToPages, getSubkey };

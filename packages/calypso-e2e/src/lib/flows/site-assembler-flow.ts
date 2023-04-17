@@ -46,4 +46,15 @@ export class SiteAssemblerFlow {
 		const footer = this.page.locator( selectors.blockRenderer ).nth( 0 );
 		await footer.click();
 	}
+
+	/**
+	 * Click "Continue" and land on the Site Editor
+	 */
+	async gotoSiteEditor(): Promise< void > {
+		// Wait for the "Continue" button to be enabled.
+		// @see: https://github.com/Automattic/wp-calypso/pull/75606
+		const waitFor = ( ms: number ) => new Promise( ( resolve ) => setTimeout( resolve, ms ) );
+		await waitFor( 500 );
+		await this.clickButton( 'Continue' );
+	}
 }
