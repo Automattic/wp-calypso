@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
@@ -54,16 +54,19 @@ const usePostSubscriptionsQuery = ( {
 		}
 	}, [ hasNextPage, isFetchingNextPage, isFetching, fetchNextPage ] );
 
-	// Flatten all the pages into a single array containing all subscriptions
-	const flattenedData = data?.pages?.map( ( page ) => page.comment_subscriptions ).flat();
-	// Transform the dates into Date objects
-	const transformedData = flattenedData?.map( ( comment_subscription ) => ( {
-		...comment_subscription,
-		subscription_date: new Date( comment_subscription.subscription_date ),
-	} ) );
+	const outputData = useMemo( () => {
+		// Flatten all the pages into a single array containing all subscriptions
+		const flattenedData = data?.pages?.map( ( page ) => page.comment_subscriptions ).flat();
+		// Transform the dates into Date objects
+		const transformedData = flattenedData?.map( ( comment_subscription ) => ( {
+			...comment_subscription,
+			subscription_date: new Date( comment_subscription.subscription_date ),
+		} ) );
+		return transformedData?.filter( filter ).sort( sort );
+	}, [ data, filter, sort ] );
 
 	return {
-		data: transformedData?.filter( filter ).sort( sort ),
+		data: outputData,
 		isFetchingNextPage,
 		isFetching,
 		hasNextPage,
