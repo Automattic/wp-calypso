@@ -32,7 +32,7 @@ import { FacebookPreview } from '@automattic/social-previews';
 	title="Five for the Future"
 	description="Launched in 2014, Five for the Future encourages organizations to contribute five percent of their resources to WordPress development. WordPress co-founder Matt Mullenweg proposed this benchmark to maintain a “golden ratio” of contributors to users."
 	url="https://wordpress.org/five-for-the-future/"
-	user={ displayName: "Matt Mullenweg" }
+	user={ { displayName: "Matt Mullenweg" } }
 />;
 ```
 
