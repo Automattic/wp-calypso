@@ -39,7 +39,11 @@ export function init() {
 						/>
 						<Modules />
 						<div className="stats-widget-footer">
-							<a href="https://jetpack.com" target="__blank" aria-label="Jetpack Official Website">
+							<a
+								href="https://jetpack.com/redirect/?source=jetpack-stats-widget-logo-link"
+								target="__blank"
+								aria-label="Jetpack Stats Website"
+							>
 								<JetpackLogo size={ 25 } full />
 							</a>
 						</div>
