@@ -120,6 +120,15 @@
 	}
 }
 
+.facebook-preview__image,
+.facebook-preview__custom-image {
+	img {
+		display: block;
+
+		object-fit: cover;
+	}
+}
+
 .facebook-preview__image {
 	&.is-empty {
 		width: 140px;
