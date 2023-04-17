@@ -3,6 +3,7 @@ import domReady from '@wordpress/dom-ready';
 import { getQueryArg } from '@wordpress/url';
 
 const siteOrigin = getQueryArg( window.location.search, 'origin' );
+const showLaunchpad = getQueryArg( window.location.search, 'showLaunchpad' );
 
 export const postWasPublished = async () =>
 	new Promise( ( resolve ) => {
@@ -18,9 +19,7 @@ export const postWasPublished = async () =>
 	} );
 
 function redirectOnboardingUserAfterPublishingPost() {
-	const showLaunchpad = window.location.search.indexOf( 'showLaunchpad=true' ) !== -1;
-
-	if ( ! showLaunchpad ) {
+	if ( 'true' !== showLaunchpad ) {
 		return false;
 	}
 
