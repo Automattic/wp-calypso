@@ -46,15 +46,14 @@ describe( `Editor: Advanced Post Flow`, function () {
 	} );
 
 	describe( 'Publish post', function () {
-		beforeAll( async function () {
+		it( 'Start a new post from the Posts page', async function () {
 			postsPage = new PostsPage( page );
 			await postsPage.visit();
 			await postsPage.newPost();
-
-			editorPage = new EditorPage( page, { target: features.siteType } );
 		} );
 
 		it( 'Enter post title', async function () {
+			editorPage = new EditorPage( page, { target: features.siteType } );
 			await editorPage.enterTitle( postTitle );
 		} );
 
@@ -92,7 +91,7 @@ describe( `Editor: Advanced Post Flow`, function () {
 	} );
 
 	describe( 'Edit published post', function () {
-		beforeAll( async () => {
+		it( 'Re-open the published post from the Posts page', async function () {
 			// Redefine the `EditorPage` without the `target`
 			// optional parameter.
 			// This is critical because even AT sites load with
@@ -145,7 +144,7 @@ describe( `Editor: Advanced Post Flow`, function () {
 	} );
 
 	describe( 'Revert post to draft', function () {
-		beforeAll( async () => {
+		it( 'Re-open the published post from the Posts page', async function () {
 			// See: https://github.com/Automattic/wp-calypso/issues/74925
 			await postsPage.visit();
 			await postsPage.clickPost( postTitle );
