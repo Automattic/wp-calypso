@@ -1,10 +1,10 @@
-import { createRegistrySelector, registerStore } from '@wordpress/data';
+import { createRegistrySelector, register, createReduxStore } from '@wordpress/data';
 
 const DEFAULT_STATE = {
 	isModalVisible: true,
 };
 
-registerStore( 'automattic/wpcom-global-styles', {
+export const store = createReduxStore( 'automattic/wpcom-global-styles', {
 	reducer: ( state = DEFAULT_STATE, action ) => {
 		switch ( action.type ) {
 			case 'DISMISS_MODAL':
@@ -33,3 +33,5 @@ registerStore( 'automattic/wpcom-global-styles', {
 
 	persist: true,
 } );
+
+register( store );
