@@ -383,6 +383,7 @@ export class PluginsMain extends Component {
 				isLoading={ this.props.requestingPluginsForSites }
 				isJetpackCloud={ this.props.isJetpackCloud }
 				searchTerm={ search }
+				filter={ this.props.filter }
 				requestPluginsError={ this.props.requestPluginsError }
 			/>
 		);
