@@ -1,16 +1,12 @@
 import { select, subscribe } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
+import { getQueryArg } from '@wordpress/url';
+
+const siteOrigin = getQueryArg( window.location.search, 'origin' );
 
 export const postWasPublished = async () =>
 	new Promise( ( resolve ) => {
 		const unsubscribe = subscribe( () => {
-			const onboardingFlag = true;
-
-			if ( false === onboardingFlag ) {
-				unsubscribe();
-				return false;
-			}
-
 			const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
 			const getCurrentPostRevisionsCount = select( 'core/editor' ).getCurrentPostRevisionsCount();
 
@@ -22,10 +18,15 @@ export const postWasPublished = async () =>
 	} );
 
 function redirectOnboardingUserAfterPublishingPost() {
-	postWasPublished().then( () => {
-		console.log( 'Redirecting...' );
+	const showLaunchpad = window.location.search.indexOf( 'showLaunchpad=true' ) !== -1;
 
-		window.location.href = '/setup/write/launchpad?siteSlug=paulopmt1test.wordpress.com';
+	if ( ! showLaunchpad ) {
+		return false;
+	}
+
+	postWasPublished().then( () => {
+		const siteSlug = window.location.hostname;
+		window.location.href = siteOrigin + '/setup/write/launchpad?siteSlug=' + siteSlug;
 	} );
 }
 
