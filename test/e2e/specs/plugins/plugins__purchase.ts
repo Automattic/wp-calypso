@@ -3,7 +3,6 @@
  */
 
 import {
-	DataHelper,
 	CartCheckoutPage,
 	TestAccount,
 	RestAPIClient,
@@ -16,7 +15,7 @@ import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( DataHelper.createSuiteTitle( 'Plugins: Add two plugins to the cart' ), function () {
+describe( 'Plugins: Add two plugins to the cart', function () {
 	const planName = 'Business';
 	const plugin1Name =
 		envVariables.VIEWPORT_NAME === 'desktop' ? 'AutomateWoo' : 'WooCommerce Subscriptions';
@@ -83,12 +82,12 @@ describe( DataHelper.createSuiteTitle( 'Plugins: Add two plugins to the cart' ),
 			await pluginsPage.validateAndContinueElebigilityWarning();
 		} );
 
-		it( `WordPress.com ${ planName } is still to cart`, async function () {
+		it( `WordPress.com ${ planName } is still in cart`, async function () {
 			cartCheckoutPage = new CartCheckoutPage( page );
 			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
 		} );
 
-		it( `${ plugin1Name } is still to cart`, async function () {
+		it( `${ plugin1Name } is still in cart`, async function () {
 			await cartCheckoutPage.validateCartItem( `${ plugin1Name }` );
 		} );
 

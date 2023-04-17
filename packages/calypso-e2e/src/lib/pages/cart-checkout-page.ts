@@ -302,19 +302,9 @@ export class CartCheckoutPage {
 	/**
 	 * Complete the purchase by clicking on the 'Pay' button.
 	 */
-	async purchase( {
-		hasMarketplaceProduct,
-		timeout,
-	}: { hasMarketplaceProduct?: boolean; timeout?: number } = {} ): Promise< void > {
-		const URLtoValidate = hasMarketplaceProduct
-			? /.*marketplace\/thank-you.*/
-			: /.*me\/transactions.*/;
-
-		if ( hasMarketplaceProduct ) {
-			await this.page.getByLabel( selectors.thirdPartyDeveloperCheckboxLabel ).check();
-		}
+	async purchase( { timeout }: { timeout?: number } = {} ): Promise< void > {
 		await Promise.all( [
-			this.page.waitForResponse( URLtoValidate, { timeout: timeout } ),
+			this.page.waitForResponse( /.*me\/transactions.*/, { timeout: timeout } ),
 			this.page.click( selectors.purchaseButton ),
 		] );
 	}
