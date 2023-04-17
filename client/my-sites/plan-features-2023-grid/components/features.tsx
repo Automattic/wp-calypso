@@ -2,6 +2,7 @@ import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/cal
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { LoadingPlaceHolder } from './components/loading-placeholder';
 import { useGetWordPressSubdomain } from './hooks/use-get-wordpress-subdomain';
 import { PlanFeaturesItem } from './item';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
@@ -20,10 +21,6 @@ const SubdomainSuggestion = styled.div`
 	}
 `;
 
-const LoadingPlaceHolder = styled.div`
-	margin: 0;
-`;
-
 const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { domainName } ) => {
 	const {
 		data: wordPressSubdomainSuggestion,
@@ -34,7 +31,7 @@ const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { doma
 	return (
 		<SubdomainSuggestion>
 			<div className="is-domain-name">{ domainName }</div>
-			{ isLoading && <LoadingPlaceHolder className="async-load__placeholder" /> }
+			{ isLoading && <LoadingPlaceHolder /> }
 			{ ! isError && <div>{ wordPressSubdomainSuggestion?.domain_name }</div> }
 		</SubdomainSuggestion>
 	);

@@ -9,6 +9,7 @@ import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import usePlanPrices from '../plans/hooks/use-plan-prices';
+import { LoadingPlaceHolder } from './components/loading-placeholder';
 import {
 	USE_GET_WORDPRESS_SUBDOMAIN_QUERY_KEY,
 	useGetWordPressSubdomain,
@@ -121,10 +122,6 @@ const StyledButton = styled( Button )`
 	}
 `;
 
-const LoadingPlaceHolder = styled.div`
-	margin: 0;
-`;
-
 export function FreePlanPaidDomainDialog( {
 	domainName,
 	planSlug,
@@ -212,7 +209,7 @@ export function FreePlanPaidDomainDialog( {
 					</RowWithBorder>
 					<Row>
 						<DomainName>
-							{ isLoading && <LoadingPlaceHolder className="async-load__placeholder" /> }
+							{ isLoading && <LoadingPlaceHolder /> }
 							{ ! isError && <div>{ wordPressSubdomainSuggestion?.domain_name }</div> }
 						</DomainName>
 						<StyledButton
