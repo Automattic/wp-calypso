@@ -183,7 +183,7 @@ export function FreePlanPaidDomainDialog( {
 				<Heading>{ translate( 'A paid plan is required for your domain.' ) }</Heading>
 				<SubHeading>
 					{ translate(
-						'Custom domains are only available with a paid plan. And they are free for the first year.'
+						'Custom domains are only available with a paid plan. And they are free for the first year with an annual paid plan.'
 					) }
 				</SubHeading>
 				<ButtonContainer>
