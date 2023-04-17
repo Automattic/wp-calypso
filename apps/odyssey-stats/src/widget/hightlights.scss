@@ -46,6 +46,7 @@
 	}
 
 	.stats-widget-highlights__column {
+		// Make sure the highlight section doesn't overflow the container, which makes ellipsis work.
 		min-width: 0;
 	}
 
@@ -76,7 +77,6 @@
 			letter-spacing: -0.24px;
 			line-height: 20px;
 
-			width: 100%;
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
