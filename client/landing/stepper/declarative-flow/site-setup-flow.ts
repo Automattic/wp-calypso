@@ -11,7 +11,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
-import { WRITE_INTENT_DEFAULT_DESIGN, WRITE_INTENT_DEFAULT_DESIGN_OPTIONS } from '../constants';
+import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
@@ -214,13 +214,7 @@ const siteSetupFlow: Flow = {
 					const pendingActions = [];
 
 					if ( siteIntent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push(
-							setDesignOnSite(
-								siteSlug,
-								WRITE_INTENT_DEFAULT_DESIGN,
-								WRITE_INTENT_DEFAULT_DESIGN_OPTIONS
-							)
-						);
+						pendingActions.push( setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN ) );
 					}
 
 					// Update Launchpad option based on site intent

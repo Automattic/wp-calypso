@@ -4,7 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
-import { WRITE_INTENT_DEFAULT_DESIGN, WRITE_INTENT_DEFAULT_DESIGN_OPTIONS } from '../constants';
+import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
@@ -131,13 +131,7 @@ const pluginBundleFlow: Flow = {
 						setGoalsOnSite( siteSlug, goals ),
 					];
 					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push(
-							setDesignOnSite(
-								siteSlug,
-								WRITE_INTENT_DEFAULT_DESIGN,
-								WRITE_INTENT_DEFAULT_DESIGN_OPTIONS
-							)
-						);
+						pendingActions.push( setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN ) );
 					}
 
 					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
