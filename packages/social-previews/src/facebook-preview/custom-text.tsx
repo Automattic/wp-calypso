@@ -4,12 +4,13 @@ import { facebookCustomText } from './helpers';
 type Props = {
 	text: string;
 	url: string;
+	forceUrlDisplay?: boolean;
 };
 
-const CustomText: React.FC< Props > = ( { text, url } ) => {
+const CustomText: React.FC< Props > = ( { text, url, forceUrlDisplay } ) => {
 	let postLink;
 
-	if ( hasTag( text, 'a' ) ) {
+	if ( forceUrlDisplay || hasTag( text, 'a' ) ) {
 		postLink = (
 			<a
 				className="facebook-preview__custom-text-post-url"
