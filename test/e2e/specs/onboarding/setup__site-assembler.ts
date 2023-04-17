@@ -26,6 +26,9 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 	} );
 
 	describe( 'Create a site with the Site Assembler', function () {
+		const assembledPreviewLocator = page.locator(
+			'.pattern-large-preview__patterns .block-renderer'
+		);
 		let startSiteFlow: SiteAssemblerFlow;
 
 		beforeAll( async function () {
@@ -54,31 +57,24 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 		} );
 
 		it( 'Select "Header"', async function () {
-			await startSiteFlow.selectHeader();
+			// await startSiteFlow.selectHeader();
+			await startSiteFlow.selectLayoutComponent( 'Header', 1 );
 			await startSiteFlow.clickButton( 'Save' );
-			await page
-				.locator( '.pattern-large-preview__patterns .block-renderer' )
-				.count()
-				.then( ( count ) => {
-					expect( count ).toBe( 1 );
-				} );
+			expect( await assembledPreviewLocator.count() ).toBe( 1 );
 		} );
 
 		it( 'Select "Footer"', async function () {
-			await startSiteFlow.selectFooter();
+			// await startSiteFlow.selectFooter();
+			await startSiteFlow.selectLayoutComponent( 'Footer', 1 );
 			await startSiteFlow.clickButton( 'Save' );
-			await page
-				.locator( '.pattern-large-preview__patterns .block-renderer' )
-				.count()
-				.then( ( count ) => {
-					expect( count ).toBe( 2 );
-				} );
+			expect( await assembledPreviewLocator.count() ).toBe( 2 );
 		} );
 
 		it( 'Click "Continue" and land on the Site Editor', async function () {
-			await startSiteFlow.gotoSiteEditor();
-			await page.waitForURL( /.*\/site-editor\/.*/, {
-				timeout: 180 * 1000,
+			await page.waitForLoadState( 'networkidle' );
+			await startSiteFlow.clickButton( 'Continue' );
+			await page.waitForURL( /site-editor/, {
+				timeout: 45 * 1000,
 			} );
 		} );
 	} );
