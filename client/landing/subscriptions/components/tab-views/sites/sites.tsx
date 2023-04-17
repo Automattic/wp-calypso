@@ -9,7 +9,7 @@ import { Notice } from 'calypso/landing/subscriptions/components/notice';
 import { SiteList } from 'calypso/landing/subscriptions/components/site-list';
 import TabView from '../tab-view';
 
-const isSearchEnabled = config.isEnabled( 'subscription-management-sites-search' );
+const isSearchEnabled = config.isEnabled( 'subscription-management/sites-search' );
 
 const Sites = () => {
 	const translate = useTranslate();
