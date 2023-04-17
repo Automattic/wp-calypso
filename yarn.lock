@@ -6438,26 +6438,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:4.26.1":
-  version: 4.26.1
-  resolution: "@tanstack/query-core@npm:4.26.1"
-  checksum: 9df752f897de918a79a1e759a672a414919314c2871bc4e40b603ecc56358de9a76fe44c7bdf5ba2988b9092a035dd14b545f5c91dd052d5d3241dd2bf3d5f7a
-  languageName: node
-  linkType: hard
-
 "@tanstack/query-core@npm:4.29.1":
   version: 4.29.1
   resolution: "@tanstack/query-core@npm:4.29.1"
   checksum: 38fb775e370e7cd43fa4084620d855a08cb02e52adc8c3dd9eaea92ca4aa6ba3ae3a0ab627162e2f4a974f629478b660dc6f1a77723e7aaaf7408ab7c1840847
-  languageName: node
-  linkType: hard
-
-"@tanstack/query-persist-client-core@npm:4.26.1":
-  version: 4.26.1
-  resolution: "@tanstack/query-persist-client-core@npm:4.26.1"
-  dependencies:
-    "@tanstack/query-core": 4.26.1
-  checksum: 941ccc8ca1b04201186276b33b085a5284a295252d174ddfb720306963b09e22b9cb0cbbb6ad13aa455ae0dd564f7e6ba4bcda3761f18f3e139598e58c915703
   languageName: node
   linkType: hard
 
@@ -6470,12 +6454,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-sync-storage-persister@npm:^4.26.1":
-  version: 4.26.1
-  resolution: "@tanstack/query-sync-storage-persister@npm:4.26.1"
+"@tanstack/query-sync-storage-persister@npm:^4.29.1":
+  version: 4.29.1
+  resolution: "@tanstack/query-sync-storage-persister@npm:4.29.1"
   dependencies:
-    "@tanstack/query-persist-client-core": 4.26.1
-  checksum: f62e24f3277e4db8f17d4fe9e245263905047ef26676c34d3a27ca67780cfede9afdc156845f35ee71d76eaf68994ea792d313c454a150e85e1e2daf8d99e98b
+    "@tanstack/query-persist-client-core": 4.29.1
+  checksum: b7afab9c997b408de9cfe66bb775741f04d62f784a30cc54a0417a087b6ecfc640fc904f33cf997ab23d17363cac03e0182444cbd0d5d532ef0a76bc471b41fd
   languageName: node
   linkType: hard
 
@@ -11941,7 +11925,7 @@ __metadata:
     "@sentry/webpack-plugin": ^1.18.8
     "@stripe/react-stripe-js": ^1.4.1
     "@stripe/stripe-js": 1.17.1
-    "@tanstack/query-sync-storage-persister": ^4.26.1
+    "@tanstack/query-sync-storage-persister": ^4.29.1
     "@tanstack/react-query": ^4.29.1
     "@tanstack/react-query-devtools": ^4.29.1
     "@tanstack/react-query-persist-client": ^4.29.1
