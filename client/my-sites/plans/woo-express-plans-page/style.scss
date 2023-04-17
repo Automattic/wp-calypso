@@ -10,6 +10,11 @@ body.is-section-plans.is-woo-express-plan {
 		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
 	}
 
+	.plans,
+	.current-plan {
+		background-color: #fff;
+	}
+
 	.woo-express-plans-page__section-title {
 		font-size: $woo-font-title-medium;
 		text-align: center;
