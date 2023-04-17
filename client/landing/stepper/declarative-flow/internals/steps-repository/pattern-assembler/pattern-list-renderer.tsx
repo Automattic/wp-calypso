@@ -44,9 +44,9 @@ const PatternListItem = ( {
 	const setRefs = useCallback(
 		( node?: Element | null | undefined ) => {
 			if ( node ) {
-				ref.current;
+				ref.current = node as HTMLButtonElement;
+				inViewRef( node );
 			}
-			inViewRef( node );
 		},
 		[ inViewRef ]
 	);
