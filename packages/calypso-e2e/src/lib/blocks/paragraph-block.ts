@@ -1,9 +1,5 @@
 import { Page, ElementHandle } from 'playwright';
 
-const selectors = {
-	block: 'p',
-};
-
 /**
  * Represents the Paragraph block.
  */
@@ -43,7 +39,7 @@ export class ParagraphBlock {
 		contents: ( string | number )[]
 	): Promise< void > {
 		for await ( const content of contents ) {
-			await page.waitForSelector( `${ selectors.block }:text("${ content.toString() }")` );
+			await page.locator( `:text("${ content.toString() }"):visible` ).waitFor();
 		}
 	}
 }
