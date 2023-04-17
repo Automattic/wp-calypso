@@ -3,7 +3,7 @@ import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
 import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
-import { SiteGoal, STORE_KEY } from './constants';
+import { SiteGoal, STORE_KEY, DEFAULT_THEME } from './constants';
 import { ProfilerData } from './types';
 import type { State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
@@ -151,7 +151,6 @@ export function* createSite( {
 
 	const siteUrl = domain?.domain_name || siteTitle || username;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
-	const defaultTheme = 'zoologist';
 	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 
 	const params: CreateSiteParams = {
@@ -165,7 +164,7 @@ export function* createSite( {
 			lang_id: lang_id,
 			site_creation_flow: 'gutenboarding',
 			enable_fse: true,
-			theme: `pub/${ selectedDesign?.theme || defaultTheme }`,
+			theme: `pub/${ selectedDesign?.theme || DEFAULT_THEME }`,
 			timezone_string: guessTimezone(),
 			...( selectedDesign?.template && { template: selectedDesign.template } ),
 			...( selectedFonts && {

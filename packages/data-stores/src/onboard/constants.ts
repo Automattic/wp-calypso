@@ -1,5 +1,7 @@
 export const STORE_KEY = 'automattic/onboard';
 
+export const DEFAULT_THEME = 'twentytwentythree';
+
 export enum SiteGoal {
 	Write = 'write',
 	Sell = 'sell',

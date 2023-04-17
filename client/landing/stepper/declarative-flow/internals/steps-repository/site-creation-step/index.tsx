@@ -35,7 +35,7 @@ import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
-const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
+const DEFAULT_WP_SITE_THEME = 'pub/twentytwentythree';
 const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
