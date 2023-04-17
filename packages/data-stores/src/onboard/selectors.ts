@@ -26,7 +26,6 @@ export const getProgress = ( state: State ) => state.progress;
 export const getProgressTitle = ( state: State ) => state.progressTitle;
 export const getStepProgress = ( state: State ) => state.stepProgress;
 export const getGoals = ( state: State ) => state.goals;
-export const getPatternContent = ( state: State ) => state.patternContent;
 export const getVerticalId = ( state: State ) => state.verticalId;
 export const getStoreLocationCountryCode = ( state: State ) => state.storeLocationCountryCode;
 export const getEcommerceFlowRecurType = ( state: State ) => state.ecommerceFlowRecurType;

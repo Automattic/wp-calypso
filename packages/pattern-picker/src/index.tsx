@@ -4,7 +4,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import Swiper from 'swiper';
 import { Item } from './item';
 import type { Pattern } from './types';
@@ -27,13 +27,19 @@ export default function PatternPicker( { onPick }: Props ) {
 			enabled: true,
 		}
 	);
-	const designs = allDesigns
-		? allDesigns.static.designs.filter(
-				( design ) =>
-					design.is_virtual &&
-					design.categories.some( ( category ) => category.slug === 'link-in-bio' )
-		  )
-		: [];
+
+	const designs = useMemo( () => {
+		if ( ! allDesigns ) {
+			return [];
+		}
+
+		return allDesigns.static.designs.filter(
+			( design ) =>
+				design.is_virtual &&
+				design.categories.some( ( category ) => category.slug === 'link-in-bio' )
+		);
+	}, [ allDesigns ] );
+
 	const swiperInstance = useRef< Swiper | null >( null );
 
 	useEffect( () => {
