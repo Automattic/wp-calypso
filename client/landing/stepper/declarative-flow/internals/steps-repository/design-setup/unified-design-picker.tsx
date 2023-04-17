@@ -84,7 +84,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			( site && ( select( SITE_STORE ) as SiteSelect ).getSiteVerticalId( site.ID ) ) || '',
 		[ site ]
 	);
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
 
 	const { goToCheckout } = useCheckout();
 
