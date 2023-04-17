@@ -39,7 +39,9 @@ export function init() {
 						/>
 						<Modules />
 						<div className="stats-widget-footer">
-							<JetpackLogo size={ 25 } full />
+							<a href="https://jetpack.com" target="__blank" aria-label="Jetpack Official Website">
+								<JetpackLogo size={ 25 } full />
+							</a>
 						</div>
 					</div>
 				</div>
