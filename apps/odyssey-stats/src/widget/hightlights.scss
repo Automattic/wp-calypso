@@ -59,8 +59,7 @@
 	.stats-widget-highlights-card__empty {
 		min-height: 40px;
 		margin-top: $font-body;
-		// TODO: use a variable for this
-		color: #999;
+		color: var(--studio-gray-40);
 	}
 
 	.stats-widget-highlights-card__list {
