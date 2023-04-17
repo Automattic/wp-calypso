@@ -110,7 +110,16 @@ const PrePurchaseNotices = () => {
 			return null;
 		}
 
-		return lowerTierProducts[ 0 ];
+		const highestTierOverlappedProduct = lowerTierProducts[ lowerTierProducts.length - 1 ];
+
+		// If the highest tiered product is Akismet Free, return null
+		// We don't need to display a notice about multiple paid plans in this case
+		if ( highestTierOverlappedProduct.productSlug === 'ak_free_yearly' ) {
+			return null;
+		}
+
+		// Returns the highest tiered product
+		return lowerTierProducts[ lowerTierProducts.length - 1 ];
 	}, [ cartItemSlugs, userActivePurchases ] );
 
 	const siteProductThatOverlapsCartPlan = useMemo( () => {
