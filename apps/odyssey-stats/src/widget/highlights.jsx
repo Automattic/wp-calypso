@@ -6,7 +6,7 @@ import useTopPostsQuery from '../hooks/use-top-posts-query';
 
 import './hightlights.scss';
 
-function TopColumn( { items, viewAllUrl, viewAllText, title, className = null } ) {
+function TopColumn( { items, viewAllUrl, viewAllText, title, isLoading, className = null } ) {
 	const translate = useTranslate();
 
 	return (
@@ -14,7 +14,11 @@ function TopColumn( { items, viewAllUrl, viewAllText, title, className = null } 
 			<label className="stats-widget-highlights-card__title">{ title }</label>
 			{ items.length === 0 && (
 				<div className="stats-widget-highlights-card__empty">
-					<span>{ translate( 'Sorry, nothing to report.' ) }</span>
+					<span>
+						{ isLoading
+							? `${ translate( 'Loading' ) }...`
+							: translate( 'Sorry, nothing to report.' ) }
+					</span>
 				</div>
 			) }
 			{ items.length > 0 && (
@@ -40,9 +44,18 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
 
-	// TODO: add a loading state placeholder with isFetching returned from the query.
-	const { data: topPostsAndPages = [] } = useTopPostsQuery( siteId, 'day', 7, queryDate );
-	const { data: topReferrers = [] } = useReferrersQuery( siteId, 'day', 7, queryDate );
+	const { data: topPostsAndPages = [], isFetching: isFetchingPostsAndPages } = useTopPostsQuery(
+		siteId,
+		'day',
+		7,
+		queryDate
+	);
+	const { data: topReferrers = [], isFetching: isFetchingReferrers } = useReferrersQuery(
+		siteId,
+		'day',
+		7,
+		queryDate
+	);
 
 	return (
 		<div className="stats-widget-highlights stats-widget-card">
@@ -57,6 +70,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 					viewAllUrl={ odysseyStatsBaseUrl }
 					viewAllText={ translate( 'View all posts & pages stats' ) }
 					items={ topPostsAndPages }
+					isLoading={ isFetchingPostsAndPages }
 				/>
 				<TopColumn
 					className="stats-widget-highlights__column"
@@ -64,6 +78,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 					viewAllUrl={ odysseyStatsBaseUrl }
 					viewAllText={ translate( 'View all referrer stats' ) }
 					items={ topReferrers }
+					isLoading={ isFetchingReferrers }
 				/>
 			</div>
 		</div>
