@@ -72,12 +72,12 @@ const useSiteSubscriptionsQuery = ( {
 		// Flatten all the pages into a single array containing all subscriptions
 		const flattenedData = data?.pages?.map( ( page ) => page.subscriptions ).flat();
 
+		const searchTermLowerCase = searchTerm.toLowerCase();
 		const searchFilter = ( item: SiteSubscription ) => {
 			if ( searchTerm === '' ) {
 				return true;
 			}
 
-			const searchTermLowerCase = searchTerm.toLowerCase();
 			return (
 				item.name.toLowerCase().includes( searchTermLowerCase ) ||
 				item.URL.toLowerCase().includes( searchTermLowerCase )
