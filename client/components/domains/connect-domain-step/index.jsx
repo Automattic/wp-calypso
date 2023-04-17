@@ -66,6 +66,11 @@ function ConnectDomainStep( {
 	const prevPageSlug = stepsDefinition[ pageSlug ].prev;
 	const isTwoColumnLayout = ! stepsDefinition[ pageSlug ].singleColumnLayout;
 
+	if ( 'link-in-bio-domain' === flowName && 'dc_return' === initialStep ) {
+		const redirectUrl = '/setup/link-in-bio/launchpad?siteSlug=' + selectedSite.slug;
+		page( redirectUrl );
+	}
+
 	const statusRef = useRef( {} );
 
 	const dispatch = useDispatch();
@@ -168,7 +173,14 @@ function ConnectDomainStep( {
 			.mappingSetupInfo( selectedSite.ID, {
 				redirect_uri:
 					'https://wordpress.com' +
-					domainMappingSetup( selectedSite.slug, domain, stepSlug.DC_RETURN ),
+					domainMappingSetup(
+						selectedSite.slug,
+						domain,
+						stepSlug.DC_RETURN,
+						false,
+						false,
+						flowName
+					),
 			} )
 			.then( ( data ) => {
 				setDomainSetupInfo( { data } );
