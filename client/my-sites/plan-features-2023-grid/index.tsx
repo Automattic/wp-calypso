@@ -122,7 +122,6 @@ type PlanFeatures2023GridProps = {
 	siteId: number;
 	isLaunchPage: boolean;
 	isReskinned: boolean;
-	is2023OnboardingPricingGrid: boolean;
 	onUpgradeClick: ( cartItem: MinimalRequestCartProduct | null ) => void;
 	// either you specify the plans prop or isPlaceholder prop
 	plans: Array< string >;
