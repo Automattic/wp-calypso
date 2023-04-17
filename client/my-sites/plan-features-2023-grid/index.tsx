@@ -496,11 +496,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, is2023OnboardingPricingGrid, translate } = this.props;
-
-		const isLargeCurrency = planPropertiesObj.some(
-			( properties ) => properties?.rawPrice && properties?.rawPrice > 99000
-		);
+		const { isReskinned, isLargeCurrency, is2023OnboardingPricingGrid, translate } = this.props;
 
 		return planPropertiesObj.map( ( properties ) => {
 			const { planName, rawPrice } = properties;
