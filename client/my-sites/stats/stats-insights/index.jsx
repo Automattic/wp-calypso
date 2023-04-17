@@ -29,13 +29,14 @@ const StatsInsights = ( props ) => {
 	const { siteId, siteSlug, translate, isOdysseyStats, isJetpack } = props;
 	const moduleStrings = statsStrings();
 
-	const isInsightsPageGridEnabled = config.isEnabled( 'stats/insights-page-grid' );
-
-	const statsModuleListClass = classNames( 'stats__module-list stats__module--unified', {
-		'is-insights-page-enabled': isInsightsPageGridEnabled,
-		'is-odyssey-stats': isOdysseyStats,
-		'is-jetpack': isJetpack,
-	} );
+	const statsModuleListClass = classNames(
+		'stats__module-list--insights',
+		'stats__module--unified',
+		{
+			'is-odyssey-stats': isOdysseyStats,
+			'is-jetpack': isJetpack,
+		}
+	);
 
 	// Track the last viewed tab.
 	// Necessary to properly configure the fixed navigation headers.
@@ -67,55 +68,22 @@ const StatsInsights = ( props ) => {
 						vendor={ getSuggestionsVendor() }
 					/>
 				) }
-				{ isInsightsPageGridEnabled ? (
-					<div className={ statsModuleListClass }>
-						<StatsModule
-							path="tags-categories"
-							moduleStrings={ moduleStrings.tags }
-							statType="statsTags"
-							hideSummaryLink
-							//hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
-						/>
-						<Comments path="comments" />
+				<div className={ statsModuleListClass }>
+					<StatsModule
+						path="tags-categories"
+						moduleStrings={ moduleStrings.tags }
+						statType="statsTags"
+						hideSummaryLink
+						//hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
+					/>
+					<Comments path="comments" />
 
-						{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
-						{ ! isJetpack && <StatShares siteId={ siteId } /> }
+					{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
+					{ ! isJetpack && <StatShares siteId={ siteId } /> }
 
-						<Followers path="followers" />
-						<Reach />
-					</div>
-				) : (
-					// remove all this section when cleaning 'stats/insights-page-grid'
-					<div className="stats-insights__nonperiodic has-recent">
-						<div className={ statsModuleListClass }>
-							<div className="stats__module-column">
-								<StatsModule
-									path="tags-categories"
-									moduleStrings={ moduleStrings.tags }
-									statType="statsTags"
-									hideSummaryLink
-									hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
-								/>
-								{ /** TODO: The feature depends on Jetpack Sharing module and is disabled for all Jetpack Sites for now. */ }
-								{ ! isJetpack && <StatShares siteId={ siteId } /> }
-							</div>
-							<div className="stats__module-column">
-								<Reach />
-								<Followers path="followers" />
-							</div>
-							<div className="stats__module-column">
-								<Comments path="comments" />
-								<StatsModule
-									path="publicize"
-									moduleStrings={ moduleStrings.publicize }
-									statType="statsPublicize"
-									hideSummaryLink
-									hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
-								/>
-							</div>
-						</div>
-					</div>
-				) }
+					<Followers path="followers" />
+					<Reach />
+				</div>
 				<JetpackColophon />
 			</div>
 		</Main>
