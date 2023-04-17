@@ -39,6 +39,9 @@ const selectors = {
 	openRemoveMenuButton: '.plugin-details-cta__manage-plugin-menu button[title="Toggle menu"]',
 	removeButton: '.popover__menu button:has-text("Remove")',
 
+	// Elegibility warnings
+	eligibilityWarning: '.eligibility-warnings__title',
+
 	// Category selector
 	selectedCategory: ( categoryTitle: string ) => `.categories__header:text("${ categoryTitle }")`,
 
@@ -289,6 +292,24 @@ export class PluginsPage {
 	async clickInstallPlugin(): Promise< void > {
 		const locator = this.page.locator( selectors.installButton );
 		await Promise.all( [ this.page.waitForResponse( /.*install\?.*/ ), locator.click() ] );
+	}
+
+	/**
+	 * Clicks on the `Purchase and Activate` button and get Elegibility warning.
+	 */
+	async clickPurchasePlugin(): Promise< void > {
+		await this.page.getByText( 'Purchase and activate' ).click();
+	}
+
+	/**
+	 * Validate Elegibility Warning and click on the `Upgrade and Activate` button.
+	 */
+	async validateAndContinueElebigilityWarning(): Promise< void > {
+		await this.page
+			.locator( selectors.eligibilityWarning )
+			.getByText( 'Upgrade your plan to install plugins' )
+			.waitFor();
+		await this.page.getByText( 'Upgrade and activate plugin' ).click();
 	}
 
 	/**
