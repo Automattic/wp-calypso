@@ -65,6 +65,7 @@ export const tagListing = ( context, next ) => {
 			showBack={ !! context.lastRoute }
 			showPrimaryFollowButtonOnCards={ false }
 			followSource={ TAG_PAGE }
+			trendingTags={ context.params.trendingTags ?? [] }
 		/>
 	);
 	next();
