@@ -2,23 +2,25 @@ import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelector } from 'react-redux';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
-import QuickSite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/quick-site';
-import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { redirect } from './internals/steps-repository/import/util';
-import ProcessingStep from './internals/steps-repository/processing-step';
+import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
-	AssertConditionResult,
-	AssertConditionState,
 	Flow,
 	ProvidedDependencies,
-} from './internals/types';
+} from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
 	useSteps() {
 		return [
-			{ slug: 'quick-site', component: QuickSite },
-			{ slug: 'processing', component: ProcessingStep },
+			{
+				slug: 'site-creation-step',
+				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+			},
+			{
+				slug: 'processing',
+				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
+			},
 		];
 	},
 
@@ -27,7 +29,7 @@ const startWriting: Flow = {
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
 			switch ( currentStep ) {
-				case 'quick-site':
+				case 'site-creation-step':
 					return navigate( 'processing' );
 				case 'processing': {
 					if ( providedDependencies?.siteSlug ) {
@@ -41,7 +43,7 @@ const startWriting: Flow = {
 		return { submit };
 	},
 
-	useAssertConditions(): AssertConditionResult {
+	useSideEffect() {
 		const flowName = this.name;
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
@@ -49,26 +51,14 @@ const startWriting: Flow = {
 
 		const logInUrl =
 			locale && locale !== 'en'
-				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Start%20writing&redirect_to=/setup/${ flowName }/quick-site`
-				: `/start/account/user?variationName=${ flowName }&pageTitle=Start%20writing&redirect_to=/setup/${ flowName }/quick-site`;
-
-		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
+				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Start%20writing&redirect_to=/setup/${ flowName }`
+				: `/start/account/user?variationName=${ flowName }&pageTitle=Start%20writing&redirect_to=/setup/${ flowName }`;
 
 		if ( ! isLoggedIn ) {
 			redirect( logInUrl );
-			result = {
-				state: AssertConditionState.CHECKING,
-				message: `${ flowName } requires a logged in user`,
-			};
 		} else if ( currentUserSiteCount && currentUserSiteCount > 0 ) {
 			redirect( '/post?showLaunchpad=true' );
-			result = {
-				state: AssertConditionState.CHECKING,
-				message: `${ flowName } requires no preexisting sites`,
-			};
 		}
-
-		return result;
 	},
 };
 

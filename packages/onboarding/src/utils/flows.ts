@@ -90,6 +90,9 @@ export const isWriteFlow = ( flowName: string | null ) => {
 export const isUpdateDesignFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ UPDATE_DESIGN_FLOW ].includes( flowName ) );
 };
+export const isStartWritingFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ START_WRITING_FLOW ].includes( flowName ) );
+};
 
 export const isSiteAssemblerFlow = ( flowName: string | null ) => {
 	const SITE_ASSEMBLER_FLOWS = [ WITH_THEME_ASSEMBLER_FLOW ];
