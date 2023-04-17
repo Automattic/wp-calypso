@@ -253,6 +253,14 @@ export const wooExpressFeatureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_ACCEPT_LOCAL_PAYMENTS,
 			FEATURE_RECURRING_PAYMENTS,
 		],
+		getFootnotes: () => ( {
+			'Available as standard in WooCommerce Payments (restrictions apply). Additional extensions may be required for other payment providers.':
+				[
+					FEATURE_INTERNATIONAL_PAYMENTS,
+					FEATURE_ACCEPT_LOCAL_PAYMENTS,
+					FEATURE_RECURRING_PAYMENTS,
+				],
+		} ),
 	},
 	[ FEATURE_GROUP_MARKETING_EMAIL ]: {
 		slug: FEATURE_GROUP_MARKETING_EMAIL,
@@ -281,5 +289,9 @@ export const wooExpressFeatureGroups: Partial< FeatureGroupMap > = {
 			FEATURE_DISCOUNTED_SHIPPING,
 			FEATURE_PRINT_SHIPPING_LABELS,
 		],
+		getFootnotes: () => ( {
+			'Only available in the U.S. – an additional extension will be required for other countries.':
+				[ FEATURE_DISCOUNTED_SHIPPING, FEATURE_PRINT_SHIPPING_LABELS ],
+		} ),
 	},
 };
