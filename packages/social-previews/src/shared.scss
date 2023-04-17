@@ -24,5 +24,11 @@ $social-preview-light-text-color: #757575;
 
 	font-size: 0.75rem;
 	line-height: 1.33;
+
+	.components-external-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+	}
 }
 
