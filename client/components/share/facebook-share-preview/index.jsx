@@ -42,8 +42,6 @@ export class FacebookSharePreview extends PureComponent {
 				description={ decodeEntities( originalExcerpt || articleContent ) }
 				image={ imageUrl }
 				customText={ decodeEntities( message || originalExcerpt || articleContent || seoTitle ) }
-				// customImage="https://encouraging-red.jurassic.ninja/wp-content/uploads/2023/04/f349df9cdd8e448e6a670f328c5df26e.jpg"
-				customImage="https://encouraging-red.jurassic.ninja/wp-content/uploads/2023/04/0-featured_morrocco_jeff_garriock-scaled.jpg"
 				user={ { displayName: externalDisplay, avatarUrl: externalProfilePicture } }
 				type={ TYPE_ARTICLE }
 			/>
