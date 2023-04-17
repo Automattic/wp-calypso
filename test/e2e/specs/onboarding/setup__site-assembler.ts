@@ -8,7 +8,7 @@ import {
 	TestAccount,
 	SiteAssemblerFlow,
 } from '@automattic/calypso-e2e';
-import { Browser, Page } from 'playwright';
+import { Browser, Locator, Page } from 'playwright';
 
 declare const browser: Browser;
 
@@ -26,9 +26,7 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 	} );
 
 	describe( 'Create a site with the Site Assembler', function () {
-		const assembledPreviewLocator = page.locator(
-			'.pattern-large-preview__patterns .block-renderer'
-		);
+		let assembledPreviewLocator: Locator;
 		let startSiteFlow: SiteAssemblerFlow;
 
 		beforeAll( async function () {
@@ -59,10 +57,13 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 		it( 'Select "Header"', async function () {
 			await startSiteFlow.selectLayoutComponent( 'Header', 1 );
 			await startSiteFlow.clickButton( 'Save' );
+
+			assembledPreviewLocator = page.locator( '.pattern-large-preview__patterns .block-renderer' );
 			expect( await assembledPreviewLocator.count() ).toBe( 1 );
 		} );
 
 		it( 'Select "Footer"', async function () {
+			await startSiteFlow.selectLayoutComponent( 'Footer', 1 );
 			await startSiteFlow.clickButton( 'Save' );
 			expect( await assembledPreviewLocator.count() ).toBe( 2 );
 		} );
