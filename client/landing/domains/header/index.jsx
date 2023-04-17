@@ -24,7 +24,8 @@ class DomainsLandingHeader extends Component {
 		);
 
 		switch ( this.props.reseller ) {
-			case 'tumblr':
+			case 'tumblr_live':
+			case 'tumblr_ote':
 				return tumblrLogo;
 			default:
 				return <WordPressLogo className="header__logo" size={ 52 } />;
