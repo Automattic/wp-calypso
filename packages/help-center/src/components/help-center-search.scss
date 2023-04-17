@@ -627,6 +627,11 @@
 			display: block;
 		}
 	}
+
+	.help-center-gpt-response {
+		font-size: $font-body-small;
+		color: var(--color-neutral-80);
+	}
 }
 
 /**

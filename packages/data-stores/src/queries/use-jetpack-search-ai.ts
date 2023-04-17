@@ -13,19 +13,19 @@ export type JetpackSearchAIResult = {
 	terms: string[];
 };
 
-export function useJetpackSearchAIQuery( siteId: number, query: string, stopAt: string ) {
-	return useQuery< JetpackSearchAIResult[] >(
+export function useJetpackSearchAIQuery( siteId: number | string, query: string, stopAt: string ) {
+	return useQuery< JetpackSearchAIResult >(
 		[ query ],
 		async () =>
 			await wpcomRequest( {
-				path: `/sites/${ siteId }/jetpack-search/ai/search`,
+				path: `sites/${ siteId }/jetpack-search/ai/search`,
 				apiNamespace: 'wpcom/v2/',
 				apiVersion: '2',
 				query: `query=${ encodeURIComponent( query ) }&stop_at=${ stopAt }`,
 			} ),
 		{
 			refetchOnWindowFocus: false,
-			keepPreviousData: true,
+			keepPreviousData: false,
 			enabled: !! query,
 		}
 	);

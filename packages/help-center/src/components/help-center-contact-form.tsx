@@ -38,6 +38,7 @@ import { HELP_CENTER_STORE } from '../stores';
 import { getSupportVariationFromMode } from '../support-variations';
 import { SitePicker } from '../types';
 import { BackButton } from './back-button';
+import { HelpCenterGPT } from './help-center-gpt';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
 import type { HelpCenterSelect } from '@automattic/data-stores';
@@ -154,6 +155,7 @@ export const HelpCenterContactForm = () => {
 	const overflow = params.get( 'overflow' ) === 'true';
 	const navigate = useNavigate();
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
+	const [ gptFetching, setGPTFetching ] = useState( 'loading' );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
 	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
@@ -428,6 +430,34 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
+	// TODO: Figure out in which environments this makes sense.
+	const showGPTResponse = true;
+	if ( showGPTResponse && showingSibylResults ) {
+		return (
+			<div className="help-center__sibyl-articles-page">
+				<BackButton />
+				<HelpCenterGPT message={ message } setLoadingState={ setGPTFetching } />
+				<section className="contact-form-submit">
+					<Button
+						disabled={ gptFetching ? true : isCTADisabled() }
+						onClick={ handleCTA }
+						primary
+						className="help-center-contact-form__site-picker-cta"
+					>
+						{ gptFetching
+							? __( 'Gathering quick response.', __i18n_text_domain__ )
+							: getCTALabel() }
+					</Button>
+					{ hasSubmittingError && (
+						<FormInputValidation
+							isError
+							text={ __( 'Something went wrong, please try again later.', __i18n_text_domain__ ) }
+						/>
+					) }
+				</section>
+			</div>
+		);
+	}
 	return showingSibylResults ? (
 		<div className="help-center__sibyl-articles-page">
 			<BackButton />
