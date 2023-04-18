@@ -2,10 +2,18 @@ import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
 function querySubscribers( siteId, period, quantity ) {
-	return wpcom.req.get( {
-		method: 'GET',
-		apiNamespace: 'rest/v1.1',
-		path: `/sites/${ siteId }/stats/subscribers?unit=${ period }&quantity=${ quantity }&http_envelope=1`,
+	return wpcom.req.get(
+		{
+			method: 'GET',
+			apiNamespace: 'rest/v1.1',
+			path: `/sites/${ siteId }/stats/subscribers`,
+		},
+		{
+			unit: period,
+			quantity,
+			http_envelope: 1,
+		}
+	);
 	} );
 }
 
