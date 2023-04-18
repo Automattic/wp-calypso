@@ -35,6 +35,7 @@ const startWriting: Flow = {
 					return navigate( 'processing' );
 				case 'processing': {
 					if ( providedDependencies?.siteSlug ) {
+						const siteOrigin = window.location.origin;
 						return redirect(
 							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?showLaunchpad=true&origin=${ siteOrigin }`
 						);
