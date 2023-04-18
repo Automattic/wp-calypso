@@ -43,6 +43,7 @@ type PlanFeaturesActionsButtonProps = {
 	flowName: string;
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
+	isWooExpressPlusPlan?: boolean;
 	selectedSiteSlug: string | null;
 };
 
@@ -322,6 +323,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	flowName,
 	buttonText,
 	isWpcomEnterpriseGridPlan = false,
+	isWooExpressPlusPlan = false,
 	selectedSiteSlug,
 } ) => {
 	const translate = useTranslate();
@@ -374,6 +376,18 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 							components: translateComponents,
 					  } ) }
 			</Button>
+		);
+	} else if ( isWooExpressPlusPlan ) {
+		return (
+			<ExternalLinkWithTracking
+				className={ classNames( classes ) }
+				href="https://woocommerce.com/get-in-touch/"
+				target="_blank"
+				tracksEventName="calypso_plan_step_woo_express_plus_click"
+				tracksEventProps={ { flow: flowName } }
+			>
+				{ translate( 'Get in touch' ) }
+			</ExternalLinkWithTracking>
 		);
 	} else if ( isLaunchPage ) {
 		return (

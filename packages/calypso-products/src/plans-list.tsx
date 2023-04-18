@@ -349,6 +349,8 @@ import {
 	FEATURE_RECOMMEND_ADD_ONS,
 	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
 	FEATURE_MIN_MAX_ORDER_QUANTITY,
+	PLAN_WOOEXPRESS_PLUS,
+	TYPE_WOO_EXPRESS_PLUS,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -1471,6 +1473,21 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 } );
 
 // The following is not a real plan, we are adding it here so that
+// Woo Express Plus gets its own column in the plans grid.
+const getPlanWooExpressPlusDetails = (): IncompleteWPcomPlan => ( {
+	...getDotcomPlanDetails(),
+	group: GROUP_WPCOM,
+	type: TYPE_WOO_EXPRESS_PLUS,
+	getTitle: () => i18n.translate( 'Plus' ),
+	getPlanTagline: () =>
+		i18n.translate( 'For fast-growing businesses that need access to the most powerful tools.' ),
+	getDescription: () => '',
+	get2023PricingGridSignupWpcomFeatures: () => [],
+	get2023PricingGridSignupJetpackFeatures: () => [],
+	get2023PricingGridSignupStorageOptions: () => [],
+} );
+
+// The following is not a real plan, we are adding it here so that
 // VIP (a.k.a Enterprise) gets its own column in the plans grid.
 // Check pdgrnI-1Qp-p2 for more details.
 const get2023EnterprisGrideDetails = (): IncompleteWPcomPlan => ( {
@@ -2367,6 +2384,15 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1056,
 		getStoreSlug: () => PLAN_WOOEXPRESS_SMALL,
 		getPathSlug: () => 'wooexpress-small-yearly',
+	},
+
+	// Not a real plan. This is used to show the Plus offering in the Woo Express plans grid
+	[ PLAN_WOOEXPRESS_PLUS ]: {
+		...getPlanWooExpressPlusDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: () => '',
+		getProductId: () => 0,
+		getStoreSlug: () => PLAN_WOOEXPRESS_PLUS,
 	},
 
 	// Not a real plan. This is used to show the Enterprise (VIP) offering in

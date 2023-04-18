@@ -69,6 +69,16 @@
 			&.is-wooexpress-small-plan {
 				background-color: var(--color-surface);
 				color: var(--color-accent);
+				border: 1px solid var(--color-accent);
+				font-weight: 400;
+			}
+
+			&.is-wooexpress-plus-plan {
+				display: inline-block;
+				width: 85%;
+				text-align: center;
+				background-color: var(--color-surface);
+				color: var(--color-accent);
 				border: 1px solid  var(--color-accent);
 				font-weight: 400;
 			}
