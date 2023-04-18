@@ -207,13 +207,24 @@ $head-foot-height: 50px;
 		color: #000;
 		font-size: $font-body-small;
 		padding: 0;
-		align-items: flex-start;
 
 		&:focus {
 			color: #043959;
 			box-shadow: 0 0 0 1px #4f94d4, 0 0 2px 1px rgba(79, 148, 212, 0.8);
 			outline: 1px solid transparent;
 			border-color: inherit;
+		}
+
+		svg {
+			margin-top: 1px;
+			margin-right: 3px;
+		}
+
+		&:hover {
+			svg {
+				margin-left: -2px;
+				margin-right: 5px;
+			}
 		}
 	}
 

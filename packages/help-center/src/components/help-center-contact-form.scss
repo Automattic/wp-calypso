@@ -121,7 +121,7 @@ section.contact-form-submit {
 			border: 1px solid var(--color-neutral-5) !important;
 			color: var(--color-neutral-20) !important;
 		}
-		&:hover {
+		&:hover:not(:disabled) {
 			color: var(--wp-components-color-accent-inverted, #fff) !important;
 		}
 	}
