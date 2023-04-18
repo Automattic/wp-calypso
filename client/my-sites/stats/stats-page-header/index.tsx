@@ -1,10 +1,10 @@
 import { useTranslate } from 'i18n-calypso';
-import { navItems } from 'calypso/blocks/stats-navigation/constants';
+import { navItems, NavItems } from 'calypso/blocks/stats-navigation/constants';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { preventWidows } from 'calypso/lib/formatting';
 
 interface StatsPageHeaderProps {
-	page: 'traffic' | 'insights' | 'store' | 'wordads' | 'googleMyBusiness' | 'subscribers';
+	page: keyof NavItems;
 	headerText: string;
 	subHeaderText: string;
 }

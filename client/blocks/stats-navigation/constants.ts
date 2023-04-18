@@ -54,8 +54,13 @@ const googleMyBusiness = {
 	showIntervals: false,
 } as NavItem;
 
-interface NavItems {
-	[ key: string ]: NavItem;
+export interface NavItems {
+	traffic: NavItem;
+	insights: NavItem;
+	store: NavItem;
+	wordads: NavItem;
+	googleMyBusiness: NavItem;
+	subscribers?: NavItem;
 }
 
 const assembleNavItems = () => {
