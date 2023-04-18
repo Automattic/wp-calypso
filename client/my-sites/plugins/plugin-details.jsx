@@ -8,6 +8,7 @@ import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import QueryPlugins from 'calypso/components/data/query-plugins';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -56,7 +57,10 @@ import {
 	getProductsList,
 	isSaasProduct as isSaasProductSelector,
 } from 'calypso/state/products-list/selectors';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import {
+	getSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -186,6 +190,8 @@ function PluginDetails( props ) {
 		isSaasProduct,
 	] );
 
+	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
+	const isFullPluginAndPurchasesFetched = hasLoadedSitePurchases && fullPlugin?.fetched;
 	const isWpcomPreinstalled =
 		PREINSTALLED_PLUGINS.includes( props.pluginSlug ) ||
 		AUTOMOMANAGED_PLUGINS.includes( props.pluginSlug );
@@ -320,6 +326,7 @@ function PluginDetails( props ) {
 			<QueryEligibility siteId={ selectedSite?.ID } />
 			<QuerySiteFeatures siteIds={ selectedOrAllSites.map( ( site ) => site.ID ) } />
 			<QueryProductsList persist={ ! wporgPluginNotFound } />
+			<QuerySitePurchases siteId={ selectedSite?.ID } />
 			<FixedNavigationHeader compactBreadcrumb={ ! isWide } navigationItems={ breadcrumbs } />
 			<PluginNotices
 				pluginId={ fullPlugin.id }
@@ -344,19 +351,22 @@ function PluginDetails( props ) {
 					</NoticeAction>
 				</Notice>
 			) }
-			{ fullPlugin?.active && ! marketplacePluginHasSubscription && ! isWpcomPreinstalled && (
-				<Notice
-					icon="notice"
-					showDismiss={ false }
-					status="is-warning"
-					text={ translate(
-						'Plugin subscription not found or you have purchased the plugin outside of WordPress.com. Purchase a WordPress.com subscription if you want to receive updates and support.',
-						{
-							textOnly: true,
-						}
-					) }
-				></Notice>
-			) }
+			{ isFullPluginAndPurchasesFetched &&
+				fullPlugin?.active &&
+				! marketplacePluginHasSubscription &&
+				! isWpcomPreinstalled && (
+					<Notice
+						icon="notice"
+						showDismiss={ false }
+						status="is-warning"
+						text={ translate(
+							'Plugin subscription not found or you have purchased the plugin outside of WordPress.com. Purchase a WordPress.com subscription if you want to receive updates and support.',
+							{
+								textOnly: true,
+							}
+						) }
+					></Notice>
+				) }
 			<div className="plugin-details__page">
 				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
 					<div className="plugin-details__header">
