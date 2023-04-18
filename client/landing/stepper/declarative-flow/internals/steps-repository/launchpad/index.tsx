@@ -1,7 +1,6 @@
 import { StepContainer } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
-import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -54,13 +53,10 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		window.location.replace( '/home' );
 	}
 
-	// This is temporary until we can use the launchpad inside the editor.
-	const newWriterFlow = 'true' === getQueryArg( window.location.search, 'showLaunchpad' );
-
 	if (
 		! isLoggedIn ||
 		launchpadScreenOption === 'off' ||
-		( launchpadScreenOption === false && 'videopress' !== flow && ! newWriterFlow )
+		( launchpadScreenOption === false && 'videopress' !== flow )
 	) {
 		redirectToSiteHome( siteSlug, flow );
 	}
