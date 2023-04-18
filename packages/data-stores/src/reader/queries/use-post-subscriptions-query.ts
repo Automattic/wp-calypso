@@ -69,7 +69,12 @@ const usePostSubscriptionsQuery = ( {
 		const searchTermLowerCase = searchTerm.toLowerCase();
 
 		const searchFilter = ( item: PostSubscription ) =>
-			searchTermLowerCase ? item.post_title.includes( searchTermLowerCase ) : true;
+			searchTermLowerCase
+				? item.post_title.toLocaleLowerCase().includes( searchTermLowerCase ) ||
+				  item.post_excerpt.toLocaleLowerCase().includes( searchTermLowerCase ) ||
+				  item.post_url.includes( searchTermLowerCase ) ||
+				  item.site_title.toLocaleLowerCase().includes( searchTermLowerCase )
+				: true;
 
 		return {
 			posts: transformedData
