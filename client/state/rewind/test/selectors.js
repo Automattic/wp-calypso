@@ -5,6 +5,8 @@ import {
 	getBackupRetentionDays,
 	getBackupRetentionUpdateRequestStatus,
 	getBackupStoppedFlag,
+	isFetchingStagingSitesList,
+	hasFetchedStagingSitesList,
 } from '../selectors';
 import { StorageUsageLevels } from '../storage/types';
 
@@ -167,5 +169,68 @@ describe( 'getBackupStoppedFlag()', () => {
 			},
 		};
 		expect( getBackupStoppedFlag( state, TEST_SITE_ID ) ).toEqual( true );
+	} );
+} );
+
+describe( 'Backup staging sites selectors', () => {
+	const TEST_SITE_ID = 123456;
+	const fixtures = {
+		emptyRewindState: {
+			rewind: {},
+		},
+		fetchingStagingSites: {
+			rewind: {
+				[ TEST_SITE_ID ]: {
+					staging: {
+						isFetchingStagingSitesList: true,
+						hasFetchedStagingSitesList: false,
+					},
+				},
+			},
+		},
+		stagingSitesLoaded: {
+			rewind: {
+				[ TEST_SITE_ID ]: {
+					staging: {
+						isFetchingStagingSitesList: false,
+						hasFetchedStagingSitesList: true,
+					},
+				},
+			},
+		},
+	};
+
+	describe( 'isFetchingStagingSitesList', () => {
+		test( 'should return false if the rewind state is empty', () => {
+			const stateIn = fixtures.emptyRewindState;
+			expect( isFetchingStagingSitesList( stateIn, TEST_SITE_ID ) ).toBe( false );
+		} );
+
+		test( 'should return true if staging sites are being fetch', () => {
+			const stateIn = fixtures.fetchingStagingSites;
+			expect( isFetchingStagingSitesList( stateIn, TEST_SITE_ID ) ).toBe( true );
+		} );
+
+		test( 'should return false if staging sites has been loaded', () => {
+			const stateIn = fixtures.stagingSitesLoaded;
+			expect( isFetchingStagingSitesList( stateIn, TEST_SITE_ID ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'hasFetchedStagingSitesList', () => {
+		test( 'should return false if the rewind state is empty', () => {
+			const stateIn = fixtures.emptyRewindState;
+			expect( hasFetchedStagingSitesList( stateIn, TEST_SITE_ID ) ).toBe( false );
+		} );
+
+		test( 'should return false if staging sites are being fetch', () => {
+			const stateIn = fixtures.fetchingStagingSites;
+			expect( hasFetchedStagingSitesList( stateIn, TEST_SITE_ID ) ).toBe( false );
+		} );
+
+		test( 'should return true if staging sites has been loaded', () => {
+			const stateIn = fixtures.stagingSitesLoaded;
+			expect( hasFetchedStagingSitesList( stateIn, TEST_SITE_ID ) ).toBe( true );
+		} );
 	} );
 } );

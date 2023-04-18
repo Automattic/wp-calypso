@@ -15,3 +15,5 @@ export { default as getBackupRetentionDays } from './get-backup-retention-days';
 export { default as getBackupCurrentSiteSize } from './get-backup-current-site-size';
 export { default as getBackupRetentionUpdateRequestStatus } from './get-backup-retention-update-status';
 export { default as getBackupStoppedFlag } from './get-backup-stopped-flag';
+export { default as isFetchingStagingSitesList } from './is-fetching-staging-sites-list';
+export { default as hasFetchedStagingSitesList } from './has-fetched-staging-sites-list';
