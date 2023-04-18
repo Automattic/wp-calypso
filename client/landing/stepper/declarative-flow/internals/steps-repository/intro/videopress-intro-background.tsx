@@ -3,11 +3,10 @@ import * as VideoPressIframeApi from './videopress-iframe-api';
 
 const VideoPressIntroBackground = () => {
 	const iframeRef = createRef< HTMLIFrameElement >();
-	const divRef = createRef< HTMLDivElement >();
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
 	useEffect( () => {
-		if ( ! divRef.current || prefersReducedMotion ) {
+		if ( prefersReducedMotion ) {
 			return;
 		}
 
@@ -15,16 +14,20 @@ const VideoPressIntroBackground = () => {
 			document.getElementById( 'videopress-intro-video-frame' ),
 			() => {
 				const pollPlayer = () => {
-					if ( '0' === divRef.current?.style.opacity ) {
+					const divRef = document.getElementById( 'videopress-intro-loading-frame' );
+					if ( null === divRef ) {
+						setTimeout( pollPlayer, 100 );
+						return;
+					}
+
+					if ( '0' === divRef.style.opacity ) {
 						return;
 					}
 
 					iframeApi.status.player().then( ( status: string ) => {
 						if ( 'playing' === status ) {
 							iframeApi.controls.seek( 0 ).then( () => {
-								if ( divRef.current ) {
-									divRef.current.style.opacity = '0';
-								}
+								divRef.style.opacity = '0';
 							} );
 						} else {
 							setTimeout( pollPlayer, 100 );
@@ -35,7 +38,7 @@ const VideoPressIntroBackground = () => {
 				pollPlayer();
 			}
 		);
-	}, [ divRef, prefersReducedMotion ] );
+	}, [] );
 
 	return (
 		<>
@@ -45,10 +48,11 @@ const VideoPressIntroBackground = () => {
 					id="videopress-intro-video-frame"
 					className="intro__video"
 					title="Video"
+					allow="autoplay; fullscreen"
 					src="https://video.wordpress.com/v/l9GrBaPw?autoPlay=true&amp;controls=false&amp;muted=true&amp;loop=true&amp;cover=true&amp;playsinline=true"
 				></iframe>
 			) }
-			<div ref={ divRef } className="intro__video loading-frame"></div>
+			<div id="videopress-intro-loading-frame" className="intro__video loading-frame"></div>
 		</>
 	);
 };
