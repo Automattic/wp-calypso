@@ -21,6 +21,7 @@ import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-s
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { deleteSite } from 'calypso/state/sites/actions';
 import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
+import { hasSitesAsLandingPage } from 'calypso/state/sites/selectors/has-sites-as-landing-page';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
@@ -93,11 +94,15 @@ class DeleteSite extends Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		const { siteId, siteExists } = this.props;
+		const { siteId, siteExists, useSitesAsLandingPage } = this.props;
 
 		if ( siteId && prevProps.siteExists && ! siteExists ) {
 			this.props.setSelectedSiteId( null );
-			page.redirect( '/stats' );
+			if ( useSitesAsLandingPage ) {
+				page.redirect( '/sites' );
+			} else {
+				page.redirect( '/stats' );
+			}
 		}
 	}
 
@@ -364,6 +369,7 @@ export default connect(
 			siteSlug,
 			siteExists: !! getSite( state, siteId ),
 			hasCancelablePurchases: hasCancelableSitePurchases( state, siteId ),
+			useSitesAsLandingPage: hasSitesAsLandingPage( state ),
 		};
 	},
 	{

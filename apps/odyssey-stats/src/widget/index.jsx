@@ -3,9 +3,11 @@ import config from '@automattic/calypso-config';
 import '@automattic/calypso-polyfills';
 import { render } from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import setLocale from '../lib/set-locale';
 import Highlights from './highlights';
 import MiniChart from './mini-chart';
+import Modules from './modules';
 
 import 'calypso/assets/stylesheets/style.scss';
 import './index.scss';
@@ -29,12 +31,22 @@ export function init() {
 						gmtOffset={ config( 'gmt_offset' ) }
 						odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
 					/>
-					<div className="stats-widget-highlights-wrapper">
+					<div className="stats-widget-wrapper">
 						<Highlights
 							siteId={ currentSiteId }
 							gmtOffset={ config( 'gmt_offset' ) }
 							odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
 						/>
+						<Modules />
+						<div className="stats-widget-footer">
+							<a
+								href="https://jetpack.com/redirect/?source=jetpack-stats-widget-logo-link"
+								target="__blank"
+								aria-label="Jetpack Stats Website"
+							>
+								<JetpackLogo size={ 25 } full />
+							</a>
+						</div>
 					</div>
 				</div>
 			</QueryClientProvider>,

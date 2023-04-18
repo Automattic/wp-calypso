@@ -6,7 +6,6 @@
 
 .dialog.card.post-share__sharing-preview-modal {
 	margin: 0 auto;
-	max-width: 865px;
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -132,10 +131,10 @@
 }
 
 .sharing-preview-pane__preview-area {
-	background-color: #f2f6f8;
+	background-color: #f3f5f9;
 	flex: 1 1 auto;
 	overflow-y: auto;
-	padding: 10px;
+	padding: 1.5rem;
 }
 
 .sharing-preview-pane__message {

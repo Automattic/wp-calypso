@@ -349,6 +349,8 @@ import {
 	FEATURE_RECOMMEND_ADD_ONS,
 	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
 	FEATURE_MIN_MAX_ORDER_QUANTITY,
+	PLAN_WOOEXPRESS_PLUS,
+	TYPE_WOO_EXPRESS_PLUS,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -869,6 +871,27 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
+	getHostingSignupFeatures: ( term ) => () =>
+		compact( [
+			term !== TERM_MONTHLY && FEATURE_CUSTOM_DOMAIN,
+			FEATURE_SELL_SHIP,
+			FEATURE_CUSTOM_STORE,
+			FEATURE_INVENTORY,
+			FEATURE_CHECKOUT,
+			FEATURE_ACCEPT_PAYMENTS_V2,
+			FEATURE_SALES_REPORTS,
+			FEATURE_SHIPPING_CARRIERS,
+			FEATURE_EXTENSIONS,
+			FEATURE_BANDWIDTH,
+			FEATURE_GLOBAL_EDGE_CACHING,
+			FEATURE_BURST,
+			FEATURE_WAF_V2,
+			FEATURE_CDN,
+			FEATURE_CPUS,
+			FEATURE_DATACENTRE_FAILOVER,
+			FEATURE_SECURITY_MALWARE,
+			FEATURE_SECURITY_DDOS,
+		] ),
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -1289,6 +1312,24 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
+	getHostingSignupFeatures: ( term ) => () =>
+		compact( [
+			term !== TERM_MONTHLY && FEATURE_CUSTOM_DOMAIN,
+			FEATURE_PLUGINS_THEMES,
+			FEATURE_BANDWIDTH,
+			FEATURE_GLOBAL_EDGE_CACHING,
+			FEATURE_BURST,
+			FEATURE_WAF_V2,
+			FEATURE_CDN,
+			FEATURE_CPUS,
+			FEATURE_DATACENTRE_FAILOVER,
+			FEATURE_ISOLATED_INFRA,
+			FEATURE_SECURITY_MALWARE,
+			FEATURE_SECURITY_DDOS,
+			FEATURE_DEV_TOOLS,
+			FEATURE_WP_UPDATES,
+			FEATURE_MULTI_SITE,
+		] ),
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -1429,6 +1470,21 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 			andMore: true,
 		},
 	} ),
+} );
+
+// The following is not a real plan, we are adding it here so that
+// Woo Express Plus gets its own column in the plans grid.
+const getPlanWooExpressPlusDetails = (): IncompleteWPcomPlan => ( {
+	...getDotcomPlanDetails(),
+	group: GROUP_WPCOM,
+	type: TYPE_WOO_EXPRESS_PLUS,
+	getTitle: () => i18n.translate( 'Plus' ),
+	getPlanTagline: () =>
+		i18n.translate( 'For fast-growing businesses that need access to the most powerful tools.' ),
+	getDescription: () => '',
+	get2023PricingGridSignupWpcomFeatures: () => [],
+	get2023PricingGridSignupJetpackFeatures: () => [],
+	get2023PricingGridSignupStorageOptions: () => [],
 } );
 
 // The following is not a real plan, we are adding it here so that
@@ -2328,6 +2384,15 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1056,
 		getStoreSlug: () => PLAN_WOOEXPRESS_SMALL,
 		getPathSlug: () => 'wooexpress-small-yearly',
+	},
+
+	// Not a real plan. This is used to show the Plus offering in the Woo Express plans grid
+	[ PLAN_WOOEXPRESS_PLUS ]: {
+		...getPlanWooExpressPlusDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: () => '',
+		getProductId: () => 0,
+		getStoreSlug: () => PLAN_WOOEXPRESS_PLUS,
 	},
 
 	// Not a real plan. This is used to show the Enterprise (VIP) offering in

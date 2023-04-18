@@ -82,7 +82,16 @@ const StatsCard = ( {
 				</div>
 			</div>
 			{ footerAction && (
-				<a className={ `${ BASE_CLASS_NAME }--footer` } href={ footerAction?.url }>
+				<a
+					className={ `${ BASE_CLASS_NAME }--footer` }
+					href={ footerAction?.url }
+					aria-label={
+						translate( 'View all %(title)s', {
+							args: { title: title.toLocaleLowerCase() },
+							comment: '"View all posts & pages", "View all referrers", etc.',
+						} ) as string
+					}
+				>
 					{ footerAction.label || translate( 'View all' ) }
 				</a>
 			) }

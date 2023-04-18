@@ -347,7 +347,7 @@ class StatsSite extends Component {
 		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
 		return (
-			<Main fullWidthLayout>
+			<Main fullWidthLayout ariaLabel={ translate( 'Jetpack Stats' ) }>
 				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>

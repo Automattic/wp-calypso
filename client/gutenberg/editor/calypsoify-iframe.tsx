@@ -380,7 +380,14 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
-			const { unsavedChanges = false, destinationUrl = this.props.closeUrl } = payload;
+			let unsavedChanges = false;
+			let destinationUrl = this.props.closeUrl;
+			if ( payload?.unsavedChanges ) {
+				unsavedChanges = payload.unsavedChanges;
+			}
+			if ( payload?.destinationUrl ) {
+				destinationUrl = payload.destinationUrl;
+			}
 			this.props.setEditorIframeLoaded( false );
 			this.navigate( destinationUrl, unsavedChanges );
 		}

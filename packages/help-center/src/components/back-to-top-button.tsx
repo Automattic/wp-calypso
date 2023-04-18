@@ -1,4 +1,5 @@
-import { Button, useScrollToTop } from '@automattic/components';
+import { useScrollToTop } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { useCallback, useRef } from '@wordpress/element';
 import { Icon, arrowUp } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
@@ -24,7 +25,7 @@ export const BackToTopButton: FC = () => {
 
 	return (
 		<Button
-			ref={ ( element ) => {
+			ref={ ( element: HTMLButtonElement ) => {
 				elementRef.current = element?.parentElement ?? null;
 			} }
 			className={ classnames( 'back-to-top-button__help-center', {

@@ -4,7 +4,6 @@
 
 import {
 	envVariables,
-	SidebarComponent,
 	TestAccount,
 	BlockWidgetEditorComponent,
 	getTestAccountByFeature,
@@ -24,13 +23,13 @@ declare const browser: Browser;
 skipDescribeIf( envVariables.TEST_ON_ATOMIC || envVariables.VIEWPORT_NAME === 'mobile' )(
 	'Widget (Legacy): Visibility option is present',
 	function () {
-		let sidebarComponent: SidebarComponent;
+		let testAccount: TestAccount;
 		let page: Page;
 
 		beforeAll( async () => {
 			page = await browser.newPage();
 
-			const testAccount = new TestAccount( accountName );
+			testAccount = new TestAccount( accountName );
 			await testAccount.authenticate( page );
 
 			// Clear out existing widgets.
@@ -41,8 +40,9 @@ skipDescribeIf( envVariables.TEST_ON_ATOMIC || envVariables.VIEWPORT_NAME === 'm
 		} );
 
 		it( 'Navigate to Appearance > Widgets', async function () {
-			sidebarComponent = new SidebarComponent( page );
-			await sidebarComponent.navigate( 'Appearance', 'Widgets' );
+			await page.goto(
+				`https://${ testAccount.credentials.testSites?.primary.url }/wp-admin/widgets.php`
+			);
 		} );
 
 		it( 'Dismiss the Welcome modals', async function () {

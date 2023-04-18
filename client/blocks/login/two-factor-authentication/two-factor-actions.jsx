@@ -72,7 +72,7 @@ class TwoFactorActions extends Component {
 				{ this.props.isWoo && ! this.props.isPartnerSignup && (
 					<Divider>{ this.props.translate( 'or' ) }</Divider>
 				) }
-				<Card className="two-factor-authentication__actions">
+				<Card className="two-factor-authentication__actions wp-login__links">
 					{ isSecurityKeyAvailable && (
 						<Button data-e2e-link="2fa-security-key-link" onClick={ this.recordSecurityKey }>
 							{ translate( 'Continue with your security\u00A0key' ) }

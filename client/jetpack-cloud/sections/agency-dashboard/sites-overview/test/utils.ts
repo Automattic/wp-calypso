@@ -33,7 +33,7 @@ describe( 'utils', () => {
 				value: siteObj,
 				error: false,
 				type: 'site',
-				status: '',
+				status: 'active',
 			},
 			backup: {
 				type: 'backup',
@@ -201,7 +201,7 @@ describe( 'utils', () => {
 				{
 					site: {
 						error: true,
-						status: '',
+						status: 'active',
 						type: 'site',
 						value: sites[ 0 ],
 					},

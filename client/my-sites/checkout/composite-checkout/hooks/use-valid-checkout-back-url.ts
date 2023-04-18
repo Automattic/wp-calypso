@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { resemblesUrl } from 'calypso/lib/url';
 import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import { isJetpackSite, getSiteId } from 'calypso/state/sites/selectors';
 
 const getAllowedHosts = ( siteSlug?: string ) => {
 	const basicHosts = [
@@ -22,7 +23,8 @@ const getAllowedHosts = ( siteSlug?: string ) => {
 
 const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undefined => {
 	const { checkoutBackUrl } = useSelector( getInitialQueryArguments ) ?? {};
-
+	const siteId = useSelector( ( state ) => getSiteId( state, siteSlug as string | null ) );
+	const jetpackSite = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	return useMemo( () => {
 		if ( ! checkoutBackUrl ) {
 			// For akismet specific checkout, if navigated with direct link
@@ -30,6 +32,11 @@ const useValidCheckoutBackUrl = ( siteSlug: string | undefined ): string | undef
 			const isAkismetCheckout = window.location.pathname.startsWith( '/checkout/akismet' );
 			if ( ! siteSlug && isAkismetCheckout ) {
 				return 'https://akismet.com/pricing';
+			}
+			// For Jetpack specific checkout, if navigated with direct link
+			// We should redirect to the jetpack pricing page
+			if ( jetpackSite ) {
+				return 'https://cloud.jetpack.com/pricing/' + ( siteSlug || '' );
 			}
 			return undefined;
 		}

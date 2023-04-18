@@ -8,8 +8,10 @@ import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-
 import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import PluginsList from './plugins-list';
 import UpdatePlugins from './update-plugins';
+import { pluginsEmptyMessage } from './utils/get-plugins-empty-message';
 import type { Plugin } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
+import type { PluginFilter } from 'calypso/state/plugins/installed/types';
 
 import './style.scss';
 
@@ -24,6 +26,7 @@ interface Props {
 	removePluginNotice: ( plugin: Plugin ) => void;
 	updatePlugin: ( plugin: Plugin ) => void;
 	isJetpackCloud: boolean;
+	filter: PluginFilter;
 }
 export default function PluginManagementV2( {
 	plugins,
@@ -36,6 +39,7 @@ export default function PluginManagementV2( {
 	updatePlugin,
 	isJetpackCloud,
 	requestError,
+	filter,
 }: Props ): ReactElement | null {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -112,7 +116,7 @@ export default function PluginManagementV2( {
 		if ( requestError ) {
 			return null;
 		}
-		let emptyStateMessage = translate( 'No plugins found' );
+		let emptyStateMessage = pluginsEmptyMessage?.[ filter ];
 		if ( searchTerm ) {
 			emptyStateMessage = translate( 'No results found. Please try refining your search.' );
 		}

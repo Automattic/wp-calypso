@@ -20,8 +20,10 @@ import {
 	isWooExpressSmallPlan,
 	isWooExpressPlan,
 	PlanSlug,
+	isWooExpressPlusPlan,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
+import { isHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -121,7 +123,6 @@ type PlanFeatures2023GridProps = {
 	siteId: number;
 	isLaunchPage: boolean;
 	isReskinned: boolean;
-	is2023OnboardingPricingGrid: boolean;
 	onUpgradeClick: ( cartItem: MinimalRequestCartProduct | null ) => void;
 	// either you specify the plans prop or isPlaceholder prop
 	plans: Array< string >;
@@ -381,6 +382,7 @@ export class PlanFeatures2023Grid extends Component<
 					<tr>{ this.renderPlanPrice( planPropertiesObj ) }</tr>
 					<tr>{ this.renderBillingTimeframe( planPropertiesObj ) }</tr>
 					<tr>{ this.renderTopButtons( planPropertiesObj ) }</tr>
+					<tr>{ this.maybeRenderRefundNotice( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPreviousFeaturesIncludedTitle( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanFeaturesList( planPropertiesObj ) }</tr>
 					<tr>{ this.renderPlanStorageOptions( planPropertiesObj ) }</tr>
@@ -447,6 +449,7 @@ export class PlanFeatures2023Grid extends Component<
 						{ this.renderBillingTimeframe( [ properties ], { isMobile: true } ) }
 						{ this.renderMobileFreeDomain( properties.planName, properties.isMonthlyPlan ) }
 						{ this.renderTopButtons( [ properties ], { isMobile: true } ) }
+						{ this.maybeRenderRefundNotice( [ properties ], { isMobile: true } ) }
 						<CardContainer
 							header={ translate( 'Show all features' ) }
 							planName={ properties.planName }
@@ -492,12 +495,13 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, isLargeCurrency } = this.props;
+		const { isReskinned, isLargeCurrency, translate } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
 				const { planName, rawPrice } = properties;
+				const isWooExpressPlus = isWooExpressPlusPlan( planName );
 				const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
 					'has-border-top': ! isReskinned,
 				} );
@@ -516,6 +520,11 @@ export class PlanFeatures2023Grid extends Component<
 								is2023OnboardingPricingGrid={ true }
 								isLargeCurrency={ isLargeCurrency }
 							/>
+						) }
+						{ isWooExpressPlus && (
+							<div className="plan-features-2023-grid__header-tagline">
+								{ translate( 'Speak to our team for a custom quote.' ) }
+							</div>
 						) }
 					</Container>
 				);
@@ -674,6 +683,7 @@ export class PlanFeatures2023Grid extends Component<
 							className={ getPlanClass( planName ) }
 							freePlan={ isFreePlan( planName ) }
 							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
+							isWooExpressPlusPlan={ isWooExpressPlusPlan( planName ) }
 							isPlaceholder={ isPlaceholder ?? false }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
@@ -689,6 +699,36 @@ export class PlanFeatures2023Grid extends Component<
 					</Container>
 				);
 			} );
+	}
+
+	maybeRenderRefundNotice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
+		const { translate, flowName } = this.props;
+
+		if ( ! isHostingFlow( flowName ) ) {
+			return false;
+		}
+
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( planProperties ) => (
+				<Container
+					key={ planProperties.planName }
+					className="plan-features-2023-grid__table-item"
+					isMobile={ options?.isMobile }
+				>
+					<div
+						className={ `plan-features-2023-grid__refund-notice ${ getPlanClass(
+							planProperties.planName
+						) }` }
+					>
+						{ translate( 'Refundable within %(dayCount)s days. No questions asked.', {
+							args: {
+								dayCount: planProperties.billingPeriod === 365 ? 14 : 7,
+							},
+						} ) }
+					</div>
+				</Container>
+			) );
 	}
 
 	renderEnterpriseClientLogos() {
@@ -717,8 +757,10 @@ export class PlanFeatures2023Grid extends Component<
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties: PlanProperties ) => {
 				const { planName, product_name_short } = properties;
+				const shouldRenderEnterpriseLogos =
+					isWpcomEnterpriseGridPlan( planName ) || isWooExpressPlusPlan( planName );
 				const shouldShowFeatureTitle =
-					! isWpComFreePlan( planName ) && ! isWpcomEnterpriseGridPlan( planName );
+					! isWpComFreePlan( planName ) && ! shouldRenderEnterpriseLogos;
 				const planShortName =
 					options?.previousProductNameShort || previousPlanShortNameFromProperties;
 				previousPlanShortNameFromProperties = product_name_short;
@@ -732,7 +774,7 @@ export class PlanFeatures2023Grid extends Component<
 					getPlanClass( planName )
 				);
 				const rowspanProp =
-					! options?.isMobile && isWpcomEnterpriseGridPlan( planName ) ? { rowSpan: '2' } : {};
+					! options?.isMobile && shouldRenderEnterpriseLogos ? { rowSpan: '2' } : {};
 				return (
 					<Container
 						key={ planName }
@@ -741,7 +783,7 @@ export class PlanFeatures2023Grid extends Component<
 						{ ...rowspanProp }
 					>
 						{ shouldShowFeatureTitle && <div className={ classes }>{ title }</div> }
-						{ isWpcomEnterpriseGridPlan( planName ) && this.renderEnterpriseClientLogos() }
+						{ shouldRenderEnterpriseLogos && this.renderEnterpriseClientLogos() }
 					</Container>
 				);
 			} );
@@ -750,7 +792,9 @@ export class PlanFeatures2023Grid extends Component<
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { domainName, translate } = this.props;
 		const planProperties = planPropertiesObj.filter(
-			( properties ) => ! isWpcomEnterpriseGridPlan( properties.planName )
+			( properties ) =>
+				! isWpcomEnterpriseGridPlan( properties.planName ) &&
+				! isWooExpressPlusPlan( properties.planName )
 		);
 
 		return planProperties
