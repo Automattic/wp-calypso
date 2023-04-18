@@ -248,6 +248,9 @@ private object OdysseyStats : WPComPluginBuild(
 
 				# generate language files
 				yarn translate
+
+				# run unit tests
+				yarn test:js --reporters=default --reporters=jest-teamcity --maxWorkers=${'$'}JEST_MAX_WORKERS
 			"""
 		}
 	}

@@ -1,7 +1,6 @@
 // Forked from https://github.com/Automattic/wp-calypso/blob/6755acc862c0387b7061e13f99fd22c5dd22e458/packages/create-calypso-config/src/test/index.js
 // This makes sure our implementation is compatible with the original one.
-
-import { createOdysseyConfigFromConfigData as createConfig } from '../create-odyssey-config';
+import createConfig from '../create-odyssey-config';
 
 describe( 'index', () => {
 	describe( 'config without data', () => {
