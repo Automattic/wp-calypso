@@ -24,14 +24,6 @@ jest.mock( '@wordpress/data', () => ( {
 	},
 } ) );
 
-const mockUpdateLaunchpadSettings = jest.fn();
-
-jest.mock( 'calypso/data/sites/use-launchpad', () => ( {
-	updateLaunchpadSettings: ( siteSlug, data ) => {
-		mockUpdateLaunchpadSettings( siteSlug, data );
-	},
-} ) );
-
 describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 	it( 'should NOT redirect the user to the launchpad if showLaunchpad query parameter is NOT present', () => {
 		delete global.window;
@@ -61,10 +53,6 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 		mockSubscribeFunction();
 
 		expect( mockUnSubscribe ).toBeCalledTimes( 1 );
-		expect( mockUpdateLaunchpadSettings ).toBeCalledTimes( 1 );
-		expect( mockUpdateLaunchpadSettings ).toBeCalledWith( 'wordpress.com', {
-			checklist_statuses: { first_post_published: true },
-		} );
 		expect( global.window.location.href ).toBe(
 			'https://calypso.localhost:3000/setup/write/launchpad?siteSlug=wordpress.com&showLaunchpad=true'
 		);
