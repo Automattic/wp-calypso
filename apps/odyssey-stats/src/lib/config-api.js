@@ -12,6 +12,7 @@ import productionConfig from '../../../../config/production.json';
 // Store the processed config data.
 let configData = {};
 
+// configApi and configApi.* are all originated from https://github.com/Automattic/wp-calypso/blob/ca7d8fe3e0a5fb87b0659fbab659078ebbfbc7be/packages/create-calypso-config/src/index.ts
 const configApi = ( key ) => {
 	if ( key in configData ) {
 		return configData[ key ];
@@ -44,6 +45,7 @@ configApi.disable = ( feature ) => {
 	}
 };
 
+// Moved from https://github.com/Automattic/wp-calypso/blob/ca7d8fe3e0a5fb87b0659fbab659078ebbfbc7be/apps/odyssey-stats/src/load-config.js
 const configOverride = () => {
 	// Set is_running_in_jetpack_site to true if not specified (undefined or null).
 	productionConfig.features.is_running_in_jetpack_site =
@@ -58,6 +60,7 @@ const configOverride = () => {
 	return configData;
 };
 
+// Forked from https://github.com/Automattic/wp-calypso/blob/ca7d8fe3e0a5fb87b0659fbab659078ebbfbc7be/packages/calypso-config/src/index.ts#L60
 const applyFlags = ( flagsString, modificationMethod ) => {
 	const flags = flagsString.split( ',' );
 	flags.forEach( ( flagRaw ) => {
@@ -90,7 +93,7 @@ const applyUrlFlags = () => {
 	}
 };
 
-// check if the current browser location is *.calypso.live
+// To be compatible with `@automattic/calypso-config`.
 export function isCalypsoLive() {
 	return false;
 }
