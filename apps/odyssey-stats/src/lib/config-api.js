@@ -57,7 +57,6 @@ const configOverride = () => {
 
 	// Note: configData is hydrated in https://github.com/Automattic/jetpack/blob/d4d0f987cbf63a864b03b542b7813aabe87e0ed3/projects/packages/stats-admin/src/class-dashboard.php#L214
 	configData.features = productionConfig.features;
-	return configData;
 };
 
 // Forked from https://github.com/Automattic/wp-calypso/blob/ca7d8fe3e0a5fb87b0659fbab659078ebbfbc7be/packages/calypso-config/src/index.ts#L60
@@ -102,7 +101,6 @@ export function isCalypsoLive() {
  * Init config data
  *
  * @param {string} configKey the key to use for the config data.
- * @returns {Object} config data.
  */
 export const initConfig = ( configKey = 'configData' ) => {
 	/**
@@ -133,8 +131,10 @@ export const initConfig = ( configKey = 'configData' ) => {
 	configData = window[ configKey ] ?? window.configData ?? configData;
 	configOverride();
 	applyUrlFlags();
-	return configData;
 };
+
+export const getConfigData = () => configData;
+export const setConfigData = ( data ) => ( configData = data );
 
 export default configApi;
 export const isEnabled = configApi.isEnabled;
