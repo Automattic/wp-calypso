@@ -46,7 +46,7 @@ export default function HighlightCards( {
 
 	return (
 		<div className={ classNames( 'highlight-cards', className ?? null ) }>
-			<h1 className="highlight-cards-heading">
+			<h3 className="highlight-cards-heading">
 				{ translate( '7-day highlights' ) }{ ' ' }
 				<span
 					className="highlight-cards-heading-icon"
@@ -84,7 +84,7 @@ export default function HighlightCards( {
 						</div>
 					</div>
 				</Popover>
-			</h1>
+			</h3>
 
 			<div className="highlight-cards-list">
 				<HighlightCard
