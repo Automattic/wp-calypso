@@ -1133,6 +1133,7 @@ __metadata:
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
+    "@babel/core": ^7.17.5
     "@wordpress/data": ^7.6.0
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
     "@wordpress/scripts": ^24.6.0
