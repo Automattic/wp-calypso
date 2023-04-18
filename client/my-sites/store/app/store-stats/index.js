@@ -23,6 +23,7 @@ import Module from './store-stats-module';
 import Chart from './store-stats-orders-chart';
 import WidgetList from './store-stats-widget-list';
 import { getEndPeriod, getQueries, getWidgetPath } from './utils';
+import StatsPageHeader from 'calypso/my-sites/stats/stats-page-header';
 
 class StoreStats extends Component {
 	static propTypes = {
@@ -66,11 +67,8 @@ class StoreStats extends Component {
 				) }
 
 				<div className="stats">
-					<FormattedHeader
-						brandFont
-						className="store-stats__section-header modernized-header"
-						headerText={ translate( 'Jetpack Stats' ) }
-						align="left"
+					<StatsPageHeader
+						page="store"
 						subHeaderText={ translate(
 							'Learn valuable insights about the purchases made on your store.'
 						) }
