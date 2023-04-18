@@ -48,7 +48,8 @@
 		"react-dom": "^17.0.2",
 		"reakit-utils": "^0.15.1",
 		"redux": "^4.1.2",
-		"tinymce": "^5.0.0"
+		"tinymce": "^5.0.0",
+		"react-query": "^3.32.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
