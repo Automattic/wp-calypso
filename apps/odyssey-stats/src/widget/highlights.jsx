@@ -13,13 +13,11 @@ function TopColumn( { items, viewAllUrl, viewAllText, title, isLoading, classNam
 		<div className={ classNames( 'stats-widget-highlights-card', className ) }>
 			<label className="stats-widget-highlights-card__title">{ title }</label>
 			{ items.length === 0 && (
-				<div className="stats-widget-highlights-card__empty">
-					<span>
-						{ isLoading
-							? `${ translate( 'Loading' ) }...`
-							: translate( 'Sorry, nothing to report.' ) }
-					</span>
-				</div>
+				<p className="stats-widget-highlights-card__empty">
+					{ isLoading
+						? `${ translate( 'Loading' ) }...`
+						: translate( 'Sorry, nothing to report.' ) }
+				</p>
 			) }
 			{ items.length > 0 && (
 				<ul className="stats-widget-highlights-card__list">
