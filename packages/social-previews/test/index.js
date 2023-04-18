@@ -5,12 +5,12 @@
 /* eslint-disable jest/no-conditional-expect */
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
-import moment from 'moment';
 import {
 	FacebookPreview as Facebook,
 	TwitterPreview as Twitter,
 	SearchPreview as Search,
 } from '../src';
+import { formatTweetDate } from '../src/helpers';
 
 const DEFAULT_POST_TITLE = 'Hello World';
 const DEFAULT_POST_URL = 'https://example.com/new-entry';
@@ -245,21 +245,15 @@ describe( 'Twitter previews', () => {
 			screenName
 		);
 		expect( tweetWrapper.querySelector( '.twitter-preview__date' ) ).toHaveTextContent(
-			moment( date ).format( 'MMM D' )
+			formatTweetDate( date )
 		);
 	} );
 
-	it( 'should only replace URLs in parentheses', () => {
+	it( 'should replace URLs with hyperlinks', () => {
 		const tweets = [
 			{
 				...emptyTweet,
-				text: 'This text (https://jetpack.com/) has (https://wordpress.com/) some (https://jetpack.com/) URLs (https://wordpress.org/).',
-				urls: [
-					'https://jetpack.com/',
-					'https://wordpress.com/',
-					'https://jetpack.com/',
-					'https://wordpress.org/',
-				],
+				text: 'This text https://jetpack.com/ has https://wordpress.com/ some https://jetpack.com/ URLs https://wordpress.org/.',
 			},
 		];
 
@@ -273,7 +267,29 @@ describe( 'Twitter previews', () => {
 
 		expect( textEl ).toBeVisible();
 		expect( textEl ).toContainHTML(
-			'This text (<a href="https://jetpack.com/">https://jetpack.com/</a>) has (<a href="https://wordpress.com/">https://wordpress.com/</a>) some (<a href="https://jetpack.com/">https://jetpack.com/</a>) URLs (<a href="https://wordpress.org/">https://wordpress.org/</a>).'
+			'This text <a href="https://jetpack.com/" rel="noopener noreferrer" target="_blank">https://jetpack.com/</a> has <a href="https://wordpress.com/" rel="noopener noreferrer" target="_blank">https://wordpress.com/</a> some <a href="https://jetpack.com/" rel="noopener noreferrer" target="_blank">https://jetpack.com/</a> URLs <a href="https://wordpress.org/." rel="noopener noreferrer" target="_blank">https://wordpress.org/.</a>'
+		);
+	} );
+
+	it( 'should replace hashtags with hyperlinks', () => {
+		const tweets = [
+			{
+				...emptyTweet,
+				text: '#hashtag here\n\nsome #otherHashtag here\n#hashtag on a new line',
+			},
+		];
+
+		const { container } = render( <Twitter tweets={ tweets } /> );
+
+		const tweetWrapper = container.querySelector( '.twitter-preview__container' );
+
+		expect( tweetWrapper ).toBeVisible();
+
+		const textEl = tweetWrapper.querySelector( '.twitter-preview__text' );
+
+		expect( textEl ).toBeVisible();
+		expect( textEl ).toContainHTML(
+			'<a href="https://twitter.com/hashtag/hashtag" rel="noopener noreferrer" target="_blank">#hashtag</a> here<br /><br />some <a href="https://twitter.com/hashtag/otherHashtag" rel="noopener noreferrer" target="_blank">#otherHashtag</a> here<br /><a href="https://twitter.com/hashtag/hashtag" rel="noopener noreferrer" target="_blank">#hashtag</a> on a new line'
 		);
 	} );
 

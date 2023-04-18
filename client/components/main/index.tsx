@@ -2,6 +2,16 @@ import classNames from 'classnames';
 
 import './style.scss';
 
+interface MainProps {
+	ariaLabel?: string;
+	children: React.ReactNode;
+	className?: string;
+	fullWidthLayout?: boolean;
+	id?: string;
+	isLoggedOut?: boolean;
+	wideLayout?: boolean;
+}
+
 export default function Main( {
 	className = '',
 	id = '',
@@ -9,7 +19,8 @@ export default function Main( {
 	wideLayout = false,
 	fullWidthLayout = false,
 	isLoggedOut = false,
-} ) {
+	ariaLabel,
+}: MainProps ) {
 	const classes = classNames( className, 'main', {
 		'is-wide-layout': wideLayout,
 		'is-full-width-layout': fullWidthLayout,
@@ -17,7 +28,7 @@ export default function Main( {
 	} );
 
 	return (
-		<main className={ classes } id={ id || null } role="main">
+		<main className={ classes } id={ id || undefined } role="main" aria-label={ ariaLabel }>
 			{ children }
 		</main>
 	);

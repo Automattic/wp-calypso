@@ -136,7 +136,15 @@ export default function JetpackUpsellCard( {
 							</span>
 							<Gridicon icon="external" size={ 16 } />
 						</a>
-						<Button href={ upgradeUrls[ slug ] } className="jetpack-upsell-card__product-button">
+						<Button
+							href={ upgradeUrls[ slug ] }
+							className="jetpack-upsell-card__product-button"
+							aria-label={
+								translate( 'Upgrade to Jetpack %(productName)s', {
+									args: { productName: title },
+								} ) as string
+							}
+						>
 							{ translate( 'Upgrade' ) }
 						</Button>
 					</div>

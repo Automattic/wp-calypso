@@ -1,7 +1,8 @@
 import { __ } from '@wordpress/i18n';
 import { useCallback, useState } from 'react';
 import { TYPE_ARTICLE } from '../constants';
-import { baseDomain, facebookTitle, facebookDescription, facebookCustomText } from './helpers';
+import CustomText from './custom-text';
+import { baseDomain, facebookTitle, facebookDescription } from './helpers';
 import FacebookPostActions from './post/actions';
 import FacebookPostHeader from './post/header';
 import FacebookPostIcon from './post/icons';
@@ -19,25 +20,31 @@ const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 	customText,
 	type,
 } ) => {
-	const [ mode, setMode ] = useState( LANDSCAPE_MODE );
+	const [ mode, setMode ] = useState< typeof LANDSCAPE_MODE | typeof PORTRAIT_MODE | undefined >();
+	const [ isLoadingImage, setLoadingImage ] = useState< boolean >( !! image );
 	const isArticle = type === TYPE_ARTICLE;
 	const portraitMode = ( isArticle && ! image ) || mode === PORTRAIT_MODE;
 	const modeClass = `is-${ portraitMode ? 'portrait' : 'landscape' }`;
 
 	const handleImageLoad = useCallback(
-		( { target } ) =>
-			setMode( target.naturalWidth > target.naturalHeight ? LANDSCAPE_MODE : PORTRAIT_MODE ),
-		[ setMode ]
+		( { target } ) => {
+			setMode( target.naturalWidth > target.naturalHeight ? LANDSCAPE_MODE : PORTRAIT_MODE );
+			setLoadingImage( false );
+		},
+		[ setMode, setLoadingImage ]
 	);
+	const handleImageError = useCallback( () => setLoadingImage( false ), [ setLoadingImage ] );
 
 	return (
 		<div className="facebook-preview__post">
 			<FacebookPostHeader user={ user } />
 			<div className="facebook-preview__content">
-				{ customText && (
-					<p className="facebook-preview__custom-text">{ facebookCustomText( customText ) }</p>
-				) }
-				<div className={ `facebook-preview__body ${ modeClass }` }>
+				{ customText && <CustomText text={ customText } url={ url } /> }
+				<div
+					className={ `facebook-preview__body ${ modeClass } ${
+						isLoadingImage ? 'is-loading' : ''
+					}` }
+				>
 					{ ( image || isArticle ) && (
 						<div
 							className={ `facebook-preview__image ${ image ? '' : 'is-empty' } ${ modeClass }` }
@@ -47,6 +54,7 @@ const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 									alt={ __( 'Facebook Preview Thumbnail', 'facebook-preview' ) }
 									src={ image }
 									onLoad={ handleImageLoad }
+									onError={ handleImageError }
 								/>
 							) }
 						</div>

@@ -79,6 +79,7 @@ const GlobalStylesVariation = ( {
 						title={ globalStylesVariation.title }
 						inlineCss={ globalStylesVariation.inline_css }
 						isFocused={ isFocused || showOnlyHoverView }
+						onFocusOut={ () => setIsFocused( false ) }
 					/>
 				</GlobalStylesContext.Provider>
 			</div>

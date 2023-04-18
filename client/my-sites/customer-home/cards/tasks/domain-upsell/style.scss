@@ -1,0 +1,115 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.task {
+	&.task__domain-upsell {
+		margin-bottom: 0 !important;
+
+		@media (min-width: ( $break-large + 1 ) ) {
+			margin-right: 0 !important;
+			margin-top: 0 !important;
+			background: url(calypso/assets/images/customer-home/illustration--task-domain-upsell.svg) no-repeat right top;
+		}
+
+		@media ( min-width: ( $break-large + 1 ) ) and ( max-width: $break-wide ) {
+			background-position-x: calc(100% + 120px);
+		}
+
+		@media (max-width: $break-large) {
+			flex-direction: column;
+		}
+
+		.task__text {
+			margin-bottom: 32px;
+			margin-top: 32px;
+			min-width: 360px;
+
+			@media (min-width: ( $break-wide + 1 ) ) {
+				max-width: calc(100% - 450px);
+			}
+
+			@media (max-width: $break-wide) {
+				max-width: calc(115% - 450px);
+			}
+
+			@media ( max-width: $break-wide ) {
+				gap: 16px !important;
+				margin-bottom: 16px;
+				margin-top: 16px;
+
+				.task__actions {
+					margin-top: 0;
+					display: grid;
+					grid-template-columns: 50% 50%;
+					width: 100%;
+					gap: 0 16px;
+
+					& > * {
+						margin: 5px 0;
+					}
+
+					.task__skip {
+						display: inline-flex;
+					}
+				}
+			}
+			@media (max-width: $break-large) {
+				min-width: auto;
+				margin-top: 0;
+				padding: 0;
+				max-width: none;
+				gap: 16px !important;
+				.task__actions {
+					flex-direction: column;
+					width: 100%;
+
+					& > * {
+						margin: 5px 0;
+					}
+				}
+			}
+
+		}
+
+		.task__illustration {
+			position: relative;
+			width: 100%;
+			padding: 0;
+
+			@media (min-width: ( $break-large + 1 )) {
+				display: none;
+			}
+
+			img {
+				width: 100%;
+			}
+
+			svg {
+				position: absolute;
+				top: 40%;
+				left: 35%;
+				height: 7%;
+				width: 70%;
+			}
+		}
+
+		.task__badge {
+			background: none;
+			color: #000;
+			position: absolute;
+			right: 0;
+			top: 119px;
+			width: 270px;
+			word-break: break-all;
+			overflow: hidden;
+			padding: 0;
+			display: inline-flex;
+			@media (max-width: $break-wide) {
+				width: 155px;
+			}
+			@media (max-width: $break-large) {
+				display: none;
+			}
+		}
+	}
+}

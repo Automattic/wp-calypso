@@ -79,7 +79,7 @@ function happyblocks_pricing_plans_render_callback( $attributes ) {
 	$json_attributes = htmlspecialchars( wp_json_encode( $attributes ), ENT_QUOTES, 'UTF-8' );
 
 	return <<<HTML
-		<div data-attributes="${json_attributes}" class="a8c-happy-tools-pricing-plans-block-placeholder" />
+		<div data-attributes="${json_attributes}" class="a8c-happy-tools-pricing-plans-block-placeholder" ></div>
 HTML;
 }
 

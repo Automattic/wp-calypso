@@ -147,6 +147,7 @@ const Paid: React.FC< OwnProps > = ( props ) => {
 					billingTerm={ billingTerm }
 					discountedPriceDuration={ discountedPriceDuration }
 					formattedOriginalPrice={ formattedOriginalPrice }
+					isDiscounted={ isDiscounted }
 				/>
 			</span>
 		</>

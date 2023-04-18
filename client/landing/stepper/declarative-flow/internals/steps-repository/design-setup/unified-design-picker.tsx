@@ -7,11 +7,10 @@ import {
 	useCategorization,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
-	PatternAssemblerCta,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
-import { useViewportMatch, useMediaQuery } from '@wordpress/compose';
+import { useViewportMatch } from '@wordpress/compose';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useState, useEffect } from 'react';
@@ -68,7 +67,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const locale = useLocale();
 
 	const isMobile = ! useViewportMatch( 'small' );
-	const isXLargeScreen = useMediaQuery( '(min-width: 1080px)' );
 
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -86,7 +84,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			( site && ( select( SITE_STORE ) as SiteSelect ).getSiteVerticalId( site.ID ) ) || '',
 		[ site ]
 	);
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
 
 	const { goToCheckout } = useCheckout();
 
@@ -616,27 +614,13 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
-		const hasMoreInfo =
-			selectedDesignHasStyleVariations || ( selectedDesign.is_virtual && isXLargeScreen );
-
 		const actionButtons = (
 			<>
-				{ hasMoreInfo && <div className="action-buttons__title">{ headerDesignTitle }</div> }
+				{ selectedDesignHasStyleVariations && (
+					<div className="action-buttons__title">{ headerDesignTitle }</div>
+				) }
 				<div>{ getPrimaryActionButton() }</div>
 			</>
-		);
-
-		const patternAssemblerCTA = selectedDesign.is_virtual && (
-			<PatternAssemblerCta
-				compact={ true }
-				hasPrimaryButton={ false }
-				onButtonClick={ () => pickBlankCanvasDesign( selectedDesign, true ) }
-				showEditorFallback={ false }
-				showHeading={ false }
-				text={ translate(
-					'You can also start from scratch and build your own homepage with our library of patterns.'
-				) }
-			/>
 		);
 
 		const stepContent = (
@@ -653,7 +637,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 					isOpen={ showPremiumGlobalStylesModal }
 					tryStyle={ tryPremiumGlobalStyles }
 				/>
-				{ hasMoreInfo ? (
+				{ selectedDesignHasStyleVariations ? (
 					<AsyncLoad
 						require="@automattic/design-preview"
 						placeholder={ null }
@@ -666,7 +650,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 						actionButtons={ actionButtons }
 						recordDeviceClick={ recordDeviceClick }
 						showGlobalStylesPremiumBadge={ shouldLimitGlobalStyles }
-						patternAssemblerCTA={ patternAssemblerCTA }
 					/>
 				) : (
 					<WebPreview
@@ -692,7 +675,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			</>
 		);
 
-		return hasMoreInfo ? (
+		return selectedDesignHasStyleVariations ? (
 			<StepContainer
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }

@@ -1,6 +1,7 @@
-import { useQuery } from 'react-query';
+import { useEffect } from 'react';
+import { useInfiniteQuery } from 'react-query';
 import { callApi } from '../helpers';
-import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
+import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SiteSubscription } from '../types';
 
 type SubscriptionManagerSiteSubscriptions = {
@@ -15,37 +16,6 @@ type SubscriptionManagerSiteSubscriptionsQueryProps = {
 	number?: number;
 };
 
-const callFollowingEndPoint = async (
-	page: number,
-	number: number,
-	isLoggedIn: boolean
-): Promise< SiteSubscription[] > => {
-	const data = [];
-
-	const incoming = await callApi< SubscriptionManagerSiteSubscriptions >( {
-		path: `/read/following/mine?number=${ number }&page=${ page }`,
-		isLoggedIn,
-		apiVersion: '1.2',
-	} );
-
-	if ( incoming && incoming.subscriptions ) {
-		data.push(
-			...incoming.subscriptions.map( ( subscription ) => ( {
-				...subscription,
-				last_updated: new Date( subscription.last_updated ),
-				date_subscribed: new Date( subscription.date_subscribed ),
-			} ) )
-		);
-	}
-
-	if ( incoming.page * number < incoming.total_subscriptions ) {
-		const next = await callFollowingEndPoint( page + 1, number, isLoggedIn );
-		data.push( ...next );
-	}
-
-	return data;
-};
-
 const defaultFilter = () => true;
 const defaultSort = () => 0;
 
@@ -54,22 +24,60 @@ const useSiteSubscriptionsQuery = ( {
 	sort = defaultSort,
 	number = 100,
 }: SubscriptionManagerSiteSubscriptionsQueryProps = {} ) => {
-	const isLoggedIn = useIsLoggedIn();
+	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
+	const cacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
 
-	const { data, ...rest } = useQuery< SiteSubscription[] >(
-		[ 'read', 'site-subscriptions', isLoggedIn ],
-		async () => {
-			return await callFollowingEndPoint( 1, number, isLoggedIn );
-		},
-		{
-			enabled,
-			refetchOnWindowFocus: false,
+	const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isFetching, ...rest } =
+		useInfiniteQuery< SubscriptionManagerSiteSubscriptions >(
+			cacheKey,
+			async ( { pageParam = 1 } ) => {
+				const data = await callApi< SubscriptionManagerSiteSubscriptions >( {
+					path: `/read/following/mine?number=${ number }&page=${ pageParam }`,
+					isLoggedIn,
+					apiVersion: '1.2',
+				} );
+
+				return {
+					...data,
+					subscriptions: data.subscriptions
+						? data.subscriptions.map( ( subscription ) => ( {
+								...subscription,
+								last_updated: new Date( subscription.last_updated ),
+								date_subscribed: new Date( subscription.date_subscribed ),
+						  } ) )
+						: [],
+				};
+			},
+			{
+				enabled,
+				getNextPageParam: ( lastPage, pages ) => {
+					return lastPage.page * number < lastPage.total_subscriptions
+						? pages.length + 1
+						: undefined;
+				},
+				refetchOnWindowFocus: false,
+			}
+		);
+
+	useEffect( () => {
+		if ( hasNextPage && ! isFetchingNextPage && ! isFetching ) {
+			fetchNextPage();
 		}
-	);
+	}, [ hasNextPage, isFetchingNextPage, isFetching, fetchNextPage ] );
+
+	// Flatten all the pages into a single array containing all subscriptions
+	const flattenedData = data?.pages?.map( ( page ) => page.subscriptions ).flat();
 
 	return {
-		data: data?.filter( filter ).sort( sort ),
+		data:
+			flattenedData
+				?.filter( ( item ) => item !== null )
+				?.filter( filter )
+				.sort( sort ) ?? [],
+		isFetchingNextPage,
+		isFetching,
+		hasNextPage,
 		...rest,
 	};
 };

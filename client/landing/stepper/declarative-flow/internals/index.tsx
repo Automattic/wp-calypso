@@ -59,6 +59,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	);
 	const previousProgressValue = stepProgress ? previousProgress / stepProgress.count : 0;
 
+	// this pre-loads all the lazy steps down the flow.
+	useEffect( () => {
+		Promise.all( flowSteps.map( ( step ) => 'asyncComponent' in step && step.asyncComponent() ) );
+	}, stepPaths );
+
 	const isFlowStart = useCallback( () => {
 		if ( ! flow || ! stepProgress ) {
 			return false;
