@@ -58,7 +58,7 @@ export default function PostStatsCard( {
 
 	return (
 		<Card className={ classes }>
-			<h3 className="post-stats-card__heading">{ heading }</h3>
+			<h4 className="post-stats-card__heading">{ heading }</h4>
 			<div className="post-stats-card__post-info">
 				<TitleTag className="post-stats-card__post-title" href={ titleLink }>
 					{ post?.title }

@@ -43,12 +43,12 @@ export default function AllTimeViewsSection( { siteId, slug }: { siteId: number;
 			{ siteId && <QuerySiteStats statType="statsVisits" siteId={ siteId } query={ query } /> }
 
 			<div className="highlight-cards">
-				<h2 className="highlight-cards-heading">{ translate( 'All-time insights' ) }</h2>
+				<h3 className="highlight-cards-heading">{ translate( 'All-time insights' ) }</h3>
 
 				<div className="highlight-cards-list">
 					<Card className="highlight-card">
 						<div className="highlight-card-heading">
-							<h3>{ translate( 'Total views' ) }</h3>
+							<h4>{ translate( 'Total views' ) }</h4>
 							{ viewData && (
 								<SimplifiedSegmentedControl options={ monthViewOptions } onSelect={ toggleViews } />
 							) }

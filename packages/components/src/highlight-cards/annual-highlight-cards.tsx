@@ -28,7 +28,7 @@ export default function AnnualHighlightCards( {
 	const translate = useTranslate();
 
 	const header = (
-		<h2 className="highlight-cards-heading">
+		<h3 className="highlight-cards-heading">
 			{ Number.isFinite( year )
 				? translate( '%(year)s in review', { args: { year } } )
 				: translate( 'Year in review' ) }{ ' ' }
@@ -39,7 +39,7 @@ export default function AnnualHighlightCards( {
 					</a>
 				</small>
 			) : null }
-		</h2>
+		</h3>
 	);
 
 	return (

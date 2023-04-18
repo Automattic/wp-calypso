@@ -29,7 +29,7 @@ const StatsCard = ( {
 			{ title }
 		</a>
 	) : (
-		<h3 className={ `${ BASE_CLASS_NAME }-header__title` }>{ title }</h3>
+		<h4 className={ `${ BASE_CLASS_NAME }-header__title` }>{ title }</h4>
 	);
 
 	// On one line shows card title and value column header

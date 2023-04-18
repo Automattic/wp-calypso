@@ -47,7 +47,7 @@ class PostTrends extends Component {
 				{ siteId && <QuerySiteStats siteId={ siteId } statType="statsStreak" query={ query } /> }
 
 				<div className="post-trends__heading">
-					<h2 className="post-trends__title">{ translate( 'Posting activity' ) }</h2>
+					<h3 className="post-trends__title">{ translate( 'Posting activity' ) }</h3>
 				</div>
 				<div ref={ this.wrapperRef } className="post-trends__wrapper">
 					<div ref={ this.yearRef } className="post-trends__year">
