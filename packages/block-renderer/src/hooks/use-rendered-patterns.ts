@@ -61,7 +61,7 @@ const useRenderedPatterns = (
 				pages.reduce( ( previous, current ) => ( { ...previous, ...current } ), {} )
 			);
 		} );
-	}, [ patternIds ] );
+	}, [ patternIds.length ] );
 
 	return renderedPatterns;
 };
