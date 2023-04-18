@@ -2,9 +2,9 @@ import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/cal
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { LoadingPlaceHolder } from './components/loading-placeholder';
-import { useGetWordPressSubdomain } from './hooks/use-get-wordpress-subdomain';
+import { useGetWordPressSubdomain } from '../hooks/use-get-wordpress-subdomain';
 import { PlanFeaturesItem } from './item';
+import { LoadingPlaceHolder } from './loading-placeholder';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import type { TransformedFeatureObject } from '../types';
 

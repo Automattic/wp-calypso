@@ -650,7 +650,12 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	handleUpgradeClick = ( singlePlanProperties: PlanProperties ) => {
-		const { onUpgradeClick: ownPropsOnUpgradeClick, selectedSiteSlug, domainName } = this.props;
+		const {
+			onUpgradeClick: ownPropsOnUpgradeClick,
+			selectedSiteSlug,
+			domainName,
+			flowName,
+		} = this.props;
 		const { cartItemForPlan, planName } = singlePlanProperties;
 
 		if ( ownPropsOnUpgradeClick && cartItemForPlan ) {
@@ -658,7 +663,7 @@ export class PlanFeatures2023Grid extends Component<
 			return;
 		}
 
-		if ( isFreePlan( planName ) && domainName ) {
+		if ( isFreePlan( planName ) && 'onboarding' === flowName && domainName ) {
 			this.toggleIsFreePlanPaidDomainDialogOpen();
 			return;
 		}
