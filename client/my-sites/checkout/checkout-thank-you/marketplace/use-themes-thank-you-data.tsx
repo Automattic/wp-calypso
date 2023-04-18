@@ -1,10 +1,11 @@
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useQueryThemes } from 'calypso/components/data/query-theme';
 import { ThankYouData, ThankYouSectionProps } from 'calypso/components/thank-you/types';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { clearActivated } from 'calypso/state/themes/actions';
 import { getThemes } from 'calypso/state/themes/selectors';
 import { hasExternallyManagedThemes as getHasExternallyManagedThemes } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -13,6 +14,7 @@ import MasterbarStyled from './masterbar-styled';
 
 export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
@@ -34,6 +36,13 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 
 	useQueryThemes( 'wpcom', themeSlugs );
 	useQueryThemes( 'wporg', themeSlugs );
+
+	// Clear completed activated them request state to avoid displaying the Thanks modal
+	useEffect( () => {
+		return () => {
+			dispatch( clearActivated( siteId || 0 ) );
+		};
+	}, [ dispatch, siteId ] );
 
 	const themesSection: ThankYouSectionProps = {
 		sectionKey: 'theme_information',

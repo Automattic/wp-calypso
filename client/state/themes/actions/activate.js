@@ -1,6 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
+import page from 'page';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
 import { showAtomicTransferDialog } from 'calypso/state/themes/actions/show-atomic-transfer-dialog';
@@ -70,6 +72,19 @@ export function activate(
 			! hasAutoLoadingHomepageModalAccepted( getState(), themeId )
 		) {
 			return dispatch( showAutoLoadingHomepageWarning( themeId ) );
+		}
+
+		/**
+		 * Check if the theme is a .org Theme and not provided by .com as well (as Premium themes)
+		 * and redirect it to the Marketplace theme installation page
+		 */
+		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
+		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
+		if ( isDotOrgTheme && ! isDotComTheme ) {
+			const siteSlug = getSiteSlug( getState(), siteId );
+
+			dispatch( productToBeInstalled( themeId, siteSlug ) );
+			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
 		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
