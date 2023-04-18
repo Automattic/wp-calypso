@@ -19,15 +19,17 @@ export const requestRelatedSites = ( action ) => {
 	} );
 };
 
-export const fromApi = ( { algorithm, sites } ) =>
-	sites.map( ( site ) => ( {
-		feedId: site.feed_id,
-		blogId: site.blog_id,
-		title: decodeEntities( site.blog_title ),
-		url: site.blog_url,
-		railcar: site.railcar,
-		algorithm,
-	} ) );
+export const fromApi = ( { cards } ) => {
+	const sites = cards
+		.filter( ( card ) => card.type === 'post' )
+		.map( ( card ) => ( {
+			feedId: card.data.feed_ID,
+			blogId: card.data.site_ID,
+			title: decodeEntities( card.data.site_name ),
+			url: card.data.site_URL,
+		} ) );
+	return sites;
+};
 
 export const addRelatedSites = ( { payload: { tag, offset } }, sites ) =>
 	receiveRelatedSites( { sites, tag, offset } );

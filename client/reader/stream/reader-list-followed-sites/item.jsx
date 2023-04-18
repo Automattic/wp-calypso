@@ -10,6 +10,7 @@ import '../style.scss';
 
 const ReaderListFollowingItem = ( props ) => {
 	const { site, path, isUnseen } = props;
+	console.log( site );
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 

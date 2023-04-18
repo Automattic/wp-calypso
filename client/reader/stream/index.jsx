@@ -462,8 +462,15 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamKey, streamKeySuffix, trendingTags, relatedSites } =
-			this.props;
+		const {
+			translate,
+			forcePlaceholders,
+			lastPage,
+			streamKey,
+			streamKeySuffix,
+			trendingTags,
+			relatedSites,
+		} = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -584,6 +591,7 @@ export default connect(
 	( state, { streamKey, recsStreamKey } ) => {
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
+		const streamKeySuffix = streamKey?.substring( streamKey.indexOf( ':' ) + 1 );
 
 		return {
 			blockedSites: getBlockedSites( state ),
@@ -602,8 +610,8 @@ export default connect(
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
-			relatedSites: getReaderRelatedSites( state, streamKey ),
-			streamKeySuffix: streamKey?.substring( streamKey.indexOf( ':' ) + 1 ),
+			relatedSites: getReaderRelatedSites( state, streamKeySuffix ),
+			streamKeySuffix: streamKeySuffix,
 		};
 	},
 	{

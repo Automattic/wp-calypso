@@ -2,8 +2,9 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import TagLink from 'calypso/blocks/reader-post-card/tags-link';
+import TagLink from 'calypso/blocks/reader-post-card/tag-link';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
+import ReaderListFollowingItem from 'calypso/reader/stream/reader-list-followed-sites/item';
 import '../style.scss';
 
 class ReaderTagSidebar extends Component {
@@ -22,10 +23,21 @@ class ReaderTagSidebar extends Component {
 	};
 
 	render() {
-		const { postCount, authorCount, translate, trendingTags } = this.props;
+		const { postCount, authorCount, translate, trendingTags, relatedSites } = this.props;
+		console.log( 'relatedSites', relatedSites );
 		const tagLinks = trendingTags
 			.sort( ( a, b ) => b.count - a.count )
 			.map( ( trendingTag ) => <TagLink tag={ trendingTag.tag } key={ trendingTag.tag.slug } /> );
+		const relatedSitesLinks =
+			relatedSites && relatedSites.length > 0
+				? relatedSites.map( ( relatedSite ) => (
+						<ReaderListFollowingItem
+							key={ relatedSite.feedId }
+							site={ relatedSite }
+							path={ null }
+						/>
+				  ) )
+				: null;
 
 		return (
 			<>
@@ -52,14 +64,12 @@ class ReaderTagSidebar extends Component {
 						<a href="/tags">{ translate( 'See all tags' ) }</a>
 					</div>
 				) }
-				<div className="reader-tag-sidebar-related-sites">
-					<h1>{ translate( 'Related Sites' ) }</h1>
-					<ul>
-						<li>
-							<a href="/tag/wordpress">WordPress</a>
-						</li>
-					</ul>
-				</div>
+				{ relatedSitesLinks && (
+					<div className="reader-tag-sidebar-related-sites">
+						<h1>{ translate( 'Related Sites' ) }</h1>
+						{ relatedSitesLinks }
+					</div>
+				) }
 			</>
 		);
 	}
