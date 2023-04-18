@@ -92,14 +92,8 @@ export function getDesignEventProps( {
 }
 
 export function getVirtualDesignProps( design: Design ) {
-	/**
-	 * If the design is virtual, and it has a recipe with pattern_ids,
-	 * then we assume that it's a pattern based virtual theme.
-	 */
-	const virtual_theme_pattern = design.is_virtual ? design.recipe?.pattern_ids?.[ 0 ] : null;
-
 	return {
 		is_virtual: design.is_virtual,
-		virtual_theme_pattern,
+		slug: design.is_virtual ? design.recipe?.slug : design.slug,
 	};
 }
