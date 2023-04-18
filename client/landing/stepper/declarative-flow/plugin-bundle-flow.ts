@@ -155,7 +155,7 @@ const pluginBundleFlow: Flow = {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 
 			const defaultExitDest = siteDetails?.options?.theme_slug
-				? `/theme/${ siteDetails?.options.theme_slug }/${ siteSlug }`
+				? `/marketplace/thank-you/${ siteSlug }?themes=${ siteDetails?.options?.theme_slug }`
 				: `/home/${ siteSlug }`;
 
 			switch ( currentStep ) {
