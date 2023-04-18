@@ -6,7 +6,7 @@
  * - The package must be initialized before using with `initConfig`.
  */
 
-import ConfigApi from './create-odyssey-config';
+import { ConfigApi } from './create-odyssey-config';
 
 const configApi = new ConfigApi();
 

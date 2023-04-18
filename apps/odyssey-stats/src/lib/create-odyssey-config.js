@@ -1,7 +1,7 @@
 // The JSON is filtered by `apps/stats/filter-json-config-loader.js`.
 import productionConfig from '../../../../config/production.json';
 
-class ConfigApi extends Function {
+export class ConfigApi extends Function {
 	/**
 	 * Make instances callable.
 	 */
@@ -156,10 +156,8 @@ export function createOdysseyConfigFromKey( configKey = 'configData' ) {
 	return configApi;
 }
 
-export function createOdysseyConfigFromConfigData( configData ) {
+export default function createOdysseyConfigFromConfigData( configData ) {
 	const configApi = new ConfigApi();
 	configApi.setConfigData( configData );
 	return configApi;
 }
-
-export default ConfigApi;
