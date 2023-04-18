@@ -452,10 +452,7 @@ export class PlansFeaturesMain extends Component {
 		// Remove this once we migrate them to the new pricing grid
 		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
 			plans = plans.filter(
-				( planSlug ) =>
-					! isBusinessPlan( planSlug ) &&
-					! isEcommercePlan( planSlug ) &&
-					! isWpcomEnterpriseGridPlan( planSlug )
+				( planSlug ) => ! isBusinessPlan( planSlug ) && ! isEcommercePlan( planSlug )
 			);
 		}
 
