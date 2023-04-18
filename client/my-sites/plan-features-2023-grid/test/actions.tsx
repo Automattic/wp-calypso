@@ -52,7 +52,7 @@ import { render, screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import React from 'react';
 import { getPlanBillPeriod } from 'calypso/state/plans/selectors';
-import PlanFeatures2023GridActions from '../actions';
+import PlanFeatures2023GridActions from '../components/actions';
 
 describe( 'PlanFeatures2023GridActions', () => {
 	beforeEach( () => {

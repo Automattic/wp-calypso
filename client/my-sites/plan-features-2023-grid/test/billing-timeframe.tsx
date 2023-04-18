@@ -30,7 +30,7 @@ import React from 'react';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { PlanPrices } from 'calypso/state/plans/types';
-import PlanFeatures2023GridBillingTimeframe from '../billing-timeframe';
+import PlanFeatures2023GridBillingTimeframe from '../components/billing-timeframe';
 
 describe( 'PlanFeatures2023GridBillingTimeframe', () => {
 	const defaultProps = {
