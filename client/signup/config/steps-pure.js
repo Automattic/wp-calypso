@@ -112,6 +112,9 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
+			props: {
+				hideFreePlan: true,
+			},
 		},
 
 		site: {
