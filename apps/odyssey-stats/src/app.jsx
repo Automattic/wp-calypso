@@ -1,6 +1,7 @@
 /**
  * Global polyfills
  */
+// `init-app-config` has to be the first import, because there could be packages reference it in their side effect.
 // eslint-disable-next-line import/order
 import './lib/init-app-config';
 import page from 'page';
