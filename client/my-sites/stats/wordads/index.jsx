@@ -173,7 +173,7 @@ class WordAds extends Component {
 
 				<div className="stats">
 					<StatsPageHeader
-						page="ads"
+						page="wordads"
 						subHeaderText={ translate( 'See how ads are performing on your site.' ) }
 					/>
 
