@@ -57,7 +57,7 @@ const newsletter: Flow = {
 			[]
 		);
 		const siteSlug = useSiteSlug();
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
 			flowName,
@@ -100,6 +100,7 @@ const newsletter: Flow = {
 					return navigate( 'domains' );
 
 				case 'domains':
+					setHidePlansFeatureComparison( true );
 					return navigate( 'plans' );
 
 				case 'plans':

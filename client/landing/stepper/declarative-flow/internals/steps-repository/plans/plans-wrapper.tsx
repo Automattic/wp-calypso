@@ -53,10 +53,13 @@ function getPlanTypes( flowName: string | null ) {
 }
 
 const PlansWrapper: React.FC< Props > = ( props ) => {
-	const { hideFreePlan, domainCartItem } = useSelect( ( select ) => {
+	const { hideFreePlan, domainCartItem, hidePlansFeatureComparison } = useSelect( ( select ) => {
 		return {
 			hideFreePlan: ( select( ONBOARD_STORE ) as OnboardSelect ).getHideFreePlan(),
 			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			hidePlansFeatureComparison: (
+				select( ONBOARD_STORE ) as OnboardSelect
+			 ).getHidePlansFeatureComparison(),
 		};
 	}, [] );
 
@@ -151,6 +154,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
 					is2023PricingGridVisible={ props.is2023PricingGridVisible }
+					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 				/>
 			</div>
 		);

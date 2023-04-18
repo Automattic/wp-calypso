@@ -451,6 +451,11 @@ export const setHideFreePlan = ( hideFreePlan: boolean ) => ( {
 	hideFreePlan,
 } );
 
+export const setHidePlansFeatureComparison = ( hidePlansFeatureComparison: boolean ) => ( {
+	type: 'SET_HIDE_PLANS_FEATURE_COMPARISON' as const,
+	hidePlansFeatureComparison,
+} );
+
 export const setIsMigrateFromWp = ( isMigrateFromWp: boolean ) => ( {
 	type: 'SET_IS_MIGRATE_FROM_WP' as const,
 	isMigrateFromWp,
@@ -522,6 +527,7 @@ export type OnboardAction = ReturnType<
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
 	| typeof setHideFreePlan
+	| typeof setHidePlansFeatureComparison
 	| typeof setProductCartItems
 	| typeof setPlanCartItem
 	| typeof setIsMigrateFromWp
