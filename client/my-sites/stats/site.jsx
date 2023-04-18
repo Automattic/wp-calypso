@@ -14,6 +14,7 @@ import illustration404 from 'calypso/assets/images/illustrations/illustration-40
 import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
@@ -367,6 +368,7 @@ class StatsSite extends Component {
 				</div>
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
+				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 			</div>
 		);
 	}

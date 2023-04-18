@@ -1,6 +1,5 @@
 import { isEcommerce } from '@automattic/calypso-products/src';
 import page from 'page';
-import AsyncLoad from 'calypso/components/async-load';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -23,12 +22,7 @@ export default async function ( context, next ) {
 		window.scrollTo( 0, 0 );
 	}
 
-	context.primary = (
-		<>
-			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />;
-			<CustomerHome key={ siteId } />
-		</>
-	);
+	context.primary = <CustomerHome key={ siteId } />;
 
 	next();
 }
