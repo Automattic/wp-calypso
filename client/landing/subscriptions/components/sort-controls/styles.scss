@@ -1,0 +1,29 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/fonts";
+@import "@automattic/color-studio/dist/color-variables";
+
+.subscription-manager-sort-controls {
+	select,
+	label {
+		font-weight: 500;
+		color: $studio-gray-60;
+		line-height: $font-title-small;
+		font-size: $font-body-small;
+	}
+
+	select {
+		border: none;
+
+		&:focus {
+			border-color: var(--color-primary);
+			border-radius: 2px;
+			box-shadow: 0 0 0 1px var(--color-primary), 0 0 0 4px var(--color-primary-10);
+		}
+
+		&:focus-visible {
+			outline: none;
+		}
+	}
+
+
+}
