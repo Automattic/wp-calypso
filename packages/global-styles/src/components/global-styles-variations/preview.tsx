@@ -52,9 +52,10 @@ interface Props {
 	title?: string;
 	inlineCss?: string;
 	isFocused?: boolean;
+	onFocusOut?: () => void;
 }
 
-const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused }: Props ) => {
+const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused, onFocusOut }: Props ) => {
 	const [ fontWeight ] = useStyle( 'typography.fontWeight' );
 	const [ fontFamily = 'serif' ] = useStyle( 'typography.fontFamily' );
 	const [ headingFontFamily = fontFamily ] = useStyle( 'elements.h1.typography.fontFamily' );
@@ -87,6 +88,7 @@ const GlobalStylesVariationPreview = ( { title, inlineCss, isFocused }: Props ) 
 			height={ normalizedHeight * ratio }
 			inlineCss={ inlineCss }
 			containerResizeListener={ containerResizeListener }
+			onFocusOut={ onFocusOut }
 		>
 			<motion.div
 				style={ {

@@ -95,6 +95,11 @@ export const Swipeable = ( {
 
 	useLayoutEffect( () => {
 		if ( ! updateEnabled ) {
+			// This is a fix for a bug when you have >1 pages and it update the component to just one but the height is still
+			// Related to https://github.com/Automattic/dotcom-forge/issues/2033
+			if ( pagesStyle?.height ) {
+				setPagesStyle( { ...pagesStyle, height: undefined } );
+			}
 			return;
 		}
 		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;

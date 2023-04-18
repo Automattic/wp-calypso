@@ -90,7 +90,7 @@ const ScreenCategoryList = ( {
 				}
 			/>
 			<div className="screen-container__body screen-container__body--align-sides screen-category-list__body">
-				{ categoriesInOrder.map( ( { name, label, description } ) => {
+				{ categoriesInOrder.map( ( { name, label } ) => {
 					const isOpen = selectedCategory === name;
 					const hasPatterns = name && patternsMapByCategory[ name ]?.length;
 					const isHeaderCategory = name === 'header';
@@ -106,7 +106,6 @@ const ScreenCategoryList = ( {
 							className={ classNames( 'screen-category-list__category-button navigator-button', {
 								'screen-category-list__category-button--is-open': isOpen,
 							} ) }
-							title={ description }
 							onClick={ () => {
 								if ( isOpen ) {
 									setSelectedCategory( null );

@@ -54,7 +54,7 @@ describe( '<SiteTableRow>', () => {
 			value: siteObj,
 			error: false,
 			type: 'site',
-			status: '',
+			status: 'active',
 		},
 		backup: {
 			type: 'backup',
@@ -96,6 +96,7 @@ describe( '<SiteTableRow>', () => {
 			throw new Error( 'Function not implemented.' );
 		},
 		isExpanded: false,
+		index: 0,
 	};
 	const initialState = {
 		partnerPortal: {

@@ -17,7 +17,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSite } from '../hooks/use-site';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import CheckPlan from './internals/steps-repository/check-plan';
 import DesignCarousel from './internals/steps-repository/design-carousel';
@@ -26,9 +26,15 @@ import ProcessingStep from './internals/steps-repository/processing-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import StoreProfiler from './internals/steps-repository/store-profiler';
 import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
+import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
 import { AssertConditionState } from './internals/types';
 import type { Flow, ProvidedDependencies, AssertConditionResult } from './internals/types';
-import type { OnboardSelect, SiteDetailsPlan, UserSelect } from '@automattic/data-stores';
+import type {
+	OnboardSelect,
+	SiteDetailsPlan,
+	SiteSelect,
+	UserSelect,
+} from '@automattic/data-stores';
 
 function getPlanFromRecurType( recurType: string ) {
 	switch ( recurType ) {
@@ -64,6 +70,7 @@ const ecommerceFlow: Flow = {
 			{ slug: 'designCarousel', component: DesignCarousel },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'waitForPluginInstall', component: WaitForPluginInstall },
 			{ slug: 'waitForAtomic', component: WaitForAtomic },
 			{ slug: 'checkPlan', component: CheckPlan },
 		];
@@ -125,7 +132,8 @@ const ecommerceFlow: Flow = {
 
 	useStepNavigation( _currentStepName, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress, setPlanCartItem } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress, setPlanCartItem, setPluginsToVerify } = useDispatch( ONBOARD_STORE );
+		setPluginsToVerify( [ 'woocommerce' ] );
 		const flowProgress = useFlowProgress( { stepName: _currentStepName, flowName } );
 		setStepProgress( flowProgress );
 		const { selectedDesign, recurType } = useSelect(
@@ -139,10 +147,12 @@ const ecommerceFlow: Flow = {
 
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
+		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepName );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
+			const siteId = getSiteIdBySlug( siteSlug );
 
 			switch ( _currentStepName ) {
 				case 'domains':
@@ -162,6 +172,10 @@ const ecommerceFlow: Flow = {
 
 				case 'processing':
 					if ( providedDependencies?.finishedWaitingForAtomic ) {
+						return navigate( 'waitForPluginInstall', { siteId, siteSlug } );
+					}
+
+					if ( providedDependencies?.pluginsInstalled ) {
 						return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
 					}
 
@@ -195,6 +209,9 @@ const ecommerceFlow: Flow = {
 					return navigate( 'domains' );
 
 				case 'waitForAtomic':
+					return navigate( 'processing' );
+
+				case 'waitForPluginInstall':
 					return navigate( 'processing' );
 
 				case 'checkPlan':

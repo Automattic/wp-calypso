@@ -53,7 +53,7 @@ function usePerMonthDescription( {
 		if ( yearlyVariantMaybeDiscountedPricePerMonth < planPrices.rawPrice ) {
 			return translate( `Save %(discountRate)s%% by paying annually`, {
 				args: {
-					discountRate: Math.round(
+					discountRate: Math.floor(
 						( 100 * ( planPrices.rawPrice - yearlyVariantMaybeDiscountedPricePerMonth ) ) /
 							planPrices.rawPrice
 					),

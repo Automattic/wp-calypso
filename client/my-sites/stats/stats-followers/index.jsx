@@ -1,12 +1,9 @@
 import config from '@automattic/calypso-config';
-import { Card } from '@automattic/components';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight, get } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import SectionHeader from 'calypso/components/section-header';
 import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
@@ -17,8 +14,6 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import ErrorPanel from '../stats-error';
-import StatsList from '../stats-list';
-import StatsListLegend from '../stats-list/legend';
 import StatsListCard from '../stats-list/stats-list-card';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
@@ -64,19 +59,15 @@ class StatModuleFollowers extends Component {
 	}
 
 	filterOptions() {
-		const { translate, isInsightsPageGridEnabled } = this.props;
+		const { translate } = this.props;
 		return [
 			{
 				value: 'wpcom-followers',
-				label: ! isInsightsPageGridEnabled
-					? translate( 'WordPress.com subscribers' )
-					: translate( 'WordPress.com' ),
+				label: translate( 'WordPress.com' ),
 			},
 			{
 				value: 'email-followers',
-				label: ! isInsightsPageGridEnabled
-					? translate( 'Email subscribers' )
-					: translate( 'Email' ),
+				label: translate( 'Email' ),
 			},
 		];
 	}
@@ -117,29 +108,16 @@ class StatModuleFollowers extends Component {
 			hasEmailQueryFailed,
 			hasWpcomQueryFailed,
 			translate,
-			numberFormat,
 			emailQuery,
 			wpcomQuery,
 			isOdysseyStats,
-			isInsightsPageGridEnabled,
 		} = this.props;
 		const isLoading = requestingWpcomFollowers || requestingEmailFollowers;
 		const hasEmailFollowers = !! get( emailData, 'subscribers', [] ).length;
 		const hasWpcomFollowers = !! get( wpcomData, 'subscribers', [] ).length;
 		const noData = ! hasWpcomFollowers && ! hasEmailFollowers;
 		const activeFilter = ! hasWpcomFollowers ? 'email-followers' : this.state.activeFilter;
-		const activeFilterClass = 'tab-' + activeFilter;
 		const hasError = hasEmailQueryFailed || hasWpcomQueryFailed;
-		const classes = [
-			'stats-module',
-			'is-followers',
-			activeFilterClass,
-			{
-				'is-loading': isLoading,
-				'has-no-data': noData,
-				'is-showing-error': hasError || noData,
-			},
-		];
 
 		const summaryPageSlug = siteSlug || '';
 		// email-followers is no longer available, so fallback to the new subscribers URL.
@@ -161,128 +139,52 @@ class StatModuleFollowers extends Component {
 				{ siteId && (
 					<QuerySiteStats statType="statsFollowers" siteId={ siteId } query={ emailQuery } />
 				) }
-				{ isInsightsPageGridEnabled && (
-					<StatsListCard
-						moduleType="followers"
-						data={ data.map( ( dataPoint ) => ( {
-							...dataPoint,
-							value: this.calculateOffset( dataPoint.value?.value ), // case 'relative-date': value = this.props.moment( valueData.value ).fromNow( true );
-						} ) ) }
-						usePlainCard
-						title={ translate( 'Subscribers' ) }
-						emptyMessage={ translate( 'No subscribers' ) }
-						mainItemLabel={ translate( 'Subscriber' ) }
-						metricLabel={ translate( 'Since' ) }
-						splitHeader
-						useShortNumber
-						showMore={
-							summaryPageLink
-								? {
-										url: summaryPageLink,
-										label:
-											data.length >= 10 // TODO: reduce to 5 items when surrounding cards get a summary page
-												? this.props.translate( 'View all', {
-														context: 'Stats: Button link to show more detailed stats information',
-												  } )
-												: this.props.translate( 'View details', {
-														context: 'Stats: Button label to see the detailed content of a panel',
-												  } ),
-								  }
-								: undefined
-						}
-						error={
-							noData &&
-							! hasError &&
-							! isLoading && (
-								<ErrorPanel
-									className="is-empty-message"
-									message={ translate( 'No subscribers' ) }
-								/>
-							)
-						}
-						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-						toggleControl={
-							<SimplifiedSegmentedControl
-								options={ this.filterOptions() }
-								onSelect={ this.changeFilter }
-							/>
-						}
-						className="stats__modernised-comments"
-						isLinkUnderlined={ activeFilter === 'wpcom-followers' }
-						showLeftIcon
-					/>
-				) }
-				{ ! isInsightsPageGridEnabled && (
-					<div className="list-followers">
-						<SectionHeader label={ translate( 'Subscribers' ) } href={ summaryPageLink } />
-						<Card className={ classNames( ...classes ) }>
-							<div className="followers">
-								<div className="module-content">
-									{ noData && ! hasError && ! isLoading && (
-										<ErrorPanel
-											className="is-empty-message"
-											message={ translate( 'No subscribers' ) }
-										/>
-									) }
-
-									{ this.filterSelect() }
-
-									<div className="tab-content wpcom-followers stats-async-metabox-wrapper">
-										<div className="module-content-text module-content-text-stat">
-											{ wpcomData && !! wpcomData.total_wpcom && (
-												<p>
-													{ translate( 'Total WordPress.com subscribers' ) }:{ ' ' }
-													{ numberFormat( wpcomData.total_wpcom ) }
-												</p>
-											) }
-										</div>
-										<StatsListLegend
-											value={ translate( 'Since' ) }
-											label={ translate( 'Subscriber' ) }
-										/>
-										{ hasWpcomFollowers && (
-											<StatsList moduleName="wpcomFollowers" data={ wpcomData.subscribers } />
-										) }
-										{ hasWpcomQueryFailed && <ErrorPanel className="is-error" /> }
-									</div>
-
-									<div className="tab-content email-followers stats-async-metabox-wrapper">
-										<div className="module-content-text module-content-text-stat">
-											{ emailData && !! emailData.total_email && (
-												<p>
-													{ translate( 'Total Email Subscribers' ) }:{ ' ' }
-													{ numberFormat( emailData.total_email ) }
-												</p>
-											) }
-										</div>
-
-										<StatsListLegend
-											value={ translate( 'Since' ) }
-											label={ translate( 'Subscriber' ) }
-										/>
-										{ hasEmailFollowers && (
-											<StatsList moduleName="EmailFollowers" data={ emailData.subscribers } />
-										) }
-										{ hasEmailQueryFailed && <ErrorPanel className="network-error" /> }
-									</div>
-
-									<StatsModulePlaceholder isLoading={ isLoading } />
-								</div>
-								{ ( ( wpcomData && wpcomData.subscribers.length !== wpcomData.total_wpcom ) ||
-									( emailData && emailData.subscribers.length !== emailData.total_email ) ) && (
-									<div key="view-all" className="module-expand">
-										<a href={ summaryPageLink }>
-											{ translate( 'View all', {
-												context: 'Stats: Button label to expand a panel',
-											} ) }
-											<span className="right" />
-										</a>
-									</div>
-								) }
-							</div>
-						</Card>
-					</div>
-				) }
+				<StatsListCard
+					moduleType="followers"
+					data={ data.map( ( dataPoint ) => ( {
+						...dataPoint,
+						value: this.calculateOffset( dataPoint.value?.value ), // case 'relative-date': value = this.props.moment( valueData.value ).fromNow( true );
+					} ) ) }
+					usePlainCard
+					title={ translate( 'Subscribers' ) }
+					emptyMessage={ translate( 'No subscribers' ) }
+					mainItemLabel={ translate( 'Subscriber' ) }
+					metricLabel={ translate( 'Since' ) }
+					splitHeader
+					useShortNumber
+					showMore={
+						summaryPageLink
+							? {
+									url: summaryPageLink,
+									label:
+										data.length >= 10 // TODO: reduce to 5 items when surrounding cards get a summary page
+											? this.props.translate( 'View all', {
+													context: 'Stats: Button link to show more detailed stats information',
+											  } )
+											: this.props.translate( 'View details', {
+													context: 'Stats: Button label to see the detailed content of a panel',
+											  } ),
+							  }
+							: undefined
+					}
+					error={
+						noData &&
+						! hasError &&
+						! isLoading && (
+							<ErrorPanel className="is-empty-message" message={ translate( 'No subscribers' ) } />
+						)
+					}
+					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+					toggleControl={
+						<SimplifiedSegmentedControl
+							options={ this.filterOptions() }
+							onSelect={ this.changeFilter }
+						/>
+					}
+					className="stats__modernised-comments"
+					isLinkUnderlined={ activeFilter === 'wpcom-followers' }
+					showLeftIcon
+				/>
 			</>
 		);
 	}
@@ -317,7 +219,6 @@ const connectComponent = connect(
 			siteId,
 			siteSlug,
 			isOdysseyStats: config.isEnabled( 'is_running_in_jetpack_site' ),
-			isInsightsPageGridEnabled: config.isEnabled( 'stats/insights-page-grid' ),
 		};
 	},
 	{ recordGoogleEvent }

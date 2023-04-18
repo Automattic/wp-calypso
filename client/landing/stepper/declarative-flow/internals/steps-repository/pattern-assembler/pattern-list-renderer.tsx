@@ -1,5 +1,6 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { Button } from '@automattic/components';
+import { Tooltip } from '@wordpress/components';
 import classnames from 'classnames';
 import { useEffect, useCallback, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -43,9 +44,9 @@ const PatternListItem = ( {
 	const setRefs = useCallback(
 		( node?: Element | null | undefined ) => {
 			if ( node ) {
-				ref.current;
+				ref.current = node as HTMLButtonElement;
+				inViewRef( node );
 			}
-			inViewRef( node );
 		},
 		[ inViewRef ]
 	);
@@ -57,24 +58,21 @@ const PatternListItem = ( {
 	}, [ isShown, isFirst, ref ] );
 
 	return (
-		<Button
-			className={ className }
-			title={ pattern.title }
-			ref={ setRefs }
-			onClick={ () => onSelect( pattern ) }
-		>
-			{ isShown && inViewOnce ? (
-				<PatternRenderer
-					key={ pattern.ID }
-					patternId={ encodePatternId( pattern.ID ) }
-					viewportWidth={ 1060 }
-					minHeight={ PLACEHOLDER_HEIGHT }
-					maxHeightFor100vh={ MAX_HEIGHT_FOR_100VH }
-				/>
-			) : (
-				<div key={ pattern.ID } style={ { height: PLACEHOLDER_HEIGHT } } />
-			) }
-		</Button>
+		<Tooltip text={ pattern.title }>
+			<Button className={ className } ref={ setRefs } onClick={ () => onSelect( pattern ) }>
+				{ isShown && inViewOnce ? (
+					<PatternRenderer
+						key={ pattern.ID }
+						patternId={ encodePatternId( pattern.ID ) }
+						viewportWidth={ 1060 }
+						minHeight={ PLACEHOLDER_HEIGHT }
+						maxHeightFor100vh={ MAX_HEIGHT_FOR_100VH }
+					/>
+				) : (
+					<div key={ pattern.ID } style={ { height: PLACEHOLDER_HEIGHT } } />
+				) }
+			</Button>
+		</Tooltip>
 	);
 };
 

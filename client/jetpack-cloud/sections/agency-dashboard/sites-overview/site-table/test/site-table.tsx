@@ -56,7 +56,7 @@ describe( '<SiteTable>', () => {
 				value: siteObj,
 				error: false,
 				type: 'site',
-				status: '',
+				status: 'active',
 			},
 			backup: {
 				type: 'backup',

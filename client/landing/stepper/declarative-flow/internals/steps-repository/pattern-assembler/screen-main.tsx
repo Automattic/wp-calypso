@@ -48,8 +48,6 @@ const ScreenMain = ( {
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_MISCLICK );
 			return;
 		}
-
-		onContinueClick();
 	};
 
 	// Set a delay to enable the Continue button since the user might mis-click easily when they go back from another screen
@@ -123,7 +121,13 @@ const ScreenMain = ( {
 			</div>
 			<div className="screen-container__footer">
 				<span className="screen-container__description">{ getDescription() }</span>
-				<Button className="pattern-assembler__button" primary onMouseDown={ handleMouseDown }>
+				<Button
+					className="pattern-assembler__button"
+					primary
+					aria-disabled={ disabled }
+					onMouseDown={ handleMouseDown }
+					onClick={ onContinueClick }
+				>
 					{ shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal
 						? translate( 'Unlock this style' )
 						: translate( 'Continue' ) }

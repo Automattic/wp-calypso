@@ -1,9 +1,12 @@
+import config from '@automattic/calypso-config';
 import UplotChart from '@automattic/components/src/chart-uplot';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { UseQueryResult } from 'react-query';
+import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import StatsModulePlaceholder from '../stats-module/placeholder';
+import StatsPeriodHeader from '../stats-period-header';
 import type uPlot from 'uplot';
 
 import './style.scss';
@@ -31,13 +34,13 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 }
 
 export default function SubscribersSection( {
-	siteId,
-	siteSlug,
+	slug,
+	period = 'month',
 }: {
-	siteId: string;
-	siteSlug: string;
+	slug?: string;
+	period?: string;
 } ) {
-	const period = 'month';
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const quantity = 30;
 	const {
 		isLoading,
@@ -45,7 +48,7 @@ export default function SubscribersSection( {
 		data,
 		// error,
 		status,
-	}: UseQueryResult< SubscribersDataResult > = useSubscribersQuery( siteId, period, quantity );
+	}: UseQueryResult< SubscribersDataResult > = useSubscribersQuery( period, quantity );
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const legendRef = useRef< HTMLDivElement >( null );
 	const translate = useTranslate();
@@ -58,27 +61,39 @@ export default function SubscribersSection( {
 
 	const chartData = transformData( data?.data || [] );
 
+	const subscribers = {
+		label: 'Subscribers',
+		path: `/stats/subscribers/`,
+	};
+
+	const slugPath = slug ? `/${ slug }` : '';
+	const pathTemplate = `${ subscribers.path }{{ interval }}${ slugPath }`;
+
 	return (
 		<div className="subscribers-section">
 			{ /* TODO: Remove highlight-cards class and use a highlight cards heading component instead. */ }
 			<div className="subscribers-section-heading highlight-cards">
 				<h1 className="highlight-cards-heading">
 					{ translate( 'Subscribers' ) }{ ' ' }
-					<small>
-						<a
-							className="highlight-cards-heading-wrapper"
-							href={ '/people/subscribers/' + siteSlug }
-						>
-							{ translate( 'View all subscribers' ) }
-						</a>
-					</small>
+					{ isOdysseyStats ? null : (
+						<small>
+							<a className="highlight-cards-heading-wrapper" href={ '/people/subscribers/' + slug }>
+								{ translate( 'View all subscribers' ) }
+							</a>
+						</small>
+					) }
 				</h1>
-				<div className="subscribers-section-legend" ref={ legendRef }></div>
+				<div className="subscribers-section-duration-control-with-legend">
+					<StatsPeriodHeader>
+						<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
+					</StatsPeriodHeader>
+					<div className="subscribers-section-legend" ref={ legendRef }></div>
+				</div>
 			</div>
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isLoading && chartData.length === 0 && (
 				<p className="subscribers-section__no-data">
-					{ translate( 'No data availble for the specified period.' ) }
+					{ translate( 'No data available for the specified period.' ) }
 				</p>
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
