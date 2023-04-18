@@ -60,7 +60,7 @@ const usePostSubscriptionsQuery = ( {
 		// Transform the dates into Date objects
 		const transformedData = flattenedData?.map( ( comment_subscription ) => ( {
 			...comment_subscription,
-			subscription_date: new Date( comment_subscription.subscription_date ),
+			subscription_date: new Date( comment_subscription.subscription_date + ' UTC' ),
 		} ) );
 		return transformedData?.filter( filter ).sort( sort );
 	}, [ data, filter, sort ] );
