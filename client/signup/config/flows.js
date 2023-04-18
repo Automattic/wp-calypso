@@ -188,7 +188,6 @@ const flows = generateFlows( {
 	getRedirectDestination,
 	getSignupDestination,
 	getLaunchDestination,
-	getThankYouNoSiteDestination,
 	getDomainSignupFlowDestination,
 	getEmailSignupFlowDestination,
 	getChecklistThemeDestination,
