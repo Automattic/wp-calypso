@@ -5,7 +5,7 @@ import capabilities from './capabilities/reducer';
 import policies from './policies/reducer';
 import updateBackupRetentionRequestStatus from './retention/reducer';
 import size from './size/reducer';
-import staging from './staging/reducer';
+import stagingSitesList from './staging/reducer';
 import state from './state/reducer';
 import storage from './storage/reducer';
 
@@ -17,7 +17,7 @@ const rewind = combineReducers( {
 	state,
 	storage,
 	updateBackupRetentionRequestStatus,
-	staging,
+	stagingSitesList,
 } );
 
 const reducer = keyedReducer( 'siteId', rewind );
