@@ -132,6 +132,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return renderLoading();
 		}
 
+		let plansToShow: string[] = [];
+		if ( isNewsletterFlow( flowName ) ) {
+			plansToShow = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
+		}
+
 		return (
 			<div>
 				<PlansFeaturesMain
@@ -155,6 +160,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isReskinned={ isReskinned }
 					is2023PricingGridVisible={ props.is2023PricingGridVisible }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
+					plansToShow={ plansToShow }
 				/>
 			</div>
 		);

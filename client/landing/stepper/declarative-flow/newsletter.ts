@@ -3,6 +3,7 @@ import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -49,7 +50,12 @@ const newsletter: Flow = {
 			},
 		];
 	},
-
+	useSideEffect() {
+		const { setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
+		useEffect( () => {
+			setHidePlansFeatureComparison( true );
+		}, [] );
+	},
 	useStepNavigation( _currentStep, navigate ) {
 		const flowName = this.name;
 		const userIsLoggedIn = useSelect(
@@ -57,7 +63,7 @@ const newsletter: Flow = {
 			[]
 		);
 		const siteSlug = useSiteSlug();
-		const { setStepProgress, setHidePlansFeatureComparison } = useDispatch( ONBOARD_STORE );
+		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
 			flowName,
@@ -100,7 +106,6 @@ const newsletter: Flow = {
 					return navigate( 'domains' );
 
 				case 'domains':
-					setHidePlansFeatureComparison( true );
 					return navigate( 'plans' );
 
 				case 'plans':

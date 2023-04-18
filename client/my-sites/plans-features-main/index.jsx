@@ -8,7 +8,6 @@ import {
 	isPersonalPlan,
 	isPremiumPlan,
 	isBusinessPlan,
-	isWpcomEnterpriseGridPlan,
 	isEcommercePlan,
 	isProPlan,
 	isStarterPlan,
