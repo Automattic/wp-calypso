@@ -38,7 +38,7 @@ import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenMain from './screen-main';
 import ScreenSection from './screen-section';
-import { encodePatternId } from './utils';
+import { encodePatternId, getVariationTitle, getVariationType } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern } from './types';
 import type { StepProps } from '../../types';
@@ -111,8 +111,10 @@ const PatternAssembler = ( {
 				step: stepName,
 				intent,
 				stylesheet,
-				color_variation_title: colorVariation?.title,
-				font_variation_title: fontVariation?.title,
+				color_variation_title: getVariationTitle( colorVariation ),
+				color_variation_type: getVariationType( colorVariation ),
+				font_variation_title: getVariationTitle( fontVariation ),
+				font_variation_type: getVariationType( fontVariation ),
 			} ),
 		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
 	);
@@ -379,6 +381,8 @@ const PatternAssembler = ( {
 		openModal: openGlobalStylesUpgradeModal,
 		globalStylesUpgradeModalProps,
 	} = useGlobalStylesUpgradeModal( {
+		flowName: flow,
+		stepName,
 		hasSelectedColorVariation: !! colorVariation,
 		hasSelectedFontVariation: !! fontVariation,
 		onCheckout: snapshotRecipe,
@@ -449,7 +453,8 @@ const PatternAssembler = ( {
 	const onScreenColorsSelect = ( variation: GlobalStylesObject | null ) => {
 		setColorVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_PREVIEW_CLICK, {
-			title: variation?.title,
+			color_variation_title: getVariationTitle( variation ),
+			color_variation_type: getVariationType( variation ),
 		} );
 	};
 
@@ -464,7 +469,8 @@ const PatternAssembler = ( {
 	const onScreenFontsSelect = ( variation: GlobalStylesObject | null ) => {
 		setFontVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_PREVIEW_CLICK, {
-			title: variation?.title,
+			font_variation_title: getVariationTitle( variation ),
+			font_variation_type: getVariationType( variation ),
 		} );
 	};
 
@@ -495,6 +501,7 @@ const PatternAssembler = ( {
 						isDismissedGlobalStylesUpgradeModal={ isDismissedGlobalStylesUpgradeModal }
 						onSelect={ onMainItemSelect }
 						onContinueClick={ onContinueClick }
+						recordTracksEvent={ recordTracksEvent }
 					/>
 				</NavigatorScreen>
 
@@ -592,6 +599,7 @@ const PatternAssembler = ( {
 				onMoveDownSection={ onMoveDownSection }
 				onDeleteHeader={ onDeleteHeader }
 				onDeleteFooter={ onDeleteFooter }
+				recordTracksEvent={ recordTracksEvent }
 			/>
 			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />
 		</NavigatorProvider>

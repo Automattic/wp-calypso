@@ -8,7 +8,6 @@ import './hightlights.scss';
 
 function TopColumn( { items, viewAllUrl, viewAllText, title, className = null } ) {
 	const translate = useTranslate();
-	// TODO: add a placeholder state
 
 	return (
 		<div className={ classNames( 'stats-widget-highlights-card', className ) }>
@@ -40,12 +39,15 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
+	const viewAllPostsStatsUrl = `${ odysseyStatsBaseUrl }#!/stats/day/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
+	const viewAllReferrerStatsUrl = `${ odysseyStatsBaseUrl }#!/stats/day/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
 
+	// TODO: add a loading state placeholder with isFetching returned from the query.
 	const { data: topPostsAndPages = [] } = useTopPostsQuery( siteId, 'day', 7, queryDate );
 	const { data: topReferrers = [] } = useReferrersQuery( siteId, 'day', 7, queryDate );
 
 	return (
-		<div className="stats-widget-highlights">
+		<div className="stats-widget-highlights stats-widget-card">
 			<div className="stats-widget-highlights__header">
 				<label>{ translate( '7 Day Highlights' ) }</label>
 				<a href={ odysseyStatsBaseUrl }>{ translate( 'View detailed stats' ) }</a>
@@ -54,14 +56,14 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 				<TopColumn
 					className="stats-widget-highlights__column"
 					title={ translate( 'Top Posts & Pages' ) }
-					viewAllUrl={ odysseyStatsBaseUrl }
+					viewAllUrl={ viewAllPostsStatsUrl }
 					viewAllText={ translate( 'View all posts & pages stats' ) }
 					items={ topPostsAndPages }
 				/>
 				<TopColumn
 					className="stats-widget-highlights__column"
 					title={ translate( 'Top Referrers' ) }
-					viewAllUrl={ odysseyStatsBaseUrl }
+					viewAllUrl={ viewAllReferrerStatsUrl }
 					viewAllText={ translate( 'View all referrer stats' ) }
 					items={ topReferrers }
 				/>

@@ -42,8 +42,8 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
-	activateTheme,
 	initiateThemeTransfer as initiateTransfer,
+	installAndActivateTheme,
 	requestActiveTheme,
 } from 'calypso/state/themes/actions';
 import { getTheme, isThemeActive as getThemeActive } from 'calypso/state/themes/selectors';
@@ -203,7 +203,7 @@ const MarketplaceProductInstall = ( {
 			if ( selectedSite.jetpack ) {
 				if ( wpOrgTheme ) {
 					// initilize theme activating
-					dispatch( activateTheme( wpOrgTheme.id, siteId ) );
+					dispatch( installAndActivateTheme( wpOrgTheme.id, siteId ) );
 				} else {
 					// initialize plugin installing
 					dispatch( installPlugin( siteId, wporgPlugin, false ) );

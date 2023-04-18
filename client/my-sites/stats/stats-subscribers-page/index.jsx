@@ -18,7 +18,7 @@ import StatsModuleEmails from '../stats-module-emails';
 import Reach from '../stats-reach';
 import SubscribersSection from '../subscribers-section';
 
-const StatsSubscribersPage = () => {
+const StatsSubscribersPage = ( { period } ) => {
 	const translate = useTranslate();
 	// Use hooks for Redux pulls.
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -65,7 +65,7 @@ const StatsSubscribersPage = () => {
 						vendor={ getSuggestionsVendor() }
 					/>
 				) }
-				<SubscribersSection siteId={ siteId } />
+				<SubscribersSection siteId={ siteId } slug={ siteSlug } period={ period } />
 				<div className={ statsModuleListClass }>
 					<Followers path="followers" />
 					<Reach />

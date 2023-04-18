@@ -6,12 +6,12 @@ import { Icon, layout } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState, CSSProperties } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { NAVIGATOR_PATHS, STYLES_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternActionBar from './pattern-action-bar';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
+import type { MouseEvent } from 'react';
 import './pattern-large-preview.scss';
 
 interface Props {
@@ -24,6 +24,7 @@ interface Props {
 	onMoveDownSection: ( position: number ) => void;
 	onDeleteHeader: () => void;
 	onDeleteFooter: () => void;
+	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
 // The pattern renderer element has 1px min height before the pattern is loaded
@@ -39,6 +40,7 @@ const PatternLargePreview = ( {
 	onMoveDownSection,
 	onDeleteHeader,
 	onDeleteFooter,
+	recordTracksEvent,
 }: Props ) => {
 	const translate = useTranslate();
 	const navigator = useNavigator();
@@ -57,6 +59,12 @@ const PatternLargePreview = ( {
 
 	const goToSelectHeaderPattern = () => {
 		navigator.goTo( NAVIGATOR_PATHS.HEADER );
+	};
+
+	const handleAddHeaderClick = ( event: MouseEvent ) => {
+		event.preventDefault();
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ADD_HEADER_BUTTON_CLICK );
+		goToSelectHeaderPattern();
 	};
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
@@ -189,10 +197,7 @@ const PatternLargePreview = ( {
 													href="#"
 													target="_blank"
 													rel="noopener noreferrer"
-													onClick={ ( event ) => {
-														event.preventDefault();
-														goToSelectHeaderPattern();
-													} }
+													onClick={ handleAddHeaderClick }
 												/>
 											),
 										},

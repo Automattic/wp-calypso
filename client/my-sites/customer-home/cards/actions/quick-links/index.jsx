@@ -2,7 +2,6 @@ import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
-import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import blazeIcon from 'calypso/assets/images/icons/blaze-icon.svg';
 import FoldableCard from 'calypso/components/foldable-card';
@@ -41,7 +40,6 @@ export const QuickLinks = ( {
 	canManageSite,
 	canModerateComments,
 	customizeUrl,
-	isAtomic,
 	isWpcomStagingSite,
 	isStaticHomePage,
 	canAddEmail,
@@ -56,7 +54,6 @@ export const QuickLinks = ( {
 	trackCustomizeThemeAction,
 	trackChangeThemeAction,
 	trackDesignLogoAction,
-	trackAnchorPodcastAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
 	trackExplorePluginsAction,
@@ -213,16 +210,6 @@ export const QuickLinks = ( {
 						iconSrc={ fiverrIcon }
 					/>
 				</>
-			) }
-			{ canManageSite && ! isAtomic && (
-				<ActionBox
-					href="https://anchor.fm/wordpressdotcom"
-					onClick={ trackAnchorPodcastAction }
-					target="_blank"
-					label={ translate( 'Create a podcast with Anchor' ) }
-					external
-					iconSrc={ anchorLogoIcon }
-				/>
 			) }
 		</div>
 	);

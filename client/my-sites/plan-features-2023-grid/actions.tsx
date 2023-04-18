@@ -12,6 +12,7 @@ import {
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
@@ -43,6 +44,7 @@ type PlanFeaturesActionsButtonProps = {
 	flowName: string;
 	buttonText?: string;
 	isWpcomEnterpriseGridPlan: boolean;
+	isWooExpressPlusPlan?: boolean;
 	selectedSiteSlug: string | null;
 };
 
@@ -290,6 +292,9 @@ const LoggedInPlansFeatureActionButton = ( {
 					<DummyDisabledButton>
 						{ translate( 'Downgrade', { context: 'verb' } ) }
 					</DummyDisabledButton>
+					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
+						{ isMobile() && translate( 'Please contact support to downgrade your plan.' ) }
+					</div>
 				</Plans2023Tooltip>
 			);
 		} else if ( forceDisplayButton ) {
@@ -322,6 +327,7 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 	flowName,
 	buttonText,
 	isWpcomEnterpriseGridPlan = false,
+	isWooExpressPlusPlan = false,
 	selectedSiteSlug,
 } ) => {
 	const translate = useTranslate();
@@ -374,6 +380,18 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 							components: translateComponents,
 					  } ) }
 			</Button>
+		);
+	} else if ( isWooExpressPlusPlan ) {
+		return (
+			<ExternalLinkWithTracking
+				className={ classNames( classes ) }
+				href="https://woocommerce.com/get-in-touch/"
+				target="_blank"
+				tracksEventName="calypso_plan_step_woo_express_plus_click"
+				tracksEventProps={ { flow: flowName } }
+			>
+				{ translate( 'Get in touch' ) }
+			</ExternalLinkWithTracking>
 		);
 	} else if ( isLaunchPage ) {
 		return (

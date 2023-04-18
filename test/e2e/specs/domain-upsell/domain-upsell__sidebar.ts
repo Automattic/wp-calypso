@@ -89,4 +89,9 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 		cartCheckoutPage = new CartCheckoutPage( page );
 		await cartCheckoutPage.validateCartItem( selectedDomain );
 	} );
+
+	afterAll( async function () {
+		const restAPIClient = new RestAPIClient( credentials );
+		await restAPIClient.clearShoppingCart( credentials.testSites?.primary?.id as number );
+	} );
 } );
