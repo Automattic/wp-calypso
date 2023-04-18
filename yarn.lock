@@ -1138,7 +1138,7 @@ __metadata:
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
     "@wordpress/scripts": ^24.6.0
     autoprefixer: ^10.2.5
-    babel-jest: 27
+    babel-jest: ^27.5
     calypso: "workspace:^"
     classnames: ^2.3.1
     debug: ^4.3.4
@@ -10519,7 +10519,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-jest@npm:27, babel-jest@npm:^27.2.4, babel-jest@npm:^27.3.1, babel-jest@npm:^27.4.5, babel-jest@npm:^27.5.1":
+"babel-jest@npm:^27.2.4, babel-jest@npm:^27.3.1, babel-jest@npm:^27.4.5, babel-jest@npm:^27.5, babel-jest@npm:^27.5.1":
   version: 27.5.1
   resolution: "babel-jest@npm:27.5.1"
   dependencies:
