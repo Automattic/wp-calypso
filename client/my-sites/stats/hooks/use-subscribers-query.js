@@ -14,7 +14,6 @@ function querySubscribers( siteId, period, quantity ) {
 			http_envelope: 1,
 		}
 	);
-	} );
 }
 
 function selectSubscribers( payload ) {
