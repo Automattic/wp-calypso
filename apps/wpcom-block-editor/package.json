@@ -42,6 +42,7 @@
 		"@wordpress/plugins": "^4.20.0",
 		"@wordpress/rich-text": "^5.20.0",
 		"@wordpress/url": "^3.23.0",
+		"@types/qs": "^6.9.7",
 		"debug": "^4.3.3",
 		"lodash": "^4.17.21",
 		"react": "^17.0.2",
