@@ -114,6 +114,7 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem' ],
 			props: {
 				hideFreePlan: true,
+				hideEnterprisePlan: true,
 			},
 		},
 
