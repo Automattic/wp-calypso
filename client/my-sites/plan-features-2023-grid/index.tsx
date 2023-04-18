@@ -498,36 +498,38 @@ export class PlanFeatures2023Grid extends Component<
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { isReskinned, isLargeCurrency, translate } = this.props;
 
-		return planPropertiesObj.map( ( properties ) => {
-			const { planName, rawPrice } = properties;
-			const isWooExpressPlus = isWooExpressPlusPlan( planName );
-			const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
-				'has-border-top': ! isReskinned,
-			} );
-			const hasNoPrice = rawPrice === undefined || rawPrice === null;
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties ) => {
+				const { planName, rawPrice } = properties;
+				const isWooExpressPlus = isWooExpressPlusPlan( planName );
+				const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
+					'has-border-top': ! isReskinned,
+				} );
+				const hasNoPrice = rawPrice === undefined || rawPrice === null;
 
-			return (
-				<Container
-					scope="col"
-					key={ planName }
-					className={ classes }
-					isMobile={ options?.isMobile }
-				>
-					{ ! hasNoPrice && (
-						<PlanFeatures2023GridHeaderPrice
-							planProperties={ properties }
-							is2023OnboardingPricingGrid={ true }
-							isLargeCurrency={ isLargeCurrency }
-						/>
-					) }
-					{ isWooExpressPlus && (
-						<div className="plan-features-2023-grid__header-tagline">
-							{ translate( 'Speak to our team for a custom quote.' ) }
-						</div>
-					) }
-				</Container>
-			);
-		} );
+				return (
+					<Container
+						scope="col"
+						key={ planName }
+						className={ classes }
+						isMobile={ options?.isMobile }
+					>
+						{ ! hasNoPrice && (
+							<PlanFeatures2023GridHeaderPrice
+								planProperties={ properties }
+								is2023OnboardingPricingGrid={ true }
+								isLargeCurrency={ isLargeCurrency }
+							/>
+						) }
+						{ isWooExpressPlus && (
+							<div className="plan-features-2023-grid__header-tagline">
+								{ translate( 'Speak to our team for a custom quote.' ) }
+							</div>
+						) }
+					</Container>
+				);
+			} );
 	}
 
 	renderBillingTimeframe( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
@@ -752,37 +754,40 @@ export class PlanFeatures2023Grid extends Component<
 		const { translate } = this.props;
 		let previousPlanShortNameFromProperties: string;
 
-		return planPropertiesObj.map( ( properties: PlanProperties ) => {
-			const { planName, product_name_short } = properties;
-			const shouldRenderEnterpriseLogos =
-				isWpcomEnterpriseGridPlan( planName ) || isWooExpressPlusPlan( planName );
-			const shouldShowFeatureTitle = ! isWpComFreePlan( planName ) && ! shouldRenderEnterpriseLogos;
-			const planShortName =
-				options?.previousProductNameShort || previousPlanShortNameFromProperties;
-			previousPlanShortNameFromProperties = product_name_short;
-			const title =
-				planShortName &&
-				translate( 'Everything in %(planShortName)s, plus:', {
-					args: { planShortName },
-				} );
-			const classes = classNames(
-				'plan-features-2023-grid__common-title',
-				getPlanClass( planName )
-			);
-			const rowspanProp =
-				! options?.isMobile && shouldRenderEnterpriseLogos ? { rowSpan: '2' } : {};
-			return (
-				<Container
-					key={ planName }
-					isMobile={ options?.isMobile }
-					className="plan-features-2023-grid__table-item"
-					{ ...rowspanProp }
-				>
-					{ shouldShowFeatureTitle && <div className={ classes }>{ title }</div> }
-					{ shouldRenderEnterpriseLogos && this.renderEnterpriseClientLogos() }
-				</Container>
-			);
-		} );
+		return planPropertiesObj
+			.filter( ( { isVisible } ) => isVisible )
+			.map( ( properties: PlanProperties ) => {
+				const { planName, product_name_short } = properties;
+				const shouldRenderEnterpriseLogos =
+					isWpcomEnterpriseGridPlan( planName ) || isWooExpressPlusPlan( planName );
+				const shouldShowFeatureTitle =
+					! isWpComFreePlan( planName ) && ! shouldRenderEnterpriseLogos;
+				const planShortName =
+					options?.previousProductNameShort || previousPlanShortNameFromProperties;
+				previousPlanShortNameFromProperties = product_name_short;
+				const title =
+					planShortName &&
+					translate( 'Everything in %(planShortName)s, plus:', {
+						args: { planShortName },
+					} );
+				const classes = classNames(
+					'plan-features-2023-grid__common-title',
+					getPlanClass( planName )
+				);
+				const rowspanProp =
+					! options?.isMobile && shouldRenderEnterpriseLogos ? { rowSpan: '2' } : {};
+				return (
+					<Container
+						key={ planName }
+						isMobile={ options?.isMobile }
+						className="plan-features-2023-grid__table-item"
+						{ ...rowspanProp }
+					>
+						{ shouldShowFeatureTitle && <div className={ classes }>{ title }</div> }
+						{ shouldRenderEnterpriseLogos && this.renderEnterpriseClientLogos() }
+					</Container>
+				);
+			} );
 	}
 
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
