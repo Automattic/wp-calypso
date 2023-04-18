@@ -4,7 +4,7 @@ import { getQueryArg } from '@wordpress/url';
 import { updateLaunchpadSettings } from 'calypso/data/sites/use-launchpad';
 
 /**
- * This function marks 'Write your first post' as completed in the launchpad
+ * This function marks 'Write your first post' as completed in the launchpad.
  */
 async function setFirstPostAsPublished( siteSlug ) {
 	await updateLaunchpadSettings( siteSlug, {
