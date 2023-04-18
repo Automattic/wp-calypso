@@ -7,24 +7,32 @@ const VideoPressIntroBackground = () => {
 	const prefersReducedMotion = window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches;
 
 	useEffect( () => {
-		if ( prefersReducedMotion ) {
+		if ( ! divRef.current || prefersReducedMotion ) {
 			return;
 		}
+
 		const iframeApi = VideoPressIframeApi(
 			document.getElementById( 'videopress-intro-video-frame' ),
 			() => {
-				const callbackId = iframeApi.status.onPlayerStatusChanged(
-					( oldStatus: string, newStatus: string ) => {
-						if ( 'playing' === newStatus ) {
+				const pollPlayer = () => {
+					if ( '0' === divRef.current?.style.opacity ) {
+						return;
+					}
+
+					iframeApi.status.player().then( ( status: string ) => {
+						if ( 'playing' === status ) {
 							iframeApi.controls.seek( 0 ).then( () => {
 								if ( divRef.current ) {
-									divRef.current.style.display = 'none';
+									divRef.current.style.opacity = '0';
 								}
-								iframeApi.status.offPlayerStatusChanged( callbackId );
 							} );
+						} else {
+							setTimeout( pollPlayer, 100 );
 						}
-					}
-				);
+					} );
+				};
+
+				pollPlayer();
 			}
 		);
 	}, [ divRef, prefersReducedMotion ] );
