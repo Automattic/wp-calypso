@@ -8,12 +8,12 @@ import titlecase from 'to-title-case';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DatePicker from 'calypso/my-sites/stats/stats-date-picker';
+import StatsPageHeader from 'calypso/my-sites/stats/stats-page-header';
 import StatsPeriodHeader from 'calypso/my-sites/stats/stats-period-header';
 import StatsPeriodNavigation from 'calypso/my-sites/stats/stats-period-navigation';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -23,7 +23,6 @@ import Module from './store-stats-module';
 import Chart from './store-stats-orders-chart';
 import WidgetList from './store-stats-widget-list';
 import { getEndPeriod, getQueries, getWidgetPath } from './utils';
-import StatsPageHeader from 'calypso/my-sites/stats/stats-page-header';
 
 class StoreStats extends Component {
 	static propTypes = {
