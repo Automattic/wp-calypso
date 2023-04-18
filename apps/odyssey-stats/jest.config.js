@@ -1,5 +1,5 @@
 /**
- * Test configuration for the FSE plugin.
+ * Test configuration for the Odyssey Stats.
  *
  * Will match files such that:
  *   1. Must be in the apps/odyssey-stats/ directory
