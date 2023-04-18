@@ -36,7 +36,7 @@ const startWriting: Flow = {
 				case 'processing': {
 					if ( providedDependencies?.siteSlug ) {
 						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?showLaunchpad=true`
+							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?showLaunchpad=true&origin=${ siteOrigin }`
 						);
 					}
 				}
