@@ -6,13 +6,13 @@ import { preventWidows } from 'calypso/lib/formatting';
 interface StatsPageHeaderProps {
 	page: 'traffic' | 'insights' | 'store' | 'wordads' | 'googleMyBusiness' | 'subscribers';
 	headerText: string;
-	subheaderText: string;
+	subHeaderText: string;
 }
 
 export default function StatsPageHeader( {
 	page,
 	headerText,
-	subheaderText,
+	subHeaderText,
 }: StatsPageHeaderProps ) {
 	const translate = useTranslate();
 
@@ -28,7 +28,7 @@ export default function StatsPageHeader( {
 				the currently selected NavItem in StatsNavigation.
 				*/ }
 			<h2 className="screen-reader-text">{ navItems[ page ]?.label }</h2>
-			<p className="formatted-header__subtitle">{ preventWidows( subheaderText, 2 ) }</p>
+			<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
 		</FormattedHeader>
 	);
 }

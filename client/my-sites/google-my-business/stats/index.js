@@ -210,7 +210,7 @@ class GoogleMyBusinessStats extends Component {
 					<StatsPageHeader
 						page="googleMyBusiness"
 						headerText={ translate( 'Google My Business' ) }
-						subheaderText={ translate(
+						subHeaderText={ translate(
 							'Integrate your business with Google and get stats on your locations. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 							{
 								components: {

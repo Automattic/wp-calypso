@@ -50,7 +50,7 @@ const StatsSubscribersPage = ( { period } ) => {
 			<div className="stats">
 				<StatsPageHeader
 					page="subscribers"
-					subheaderText={ translate( "View your site's performance and learn from trends." ) }
+					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				/>
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
 				{ /* TODO: replace annual highlight */ }

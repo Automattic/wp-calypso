@@ -174,7 +174,7 @@ class WordAds extends Component {
 				<div className="stats">
 					<StatsPageHeader
 						page="ads"
-						subheaderText={ translate( 'See how ads are performing on your site.' ) }
+						subHeaderText={ translate( 'See how ads are performing on your site.' ) }
 					/>
 
 					{ ! canAccessAds && (

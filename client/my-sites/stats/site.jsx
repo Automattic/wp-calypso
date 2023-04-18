@@ -172,7 +172,7 @@ class StatsSite extends Component {
 				) }
 				<StatsPageHeader
 					page="traffic"
-					subheaderText={ translate(
+					subHeaderText={ translate(
 						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
 							components: {

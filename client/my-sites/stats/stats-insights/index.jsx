@@ -51,7 +51,7 @@ const StatsInsights = ( props ) => {
 			<div className="stats">
 				<StatsPageHeader
 					page="insights"
-					subheaderText={ translate( "View your site's performance and learn from trends." ) }
+					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
 				/>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />
