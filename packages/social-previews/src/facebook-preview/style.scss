@@ -31,12 +31,21 @@
 	word-break: break-word;
 }
 
+.facebook-preview__custom-text-post-url {
+	display: block;
+	margin-top: 0.5rem;
+}
+
 .facebook-preview__body {
 	display: flex;
 	flex-direction: column;
 
 	border-top: $facebook-preview-body-border;
 	border-bottom: $facebook-preview-body-border;
+
+	&.is-loading {
+		visibility: hidden;
+	}
 
 	&.is-portrait {
 		flex-direction: row;

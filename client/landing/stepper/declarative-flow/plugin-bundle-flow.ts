@@ -4,6 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
@@ -25,8 +26,6 @@ import pluginBundleData from './plugin-bundle-data';
 import type { BundledPlugin } from './plugin-bundle-data';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const WRITE_INTENT_DEFAULT_THEME = 'livro';
-const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 
 const pluginBundleFlow: Flow = {
@@ -98,7 +97,7 @@ const pluginBundleFlow: Flow = {
 		);
 		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
 			useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
+		const { setIntentOnSite, setGoalsOnSite, setDesignOnSite } = useDispatch( SITE_STORE );
 		const siteDetails = useSelect(
 			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).getSite( site.ID ),
 			[ site ]
@@ -132,13 +131,7 @@ const pluginBundleFlow: Flow = {
 						setGoalsOnSite( siteSlug, goals ),
 					];
 					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push(
-							setThemeOnSite(
-								siteSlug,
-								WRITE_INTENT_DEFAULT_THEME,
-								WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION
-							)
-						);
+						pendingActions.push( setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN ) );
 					}
 
 					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
