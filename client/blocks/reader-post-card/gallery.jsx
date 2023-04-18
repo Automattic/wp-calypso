@@ -43,7 +43,7 @@ function PostGallery( { post, isDiscover, children } ) {
 	return (
 		<div className="reader-post-card__post">
 			<div onClick={ handleClick } role="presentation">
-				<DotPager>{ listItems }</DotPager>
+				<DotPager isClickEnabled={ true }>{ listItems }</DotPager>
 			</div>
 			<div className="reader-post-card__post-details">
 				<AutoDirection>
