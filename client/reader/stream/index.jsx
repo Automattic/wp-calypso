@@ -462,7 +462,7 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamKey, trendingTags, relatedSites } =
+		const { translate, forcePlaceholders, lastPage, streamKey, streamKeySuffix, trendingTags, relatedSites } =
 			this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
@@ -509,9 +509,10 @@ class ReaderStream extends Component {
 			if ( path.startsWith( '/tag/' ) ) {
 				console.log( trendingTags, relatedSites );
 				sidebarContent = (
-					<QueryReaderRelatedSites tag={ streamKey }>
+					<>
+						<QueryReaderRelatedSites tag={ streamKeySuffix } />
 						<ReaderTagSidebar trendingTags={ trendingTags } relatedSites={ relatedSites } />
-					</QueryReaderRelatedSites>
+					</>
 				);
 			} else {
 				sidebarContent = <ReaderListFollowedSites path={ path } />;
@@ -602,6 +603,7 @@ export default connect(
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
 			relatedSites: getReaderRelatedSites( state, streamKey ),
+			streamKeySuffix: streamKey?.substring( streamKey.indexOf( ':' ) + 1 ),
 		};
 	},
 	{

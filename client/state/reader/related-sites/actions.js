@@ -3,7 +3,7 @@ import {
 	READER_RELATED_SITES_RECEIVE,
 } from 'calypso/state/reader/action-types';
 
-import 'calypso/state/data-layer/wpcom/read/related-sites/sites';
+import 'calypso/state/data-layer/wpcom/read/related/sites';
 
 import 'calypso/state/reader/init';
 

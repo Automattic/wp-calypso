@@ -13,7 +13,7 @@ export const requestRelatedSites = ( action ) => {
 		method: 'GET',
 		path: `/read/tags/${ tag }/cards`,
 		query: { number, offset, posts_per_site: 0 },
-		apiVersion: '1.2',
+		apiNamespace: 'wpcom/v2',
 		onSuccess: action,
 		onFailure: action,
 	} );
