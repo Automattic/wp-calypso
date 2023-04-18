@@ -30,7 +30,7 @@ const useGlobalStylesUpgradeModal = ( {
 	const site = useSite();
 	const siteSlug = useSiteSlugParam();
 	const siteUrl = siteSlug || urlToSlug( site?.URL || '' ) || '';
-	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
 	const translate = useTranslate();
 	const { goToCheckout } = useCheckout();
 

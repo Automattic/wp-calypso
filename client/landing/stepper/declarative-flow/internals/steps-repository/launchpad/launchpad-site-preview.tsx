@@ -25,8 +25,8 @@ const LaunchpadSitePreview = ( {
 	flow: string | null;
 } ) => {
 	const translate = useTranslate();
-	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 	const site = useSite();
+	const { globalStylesInUse } = usePremiumGlobalStyles( site?.ID );
 	const isInVideoPressFlow = isVideoPressFlow( flow );
 	const enableEditOverlay = ! isNewsletterFlow( flow );
 
@@ -74,7 +74,7 @@ const LaunchpadSitePreview = ( {
 			// hide cookies popup
 			preview: true,
 			do_preview_no_interactions: ! isInVideoPressFlow,
-			...( globalStylesInUse && shouldLimitGlobalStyles && { 'preview-global-styles': true } ),
+			...( globalStylesInUse && { 'preview-global-styles': true } ),
 		} );
 	}
 
