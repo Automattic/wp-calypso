@@ -20,8 +20,8 @@ export default function PostsListHeader() {
 			title: translate( 'Publish date' ),
 		},
 		{
-			id: 'visitors',
-			title: translate( 'Visitors' ),
+			id: 'views',
+			title: translate( 'Views' ),
 		},
 		{
 			id: 'likes',

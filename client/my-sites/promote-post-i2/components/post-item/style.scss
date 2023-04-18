@@ -28,10 +28,10 @@ $post-item-background-color: var(--color-surface);
 		&-data,
 		&-type,
 		&-publish-date,
-		&-visitors,
+		&-views,
 		&-likes,
 		&-comments,
-		&-view,
+		&-link,
 		&-promote {
 			border-bottom: 1px solid #eee;
 			vertical-align: middle;
@@ -58,7 +58,7 @@ $post-item-background-color: var(--color-surface);
 			width: 9.2%;
 		}
 
-		&-view {
+		&-link {
 			text-decoration-line: underline;
 			width: 7%;
 		}
@@ -74,6 +74,7 @@ $post-item-background-color: var(--color-surface);
 		&__row .post-item__post-data {
 			align-items: center;
 			display: flex;
+			font-weight: 500;
 		}
 
 		&__post-promote-button {

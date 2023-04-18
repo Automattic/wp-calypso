@@ -153,6 +153,16 @@ export default function PromotedPosts( { tab }: Props ) {
 		( obj, index ) => content.findIndex( ( item ) => item.ID === obj.ID ) === index
 	);
 
+	/**
+	 * Maybe populate the number of views into posts
+	 */
+	for ( const obj of mostPopularPostAndPages ) {
+		const index = contentWithoutDuplicatedIds.findIndex( ( item ) => item.ID === obj.ID );
+		if ( index > -1 && obj?.views ) {
+			contentWithoutDuplicatedIds[ index ].views = obj.views;
+		}
+	}
+
 	const tabs: TabOption[] = [
 		{
 			id: 'posts',

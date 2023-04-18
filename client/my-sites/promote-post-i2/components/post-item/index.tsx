@@ -10,6 +10,10 @@ import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
 
+type Discussion = {
+	comment_count: number;
+};
+
 export type Post = {
 	ID: number;
 	global_ID: string;
@@ -24,6 +28,9 @@ export type Post = {
 	status: string;
 	type: string; // post, page
 	URL: string;
+	like_count: number;
+	discussion: Discussion;
+	views: number;
 };
 
 type Props = {
@@ -69,10 +76,10 @@ export default function PostItem( { post }: Props ) {
 			</td>
 
 			{ /* TODO: put the number of visitors and likes */ }
-			<td className="post-item__post-visitors">0</td>
-			<td className="post-item__post-likes">0</td>
-			<td className="post-item__post-comments">0</td>
-			<td className="post-item__post-view">
+			<td className="post-item__post-views">{ post?.views ?? 0 }</td>
+			<td className="post-item__post-likes">{ post?.like_count }</td>
+			<td className="post-item__post-comments">{ post.discussion.comment_count }</td>
+			<td className="post-item__post-link">
 				<a href={ post.URL } className="post-item__title-view">
 					{ __( 'View' ) }
 				</a>
