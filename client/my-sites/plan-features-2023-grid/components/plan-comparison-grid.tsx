@@ -23,17 +23,17 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import TermExperimentPlanTypeSelector from 'calypso/my-sites/plans-features-main/term-experiment-plan-type-selector';
-import useIsLargeCurrency from '../plans/hooks/use-is-large-currency';
+import useIsLargeCurrency from '../../plans/hooks/use-is-large-currency';
+import useHighlightAdjacencyMatrix from '../hooks/use-highlight-adjacency-matrix';
+import useHighlightLabel from '../hooks/use-highlight-label';
+import { plansBreakSmall } from '../media-queries';
+import { PlanProperties } from '../types';
+import { usePricingBreakpoint } from '../util';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
-import PopularBadge from './components/popular-badge';
 import PlanFeatures2023GridHeaderPrice from './header-price';
-import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
-import useHighlightLabel from './hooks/use-highlight-label';
-import { plansBreakSmall } from './media-queries';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
-import { PlanProperties } from './types';
-import { usePricingBreakpoint } from './util';
+import PopularBadge from './popular-badge';
 
 function DropdownIcon() {
 	return (
