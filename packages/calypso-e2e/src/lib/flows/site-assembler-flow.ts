@@ -26,16 +26,20 @@ export class SiteAssemblerFlow {
 	}
 
 	/**
-	 * Given two parameters, type and index, selects a layout component matching
-	 * the specifications.
+	 * Given a component type, clicks on the heading item to show available components.
 	 *
 	 * @param {LayoutType} type Type of the layout component.
+	 */
+	async selectLayoutComponentType( type: LayoutType ): Promise< void > {
+		await this.page.getByRole( 'button', { name: type } ).click();
+	}
+
+	/**
+	 * Selects a layout component at matching index.
+	 *
 	 * @param {number} index Index of the item to choose. Defaults to 0.
 	 */
-	async selectLayoutComponent( type: LayoutType, index = 0 ): Promise< void > {
-		await this.page.getByRole( 'button', { name: type } ).click();
-		await this.page.waitForLoadState( 'networkidle' );
-
+	async selectLayoutComponent( index = 0 ): Promise< void > {
 		await this.page.locator( '.pattern-list-renderer__pattern-list-item' ).nth( index ).click();
 	}
 }

@@ -52,25 +52,37 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 					timeout: 30 * 1000,
 				}
 			);
+
+			assembledPreviewLocator = page.locator( '.pattern-large-preview__patterns .block-renderer' );
 		} );
 
 		it( 'Select "Header"', async function () {
-			await startSiteFlow.selectLayoutComponent( 'Header', 1 );
-			await startSiteFlow.clickButton( 'Save' );
+			await startSiteFlow.selectLayoutComponentType( 'Header' );
+			await startSiteFlow.selectLayoutComponent( 1 );
 
-			assembledPreviewLocator = page.locator( '.pattern-large-preview__patterns .block-renderer' );
 			expect( await assembledPreviewLocator.count() ).toBe( 1 );
+
+			await startSiteFlow.clickButton( 'Save' );
 		} );
 
 		it( 'Select "Footer"', async function () {
-			await startSiteFlow.selectLayoutComponent( 'Footer', 1 );
-			await startSiteFlow.clickButton( 'Save' );
+			await startSiteFlow.selectLayoutComponentType( 'Footer' );
+			await startSiteFlow.selectLayoutComponent( 1 );
+
 			expect( await assembledPreviewLocator.count() ).toBe( 2 );
+
+			await startSiteFlow.clickButton( 'Save' );
 		} );
 
 		it( 'Click "Continue" and land on the Site Editor', async function () {
-			await page.waitForLoadState( 'networkidle' );
-			await startSiteFlow.clickButton( 'Continue' );
+			// This is temporary.
+			// Read: This is TEMPORARY!
+			// See: https://github.com/Automattic/wp-calypso/pull/75606#issuecomment-1512538989
+			await page.waitForTimeout( 500 );
+			await Promise.all( [
+				page.waitForURL( /processing/ ),
+				startSiteFlow.clickButton( 'Continue' ),
+			] );
 			await page.waitForURL( /site-editor/, {
 				timeout: 45 * 1000,
 			} );
