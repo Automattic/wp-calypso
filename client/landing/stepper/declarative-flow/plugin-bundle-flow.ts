@@ -4,6 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
@@ -72,7 +73,7 @@ const pluginBundleFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStartingPoint(),
 			[]
 		);
-		const siteSlugParam = useSiteSlugParam();
+		const siteSlugParam = useSiteSlugParam() as string;
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
 
@@ -104,6 +105,8 @@ const pluginBundleFlow: Flow = {
 			[ site ]
 		);
 		const dispatch = reduxDispatch();
+
+		dispatch( requestSite( siteSlugParam ) );
 
 		// Since we're mimicking a subset of the site-setup-flow, we're safe to use the siteSetupProgress.
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
@@ -167,6 +170,7 @@ const pluginBundleFlow: Flow = {
 					// If WooCommerce is already installed, we should exit the flow.
 					if ( providedDependencies?.hasWooCommerce ) {
 						// If we have the theme for the site, redirect to the theme page. Otherwise redirect to /home.
+
 						return exitFlow( defaultExitDest );
 					}
 
@@ -313,6 +317,12 @@ const pluginBundleFlow: Flow = {
 
 		return result;
 	},
+	// useSideEffect() {
+	// 	const dispatch = reduxDispatch();
+	// 	const siteSlugParam = useSiteSlugParam() as string;
+	// 	console.log( 'tuto benne', siteSlugParam );
+	// 	dispatch( requestSite( siteSlugParam ) );
+	// },
 };
 
 export default pluginBundleFlow;
