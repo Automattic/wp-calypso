@@ -16,38 +16,47 @@ export const emailIntervals = [ hour, day ];
 /**
  * Nav items
  */
+type NavItem = {
+	label: string;
+	path: string;
+	showIntervals: boolean;
+};
 const traffic = {
 	label: translate( 'Traffic' ),
 	path: '/stats',
 	showIntervals: true,
-};
+} as NavItem;
 const insights = {
 	label: translate( 'Insights' ),
 	path: '/stats/insights',
 	showIntervals: false,
-};
+} as NavItem;
 // TODO: Consider adding subscriber counts into this nav item in the future.
 // See client/blocks/subscribers-count/index.jsx.
 const subscribers = {
 	label: translate( 'Subscribers' ),
 	path: '/stats/subscribers',
 	showIntervals: false,
-};
+} as NavItem;
 const store = {
 	label: translate( 'Store' ),
 	path: '/store/stats/orders',
 	showIntervals: true,
-};
+} as NavItem;
 const wordads = {
 	label: translate( 'Ads' ),
 	path: '/stats/ads',
 	showIntervals: true,
-};
+} as NavItem;
 const googleMyBusiness = {
 	label: translate( 'Google My Business' ),
 	path: '/google-my-business/stats',
 	showIntervals: false,
-};
+} as NavItem;
+
+interface NavItems {
+	[ key: string ]: NavItem;
+}
 
 const assembleNavItems = () => {
 	const navItems = {
@@ -56,7 +65,7 @@ const assembleNavItems = () => {
 		store,
 		wordads,
 		googleMyBusiness,
-	};
+	} as NavItems;
 
 	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
 		navItems.subscribers = subscribers;
