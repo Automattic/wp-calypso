@@ -32,7 +32,7 @@ export default function SearchBar( props: Props ) {
 	};
 
 	const onChangeFilter = () => {
-		setSearchInput( '' );
+		setSearchInput( '' ); // TODO: Filter by status: All | Active | In Moderation | Rejected.
 	};
 
 	return (
