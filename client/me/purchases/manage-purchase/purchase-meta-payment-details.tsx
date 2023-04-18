@@ -11,6 +11,7 @@ interface PaymentProps {
 	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
 	siteSlug?: string;
 	site?: string;
+	isAkismetPurchase: boolean;
 }
 
 function PurchaseMetaPaymentDetails( {
@@ -18,6 +19,7 @@ function PurchaseMetaPaymentDetails( {
 	getChangePaymentMethodUrlFor,
 	siteSlug,
 	site,
+	isAkismetPurchase,
 }: PaymentProps ) {
 	const { paymentMethods: cards } = useStoredPaymentMethods( { type: 'card' } );
 	const handleEditPaymentMethodClick = () => {
@@ -33,8 +35,7 @@ function PurchaseMetaPaymentDetails( {
 	if (
 		! canEditPaymentDetails( purchase ) ||
 		! isPaidWithCreditCard( purchase ) ||
-		! site ||
-		! siteSlug
+		( ( ! site || ! siteSlug ) && ! isAkismetPurchase )
 	) {
 		return <li>{ paymentDetails }</li>;
 	}

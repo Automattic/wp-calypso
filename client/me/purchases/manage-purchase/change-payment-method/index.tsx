@@ -24,7 +24,6 @@ import {
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PaymentMethodSelector from '../payment-method-selector';
 import getPaymentMethodIdFromPayment from '../payment-method-selector/get-payment-method-id-from-payment';
 import useCreateAssignablePaymentMethods from './use-create-assignable-payment-methods';
@@ -46,14 +45,13 @@ function ChangePaymentMethod( {
 	const hasLoadedUserPurchases = useSelector( hasLoadedUserPurchasesFromServer );
 	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
 	const payment = useSelector( ( state ) => getByPurchaseId( state, purchaseId )?.payment );
-	const selectedSite = useSelector( getSelectedSite );
 	const { isLoading: isLoadingStoredCards } = useStoredPaymentMethods( { type: 'card' } );
 
 	const { isStripeLoading } = useStripe();
 
 	const isDataLoading =
 		! hasLoadedSites || ! hasLoadedUserPurchases || isLoadingStoredCards || isStripeLoading;
-	const isDataValid = purchase && selectedSite;
+	const isDataValid = purchase;
 
 	useEffect( () => {
 		if ( ! isDataLoading && ! isDataValid ) {
