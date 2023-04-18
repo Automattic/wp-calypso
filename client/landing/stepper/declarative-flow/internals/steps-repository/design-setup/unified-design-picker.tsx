@@ -40,7 +40,6 @@ import {
 	getDesignTypeProps,
 	recordPreviewedDesign,
 	recordSelectedDesign,
-	getVirtualDesignProps,
 } from '../../analytics/record-design';
 import StepperLoader from '../../components/stepper-loader';
 import { PLACEHOLDER_SITE_ID } from '../pattern-assembler/constants';
@@ -273,7 +272,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	function onChangeVariation( design: Design, styleVariation?: StyleVariation ) {
 		recordTracksEvent( 'calypso_signup_design_picker_style_variation_button_click', {
 			...getEventPropsByDesign( design, styleVariation ),
-			...getVirtualDesignProps( design ),
 		} );
 	}
 
