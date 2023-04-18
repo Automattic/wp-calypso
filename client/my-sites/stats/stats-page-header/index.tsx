@@ -5,8 +5,8 @@ import { preventWidows } from 'calypso/lib/formatting';
 
 interface StatsPageHeaderProps {
 	page: keyof NavItems;
-	headerText: string;
-	subHeaderText: string;
+	headerText?: string;
+	subHeaderText?: string;
 }
 
 export default function StatsPageHeader( {
@@ -28,7 +28,9 @@ export default function StatsPageHeader( {
 				the currently selected NavItem in StatsNavigation.
 				*/ }
 			<h2 className="screen-reader-text">{ navItems[ page ]?.label }</h2>
-			<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
+			{ subHeaderText && (
+				<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
+			) }
 		</FormattedHeader>
 	);
 }
