@@ -39,7 +39,7 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 			} );
 		} );
 
-		it( 'Select "Continue" until it lands on the Design Picker', async function () {
+		it( 'Skip until the Design Picker', async function () {
 			await startSiteFlow.clickButton( 'Continue' );
 			await startSiteFlow.clickButton( 'Continue' );
 		} );
@@ -75,10 +75,6 @@ describe( DataHelper.createSuiteTitle( 'Site Assembler' ), () => {
 		} );
 
 		it( 'Click "Continue" and land on the Site Editor', async function () {
-			// This is temporary.
-			// Read: This is TEMPORARY!
-			// See: https://github.com/Automattic/wp-calypso/pull/75606#issuecomment-1512538989
-			await page.waitForTimeout( 500 );
 			await Promise.all( [
 				page.waitForURL( /processing/ ),
 				startSiteFlow.clickButton( 'Continue' ),
