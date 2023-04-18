@@ -1,8 +1,8 @@
-import config from '@automattic/calypso-config';
 import '@automattic/calypso-polyfills';
 import { render } from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import JetpackLogo from 'calypso/components/jetpack-logo';
+import config from '../lib/config-api';
 import setLocale from '../lib/set-locale';
 import Highlights from './highlights';
 import MiniChart from './mini-chart';
