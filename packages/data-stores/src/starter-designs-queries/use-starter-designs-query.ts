@@ -25,6 +25,7 @@ interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
 }
 
 interface StarterDesignsResponse {
+	filters: { subject: string[] };
 	generated: { designs: GeneratedDesign[] };
 	static: { designs: StaticDesign[] };
 }
@@ -56,6 +57,7 @@ export function useStarterDesignsQuery(
 	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
 		select: ( response: StarterDesignsResponse ) => {
 			const allDesigns = {
+				filters: response.filters || {},
 				generated: {
 					designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
 				},
