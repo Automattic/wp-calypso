@@ -1,5 +1,5 @@
 export interface Task {
-	id: string;
+	id: TaskId;
 	completed: boolean;
 	disabled: boolean;
 	title?: string;
@@ -9,6 +9,16 @@ export interface Task {
 	isLaunchTask?: boolean;
 	warning?: boolean;
 }
+
+export type TaskId =
+	| 'links_edited'
+	| 'site_edited'
+	| 'site_launched'
+	| 'first_post_published'
+	| 'video_uploaded'
+	| 'publish_first_course'
+	| 'plan_completed'
+	| 'domain_upsell_deferred';
 
 export interface LaunchpadFlowTaskList {
 	[ string: string ]: string[];
@@ -21,19 +31,10 @@ export interface TranslatedLaunchpadStrings {
 	subtitle: string;
 }
 
-export interface LaunchpadStatuses {
-	links_edited?: boolean;
-	site_edited?: boolean;
-	site_launched?: boolean;
-	first_post_published?: boolean;
-	video_uploaded?: boolean;
-	publish_first_course?: boolean;
-	plan_completed?: boolean;
-	domain_upsell_deferred?: boolean;
-}
+export type LaunchpadChecklist = Array< Task >;
 
 export interface LaunchpadResponse {
 	site_intent: string;
 	launchpad_screen: boolean | string;
-	checklist_statuses: LaunchpadStatuses[];
+	checklist_statuses: LaunchpadChecklist[];
 }

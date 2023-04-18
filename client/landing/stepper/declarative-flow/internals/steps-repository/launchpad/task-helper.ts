@@ -15,7 +15,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadFlowTaskList, LaunchpadStatuses, Task } from './types';
+import { LaunchpadFlowTaskList, LaunchpadStatuses, Task, LaunchpadChecklist } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 export function getEnhancedTasks(
@@ -415,21 +415,16 @@ export function getArrayOfFilteredTasks(
  * @returns {boolean} - True if the final task for the given site_intent is completed
  */
 export function areLaunchpadTasksCompleted(
-	site_intent: string,
-	launchpadFlowTasks: LaunchpadFlowTaskList,
-	checklist_statuses: LaunchpadStatuses,
+	checklist: LaunchpadChecklist,
 	isSiteLaunched: boolean
 ) {
-	if ( ! site_intent ) {
-		return false;
+	const lastTask = checklist[ checklist.length - 1 ];
+
+	// If last task is site_launched, return true if site is launched OR site_launched task is completed
+	// Else return the status of the last task (will be false if task is not in checklist_statuses)
+	if ( lastTask.id === 'site_launched' && isSiteLaunched ) {
+		return true;
 	}
 
-	const lastTask =
-		launchpadFlowTasks[ site_intent ][ launchpadFlowTasks[ site_intent ].length - 1 ];
-
-	// If last task is site_launched, return true if site is launched OR site_launch task is completed
-	// Else return the status of the last task (will be false if task is not in checklist_statuses)
-	return lastTask === 'site_launched'
-		? isSiteLaunched || Boolean( checklist_statuses[ lastTask ] )
-		: Boolean( checklist_statuses[ lastTask as keyof LaunchpadStatuses ] );
+	return lastTask.completed;
 }

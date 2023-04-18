@@ -1,8 +1,8 @@
 import { isEcommerce } from '@automattic/calypso-products/src';
 import page from 'page';
+import { useLaunchpadChecklist } from 'calypso/../packages/help-center/src/hooks/use-launchpad';
 import { fetchLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
-import { launchpadFlowTasks } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/tasks';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
@@ -45,23 +45,22 @@ export async function maybeRedirect( context, next ) {
 	const siteId = getSelectedSiteId( state );
 	const site = getSelectedSite( state );
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
+	const {
+		data: { checklist: launchpadChecklist },
+	} = useLaunchpadChecklist( siteSlug, siteIntentOption );
 
 	try {
-		const { launchpad_screen, checklist_statuses, site_intent } = await fetchLaunchpad( slug );
+		const { launchpad_screen: launchpadScreenOption, site_intent: siteIntentOption } =
+			await fetchLaunchpad( slug );
 		if (
-			launchpad_screen === 'full' &&
-			! areLaunchpadTasksCompleted(
-				site_intent,
-				launchpadFlowTasks,
-				checklist_statuses,
-				isSiteLaunched
-			)
+			launchpadScreenOption === 'full' &&
+			! areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched )
 		) {
 			// The new stepper launchpad onboarding flow isn't registered within the "page"
 			// client-side router, so page.redirect won't work. We need to use the
 			// traditional window.location Web API.
 			const verifiedParam = getQueryArgs()?.verified;
-			redirectToLaunchpad( slug, site_intent, verifiedParam );
+			redirectToLaunchpad( slug, siteIntentOption, verifiedParam );
 			return;
 		}
 	} catch ( error ) {}

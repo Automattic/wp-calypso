@@ -3,6 +3,7 @@ import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch } from 'react-redux';
+import { useLaunchpadChecklist } from 'calypso/../packages/help-center/src/hooks/use-launchpad';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
@@ -17,7 +18,6 @@ import { successNotice } from 'calypso/state/notices/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import { areLaunchpadTasksCompleted } from './task-helper';
-import { launchpadFlowTasks } from './tasks';
 import type { Step } from '../../types';
 import type { SiteSelect } from '@automattic/data-stores';
 
@@ -36,8 +36,14 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const site = useSite();
 	const {
 		isError: launchpadFetchError,
-		data: { launchpad_screen: launchpadScreenOption, checklist_statuses, site_intent },
+		data: { launchpad_screen: launchpadScreenOption, site_intent: siteIntentOption },
 	} = useLaunchpad( siteSlug );
+	const {
+		data: { checklist: launchpadChecklist },
+	} = useLaunchpadChecklist( siteSlug, siteIntentOption );
+
+	console.log( { launchpadChecklist } );
+
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	const recordSignupComplete = useRecordSignupComplete( flow );
 	const dispatch = useDispatch();
@@ -61,14 +67,9 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 		redirectToSiteHome( siteSlug, flow );
 	}
 
-	if (
-		areLaunchpadTasksCompleted(
-			site_intent,
-			launchpadFlowTasks,
-			checklist_statuses,
-			isSiteLaunched
-		)
-	) {
+	console.log( 'completed: ', areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched ) );
+
+	if ( areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched ) ) {
 		saveSiteSettings( site?.ID, { launchpad_screen: 'off' } );
 		redirectToSiteHome( siteSlug, flow );
 	}
