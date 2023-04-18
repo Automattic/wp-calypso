@@ -83,7 +83,7 @@ describe( 'useStorageUsageText', () => {
 		[ TERABYTE * 3, 3 ],
 		[ TERABYTE * 4, 4 ],
 	] )(
-		'shows available storage in integer terabytes if bytesAvailable is >= 1TB and the amout is a whole number',
+		'shows available storage in integer terabytes if bytesAvailable is >= 1TB and the amount is a whole number',
 		( bytesAvailable, expectedTB ) => {
 			const text = renderStorageUsageText( 0, bytesAvailable );
 			expect( text ).toHaveTextContent( `${ expectedTB }TB` );
