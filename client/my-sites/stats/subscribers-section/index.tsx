@@ -19,6 +19,8 @@ interface SubscribersData {
 
 interface SubscribersDataResult {
 	data: SubscribersData[];
+	unit: string;
+	date: string;
 }
 
 // New Subscriber Stats
@@ -50,7 +52,7 @@ export default function SubscribersSection( {
 		data,
 		// error,
 		status,
-	}: UseQueryResult< SubscribersDataResult > = useSubscribersQuery( siteId, period, quantity );
+	} = useSubscribersQuery( siteId, period, quantity ) as UseQueryResult< SubscribersDataResult >;
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const legendRef = useRef< HTMLDivElement >( null );
 	const translate = useTranslate();
