@@ -1,7 +1,6 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
 import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
-import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
@@ -77,11 +76,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		flow,
 		isEmailVerified
 	);
-
-	// This is temporary until we can use the launchpad inside the editor.
-	if ( 'true' === getQueryArg( window.location.search, 'showLaunchpad' ) ) {
-		checklist_statuses.first_post_published = true;
-	}
 
 	const enhancedTasks: Task[] | null =
 		site &&
