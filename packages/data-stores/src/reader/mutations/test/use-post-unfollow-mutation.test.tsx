@@ -9,7 +9,7 @@ import usePostUnfollowMutation from '../../mutations/use-post-unfollow-mutation'
 
 // Mock the useIsLoggedIn function
 jest.mock( '../../hooks', () => ( {
-	useIsLoggedIn: jest.fn().mockReturnValue( true ),
+	useIsLoggedIn: jest.fn().mockReturnValue( { isLoggedIn: true } ),
 } ) );
 
 // Mock the entire Helpers module
