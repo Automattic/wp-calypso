@@ -31,6 +31,7 @@
 	}
 
 	.confirmation-task__title {
+		color: var(--color-neutral-100);
 		margin-top: 24px;
 		font-size: $font-body-small;
 		font-weight: 600;
@@ -39,6 +40,6 @@
 	.confirmation-task__subtitle {
 		margin-top: 6px;
 		font-size: var(--subtitle-font-size);
-		color: var(--color-neutral-40);
+		color: var(--color-neutral-60);
 	}
 }
