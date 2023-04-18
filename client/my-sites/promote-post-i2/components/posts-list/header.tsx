@@ -8,7 +8,7 @@ type PostsListHeaderColumn = {
 export default function PostsListHeader() {
 	const columns: Array< PostsListHeaderColumn > = [
 		{
-			id: 'post',
+			id: 'data',
 			title: translate( 'Post' ),
 		},
 		{
@@ -42,12 +42,17 @@ export default function PostsListHeader() {
 	];
 
 	return (
-		<div className="posts-list__header">
-			{ columns.map( ( item ) => (
-				<div className={ `posts-list__header-column posts-list__column-${ item.id }` }>
-					{ item.title }
-				</div>
-			) ) }
-		</div>
+		<thead className="posts-list__header">
+			<tr>
+				{ columns.map( ( item ) => (
+					<th
+						key={ item.id }
+						className={ `posts-list__header-column post-item__post-${ item.id }` }
+					>
+						{ item.title }
+					</th>
+				) ) }
+			</tr>
+		</thead>
 	);
 }

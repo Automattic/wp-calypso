@@ -1,5 +1,4 @@
 import { safeImageUrl } from '@automattic/calypso-url';
-import { CompactCard } from '@automattic/components';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -46,8 +45,8 @@ export default function PostItem( { post }: Props ) {
 	const featuredImage = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
 
 	return (
-		<CompactCard className="post-item__row">
-			<div className="posts-list__column-post">
+		<tr className="post-item__row">
+			<td className="post-item__post-data">
 				{ featuredImage && (
 					<div
 						className="post-item__post-thumbnail-wrapper"
@@ -58,36 +57,37 @@ export default function PostItem( { post }: Props ) {
 					<div className="post-item__post-thumbnail-wrapper post-item__post-thumbnail-wrapper_no-image" />
 				) }
 				<div className="post-item__post-title">{ post?.title || __( 'Untitled' ) }</div>
-			</div>
+			</td>
 
-			<div className="posts-list__column-type post-item__post-type">
-				{ getPostType( post.type ) }
-			</div>
-			<div className="posts-list__column-publish-date post-item__post-publish-date">
-				<PostRelativeTimeStatus
+			<td className="post-item__post-type">{ getPostType( post.type ) }</td>
+			<td className="post-item__post-publish-date">
+				<PostRelativeTimeStatus // TODO: adjust publish date according to Figma
 					showPublishedStatus={ false }
 					post={ post }
 					showGridIcon={ false }
 				/>
-			</div>
+			</td>
 
-			<div className="posts-list__column-publish-date post-item__post-visitors">0</div>
-			<div className="posts-list__column-publish-date post-item__post-likes">0</div>
-			<div className="posts-list__column-publish-date post-item__post-view">
+			{ /* TODO: put the number of visitors and likes */ }
+			<td className="post-item__post-visitors">0</td>
+			<td className="post-item__post-likes">0</td>
+			<td className="post-item__post-comments">0</td>
+			<td className="post-item__post-view">
 				<a href={ post.URL } className="post-item__title-view">
 					{ __( 'View' ) }
 				</a>
-			</div>
-			<div className="posts-list__column-publish-date post-item__post-promote">
+			</td>
+			<td className="post-item__post-promote">
 				<Button
-					isPrimary={ true }
+					className="post-item__post-promote-button"
+					variant="link"
 					isBusy={ loading }
 					disabled={ loading }
 					onClick={ onClickPromote }
 				>
 					{ __( 'Promote' ) }
 				</Button>
-			</div>
-		</CompactCard>
+			</td>
+		</tr>
 	);
 }

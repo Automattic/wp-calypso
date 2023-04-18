@@ -39,12 +39,14 @@ export default function PostsList( { content, isLoading }: Props ) {
 				/>
 			) }
 			{ ! isLoading && ! isEmpty && (
-				<div className="promote-post__table">
+				<table>
 					<PostsListHeader />
-					{ content.map( function ( post: Post ) {
-						return <PostItem key={ post.ID } post={ post } />;
-					} ) }
-				</div>
+					<tbody>
+						{ content.map( function ( post: Post ) {
+							return <PostItem key={ post.ID } post={ post } />;
+						} ) }
+					</tbody>
+				</table>
 			) }
 
 			{ selectedSiteId && selectedPostId && keyValue && (

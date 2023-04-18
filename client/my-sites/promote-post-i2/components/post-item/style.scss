@@ -1,39 +1,31 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "~@automattic/color-studio/dist/color-variables";
+@import "@automattic/components/src/styles/typography";
+@import "@automattic/color-studio/dist/color-variables";
 
 $post-item-background-color: var(--color-surface);
 
 .promote-post {
-	&__table {
-		display: table;
+	color: $studio-gray-60;
+	font-family: $font-sf-pro-text;
+	font-weight: 400;
+	font-size: 0.875rem;
+	font-style: normal;
+	letter-spacing: -0.15px;
+	line-height: 1.43;
+
+	.posts-list__header-column {
+		border-bottom: 1px solid #eee;
+		font-weight: normal;
+		padding-bottom: 8px;
 	}
 
-	.posts-list__header {
-		display: table-row;
-
-		.posts-list__column {
-			&-post,
-			&-type,
-			&-publish-date,
-			&-visitors,
-			&-likes,
-			&-comments,
-			&-view,
-			&-promote {
-				color: $studio-gray-60;
-				font-family: sans-serif;
-				font-style: normal;
-				font-weight: 400;
-				font-size: 0.875rem;
-				letter-spacing: -0.15px;
-				line-height: 1.43;
-			}
-		}
+	.post-item__row {
+		width: 100%;
 	}
 
-	.posts-list__column {
-		&-post,
+	.post-item__post {
+		&-data,
 		&-type,
 		&-publish-date,
 		&-visitors,
@@ -41,17 +33,12 @@ $post-item-background-color: var(--color-surface);
 		&-comments,
 		&-view,
 		&-promote {
-			display: table-cell;
+			border-bottom: 1px solid #eee;
 			vertical-align: middle;
 		}
 
-		&-post {
-			width: 39.8%;
-			// TODO: add min-width
-			// 444+82+142+102*3+78+60
-		}
-
 		&-type {
+			font-size: 0.875rem;
 			width: 7.4%;
 		}
 
@@ -72,123 +59,31 @@ $post-item-background-color: var(--color-surface);
 		}
 
 		&-view {
+			text-decoration-line: underline;
 			width: 7%;
 		}
 
 		&-promote {
+			color: $studio-simplenote-blue-50;
+			text-decoration-line: underline;
 			width: 5.4%;
 		}
 	}
 
-	.post-item__row {
-		display: table-row;
-
-		.posts-list__column-post {
+	.post-item {
+		&__row .post-item__post-data {
 			align-items: center;
 			display: flex;
+		}
+
+		&__post-promote-button {
+			text-decoration: none;
 		}
 	}
 
 	.post-item__post-title {
 		color: $studio-gray-100;
-		font-family: sans-serif;
-		font-style: normal;
-		font-weight: 500;
-		font-size: 0.875rem;
-		line-height: 1.43;
-		letter-spacing: -0.15px;
 		margin-left: 16px;
-	}
-
-	.post-item__post-type,
-	.post-item__post-publish-date {
-		color: $studio-gray-60;
-		font-family: sans-serif;
-		font-style: normal;
-		font-weight: 400;
-		font-size: 0.875rem;
-		line-height: 1.43;
-		letter-spacing: -0.15px;
-	}
-
-	.post-item__detail {
-		position: relative;
-		width: calc(100% - 50px);
-		margin-right: auto;
-		word-break: break-word;
-		word-wrap: break-word;
-		padding: 16px 0;
-	}
-
-	.post-item__meta-time-status {
-		display: inline-block;
-		margin-right: 0;
-		width: 100%;
-
-		@include break-mobile {
-			margin-right: 16px;
-			width: auto;
-		}
-	}
-
-	.post-item__post-type,
-	.post-item__link {
-		margin-right: 16px;
-	}
-
-	/* Force all items in the meta section to be middle-aligned */
-	.post-item__meta a,
-	.post-item__meta div,
-	.post-item__meta li,
-	.post-item__meta span,
-	.post-item__meta ul {
-		display: inline-block;
-		vertical-align: bottom;
-	}
-
-	.post-item__title-link,
-	.post-item__title-link:visited {
-		color: var(--color-neutral-70);
-		display: block;
-		padding-bottom: 2px;
-		padding-right: 8px;
-
-		.post-item__panel.is-untitled & {
-			color: var(--color-text-subtle);
-			font-style: italic;
-		}
-	}
-
-	a.post-item__title-view,
-	a.post-item__title-view:visited {
-		color: var(--color-neutral-70);
-		display: flex;
-		align-items: center;
-
-		&:hover {
-			color: var(--color-neutral-50);
-		}
-
-		.post-item__panel.is-untitled & {
-			color: var(--color-text-subtle);
-			font-style: italic;
-		}
-
-		.post-item__external-icon {
-			margin-left: 2px;
-		}
-	}
-
-	.post-item__panel {
-		box-sizing: border-box;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 0;
-		background: $post-item-background-color;
-		&.card.is-compact {
-			padding: 0;
-		}
 	}
 
 	.post-item__post-thumbnail-wrapper {
@@ -201,15 +96,4 @@ $post-item-background-color: var(--color-surface);
 		overflow: hidden;
 		margin: 16px 0;
 	}
-
-	.post-item__post-thumbnail {
-		flex-shrink: 0;
-		min-width: 100%;
-		min-height: 100%;
-	}
-
-	.post-item__promote-link {
-		margin-left: 32px;
-	}
-
 }
