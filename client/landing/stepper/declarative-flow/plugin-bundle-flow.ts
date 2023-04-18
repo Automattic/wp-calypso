@@ -154,10 +154,14 @@ const pluginBundleFlow: Flow = {
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 
-			const defaultExitDest = siteDetails?.options?.theme_slug
-				? `/marketplace/thank-you/${ siteSlug }?themes=${ siteDetails?.options?.theme_slug }`
-				: `/home/${ siteSlug }`;
-
+			let defaultExitDest = `/home/${ siteSlug }`;
+			if ( siteDetails?.options?.theme_slug ) {
+				if ( isEnabled( 'themes/display-thank-you-page' ) ) {
+					defaultExitDest = `/marketplace/thank-you/${ siteSlug }?themes=${ siteDetails?.options?.theme_slug }`;
+				} else {
+					defaultExitDest = `/theme/${ siteDetails?.options.theme_slug }/${ siteSlug }`;
+				}
+			}
 			switch ( currentStep ) {
 				case 'checkForWoo':
 					// If WooCommerce is already installed, we should exit the flow.
