@@ -26,7 +26,7 @@ const TermExperimentPlanTypeSelector: React.FunctionComponent< {
 			const propsWithBiannualToggle = {
 				...planTypeSelectorProps,
 				showBiannualToggle:
-					( true && variationName === 'toggle_and_checkout' ) || variationName === 'toggle_only',
+					false && ( variationName === 'toggle_and_checkout' || variationName === 'toggle_only' ),
 			};
 
 			return <PlanTypeSelector { ...propsWithBiannualToggle } kind={ kind } plans={ plans } />;

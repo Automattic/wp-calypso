@@ -228,6 +228,10 @@ const PlanLogo: React.FunctionComponent< {
 	);
 };
 
+function getBannerContainer() {
+	return document.querySelector( '.plans-features-main__notice' );
+}
+
 export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
 	PlanFeatures2023GridState
@@ -468,7 +472,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, isLargeCurrency, translate } = this.props;
+		const { isReskinned, isLargeCurrency, translate, hideCreditNotice } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -489,6 +493,7 @@ export class PlanFeatures2023Grid extends Component<
 					>
 						{ ! hasNoPrice && (
 							<PlanFeatures2023GridHeaderPrice
+								hideCreditNotice={ hideCreditNotice }
 								planProperties={ properties }
 								is2023OnboardingPricingGrid={ true }
 								isLargeCurrency={ isLargeCurrency }

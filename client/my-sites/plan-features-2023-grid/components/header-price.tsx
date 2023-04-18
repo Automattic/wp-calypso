@@ -10,6 +10,7 @@ interface PlanFeatures2023GridHeaderPriceProps {
 	planProperties: PlanProperties;
 	is2023OnboardingPricingGrid: boolean;
 	isLargeCurrency: boolean;
+	hideCreditNotice?: boolean;
 }
 
 const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
@@ -100,12 +101,16 @@ const HeaderPriceContainer = styled.div`
 			}
 		}
 	}
+	.badge {
+		margin-bottom: 10px;
+	}
 `;
 
 const PlanFeatures2023GridHeaderPrice = ( {
 	planProperties,
 	is2023OnboardingPricingGrid,
 	isLargeCurrency,
+	hideCreditNotice,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
 	const { planName, showMonthlyPrice } = planProperties;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
@@ -124,24 +129,27 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	return (
 		<HeaderPriceContainer>
 			{ shouldShowDiscountedPrice && (
-				<PricesGroup isLargeCurrency={ isLargeCurrency }>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ planPrices.rawPrice }
-						displayPerMonthNotation={ false }
-						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
-						isLargeCurrency={ isLargeCurrency }
-						original
-					/>
-					<PlanPrice
-						currencyCode={ currencyCode }
-						rawPrice={ planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice }
-						displayPerMonthNotation={ false }
-						is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
-						isLargeCurrency={ isLargeCurrency }
-						discounted
-					/>
-				</PricesGroup>
+				<>
+					{ ! hideCreditNotice ? <Badge>Credit applied</Badge> : <Badge>One time discount</Badge> }
+					<PricesGroup isLargeCurrency={ isLargeCurrency }>
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ planPrices.rawPrice }
+							displayPerMonthNotation={ false }
+							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+							isLargeCurrency={ isLargeCurrency }
+							original
+						/>
+						<PlanPrice
+							currencyCode={ currencyCode }
+							rawPrice={ planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice }
+							displayPerMonthNotation={ false }
+							is2023OnboardingPricingGrid={ is2023OnboardingPricingGrid }
+							isLargeCurrency={ isLargeCurrency }
+							discounted
+						/>
+					</PricesGroup>
+				</>
 			) }
 			{ ! shouldShowDiscountedPrice && (
 				<PlanPrice
