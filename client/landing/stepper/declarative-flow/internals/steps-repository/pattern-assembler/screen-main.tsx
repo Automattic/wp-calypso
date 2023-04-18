@@ -46,7 +46,12 @@ const ScreenMain = ( {
 		if ( disabled ) {
 			event.preventDefault();
 			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_MISCLICK );
-			return;
+		}
+	};
+
+	const handleClick = () => {
+		if ( ! disabled ) {
+			onContinueClick();
 		}
 	};
 
@@ -126,7 +131,7 @@ const ScreenMain = ( {
 					primary
 					aria-disabled={ disabled }
 					onMouseDown={ handleMouseDown }
-					onClick={ onContinueClick }
+					onClick={ handleClick }
 				>
 					{ shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal
 						? translate( 'Unlock this style' )
