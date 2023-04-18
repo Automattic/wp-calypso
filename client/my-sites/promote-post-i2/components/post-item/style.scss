@@ -1,45 +1,114 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
+@import "~@automattic/color-studio/dist/color-variables";
 
 $post-item-background-color: var(--color-surface);
 
 .promote-post {
+	&__table {
+		display: table;
+	}
+
 	.posts-list__header {
-		display: flex;
+		display: table-row;
+
+		.posts-list__column {
+			&-post,
+			&-type,
+			&-publish-date,
+			&-visitors,
+			&-likes,
+			&-comments,
+			&-view,
+			&-promote {
+				color: $studio-gray-60;
+				font-family: sans-serif;
+				font-style: normal;
+				font-weight: 400;
+				font-size: 0.875rem;
+				letter-spacing: -0.15px;
+				line-height: 1.43;
+			}
+		}
 	}
 
 	.posts-list__column {
+		&-post,
+		&-type,
+		&-publish-date,
+		&-visitors,
+		&-likes,
+		&-comments,
+		&-view,
+		&-promote {
+			display: table-cell;
+			vertical-align: middle;
+		}
+
 		&-post {
-			width: 444px;
+			width: 39.8%;
+			// TODO: add min-width
+			// 444+82+142+102*3+78+60
 		}
 
 		&-type {
-			width: 82px;
+			width: 7.4%;
 		}
 
 		&-publish-date {
-			width: 142px;
+			width: 12.8%;
 		}
 
 		&-visitors {
-			width: 102px;
+			width: 9.2%;
 		}
 
 		&-likes {
-			width: 102px;
+			width: 9.2%;
 		}
 
 		&-comments {
-			width: 102px;
+			width: 9.2%;
 		}
 
 		&-view {
-			width: 78px;
+			width: 7%;
 		}
 
 		&-promote {
-			width: 56px;
+			width: 5.4%;
 		}
+	}
+
+	.post-item__row {
+		display: table-row;
+
+		.posts-list__column-post {
+			align-items: center;
+			display: flex;
+		}
+	}
+
+	.post-item__post-title {
+		color: $studio-gray-100;
+		font-family: sans-serif;
+		font-style: normal;
+		font-weight: 500;
+		font-size: 0.875rem;
+		line-height: 1.43;
+		letter-spacing: -0.15px;
+		margin-left: 16px;
+	}
+
+	.post-item__post-type,
+	.post-item__post-publish-date {
+		color: $studio-gray-60;
+		font-family: sans-serif;
+		font-style: normal;
+		font-weight: 400;
+		font-size: 0.875rem;
+		line-height: 1.43;
+		letter-spacing: -0.15px;
 	}
 
 	.post-item__detail {
@@ -49,22 +118,6 @@ $post-item-background-color: var(--color-surface);
 		word-break: break-word;
 		word-wrap: break-word;
 		padding: 16px 0;
-	}
-
-
-	.post-item__title {
-		margin: 0;
-		padding: 0 0 2px;
-		font-weight: 600;
-		font-size: $font-title-small;
-		line-height: 1.2;
-	}
-
-	.post-item__meta,
-	.post-item__post-type,
-	.post-item__link {
-		font-size: $font-body-extra-small;
-		color: var(--color-text-subtle);
 	}
 
 	.post-item__meta-time-status {
@@ -131,30 +184,28 @@ $post-item-background-color: var(--color-surface);
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 0 16px;
+		padding: 0;
 		background: $post-item-background-color;
 		&.card.is-compact {
-			padding: 0 16px;
+			padding: 0;
 		}
 	}
 
 	.post-item__post-thumbnail-wrapper {
 		display: block;
 		position: relative;
-		width: 80px;
+		height: 78px;
+		width: 108px;
 		align-self: stretch;
+		border-radius: 4px;
 		overflow: hidden;
-		margin: 8px 0;
+		margin: 16px 0;
 	}
 
 	.post-item__post-thumbnail {
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		height: 100%;
-		max-height: 80px;
-		max-width: none;
+		flex-shrink: 0;
+		min-width: 100%;
+		min-height: 100%;
 	}
 
 	.post-item__promote-link {

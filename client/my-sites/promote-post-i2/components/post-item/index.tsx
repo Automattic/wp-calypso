@@ -1,5 +1,5 @@
 import { safeImageUrl } from '@automattic/calypso-url';
-import { CompactCard, Gridicon } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -9,7 +9,6 @@ import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
-import PostActionCounts from 'calypso/my-sites/post-type-list/post-action-counts';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
 
 export type Post = {
@@ -47,41 +46,39 @@ export default function PostItem( { post }: Props ) {
 	const featuredImage = safeUrl && resizeImageUrl( safeUrl, { h: 80 }, 0 );
 
 	return (
-		<CompactCard className="post-item__panel">
-			{ featuredImage && (
-				<div className="post-item__post-thumbnail-wrapper ">
-					<img className="post-item__post-thumbnail" src={ featuredImage } alt="" />
-				</div>
-			) }
-
-			<div className="post-item__detail">
-				<h1 // eslint-disable-line
-					className="post-item__title"
-				>
-					<span className="post-item__title-link">{ post.title || __( 'Untitled' ) }</span>
-				</h1>
-				<div className="post-item__meta">
-					<span className="post-item__meta-time-status">
-						{ post && (
-							<PostRelativeTimeStatus
-								showPublishedStatus={ false }
-								post={ post }
-								gridiconSize={ 12 }
-							/>
-						) }
-					</span>
-					<span className="post-item__post-type">{ getPostType( post.type ) }</span>
-					<span className="post-item__link">
-						<a href={ post.URL } className="post-item__title-view">
-							{ __( 'View' ) }{ ' ' }
-							<Gridicon icon="external" size={ 12 } className="post-item__external-icon" />
-						</a>
-					</span>
-					<PostActionCounts globalId={ post.global_ID } />
-				</div>
+		<CompactCard className="post-item__row">
+			<div className="posts-list__column-post">
+				{ featuredImage && (
+					<div
+						className="post-item__post-thumbnail-wrapper"
+						style={ { backgroundImage: `url(${ featuredImage })` } }
+					/>
+				) }
+				{ ! featuredImage && (
+					<div className="post-item__post-thumbnail-wrapper post-item__post-thumbnail-wrapper_no-image" />
+				) }
+				<div className="post-item__post-title">{ post?.title || __( 'Untitled' ) }</div>
 			</div>
 
-			<div className="post-item__promote-link">
+			<div className="posts-list__column-type post-item__post-type">
+				{ getPostType( post.type ) }
+			</div>
+			<div className="posts-list__column-publish-date post-item__post-publish-date">
+				<PostRelativeTimeStatus
+					showPublishedStatus={ false }
+					post={ post }
+					showGridIcon={ false }
+				/>
+			</div>
+
+			<div className="posts-list__column-publish-date post-item__post-visitors">0</div>
+			<div className="posts-list__column-publish-date post-item__post-likes">0</div>
+			<div className="posts-list__column-publish-date post-item__post-view">
+				<a href={ post.URL } className="post-item__title-view">
+					{ __( 'View' ) }
+				</a>
+			</div>
+			<div className="posts-list__column-publish-date post-item__post-promote">
 				<Button
 					isPrimary={ true }
 					isBusy={ loading }
