@@ -15,18 +15,12 @@ type Props = { onPick: ( design: Design ) => void };
 
 export default function PatternPicker( { onPick }: Props ) {
 	const { __ } = useI18n();
-	const { data: allDesigns } = useStarterDesignsQuery(
-		{
-			vertical_id: '',
-			intent: '',
-			seed: undefined,
-			_locale: useLocale(),
-			include_pattern_virtual_designs: true,
-		},
-		{
-			enabled: true,
-		}
-	);
+	const { data: allDesigns } = useStarterDesignsQuery( {
+		vertical_id: '',
+		intent: '',
+		_locale: useLocale(),
+		include_pattern_virtual_designs: true,
+	} );
 
 	const designs = useMemo( () => {
 		if ( ! allDesigns ) {
