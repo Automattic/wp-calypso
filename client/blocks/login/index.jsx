@@ -94,7 +94,6 @@ class Login extends Component {
 		isPartnerSignup: PropTypes.bool,
 		loginEmailAddress: PropTypes.string,
 		action: PropTypes.string,
-		isGravatar: PropTypes.bool,
 	};
 
 	state = {
@@ -260,7 +259,6 @@ class Login extends Component {
 			isWhiteLogin,
 			isJetpackWooCommerceFlow,
 			isP2Login,
-			isGravatar,
 			wccomFrom,
 			isManualRenewalImmediateLoginAttempt,
 			linkingSocialService,
@@ -463,7 +461,7 @@ class Login extends Component {
 			);
 		}
 
-		if ( isWhiteLogin && ! isGravatar ) {
+		if ( isWhiteLogin ) {
 			preHeader = (
 				<div className="login__form-gutenboarding-wordpress-logo">
 					<svg
