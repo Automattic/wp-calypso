@@ -122,7 +122,7 @@ const linkInBioDomain: Flow = {
 					return navigate( 'processing' );
 
 				case 'processing': {
-					const destination = `/domains/mapping/${ providedDependencies.siteSlug }/setup/${ domain }?firstVisit=true&flowName=${ variantSlug }`;
+					const destination = `/setup/link-in-bio/launchpad?siteSlug=${ providedDependencies.siteSlug }`;
 					persistSignupDestination( destination );
 					setSignupCompleteSlug( providedDependencies?.siteSlug );
 					setSignupCompleteFlowName( variantSlug );
