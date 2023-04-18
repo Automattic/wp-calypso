@@ -12,7 +12,7 @@ import TabView from '../tab-view';
 
 const SortBy = SubscriptionManager.SiteSubscriptionsSortBy;
 
-const isSearchEnabled = config.isEnabled( 'subscription-management/sites-search' );
+const isListControlsEnabled = config.isEnabled( 'subscription-management/sites-list-controls' );
 
 const sortOptions: Option[] = [
 	{ value: SortBy.LastUpdated, label: 'Last updated' },
@@ -43,7 +43,7 @@ const Sites = () => {
 
 	return (
 		<TabView errorMessage={ errorMessage } isLoading={ isLoading }>
-			{ isSearchEnabled && (
+			{ isListControlsEnabled && (
 				<div className="subscriptions-manager__list-actions-bar">
 					<SearchInput
 						placeholder={ translate( 'Search by site name or address…' ) }
