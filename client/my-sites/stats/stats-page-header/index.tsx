@@ -5,15 +5,10 @@ import { preventWidows } from 'calypso/lib/formatting';
 
 interface StatsPageHeaderProps {
 	page: keyof NavItems;
-	headerText?: string;
 	subHeaderText?: string;
 }
 
-export default function StatsPageHeader( {
-	page,
-	headerText,
-	subHeaderText,
-}: StatsPageHeaderProps ) {
+export default function StatsPageHeader( { page, subHeaderText }: StatsPageHeaderProps ) {
 	const translate = useTranslate();
 
 	return (
@@ -21,7 +16,7 @@ export default function StatsPageHeader( {
 			align="left"
 			brandFont
 			className="stats__section-header modernized-header"
-			headerText={ preventWidows( headerText ?? translate( 'Jetpack Stats' ), 2 ) } // This is the H1 header.
+			headerText={ preventWidows( translate( 'Jetpack Stats' ), 2 ) } // This is the H1 header.
 		>
 			{ /*
 				The secondary H2 header is only used for screen readers. This text should be identical to 
