@@ -14,7 +14,7 @@ export type LinkedInPreviewProps = {
 	url?: string;
 };
 
-export default function LinkedInPreview( {
+export function LinkedInPreview( {
 	image,
 	jobTitle,
 	name,
