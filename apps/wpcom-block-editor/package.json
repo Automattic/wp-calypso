@@ -42,7 +42,6 @@
 		"@wordpress/plugins": "^4.20.0",
 		"@wordpress/rich-text": "^5.20.0",
 		"@wordpress/url": "^3.23.0",
-		"qs": "^6.9.1",
 		"debug": "^4.3.3",
 		"lodash": "^4.17.21",
 		"react": "^17.0.2",
@@ -50,7 +49,9 @@
 		"reakit-utils": "^0.15.1",
 		"redux": "^4.1.2",
 		"tinymce": "^5.0.0",
-		"react-query": "^3.32.1"
+		"react-query": "^3.32.1",
+		"store": "^2.0.12",
+		"qs": "^6.9.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
