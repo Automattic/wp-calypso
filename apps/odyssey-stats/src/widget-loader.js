@@ -2,7 +2,7 @@
  * The loader is to optimize page loading time of WP-Admin Dashboard.
  */
 
-// `init-app-config` has to be the first import, because there could be packages reference it in their side effect.
+// `init-app-config` has to be the first import, because there could be packages that reference it in their side effect.
 import './lib/init-widget-config';
 
 // Initialize Stats widget when DOMContentLoaded is fired, or immediately if it already has been.
