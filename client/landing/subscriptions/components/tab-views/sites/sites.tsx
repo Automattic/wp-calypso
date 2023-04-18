@@ -50,7 +50,7 @@ const Sites = () => {
 						searchIcon={ <SearchIcon size={ 18 } /> }
 						onSearch={ handleSearch }
 					/>
-					<SortControls value={ sortTerm } onChange={ setSortTerm } options={ sortOptions } />
+					<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
 				</div>
 			) }
 
