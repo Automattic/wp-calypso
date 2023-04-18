@@ -13,7 +13,6 @@ import {
 	TERM_MONTHLY,
 	isBusinessPlan,
 	getPlanPath,
-	PLAN_FREE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
 	isWooExpressMediumPlan,
@@ -23,6 +22,7 @@ import {
 	isWooExpressPlusPlan,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { isHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
@@ -34,7 +34,6 @@ import {
 	TranslateResult,
 	useTranslate,
 } from 'i18n-calypso';
-import { last } from 'lodash';
 import page from 'page';
 import { Component, createRef } from 'react';
 import ReactDOM from 'react-dom';
@@ -149,7 +148,8 @@ type PlanFeatures2023GridConnectedProps = {
 	selectedSiteSlug: string | null;
 	planCredits: number;
 	hasPlaceholders: boolean;
-	showPlanCreditsApplied: boolean;
+	hideCreditNotice: boolean;
+	isDiscountNoticeVisible: boolean;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -248,6 +248,10 @@ const PlanLogo: React.FunctionComponent< {
 		</Container>
 	);
 };
+
+function getBannerContainer() {
+	return document.querySelector( '.plans-features-main__notice' );
+}
 
 export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
@@ -495,7 +499,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, isLargeCurrency, translate } = this.props;
+		const { isReskinned, isLargeCurrency, translate, hideCreditNotice } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -516,6 +520,7 @@ export class PlanFeatures2023Grid extends Component<
 					>
 						{ ! hasNoPrice && (
 							<PlanFeatures2023GridHeaderPrice
+								hideCreditNotice={ hideCreditNotice }
 								planProperties={ properties }
 								is2023OnboardingPricingGrid={ true }
 								isLargeCurrency={ isLargeCurrency }
@@ -871,35 +876,6 @@ export class PlanFeatures2023Grid extends Component<
 			} );
 	}
 
-	getBannerContainer() {
-		return document.querySelector( '.plans-features-main__notice' );
-	}
-
-	higherPlanAvailable() {
-		const currentPlan = this.props.currentSitePlanSlug;
-		const availablePlanProperties = this.props.planProperties.filter(
-			( { planName } ) => planName !== PLAN_ENTERPRISE_GRID_WPCOM
-		);
-		const highestPlan = last( availablePlanProperties );
-
-		return currentPlan !== highestPlan?.planName && highestPlan?.availableForPurchase;
-	}
-
-	hasDiscountNotice() {
-		const { canUserPurchasePlan, hasPlaceholders, withDiscount } = this.props;
-		const bannerContainer = this.getBannerContainer();
-		if ( ! bannerContainer ) {
-			return false;
-		}
-
-		const activeDiscount = getDiscountByName( withDiscount );
-		if ( ! activeDiscount || hasPlaceholders || ! canUserPurchasePlan ) {
-			return false;
-		}
-
-		return true;
-	}
-
 	renderNotice() {
 		const { noticeDismissed } = this.state;
 
@@ -922,7 +898,7 @@ export class PlanFeatures2023Grid extends Component<
 			return null;
 		}
 
-		const bannerContainer = this.getBannerContainer();
+		const bannerContainer = getBannerContainer();
 		if ( ! bannerContainer ) {
 			return null;
 		}
@@ -931,11 +907,11 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderDiscountNotice() {
-		if ( ! this.hasDiscountNotice() ) {
+		if ( ! this.props.isDiscountNoticeVisible ) {
 			return false;
 		}
 
-		const bannerContainer = this.getBannerContainer();
+		const bannerContainer = getBannerContainer();
 		const activeDiscount = getDiscountByName( this.props.withDiscount );
 
 		if ( ! bannerContainer || ! activeDiscount ) {
@@ -969,7 +945,7 @@ export class PlanFeatures2023Grid extends Component<
 			return null;
 		}
 
-		const bannerContainer = this.getBannerContainer();
+		const bannerContainer = getBannerContainer();
 		if ( ! bannerContainer ) {
 			return false;
 		}
@@ -989,25 +965,10 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderCreditNotice() {
-		const {
-			canUserPurchasePlan,
-			showPlanCreditsApplied,
-			hasPlaceholders,
-			translate,
-			planCredits,
-			planProperties,
-		} = this.props;
-		const bannerContainer = this.getBannerContainer();
-		const isShowPlanCreditsApplied = true === showPlanCreditsApplied && ! this.hasDiscountNotice();
+		const { hideCreditNotice, translate, planCredits, planProperties } = this.props;
+		const bannerContainer = getBannerContainer();
 
-		if (
-			hasPlaceholders ||
-			! canUserPurchasePlan ||
-			! bannerContainer ||
-			! isShowPlanCreditsApplied ||
-			! planCredits ||
-			! this.higherPlanAvailable()
-		) {
+		if ( hideCreditNotice || ! bannerContainer ) {
 			return null;
 		}
 
@@ -1020,8 +981,7 @@ export class PlanFeatures2023Grid extends Component<
 				status="is-success"
 			>
 				{ translate(
-					'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
-						'Apply those credits towards an upgrade before they expire!',
+					'We’ve applied the {{b}}%(amountInCurrency)s{{/b}} {{a}}upgrade credit{{/a}} from your previous plan as a deduction to your new plan, below. Remember to use it before it expires!',
 					{
 						args: {
 							amountInCurrency: formatCurrency(
@@ -1031,6 +991,14 @@ export class PlanFeatures2023Grid extends Component<
 						},
 						components: {
 							b: <strong />,
+							a: (
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/manage-purchases/#pro-rated-credits'
+									) }
+									className="get-apps__desktop-link"
+								/>
+							),
 						},
 					}
 				) }
@@ -1180,6 +1148,47 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 		const isJetpackNotAtomic = isJetpack && ! isSiteAT;
 
+		const hasDiscountNotice = () => {
+			const { withDiscount } = ownProps;
+			const bannerContainer = getBannerContainer();
+			if ( ! bannerContainer ) {
+				return false;
+			}
+
+			const activeDiscount = getDiscountByName( withDiscount );
+			if ( ! activeDiscount || hasPlaceholders( planProperties ) || ! canUserPurchasePlan ) {
+				return false;
+			}
+			return true;
+		};
+
+		const higherPlanAvailable = () => {
+			const currentPlan = currentSitePlan?.productSlug;
+			const highestPurchasablePlan = planProperties
+				.filter( ( { planName } ) => planName !== PLAN_ENTERPRISE_GRID_WPCOM )
+				.filter( ( { availableForPurchase } ) => availableForPurchase )
+				.pop();
+			const { planName: highestPurchasablePlanName } = highestPurchasablePlan ?? {};
+			return currentPlan !== highestPurchasablePlanName;
+		};
+
+		const isDiscountNoticeVisible = hasDiscountNotice();
+		const isFreePlanActive = isFreePlan( sitePlan?.product_slug ?? '' );
+		const isWPPlansPage = sitePlan && ! isJetpackNotAtomic && ! isInSignup;
+		const isHigherPlanAvailable = higherPlanAvailable();
+		const bannerContainer = getBannerContainer();
+
+		const hasPlaceholdersFlag = hasPlaceholders( planProperties );
+		const hideCreditNotice =
+			! isWPPlansPage ||
+			isFreePlanActive ||
+			isDiscountNoticeVisible ||
+			hasPlaceholdersFlag ||
+			! canUserPurchasePlan ||
+			! bannerContainer ||
+			! planCredits ||
+			! isHigherPlanAvailable;
+
 		return {
 			currentSitePlanSlug: currentSitePlan?.productSlug,
 			planProperties,
@@ -1188,12 +1197,9 @@ const ConnectedPlanFeatures2023Grid = connect(
 			selectedSiteSlug,
 			planCredits,
 			hasPlaceholders: hasPlaceholders( planProperties ),
-			showPlanCreditsApplied:
-				sitePlan &&
-				sitePlan.product_slug !== PLAN_FREE &&
-				planCredits &&
-				! isJetpackNotAtomic &&
-				! isInSignup,
+			bannerContainer,
+			hideCreditNotice,
+			isDiscountNoticeVisible,
 		};
 	},
 	{
