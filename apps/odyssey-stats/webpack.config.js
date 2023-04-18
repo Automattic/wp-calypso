@@ -185,7 +185,10 @@ module.exports = {
 		// Repalce the `packages/components/src/gridicon/index.tsx` with a replacement that does not enqueue the SVG sprite.
 		// The sprite is loaded separately in Jetpack.
 		new webpack.NormalModuleReplacementPlugin( /^\.\.\/gridicon$/, '../gridicon/no-asset' ),
-		new webpack.NormalModuleReplacementPlugin( /^\.\/gridicon$/, './gridicon/no-asset' ),
+		new webpack.NormalModuleReplacementPlugin(
+			/^@automattic\/calypso-config$/,
+			path.resolve( __dirname, 'src/lib/config-api' )
+		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/jetpack-colophon$/,
 			'calypso/components/jetpack/jetpack-footer'
@@ -194,6 +197,7 @@ module.exports = {
 			/^calypso\/components\/formatted-header$/,
 			'calypso/components/jetpack/jetpack-header'
 		),
+		new webpack.NormalModuleReplacementPlugin( /^\.\/gridicon$/, './gridicon/no-asset' ),
 		...excludedPackagePlugins,
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {

@@ -1,6 +1,7 @@
 /**
  * The loader is to optimize page loading time of WP-Admin Dashboard.
  */
+import './lib/init-widget-config';
 
 // Initialize Stats widget when DOMContentLoaded is fired, or immediately if it already has been.
 function initStatsWidget() {

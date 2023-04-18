@@ -1,4 +1,3 @@
-import '../load-config';
 import config from '@automattic/calypso-config';
 import '@automattic/calypso-polyfills';
 import { render } from 'react-dom';
