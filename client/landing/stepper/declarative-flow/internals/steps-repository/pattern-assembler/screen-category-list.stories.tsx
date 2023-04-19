@@ -9,8 +9,7 @@ import './style.scss';
 import './navigator-buttons/style.scss';
 
 export default {
-	title: 'client/pattern-assembler/ScreenCategoryList',
-	// 'client/landing/stepper/declarative-flow/internals/steps-repository/pattern-assembler/ScreenCategoryList',
+	title: 'client/landing/pattern-assembler/ScreenCategoryList',
 	component: ScreenCategoryList,
 } as Meta;
 
