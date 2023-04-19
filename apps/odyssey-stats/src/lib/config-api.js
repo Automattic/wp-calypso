@@ -1,9 +1,9 @@
 /**
  * The config package is to provide a compatible way to access config data exactly like `@automattic/calypso-config`.
  *
- * - The package supports custom config data source, which is useful for Odyssey Apps.
- * - Restored feature flag gating for Odyssey Apps.
- * - The package must be initialized before using with `initConfig`.
+ * - Adds support for custom config data sources for Odyssey Apps.
+ * - Adds feature flag gating for Odyssey Apps.
+ * - The package must first be initialized before use via an invocation of `initConfig`.
  */
 
 import { ConfigApi } from './create-odyssey-config';
