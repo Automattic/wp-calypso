@@ -17,7 +17,6 @@ import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
 import { getEnhancedChecklist } from './task-helper';
-import { DOMAIN_UPSELL } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
 
@@ -87,7 +86,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
 	const showDomainUpgradeBadge =
 		sidebarDomain?.isWPCOMDomain &&
-		! enhancedChecklist?.find( ( task ) => task.id === DOMAIN_UPSELL );
+		! enhancedChecklist?.find( ( task ) => task.id === 'domain_upsell' );
 
 	if ( sidebarDomain ) {
 		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;

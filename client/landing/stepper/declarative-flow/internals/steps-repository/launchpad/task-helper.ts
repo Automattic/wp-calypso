@@ -13,8 +13,7 @@ import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/int
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
-import { launchpadFlowTasks } from './tasks';
-import { LaunchpadChecklist, Task } from './types';
+import { LaunchpadChecklist } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 export function getEnhancedChecklist(
@@ -307,33 +306,6 @@ function recordTaskClickTracksEvent(
 		is_completed,
 		flow,
 	} );
-}
-
-// TODO: We should remove this method since it's no longer needed
-// Note that removing the method will break unit tests
-// Returns list of tasks/checklist items for a specific flow
-export function getArrayOfFilteredTasks(
-	tasks: Task[],
-	flow: string | null,
-	isEmailVerified: boolean
-) {
-	let currentFlowTasksIds = flow ? launchpadFlowTasks[ flow ] : null;
-
-	if ( isEmailVerified && currentFlowTasksIds ) {
-		currentFlowTasksIds = currentFlowTasksIds.filter( ( task ) => task !== 'verify_email' );
-	}
-
-	return (
-		currentFlowTasksIds &&
-		currentFlowTasksIds.reduce( ( accumulator, currentTaskId ) => {
-			tasks.find( ( task ) => {
-				if ( task.id === currentTaskId ) {
-					accumulator.push( task );
-				}
-			} );
-			return accumulator;
-		}, [] as Task[] )
-	);
 }
 
 /*
