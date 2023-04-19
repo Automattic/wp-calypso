@@ -20,9 +20,9 @@ jest.mock( 'calypso/my-sites/plans/hooks/use-plan-prices', () => jest.fn() );
 import { render } from '@testing-library/react';
 import React from 'react';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
-import PlanFeatures2023GridHeaderPrice from '../components/header-price';
-import { PlanProperties } from '../types';
-import type { PlanPrices } from '../../../state/plans/selectors/get-plan-prices';
+import PlanFeatures2023GridHeaderPrice from '..//header-price';
+import { PlanProperties } from '../../types';
+import type { PlanPrices } from 'calypso/state/plans/selectors/get-plan-prices';
 
 describe( 'PlanFeatures2023GridHeaderPrice', () => {
 	const planProperties = {

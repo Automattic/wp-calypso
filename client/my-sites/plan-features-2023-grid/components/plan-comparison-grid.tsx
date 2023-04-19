@@ -26,6 +26,7 @@ import TermExperimentPlanTypeSelector from 'calypso/my-sites/plans-features-main
 import useIsLargeCurrency from '../../plans/hooks/use-is-large-currency';
 import useHighlightAdjacencyMatrix from '../hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from '../hooks/use-highlight-label';
+import { sortPlans } from '../lib/sort-plan-properties';
 import { plansBreakSmall } from '../media-queries';
 import { PlanProperties } from '../types';
 import { usePricingBreakpoint } from '../util';
@@ -638,6 +639,18 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		firstSetOfFeatures,
 	] );
 
+	const displayedPlansProperties = useMemo( () => {
+		const filteredPlanProperties = ( planProperties ?? [] ).filter(
+			( { planName, isVisible } ) => isVisible && ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
+		);
+		const sortedPlanProperties = sortPlans(
+			filteredPlanProperties,
+			currentSitePlanSlug,
+			isMediumBreakpoint
+		);
+		return sortedPlanProperties;
+	}, [ planProperties, currentSitePlanSlug, isMediumBreakpoint ] );
+
 	useEffect( () => {
 		let newVisiblePlans = displayedPlansProperties.map( ( { planName } ) => planName );
 
@@ -650,10 +663,6 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		visibleLength = isMediumBreakpoint ? 2 : visibleLength;
 
 		if ( newVisiblePlans.length !== visibleLength ) {
-			// ensures current plan is first in the list
-			newVisiblePlans.sort( ( visiblePlan ) =>
-				[ currentSitePlanSlug ].includes( visiblePlan ) ? -1 : 1
-			);
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
 		}
 
@@ -662,10 +671,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		isLargestBreakpoint,
 		isLargeBreakpoint,
 		isMediumBreakpoint,
-		intervalType,
 		displayedPlansProperties,
 		isInSignup,
-		currentSitePlanSlug,
 	] );
 
 	const restructuredFeatures = useMemo( () => {

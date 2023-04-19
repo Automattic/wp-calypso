@@ -94,7 +94,6 @@ import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from './hooks/use-highlight-label';
-import { sortPlanProperties } from './lib/sort-plan-properties';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { IAppState } from 'calypso/state/types';
@@ -1183,7 +1182,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 		return {
 			currentSitePlanSlug: currentSitePlan?.productSlug,
-			planProperties: sortPlanProperties( planProperties, currentSitePlan?.productSlug ),
+			planProperties,
 			canUserPurchasePlan,
 			manageHref,
 			selectedSiteSlug,
