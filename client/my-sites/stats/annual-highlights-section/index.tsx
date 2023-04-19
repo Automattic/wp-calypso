@@ -1,4 +1,4 @@
-import AnnualHighlightCards from '@automattic/components/src/highlight-cards/annual-highlight-cards';
+import { AnnualHighlightCards } from '@automattic/components';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';

@@ -1,5 +1,10 @@
-import { Card, ComponentSwapper, ShortenedNumber, formattedNumber } from '@automattic/components';
-import { percentCalculator } from '@automattic/components/src/highlight-cards/count-comparison-card';
+import {
+	Card,
+	ComponentSwapper,
+	formattedNumber,
+	percentCalculator,
+	ShortenedNumber,
+} from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
