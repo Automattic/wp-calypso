@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useEffect, ChangeEvent, ReactElement } from 'react';
+import { useState, useEffect, ChangeEvent, ReactElement } from 'react';
 import './styles.scss';
 
 export type Option = {
@@ -9,17 +9,14 @@ export type Option = {
 
 type SortControlsProps< T > = {
 	options: Option[];
-	onChange?: ( sortOrder: T ) => void;
 	value: T;
+	onChange: ( sortOrder: T ) => void;
 };
-
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
 
 const SortControls: < T extends string >( props: SortControlsProps< T > ) => ReactElement = ( {
 	options,
-	onChange = noop,
 	value,
+	onChange,
 } ) => {
 	const translate = useTranslate();
 	const [ selected, setSelected ] = useState( value );
