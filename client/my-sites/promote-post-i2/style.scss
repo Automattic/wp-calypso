@@ -11,7 +11,42 @@
 	line-height: 1.43;
 }
 
+.notouch .promote-post .section-nav-tab__link:hover {
+	background-color: transparent;
+}
+
 .promote-post {
+	@media (min-width: 481px) {
+		.section-nav-tab {
+			margin-right: 16px;
+
+			&__link {
+				padding: 16px 0;
+
+				.section-nav-tab__text {
+					@include promote-post-i2-font;
+					color: $studio-gray-100;
+
+					.count {
+						background: $studio-gray-0;
+						border: none;
+						border-radius: 2px;
+						color: $studio-gray-80;
+						font-family: $font-sf-pro-text;
+						font-weight: 500;
+						font-size: 0.875rem;
+						line-height: 1.67;
+						padding: 0 8px;
+					}
+				}
+			}
+		}
+	}
+
+	.section-nav {
+		box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+	}
+
 	.search {
 		border: 1px solid #ddd;
 		border-radius: 4px;
