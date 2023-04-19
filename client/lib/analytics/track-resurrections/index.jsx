@@ -1,6 +1,6 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
@@ -31,9 +31,9 @@ const TrackResurrections = () => {
 			return;
 		}
 		recordTracksEvent( 'calypso_user_resurrected', {
-			lastSeen,
+			last_seen: lastSeen,
 		} );
-	}, [ isFetching, lastSeen ] );
+	}, [ lastSeen ] ); // Only run this when LastSeen value changes.
 
 	return null;
 };
