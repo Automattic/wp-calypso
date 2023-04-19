@@ -11,6 +11,7 @@ const StatsCard = ( {
 	className,
 	title,
 	titleURL,
+	titleAriaLevel = 4,
 	footerAction,
 	isEmpty,
 	emptyMessage,
@@ -29,7 +30,13 @@ const StatsCard = ( {
 			{ title }
 		</a>
 	) : (
-		<h4 className={ `${ BASE_CLASS_NAME }-header__title` }>{ title }</h4>
+		<div
+			className={ `${ BASE_CLASS_NAME }-header__title` }
+			role="heading"
+			aria-level={ titleAriaLevel }
+		>
+			{ title }
+		</div>
 	);
 
 	// On one line shows card title and value column header
