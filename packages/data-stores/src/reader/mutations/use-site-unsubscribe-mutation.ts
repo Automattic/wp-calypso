@@ -7,24 +7,24 @@ import {
 	SubscriptionManagerSubscriptionsCount,
 } from '../types';
 
-type SiteSubscriptionUnfollowParams = {
+type SiteSubscriptionUnsubscribeParams = {
 	blog_id: number | string;
 };
 
-type SiteSubscriptionUnfollowResponse = {
+type SiteSubscriptionUnsubscribeResponse = {
 	success: boolean;
 	subscribed: boolean;
 	subscription: null;
 };
 
-const useSiteUnfollowMutation = () => {
+const useSiteUnsubscribeMutation = () => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
 	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
 	const subscriptionsCountCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 
 	return useMutation(
-		async ( params: SiteSubscriptionUnfollowParams ) => {
+		async ( params: SiteSubscriptionUnsubscribeParams ) => {
 			if ( ! params.blog_id ) {
 				throw new Error(
 					// reminder: translate this string when we add it to the UI
@@ -32,7 +32,7 @@ const useSiteUnfollowMutation = () => {
 				);
 			}
 
-			const response = await callApi< SiteSubscriptionUnfollowResponse >( {
+			const response = await callApi< SiteSubscriptionUnsubscribeResponse >( {
 				path: `/read/site/${ params.blog_id }/post_email_subscriptions/delete`,
 				method: 'POST',
 				isLoggedIn,
@@ -111,4 +111,4 @@ const useSiteUnfollowMutation = () => {
 	);
 };
 
-export default useSiteUnfollowMutation;
+export default useSiteUnsubscribeMutation;

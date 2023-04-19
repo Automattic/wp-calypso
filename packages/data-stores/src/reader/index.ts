@@ -1,8 +1,8 @@
 import { useSubscriberEmailAddress } from './hooks';
 import {
-	usePostUnfollowMutation,
+	usePostUnsubscribeMutation,
 	useSiteDeliveryFrequencyMutation,
-	useSiteUnfollowMutation,
+	useSiteUnsubscribeMutation,
 	useUserSettingsMutation,
 	usePendingSiteConfirmMutation,
 	usePendingSiteDeleteMutation,
@@ -18,11 +18,11 @@ import {
 
 export const SubscriptionManager = {
 	SiteSubscriptionsSortBy,
-	usePostUnfollowMutation,
+	usePostUnsubscribeMutation,
 	useSiteDeliveryFrequencyMutation,
 	useSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
-	useSiteUnfollowMutation,
+	useSiteUnsubscribeMutation,
 	useSubscriptionsCountQuery,
 	useSubscriberEmailAddress,
 	useUserSettingsQuery,

@@ -3,22 +3,22 @@ import { callApi } from '../helpers';
 import { useIsLoggedIn } from '../hooks';
 import { PostSubscription, SubscriptionManagerSubscriptionsCount } from '../types';
 
-type PostSubscriptionUnfollowParams = {
+type PostSubscriptionUnsubscribeParams = {
 	blog_id: number | string;
 	post_id: number | string;
 };
 
-type PostSubscriptionUnfollowResponse = {
+type PostSubscriptionUnsubscribeResponse = {
 	success: boolean;
 	subscribed: boolean;
 	subscription: null;
 };
 
-const usePostUnfollowMutation = () => {
+const usePostUnsubscribeMutation = () => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
 	return useMutation(
-		async ( params: PostSubscriptionUnfollowParams ) => {
+		async ( params: PostSubscriptionUnsubscribeParams ) => {
 			if ( ! params.blog_id ) {
 				throw new Error(
 					// reminder: translate this string when we add it to the UI
@@ -26,7 +26,7 @@ const usePostUnfollowMutation = () => {
 				);
 			}
 
-			const response = await callApi< PostSubscriptionUnfollowResponse >( {
+			const response = await callApi< PostSubscriptionUnsubscribeResponse >( {
 				path: `/read/site/${ params.blog_id }/comment_email_subscriptions/delete?post_id=${ params.post_id }`,
 				method: 'POST',
 				isLoggedIn,
@@ -107,4 +107,4 @@ const usePostUnfollowMutation = () => {
 	);
 };
 
-export default usePostUnfollowMutation;
+export default usePostUnsubscribeMutation;

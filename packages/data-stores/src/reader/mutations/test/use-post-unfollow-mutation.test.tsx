@@ -5,7 +5,7 @@ import { render, waitFor } from '@testing-library/react';
 import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { callApi } from '../../helpers';
-import usePostUnfollowMutation from '../../mutations/use-post-unfollow-mutation';
+import usePostUnsubscribeMutation from '../../mutations/use-post-unsubscribe-mutation';
 
 // Mock the useIsLoggedIn function
 jest.mock( '../../hooks', () => ( {
@@ -22,10 +22,10 @@ const Parent = ( { children } ) => (
 	<QueryClientProvider client={ client }>{ children }</QueryClientProvider>
 );
 
-describe( 'usePostUnfollowMutation()', () => {
+describe( 'usePostUnsubscribeMutation()', () => {
 	it( 'calls the right API', async () => {
 		const Skeleton = () => {
-			const { mutate } = usePostUnfollowMutation();
+			const { mutate } = usePostUnsubscribeMutation();
 			useEffect( () => {
 				mutate( {
 					blog_id: 123,
