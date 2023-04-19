@@ -34,6 +34,10 @@
 	margin-bottom: 15px;
 }
 
+.trending-tags__container {
+	padding-bottom: 58px;
+}
+
 .trending-tags__row {
 	padding: 0;
 
@@ -84,12 +88,12 @@
 	}
 }
 .alphabetic-tags__header {
-	padding-top: 72px;
+	background: var(--studio-white);
+	padding-top: 20px;
 	padding-bottom: 10px;
 	border-bottom: 1px solid var(--studio-gray-5);
 	margin-bottom: 26px;
 	padding-left: 10px;
-	position: sticky;
 
 	@include break-small {
 		padding-left: 0;
