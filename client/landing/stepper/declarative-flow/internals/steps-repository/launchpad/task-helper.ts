@@ -53,21 +53,11 @@ export function getEnhancedChecklist(
 				canvas: 'edit',
 		  } );
 
-	let planWarningText = displayGlobalStylesWarning
-		? translate(
-				'Your site contains custom colors that will only be visible once you upgrade to a Premium plan.'
-		  )
-		: '';
-
+	// TODO: We should update all references to isVideoPressFlowWithUnsupportedPlan once we are able to retrieve it from the endpoint
 	const isVideoPressFlowWithUnsupportedPlan =
 		isVideoPressFlow( flow ) && ! planHasFeature( productSlug as string, FEATURE_VIDEO_UPLOADS );
 
-	if ( isVideoPressFlowWithUnsupportedPlan ) {
-		planWarningText = translate(
-			'Upgrade to a plan with VideoPress support to upload your videos.'
-		);
-	}
-
+	// TODO: We should update all references to shouldDisplayWarning once we are able to retrieve it from the endpoint
 	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
 
 	checklist &&
@@ -126,7 +116,6 @@ export function getEnhancedChecklist(
 					break;
 				case 'plan_selected':
 					taskData = {
-						subtitle: planWarningText,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							if ( displayGlobalStylesWarning ) {
