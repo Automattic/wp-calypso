@@ -782,7 +782,7 @@ export class SiteSettingsFormGeneral extends Component {
 						{ this.blogAddress() }
 						{ this.languageOptions() }
 						{ this.Timezone() }
-						{ siteIsJetpack && this.WordPressVersion() }
+						{ this.WordPressVersion() }
 					</form>
 				</Card>
 
