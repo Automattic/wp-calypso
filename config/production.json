@@ -153,7 +153,7 @@
 		"subscription-management/comments-list-controls": false,
 		"subscription-management/sites-list-controls": false,
 		"themes/atomic-homepage-replace": true,
-		"themes/display-thank-you-page": false,
+		"themes/display-thank-you-page": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
 		"themes/theme-switch-persist-template": false,
