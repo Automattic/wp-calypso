@@ -1,7 +1,7 @@
 import { Page, Locator } from 'playwright';
 
 const selectors = {
-	exitButton: `a[aria-label="Go back to the dashboard"]`,
+	exitButton: `a[aria-label="Go back to the Dashboard"]`,
 	templatePartsItem: 'button[id="/wp_template_part"]',
 	manageAllTemplatePartsItem: 'button:text("Manage all template parts")',
 	navigationScreenTitle: '.edit-site-sidebar-navigation-screen__title',
@@ -27,7 +27,9 @@ export class FullSiteEditorNavSidebarComponent {
 	 * Clicks the Dashboard menu link to exit the editor.
 	 */
 	async exit(): Promise< void > {
-		const exitButtonLocator = this.editor.locator( selectors.exitButton );
+		const exitButtonLocator = this.editor
+			.getByRole( 'region', { name: 'Navigation sidebar' } )
+			.locator( selectors.exitButton );
 		await exitButtonLocator.click();
 	}
 
@@ -44,7 +46,10 @@ export class FullSiteEditorNavSidebarComponent {
 	 */
 	async ensureNavigationTopLevel(): Promise< void > {
 		const waitForNavigationTopLevel = async () => {
-			await this.editor.locator( selectors.exitButton ).waitFor();
+			await this.editor
+				.getByRole( 'region', { name: 'Navigation sidebar' } )
+				.locator( selectors.exitButton )
+				.waitFor();
 		};
 
 		const headerLocator = this.editor.locator( selectors.navigationScreenTitle );
