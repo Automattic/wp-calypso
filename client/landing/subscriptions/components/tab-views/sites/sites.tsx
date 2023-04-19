@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice } from 'calypso/landing/subscriptions/components/notice';
@@ -14,11 +14,16 @@ const SortBy = SubscriptionManager.SiteSubscriptionsSortBy;
 
 const isListControlsEnabled = config.isEnabled( 'subscription-management/sites-list-controls' );
 
-const sortOptions: Option[] = [
-	{ value: SortBy.LastUpdated, label: 'Last updated' },
+const getSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[] => [
+	{ value: SortBy.LastUpdated, label: translate( 'Last updated' ) },
+	// todo: translate when we have agreed on the label
 	{ value: SortBy.DateSubscribed, label: 'Date subscribed' },
+	// todo: translate when we have agreed on the label
 	{ value: SortBy.SiteName, label: 'Site name' },
 ];
+
+const useSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[] =>
+	useMemo( () => getSortOptions( translate ), [ translate ] );
 
 const Sites = () => {
 	const translate = useTranslate();
@@ -30,6 +35,7 @@ const Sites = () => {
 		sortTerm,
 	} );
 	const { subscriptions, totalCount } = data ?? {};
+	const sortOptions = useSortOptions( translate );
 	// todo: translate when we have agreed on the error message
 	const errorMessage = error ? 'An error occurred while fetching your subscriptions.' : '';
 
