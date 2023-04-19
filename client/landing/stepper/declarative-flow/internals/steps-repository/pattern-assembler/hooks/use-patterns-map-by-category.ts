@@ -6,6 +6,10 @@ const usePatternsMapByCategory = ( patterns: Pattern[], categories: Category[] )
 		const categoriesMap: Record< string, Pattern[] > = {};
 
 		patterns.forEach( ( pattern ) => {
+			// Filter pattern with the meta assembler_waitlist because of rendering issues
+			if ( pattern.pattern_meta.assembler_waitlist ) {
+				return;
+			}
 			Object.keys( pattern.categories ).forEach( ( category ) => {
 				if ( ! categoriesMap[ category ] ) {
 					categoriesMap[ category ] = [];
