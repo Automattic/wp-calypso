@@ -46,6 +46,13 @@ body {
 	.subscriptions-manager {
 		&__list-actions-bar {
 			margin-bottom: 57px;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+
+			.subscription-manager__sort-controls {
+				margin-left: auto;
+			}
 		}
 	}
 

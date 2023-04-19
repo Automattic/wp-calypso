@@ -73,6 +73,20 @@ export const useStorageUsageText = (
 			);
 		}
 
+		if ( availableUnit === StorageUnits.Terabyte && availableUnitAmount % 1 !== 0 ) {
+			return translate(
+				'Using {{usedStorage}}%(usedGigabytes).1fGB{{/usedStorage}} of %(availableUnitAmount).2fTB',
+				'Using {{usedStorage}}%(usedGigabytes).1fGB{{/usedStorage}} of %(availableUnitAmount).2fTB',
+				{
+					count: usedGigabytes,
+					args: { usedGigabytes, availableUnitAmount },
+					comment:
+						'Must use unit abbreviation; describes used vs available storage amounts (e.g., Using 20.0GB of 1.01TB, Using 0.5GB of 2TB)',
+					components: { usedStorage: <span className="used-space__span" /> },
+				}
+			);
+		}
+
 		return translate(
 			'Using {{usedStorage}}%(usedGigabytes).1fGB{{/usedStorage}} of %(availableUnitAmount)dTB',
 			'Using {{usedStorage}}%(usedGigabytes).1fGB{{/usedStorage}} of %(availableUnitAmount)dTB',
@@ -150,10 +164,10 @@ export const useStorageText = ( storageInBytes: number ): TranslateResult | stri
 						} );
 					}
 
-					return translate( '%(storageInBytes).1fTB', {
+					return translate( '%(storageInBytes).2fTB', {
 						args: { storageInBytes: unitAmount },
 						comment:
-							'Must use unit abbreviation; describes an storage amounts with 1 decimal point (e.g., 1.5TB)',
+							'Must use unit abbreviation; describes an storage amounts with 2 decimal point (e.g., 1.50TB)',
 					} );
 			}
 		}

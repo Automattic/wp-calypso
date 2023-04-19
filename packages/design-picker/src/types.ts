@@ -81,6 +81,12 @@ export type DesignType =
 	| 'anchor-fm'
 	| 'assembler';
 
+export interface PreviewData {
+	site_title?: string;
+	site_tagline?: string;
+	site_logo_url?: string;
+}
+
 export interface Design {
 	slug: string;
 	title: string;
@@ -99,6 +105,7 @@ export interface Design {
 	software_sets?: SoftwareSet[];
 	is_bundled_with_woo_commerce?: boolean;
 	is_virtual?: boolean;
+	preview_data?: PreviewData;
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;

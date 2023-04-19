@@ -16,7 +16,11 @@ import OauthClientMasterbar from 'calypso/layout/masterbar/oauth-client';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { navigate } from 'calypso/lib/navigate';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isWooOAuth2Client,
+	isGravatarOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { isPartnerSignupQuery } from 'calypso/state/login/utils';
 import {
@@ -37,6 +41,7 @@ const LayoutLoggedOut = ( {
 	isJetpackWooCommerceFlow,
 	isJetpackWooDnaFlow,
 	isP2Login,
+	isGravatar,
 	wccomFrom,
 	masterbarIsHidden,
 	oauth2Client,
@@ -86,6 +91,7 @@ const LayoutLoggedOut = ( {
 		'is-jetpack-woo-dna-flow': isJetpackWooDnaFlow,
 		'is-wccom-oauth-flow': isWooOAuth2Client( oauth2Client ) && wccomFrom,
 		'is-p2-login': isP2Login,
+		'is-gravatar': isGravatar,
 	};
 
 	let masterbar = null;
@@ -100,8 +106,11 @@ const LayoutLoggedOut = ( {
 		} else if ( isWooOAuth2Client( oauth2Client ) && wccomFrom ) {
 			masterbar = null;
 		} else {
-			classes.dops = true;
-			classes[ oauth2Client.name ] = true;
+			if ( ! isGravatar ) {
+				classes.dops = true;
+				// Using .is-gravatar instead of .gravatar to avoid style conflicts with the Gravatar component
+				classes[ oauth2Client.name ] = true;
+			}
 
 			// Force masterbar for all Crowdsignal OAuth pages
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
@@ -214,16 +223,21 @@ export default withCurrentRoute(
 		const isPartnerSignupStart = currentRoute.startsWith( '/start/wpcc' );
 		const isJetpackWooDnaFlow = wooDnaConfig( getInitialQueryArguments( state ) ).isWooDnaFlow();
 		const isP2Login = 'login' === sectionName && 'p2' === currentQuery?.from;
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const isGravatar = isGravatarOAuth2Client( oauth2Client );
 		const isReskinLoginRoute =
 			currentRoute.startsWith( '/log-in' ) &&
 			! isJetpackLogin &&
 			! isP2Login &&
 			Boolean( currentQuery?.client_id ) === false;
-		const isWhiteLogin = isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart );
+		const isWhiteLogin =
+			isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart ) || isGravatar;
 		const noMasterbarForRoute =
-			isJetpackLogin || ( isWhiteLogin && ! isPartnerSignup ) || isJetpackWooDnaFlow || isP2Login;
+			isJetpackLogin ||
+			( isWhiteLogin && ! isPartnerSignup & ! isGravatar ) ||
+			isJetpackWooDnaFlow ||
+			isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;
-		const oauth2Client = getCurrentOAuth2Client( state );
 		const noMasterbarForSection =
 			! isWooOAuth2Client( oauth2Client ) &&
 			[ 'signup', 'jetpack-connect' ].includes( sectionName );
@@ -239,6 +253,7 @@ export default withCurrentRoute(
 			isJetpackWooCommerceFlow,
 			isJetpackWooDnaFlow,
 			isP2Login,
+			isGravatar,
 			wccomFrom,
 			masterbarIsHidden,
 			sectionGroup,

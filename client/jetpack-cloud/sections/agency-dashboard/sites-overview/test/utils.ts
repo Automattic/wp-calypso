@@ -38,7 +38,7 @@ describe( 'utils', () => {
 			backup: {
 				type: 'backup',
 				value: translate( 'Failed' ),
-				status: 'failed',
+				status: 'critical',
 			},
 			monitor: {
 				error: false,

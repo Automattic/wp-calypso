@@ -33527,6 +33527,7 @@ fsevents@^1.2.7:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-jest": "workspace:^"
     "@automattic/calypso-package-generator": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/color-studio": 2.5.0
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
@@ -33548,6 +33549,7 @@ fsevents@^1.2.7:
     "@babel/runtime": ^7.17.2
     "@bartekbp/typescript-checkstyle": ^5.0.0
     "@signal-noise/stylelint-scales": ^2.0.3
+    "@storybook/react": ^6.4.18
     "@testing-library/jest-dom": ^5.16.2
     "@types/cookie": ^0.4.1
     "@types/debug": ^4.1.7

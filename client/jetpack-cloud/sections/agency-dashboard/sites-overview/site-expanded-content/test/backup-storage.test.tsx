@@ -53,13 +53,17 @@ describe( 'BackupStorage component', () => {
 	);
 
 	it( 'renders empty content when backup is not supported on multisite', () => {
-		render( <BackupStorage site={ site } trackEvent={ mockTrackEvent } />, { wrapper: Wrapper } );
+		render( <BackupStorage site={ site } trackEvent={ mockTrackEvent } hasError={ false } />, {
+			wrapper: Wrapper,
+		} );
 		expect( screen.getByText( /backup not supported on multisite/i ) ).toBeInTheDocument();
 	} );
 
 	it( 'renders empty content when backup is not enabled', () => {
 		initialState.sites.items[ site.blog_id ].is_multisite = false;
-		render( <BackupStorage site={ site } trackEvent={ mockTrackEvent } />, { wrapper: Wrapper } );
+		render( <BackupStorage site={ site } trackEvent={ mockTrackEvent } hasError={ false } />, {
+			wrapper: Wrapper,
+		} );
 		expect( screen.getByText( /see your backup/i ) ).toBeInTheDocument();
 		fireEvent.click( screen.getByRole( 'button', { name: /add backup/i } ) );
 		expect( mockTrackEvent ).toHaveBeenCalledWith( 'expandable_block_backup_add_click' );
@@ -67,7 +71,9 @@ describe( 'BackupStorage component', () => {
 
 	it( 'renders BackupStorageContent when backup is enabled', async () => {
 		site.has_backup = true;
-		render( <BackupStorage site={ site } trackEvent={ mockTrackEvent } />, { wrapper: Wrapper } );
+		render( <BackupStorage site={ site } trackEvent={ mockTrackEvent } hasError={ false } />, {
+			wrapper: Wrapper,
+		} );
 		expect( screen.getByText( /latest backup/i ) ).toBeInTheDocument();
 		expect( screen.getByText( /activity log/i ) ).toHaveAttribute(
 			'href',
@@ -81,7 +87,9 @@ describe( 'BackupStorage component', () => {
 	it( 'renders empty content when backup has error', async () => {
 		site.has_backup = true;
 		site.latest_backup_status = 'backup_only_error';
-		render( <BackupStorage site={ site } trackEvent={ mockTrackEvent } />, { wrapper: Wrapper } );
+		render( <BackupStorage site={ site } trackEvent={ mockTrackEvent } hasError={ false } />, {
+			wrapper: Wrapper,
+		} );
 		expect( screen.getByText( /see your backup storage/i ) ).toBeInTheDocument();
 		const button = screen.getByRole( 'button', { name: /fix backup/i } );
 		fireEvent.click( button );

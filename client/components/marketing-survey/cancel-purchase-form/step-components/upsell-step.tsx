@@ -112,7 +112,7 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 	const currencyCode = useSelector( getCurrentUserCurrencyCode ) || 'USD';
 	const happyChat = useHappyChat();
 	const numberOfPluginsThemes = numberFormat( 50000, 0 );
-	const discountRate = '25%';
+	const discountRate = 25;
 	const couponCode = 'BIZWPC25';
 	const builtByURL = 'https://wordpress.com/built-by/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
@@ -187,15 +187,18 @@ export default function UpsellStep( { upsell, site, purchase, ...props }: StepPr
 					onDecline={ props.onDeclineUpsell }
 					image={ imgBusinessPlan }
 				>
-					{ translate(
-						'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com Business plan? ' +
-							'Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. ' +
-							'Claim a %(discountRate)s discount when you renew your Business plan today – {{b}}just enter the code %(couponCode)s at checkout.{{/b}}',
-						{
-							args: { numberOfPluginsThemes, discountRate, couponCode },
-							components: { b: <strong /> },
-						}
-					) }
+					{
+						/* translators: %(discountRate)d%% is a discount percentage like 20% or 25%, followed by an escaped percentage sign %% */
+						translate(
+							'Did you know that you can now use over %(numberOfPluginsThemes)s third-party plugins and themes on the WordPress.com Business plan? ' +
+								'Whatever feature or design you want to add to your site, you’ll find a plugin or theme to get you there. ' +
+								'Claim a %(discountRate)d%% discount when you renew your Business plan today – {{b}}just enter the code %(couponCode)s at checkout.{{/b}}',
+							{
+								args: { numberOfPluginsThemes, discountRate, couponCode },
+								components: { b: <strong /> },
+							}
+						)
+					}
 				</Upsell>
 			);
 		case 'downgrade-monthly':

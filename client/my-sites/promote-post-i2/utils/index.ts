@@ -13,6 +13,7 @@ export const campaignStatus = {
 	ACTIVE: 'active',
 	CANCELED: 'canceled',
 	FINISHED: 'finished',
+	PROCESSING: 'processing',
 };
 
 export const getPostType = ( type: string ) => {
@@ -37,7 +38,7 @@ export const getCampaignStatusBadgeColor = ( status: string ) => {
 			return 'info-blue';
 		}
 		case campaignStatus.CREATED: {
-			return 'info-blue';
+			return 'warning';
 		}
 		case campaignStatus.REJECTED: {
 			return 'error';
@@ -52,11 +53,17 @@ export const getCampaignStatusBadgeColor = ( status: string ) => {
 			return 'error';
 		}
 		case campaignStatus.FINISHED: {
-			return 'info-purple';
+			return 'info-blue';
 		}
 		default:
 			return 'warning';
 	}
+};
+
+export const isCampaignFinished = ( status: string ) => {
+	return [ campaignStatus.CANCELED, campaignStatus.ACTIVE, campaignStatus.FINISHED ].includes(
+		status
+	);
 };
 
 export const getCampaignStatus = ( status: string ) => {
@@ -65,7 +72,7 @@ export const getCampaignStatus = ( status: string ) => {
 			return __( 'Scheduled' );
 		}
 		case campaignStatus.CREATED: {
-			return __( 'Pending review' );
+			return __( 'In moderation' );
 		}
 		case campaignStatus.REJECTED: {
 			return __( 'Rejected' );
@@ -81,6 +88,9 @@ export const getCampaignStatus = ( status: string ) => {
 		}
 		case campaignStatus.FINISHED: {
 			return __( 'Finished' );
+		}
+		case campaignStatus.PROCESSING: {
+			return __( 'Creating' );
 		}
 		default:
 			return status;
@@ -200,6 +210,13 @@ export const getCampaignEstimatedImpressions = ( displayDeliveryEstimate: string
 	}
 	const [ minEstimate, maxEstimate ] = displayDeliveryEstimate.split( ':' );
 	return `${ ( +minEstimate ).toLocaleString() } - ${ ( +maxEstimate ).toLocaleString() }`;
+};
+
+export const formatNumber = ( number: number ) => {
+	if ( ! number ) {
+		return '-';
+	}
+	return number.toLocaleString();
 };
 
 export const canCancelCampaign = ( status: string ) => {
