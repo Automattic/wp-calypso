@@ -8,7 +8,7 @@ import {
 export const initialState = {
 	hasFetchedStagingSitesList: false,
 	isFetchingStagingSitesList: false,
-	stagingSitesList: [],
+	sites: [],
 };
 
 export const stagingSitesList = ( state = initialState, action: AnyAction ) => {
@@ -25,7 +25,7 @@ export const stagingSitesList = ( state = initialState, action: AnyAction ) => {
 				...state,
 				hasFetchedStagingSitesList: true,
 				isFetchingStagingSitesList: false,
-				stagingSitesList: action.stagingSitesList,
+				sites: action.stagingSitesList,
 			};
 
 		case JETPACK_BACKUP_STAGING_LIST_REQUEST_FAILURE:
