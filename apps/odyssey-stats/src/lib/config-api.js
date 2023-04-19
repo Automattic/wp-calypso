@@ -1,5 +1,5 @@
 /**
- * The config package is to provide a comaptible way to access config data exactly like `@automattic/calypso-config`.
+ * The config package is to provide a compatible way to access config data exactly like `@automattic/calypso-config`.
  *
  * - The package supports custom config data source, which is useful for Odyssey Apps.
  * - Restored feature flag gating for Odyssey Apps.
