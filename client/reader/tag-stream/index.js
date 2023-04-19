@@ -3,7 +3,6 @@ import { startsWith } from 'lodash';
 import page from 'page';
 import { makeLayout, redirectLoggedOutToSignup, render as clientRender } from 'calypso/controller';
 import { sidebar, updateLastRoute } from 'calypso/reader/controller';
-import { fetchTrendingTags } from 'calypso/reader/tags/controller';
 import { tagListing } from './controller';
 
 const redirectHashtaggedTags = ( context, next ) => {
@@ -27,7 +26,6 @@ export default function () {
 		redirectToSignup,
 		updateLastRoute,
 		sidebar,
-		fetchTrendingTags,
 		tagListing,
 		makeLayout,
 		clientRender

@@ -460,7 +460,7 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamKey, tag, trendingTags } = this.props;
+		const { translate, forcePlaceholders, lastPage, streamKey, tag } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -502,13 +502,11 @@ class ReaderStream extends Component {
 				/>
 			);
 
-			let sidebarContent;
-			if ( path.startsWith( '/tag/' ) ) {
-				console.log( trendingTags );
-				sidebarContent = <ReaderTagSidebar trendingTags={ trendingTags } tag={ tag } />;
-			} else {
-				sidebarContent = <ReaderListFollowedSites path={ path } />;
-			}
+			const sidebarContent = path.startsWith( '/tag/' ) ? (
+				<ReaderTagSidebar tag={ tag } />
+			) : (
+				<ReaderListFollowedSites path={ path } />
+			);
 
 			if ( excludesSidebar.includes( streamType ) ) {
 				body = bodyContent;
