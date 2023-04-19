@@ -4,6 +4,7 @@ import {
 	isJetpackPlan,
 	isJetpackProduct,
 	JETPACK_LEGACY_PLANS,
+	PRODUCT_AKISMET_FREE,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -56,14 +57,19 @@ function PurchaseMetaExpiration( {
 	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled ?? false;
 	const isJetpackPurchaseUsingPrimaryCancellationFlow =
 		isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' );
-	const hideAutoRenew =
-		purchase &&
-		JETPACK_LEGACY_PLANS.some( ( plan ) => plan === purchase.productSlug ) &&
-		! isRenewable( purchase );
 
-	if ( ! purchase || isDomainTransfer( purchase ) || purchase?.isInAppPurchase ) {
+	if (
+		! purchase ||
+		isDomainTransfer( purchase ) ||
+		purchase?.isInAppPurchase ||
+		PRODUCT_AKISMET_FREE === purchase?.productSlug
+	) {
 		return null;
 	}
+
+	const hideAutoRenew =
+		JETPACK_LEGACY_PLANS.some( ( plan ) => plan === purchase.productSlug ) &&
+		! isRenewable( purchase );
 
 	if ( isRenewable( purchase ) && ! isExpired( purchase ) ) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
