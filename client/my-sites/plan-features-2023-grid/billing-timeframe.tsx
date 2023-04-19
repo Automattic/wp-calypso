@@ -142,7 +142,7 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 		);
 	}
 
-	return <div style={ { textAlign: 'left', minWidth: '55px' } }>{ perMonthDescription }</div>;
+	return <div>{ perMonthDescription }</div>;
 };
 
 export default localize( PlanFeatures2023GridBillingTimeframe );
