@@ -18,8 +18,8 @@ const isResurrected = ( lastSeen ) => {
 };
 
 const TrackResurrections = () => {
-	const userSettings = useSelector( getUserSettings ) ?? {};
-	const lastSeen = userSettings?.last_admin_activity_timestamp || Date.now();
+	const userSettings = useSelector( getUserSettings ) || {};
+	const lastSeen = userSettings.last_admin_activity_timestamp || Date.now();
 
 	const isFetching = useSelector( isFetchingUserSettings );
 
