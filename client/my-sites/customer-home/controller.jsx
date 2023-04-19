@@ -47,14 +47,15 @@ export async function maybeRedirect( context, next ) {
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
 
 	try {
-		const { launchpad_screen, site_intent: siteIntentOption } = await fetchLaunchpad( slug );
+		const { launchpad_screen: launchpadScreenOption, site_intent: siteIntentOption } =
+			await fetchLaunchpad( slug );
 		const { checklist: launchpadChecklist } = await fetchLaunchpadChecklist(
 			slug,
 			siteIntentOption
 		);
 
 		if (
-			launchpad_screen === 'full' &&
+			launchpadScreenOption === 'full' &&
 			! areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched )
 		) {
 			// The new stepper launchpad onboarding flow isn't registered within the "page"
