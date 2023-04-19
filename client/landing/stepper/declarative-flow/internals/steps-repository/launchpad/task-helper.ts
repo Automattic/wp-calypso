@@ -8,14 +8,13 @@ import { isNewsletterFlow } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { translate } from 'i18n-calypso';
 import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
+import { LaunchpadChecklist, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 export function getEnhancedChecklist(
@@ -26,22 +25,26 @@ export function getEnhancedChecklist(
 	displayGlobalStylesWarning: boolean,
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow?: string | null,
-	isEmailVerified = false,
-	checklistStatuses: LaunchpadStatuses = {}
+	isEmailVerified = false
 ) {
 	const enhancedChecklist: LaunchpadChecklist = [];
 	const productSlug = site?.plan?.product_slug;
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
+	const siteLaunchCompleted = Boolean(
+		checklist.find( ( task ) => task.id === 'site_launched' )?.completed
+	);
 
-	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
+	const videoPressUploadCompleted = Boolean(
+		checklist.find( ( task ) => task.id === 'video_uploaded' )?.completed
+	);
 
 	// TODO: We should update all references to mustVerifyEmailBeforePosting and isEmailVerified once we are able to retrieve it from the endpoint
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
 	const homePageId = site?.options?.page_on_front;
 	// send user to Home page editor, fallback to FSE if page id is not known
+	// TODO: We should update all references to launchpadUploadVideoLink once we are able to retrieve it from the endpoint
 	const launchpadUploadVideoLink = homePageId
 		? `/page/${ siteSlug }/${ homePageId }`
 		: addQueryArgs( `/site-editor/${ siteSlug }`, {
@@ -61,7 +64,6 @@ export function getEnhancedChecklist(
 			switch ( task.id ) {
 				case 'setup_free':
 					taskData = {
-						title: translate( 'Personalize your site' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -231,18 +233,9 @@ export function getEnhancedChecklist(
 						},
 					};
 					break;
-				case 'videopress_setup':
-					taskData = {
-						completed: true,
-						disabled: true,
-						title: translate( 'Set up your video site' ),
-					};
-					break;
 				case 'videopress_upload':
 					taskData = {
-						title: translate( 'Upload your first video' ),
 						actionUrl: launchpadUploadVideoLink,
-						completed: videoPressUploadCompleted,
 						disabled: isVideoPressFlowWithUnsupportedPlan || videoPressUploadCompleted,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -252,7 +245,6 @@ export function getEnhancedChecklist(
 					break;
 				case 'videopress_launched':
 					taskData = {
-						title: translate( 'Launch site' ),
 						completed: siteLaunchCompleted,
 						disabled: ! videoPressUploadCompleted,
 						actionDispatch: () => {
@@ -280,11 +272,9 @@ export function getEnhancedChecklist(
 					break;
 				case 'domain_upsell':
 					taskData = {
-						title: translate( 'Choose a domain' ),
-						completed: domainUpsellCompleted,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
-							const destinationUrl = domainUpsellCompleted
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							const destinationUrl = task.completed
 								? `/domains/manage/${ siteSlug }`
 								: addQueryArgs( '/setup/domain-upsell/domains', {
 										siteSlug,
@@ -293,7 +283,6 @@ export function getEnhancedChecklist(
 								  } );
 							window.location.assign( destinationUrl );
 						},
-						badgeText: domainUpsellCompleted ? '' : translate( 'Upgrade plan' ),
 					};
 					break;
 				case 'verify_email':
@@ -305,13 +294,6 @@ export function getEnhancedChecklist(
 			enhancedChecklist.push( { ...task, ...taskData } );
 		} );
 	return enhancedChecklist;
-}
-
-function isDomainUpsellCompleted(
-	site: SiteDetails | null,
-	checklistStatuses: LaunchpadStatuses
-): boolean {
-	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
 }
 
 // Records a generic task click Tracks event
