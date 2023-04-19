@@ -106,4 +106,21 @@ $barDarkColor: var(--color-primary-60);
 			font-weight: 600;
 		}
 	}
+
+	.stats__empty-state {
+		.empty-state-card {
+			padding: 16px;
+			border: 1px solid var(--studio-gray-5);
+			box-shadow: none;
+		}
+
+		.empty-state-card-heading {
+			font-size: $font-body-large;
+		}
+
+		.empty-state-card-info {
+			margin: 8px 0;
+			color: var(--studio-gray-60);
+		}
+	}
 }

@@ -5,6 +5,7 @@ import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
+import StatsEmptyState from 'calypso/my-sites/stats/stats-empty-state';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import useVisitsQuery from '../hooks/use-visits-query';
 
@@ -55,11 +56,13 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 					clickHandler={ null }
 				/>
 			</div>
-			{ ( isLoading || ! ( chartData?.length > 0 ) ) && (
-				<StatsModulePlaceholder className="is-chart" isLoading={ true } />
-			) }
-			{ chartData?.length > 0 && (
-				<Chart barClick={ barClick } data={ chartData } minBarWidth={ 35 } />
+			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading={ true } /> }
+			{ ! isLoading && (
+				<Chart barClick={ barClick } data={ chartData } minBarWidth={ 35 }>
+					<StatsEmptyState
+						infoText={ translate( 'There was no data recorded during the selected time period.' ) }
+					/>
+				</Chart>
 			) }
 		</div>
 	);

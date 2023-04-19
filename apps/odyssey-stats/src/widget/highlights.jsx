@@ -65,9 +65,7 @@ function TopColumn( {
 			<label className="stats-widget-highlights-card__title">{ title }</label>
 			{ items.length === 0 && (
 				<p className="stats-widget-highlights-card__empty">
-					{ isLoading
-						? `${ translate( 'Loading' ) }...`
-						: translate( 'Sorry, nothing to report.' ) }
+					{ isLoading ? `${ translate( 'Loading' ) }...` : translate( 'No data to show' ) }
 				</p>
 			) }
 			{ items.length > 0 && (
