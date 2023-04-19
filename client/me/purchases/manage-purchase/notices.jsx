@@ -5,6 +5,7 @@ import {
 	isPlan,
 	isDomainRegistration,
 	isMonthly,
+	PRODUCT_AKISMET_FREE,
 } from '@automattic/calypso-products';
 import { localize } from 'i18n-calypso';
 import { isEmpty, merge, minBy } from 'lodash';
@@ -265,6 +266,7 @@ class PurchaseNotice extends Component {
 	};
 
 	renderPurchaseExpiringNotice() {
+		const EXCLUDED_PRODUCTS = [ 'ecommerce-trial-bundle-monthly', PRODUCT_AKISMET_FREE ];
 		const {
 			moment,
 			purchase,
@@ -290,7 +292,7 @@ class PurchaseNotice extends Component {
 
 		if (
 			! isExpiring( currentPurchase ) ||
-			'ecommerce-trial-bundle-monthly' === currentPurchase?.productSlug
+			EXCLUDED_PRODUCTS.includes( currentPurchase?.productSlug )
 		) {
 			return null;
 		}

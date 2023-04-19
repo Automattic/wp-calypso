@@ -16,6 +16,7 @@
 	background: var(--jetpack-white-off);
 
 	label {
+		cursor: auto;
 		font-family: $font-sf-pro-display;
 	}
 }
@@ -31,4 +32,7 @@
 
 .stats-widget-footer {
 	margin-top: 24px;
+	a {
+		display: inline-block;
+	}
 }

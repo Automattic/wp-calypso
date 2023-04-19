@@ -349,6 +349,8 @@ import {
 	FEATURE_RECOMMEND_ADD_ONS,
 	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
 	FEATURE_MIN_MAX_ORDER_QUANTITY,
+	PLAN_WOOEXPRESS_PLUS,
+	TYPE_WOO_EXPRESS_PLUS,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -1380,9 +1382,15 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PRO,
 	getTitle: () => i18n.translate( 'WordPress Pro' ),
+	getTagline: () =>
+		i18n.translate(
+			'This plan gives you access to our most powerful features at an affordable price for an unmatched value you won’t get anywhere else. No longer available to new users.'
+		),
 	getDescription: () =>
 		i18n.translate(
-			'Unlock the full power of WordPress with plugins, custom themes and much more.'
+			'You’ve got our best deal on hosting! ' +
+				'Your Pro plan includes access to all the most popular features WordPress.com has to offer, including premium themes and access to over 50,000 plugins. ' +
+				'As an existing customer, you can keep your site on this plan as long as your subscription remains active.'
 		),
 	getSubTitle: () => i18n.translate( 'Unlimited features. Unbeatable value.' ),
 	getPlanCompareFeatures: () => [
@@ -1437,6 +1445,14 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_BACKUPS,
 	],
+	getPlanCancellationDescription: () =>
+		i18n.translate(
+			'Heads up — you are currently on a legacy plan that is no longer available for new subscribers. ' +
+				'Your Pro plan includes access to all the most popular features WordPress.com has to offer, ' +
+				'including premium themes and access to over 50,000 plugins. As an existing Pro plan subscriber, ' +
+				'you can keep your site on this legacy plan as long as your subscription remains active. ' +
+				'If canceled, the WordPress.com Pro plan can no longer be added to your account.'
+		),
 	getCancellationFeatureList: (): CancellationFeatureLists => ( {
 		monthly: {
 			featureList: [
@@ -1468,6 +1484,21 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 			andMore: true,
 		},
 	} ),
+} );
+
+// The following is not a real plan, we are adding it here so that
+// Woo Express Plus gets its own column in the plans grid.
+const getPlanWooExpressPlusDetails = (): IncompleteWPcomPlan => ( {
+	...getDotcomPlanDetails(),
+	group: GROUP_WPCOM,
+	type: TYPE_WOO_EXPRESS_PLUS,
+	getTitle: () => i18n.translate( 'Plus' ),
+	getPlanTagline: () =>
+		i18n.translate( 'For fast-growing businesses that need access to the most powerful tools.' ),
+	getDescription: () => '',
+	get2023PricingGridSignupWpcomFeatures: () => [],
+	get2023PricingGridSignupJetpackFeatures: () => [],
+	get2023PricingGridSignupStorageOptions: () => [],
 } );
 
 // The following is not a real plan, we are adding it here so that
@@ -2367,6 +2398,15 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1056,
 		getStoreSlug: () => PLAN_WOOEXPRESS_SMALL,
 		getPathSlug: () => 'wooexpress-small-yearly',
+	},
+
+	// Not a real plan. This is used to show the Plus offering in the Woo Express plans grid
+	[ PLAN_WOOEXPRESS_PLUS ]: {
+		...getPlanWooExpressPlusDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: () => '',
+		getProductId: () => 0,
+		getStoreSlug: () => PLAN_WOOEXPRESS_PLUS,
 	},
 
 	// Not a real plan. This is used to show the Enterprise (VIP) offering in

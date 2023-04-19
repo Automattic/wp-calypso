@@ -7,7 +7,8 @@ import './styles.scss';
 
 const SiteSubscriptionsList = () => {
 	const translate = useTranslate();
-	const { data: sites, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery();
+	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery();
+	const { subscriptions, totalCount } = data ?? {};
 
 	if ( error ) {
 		// todo: translate when we have agreed on the error message
@@ -18,11 +19,11 @@ const SiteSubscriptionsList = () => {
 		return <Spinner />;
 	}
 
-	if ( ! sites?.length ) {
+	if ( ! totalCount ) {
 		return <Notice type="warning">{ translate( 'You are not subscribed to any sites.' ) }</Notice>;
 	}
 
-	return <SiteList sites={ sites } />;
+	return <SiteList sites={ subscriptions } />;
 };
 
 export default SiteSubscriptionsList;

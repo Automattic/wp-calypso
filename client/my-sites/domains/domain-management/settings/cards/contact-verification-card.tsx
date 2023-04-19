@@ -128,6 +128,7 @@ const ContactVerificationCard: FunctionComponent< Props > = ( props ) => {
 			return;
 		}
 
+		setSubmitting( true );
 		const formData: [ string, File, string ][] = [];
 		[ ...selectedFiles ].forEach( ( file: File ) => {
 			formData.push( [ 'files[]', file, file.name ] );

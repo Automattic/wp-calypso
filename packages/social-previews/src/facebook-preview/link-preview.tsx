@@ -1,14 +1,12 @@
 import { __ } from '@wordpress/i18n';
-import { useCallback, useState } from 'react';
-import { TYPE_ARTICLE } from '../constants';
-import { baseDomain, facebookTitle, facebookDescription, facebookCustomText } from './helpers';
+import { TYPE_ARTICLE, PORTRAIT_MODE } from '../constants';
+import CustomText from './custom-text';
+import { baseDomain, facebookTitle, facebookDescription } from './helpers';
+import useImage from './hooks/use-image-hook';
 import FacebookPostActions from './post/actions';
 import FacebookPostHeader from './post/header';
 import FacebookPostIcon from './post/icons';
 import type { FacebookPreviewProps } from './types';
-
-const LANDSCAPE_MODE = 'landscape';
-const PORTRAIT_MODE = 'portrait';
 
 const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 	url,
@@ -19,36 +17,27 @@ const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 	customText,
 	type,
 } ) => {
-	const [ mode, setMode ] = useState( LANDSCAPE_MODE );
+	const [ mode, isLoadingImage, imgProps ] = useImage();
 	const isArticle = type === TYPE_ARTICLE;
 	const portraitMode = ( isArticle && ! image ) || mode === PORTRAIT_MODE;
 	const modeClass = `is-${ portraitMode ? 'portrait' : 'landscape' }`;
-
-	const handleImageLoad = useCallback(
-		( { target } ) =>
-			setMode( target.naturalWidth > target.naturalHeight ? LANDSCAPE_MODE : PORTRAIT_MODE ),
-		[ setMode ]
-	);
 
 	return (
 		<div className="facebook-preview__post">
 			<FacebookPostHeader user={ user } />
 			<div className="facebook-preview__content">
-				{ customText && (
-					<p className="facebook-preview__custom-text">{ facebookCustomText( customText ) }</p>
-				) }
-				<div className={ `facebook-preview__body ${ modeClass }` }>
+				{ customText && <CustomText text={ customText } url={ url } /> }
+				<div
+					className={ `facebook-preview__body ${ modeClass } ${
+						image && isLoadingImage ? 'is-loading' : ''
+					}` }
+				>
 					{ ( image || isArticle ) && (
 						<div
 							className={ `facebook-preview__image ${ image ? '' : 'is-empty' } ${ modeClass }` }
 						>
-							{ image && (
-								<img
-									alt={ __( 'Facebook Preview Thumbnail', 'facebook-preview' ) }
-									src={ image }
-									onLoad={ handleImageLoad }
-								/>
-							) }
+							{ /* eslint-disable jsx-a11y/alt-text */ }
+							{ image && <img src={ image } { ...imgProps } /> }
 						</div>
 					) }
 					<div className="facebook-preview__text">

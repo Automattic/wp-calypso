@@ -38,9 +38,14 @@ async function callApi< ReturnType >( {
 		throw new Error( 'Subkey not found' );
 	}
 
+	const apiPath =
+		apiVersion === '2'
+			? `https://public-api.wordpress.com/wpcom/v2${ path }`
+			: `https://public-api.wordpress.com/rest/v${ apiVersion }${ path }`;
+
 	return apiFetch( {
 		global: true,
-		path: `https://public-api.wordpress.com/rest/v${ apiVersion }${ path }`,
+		path: apiPath,
 		apiVersion,
 		method,
 		body: method === 'POST' ? JSON.stringify( body ) : undefined,

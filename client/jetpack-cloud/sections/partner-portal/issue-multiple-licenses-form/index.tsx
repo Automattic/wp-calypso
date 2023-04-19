@@ -146,6 +146,8 @@ export default function IssueMultipleLicensesForm( {
 
 	const selectedSiteDomain = selectedSite?.domain;
 
+	const selectedLicenseCount = selectedProductSlugs.length;
+
 	return (
 		<div className="issue-multiple-licenses-form">
 			{ isLoadingProducts && <div className="issue-multiple-licenses-form__placeholder" /> }
@@ -168,15 +170,22 @@ export default function IssueMultipleLicensesForm( {
 						</p>
 						<div className="issue-multiple-licenses-form__controls">
 							<TotalCost />
-							<Button
-								primary
-								className="issue-multiple-licenses-form__select-license"
-								disabled={ ! selectedProductSlugs.length }
-								busy={ isLoading }
-								onClick={ issueLicenses }
-							>
-								{ translate( 'Select License' ) }
-							</Button>
+							{ selectedLicenseCount > 0 && (
+								<Button
+									primary
+									className="issue-multiple-licenses-form__select-license"
+									busy={ isLoading }
+									onClick={ issueLicenses }
+								>
+									{ translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
+										context: 'button label',
+										count: selectedLicenseCount,
+										args: {
+											numLicenses: selectedLicenseCount,
+										},
+									} ) }
+								</Button>
+							) }
 						</div>
 					</div>
 					<div className="issue-multiple-licenses-form__bottom">
