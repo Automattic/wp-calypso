@@ -48,6 +48,7 @@ module.exports = function storybookDefaultConfig( {
 		stories: stories && stories.length ? stories : [ '../src/**/*.stories.{js,jsx,ts,tsx}' ],
 		addons: [
 			'@storybook/addon-actions',
+			'@storybook/addon-controls',
 			'@storybook/addon-viewport',
 			'@storybook/preset-scss',
 		],
