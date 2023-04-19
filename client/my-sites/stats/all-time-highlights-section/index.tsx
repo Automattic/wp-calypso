@@ -144,7 +144,7 @@ export default function AllTimeHighlightsSection( {
 				},
 			],
 		};
-	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal ] );
+	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal, userLocale ] );
 
 	const mobileCards = (
 		<div className="highlight-cards-mobile">
