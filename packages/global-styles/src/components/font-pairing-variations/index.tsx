@@ -16,7 +16,7 @@ import './style.scss';
 interface FontPairingVariationProps {
 	fontPairingVariation: GlobalStylesObject;
 	isActive: boolean;
-	composite?: unknown;
+	composite?: Record< string, unknown >;
 	onSelect: () => void;
 }
 

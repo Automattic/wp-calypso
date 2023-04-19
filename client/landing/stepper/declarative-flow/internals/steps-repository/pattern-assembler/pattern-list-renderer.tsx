@@ -14,7 +14,7 @@ interface PatternListItemProps {
 	isFirst: boolean;
 	isShown: boolean;
 	isSelected?: boolean;
-	composite?: unknown;
+	composite?: Record< string, unknown >;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
 
@@ -24,7 +24,7 @@ interface PatternListRendererProps {
 	selectedPattern: Pattern | null;
 	activeClassName: string;
 	emptyPatternText?: string;
-	composite?: unknown;
+	composite?: Record< string, unknown >;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
 

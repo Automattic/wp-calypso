@@ -16,7 +16,7 @@ import './style.scss';
 interface ColorPaletteVariationProps {
 	colorPaletteVariation: GlobalStylesObject;
 	isActive: boolean;
-	composite?: unknown;
+	composite?: Record< string, unknown >;
 	onSelect: () => void;
 }
 

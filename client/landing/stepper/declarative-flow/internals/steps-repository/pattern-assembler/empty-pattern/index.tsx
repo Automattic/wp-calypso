@@ -7,7 +7,7 @@ interface Props {
 	className?: string;
 	text: string;
 	isSelected?: boolean;
-	composite?: unknown;
+	composite?: Record< string, unknown >;
 	onSelect: () => void;
 }
 
