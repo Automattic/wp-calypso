@@ -1,7 +1,7 @@
 import { comment, Icon, paragraph, people, postContent, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import HighlightCard from './count-comparison-card';
+import CountComparisonCard from './count-comparison-card';
 import './style.scss';
 
 type AnnualHighlightCardsProps = {
@@ -50,31 +50,31 @@ export default function AnnualHighlightCards( {
 			</div>
 
 			<div className="highlight-cards-list">
-				<HighlightCard
+				<CountComparisonCard
 					heading={ translate( 'Posts' ) }
 					icon={ <Icon icon={ postContent } /> }
 					count={ counts?.posts ?? null }
 					showValueTooltip
 				/>
-				<HighlightCard
+				<CountComparisonCard
 					heading={ translate( 'Words' ) }
 					icon={ <Icon icon={ paragraph } /> }
 					count={ counts?.words ?? null }
 					showValueTooltip
 				/>
-				<HighlightCard
+				<CountComparisonCard
 					heading={ translate( 'Likes' ) }
 					icon={ <Icon icon={ starEmpty } /> }
 					count={ counts?.likes ?? null }
 					showValueTooltip
 				/>
-				<HighlightCard
+				<CountComparisonCard
 					heading={ translate( 'Comments' ) }
 					icon={ <Icon icon={ comment } /> }
 					count={ counts?.comments ?? null }
 					showValueTooltip
 				/>
-				<HighlightCard
+				<CountComparisonCard
 					heading={ translate( 'Subscribers' ) }
 					icon={ <Icon icon={ people } /> }
 					count={ counts?.followers ?? null }

@@ -5,7 +5,7 @@ import { useState, useRef } from 'react';
 import { eye } from '../icons';
 import Popover from '../popover';
 import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
-import HighlightCard from './count-comparison-card';
+import CountComparisonCard from './count-comparison-card';
 import './style.scss';
 
 type WeeklyHighlightCardsProps = {
@@ -87,7 +87,7 @@ export default function WeeklyHighlightCards( {
 			</h3>
 
 			<div className="highlight-cards-list">
-				<HighlightCard
+				<CountComparisonCard
 					heading={ translate( 'Visitors' ) }
 					icon={ <Icon icon={ people } /> }
 					count={ counts?.visitors ?? null }
@@ -95,7 +95,7 @@ export default function WeeklyHighlightCards( {
 					showValueTooltip={ showValueTooltip }
 					onClick={ onClickVisitors }
 				/>
-				<HighlightCard
+				<CountComparisonCard
 					heading={ translate( 'Views' ) }
 					icon={ <Icon icon={ eye } /> }
 					count={ counts?.views ?? null }
@@ -103,7 +103,7 @@ export default function WeeklyHighlightCards( {
 					showValueTooltip={ showValueTooltip }
 					onClick={ onClickViews }
 				/>
-				<HighlightCard
+				<CountComparisonCard
 					heading={ translate( 'Likes' ) }
 					icon={ <Icon icon={ starEmpty } /> }
 					count={ counts?.likes ?? null }
@@ -111,7 +111,7 @@ export default function WeeklyHighlightCards( {
 					showValueTooltip={ showValueTooltip }
 					onClick={ onClickLikes }
 				/>
-				<HighlightCard
+				<CountComparisonCard
 					heading={ translate( 'Comments' ) }
 					icon={ <Icon icon={ commentContent } /> }
 					count={ counts?.comments ?? null }
