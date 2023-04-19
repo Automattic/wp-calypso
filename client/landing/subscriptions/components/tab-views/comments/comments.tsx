@@ -8,7 +8,7 @@ import { Notice } from 'calypso/landing/subscriptions/components/notice';
 import useSearch from 'calypso/landing/subscriptions/hooks/use-search';
 import TabView from '../tab-view';
 
-const isSearchEnabled = config.isEnabled( 'subscription-management/posts-search' );
+const isListControlsEnabled = config.isEnabled( 'subscription-management/sites-list-controls' );
 
 const Comments = () => {
 	const translate = useTranslate();
@@ -31,7 +31,7 @@ const Comments = () => {
 
 	return (
 		<TabView errorMessage={ errorMessage } isLoading={ isLoading }>
-			{ isSearchEnabled && (
+			{ isListControlsEnabled && (
 				<div className="subscriptions-manager__list-actions-bar">
 					<SearchInput
 						// todo: translate when we have agreed on the placeholder
