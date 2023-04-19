@@ -171,7 +171,15 @@ class JestEnvironmentPlaywright extends NodeEnvironment {
 						// Screenshots and video are saved per page, where numerous
 						// pages may exist within a context.
 						try {
-							await page.screenshot( { path: `${ mediaFilePath }.png`, timeout: env.TIMEOUT } );
+							await page.screenshot( {
+								path: `${ mediaFilePath }-fullpage.png`,
+								timeout: env.TIMEOUT,
+								fullPage: true,
+							} );
+							await page.screenshot( {
+								path: `${ mediaFilePath }.png`,
+								timeout: env.TIMEOUT,
+							} );
 						} catch ( error ) {
 							console.error(
 								`Error while capturing page (${ pageName }) screenshot. ` +

@@ -56,12 +56,28 @@ describe( '<SiteTable>', () => {
 				value: siteObj,
 				error: false,
 				type: 'site',
-				status: '',
+				status: 'active',
+			},
+			stats: {
+				type: 'stats',
+				status: 'active',
+				value: {
+					views: {
+						total: 0,
+						trend: 'up',
+						trend_change: 0,
+					},
+					visitors: {
+						total: 0,
+						trend: 'up',
+						trend_change: 0,
+					},
+				},
 			},
 			backup: {
 				type: 'backup',
 				value: translate( 'Failed' ),
-				status: 'failed',
+				status: 'critical',
 			},
 			monitor: {
 				error: false,
@@ -114,7 +130,7 @@ describe( '<SiteTable>', () => {
 	const queryClient = new QueryClient();
 
 	test( 'should render correctly and have href and status for each row', () => {
-		const { getByTestId } = render(
+		const { getByTestId, getByText } = render(
 			<Provider store={ store }>
 				<QueryClientProvider client={ queryClient }>
 					<SiteTable { ...props } />
@@ -124,22 +140,16 @@ describe( '<SiteTable>', () => {
 
 		const backupEle = getByTestId( `row-${ blogId }-backup` );
 		expect( backupEle.getAttribute( 'href' ) ).toEqual( `/backup/${ siteUrl }` );
-		expect( backupEle.getElementsByClassName( 'sites-overview__badge' )[ 0 ].textContent ).toEqual(
-			'Failed'
-		);
+		expect( getByText( /failed/i ) ).toBeInTheDocument();
 
 		const scanEle = getByTestId( `row-${ blogId }-scan` );
 		expect( scanEle.getAttribute( 'href' ) ).toEqual( `/scan/${ siteUrl }` );
-		expect( scanEle.getElementsByClassName( 'sites-overview__badge' )[ 0 ].textContent ).toEqual(
-			`${ scanThreats } Threats`
-		);
+		expect( getByText( `${ scanThreats } Threats` ) ).toBeInTheDocument();
 
 		const pluginEle = getByTestId( `row-${ blogId }-plugin` );
 		expect( pluginEle.getAttribute( 'href' ) ).toEqual(
 			`https://wordpress.com/plugins/updates/${ siteUrl }`
 		);
-		expect( pluginEle.getElementsByClassName( 'sites-overview__badge' )[ 0 ].textContent ).toEqual(
-			`${ pluginUpdates.length } Available`
-		);
+		expect( getByText( `${ pluginUpdates.length } Available` ) ).toBeInTheDocument();
 	} );
 } );

@@ -116,3 +116,34 @@ body.is-white-signup {
 		}
 	}
 }
+
+.signup .lean-domain-search {
+
+	.step-wrapper__header {
+		max-width: 50%;
+	}
+
+	.step-wrapper__content {
+		max-width: 50%;
+	}
+
+	.formatted-header__title {
+		max-width: 100%;
+		word-wrap: break-word;
+	}
+
+	.select-items__item-title {
+		max-width: 300px;
+		text-overflow: ellipsis;
+		overflow: hidden;
+	}
+
+	@media (max-width: 600px) {
+		.step-wrapper__header {
+			max-width: 100%;
+		}
+		.step-wrapper__content {
+			max-width: 100%;
+		}
+	}
+}

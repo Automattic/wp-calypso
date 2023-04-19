@@ -5,10 +5,18 @@ import type { UserSelect } from '../../user';
 const USER_STORE = registerUserStore( { client_id: '', client_secret: '' } );
 
 const useIsLoggedIn = () => {
-	return useSelect(
-		( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
 		[]
-	) as boolean;
+	);
+
+	return {
+		id: currentUser?.ID,
+		isLoggedIn: useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		),
+	};
 };
 
 export default useIsLoggedIn;

@@ -1,7 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
 import { showAtomicTransferDialog } from 'calypso/state/themes/actions/show-atomic-transfer-dialog';
@@ -75,6 +76,19 @@ export function activate(
 		}
 
 		/**
+		 * Check if the theme is a .org Theme and not provided by .com as well (as Premium themes)
+		 * and redirect it to the Marketplace theme installation page
+		 */
+		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
+		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
+		if ( isDotOrgTheme && ! isDotComTheme ) {
+			const siteSlug = getSiteSlug( getState(), siteId );
+
+			dispatch( productToBeInstalled( themeId, siteSlug ) );
+			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
+		}
+
+		/**
 		 * Check if its a free or premium dotcom theme, if so, dispatch the activate action
 		 * and redirect to the Marketplace Thank You Page.
 		 *
@@ -86,7 +100,6 @@ export function activate(
 		 */
 		const isExternallyManaged = isExternallyManagedTheme( getState(), themeId );
 		const isWooTheme = doesThemeBundleSoftwareSet( getState(), themeId );
-		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		if (
 			isDotComTheme &&
 			isEnabled( 'themes/display-thank-you-page' ) &&

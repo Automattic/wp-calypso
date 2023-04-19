@@ -114,7 +114,7 @@ export type Flow = {
 export type StepProps = {
 	navigation: NavigationControls;
 	stepName: string;
-	flow: string | null;
+	flow: string;
 	/**
 	 * If this is a step of a flow that extends another, pass the variantSlug of the variant flow, it can come handy.
 	 */

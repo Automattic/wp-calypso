@@ -64,7 +64,7 @@ class StatsNavigation extends Component {
 		return (
 			<div className={ wrapperClass }>
 				<SectionNav selectedText={ label }>
-					<NavTabs label="Stats" selectedText={ label }>
+					<NavTabs selectedText={ label }>
 						{ Object.keys( navItems )
 							.filter( this.isValidItem )
 							.map( ( item ) => {
@@ -87,7 +87,7 @@ class StatsNavigation extends Component {
 					{ isLegacy && showIntervals && (
 						<Intervals selected={ interval } pathTemplate={ pathTemplate } />
 					) }
-					<SubscribersCount />
+					{ ! config.isEnabled( 'stats/subscribers-section' ) && <SubscribersCount /> }
 				</SectionNav>
 				{ isLegacy && showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />

@@ -1,6 +1,12 @@
 import { FEATURE_VIDEO_UPLOADS, planHasFeature } from '@automattic/calypso-products';
 import { DEVICE_TYPES } from '@automattic/components';
-import { FREE_FLOW, NEWSLETTER_FLOW, BUILD_FLOW, WRITE_FLOW } from '@automattic/onboarding';
+import {
+	FREE_FLOW,
+	NEWSLETTER_FLOW,
+	BUILD_FLOW,
+	WRITE_FLOW,
+	isNewsletterFlow,
+} from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import WebPreview from 'calypso/components/web-preview/component';
@@ -19,9 +25,10 @@ const LaunchpadSitePreview = ( {
 	flow: string | null;
 } ) => {
 	const translate = useTranslate();
-	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 	const site = useSite();
+	const { globalStylesInUse } = usePremiumGlobalStyles( site?.ID );
 	const isInVideoPressFlow = isVideoPressFlow( flow );
+	const enableEditOverlay = ! isNewsletterFlow( flow );
 
 	let previewUrl = siteSlug ? 'https://' + siteSlug : null;
 	const devicesToShow: Device[] = [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];
@@ -67,7 +74,7 @@ const LaunchpadSitePreview = ( {
 			// hide cookies popup
 			preview: true,
 			do_preview_no_interactions: ! isInVideoPressFlow,
-			...( globalStylesInUse && shouldLimitGlobalStyles && { 'preview-global-styles': true } ),
+			...( globalStylesInUse && { 'preview-global-styles': true } ),
 		} );
 	}
 
@@ -106,7 +113,7 @@ const LaunchpadSitePreview = ( {
 				defaultViewportDevice={ defaultDevice }
 				devicesToShow={ devicesToShow }
 				showSiteAddressBar={ false }
-				enableEditOverlay
+				enableEditOverlay={ enableEditOverlay }
 			/>
 		</div>
 	);

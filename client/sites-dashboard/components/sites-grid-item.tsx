@@ -1,3 +1,4 @@
+import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
@@ -79,6 +80,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	const isP2Site = site.options?.is_wpforteams_site;
 	const isStagingSite = site.is_wpcom_staging_site;
 	const translatedStatus = useSiteLaunchStatusLabel( site );
+	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
 	const { ref, inView } = useInView( { triggerOnce: true } );
 
@@ -108,7 +110,9 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 							sizesAttr={ SIZES_ATTR }
 						/>
 					</ThumbnailLink>
-					{ site.plan?.expired && <SitesGridActionRenew site={ site } /> }
+					{ site.plan?.expired && (
+						<SitesGridActionRenew site={ site } hideRenewLink={ isECommerceTrialSite } />
+					) }
 				</>
 			}
 			primary={

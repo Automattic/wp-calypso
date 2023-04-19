@@ -357,12 +357,6 @@
 		white-space: normal;
 	}
 
-	.reader-post-card.is-gallery .reader-post-card__gallery-item:last-child {
-		@include breakpoint-deprecated( "<960px" ) {
-			display: block;
-		}
-	}
-
 	.reader-share__button-label,
 	.comment-button__label-status,
 	.like-button__label-status {

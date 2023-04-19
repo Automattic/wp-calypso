@@ -1,16 +1,17 @@
 import { Site } from '@automattic/data-stores';
 import {
 	ECOMMERCE_FLOW,
-	WOOEXPRESS_FLOW,
-	isLinkInBioFlow,
-	addPlanToCart,
-	createSiteWithCart,
-	isFreeFlow,
-	isMigrationFlow,
-	isCopySiteFlow,
-	isWooExpressFlow,
 	StepContainer,
+	WOOEXPRESS_FLOW,
+	addPlanToCart,
 	addProductsToCart,
+	createSiteWithCart,
+	isCopySiteFlow,
+	isFreeFlow,
+	isLinkInBioFlow,
+	isMigrationFlow,
+	isStartWritingFlow,
+	isWooExpressFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -86,10 +87,11 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	// These flows default to "Coming Soon"
 	if (
-		isLinkInBioFlow( flow ) ||
-		isFreeFlow( flow ) ||
-		isMigrationFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
+		isFreeFlow( flow ) ||
+		isLinkInBioFlow( flow ) ||
+		isMigrationFlow( flow ) ||
+		isStartWritingFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;

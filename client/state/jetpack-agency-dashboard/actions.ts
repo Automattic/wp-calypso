@@ -3,6 +3,7 @@ import { AnyAction } from 'redux';
 import {
 	AgencyDashboardFilterOption,
 	PurchasedProductsInfo,
+	DashboardSortInterface,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import './init';
@@ -27,7 +28,7 @@ export const updateDashboardURLQueryArgs = ( {
 	search,
 }: {
 	filter?: AgencyDashboardFilterOption[];
-	sort?: { field: string; direction: string };
+	sort?: DashboardSortInterface;
 	search?: string;
 } ) => {
 	const params = new URLSearchParams( window.location.search );
@@ -60,7 +61,7 @@ export const updateFilter = ( filter: AgencyDashboardFilterOption[] ) => () => {
 	updateDashboardURLQueryArgs( { filter } );
 };
 
-export const updateSort = ( sort: { field: string; direction: string } ) => () => {
+export const updateSort = ( sort: DashboardSortInterface ) => () => {
 	updateDashboardURLQueryArgs( { sort } );
 };
 

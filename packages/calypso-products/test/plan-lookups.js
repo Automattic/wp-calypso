@@ -67,6 +67,7 @@ import {
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOOEXPRESS_PLUS,
 } from '../src/constants';
 import {
 	getPlan,
@@ -103,6 +104,10 @@ import {
 	planHasFeature,
 	planHasAtLeastOneFeature,
 	planHasSuperiorFeature,
+	isWooExpressPlan,
+	isWooExpressMediumPlan,
+	isWooExpressSmallPlan,
+	isWooExpressPlusPlan,
 } from '../src/index';
 
 const PLANS_LIST = getPlans();
@@ -199,6 +204,110 @@ describe( 'isPremiumPlan', () => {
 		expect( isPremiumPlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
 		expect( isPremiumPlan( PLAN_ECOMMERCE ) ).toEqual( false );
 		expect( isPremiumPlan( 'non-existing plan' ) ).toEqual( false );
+	} );
+} );
+
+describe( 'isWooExpressPlan', () => {
+	test( 'should return true for Woo Express plans', () => {
+		expect( isWooExpressPlan( PLAN_WOOEXPRESS_MEDIUM ) ).toEqual( true );
+		expect( isWooExpressPlan( PLAN_WOOEXPRESS_MEDIUM_MONTHLY ) ).toEqual( true );
+		expect( isWooExpressPlan( PLAN_WOOEXPRESS_SMALL ) ).toEqual( true );
+		expect( isWooExpressPlan( PLAN_WOOEXPRESS_SMALL_MONTHLY ) ).toEqual( true );
+		expect( isWooExpressPlan( PLAN_WOOEXPRESS_PLUS ) ).toEqual( true );
+	} );
+	test( 'should return false for non Woo Express plans', () => {
+		expect( isWooExpressPlan( PLAN_PERSONAL ) ).toEqual( false );
+		expect( isWooExpressPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( false );
+		expect( isWooExpressPlan( PLAN_PERSONAL_3_YEARS ) ).toEqual( false );
+		expect( isWooExpressPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
+		expect( isWooExpressPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( false );
+		expect( isWooExpressPlan( PLAN_BUSINESS ) ).toEqual( false );
+		expect( isWooExpressPlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
+		expect( isWooExpressPlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isWooExpressPlan( PLAN_PREMIUM ) ).toEqual( false );
+		expect( isWooExpressPlan( PLAN_PREMIUM_2_YEARS ) ).toEqual( false );
+		expect( isWooExpressPlan( PLAN_PREMIUM_3_YEARS ) ).toEqual( false );
+		expect( isWooExpressPlan( PLAN_JETPACK_PREMIUM ) ).toEqual( false );
+		expect( isWooExpressPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).toEqual( false );
+		expect( isWooExpressPlan( 'non-existing plan' ) ).toEqual( false );
+	} );
+} );
+
+describe( 'isWooExpressMediumPlan', () => {
+	test( 'should return true for Woo Express Medium plans', () => {
+		expect( isWooExpressMediumPlan( PLAN_WOOEXPRESS_MEDIUM ) ).toEqual( true );
+		expect( isWooExpressMediumPlan( PLAN_WOOEXPRESS_MEDIUM_MONTHLY ) ).toEqual( true );
+	} );
+	test( 'should return false for non Woo Express Medium plans', () => {
+		expect( isWooExpressMediumPlan( PLAN_WOOEXPRESS_SMALL ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_WOOEXPRESS_SMALL_MONTHLY ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_WOOEXPRESS_PLUS ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_PERSONAL ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_PERSONAL_3_YEARS ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_BUSINESS ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_PREMIUM ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_PREMIUM_2_YEARS ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_PREMIUM_3_YEARS ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_JETPACK_PREMIUM ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).toEqual( false );
+		expect( isWooExpressMediumPlan( 'non-existing plan' ) ).toEqual( false );
+	} );
+} );
+
+describe( 'isWooExpressSmallPlan', () => {
+	test( 'should return true for Woo Express Small plans', () => {
+		expect( isWooExpressSmallPlan( PLAN_WOOEXPRESS_SMALL ) ).toEqual( true );
+		expect( isWooExpressSmallPlan( PLAN_WOOEXPRESS_SMALL_MONTHLY ) ).toEqual( true );
+	} );
+	test( 'should return false for non Woo Express Small plans', () => {
+		expect( isWooExpressSmallPlan( PLAN_WOOEXPRESS_MEDIUM ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_WOOEXPRESS_MEDIUM_MONTHLY ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_WOOEXPRESS_PLUS ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_PERSONAL ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_PERSONAL_3_YEARS ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_BUSINESS ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_PREMIUM ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_PREMIUM_2_YEARS ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_PREMIUM_3_YEARS ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_JETPACK_PREMIUM ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).toEqual( false );
+		expect( isWooExpressSmallPlan( 'non-existing plan' ) ).toEqual( false );
+	} );
+} );
+
+describe( 'isWooExpressPlusPlan', () => {
+	test( 'should return true for Woo Express Plus plans', () => {
+		expect( isWooExpressPlusPlan( PLAN_WOOEXPRESS_PLUS ) ).toEqual( true );
+	} );
+	test( 'should return false for non Woo Express Plus plans', () => {
+		expect( isWooExpressPlusPlan( PLAN_WOOEXPRESS_SMALL ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_WOOEXPRESS_SMALL_MONTHLY ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_WOOEXPRESS_MEDIUM ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_WOOEXPRESS_MEDIUM_MONTHLY ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_PERSONAL ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_PERSONAL_2_YEARS ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_PERSONAL_3_YEARS ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_JETPACK_PERSONAL ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_JETPACK_PERSONAL_MONTHLY ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_BUSINESS ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_JETPACK_BUSINESS ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_ECOMMERCE ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_PREMIUM ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_PREMIUM_2_YEARS ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_PREMIUM_3_YEARS ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_JETPACK_PREMIUM ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( PLAN_JETPACK_PREMIUM_MONTHLY ) ).toEqual( false );
+		expect( isWooExpressPlusPlan( 'non-existing plan' ) ).toEqual( false );
 	} );
 } );
 
@@ -932,6 +1041,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_ECOMMERCE,
 			PLAN_WOOEXPRESS_MEDIUM,
 			PLAN_WOOEXPRESS_SMALL,
+			PLAN_WOOEXPRESS_PLUS,
 			PLAN_ENTERPRISE_GRID_WPCOM,
 			PLAN_JETPACK_FREE,
 			PLAN_JETPACK_PREMIUM,
@@ -1029,6 +1139,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_WOOEXPRESS_MEDIUM,
 			PLAN_WOOEXPRESS_SMALL_MONTHLY,
 			PLAN_WOOEXPRESS_SMALL,
+			PLAN_WOOEXPRESS_PLUS,
 			PLAN_ENTERPRISE_GRID_WPCOM,
 			PLAN_ECOMMERCE_3_YEARS,
 			PLAN_P2_PLUS,

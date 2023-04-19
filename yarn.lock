@@ -1128,10 +1128,12 @@ __metadata:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
+    "@automattic/components": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
+    "@wordpress/data": ^7.6.0
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
@@ -1447,12 +1449,11 @@ __metadata:
     "@wordpress/components": ^22.1.0
     "@wordpress/i18n": ^4.22.0
     classnames: ^2.3.1
-    lodash: ^4.17.21
-    moment: ^2.26.0
     postcss: ^8.4.5
     prop-types: ^15.7.2
     react: ^17.0.2
     react-dom: ^17.0.2
+    typescript: ^4.7.4
     webpack: ^5.68.0
   peerDependencies:
     "@babel/runtime": ^7
@@ -33526,6 +33527,7 @@ fsevents@^1.2.7:
     "@automattic/calypso-eslint-overrides": "workspace:^"
     "@automattic/calypso-jest": "workspace:^"
     "@automattic/calypso-package-generator": "workspace:^"
+    "@automattic/calypso-storybook": "workspace:^"
     "@automattic/color-studio": 2.5.0
     "@automattic/components": "workspace:^"
     "@automattic/data-stores": "workspace:^"
@@ -33547,6 +33549,7 @@ fsevents@^1.2.7:
     "@babel/runtime": ^7.17.2
     "@bartekbp/typescript-checkstyle": ^5.0.0
     "@signal-noise/stylelint-scales": ^2.0.3
+    "@storybook/react": ^6.4.18
     "@testing-library/jest-dom": ^5.16.2
     "@types/cookie": ^0.4.1
     "@types/debug": ^4.1.7

@@ -30,7 +30,7 @@ export const HelpCenterSearch = () => {
 		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ),
 		[ siteId ]
 	);
-	let launchpadEnabled = site && site?.options.launchpad_screen === 'full';
+	let launchpadEnabled = site && site?.options?.launchpad_screen === 'full';
 
 	if ( ! launchpadEnabled ) {
 		launchpadEnabled = window?.helpCenterData?.currentSite?.launchpad_screen === 'full';

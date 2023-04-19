@@ -528,6 +528,7 @@ export class Theme extends Component {
 				onClick={ this.setBookmark }
 				onImageClick={ this.onScreenshotClick }
 				onStyleVariationClick={ this.onStyleVariationClick }
+				onStyleVariationMoreClick={ this.onStyleVariationClick }
 			/>
 		);
 	}

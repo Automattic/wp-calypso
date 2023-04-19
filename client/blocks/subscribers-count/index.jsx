@@ -22,7 +22,8 @@ class SubscribersCount extends Component {
 						href={ '/people/subscribers/' + slug }
 						title={ translate( 'Total of WordPress and Email Subscribers' ) }
 					>
-						{ translate( 'Subscribers' ) } <Count count={ subscribers } />
+						{ translate( 'Subscribers' ) }
+						<span className="screen-reader-text">:</span> <Count count={ subscribers } />
 					</Button>
 				) }
 			</div>

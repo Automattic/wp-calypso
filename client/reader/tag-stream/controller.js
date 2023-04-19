@@ -1,3 +1,4 @@
+import { translate } from 'i18n-calypso';
 import { trim } from 'lodash';
 import AsyncLoad from 'calypso/components/async-load';
 import {
@@ -8,8 +9,21 @@ import {
 } from 'calypso/reader/controller-helper';
 import { TAG_PAGE } from 'calypso/reader/follow-sources';
 import { recordTrack } from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const analyticsPageTitle = 'Reader';
+
+const renderHeaderSection = () => (
+	<div className="tag-stream__page-header">
+		<h2>
+			{
+				// translators: The title of the reader tag page
+				translate( 'WordPress Reader' )
+			}
+		</h2>
+		<h1>{ translate( 'Enjoy millions of blogs at your fingertips.' ) }</h1>
+	</div>
+);
 
 export const tagListing = ( context, next ) => {
 	const basePath = '/tag/:slug';
@@ -28,6 +42,9 @@ export const tagListing = ( context, next ) => {
 		tag: tagSlug,
 	} );
 
+	if ( ! isUserLoggedIn( context.store.getState() ) ) {
+		context.headerSection = renderHeaderSection();
+	}
 	context.primary = (
 		<AsyncLoad
 			require="calypso/reader/tag-stream/main"

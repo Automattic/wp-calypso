@@ -7,7 +7,9 @@ type SiteListProps = {
 	sites?: SiteSubscription[];
 };
 
-export default function SiteList( { sites }: SiteListProps ) {
+const defaultSites: SiteSubscription[] = [];
+
+export default function SiteList( { sites = defaultSites }: SiteListProps ) {
 	const translate = useTranslate();
 
 	return (

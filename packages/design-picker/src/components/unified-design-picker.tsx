@@ -1,5 +1,3 @@
-/* eslint-disable wpcalypso/jsx-classname-namespace */
-
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FEATURE_WOOP } from '@automattic/calypso-products';
 import { MShotsImage } from '@automattic/onboarding';
@@ -25,7 +23,7 @@ import {
 import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filter/unified-design-picker-category-filter';
 import PatternAssemblerCta from './pattern-assembler-cta';
 import PremiumBadge from './premium-badge';
-import StyleVariationBadges from './style-variation-badges';
+import ThemeCard from './theme-card';
 import ThemePreview from './theme-preview';
 import WooCommerceBundledBadge from './woocommerce-bundled-badge';
 import type { Categorization } from '../hooks/use-categorization';
@@ -144,44 +142,40 @@ const useTrackDesignView = ( {
 	);
 };
 
-interface DesignButtonProps {
+interface DesignCardProps {
 	design: Design;
 	locale: string;
-	onSelect: ( design: Design ) => void;
-	onPreview: ( design: Design, variation?: StyleVariation ) => void;
-	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
-	isPremiumThemeAvailable?: boolean;
-	hasPurchasedTheme?: boolean;
-	onCheckout?: any;
+	category?: string | null;
 	verticalId?: string;
 	currentPlanFeatures?: string[];
+	hasPurchasedTheme?: boolean;
+	isPremiumThemeAvailable?: boolean;
 	shouldLimitGlobalStyles?: boolean;
+	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
+	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 }
 
-const DesignButton: React.FC< DesignButtonProps > = ( {
-	locale,
-	onPreview,
-	onChangeVariation,
+const DesignCard: React.FC< DesignCardProps > = ( {
 	design,
-	isPremiumThemeAvailable = false,
-	hasPurchasedTheme = false,
+	locale,
+	category,
 	verticalId,
 	currentPlanFeatures,
+	hasPurchasedTheme = false,
+	isPremiumThemeAvailable,
 	shouldLimitGlobalStyles,
+	onChangeVariation,
+	onPreview,
 } ) => {
 	const { __ } = useI18n();
 	const [ selectedStyleVariation, setSelectedStyleVariation ] = useState< StyleVariation >();
 
 	const { style_variations = [] } = design;
-	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
-	const designIsBundledWithWoo = design.is_bundled_with_woo_commerce;
-
+	const trackingDivRef = useTrackDesignView( { category, design, isPremiumThemeAvailable } );
 	const isDefaultVariation = ! selectedStyleVariation || selectedStyleVariation.slug === 'default';
 
-	const title = isDefaultVariation
-		? design.title
-		: `${ design.title } – ${ selectedStyleVariation.title }`;
-
+	const currentSiteCanInstallWoo = currentPlanFeatures?.includes( FEATURE_WOOP ) ?? false;
+	const designIsBundledWithWoo = design.is_bundled_with_woo_commerce;
 	const isPremium = design.is_premium || ( shouldLimitGlobalStyles && ! isDefaultVariation );
 	const shouldUpgrade = isPremium && ! isPremiumThemeAvailable && ! hasPurchasedTheme;
 
@@ -221,90 +215,38 @@ const DesignButton: React.FC< DesignButtonProps > = ( {
 		}
 
 		return (
-			<div className="design-picker__pricing-description design-picker__override-premium-badge">
+			<>
 				{ badge }
 				<span>{ text }</span>
-			</div>
+			</>
 		);
 	}
 
 	return (
-		<div className="design-picker__design-option">
-			<button
-				data-e2e-button={ isPremium ? 'paidOption' : 'freeOption' }
-				onClick={ () => onPreview( design, selectedStyleVariation ) }
-			>
-				<span
-					className={ classnames(
-						'design-picker__image-frame',
-						'design-picker__image-frame-landscape',
-						'design-picker__scrollable',
-						'design-picker__image-frame-no-header'
-					) }
-				>
-					<div className="design-picker__image-frame-inside">
-						<DesignPreviewImage
-							design={ design }
-							locale={ locale }
-							verticalId={ verticalId }
-							styleVariation={ selectedStyleVariation }
-						/>
-					</div>
-				</span>
-			</button>
-			<span className="design-picker__option-overlay">
-				<span id={ makeOptionId( design ) } className="design-picker__option-meta">
-					<span className="design-picker__option-name">{ title }</span>
-					{ style_variations.length > 0 && (
-						<div className="design-picker__options-style-variations">
-							<StyleVariationBadges
-								variations={ style_variations }
-								onClick={ ( variation ) => {
-									onChangeVariation( design, variation );
-									setSelectedStyleVariation( variation );
-								} }
-								selectedVariation={ selectedStyleVariation }
-								onMoreClick={ () => onPreview( design ) }
-							/>
-						</div>
-					) }
-				</span>
-			</span>
-			{ getPricingDescription() }
-		</div>
-	);
-};
-
-interface DesignButtonContainerProps extends DesignButtonProps {
-	category?: string | null;
-	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
-}
-
-const DesignButtonContainer: React.FC< DesignButtonContainerProps > = ( {
-	category,
-	onSelectBlankCanvas,
-	...props
-} ) => {
-	const trackingDivRef = useTrackDesignView( {
-		category,
-		design: props.design,
-		isPremiumThemeAvailable: props.isPremiumThemeAvailable,
-	} );
-
-	if ( isBlankCanvasDesign( props.design ) ) {
-		return (
-			<PatternAssemblerCta
-				onButtonClick={ ( shouldGoToAssemblerStep ) =>
-					onSelectBlankCanvas( props.design, shouldGoToAssemblerStep )
-				}
-			/>
-		);
-	}
-
-	return (
-		<div className="design-button-container" ref={ trackingDivRef }>
-			<DesignButton { ...props } />
-		</div>
+		<ThemeCard
+			className="design-button-container"
+			ref={ trackingDivRef }
+			name={
+				isDefaultVariation ? design.title : `${ design.title } – ${ selectedStyleVariation.title }`
+			}
+			image={
+				<DesignPreviewImage
+					design={ design }
+					locale={ locale }
+					verticalId={ verticalId }
+					styleVariation={ selectedStyleVariation }
+				/>
+			}
+			badge={ getPricingDescription() }
+			styleVariations={ style_variations }
+			selectedStyleVariation={ selectedStyleVariation }
+			onImageClick={ () => onPreview( design, selectedStyleVariation ) }
+			onStyleVariationClick={ ( variation ) => {
+				onChangeVariation( design, variation );
+				setSelectedStyleVariation( variation );
+			} }
+			onStyleVariationMoreClick={ () => onPreview( design ) }
+		/>
 	);
 };
 
@@ -395,7 +337,6 @@ const wasThemePurchased = ( purchasedThemes: string[] | undefined, design: Desig
 interface DesignPickerProps {
 	locale: string;
 	verticalId?: string;
-	onSelect: ( design: Design ) => void;
 	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
@@ -403,7 +344,6 @@ interface DesignPickerProps {
 	generatedDesigns: Design[];
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
-	onCheckout?: any;
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
 	shouldLimitGlobalStyles?: boolean;
@@ -411,7 +351,6 @@ interface DesignPickerProps {
 
 const DesignPicker: React.FC< DesignPickerProps > = ( {
 	locale,
-	onSelect,
 	onSelectBlankCanvas,
 	onPreview,
 	onChangeVariation,
@@ -419,7 +358,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	generatedDesigns,
 	categorization,
 	isPremiumThemeAvailable,
-	onCheckout,
 	verticalId,
 	purchasedThemes,
 	currentPlanFeatures,
@@ -444,24 +382,34 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				/>
 			) }
 			<div className="design-picker__grid">
-				{ filteredStaticDesigns.map( ( design, index ) => (
-					<DesignButtonContainer
-						category={ categorization?.selection }
-						key={ index }
-						design={ design }
-						locale={ locale }
-						onSelect={ onSelect }
-						onSelectBlankCanvas={ onSelectBlankCanvas }
-						onPreview={ onPreview }
-						onChangeVariation={ onChangeVariation }
-						isPremiumThemeAvailable={ isPremiumThemeAvailable }
-						onCheckout={ onCheckout }
-						verticalId={ verticalId }
-						hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
-						currentPlanFeatures={ currentPlanFeatures }
-						shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
-					/>
-				) ) }
+				{ filteredStaticDesigns.map( ( design, index ) => {
+					if ( isBlankCanvasDesign( design ) ) {
+						return (
+							<PatternAssemblerCta
+								key={ index }
+								onButtonClick={ ( shouldGoToAssemblerStep ) =>
+									onSelectBlankCanvas( design, shouldGoToAssemblerStep )
+								}
+							/>
+						);
+					}
+
+					return (
+						<DesignCard
+							key={ index }
+							category={ categorization?.selection }
+							design={ design }
+							locale={ locale }
+							verticalId={ verticalId }
+							currentPlanFeatures={ currentPlanFeatures }
+							hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
+							isPremiumThemeAvailable={ isPremiumThemeAvailable }
+							shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
+							onChangeVariation={ onChangeVariation }
+							onPreview={ onPreview }
+						/>
+					);
+				} ) }
 				{ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG &&
 					generatedDesigns.map( ( design ) => (
 						<GeneratedDesignButtonContainer
@@ -481,7 +429,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 export interface UnifiedDesignPickerProps {
 	locale: string;
 	verticalId?: string;
-	onSelect: ( design: Design ) => void;
 	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
@@ -491,7 +438,6 @@ export interface UnifiedDesignPickerProps {
 	categorization?: Categorization;
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
-	onCheckout?: any;
 	purchasedThemes?: string[];
 	currentPlanFeatures?: string[];
 	shouldLimitGlobalStyles?: boolean;
@@ -499,7 +445,6 @@ export interface UnifiedDesignPickerProps {
 
 const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	locale,
-	onSelect,
 	onSelectBlankCanvas,
 	onPreview,
 	onChangeVariation,
@@ -510,7 +455,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	heading,
 	categorization,
 	isPremiumThemeAvailable,
-	onCheckout,
 	purchasedThemes,
 	currentPlanFeatures,
 	shouldLimitGlobalStyles,
@@ -522,6 +466,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 
 	// Track as if user has scrolled to bottom of the design picker
 	const ref = useInView< HTMLDivElement >( onViewAllDesigns, {}, [ categorization?.selection ] );
+	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	const bottomAnchorContent = <div className="design-picker__bottom_anchor" ref={ ref }></div>;
 
 	return (
@@ -539,7 +484,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 			<div className="unified-design-picker__designs">
 				<DesignPicker
 					locale={ locale }
-					onSelect={ onSelect }
 					onSelectBlankCanvas={ onSelectBlankCanvas }
 					onPreview={ onPreview }
 					onChangeVariation={ onChangeVariation }
@@ -548,7 +492,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					categorization={ categorization }
 					verticalId={ verticalId }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
-					onCheckout={ onCheckout }
 					purchasedThemes={ purchasedThemes }
 					currentPlanFeatures={ currentPlanFeatures }
 					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }

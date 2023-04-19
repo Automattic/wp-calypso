@@ -87,13 +87,10 @@ export class SupportComponent {
 
 	/**
 	 * Wait for and scroll to expose the Support card, present only on My Home.
-	 *
-	 * @returns {Promise<void>} No return value.
 	 */
 	async showSupportCard(): Promise< void > {
-		const elementHandle = await this.page.waitForSelector( selectors.supportCard );
-		await elementHandle.waitForElementState( 'stable' );
-		await elementHandle.scrollIntoViewIfNeeded();
+		const locator = this.page.locator( selectors.supportCard );
+		await Promise.all( [ locator.waitFor(), locator.scrollIntoViewIfNeeded() ] );
 	}
 
 	/* Result methods */

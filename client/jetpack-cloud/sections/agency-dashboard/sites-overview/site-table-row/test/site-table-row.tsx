@@ -54,12 +54,28 @@ describe( '<SiteTableRow>', () => {
 			value: siteObj,
 			error: false,
 			type: 'site',
-			status: '',
+			status: 'active',
+		},
+		stats: {
+			type: 'stats',
+			status: 'active',
+			value: {
+				views: {
+					total: 0,
+					trend: 'up',
+					trend_change: 0,
+				},
+				visitors: {
+					total: 0,
+					trend: 'up',
+					trend_change: 0,
+				},
+			},
 		},
 		backup: {
 			type: 'backup',
 			value: translate( 'Failed' ),
-			status: 'failed',
+			status: 'critical',
 		},
 		monitor: {
 			error: false,
@@ -96,6 +112,7 @@ describe( '<SiteTableRow>', () => {
 			throw new Error( 'Function not implemented.' );
 		},
 		isExpanded: false,
+		index: 0,
 	};
 	const initialState = {
 		partnerPortal: {

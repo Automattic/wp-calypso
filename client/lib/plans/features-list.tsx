@@ -1884,11 +1884,11 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN ]: {
 		getSlug: () => FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
-		getTitle: () => i18n.translate( 'Automated backups and security scans' ),
+		getTitle: () => i18n.translate( 'Automated backup + quick restore' ),
 	},
 	[ FEATURE_INTEGRATED_SHIPMENT_TRACKING ]: {
 		getSlug: () => FEATURE_INTEGRATED_SHIPMENT_TRACKING,
-		getTitle: () => i18n.translate( 'Integrated shipment tracking' ),
+		getTitle: () => i18n.translate( 'Shipment tracking' ),
 	},
 	[ FEATURE_SELL_EGIFTS_AND_VOUCHERS ]: {
 		getSlug: () => FEATURE_SELL_EGIFTS_AND_VOUCHERS,
@@ -1905,7 +1905,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ]: {
 		getSlug: () => FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
-		getTitle: () => i18n.translate( 'Back in stock notifications' ),
+		getTitle: () => i18n.translate( 'Back in stock emails' ),
 		getDescription: () =>
 			i18n.translate( 'Notify customers when an out-of-stock item is back in stock.' ),
 	},
@@ -1979,7 +1979,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: {
 		getSlug: () => FEATURE_MIN_MAX_ORDER_QUANTITY,
-		getTitle: () => i18n.translate( 'Minimum/maximum order quantity' ),
+		getTitle: () => i18n.translate( 'Min/max order quantity' ),
 		getDescription: () =>
 			i18n.translate(
 				'Set minimum and maximum quantity limits for orders to prevent over-ordering or under-ordering.'

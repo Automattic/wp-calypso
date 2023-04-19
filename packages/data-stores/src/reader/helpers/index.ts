@@ -38,9 +38,14 @@ async function callApi< ReturnType >( {
 		throw new Error( 'Subkey not found' );
 	}
 
+	const apiPath =
+		apiVersion === '2'
+			? `https://public-api.wordpress.com/wpcom/v2${ path }`
+			: `https://public-api.wordpress.com/rest/v${ apiVersion }${ path }`;
+
 	return apiFetch( {
 		global: true,
-		path: `https://public-api.wordpress.com/rest/v${ apiVersion }${ path }`,
+		path: apiPath,
 		apiVersion,
 		method,
 		body: method === 'POST' ? JSON.stringify( body ) : undefined,
@@ -52,4 +57,26 @@ async function callApi< ReturnType >( {
 	} as APIFetchOptions );
 }
 
-export { callApi, getSubkey };
+interface PagedResult< T > {
+	pages: T[];
+	pageParams: number;
+}
+
+type KeyedObject< K extends string, T > = {
+	[ key in K ]: T[];
+};
+
+const applyCallbackToPages = < K extends string, T >(
+	pagedResult: PagedResult< KeyedObject< K, T > > | undefined,
+	callback: ( page: KeyedObject< K, T > ) => KeyedObject< K, T >
+): PagedResult< KeyedObject< K, T > > | undefined => {
+	if ( ! pagedResult ) {
+		return undefined;
+	}
+	return {
+		pages: pagedResult.pages.map( ( page ) => callback( page ) ),
+		pageParams: pagedResult.pageParams,
+	};
+};
+
+export { callApi, applyCallbackToPages, getSubkey };

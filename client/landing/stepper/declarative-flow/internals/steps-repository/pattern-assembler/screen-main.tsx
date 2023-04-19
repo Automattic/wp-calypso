@@ -3,15 +3,19 @@ import { Button } from '@automattic/components';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useState, useEffect } from 'react';
+import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
 import { NavigatorItemGroup } from './navigator-item-group';
+import type { MouseEvent } from 'react';
 
 interface Props {
 	shouldUnlockGlobalStyles: boolean;
 	isDismissedGlobalStylesUpgradeModal?: boolean;
 	onSelect: ( name: string ) => void;
 	onContinueClick: () => void;
+	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
 const ScreenMain = ( {
@@ -19,8 +23,10 @@ const ScreenMain = ( {
 	isDismissedGlobalStylesUpgradeModal,
 	onSelect,
 	onContinueClick,
+	recordTracksEvent,
 }: Props ) => {
 	const translate = useTranslate();
+	const [ disabled, setDisabled ] = useState( true );
 	const getDescription = () => {
 		if ( ! shouldUnlockGlobalStyles ) {
 			return translate( 'Ready? Go to the Site Editor to edit your content.' );
@@ -34,6 +40,28 @@ const ScreenMain = ( {
 
 		return translate( "You've selected a premium color or font for your site." );
 	};
+
+	// Use the mousedown event to prevent either the button focusing or text selection
+	const handleMouseDown = ( event: MouseEvent< HTMLButtonElement > ) => {
+		if ( disabled ) {
+			event.preventDefault();
+			recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.CONTINUE_MISCLICK );
+		}
+	};
+
+	const handleClick = () => {
+		if ( ! disabled ) {
+			onContinueClick();
+		}
+	};
+
+	// Set a delay to enable the Continue button since the user might mis-click easily when they go back from another screen
+	useEffect( () => {
+		const timeoutId = window.setTimeout( () => setDisabled( false ), 300 );
+		return () => {
+			window.clearTimeout( timeoutId );
+		};
+	}, [] );
 
 	return (
 		<>
@@ -98,7 +126,13 @@ const ScreenMain = ( {
 			</div>
 			<div className="screen-container__footer">
 				<span className="screen-container__description">{ getDescription() }</span>
-				<Button className="pattern-assembler__button" onClick={ onContinueClick } primary>
+				<Button
+					className="pattern-assembler__button"
+					primary
+					aria-disabled={ disabled }
+					onMouseDown={ handleMouseDown }
+					onClick={ handleClick }
+				>
 					{ shouldUnlockGlobalStyles && ! isDismissedGlobalStylesUpgradeModal
 						? translate( 'Unlock this style' )
 						: translate( 'Continue' ) }
