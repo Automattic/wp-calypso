@@ -1,4 +1,5 @@
 import { formattedNumber } from '@automattic/components';
+import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -8,8 +9,55 @@ import useTopPostsQuery from '../hooks/use-top-posts-query';
 import './hightlights.scss';
 
 const HIGHLIGHT_ITEMS_LIMIT = 5;
+const postAndPageLink = ( baseUrl, siteId, postId ) => {
+	return `${ baseUrl }#!/stats/post/${ postId }/${ siteId }`;
+};
 
-function TopColumn( { items, viewAllUrl, viewAllText, title, className = null } ) {
+function ItemWrapper( { odysseyStatsBaseUrl, siteId, isItemLink, item } ) {
+	const translate = useTranslate();
+
+	const renderedItem = (
+		<div>
+			<p>{ item.title }</p>
+			<span>
+				{ translate( '%(views)s Views', {
+					args: { views: formattedNumber( item.views ) },
+				} ) }
+			</span>
+		</div>
+	);
+
+	return isItemLink ? (
+		<a
+			href={ postAndPageLink( odysseyStatsBaseUrl, siteId, item.id ) }
+			rel="noopener noreferrer"
+			title={ translate( 'View highlight post or page', {
+				textOnly: true,
+				context: 'View highlight post or page',
+			} ) }
+			aria-label={ translate( 'View highlight post or page', {
+				textOnly: true,
+				context: 'View highlight post or page',
+			} ) }
+		>
+			{ renderedItem }
+			<Icon className="stats-icon" icon={ external } size={ 18 } />
+		</a>
+	) : (
+		renderedItem
+	);
+}
+
+function TopColumn( {
+	items,
+	viewAllUrl,
+	viewAllText,
+	title,
+	odysseyStatsBaseUrl,
+	siteId,
+	isItemLink = false,
+	className = null,
+} ) {
 	const translate = useTranslate();
 
 	return (
@@ -24,12 +72,12 @@ function TopColumn( { items, viewAllUrl, viewAllText, title, className = null } 
 				<ul className="stats-widget-highlights-card__list">
 					{ items.slice( 0, HIGHLIGHT_ITEMS_LIMIT ).map( ( item, idx ) => (
 						<li key={ idx }>
-							<p>{ item.title }</p>
-							<span>
-								{ translate( '%(views)s Views', {
-									args: { views: formattedNumber( item.views ) },
-								} ) }
-							</span>
+							<ItemWrapper
+								item={ item }
+								odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
+								siteId={ siteId }
+								isItemLink={ isItemLink }
+							/>
 						</li>
 					) ) }
 				</ul>
@@ -66,6 +114,9 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 					viewAllUrl={ viewAllPostsStatsUrl }
 					viewAllText={ translate( 'View all posts & pages stats' ) }
 					items={ topPostsAndPages }
+					odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
+					siteId={ siteId }
+					isItemLink={ true }
 				/>
 				<TopColumn
 					className="stats-widget-highlights__column"
@@ -73,6 +124,8 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 					viewAllUrl={ viewAllReferrerStatsUrl }
 					viewAllText={ translate( 'View all referrer stats' ) }
 					items={ topReferrers }
+					odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
+					siteId={ siteId }
 				/>
 			</div>
 		</div>
