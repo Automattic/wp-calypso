@@ -83,3 +83,13 @@ export type PostSubscription = {
 	post_excerpt: string;
 	post_url: string;
 };
+
+export type PendingSiteSubscription = {
+	id: string;
+	activation_key: string;
+	site_title: string;
+	site_icon: string;
+	site_url: string;
+	date_subscribed: Date;
+	organization_id: number;
+};
