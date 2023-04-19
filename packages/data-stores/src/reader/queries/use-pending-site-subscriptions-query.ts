@@ -15,9 +15,10 @@ type SubscriptionManagerPendingSiteSubscriptionsQueryProps = {
 
 const callPendingBlogSubscriptionsEndpoint = async (): Promise< PendingSiteSubscription[] > => {
 	const data = [];
+	const perPage = 1000; // TODO: This is a temporary workaround to get all pending subscriptions. We should remove this once we decide how to handle pagination.
 
 	const incoming = await callApi< SubscriptionManagerPendingSiteSubscriptions >( {
-		path: `/pending-blog-subscriptions`,
+		path: `/pending-blog-subscriptions?per_page=${ perPage }`,
 		apiVersion: '2',
 	} );
 
