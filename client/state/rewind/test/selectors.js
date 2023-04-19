@@ -7,7 +7,9 @@ import {
 	getBackupStoppedFlag,
 	isFetchingStagingSitesList,
 	hasFetchedStagingSitesList,
+	getBackupStagingSites,
 } from '../selectors';
+import { stagingSites } from '../staging/test/fixtures';
 import { StorageUsageLevels } from '../storage/types';
 
 describe( 'getRewindStorageUsageLevel()', () => {
@@ -184,6 +186,7 @@ describe( 'Backup staging sites selectors', () => {
 					staging: {
 						isFetchingStagingSitesList: true,
 						hasFetchedStagingSitesList: false,
+						sites: [],
 					},
 				},
 			},
@@ -194,6 +197,7 @@ describe( 'Backup staging sites selectors', () => {
 					staging: {
 						isFetchingStagingSitesList: false,
 						hasFetchedStagingSitesList: true,
+						sites: stagingSites,
 					},
 				},
 			},
@@ -231,6 +235,18 @@ describe( 'Backup staging sites selectors', () => {
 		test( 'should return true if staging sites has been loaded', () => {
 			const stateIn = fixtures.stagingSitesLoaded;
 			expect( hasFetchedStagingSitesList( stateIn, TEST_SITE_ID ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'getBackupStagingSites', () => {
+		test( 'should return empty array if the rewind state is empty', () => {
+			const stateIn = fixtures.emptyRewindState;
+			expect( getBackupStagingSites( stateIn, TEST_SITE_ID ) ).toStrictEqual( [] );
+		} );
+
+		test( 'should return the staging sites related to specified site ID', () => {
+			const stateIn = fixtures.stagingSitesLoaded;
+			expect( getBackupStagingSites( stateIn, TEST_SITE_ID ) ).toStrictEqual( stagingSites );
 		} );
 	} );
 } );
