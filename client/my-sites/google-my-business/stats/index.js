@@ -9,7 +9,6 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
-import FormattedHeader from 'calypso/components/formatted-header';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -18,6 +17,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'calypso/my-sites/google-my-business/stats/chart';
+import StatsPageHeader from 'calypso/my-sites/stats/stats-page-header';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
 import getGoogleMyBusinessConnectedLocation from 'calypso/state/selectors/get-google-my-business-connected-location';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -207,11 +207,8 @@ class GoogleMyBusinessStats extends Component {
 				<QueryKeyringServices />
 
 				<div className="stats">
-					<FormattedHeader
-						brandFont
-						className="stats__section-header modernized-header"
-						headerText={ translate( 'Google My Business' ) }
-						align="left"
+					<StatsPageHeader
+						page="googleMyBusiness"
 						subHeaderText={ translate(
 							'Integrate your business with Google and get stats on your locations. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 							{

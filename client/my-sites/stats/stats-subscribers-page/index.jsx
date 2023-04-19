@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux';
 import DomainTip from 'calypso/blocks/domain-tip';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -15,6 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AnnualHighlightsSection from '../annual-highlights-section';
 import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
+import StatsPageHeader from '../stats-page-header';
 import Reach from '../stats-reach';
 import SubscribersSection from '../subscribers-section';
 
@@ -48,12 +48,9 @@ const StatsSubscribersPage = ( { period } ) => {
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/subscribers/:site" title="Stats > Subscribers" />
 			<div className="stats">
-				<FormattedHeader
-					brandFont
-					className="stats__section-header modernized-header"
-					headerText={ translate( 'Jetpack Stats' ) }
+				<StatsPageHeader
+					page="subscribers"
 					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
-					align="left"
 				/>
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
 				{ /* TODO: replace annual highlight */ }
