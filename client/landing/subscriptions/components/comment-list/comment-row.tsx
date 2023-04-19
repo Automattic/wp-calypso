@@ -51,7 +51,7 @@ const CommentRow = ( {
 					<TimeSince date={ subscription_date.toISOString?.() ?? subscription_date } />
 				</span>
 				<span className="actions" role="cell">
-					<CommentSettings onUnfollow={ () => undefined } unfollowing={ false } />
+					<CommentSettings onUnsubscribe={ () => undefined } unsubscribing={ false } />
 				</span>
 			</div>
 		</div>
