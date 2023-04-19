@@ -7,6 +7,8 @@ export class ConfigApi extends Function {
 	 */
 	constructor() {
 		super( '...args', 'return this._bound._call(...args)' );
+		// Holds the config data.
+		this.configData = {};
 		this._bound = this.bind( this );
 		return this._bound;
 	}
@@ -26,8 +28,6 @@ export class ConfigApi extends Function {
 		return undefined;
 	}
 }
-
-ConfigApi.prototype.configData = {};
 
 // Moved from https://github.com/Automattic/wp-calypso/blob/ca7d8fe3e0a5fb87b0659fbab659078ebbfbc7be/apps/odyssey-stats/src/load-config.js
 ConfigApi.prototype._overrideConfigDataFeatures = function () {
