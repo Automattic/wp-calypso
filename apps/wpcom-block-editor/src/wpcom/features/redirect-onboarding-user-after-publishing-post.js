@@ -19,7 +19,8 @@ export function redirectOnboardingUserAfterPublishingPost() {
 		if ( isCurrentPostPublished && getCurrentPostRevisionsCount === 1 ) {
 			unsubscribe();
 
-			window.location.href = siteOrigin + '/setup/write/launchpad?siteSlug=' + siteSlug;
+			window.location.href =
+				siteOrigin + '/setup/write/launchpad?siteSlug=' + siteSlug + '&showLaunchpad=true';
 		}
 	} );
 }

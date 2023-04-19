@@ -13,15 +13,21 @@ const SidebarHeading = ( { children, onClick, ...props } ) => {
 		};
 	}
 
-	/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+	const linkAttrs = { ...props };
+
+	// These are not valid HTML attribute for a <a> tag
+	delete linkAttrs.navigationLabel;
+	delete linkAttrs.url;
+
 	return (
 		<li>
+			{ /* eslint-disable jsx-a11y/no-static-element-interactions */ }
 			<a
 				tabIndex={ tabIndex }
 				className="sidebar__heading"
 				onKeyDown={ onKeyDown }
 				onClick={ onClick }
-				{ ...props }
+				{ ...linkAttrs }
 			>
 				{ children }
 			</a>

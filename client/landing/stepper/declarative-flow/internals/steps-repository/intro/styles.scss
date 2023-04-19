@@ -125,6 +125,10 @@
 			margin-top: 32px;
 			font-size: 1.25rem;
 		}
+
+		.intro__video.loading-frame {
+			transition: opacity 0.3s ease-in-out;
+		}
 	}
 
 	min-height: 100%;

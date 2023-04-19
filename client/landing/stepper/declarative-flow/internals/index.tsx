@@ -9,10 +9,13 @@ import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
+import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
 import {
 	getSignupCompleteFlowNameAndClear,
 	getSignupCompleteStepNameAndClear,
 } from 'calypso/signup/storageUtils';
+import { useSite } from '../../hooks/use-site';
+import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
 import recordStepStart from './analytics/record-step-start';
@@ -47,6 +50,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
 	);
+
+	const site = useSite();
 	const ref = useQuery().get( 'ref' ) || '';
 
 	const stepProgress = useSelect(
@@ -102,6 +107,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	);
 
 	flow.useSideEffect?.( currentStepRoute, _navigate );
+
+	useSyncRoute();
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
@@ -204,6 +211,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					}
 				/>
 			</Routes>
+			<AsyncCheckoutModal siteId={ site?.ID } />
 		</Suspense>
 	);
 };

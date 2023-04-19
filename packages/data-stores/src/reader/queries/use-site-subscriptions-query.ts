@@ -4,6 +4,12 @@ import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SiteSubscription } from '../types';
 
+export enum SiteSubscriptionsSortBy {
+	SiteName = 'site_name',
+	LastUpdated = 'last_updated',
+	DateSubscribed = 'date_subscribed',
+}
+
 type SubscriptionManagerSiteSubscriptions = {
 	subscriptions: SiteSubscription[];
 	page: number;
@@ -13,17 +19,40 @@ type SubscriptionManagerSiteSubscriptions = {
 type SubscriptionManagerSiteSubscriptionsQueryProps = {
 	searchTerm?: string;
 	filter?: ( item?: SiteSubscription ) => boolean;
-	sort?: ( a?: SiteSubscription, b?: SiteSubscription ) => number;
+	sortTerm?: SiteSubscriptionsSortBy;
 	number?: number;
 };
 
+const sortByDateSubscribed = ( a: SiteSubscription, b: SiteSubscription ) =>
+	b.date_subscribed.getTime() - a.date_subscribed.getTime();
+
+const sortByLastUpdated = ( a: SiteSubscription, b: SiteSubscription ) =>
+	a.last_updated instanceof Date && b.last_updated instanceof Date
+		? b.last_updated.getTime() - a.last_updated.getTime()
+		: 0;
+
+const sortBySiteName = ( a: SiteSubscription, b: SiteSubscription ) =>
+	a.name.localeCompare( b.name );
+
+const getSortFunction = ( sortTerm: SiteSubscriptionsSortBy ) => {
+	switch ( sortTerm ) {
+		case SiteSubscriptionsSortBy.DateSubscribed:
+			return sortByDateSubscribed;
+		case SiteSubscriptionsSortBy.LastUpdated:
+			return sortByLastUpdated;
+		case SiteSubscriptionsSortBy.SiteName:
+			return sortBySiteName;
+		default:
+			return undefined;
+	}
+};
+
 const defaultFilter = () => true;
-const defaultSort = () => 0;
 
 const useSiteSubscriptionsQuery = ( {
 	searchTerm = '',
 	filter = defaultFilter,
-	sort = defaultSort,
+	sortTerm = SiteSubscriptionsSortBy.LastUpdated,
 	number = 100,
 }: SubscriptionManagerSiteSubscriptionsQueryProps = {} ) => {
 	const { isLoggedIn } = useIsLoggedIn();
@@ -83,6 +112,7 @@ const useSiteSubscriptionsQuery = ( {
 				item.URL.toLowerCase().includes( searchTermLowerCase )
 			);
 		};
+		const sort = getSortFunction( sortTerm );
 
 		return {
 			subscriptions:
@@ -92,7 +122,7 @@ const useSiteSubscriptionsQuery = ( {
 			totalCount: data?.pages?.[ 0 ]?.total_subscriptions ?? 0,
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ data?.pages, filter, searchTerm, sort ] );
+	}, [ data?.pages, filter, searchTerm, sortTerm ] );
 
 	return {
 		data: resultData,

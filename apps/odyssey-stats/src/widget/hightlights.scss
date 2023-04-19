@@ -46,6 +46,7 @@
 	}
 
 	.stats-widget-highlights__column {
+		// Make sure the highlight section doesn't overflow the container, which makes ellipsis work.
 		min-width: 0;
 	}
 
@@ -58,8 +59,7 @@
 	.stats-widget-highlights-card__empty {
 		min-height: 40px;
 		margin-top: $font-body;
-		// TODO: use a variable for this
-		color: #999;
+		color: var(--studio-gray-40);
 	}
 
 	.stats-widget-highlights-card__list {
@@ -76,7 +76,6 @@
 			letter-spacing: -0.24px;
 			line-height: 20px;
 
-			width: 100%;
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;

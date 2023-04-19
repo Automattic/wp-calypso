@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import page from 'page';
+import { isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { SOCIAL_HANDOFF_CONNECT_ACCOUNT } from 'calypso/state/action-types';
 import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
@@ -47,11 +48,15 @@ const enhanceContextWithLogin = ( context ) => {
 		: null;
 	const isJetpackLogin = isJetpack === 'jetpack';
 	const isP2Login = query && query.from === 'p2';
+	const clientId = query?.client_id;
+	const oauth2ClientId = query?.oauth2_client_id;
+	const isGravatar = isGravatarOAuth2Client( { id: Number( clientId || oauth2ClientId ) } );
 	const isWhiteLogin =
-		! isJetpackLogin &&
-		! isP2Login &&
-		Boolean( query?.client_id ) === false &&
-		Boolean( query?.oauth2_client_id ) === false;
+		( ! isJetpackLogin &&
+			! isP2Login &&
+			Boolean( clientId ) === false &&
+			Boolean( oauth2ClientId ) === false ) ||
+		isGravatar;
 
 	context.primary = (
 		<WPLogin
@@ -59,6 +64,7 @@ const enhanceContextWithLogin = ( context ) => {
 			isJetpack={ isJetpackLogin }
 			isWhiteLogin={ isWhiteLogin }
 			isP2Login={ isP2Login }
+			isGravatar={ isGravatar }
 			path={ path }
 			twoFactorAuthType={ twoFactorAuthType }
 			socialService={ socialService }

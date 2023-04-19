@@ -436,6 +436,18 @@ function getAvailabilityNotice( domain, error, errorData ) {
 			);
 			break;
 
+		case 'domain_availability_throttle':
+			message = translate(
+				"Unfortunately we're unable to check the status of {{strong}}%(domain)s{{/strong}} at this moment. Please log in first or try again later.",
+				{
+					args: { domain },
+					components: {
+						strong: <strong />,
+					},
+				}
+			);
+			break;
+
 		default:
 			message = translate(
 				'Sorry, there was a problem processing your request. Please try again in a few minutes.'

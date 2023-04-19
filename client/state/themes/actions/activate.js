@@ -11,6 +11,7 @@ import { suffixThemeIdForInstall } from 'calypso/state/themes/actions/suffix-the
 import {
 	getTheme,
 	hasAutoLoadingHomepageModalAccepted,
+	isThemePremium,
 	themeHasAutoLoadingHomepage,
 	wasAtomicTransferDialogAccepted,
 	isExternallyManagedTheme,
@@ -75,11 +76,36 @@ export function activate(
 		}
 
 		/**
-		 * Check if the theme is a .org Theme and not provided by .com as well (as Premium themes)
+		 * Check if its a free dotcom theme, if so, dispatch the activate action
+		 * and redirect to the Marketplace Thank You Page.
+		 *
+		 * A theme is considered free when its not premium and not externally managed.
+		 *
+		 * Currently a feature flag check is also being applied.
+		 */
+		const isPremiumTheme = isThemePremium( getState(), themeId );
+		const isExternallyManaged = isExternallyManagedTheme( getState(), themeId );
+		const isFreeTheme = ! isPremiumTheme && ! isExternallyManaged;
+		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
+		if ( isFreeTheme && isDotComTheme && isEnabled( 'themes/display-thank-you-page' ) ) {
+			dispatchActivateAction(
+				dispatch,
+				getState,
+				siteId,
+				themeId,
+				source,
+				purchased,
+				keepCurrentHomepage
+			);
+
+			const siteSlug = getSiteSlug( getState(), siteId );
+			return page( `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }` );
+		}
+
+		/* Check if the theme is a .org Theme and not provided by .com as well (as Premium themes)
 		 * and redirect it to the Marketplace theme installation page
 		 */
 		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
-		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		if ( isDotOrgTheme && ! isDotComTheme ) {
 			const siteSlug = getSiteSlug( getState(), siteId );
 
@@ -87,15 +113,35 @@ export function activate(
 			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
-		if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
-			const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
-			// If theme is already installed, installation will silently fail,
-			// and it will just be activated.
-			return dispatch(
-				installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
-			);
-		}
-
-		return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
+		return dispatchActivateAction(
+			dispatch,
+			getState,
+			siteId,
+			themeId,
+			source,
+			purchased,
+			keepCurrentHomepage
+		);
 	};
+}
+
+function dispatchActivateAction(
+	dispatch,
+	getState,
+	siteId,
+	themeId,
+	source,
+	purchased,
+	keepCurrentHomepage
+) {
+	if ( isJetpackSite( getState(), siteId ) && ! getTheme( getState(), siteId, themeId ) ) {
+		const installId = suffixThemeIdForInstall( getState(), siteId, themeId );
+		// If theme is already installed, installation will silently fail,
+		// and it will just be activated.
+		return dispatch(
+			installAndActivateTheme( installId, siteId, source, purchased, keepCurrentHomepage )
+		);
+	}
+
+	return dispatch( activateTheme( themeId, siteId, source, purchased, keepCurrentHomepage ) );
 }

@@ -7,6 +7,7 @@ import {
 	firstValid,
 	formatTweetDate,
 	hardTruncation,
+	preparePreviewText,
 	shortEnough,
 	stripHtmlTags,
 } from '../helpers';
@@ -77,23 +78,7 @@ export class Tweet extends PureComponent {
 			? text.substring( 0, text.lastIndexOf( cardUrl ) )
 			: text;
 
-		let __html = stripHtmlTags( deCardedText );
-
-		// Convert URLs to hyperlinks.
-		__html = __html.replace(
-			// TODO: Use a better regex here to match the URLs without protocol.
-			/(https?:\/\/\S+)/g,
-			'<a href="$1" rel="noopener noreferrer" target="_blank">$1</a>'
-		);
-
-		// Convert hashtags to hyperlinks.
-		__html = __html.replace(
-			/(^|\s)#(\w+)/g,
-			'$1<a href="https://twitter.com/hashtag/$2" rel="noopener noreferrer" target="_blank">#$2</a>'
-		);
-
-		// Convert newlines to <br> tags.
-		__html = __html.replace( /\n/g, '<br/>' );
+		const __html = preparePreviewText( deCardedText, { platform: 'twitter' } );
 
 		// We can enable dangerouslySetInnerHTML here, since the text we're using is stripped
 		// of all HTML tags, then only has safe tags added in createTweetMarkup().
