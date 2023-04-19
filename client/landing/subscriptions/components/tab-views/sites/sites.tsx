@@ -2,23 +2,40 @@ import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice } from 'calypso/landing/subscriptions/components/notice';
 import { SiteList } from 'calypso/landing/subscriptions/components/site-list';
+import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
 import TabView from '../tab-view';
 
-const isSearchEnabled = config.isEnabled( 'subscription-management/sites-search' );
+const SortBy = SubscriptionManager.SiteSubscriptionsSortBy;
+
+const isListControlsEnabled = config.isEnabled( 'subscription-management/sites-list-controls' );
+
+const getSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[] => [
+	{ value: SortBy.LastUpdated, label: translate( 'Last updated' ) },
+	// todo: translate when we have agreed on the label
+	{ value: SortBy.DateSubscribed, label: 'Date subscribed' },
+	// todo: translate when we have agreed on the label
+	{ value: SortBy.SiteName, label: 'Site name' },
+];
+
+const useSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[] =>
+	useMemo( () => getSortOptions( translate ), [ translate ] );
 
 const Sites = () => {
 	const translate = useTranslate();
 	const [ searchTerm, setSearchTerm ] = useState( '' );
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
+	const [ sortTerm, setSortTerm ] = useState( SortBy.LastUpdated );
 	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery( {
 		searchTerm: debouncedSearchTerm,
+		sortTerm,
 	} );
 	const { subscriptions, totalCount } = data ?? {};
+	const sortOptions = useSortOptions( translate );
 	// todo: translate when we have agreed on the error message
 	const errorMessage = error ? 'An error occurred while fetching your subscriptions.' : '';
 
@@ -32,19 +49,20 @@ const Sites = () => {
 
 	return (
 		<TabView errorMessage={ errorMessage } isLoading={ isLoading }>
-			{ isSearchEnabled && (
+			{ isListControlsEnabled && (
 				<div className="subscriptions-manager__list-actions-bar">
 					<SearchInput
 						placeholder={ translate( 'Search by site name or address…' ) }
 						searchIcon={ <SearchIcon size={ 18 } /> }
 						onSearch={ handleSearch }
 					/>
+					<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
 				</div>
 			) }
 
 			<SiteList sites={ subscriptions } />
 
-			{ totalCount && subscriptions.length === 0 && (
+			{ totalCount > 0 && subscriptions.length === 0 && (
 				<Notice type="warning">
 					{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {
 						components: { italic: <i /> },

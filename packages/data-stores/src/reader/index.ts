@@ -6,6 +6,7 @@ import {
 	useUserSettingsMutation,
 } from './mutations';
 import {
+	SiteSubscriptionsSortBy,
 	useSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
 	useSubscriptionsCountQuery,
@@ -13,6 +14,7 @@ import {
 } from './queries';
 
 export const SubscriptionManager = {
+	SiteSubscriptionsSortBy,
 	usePostUnfollowMutation,
 	useSiteDeliveryFrequencyMutation,
 	useSiteSubscriptionsQuery,
