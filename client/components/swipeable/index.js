@@ -63,6 +63,7 @@ export const Swipeable = ( {
 	onPageSelect,
 	pageClassName,
 	containerClassName,
+	isClickEnabled,
 	...otherProps
 } ) => {
 	const [ swipeableArea, setSwipeableArea ] = useState();
@@ -109,6 +110,15 @@ export const Swipeable = ( {
 		}
 	}, [ pagesRef, currentPage, pagesStyle, updateEnabled, containerWidth, childrenOrder ] );
 
+	const resetDragData = useCallback( () => {
+		delete pagesStyle.transform;
+		setPagesStyle( {
+			...pagesStyle,
+			transitionDuration: TRANSITION_DURATION,
+		} );
+		setDragData( null );
+	}, [ pagesStyle, setPagesStyle, setDragData ] );
+
 	const handleDragStart = useCallback(
 		( event ) => {
 			const position = getDragPositionAndTime( event );
@@ -147,14 +157,20 @@ export const Swipeable = ( {
 			const verticalAbsoluteDelta = Math.abs( dragPosition.y - dragData.start.y );
 			const angle = ( Math.atan2( verticalAbsoluteDelta, absoluteDelta ) * 180 ) / Math.PI;
 
+			// Is click or tap?
+			if ( velocity === 0 && isClickEnabled ) {
+				if ( numPages !== currentPage + 1 ) {
+					onPageSelect( currentPage + 1 );
+				} else {
+					onPageSelect( 0 );
+				}
+				resetDragData();
+				return;
+			}
+
 			// Is vertical scroll detected?
 			if ( angle > VERTICAL_THRESHOLD_ANGLE ) {
-				delete pagesStyle.transform;
-				setPagesStyle( {
-					...pagesStyle,
-					transitionDuration: TRANSITION_DURATION,
-				} );
-				setDragData( null );
+				resetDragData();
 				return;
 			}
 
@@ -189,6 +205,7 @@ export const Swipeable = ( {
 			onPageSelect,
 			pagesStyle,
 			containerWidth,
+			isClickEnabled,
 		]
 	);
 
