@@ -14,7 +14,7 @@ declare module '@wordpress/components' {
 	export const __experimentalNavigatorProvider: React.ComponentType< Props >;
 	export const __experimentalNavigatorScreen: React.ComponentType< Props >;
 	export const __unstableComposite: React.ComponentType< Props >;
-	export const __unstableUseCompositeState: ( props: {
+	export const __unstableUseCompositeState: ( props?: {
 		orientation?: 'horizontal' | 'vertical';
 	} ) => any;
 	export const __unstableCompositeItem: React.ComponentType< Props >;
