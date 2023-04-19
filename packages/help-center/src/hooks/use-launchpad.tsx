@@ -42,7 +42,7 @@ export const fetchLaunchpadChecklist = (
 };
 
 export const useLaunchpadChecklist = ( siteSlug: string | null, siteIntent: string ) => {
-	const key = [ 'launchpad', siteSlug ];
+	const key = [ 'launchpad_checklist', siteSlug ];
 	return useQuery( key, () => fetchLaunchpadChecklist( siteSlug, siteIntent ), {
 		retry: 3,
 		initialData: {
