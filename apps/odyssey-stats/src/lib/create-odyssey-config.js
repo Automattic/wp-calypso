@@ -29,7 +29,7 @@ export class ConfigApi extends Function {
 	}
 }
 
-// Moved from https://github.com/Automattic/wp-calypso/blob/ca7d8fe3e0a5fb87b0659fbab659078ebbfbc7be/apps/odyssey-stats/src/load-config.js
+// Copied from https://github.com/Automattic/wp-calypso/blob/ca7d8fe3e0a5fb87b0659fbab659078ebbfbc7be/apps/odyssey-stats/src/load-config.js
 ConfigApi.prototype._overrideConfigDataFeatures = function () {
 	// Set is_running_in_jetpack_site to true if not specified (undefined or null).
 	productionConfig.features.is_running_in_jetpack_site =
