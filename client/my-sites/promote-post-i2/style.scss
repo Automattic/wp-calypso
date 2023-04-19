@@ -1,3 +1,45 @@
+@import "@automattic/color-studio/dist/color-variables";
+@import "@automattic/components/src/styles/typography";
+
+@mixin promote-post-i2-font {
+	color: $studio-gray-60;
+	font-family: $font-sf-pro-text;
+	font-weight: 400;
+	font-size: 0.875rem;
+	font-style: normal;
+	letter-spacing: -0.15px;
+	line-height: 1.43;
+}
+
+.promote-post {
+	.search {
+		border: 1px solid #ddd;
+		border-radius: 4px;
+
+		&.is-open .search__open-icon {
+			fill: $studio-gray-30;
+		}
+	}
+
+	&__search-bar-wrapper {
+		.form-text-input.search__input {
+			@include promote-post-i2-font;
+			// border-radius: 4px;
+			height: calc(100% - 4px) !important;
+			margin: 2px 2px 2px 0;
+		}
+
+		.search__icon-navigation {
+			margin: 2px 0 2px 2px;
+		}
+	}
+
+	.select-dropdown__header {
+		border-color: $studio-gray-30 !important;
+		border-radius: 4px;
+	}
+}
+
 .promote-post__loading-container {
 	text-align: center;
 }

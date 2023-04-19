@@ -1,18 +1,14 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
-@import "@automattic/components/src/styles/typography";
-@import "@automattic/color-studio/dist/color-variables";
+@import "../../style.scss";
 
 $post-item-background-color: var(--color-surface);
+body {
+	background-color: $post-item-background-color;
+}
 
 .promote-post {
-	color: $studio-gray-60;
-	font-family: $font-sf-pro-text;
-	font-weight: 400;
-	font-size: 0.875rem;
-	font-style: normal;
-	letter-spacing: -0.15px;
-	line-height: 1.43;
+	@include promote-post-i2-font;
 
 	.posts-list__header-column {
 		border-bottom: 1px solid #eee;
@@ -96,5 +92,15 @@ $post-item-background-color: var(--color-surface);
 		border-radius: 4px;
 		overflow: hidden;
 		margin: 16px 0;
+
+		&_no-image {
+			align-items: center;
+			background: $studio-gray-0;
+			border-radius: 4px;
+			display: flex;
+			justify-content: center;
+		}
 	}
+
+
 }
