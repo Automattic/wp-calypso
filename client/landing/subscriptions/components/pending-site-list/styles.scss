@@ -4,27 +4,16 @@
 
 $max-list-width: 1300px;
 
-%ellipsis {
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
-}
-
-.subscription-manager__comment-list {
+.subscription-manager__pending-site-list {
 	max-width: $max-list-width;
-	min-width: 300px;
-
-	.row-wrapper {
-		border-bottom: 1px solid var(--color-border-subtle);
-	}
 
 	.row {
+		border-bottom: 1px solid var(--color-border-subtle);
 		display: flex;
 		align-items: center;
 		flex-direction: row;
-		margin-top: 20px;
-		margin-bottom: 20px;
-		justify-content: space-between;
+		padding-top: 20px;
+		padding-bottom: 20px;
 
 		* {
 			flex: 1;
@@ -33,47 +22,12 @@ $max-list-width: 1300px;
 		&.header {
 			padding-bottom: $font-code;
 			padding-top: 0;
-			margin: 0;
-		}
-
-		.post {
-			flex: 0 0 403px;
-			font-size: $font-body-small;
-			line-height: 20px;
-
-			.title {
-				max-width: 350px;
-				@extend %ellipsis;
-
-				a {
-					font-weight: 500;
-					color: $studio-gray-100;
-
-					&:hover {
-						text-decoration: underline;
-					}
-				}
-			}
-
-			.excerpt {
-				max-width: 350px;
-				font-weight: 400;
-				color: $studio-gray-60;
-				margin-top: 4px;
-				@extend %ellipsis;
-			}
-		}
-
-		@media (max-width: $break-small) {
-			.post {
-				flex: 1 1;
-				max-width: calc(100% - 54px);
-			}
 		}
 
 		.title-box {
 			display: flex;
 			align-items: center;
+			flex: 1.83;
 			min-width: 0;
 
 			.icon {
@@ -96,8 +50,10 @@ $max-list-width: 1300px;
 					line-height: 22px;
 					color: $studio-gray-100;
 					letter-spacing: -0.24px;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					overflow: hidden;
 					padding-right: 10px;
-					@extend %ellipsis;
 
 					&:hover {
 						text-decoration: underline;
@@ -109,18 +65,14 @@ $max-list-width: 1300px;
 					font-size: $font-body-extra-small;
 					line-height: 18px;
 					color: $studio-gray-40;
-					@extend %ellipsis;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					overflow: hidden;
 
 					&:hover {
 						text-decoration: underline;
 					}
 				}
-			}
-		}
-
-		@media (max-width: $break-small) {
-			.title-box {
-				display: none;
 			}
 		}
 
@@ -131,12 +83,6 @@ $max-list-width: 1300px;
 			line-height: 20px;
 			letter-spacing: -0.15px;
 			color: $studio-gray-60;
-		}
-
-		@media (max-width: $break-medium) {
-			.date {
-				display: none;
-			}
 		}
 
 		.actions {
@@ -150,6 +96,12 @@ $max-list-width: 1300px;
 
 		&:last-child {
 			border-bottom: none;
+		}
+	}
+
+	@media (max-width: $break-small) {
+		.date {
+			display: none;
 		}
 	}
 }

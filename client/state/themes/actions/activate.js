@@ -76,19 +76,6 @@ export function activate(
 		}
 
 		/**
-		 * Check if the theme is a .org Theme and not provided by .com as well (as Premium themes)
-		 * and redirect it to the Marketplace theme installation page
-		 */
-		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
-		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
-		if ( isDotOrgTheme && ! isDotComTheme ) {
-			const siteSlug = getSiteSlug( getState(), siteId );
-
-			dispatch( productToBeInstalled( themeId, siteSlug ) );
-			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
-		}
-
-		/**
 		 * Check if its a free or premium dotcom theme, if so, dispatch the activate action
 		 * and redirect to the Marketplace Thank You Page.
 		 *
@@ -100,6 +87,7 @@ export function activate(
 		 */
 		const isExternallyManaged = isExternallyManagedTheme( getState(), themeId );
 		const isWooTheme = doesThemeBundleSoftwareSet( getState(), themeId );
+		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		if (
 			isDotComTheme &&
 			isEnabled( 'themes/display-thank-you-page' ) &&
@@ -118,6 +106,17 @@ export function activate(
 
 			const siteSlug = getSiteSlug( getState(), siteId );
 			return page( `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }` );
+		}
+
+		/**
+		 * Check if the theme is a .org Theme and not provided by .com as well (as Premium themes)
+		 * and redirect it to the Marketplace theme installation page
+		 */ const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
+		if ( isDotOrgTheme && ! isDotComTheme ) {
+			const siteSlug = getSiteSlug( getState(), siteId );
+
+			dispatch( productToBeInstalled( themeId, siteSlug ) );
+			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
 		return dispatchActivateAction(
