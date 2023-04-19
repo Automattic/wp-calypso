@@ -10,9 +10,10 @@ import '../style.scss';
 
 const ReaderListFollowingItem = ( props ) => {
 	const { site, path, isUnseen } = props;
-	console.log( site );
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
+
+	console.log( 'site', site );
 
 	const handleSidebarClick = ( selectedSite ) => {
 		recordAction( 'clicked_reader_sidebar_following_item' );

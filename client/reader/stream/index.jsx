@@ -6,7 +6,6 @@ import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
-import QueryReaderRelatedSites from 'calypso/components/data/query-reader-related-sites';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
@@ -28,7 +27,6 @@ import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/like
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
-import { getReaderRelatedSites } from 'calypso/state/reader/related-sites/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
 import {
 	requestPage,
@@ -462,15 +460,7 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const {
-			translate,
-			forcePlaceholders,
-			lastPage,
-			streamKey,
-			streamKeySuffix,
-			trendingTags,
-			relatedSites,
-		} = this.props;
+		const { translate, forcePlaceholders, lastPage, streamKey, tag, trendingTags } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -514,13 +504,8 @@ class ReaderStream extends Component {
 
 			let sidebarContent;
 			if ( path.startsWith( '/tag/' ) ) {
-				console.log( trendingTags, relatedSites );
-				sidebarContent = (
-					<>
-						<QueryReaderRelatedSites tag={ streamKeySuffix } />
-						<ReaderTagSidebar trendingTags={ trendingTags } relatedSites={ relatedSites } />
-					</>
-				);
+				console.log( trendingTags );
+				sidebarContent = <ReaderTagSidebar trendingTags={ trendingTags } tag={ tag } />;
 			} else {
 				sidebarContent = <ReaderListFollowedSites path={ path } />;
 			}
@@ -591,7 +576,7 @@ export default connect(
 	( state, { streamKey, recsStreamKey } ) => {
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
-		const streamKeySuffix = streamKey?.substring( streamKey.indexOf( ':' ) + 1 );
+		const streamKeySuffix = streamKey?.substring( streamKey?.indexOf( ':' ) + 1 );
 
 		return {
 			blockedSites: getBlockedSites( state ),
@@ -610,8 +595,7 @@ export default connect(
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 			organizations: getReaderOrganizations( state ),
 			primarySiteId: getPrimarySiteId( state ),
-			relatedSites: getReaderRelatedSites( state, streamKeySuffix ),
-			streamKeySuffix: streamKeySuffix,
+			tag: streamKeySuffix,
 		};
 	},
 	{

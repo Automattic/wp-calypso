@@ -1,83 +1,58 @@
-import { localize } from 'i18n-calypso';
-import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
+import { useRelatedMetaByTag } from 'calypso/data/reader/use-related-meta-by-tag';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
 import ReaderListFollowingItem from 'calypso/reader/stream/reader-list-followed-sites/item';
 import '../style.scss';
 
-class ReaderTagSidebar extends Component {
-	static defaultProps = {
-		sitesPerPage: 25,
-		trendingTags: [],
-		relatedSites: [],
-	};
+const ReaderTagSidebar = ( { tag, postCount, authorCount } ) => {
+	const translate = useTranslate();
+	const relatedMetaByTag = useRelatedMetaByTag( tag );
 
-	static propTypes = {
-		trendingTags: PropTypes.array,
-		relatedSites: PropTypes.array,
-		postCount: PropTypes.number,
-		authorCount: PropTypes.number,
-		sitesPerPage: PropTypes.number,
-	};
+	console.log( 'readertagsidebar', relatedMetaByTag );
 
-	render() {
-		const { postCount, authorCount, translate, trendingTags, relatedSites } = this.props;
-		console.log( 'relatedSites', relatedSites );
-		const tagLinks = trendingTags
-			.sort( ( a, b ) => b.count - a.count )
-			.map( ( trendingTag ) => <TagLink tag={ trendingTag.tag } key={ trendingTag.tag.slug } /> );
-		const relatedSitesLinks =
-			relatedSites && relatedSites.length > 0
-				? relatedSites.map( ( relatedSite ) => (
-						<ReaderListFollowingItem
-							key={ relatedSite.feedId }
-							site={ relatedSite }
-							path={ null }
-						/>
-				  ) )
-				: null;
+	const tagLinks = relatedMetaByTag.data?.related_tags
+		.sort( ( a, b ) => b.score - a.score )
+		.map( ( relatedTag ) => <TagLink tag={ relatedTag } key={ relatedTag.slug } /> );
 
-		return (
-			<>
-				<div className="reader-tag-sidebar-totals">
-					<ul>
-						<li>
-							<span className="reader-tag-sidebar__count">
-								{ formatNumberCompact( postCount ) }
-							</span>
-							<span className="reader-tag-sidebar__title">{ translate( 'Posts' ) }</span>
-						</li>
-						<li>
-							<span className="reader-tag-sidebar__count">
-								{ formatNumberCompact( authorCount ) }
-							</span>
-							<span className="reader-tag-sidebar__title">{ translate( 'Authors' ) }</span>
-						</li>
-					</ul>
+	const relatedSitesLinks =
+		relatedMetaByTag.data?.related_sites && relatedMetaByTag.data.related_sites.length > 0
+			? relatedMetaByTag.data.related_sites.map( ( relatedSite ) => (
+					<ReaderListFollowingItem key={ relatedSite.feed_ID } site={ relatedSite } path="/" />
+			  ) )
+			: null;
+
+	return (
+		<>
+			<div className="reader-tag-sidebar-totals">
+				<ul>
+					<li>
+						<span className="reader-tag-sidebar__count">{ formatNumberCompact( postCount ) }</span>
+						<span className="reader-tag-sidebar__title">{ translate( 'Posts' ) }</span>
+					</li>
+					<li>
+						<span className="reader-tag-sidebar__count">
+							{ formatNumberCompact( authorCount ) }
+						</span>
+						<span className="reader-tag-sidebar__title">{ translate( 'Authors' ) }</span>
+					</li>
+				</ul>
+			</div>
+			{ tagLinks && (
+				<div className="reader-tag-sidebar-related-tags">
+					<h1>{ translate( 'Related Tags' ) }</h1>
+					{ tagLinks }
+					<a href="/tags">{ translate( 'See all tags' ) }</a>
 				</div>
-				{ tagLinks && (
-					<div className="reader-tag-sidebar-related-tags">
-						<h1>{ translate( 'Trending Tags' ) }</h1>
-						{ tagLinks }
-						<a href="/tags">{ translate( 'See all tags' ) }</a>
-					</div>
-				) }
-				{ relatedSitesLinks && (
-					<div className="reader-tag-sidebar-related-sites">
-						<h1>{ translate( 'Related Sites' ) }</h1>
-						{ relatedSitesLinks }
-					</div>
-				) }
-			</>
-		);
-	}
-}
+			) }
+			{ relatedSitesLinks && (
+				<div className="reader-tag-sidebar-related-sites">
+					<h1>{ translate( 'Related Sites' ) }</h1>
+					{ relatedSitesLinks }
+				</div>
+			) }
+		</>
+	);
+};
 
-export default connect( () => {
-	return {
-		authorCount: 335000,
-		postCount: 379000,
-	};
-} )( localize( ReaderTagSidebar ) );
+export default ReaderTagSidebar;

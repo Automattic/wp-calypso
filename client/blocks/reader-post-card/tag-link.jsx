@@ -22,7 +22,7 @@ class TagLink extends Component {
 					className="reader-post-card__tag-link ignore-click"
 					onClick={ this.recordSingleTagClick }
 				>
-					{ tag.name || tag.display_name }
+					{ tag.name || tag.slug }
 				</a>
 			</span>
 		);
