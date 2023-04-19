@@ -17,10 +17,10 @@ import useCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-post-c
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import CampaignsList from 'calypso/my-sites/promote-post/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post/components/posts-list';
 import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
 import PromotePostTabBar from 'calypso/my-sites/promote-post/components/promoted-post-filter';
+import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import {
 	getSitePost,
 	getPostsForQuery,

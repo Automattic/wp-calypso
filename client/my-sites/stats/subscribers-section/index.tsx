@@ -19,6 +19,8 @@ interface SubscribersData {
 
 interface SubscribersDataResult {
 	data: SubscribersData[];
+	unit: string;
+	date: string;
 }
 
 // New Subscriber Stats
@@ -34,9 +36,11 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 }
 
 export default function SubscribersSection( {
+	siteId,
 	slug,
 	period = 'month',
 }: {
+	siteId: string;
 	slug?: string;
 	period?: string;
 } ) {
@@ -48,7 +52,7 @@ export default function SubscribersSection( {
 		data,
 		// error,
 		status,
-	}: UseQueryResult< SubscribersDataResult > = useSubscribersQuery( period, quantity );
+	} = useSubscribersQuery( siteId, period, quantity ) as UseQueryResult< SubscribersDataResult >;
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const legendRef = useRef< HTMLDivElement >( null );
 	const translate = useTranslate();

@@ -46,9 +46,17 @@ describe( 'MonitorActivity component', () => {
 	const hasMonitor = true;
 
 	test( 'renders the header and content', async () => {
-		render( <MonitorActivity site={ site } trackEvent={ trackEvent } hasMonitor={ hasMonitor } />, {
-			wrapper: Wrapper,
-		} );
+		render(
+			<MonitorActivity
+				site={ site }
+				trackEvent={ trackEvent }
+				hasMonitor={ hasMonitor }
+				hasError={ false }
+			/>,
+			{
+				wrapper: Wrapper,
+			}
+		);
 		expect( screen.getByText( /monitor activity/i ) ).toBeInTheDocument();
 		expect( screen.getByText( /20d ago/i ) ).toBeInTheDocument();
 		expect( screen.getByText( /today/i ) ).toBeInTheDocument();
@@ -58,9 +66,17 @@ describe( 'MonitorActivity component', () => {
 
 	test( 'calls the trackEvent function and toggleActivateMonitor when clicked', () => {
 		const hasMonitor = false;
-		render( <MonitorActivity site={ site } trackEvent={ trackEvent } hasMonitor={ hasMonitor } />, {
-			wrapper: Wrapper,
-		} );
+		render(
+			<MonitorActivity
+				site={ site }
+				trackEvent={ trackEvent }
+				hasMonitor={ hasMonitor }
+				hasError={ false }
+			/>,
+			{
+				wrapper: Wrapper,
+			}
+		);
 		const card = screen.getByRole( 'button', {
 			name: /activate monitor to see your uptime records/i,
 		} );

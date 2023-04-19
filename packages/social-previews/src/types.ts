@@ -4,5 +4,6 @@ export type PreviewProps = {
 	description?: string;
 	customText?: string;
 	image?: string;
+	customImage?: string;
 	headingsLevel?: number;
 };

@@ -26,6 +26,7 @@ describe( 'BoostSitePerformance', () => {
 				siteId={ siteId }
 				siteUrlWithScheme={ siteUrlWithScheme }
 				trackEvent={ trackEventMock }
+				hasError={ false }
 			/>
 		);
 
@@ -48,6 +49,7 @@ describe( 'BoostSitePerformance', () => {
 				siteId={ siteId }
 				siteUrlWithScheme={ siteUrlWithScheme }
 				trackEvent={ trackEventMock }
+				hasError={ false }
 			/>
 		);
 
@@ -67,6 +69,7 @@ describe( 'BoostSitePerformance', () => {
 				siteId={ siteId }
 				siteUrlWithScheme={ siteUrlWithScheme }
 				trackEvent={ trackEventMock }
+				hasError={ false }
 			/>
 		);
 

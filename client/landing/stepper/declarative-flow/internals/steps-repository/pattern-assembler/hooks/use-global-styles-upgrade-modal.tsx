@@ -75,6 +75,8 @@ const useGlobalStylesUpgradeModal = ( {
 			destination: redirectUrl,
 			plan: 'premium',
 		} );
+
+		setIsOpen( false );
 	};
 
 	const upgradeLater = () => {
