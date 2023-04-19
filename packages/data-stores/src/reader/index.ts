@@ -4,6 +4,8 @@ import {
 	useSiteDeliveryFrequencyMutation,
 	useSiteUnfollowMutation,
 	useUserSettingsMutation,
+	usePendingSiteConfirmMutation,
+	usePendingSiteDeleteMutation,
 } from './mutations';
 import {
 	SiteSubscriptionsSortBy,
@@ -26,6 +28,8 @@ export const SubscriptionManager = {
 	useUserSettingsQuery,
 	useUserSettingsMutation,
 	usePendingSiteSubscriptionsQuery,
+	usePendingSiteConfirmMutation,
+	usePendingSiteDeleteMutation,
 };
 
 // Types

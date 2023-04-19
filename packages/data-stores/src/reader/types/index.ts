@@ -93,3 +93,14 @@ export type PendingSiteSubscription = {
 	date_subscribed: Date;
 	organization_id: number;
 };
+
+export type PendingPostSubscription = {
+	id: string;
+	title: string;
+	excerpt: string;
+	url: string;
+	site_title: string;
+	site_icon: string;
+	site_url: string;
+	date_subscribed: Date;
+};
