@@ -23,7 +23,6 @@ import type {
 
 const INITIAL_UNIX_EPOCH = '1970-01-01 00:00:00';
 
-const isExpandedBlockEnabled = config.isEnabled( 'jetpack/pro-dashboard-expandable-block' );
 const isBoostEnabled = config.isEnabled( 'jetpack/pro-dashboard-jetpack-boost' );
 
 // Mapping the columns to the site data keys
@@ -42,30 +41,24 @@ const boostColumn: SiteColumns = isBoostEnabled
 	  ]
 	: [];
 
-const statsColumns: SiteColumns = isExpandedBlockEnabled
-	? [
-			{
-				key: 'stats',
-				title: translate( 'Stats' ),
-				className: 'width-fit-content',
-				isExpandable: true,
-			},
-	  ]
-	: [];
-
 export const siteColumns: SiteColumns = [
 	{
 		key: 'site',
 		title: translate( 'Site' ),
 		isSortable: true,
 	},
-	...statsColumns,
+	{
+		key: 'stats',
+		title: translate( 'Stats' ),
+		className: 'width-fit-content',
+		isExpandable: true,
+	},
 	...boostColumn,
 	{
 		key: 'backup',
 		title: translate( 'Backup' ),
 		className: 'width-fit-content',
-		isExpandable: isExpandedBlockEnabled,
+		isExpandable: true,
 	},
 	{
 		key: 'scan',
@@ -76,7 +69,7 @@ export const siteColumns: SiteColumns = [
 		key: 'monitor',
 		title: translate( 'Monitor' ),
 		className: 'min-width-100px',
-		isExpandable: isExpandedBlockEnabled,
+		isExpandable: true,
 	},
 	{
 		key: 'plugin',
@@ -120,10 +113,6 @@ const backupEventNames: StatusEventNames = {
 	progress: {
 		small_screen: 'calypso_jetpack_agency_dashboard_backup_progress_click_small_screen',
 		large_screen: 'calypso_jetpack_agency_dashboard_backup_progress_click_large_screen',
-	},
-	failed: {
-		small_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_small_screen',
-		large_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_large_screen',
 	},
 	critical: {
 		small_screen: 'calypso_jetpack_agency_dashboard_backup_failed_click_small_screen',
@@ -212,7 +201,6 @@ const getRowEventName = (
 
 const backupTooltips: StatusTooltip = {
 	critical: translate( 'Latest backup failed' ),
-	failed: translate( 'Latest backup failed' ),
 	warning: translate( 'Latest backup completed with warnings' ),
 	inactive: translate( 'Add Jetpack VaultPress Backup to this site' ),
 	progress: translate( 'Backup in progress' ),
@@ -378,7 +366,7 @@ const formatBackupData = ( site: Site ) => {
 			break;
 		case 'rewind_backup_error':
 		case 'backup_only_error':
-			backup.status = isExpandedBlockEnabled ? 'critical' : 'failed';
+			backup.status = 'critical';
 			backup.value = translate( 'Failed' );
 			break;
 		case 'rewind_backup_complete_warning':

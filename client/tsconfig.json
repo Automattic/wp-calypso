@@ -23,5 +23,10 @@
 		"./package.json",
 		"./state/data-layer/wpcom/sites/jitm/schema.json"
 	],
-	"exclude": [ "./**/node_modules/**/*", "./**/test/**/*", "./server/devdocs/search-index.js" ]
+	"exclude": [
+		"./**/node_modules/**/*",
+		"./**/test/**/*",
+		"./server/devdocs/search-index.js",
+		"./**/.stories.tsx"
+	]
 }

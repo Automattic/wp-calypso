@@ -38,5 +38,11 @@ module.exports = {
 				'no-console': 'off',
 			},
 		},
+		{
+			files: [ '**/*.stories.tsx' ],
+			rules: {
+				'import/no-extraneous-dependencies': 'off',
+			},
+		},
 	],
 };

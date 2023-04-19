@@ -1,12 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-.site-table__table-v2 {
-	td,
-	th {
-		border: 1px solid rgba(220, 220, 222, 0.5);
-	}
-}
 
 .site-table__table {
 	border: 1px solid var(--studio-gray-5);
@@ -62,7 +56,7 @@
 
 	td,
 	th {
-		border-bottom: 1px solid var(--studio-gray-5);
+		border: 1px solid rgba(220, 220, 222, 0.5);
 		text-align: left;
 		border-collapse: collapse;
 		vertical-align: middle;

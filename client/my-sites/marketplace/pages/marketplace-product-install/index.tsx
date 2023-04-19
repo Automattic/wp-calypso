@@ -17,7 +17,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useInterval } from 'calypso/lib/interval';
 import { getProductSlugByPeriodVariation } from 'calypso/lib/plugins/utils';
 import MarketplaceProgressBar from 'calypso/my-sites/marketplace/components/progressbar';
-import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-plugin-install/use-marketplace-additional-steps';
+import useMarketplaceAdditionalSteps from 'calypso/my-sites/marketplace/pages/marketplace-product-install/use-marketplace-additional-steps';
 import theme from 'calypso/my-sites/marketplace/theme';
 import { waitFor } from 'calypso/my-sites/marketplace/util';
 import { initiateAtomicTransfer } from 'calypso/state/atomic/transfers/actions';
@@ -42,8 +42,8 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
-	activateTheme,
 	initiateThemeTransfer as initiateTransfer,
+	installAndActivateTheme,
 	requestActiveTheme,
 } from 'calypso/state/themes/actions';
 import { getTheme, isThemeActive as getThemeActive } from 'calypso/state/themes/selectors';
@@ -61,11 +61,11 @@ interface InstalledPlugin {
 	id?: number;
 }
 
-const MarketplacePluginInstall = ( {
-	productSlug = '',
+const MarketplaceProductInstall = ( {
+	pluginSlug = '',
 	themeSlug = '',
 }: MarketplacePluginInstallProps ) => {
-	const isUploadFlow = ! productSlug && ! themeSlug;
+	const isPluginUploadFlow = ! pluginSlug && ! themeSlug;
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ initializeInstallFlow, setInitializeInstallFlow ] = useState( false );
 	const [ atomicFlow, setAtomicFlow ] = useState( false );
@@ -82,37 +82,37 @@ const MarketplacePluginInstall = ( {
 	const pluginExists = pluginUploadError?.error === 'folder_exists';
 	const pluginMalicious = pluginUploadError?.error === 'plugin_malicious';
 	const pluginTooBig = pluginUploadError?.statusCode === 413;
-	const wporgPlugin = useSelector( ( state ) => getPlugin( state, productSlug ) );
-	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, productSlug ) );
+	const wporgPlugin = useSelector( ( state ) => getPlugin( state, pluginSlug ) );
+	const isWporgPluginFetched = useSelector( ( state ) => isFetched( state, pluginSlug ) );
 	const uploadedPluginSlug = useSelector( ( state ) =>
 		getUploadedPluginId( state, siteId )
 	) as string;
 	const pluginUploadComplete = useSelector( ( state ) => isPluginUploadComplete( state, siteId ) );
 	const installedPlugin = useSelector( ( state: DefaultRootState ): InstalledPlugin | undefined =>
-		getPluginOnSite( state, siteId, isUploadFlow ? uploadedPluginSlug : productSlug )
+		getPluginOnSite( state, siteId, isPluginUploadFlow ? uploadedPluginSlug : pluginSlug )
 	);
 	const pluginActive = useSelector( ( state ) =>
-		isPluginActive( state, siteId, isUploadFlow ? uploadedPluginSlug : productSlug )
+		isPluginActive( state, siteId, isPluginUploadFlow ? uploadedPluginSlug : pluginSlug )
 	);
 	const automatedTransferStatus = useSelector( ( state ) =>
 		getAutomatedTransferStatus( state, siteId )
 	);
 
 	const pluginInstallStatus = useSelector( ( state ) =>
-		getStatusForPlugin( state, siteId, productSlug )
+		getStatusForPlugin( state, siteId, pluginSlug )
 	);
 
 	const productsList = useSelector( ( state ) => getProductsList( state ) );
 	const isProductListFetched = Object.values( productsList ).length > 0;
 	const isMarketplaceProduct = useSelector( ( state ) =>
-		isMarketplaceProductSelector( state, productSlug )
+		isMarketplaceProductSelector( state, pluginSlug )
 	);
 
 	const wpOrgTheme = useSelector( ( state ) => getTheme( state, 'wporg', themeSlug ) );
 	const isThemeActive = useSelector( ( state ) => getThemeActive( state, themeSlug, siteId ) );
 	useQueryTheme( 'wporg', themeSlug );
 
-	const { data: wpComPluginData } = useWPCOMPlugin( productSlug, {
+	const { data: wpComPluginData } = useWPCOMPlugin( pluginSlug, {
 		enabled: isProductListFetched && isMarketplaceProduct,
 	} );
 
@@ -120,7 +120,7 @@ const MarketplacePluginInstall = ( {
 		const { pluginInstallationStatus, productSlugInstalled, primaryDomain } = getPurchaseFlowState(
 			state as IAppState
 		);
-		if ( isUploadFlow ) {
+		if ( isPluginUploadFlow ) {
 			return (
 				pluginInstallationStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED &&
 				primaryDomain === selectedSiteSlug
@@ -129,7 +129,7 @@ const MarketplacePluginInstall = ( {
 		return (
 			pluginInstallationStatus !== MARKETPLACE_ASYNC_PROCESS_STATUS.COMPLETED &&
 			productSlugInstalled &&
-			[ productSlug, themeSlug ].includes( productSlugInstalled ) &&
+			[ pluginSlug, themeSlug ].includes( productSlugInstalled ) &&
 			primaryDomain === selectedSiteSlug
 		);
 	} );
@@ -151,9 +151,9 @@ const MarketplacePluginInstall = ( {
 	// retrieve plugin data if not available
 	useEffect( () => {
 		if ( ! isWporgPluginFetched ) {
-			dispatch( wporgFetchPluginData( productSlug ) );
+			dispatch( wporgFetchPluginData( pluginSlug ) );
 		}
-	}, [ isWporgPluginFetched, productSlug, dispatch ] );
+	}, [ isWporgPluginFetched, pluginSlug, dispatch ] );
 
 	// Check if the user plan is enough for installation or it is a self-hosted jetpack site
 	// if not, check again in 2s and show an error message
@@ -190,7 +190,7 @@ const MarketplacePluginInstall = ( {
 	useEffect( () => {
 		if (
 			( marketplaceInstallationInProgress || directInstallationAllowed ) &&
-			! isUploadFlow &&
+			! isPluginUploadFlow &&
 			! initializeInstallFlow &&
 			( wporgPlugin || wpOrgTheme ) &&
 			selectedSite
@@ -203,7 +203,7 @@ const MarketplacePluginInstall = ( {
 			if ( selectedSite.jetpack ) {
 				if ( wpOrgTheme ) {
 					// initilize theme activating
-					dispatch( activateTheme( wpOrgTheme.id, siteId ) );
+					dispatch( installAndActivateTheme( wpOrgTheme.id, siteId ) );
 				} else {
 					// initialize plugin installing
 					dispatch( installPlugin( siteId, wporgPlugin, false ) );
@@ -216,7 +216,7 @@ const MarketplacePluginInstall = ( {
 					dispatch( initiateAtomicTransfer( siteId, { themeSlug } ) );
 				} else {
 					setAtomicFlow( true );
-					dispatch( initiateTransfer( siteId, null, productSlug ) );
+					dispatch( initiateTransfer( siteId, null, pluginSlug ) );
 				}
 
 				triggerInstallFlow();
@@ -225,13 +225,13 @@ const MarketplacePluginInstall = ( {
 	}, [
 		marketplaceInstallationInProgress,
 		directInstallationAllowed,
-		isUploadFlow,
+		isPluginUploadFlow,
 		initializeInstallFlow,
 		selectedSite,
 		siteId,
 		wporgPlugin,
 		wpOrgTheme,
-		productSlug,
+		pluginSlug,
 		themeSlug,
 		dispatch,
 		hasAtomicFeature,
@@ -249,7 +249,7 @@ const MarketplacePluginInstall = ( {
 		if (
 			installedPlugin &&
 			currentStep === 1 &&
-			( ! isUploadFlow || ( isUploadFlow && pluginUploadComplete ) )
+			( ! isPluginUploadFlow || ( isPluginUploadFlow && pluginUploadComplete ) )
 		) {
 			dispatch(
 				activatePlugin( siteId, {
@@ -271,20 +271,20 @@ const MarketplacePluginInstall = ( {
 			( atomicFlow && transferStates.COMPLETE === automatedTransferStatus ) ||
 			// Transfer to atomic uploading a zip plugin
 			( uploadedPluginSlug &&
-				isUploadFlow &&
+				isPluginUploadFlow &&
 				! isAtomic &&
 				transferStates.COMPLETE === automatedTransferStatus )
 		) {
 			waitFor( 1 ).then( () =>
 				page.redirect(
 					`/marketplace/thank-you/${ selectedSiteSlug }?hide-progress-bar&plugins=${
-						installedPlugin?.slug || productSlug || uploadedPluginSlug
+						installedPlugin?.slug || pluginSlug || uploadedPluginSlug
 					}`
 				)
 			);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ pluginActive, automatedTransferStatus, atomicFlow, isUploadFlow, isAtomic ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
+	}, [ pluginActive, automatedTransferStatus, atomicFlow, isPluginUploadFlow, isAtomic ] ); // We need to trigger this hook also when `automatedTransferStatus` changes cause the plugin install is done on the background in that case.
 
 	// Validate theme is already active
 	useEffect( () => {
@@ -311,13 +311,13 @@ const MarketplacePluginInstall = ( {
 		}
 
 		return [
-			isUploadFlow
+			isPluginUploadFlow
 				? translate( 'Uploading plugin' )
 				: translate( 'Setting up plugin installation' ),
 			translate( 'Installing plugin' ),
 			translate( 'Activating plugin' ),
 		];
-	}, [ themeSlug, isUploadFlow, translate ] );
+	}, [ themeSlug, isPluginUploadFlow, translate ] );
 	const additionalSteps = useMarketplaceAdditionalSteps();
 
 	const installPluginQuestionText = translate( 'Do you want to install the plugin %(plugin)s?', {
@@ -337,11 +337,11 @@ const MarketplacePluginInstall = ( {
 
 	const productName = themeSlug
 		? wpOrgTheme?.name || themeSlug
-		: wporgPlugin?.name || wpComPluginData?.name || productSlug;
+		: wporgPlugin?.name || wpComPluginData?.name || pluginSlug;
 
 	const productPage = themeSlug
 		? `/themes/${ themeSlug }/${ selectedSite?.slug }`
-		: `/plugins/${ productSlug }/${ selectedSite?.slug }`;
+		: `/plugins/${ pluginSlug }/${ selectedSite?.slug }`;
 	const goToPluginPageText = translate( 'Go to the plugin page' );
 	const goToThemePageText = translate( 'Go to the theme page' );
 	const goToText = themeSlug ? goToThemePageText : goToPluginPageText;
@@ -361,11 +361,11 @@ const MarketplacePluginInstall = ( {
 						"Your current plan doesn't allow plugin installation. Please upgrade to Business plan first."
 					) }
 					action={ translate( 'Upgrade to Business Plan' ) }
-					actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/plugin/${ productSlug }/install/${ selectedSite?.slug }#step2` }
+					actionURL={ `/checkout/${ selectedSite?.slug }/business?redirect_to=/marketplace/plugin/${ pluginSlug }/install/${ selectedSite?.slug }#step2` }
 				/>
 			);
 		}
-		if ( isUploadFlow && noDirectAccessError && ! directInstallationAllowed ) {
+		if ( isPluginUploadFlow && noDirectAccessError && ! directInstallationAllowed ) {
 			return (
 				<EmptyContent
 					illustration="/calypso/images/illustrations/error.svg"
@@ -471,9 +471,9 @@ const MarketplacePluginInstall = ( {
 					line={ translate( 'An error occurred while installing the plugin.' ) }
 					action={ translate( 'Back' ) }
 					actionURL={
-						isUploadFlow
+						isPluginUploadFlow
 							? `/plugins/upload/${ selectedSiteSlug }`
-							: `/plugins/${ productSlug }/${ selectedSiteSlug }`
+							: `/plugins/${ pluginSlug }/${ selectedSiteSlug }`
 					}
 				/>
 			);
@@ -483,14 +483,14 @@ const MarketplacePluginInstall = ( {
 	return (
 		<ThemeProvider theme={ theme }>
 			<PageViewTracker
-				path="/marketplace/:productSlug?/install/:site?"
-				title="Plugins > Installing"
+				path="/marketplace/(plugin/theme)/:productSlug?/install/:site?"
+				title="Marketplace Product > Installing"
 			/>
 			<QueryActiveTheme siteId={ siteId } />
 			{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 			<Masterbar className="marketplace-plugin-install__masterbar">
 				<WordPressWordmark className="marketplace-plugin-install__wpcom-wordmark" />
-				<Item>{ translate( 'Plugin installation' ) }</Item>
+				<Item>{ translate( 'Marketplace installation' ) }</Item>
 			</Masterbar>
 			<div className="marketplace-plugin-install__root">
 				{ renderError() || (
@@ -505,4 +505,4 @@ const MarketplacePluginInstall = ( {
 	);
 };
 
-export default MarketplacePluginInstall;
+export default MarketplaceProductInstall;

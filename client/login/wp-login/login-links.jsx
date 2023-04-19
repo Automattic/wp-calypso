@@ -39,6 +39,7 @@ export class LoginLinks extends Component {
 		twoFactorAuthType: PropTypes.string,
 		usernameOrEmail: PropTypes.string,
 		isPartnerSignup: PropTypes.bool,
+		isGravatar: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -315,6 +316,7 @@ export class LoginLinks extends Component {
 		const {
 			currentRoute,
 			isP2Login,
+			isGravatar,
 			locale,
 			oauth2Client,
 			pathname,
@@ -322,6 +324,10 @@ export class LoginLinks extends Component {
 			translate,
 			usernameOrEmail,
 		} = this.props;
+
+		if ( isGravatar ) {
+			return null;
+		}
 
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl = this.props.signupUrl
@@ -361,6 +367,7 @@ export class LoginLinks extends Component {
 			<div
 				className={ classnames( 'wp-login__links', {
 					'has-2fa-links': this.props.twoFactorAuthType,
+					'is-gravatar-links': this.props.isGravatar,
 				} ) }
 			>
 				{ this.renderSignUpLink() }

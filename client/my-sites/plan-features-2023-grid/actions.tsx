@@ -12,6 +12,7 @@ import {
 import { Button } from '@automattic/components';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { isMobile } from '@automattic/viewport';
 import styled from '@emotion/styled';
 import { useDispatch } from '@wordpress/data';
 import { useCallback } from '@wordpress/element';
@@ -291,6 +292,9 @@ const LoggedInPlansFeatureActionButton = ( {
 					<DummyDisabledButton>
 						{ translate( 'Downgrade', { context: 'verb' } ) }
 					</DummyDisabledButton>
+					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
+						{ isMobile() && translate( 'Please contact support to downgrade your plan.' ) }
+					</div>
 				</Plans2023Tooltip>
 			);
 		} else if ( forceDisplayButton ) {
