@@ -89,8 +89,8 @@ export function activate(
 		const isWooTheme = doesThemeBundleSoftwareSet( getState(), themeId );
 		const isDotComTheme = !! getTheme( getState(), 'wpcom', themeId );
 		if (
-			isDotComTheme &&
 			isEnabled( 'themes/display-thank-you-page' ) &&
+			isDotComTheme &&
 			! isWooTheme &&
 			! isExternallyManaged
 		) {
