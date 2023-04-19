@@ -18,7 +18,7 @@ const getMessage = ( translate, product, siteVersion, minVersion ) => {
 					minVersion: minVersion,
 				},
 				components: {
-					productName: displayName,
+					productName: <>{ displayName }</>,
 					strong: <strong />,
 				},
 			}
@@ -33,7 +33,7 @@ const getMessage = ( translate, product, siteVersion, minVersion ) => {
 				siteVersion: siteVersion,
 			},
 			components: {
-				productName: displayName,
+				productName: <>{ displayName }</>,
 				strong: <strong />,
 			},
 		}
