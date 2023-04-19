@@ -33,7 +33,7 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 	);
 
 	return (
-		<HighlightCards
+		<WeeklyHighlightCards
 			className="has-odyssey-stats-bg-color"
 			counts={ counts }
 			previousCounts={ previousCounts }

@@ -8,7 +8,7 @@ import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
 import HighlightCard from './highlight-card';
 import './style.scss';
 
-export type HighlightCardsProps = {
+type WeeklyHighlightCardsProps = {
 	className?: string;
 	counts: {
 		comments: number | null;
@@ -29,7 +29,7 @@ export type HighlightCardsProps = {
 	onClickVisitors: ( event: MouseEvent ) => void;
 };
 
-export default function HighlightCards( {
+export default function WeeklyHighlightCards( {
 	className,
 	counts,
 	onClickComments,
@@ -38,7 +38,7 @@ export default function HighlightCards( {
 	onClickVisitors,
 	previousCounts,
 	showValueTooltip,
-}: HighlightCardsProps ) {
+}: WeeklyHighlightCardsProps ) {
 	const translate = useTranslate();
 
 	const textRef = useRef( null );
