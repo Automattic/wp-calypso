@@ -187,6 +187,10 @@ module.exports = {
 		new webpack.NormalModuleReplacementPlugin( /^\.\.\/gridicon$/, '../gridicon/no-asset' ),
 		new webpack.NormalModuleReplacementPlugin( /^\.\/gridicon$/, './gridicon/no-asset' ),
 		new webpack.NormalModuleReplacementPlugin(
+			/^@automattic\/calypso-config$/,
+			path.resolve( __dirname, 'src/lib/config-api' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/jetpack-colophon$/,
 			'calypso/components/jetpack/jetpack-footer'
 		),
