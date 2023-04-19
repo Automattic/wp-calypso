@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import { baseDomain, preparePreviewText } from '../helpers';
 import './style.scss';
 
@@ -33,13 +34,23 @@ export function LinkedInPreview( {
 					<div className="linkedin-preview__header--profile-info">
 						<div className="linkedin-preview__header--profile-name">{ name }</div>
 						<span>•</span>
-						<div className="linkedin-preview__header--profile-actor">1st</div>
+						<div className="linkedin-preview__header--profile-actor">
+							{
+								// translators: refers to the actor level of the post being shared, e.g. "1st", "2nd", "3rd", etc.
+								__( '1st', 'social-previews' )
+							}
+						</div>
 					</div>
 					{ jobTitle ? (
 						<div className="linkedin-preview__header--profile-title">{ jobTitle }</div>
 					) : null }
 					<div className="linkedin-preview__header--profile-meta">
-						<span>1h</span>
+						<span>
+							{
+								// translators: refers to the time since the post was published, e.g. "1h"
+								__( '1h', 'social-previews' )
+							}
+						</span>
 						<span>•</span>
 						{ /* This is the Globe SVG that represents visibility to be "public" */ }
 						<svg viewBox="0 0 16 16" fill="currentColor" width="16" height="16" focusable="false">
@@ -71,7 +82,12 @@ export function LinkedInPreview( {
 							<div className="linkedin-preview__description--meta">
 								<span className="linkedin-preview__description--url">{ baseDomain( url ) }</span>
 								<span>•</span>
-								<span>x min read</span>
+								<span>
+									{
+										// translators: x is the number of minutes it takes to read the article
+										__( 'x min read', 'social-previews' )
+									}
+								</span>
 							</div>
 						</div>
 					) : null }
