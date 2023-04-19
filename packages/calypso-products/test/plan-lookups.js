@@ -1216,6 +1216,20 @@ describe( 'planMatches - general', () => {
 	} );
 } );
 
+describe( 'planMatches - free', () => {
+	test( 'should return true for matching queries', () => {
+		expect( planMatches( PLAN_FREE, { type: TYPE_FREE } ) ).toEqual( true );
+
+		// see the explanation in packages/calypso-products/src/main.ts:planMatches()
+		// tl;dr the Free plan doesn't have the concept of terms.
+		expect( planMatches( PLAN_FREE, { type: TYPE_FREE } ) ).toEqual( true );
+		expect( planMatches( PLAN_FREE, { type: TYPE_FREE, term: TERM_MONTHLY } ) ).toEqual( true );
+		expect( planMatches( PLAN_FREE, { type: TYPE_FREE, term: TERM_ANNUALLY } ) ).toEqual( true );
+		expect( planMatches( PLAN_FREE, { type: TYPE_FREE, term: TERM_BIENNIALLY } ) ).toEqual( true );
+		expect( planMatches( PLAN_FREE, { type: TYPE_FREE, term: TERM_TRIENNIALLY } ) ).toEqual( true );
+	} );
+} );
+
 describe( 'planMatches - personal', () => {
 	test( 'should return true for matching queries', () => {
 		expect( planMatches( PLAN_PERSONAL, { type: TYPE_PERSONAL } ) ).toEqual( true );

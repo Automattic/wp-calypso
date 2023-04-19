@@ -518,7 +518,9 @@ export function planMatches( planKey: string | Plan, query: PlanMatchesQuery = {
 	if (
 		( ! ( 'type' in query ) || plan.type === query.type ) &&
 		( ! ( 'group' in query ) || plan.group === query.group ) &&
-		( ! ( 'term' in query ) || plan.term === query.term )
+		// the Free plan doesn't have the concept of term.
+		// However, we often have to query a list of plans with a term. Thus
+		( ! ( 'term' in query ) || plan.term === query.term || plan.type === TYPE_FREE )
 	) {
 		return true;
 	}
