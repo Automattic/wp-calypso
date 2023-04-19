@@ -16,7 +16,11 @@ import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
+<<<<<<< HEAD
 import config from './lib/config-api';
+=======
+import { removeMainRoleFromExistingElements } from './lib/a11y';
+>>>>>>> 9c94c48f61 (import function into app startup)
 import setLocale from './lib/set-locale';
 import { setupContextMiddleware } from './page-middleware/setup-context';
 import registerStatsPages from './routes';
@@ -25,6 +29,7 @@ import 'calypso/assets/stylesheets/style.scss';
 import './app.scss';
 
 async function AppBoot() {
+	removeMainRoleFromExistingElements();
 	const siteId = config( 'blog_id' );
 	const localeSlug = config( 'i18n_locale_slug' ) || config( 'i18n_default_locale_slug' ) || 'en';
 
