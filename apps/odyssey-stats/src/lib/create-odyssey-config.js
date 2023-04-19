@@ -43,7 +43,7 @@ ConfigApi.prototype._overrideConfigDataFeatures = function () {
 	this.configData.features = productionConfig.features;
 };
 
-// Forked from https://github.com/Automattic/wp-calypso/blob/ca7d8fe3e0a5fb87b0659fbab659078ebbfbc7be/packages/calypso-config/src/index.ts#L60
+// Copied from https://github.com/Automattic/wp-calypso/blob/ca7d8fe3e0a5fb87b0659fbab659078ebbfbc7be/packages/calypso-config/src/index.ts#L60
 ConfigApi.prototype._applyFlags = function ( flagsString, modificationMethod ) {
 	const flags = flagsString.split( ',' );
 	flags.forEach( ( flagRaw ) => {
