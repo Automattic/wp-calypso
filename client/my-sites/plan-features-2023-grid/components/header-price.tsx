@@ -1,5 +1,6 @@
 import { isWpcomEnterpriseGridPlan, PlanSlug } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
+import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
@@ -19,6 +20,21 @@ const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
 	flex-direction: ${ ( props ) => ( props.isLargeCurrency ? 'column' : 'row-reverse' ) };
 	align-items: ${ ( props ) => ( props.isLargeCurrency ? 'flex-start' : 'flex-end' ) };
 	gap: 4px;
+`;
+
+const Badge = styled.div`
+	text-align: center;
+	white-space: nowrap;
+	font-size: 0.75rem;
+	font-weight: 500;
+	letter-spacing: 0.2px;
+	line-height: 1.25rem;
+	padding: 0 12px;
+	border-radius: 4px;
+	height: 21px;
+	background-color: var( --studio-green-0 );
+	display: inline-block;
+	color: var( --studio-green-40 );
 `;
 
 const HeaderPriceContainer = styled.div`
@@ -112,6 +128,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	isLargeCurrency,
 	hideCreditNotice,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
+	const translate = useTranslate();
 	const { planName, showMonthlyPrice } = planProperties;
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const planPrices = usePlanPrices( {
@@ -130,7 +147,11 @@ const PlanFeatures2023GridHeaderPrice = ( {
 		<HeaderPriceContainer>
 			{ shouldShowDiscountedPrice && (
 				<>
-					{ ! hideCreditNotice ? <Badge>Credit applied</Badge> : <Badge>One time discount</Badge> }
+					<Badge className="plan-features-2023-grid__badge">
+						{ ! hideCreditNotice
+							? translate( 'Credit applied' )
+							: translate( 'One time discount' ) }
+					</Badge>
 					<PricesGroup isLargeCurrency={ isLargeCurrency }>
 						<PlanPrice
 							currencyCode={ currencyCode }
