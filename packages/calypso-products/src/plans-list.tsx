@@ -1382,9 +1382,15 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PRO,
 	getTitle: () => i18n.translate( 'WordPress Pro' ),
+	getTagline: () =>
+		i18n.translate(
+			'This plan gives you access to our most powerful features at an affordable price for an unmatched value you won’t get anywhere else. No longer available to new users.'
+		),
 	getDescription: () =>
 		i18n.translate(
-			'Unlock the full power of WordPress with plugins, custom themes and much more.'
+			'You’ve got our best deal on hosting! ' +
+				'Your Pro plan includes access to all the most popular features WordPress.com has to offer, including premium themes and access to over 50,000 plugins. ' +
+				'As an existing customer, you can keep your site on this plan as long as your subscription remains active.'
 		),
 	getSubTitle: () => i18n.translate( 'Unlimited features. Unbeatable value.' ),
 	getPlanCompareFeatures: () => [
@@ -1439,6 +1445,14 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_BACKUPS,
 	],
+	getPlanCancellationDescription: () =>
+		i18n.translate(
+			'Heads up — you are currently on a legacy plan that is no longer available for new subscribers. ' +
+				'Your Pro plan includes access to all the most popular features WordPress.com has to offer, ' +
+				'including premium themes and access to over 50,000 plugins. As an existing Pro plan subscriber, ' +
+				'you can keep your site on this legacy plan as long as your subscription remains active. ' +
+				'If canceled, the WordPress.com Pro plan can no longer be added to your account.'
+		),
 	getCancellationFeatureList: (): CancellationFeatureLists => ( {
 		monthly: {
 			featureList: [
