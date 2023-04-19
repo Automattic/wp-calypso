@@ -8859,18 +8859,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/icons@npm:^9.13.0, @wordpress/icons@npm:^9.4.0":
-  version: 9.18.0
-  resolution: "@wordpress/icons@npm:9.18.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^5.4.0
-    "@wordpress/primitives": ^3.25.0
-  checksum: 4faa7d2698dc4a0740047c54913688b0b37e21f8ece9eafd09b6f34ec4d57eb8fd55e09cdf191ebe13abaa06d27ee27722e193e1f109bff16ec3da16b08f9caf
-  languageName: node
-  linkType: hard
-
-"@wordpress/icons@npm:^9.22.0":
+"@wordpress/icons@npm:^9.13.0, @wordpress/icons@npm:^9.22.0, @wordpress/icons@npm:^9.4.0":
   version: 9.22.0
   resolution: "@wordpress/icons@npm:9.22.0"
   dependencies:
@@ -9073,18 +9062,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.11.0, @wordpress/primitives@npm:^3.20.0, @wordpress/primitives@npm:^3.25.0":
-  version: 3.25.0
-  resolution: "@wordpress/primitives@npm:3.25.0"
-  dependencies:
-    "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^5.4.0
-    classnames: ^2.3.1
-  checksum: 72f570d9cc269c6827b56e8e6e000277c80495b329cb30706bdedf54462ce49b91d28f4418d71f4a3cda676b7c451359575c20c9640003aca2242cdd1420aadd
-  languageName: node
-  linkType: hard
-
-"@wordpress/primitives@npm:^3.29.0":
+"@wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.11.0, @wordpress/primitives@npm:^3.20.0, @wordpress/primitives@npm:^3.29.0":
   version: 3.29.0
   resolution: "@wordpress/primitives@npm:3.29.0"
   dependencies:
