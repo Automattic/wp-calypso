@@ -7093,6 +7093,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/redux-mock-store@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@types/redux-mock-store@npm:1.0.3"
+  dependencies:
+    redux: ^4.0.5
+  checksum: 5027e4ecd654efc8b98418c41e9286c257db54206943ee2f541d751f6579e740b733597d58d1a79df133da0693f8c34772e6bed85c5ef6d9ae8636d342d7df88
+  languageName: node
+  linkType: hard
+
 "@types/resolve@npm:0.0.8":
   version: 0.0.8
   resolution: "@types/resolve@npm:0.0.8"
@@ -11674,6 +11683,7 @@ __metadata:
     "@testing-library/react-hooks": 7.0.2
     "@testing-library/user-event": ^14.2.0
     "@types/jest": ^27.4.0
+    "@types/redux-mock-store": 1.0.3
     "@wordpress/a11y": ^3.22.0
     "@wordpress/api-fetch": ^6.19.0
     "@wordpress/base-styles": ^4.13.0
@@ -27556,7 +27566,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"redux@npm:^4.0.0, redux@npm:^4.0.4, redux@npm:^4.1.2, redux@npm:^4.2.0":
+"redux@npm:^4.0.0, redux@npm:^4.0.4, redux@npm:^4.0.5, redux@npm:^4.1.2, redux@npm:^4.2.0":
   version: 4.2.1
   resolution: "redux@npm:4.2.1"
   dependencies:
