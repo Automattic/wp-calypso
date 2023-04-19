@@ -48,7 +48,7 @@ export const redirectCheckoutToWpAdmin = (): boolean => !! JETPACK_REDIRECT_CHEC
  *
  */
 export const is2023PricingGridEnabled = (): boolean => {
-	return true && isEnabled( 'onboarding/2023-pricing-grid' );
+	return isEnabled( 'onboarding/2023-pricing-grid' );
 };
 
 /**

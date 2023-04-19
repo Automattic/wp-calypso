@@ -19,7 +19,7 @@ const BadgeContainer = styled.div`
 const Badge: React.FunctionComponent< PropsWithChildren< { children: string } > > = ( {
 	children,
 } ) => {
-	return <BadgeContainer className="badge">{ children }</BadgeContainer>;
+	return <BadgeContainer className="plan-features-2023-grid__badge">{ children }</BadgeContainer>;
 };
 
 export default Badge;
