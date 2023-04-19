@@ -31,7 +31,7 @@ import {
 	PLAN_WOOEXPRESS_PLUS,
 	WOO_EXPRESS_PLANS,
 } from './constants';
-import { featureGroups } from './feature-group-plan-map';
+import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
 import { PLANS_LIST } from './plans-list';
 import {
 	isJetpackBusiness,
@@ -61,6 +61,10 @@ export function getPlans(): Record< string, Plan > {
 
 export function getPlanFeaturesGrouped(): Partial< FeatureGroupMap > {
 	return featureGroups;
+}
+
+export function getWooExpressFeaturesGrouped(): Partial< FeatureGroupMap > {
+	return wooExpressFeatureGroups;
 }
 
 export function getPlansSlugs(): string[] {
