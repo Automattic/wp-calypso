@@ -37,12 +37,11 @@ export function getEnhancedChecklist(
 
 	const siteLaunchCompleted = checklistStatuses?.site_launched || false;
 
-	const firstPostPublishedCompleted = checklistStatuses?.first_post_published || false;
-
 	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
+	// TODO: We should update all references to mustVerifyEmailBeforePosting and isEmailVerified once we are able to retrieve it from the endpoint
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
 	const homePageId = site?.options?.page_on_front;
@@ -84,7 +83,6 @@ export function getEnhancedChecklist(
 					break;
 				case 'setup_newsletter':
 					taskData = {
-						title: translate( 'Personalize Newsletter' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -140,7 +138,6 @@ export function getEnhancedChecklist(
 					break;
 				case 'subscribers_added':
 					taskData = {
-						title: translate( 'Add Subscribers' ),
 						actionDispatch: () => {
 							if ( goToStep ) {
 								recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -162,8 +159,6 @@ export function getEnhancedChecklist(
 					break;
 				case 'first_post_published_newsletter':
 					taskData = {
-						title: translate( 'Start writing' ),
-						completed: firstPostPublishedCompleted,
 						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -324,7 +319,6 @@ export function getEnhancedChecklist(
 				case 'verify_email':
 					taskData = {
 						completed: isEmailVerified,
-						title: translate( 'Confirm Email (Check Your Inbox)' ),
 					};
 					break;
 			}
