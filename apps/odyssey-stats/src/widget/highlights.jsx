@@ -31,13 +31,12 @@ function ItemWrapper( { odysseyStatsBaseUrl, siteId, isItemLink, item } ) {
 		<a
 			href={ postAndPageLink( odysseyStatsBaseUrl, siteId, item.id ) }
 			rel="noopener noreferrer"
-			title={ translate( 'View highlight post or page', {
+			title={ translate( 'View detailed stats for %(title)s', {
+				args: {
+					title: item.title,
+				},
 				textOnly: true,
-				context: 'View highlight post or page',
-			} ) }
-			aria-label={ translate( 'View highlight post or page', {
-				textOnly: true,
-				context: 'View highlight post or page',
+				comment: 'Text for anchor linking to a stats page for a given post/page',
 			} ) }
 		>
 			{ renderedItem }
