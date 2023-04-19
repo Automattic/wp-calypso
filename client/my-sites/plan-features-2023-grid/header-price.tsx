@@ -102,7 +102,7 @@ const HeaderPriceContainer = styled.div`
 			}
 		}
 	}
-	.badge {
+	.plan-features-2023-grid__badge {
 		margin-bottom: 10px;
 	}
 `;
