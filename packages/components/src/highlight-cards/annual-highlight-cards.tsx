@@ -4,7 +4,7 @@ import { useTranslate } from 'i18n-calypso';
 import HighlightCard from './count-comparison-card';
 import './style.scss';
 
-export type AnnualHighlightCardsProps = {
+type AnnualHighlightCardsProps = {
 	className?: string;
 	counts: {
 		comments: number | null;
