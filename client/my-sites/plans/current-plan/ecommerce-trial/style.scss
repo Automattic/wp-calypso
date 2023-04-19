@@ -69,11 +69,9 @@ body.is-section-plans.is-ecommerce-trial-plan {
 
 		.feature-included-card__illustration {
 			width: 48px;
-			margin-right: 24px;
 
 			@media (min-width: $break-large) {
 				width: 60px;
-				margin-right: 0;
 			}
 
 		}
