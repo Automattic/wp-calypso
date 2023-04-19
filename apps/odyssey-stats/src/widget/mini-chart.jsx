@@ -6,6 +6,7 @@ import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
+import nothing from '../components/nothing';
 import useVisitsQuery from '../hooks/use-visits-query';
 
 import './mini-chart.scss';
@@ -52,7 +53,7 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 					activeCharts={ [ 'visitors' ] }
 					tabs={ CHARTS }
 					activeTab={ CHART_VIEWS }
-					clickHandler={ null }
+					clickHandler={ nothing }
 				/>
 			</div>
 			{ ( isLoading || ! ( chartData?.length > 0 ) ) && (
