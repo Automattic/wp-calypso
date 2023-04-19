@@ -54,6 +54,15 @@ body {
 			.subscription-manager__sort-controls {
 				margin-left: auto;
 			}
+
+			.subscriptions-manager__filter-control {
+				flex-grow: 1;
+
+				&.select-dropdown,
+				.select-dropdown__header {
+					height: 48px;
+				}
+			}
 		}
 
 		@media (max-width: $break-small) {
