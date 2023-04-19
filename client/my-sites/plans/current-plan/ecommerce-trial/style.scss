@@ -63,8 +63,16 @@ body.is-section-plans.is-ecommerce-trial-plan {
 			padding: 48px 24px 24px;
 		}
 
-		.feature-included-card__content .feature-included-card__title {
-			margin-bottom: 8px;
+		.feature-included-card__content {
+			margin-left: 24px;
+
+			@media (min-width: $break-large) {
+				margin-left: 0;
+			}
+
+			.feature-included-card__title {
+				margin-bottom: 8px;
+			}
 		}
 
 		.feature-included-card__illustration {
@@ -73,7 +81,6 @@ body.is-section-plans.is-ecommerce-trial-plan {
 			@media (min-width: $break-large) {
 				width: 60px;
 			}
-
 		}
 
 		.feature-included-card__text {
