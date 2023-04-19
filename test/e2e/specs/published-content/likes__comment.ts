@@ -12,7 +12,6 @@ import {
 	RestAPIClient,
 	NewCommentResponse,
 	PostResponse,
-	ElementHelper,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -32,11 +31,12 @@ describe( 'Likes: Comment', function () {
 	const postContent =
 		'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 	let page: Page;
+	let commentsComponent: CommentsComponent;
+	let testAccount: TestAccount;
 	let newPost: PostResponse;
 	let commentToBeLiked: NewCommentResponse;
 	let commentToBeUnliked: NewCommentResponse;
 	let restAPIClient: RestAPIClient;
-	let testAccount: TestAccount;
 
 	beforeAll( async function () {
 		page = await browser.newPage();
@@ -64,13 +64,16 @@ describe( 'Likes: Comment', function () {
 			DataHelper.getRandomPhrase()
 		);
 
-		// Establish proper state for the respective comments.
-		await restAPIClient.commentAction(
-			'unlike',
-			testAccount.credentials.testSites?.primary.id as number,
-			commentToBeLiked.ID
-		);
+		// For AT sites the API will respond with a HTTP 404
+		// unless time is given for the comment to "settle" in place.
+		// It could be argued that adding this arbitrary delay is
+		// "more representative" of users.
+		// @see: https://github.com/Automattic/wp-calypso/issues/75952
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			await page.waitForTimeout( 5 * 1000 );
+		}
 
+		// Establish proper state for the comment to be unliked.
 		await restAPIClient.commentAction(
 			'like',
 			testAccount.credentials.testSites?.primary.id as number,
@@ -84,37 +87,19 @@ describe( 'Likes: Comment', function () {
 		await page.goto( newPost.URL );
 	} );
 
-	describe( 'Like', function () {
-		let commentsComponent: CommentsComponent;
-
-		beforeAll( async function () {
-			async function closure( page: Page ) {
-				await page.getByText( 'Loading...' ).last().waitFor( { state: 'hidden' } );
-			}
-			await ElementHelper.reloadAndRetry( page, closure );
-		} );
-
-		it( 'Like the comment', async function () {
-			commentsComponent = new CommentsComponent( page );
-			await commentsComponent.like( commentToBeLiked.raw_content );
-		} );
-
-		it( 'Unlike the comment', async function () {
-			commentsComponent = new CommentsComponent( page );
-			await commentsComponent.unlike( commentToBeUnliked.raw_content );
-		} );
+	it( 'Like the comment', async function () {
+		commentsComponent = new CommentsComponent( page );
+		await commentsComponent.like( commentToBeLiked.raw_content );
 	} );
 
-	// describe( 'Unlike', function () {
-	// 	let commentsComponent: CommentsComponent;
-
-	// beforeAll( async function () {
-	// 	async function closure( page: Page ) {
-	// 		await page.getByText( 'Loading...' ).last().waitFor( { state: 'hidden' } );
-	// 	}
-	// 	await ElementHelper.reloadAndRetry( page, closure );
-	// } );
-	// } );
+	it( 'Unlike the comment', async function () {
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			// AT comments appear unable to respond to `scrollIntoViewIfNeeded`
+			// unless the focus is "unstuck" by shiting the page.
+			await page.mouse.wheel( 0, 120 );
+		}
+		await commentsComponent.unlike( commentToBeUnliked.raw_content );
+	} );
 
 	afterAll( async function () {
 		if ( ! newPost ) {
