@@ -3,6 +3,7 @@ import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { useLaunchpadChecklist } from 'calypso/../packages/help-center/src/hooks/use-launchpad';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -15,8 +16,8 @@ import { ResponseDomain } from 'calypso/lib/domains/types';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
-import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
-import { DOMAIN_UPSELL, tasks } from './tasks';
+import { getEnhancedChecklist } from './task-helper';
+import { DOMAIN_UPSELL } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
 
@@ -40,18 +41,6 @@ function getUrlInfo( url: string ) {
 	return [ siteName, topLevelDomain ];
 }
 
-function getTasksProgress( tasks: Task[] | null ) {
-	if ( ! tasks ) {
-		return null;
-	}
-
-	const completedTasks = tasks.reduce( ( total, currentTask ) => {
-		return currentTask.completed ? total + 1 : total;
-	}, 0 );
-
-	return completedTasks;
-}
-
 const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
@@ -67,20 +56,18 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		data: { checklist_statuses },
 	} = useLaunchpad( siteSlug );
 
+	const {
+		data: { checklist: launchpadChecklist },
+	} = useLaunchpadChecklist( siteSlug, 'link-in-bio' );
+
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
-	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks(
-		tasks,
-		flow,
-		isEmailVerified
-	);
-
-	const enhancedTasks: Task[] | null =
+	const enhancedChecklist: Task[] | null =
 		site &&
-		getEnhancedTasks(
-			arrayOfFilteredTasks,
+		getEnhancedChecklist(
+			launchpadChecklist,
 			siteSlug,
 			site,
 			submit,
@@ -91,15 +78,16 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			checklist_statuses
 		);
 
-	const currentTask = getTasksProgress( enhancedTasks );
-	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
+	const currentTask = enhancedChecklist?.filter( ( task ) => task.completed ).length;
+	const launchTask = enhancedChecklist?.find( ( task ) => task.isLaunchTask === true );
 
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
 	const domainUpgradeBadgeUrl = ! site?.plan?.is_free
 		? `/domains/manage/${ siteSlug }`
 		: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
 	const showDomainUpgradeBadge =
-		sidebarDomain?.isWPCOMDomain && ! enhancedTasks?.find( ( task ) => task.id === DOMAIN_UPSELL );
+		sidebarDomain?.isWPCOMDomain &&
+		! enhancedChecklist?.find( ( task ) => task.id === DOMAIN_UPSELL );
 
 	if ( sidebarDomain ) {
 		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;
@@ -117,8 +105,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 					<CircularProgressBar
 						size={ 40 }
 						enableDesktopScaling
-						currentStep={ currentTask }
-						numberOfSteps={ enhancedTasks?.length || null }
+						currentStep={ currentTask || null }
+						numberOfSteps={ enhancedChecklist?.length || null }
 					/>
 				</div>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
@@ -178,7 +166,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						</p>
 					</div>
 				) }
-				<Checklist tasks={ enhancedTasks } />
+				<Checklist tasks={ enhancedChecklist } />
 			</div>
 			<div className="launchpad__sidebar-admin-link">
 				<StepNavigationLink

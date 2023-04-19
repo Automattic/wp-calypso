@@ -18,8 +18,8 @@ import { launchpadFlowTasks } from './tasks';
 import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 
-export function getEnhancedTasks(
-	tasks: Task[] | null,
+export function getEnhancedChecklist(
+	checklist: LaunchpadChecklist,
 	siteSlug: string | null,
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
@@ -29,11 +29,9 @@ export function getEnhancedTasks(
 	isEmailVerified = false,
 	checklistStatuses: LaunchpadStatuses = {}
 ) {
-	const enhancedTaskList: Task[] = [];
+	const enhancedChecklist: LaunchpadChecklist = [];
 	const productSlug = site?.plan?.product_slug;
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
-
-	const linkInBioLinksEditCompleted = checklistStatuses?.links_edited || false;
 
 	const siteEditCompleted = checklistStatuses?.site_edited || false;
 
@@ -75,8 +73,8 @@ export function getEnhancedTasks(
 
 	const shouldDisplayWarning = displayGlobalStylesWarning || isVideoPressFlowWithUnsupportedPlan;
 
-	tasks &&
-		tasks.map( ( task ) => {
+	checklist &&
+		checklist.map( ( task ) => {
 			let taskData = {};
 			switch ( task.id ) {
 				case 'setup_write':
@@ -205,7 +203,6 @@ export function getEnhancedTasks(
 					break;
 				case 'setup_link_in_bio':
 					taskData = {
-						title: translate( 'Personalize Link in Bio' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -218,10 +215,8 @@ export function getEnhancedTasks(
 					break;
 				case 'links_added':
 					taskData = {
-						title: translate( 'Add links' ),
-						completed: linkInBioLinksEditCompleted,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, linkInBioLinksEditCompleted, task.id );
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
 								addQueryArgs( `/site-editor/${ siteSlug }`, {
 									canvas: 'edit',
@@ -232,9 +227,6 @@ export function getEnhancedTasks(
 					break;
 				case 'link_in_bio_launched':
 					taskData = {
-						title: translate( 'Launch your site' ),
-						completed: siteLaunchCompleted,
-						disabled: ! linkInBioLinksEditCompleted,
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -247,7 +239,7 @@ export function getEnhancedTasks(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
+									recordTaskClickTracksEvent( flow, task.completed, task.id );
 									return { goToHome: true, siteSlug };
 								} );
 
@@ -353,9 +345,9 @@ export function getEnhancedTasks(
 					};
 					break;
 			}
-			enhancedTaskList.push( { ...task, ...taskData } );
+			enhancedChecklist.push( { ...task, ...taskData } );
 		} );
-	return enhancedTaskList;
+	return enhancedChecklist;
 }
 
 function isDomainUpsellCompleted(
@@ -378,6 +370,8 @@ function recordTaskClickTracksEvent(
 	} );
 }
 
+// TODO: We should remove this method since it's no longer needed
+// Note that removing the method will break unit tests
 // Returns list of tasks/checklist items for a specific flow
 export function getArrayOfFilteredTasks(
 	tasks: Task[],
