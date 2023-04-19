@@ -15,7 +15,7 @@ export function initConfig( configKey = 'configData' ) {
 }
 
 export default configApi;
-export const isEnabled = configApi.isEnabled;
-export const enabledFeatures = configApi.enabledFeatures;
-export const enable = configApi.enable;
-export const disable = configApi.disable;
+export const isEnabled = configApi.isEnabled.bind( configApi );
+export const enabledFeatures = configApi.enabledFeatures.bind( configApi );
+export const enable = configApi.enable.bind( configApi );
+export const disable = configApi.disable.bind( configApi );
