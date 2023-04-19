@@ -1,3 +1,4 @@
+import { formattedNumber } from '@automattic/components';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -24,7 +25,11 @@ function TopColumn( { items, viewAllUrl, viewAllText, title, className = null } 
 					{ items.slice( 0, HIGHLIGHT_ITEMS_LIMIT ).map( ( item, idx ) => (
 						<li key={ idx }>
 							<p>{ item.title }</p>
-							<span>{ translate( '%(views)s Views', { args: { views: item.views } } ) }</span>
+							<span>
+								{ translate( '%(views)s Views', {
+									args: { views: formattedNumber( item.views ) },
+								} ) }
+							</span>
 						</li>
 					) ) }
 				</ul>
