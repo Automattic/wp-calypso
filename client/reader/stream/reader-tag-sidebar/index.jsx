@@ -5,11 +5,12 @@ import formatNumberCompact from 'calypso/lib/format-number-compact';
 import ReaderListFollowingItem from 'calypso/reader/stream/reader-list-followed-sites/item';
 import '../style.scss';
 
-const ReaderTagSidebar = ( { tag, postCount, authorCount } ) => {
+const ReaderTagSidebar = ( { tag } ) => {
 	const translate = useTranslate();
 	const relatedMetaByTag = useRelatedMetaByTag( tag );
-
-	console.log( 'readertagsidebar', relatedMetaByTag );
+	if ( relatedMetaByTag === undefined ) {
+		return null;
+	}
 
 	const tagLinks = relatedMetaByTag.data?.related_tags
 		.sort( ( a, b ) => b.score - a.score )
@@ -24,20 +25,18 @@ const ReaderTagSidebar = ( { tag, postCount, authorCount } ) => {
 
 	return (
 		<>
-			<div className="reader-tag-sidebar-totals">
-				<ul>
-					<li>
-						<span className="reader-tag-sidebar__count">{ formatNumberCompact( postCount ) }</span>
-						<span className="reader-tag-sidebar__title">{ translate( 'Posts' ) }</span>
-					</li>
-					<li>
-						<span className="reader-tag-sidebar__count">
-							{ formatNumberCompact( authorCount ) }
-						</span>
-						<span className="reader-tag-sidebar__title">{ translate( 'Authors' ) }</span>
-					</li>
-				</ul>
-			</div>
+			{ relatedMetaByTag.data?.total_post_count > 0 && (
+				<div className="reader-tag-sidebar-totals">
+					<ul>
+						<li>
+							<span className="reader-tag-sidebar__count">
+								{ formatNumberCompact( relatedMetaByTag.data.total_post_count ) }
+							</span>
+							<span className="reader-tag-sidebar__title">{ translate( 'Posts' ) }</span>
+						</li>
+					</ul>
+				</div>
+			) }
 			{ tagLinks && (
 				<div className="reader-tag-sidebar-related-tags">
 					<h1>{ translate( 'Related Tags' ) }</h1>

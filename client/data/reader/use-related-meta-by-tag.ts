@@ -21,6 +21,7 @@ export interface RelatedTagByTag {
 export interface RelatedMetaByTag {
 	related_sites: RelatedSiteByTag[] | null;
 	related_tags: RelatedTagByTag[] | null;
+	total_post_count: number;
 }
 
 interface Card {
@@ -78,9 +79,17 @@ const selectRelatedTags = ( response: { cards: Card[] } ): RelatedTagByTag[] | n
 	return relatedTagByTag.length > 0 ? relatedTagByTag : null;
 };
 
-const selectFromCards = ( response: { cards: Card[] } ): RelatedMetaByTag | null => ( {
+const selectPostCount = ( response: { total: number } ): number => {
+	return response?.total || 0;
+};
+
+const selectFromCards = ( response: {
+	cards: Card[];
+	total: number;
+} ): RelatedMetaByTag | null => ( {
 	related_sites: selectRelatedSites( response ),
 	related_tags: selectRelatedTags( response ),
+	total_post_count: selectPostCount( response ),
 } );
 
 export const useRelatedMetaByTag = ( tag: string ): UseQueryResult< RelatedMetaByTag | null > =>
