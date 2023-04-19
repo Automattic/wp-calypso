@@ -35,8 +35,6 @@ export function getEnhancedChecklist(
 
 	const siteEditCompleted = checklistStatuses?.site_edited || false;
 
-	const siteLaunchCompleted = checklistStatuses?.site_launched || false;
-
 	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
@@ -63,11 +61,6 @@ export function getEnhancedChecklist(
 		checklist.map( ( task ) => {
 			let taskData = {};
 			switch ( task.id ) {
-				case 'setup_write':
-					taskData = {
-						title: translate( 'Set up your site' ),
-					};
-					break;
 				case 'setup_free':
 					taskData = {
 						title: translate( 'Personalize your site' ),
@@ -149,7 +142,6 @@ export function getEnhancedChecklist(
 				case 'first_post_published':
 					taskData = {
 						title: translate( 'Write your first post' ),
-						completed: firstPostPublishedCompleted,
 						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -228,8 +220,6 @@ export function getEnhancedChecklist(
 					break;
 				case 'site_launched':
 					taskData = {
-						title: translate( 'Launch your site' ),
-						completed: siteLaunchCompleted,
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -242,7 +232,7 @@ export function getEnhancedChecklist(
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
-									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
+									recordTaskClickTracksEvent( flow, task.completed, task.id );
 									return { goToHome: true, siteSlug };
 								} );
 
