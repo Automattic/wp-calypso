@@ -116,11 +116,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		// allDesigns.filters.subject = Object.keys( allDesigns.filters.subject ).map( ( slug ) => ( {
-		// 	slug,
-		// 	...allDesigns.filters.subject[ slug ],
-		// } ) );
-
 		allDesigns.static.designs = allDesigns.static.designs.filter(
 			( design ) => RETIRING_DESIGN_SLUGS.indexOf( design.slug ) === -1
 		);

@@ -74,19 +74,22 @@ export function useCategorizationFromApi(
 	const { __ } = useI18n();
 
 	const categories = useMemo( () => {
-		const result = Object.keys( categoryMap ).map( ( slug ) => ( {
+		const categoryMapKeys = Object.keys( categoryMap ) || [];
+		const hasCategories = !! categoryMapKeys.length;
+
+		const result = categoryMapKeys.map( ( slug ) => ( {
 			...categoryMap[ slug ],
 			slug,
 		} ) );
 
-		if ( generatedDesignsFilter ) {
+		if ( generatedDesignsFilter && hasCategories ) {
 			result.unshift( {
 				name: generatedDesignsFilter,
 				slug: SHOW_GENERATED_DESIGNS_SLUG,
 			} );
 		}
 
-		if ( showAllFilter ) {
+		if ( showAllFilter && hasCategories ) {
 			result.unshift( {
 				name: __( 'Show All', __i18n_text_domain__ ),
 				slug: SHOW_ALL_SLUG,
