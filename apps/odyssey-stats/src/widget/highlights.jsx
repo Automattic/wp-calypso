@@ -6,6 +6,8 @@ import useTopPostsQuery from '../hooks/use-top-posts-query';
 
 import './hightlights.scss';
 
+const HIGHLIGHT_ITEMS_LIMIT = 5;
+
 function TopColumn( { items, viewAllUrl, viewAllText, title, className = null } ) {
 	const translate = useTranslate();
 
@@ -19,7 +21,7 @@ function TopColumn( { items, viewAllUrl, viewAllText, title, className = null } 
 			) }
 			{ items.length > 0 && (
 				<ul className="stats-widget-highlights-card__list">
-					{ items.map( ( item, idx ) => (
+					{ items.slice( 0, HIGHLIGHT_ITEMS_LIMIT ).map( ( item, idx ) => (
 						<li key={ idx }>
 							<p>{ item.title }</p>
 							<span>{ translate( '%(views)s Views', { args: { views: item.views } } ) }</span>
