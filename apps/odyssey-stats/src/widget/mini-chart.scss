@@ -58,9 +58,10 @@ $barDarkColor: var(--color-primary-60);
 	.chart__x-axis-label,
 	.chart__y-axis-label {
 		&:not(.chart__x-axis-width-spacer) {
-			font-size: $font-body-small;
+			font-size: $font-body-extra-small;
 			letter-spacing: -0.02em;
 			color: var(--color-neutral-60);
+			white-space: nowrap;
 		}
 	}
 
