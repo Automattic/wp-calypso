@@ -4,7 +4,7 @@ import { Button } from '@automattic/components';
 import { Onboard, useStarterDesignBySlug, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
-	useCategorizationStatic,
+	useCategorizationFromApi,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
 } from '@automattic/design-picker';
@@ -116,14 +116,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		const { filters = {} } = allDesigns;
-
-		if ( filters.subject ) {
-			allDesigns.filters.subject = Object.keys( filters.subject ).map( ( slug ) => ( {
-				slug,
-				...filters.subject[ slug ],
-			} ) );
-		}
+		// allDesigns.filters.subject = Object.keys( allDesigns.filters.subject ).map( ( slug ) => ( {
+		// 	slug,
+		// 	...allDesigns.filters.subject[ slug ],
+		// } ) );
 
 		allDesigns.static.designs = allDesigns.static.designs.filter(
 			( design ) => RETIRING_DESIGN_SLUGS.indexOf( design.slug ) === -1
@@ -158,7 +154,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	);
 
-	const staticCategoryList = allDesigns?.filters?.subject || {};
 	const generatedDesigns = allDesigns?.generated?.designs || [];
 	const staticDesigns = allDesigns?.static?.designs || [];
 
@@ -182,7 +177,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		generatedDesigns.length > 0 ? siteVertical?.title : undefined
 	);
 
-	const categorization = useCategorizationStatic( staticCategoryList, categorizationOptions );
+	const categorization = useCategorizationFromApi(
+		allDesigns?.filters?.subject || {},
+		categorizationOptions
+	);
 
 	// ********** Logic for selecting a design and style variation
 

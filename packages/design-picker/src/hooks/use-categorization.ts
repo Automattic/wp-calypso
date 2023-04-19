@@ -67,14 +67,18 @@ export function useCategorization(
 	};
 }
 
-export function useCategorizationStatic(
-	staticCategoryList: Category[],
+export function useCategorizationFromApi(
+	categoryMap: Record< string, Category >,
 	{ defaultSelection, showAllFilter, generatedDesignsFilter }: UseCategorizationOptions
 ): Categorization {
 	const { __ } = useI18n();
 
 	const categories = useMemo( () => {
-		const result = [ ...staticCategoryList ];
+		const result = Object.keys( categoryMap ).map( ( slug ) => ( {
+			...categoryMap[ slug ],
+			slug,
+		} ) );
+
 		if ( generatedDesignsFilter ) {
 			result.unshift( {
 				name: generatedDesignsFilter,
@@ -90,7 +94,7 @@ export function useCategorizationStatic(
 		}
 
 		return result;
-	}, [ showAllFilter, generatedDesignsFilter, staticCategoryList, __ ] );
+	}, [ showAllFilter, generatedDesignsFilter, categoryMap, __ ] );
 
 	const [ selection, onSelect ] = useState< string | null >(
 		chooseDefaultSelection( categories, defaultSelection )
