@@ -13,8 +13,6 @@ const ReaderListFollowingItem = ( props ) => {
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 
-	console.log( 'site', site );
-
 	const handleSidebarClick = ( selectedSite ) => {
 		recordAction( 'clicked_reader_sidebar_following_item' );
 		recordGaEvent( 'Clicked Reader Sidebar Following Item' );
