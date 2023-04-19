@@ -6,3 +6,4 @@ export {
 } from './use-site-subscriptions-query';
 export { default as usePostSubscriptionsQuery } from './use-post-subscriptions-query';
 export { default as usePendingSiteSubscriptionsQuery } from './use-pending-site-subscriptions-query';
+export { default as usePendingPostSubscriptionsQuery } from './use-pending-post-subscriptions-query';
