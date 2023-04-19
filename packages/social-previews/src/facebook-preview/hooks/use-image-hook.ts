@@ -1,28 +1,30 @@
 import { __ } from '@wordpress/i18n';
 import { useCallback, useState } from 'react';
 import { LANDSCAPE_MODE, PORTRAIT_MODE } from '../../constants';
+import type { ImageMode } from '../../types';
 
-type Mode = typeof LANDSCAPE_MODE | typeof PORTRAIT_MODE | undefined;
 type ImageEventHandler = ( event: React.SyntheticEvent< HTMLImageElement > ) => void;
 type ImgProps = {
 	alt: string;
 	onLoad: ImageEventHandler;
 	onError: ImageEventHandler;
 };
-type UseImage = () => [ Mode, boolean, ImgProps ];
+type UseImage = ( mode?: ImageMode ) => [ ImageMode | undefined, boolean, ImgProps ];
 
-const useImage: UseImage = () => {
-	const [ mode, setMode ] = useState< typeof LANDSCAPE_MODE | typeof PORTRAIT_MODE | undefined >();
+const useImage: UseImage = ( initialMode ) => {
+	const [ mode, setMode ] = useState< ImageMode | undefined >( initialMode );
 	const [ isLoadingImage, setLoadingImage ] = useState< boolean >( true );
 
 	const onLoad = useCallback(
 		( { target } ) => {
-			setMode( target.naturalWidth > target.naturalHeight ? LANDSCAPE_MODE : PORTRAIT_MODE );
+			if ( ! mode ) {
+				setMode( target.naturalWidth > target.naturalHeight ? LANDSCAPE_MODE : PORTRAIT_MODE );
+			}
 			setLoadingImage( false );
 		},
-		[ setMode, setLoadingImage ]
+		[ mode ]
 	);
-	const onError = useCallback( () => setLoadingImage( false ), [ setLoadingImage ] );
+	const onError = useCallback( () => setLoadingImage( false ), [] );
 
 	return [
 		mode,
