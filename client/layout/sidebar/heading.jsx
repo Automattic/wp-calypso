@@ -19,9 +19,9 @@ const SidebarHeading = ( { children, onClick, ...props } ) => {
 	delete linkAttrs.navigationLabel;
 	delete linkAttrs.url;
 
-	/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 	return (
 		<li>
+			{ /* eslint-disable jsx-a11y/no-static-element-interactions */ }
 			<a
 				tabIndex={ tabIndex }
 				className="sidebar__heading"
