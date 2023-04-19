@@ -707,7 +707,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		isInSignup,
 	] );
 
-	const restructureFootnotes = useMemo( () => {
+	const restructuredFootnotes = useMemo( () => {
 		// This is the main list of all footnotes. It is displayed at the bottom of the comparison grid.
 		const footnoteList: string[] = [];
 		// This is a map of features to the index of the footnote in the main list of footnotes.
@@ -887,7 +887,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									allJetpackFeatures={ allJetpackFeatures }
 									visiblePlansProperties={ visiblePlansProperties }
 									restructuredFeatures={ restructuredFeatures }
-									restructuredFootnotes={ restructureFootnotes }
+									restructuredFootnotes={ restructuredFootnotes }
 									isStorageFeature={ false }
 								/>
 							) ) }
@@ -898,7 +898,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									allJetpackFeatures={ allJetpackFeatures }
 									visiblePlansProperties={ visiblePlansProperties }
 									restructuredFeatures={ restructuredFeatures }
-									restructuredFootnotes={ restructureFootnotes }
+									restructuredFootnotes={ restructuredFootnotes }
 									isStorageFeature={ true }
 								/>
 							) : null }
@@ -922,10 +922,10 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			</Grid>
 
 			<div className="plan-comparison-grid__footer">
-				{ restructureFootnotes?.footnoteList && (
+				{ restructuredFootnotes?.footnoteList && (
 					<FeatureFootnotes>
 						<ol>
-							{ restructureFootnotes?.footnoteList?.map( ( footnote, index ) => {
+							{ restructuredFootnotes?.footnoteList?.map( ( footnote, index ) => {
 								return <li key={ `${ footnote }-${ index }` }>{ footnote }</li>;
 							} ) }
 						</ol>
