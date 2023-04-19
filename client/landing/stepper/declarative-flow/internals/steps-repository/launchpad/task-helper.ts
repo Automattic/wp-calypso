@@ -4,7 +4,7 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { isFreeFlow, isBuildFlow, isWriteFlow, isNewsletterFlow } from '@automattic/onboarding';
+import { isNewsletterFlow } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -40,9 +40,6 @@ export function getEnhancedChecklist(
 	const firstPostPublishedCompleted = checklistStatuses?.first_post_published || false;
 
 	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
-
-	const allowUpdateDesign =
-		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
@@ -129,7 +126,6 @@ export function getEnhancedChecklist(
 					break;
 				case 'plan_selected':
 					taskData = {
-						title: translate( 'Choose a Plan' ),
 						subtitle: planWarningText,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -188,8 +184,6 @@ export function getEnhancedChecklist(
 					break;
 				case 'design_selected':
 					taskData = {
-						title: translate( 'Select a design' ),
-						disabled: ! allowUpdateDesign,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
