@@ -28,6 +28,7 @@ import {
 	JETPACK_SECURITY_T1_PLANS,
 	isP2Plus,
 	getMonthlyPlanByYearly,
+	getBiennialPlan,
 	hasMarketplaceProduct,
 	isDIFMProduct,
 	isAkismetProduct,
@@ -78,6 +79,7 @@ import {
 	purchaseType,
 	getName,
 	shouldRenderMonthlyRenewalOption,
+	shouldRenderBiennialRenewalOption,
 	getDIFMTieredPurchaseDetails,
 } from 'calypso/lib/purchases';
 import { getPurchaseCancellationFlowType } from 'calypso/lib/purchases/utils';
@@ -365,6 +367,27 @@ class ManagePurchase extends Component {
 	renderRenewMonthlyNavItem() {
 		const { translate } = this.props;
 		return this.renderRenewalNavItem( translate( 'Renew monthly' ), this.handleRenewMonthly );
+	}
+
+	renderRenewBienniallyNavItem() {
+		const { translate, relatedBiennialPlanPrice, relatedMonthlyPlanPrice } = this.props;
+		const savings = Math.round(
+			( 100 * ( relatedMonthlyPlanPrice - relatedBiennialPlanPrice / 24 ) ) /
+				relatedMonthlyPlanPrice
+		);
+		return this.renderRenewalNavItem(
+			<div>
+				{ translate( 'Renew for two years' ) }
+				<Badge className="manage-purchase__savings-badge" type="success">
+					{ translate( '%(savings)d%% cheaper than monthly', {
+						args: {
+							savings,
+						},
+					} ) }
+				</Badge>
+			</div>,
+			this.handleRenew
+		);
 	}
 
 	handleUpgradeClick = () => {
@@ -1038,6 +1061,7 @@ class ManagePurchase extends Component {
 		const siteId = purchase.siteId;
 
 		const renderMonthlyRenewalOption = shouldRenderMonthlyRenewalOption( purchase );
+		const renderBiennialRenewalOption = shouldRenderBiennialRenewalOption( purchase );
 
 		return (
 			<Fragment>
@@ -1097,6 +1121,9 @@ class ManagePurchase extends Component {
 					<>
 						{ preventRenewal && this.renderSelectNewNavItem() }
 						{ ! preventRenewal && ! renderMonthlyRenewalOption && this.renderRenewNowNavItem() }
+						{ ! preventRenewal &&
+							renderBiennialRenewalOption &&
+							this.renderRenewBienniallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewAnnuallyNavItem() }
 						{ ! preventRenewal && renderMonthlyRenewalOption && this.renderRenewMonthlyNavItem() }
 						{ /* We don't want to show the Renew/Upgrade nav item for "Jetpack" temporary sites, but we DO
@@ -1278,6 +1305,9 @@ export default connect(
 		const hasLoadedDomains = hasLoadedSiteDomains( state, siteId );
 		const relatedMonthlyPlanSlug = getMonthlyPlanByYearly( purchase?.productSlug );
 		const relatedMonthlyPlanPrice = getSitePlanRawPrice( state, siteId, relatedMonthlyPlanSlug );
+		const relatedBiennialPlanSlug = getBiennialPlan( purchase?.productSlug );
+		const relatedBiennialPlanPrice = getSitePlanRawPrice( state, siteId, relatedBiennialPlanSlug );
+
 		const primaryDomain = getPrimaryDomainBySiteId( state, siteId );
 
 		return {
@@ -1308,6 +1338,8 @@ export default connect(
 			isAtomicSite: isSiteAtomic( state, siteId ),
 			relatedMonthlyPlanSlug,
 			relatedMonthlyPlanPrice,
+			relatedBiennialPlanSlug,
+			relatedBiennialPlanPrice,
 			primaryDomain: primaryDomain,
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 		};
