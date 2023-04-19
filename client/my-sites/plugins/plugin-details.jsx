@@ -18,12 +18,11 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import { useESPlugin } from 'calypso/data/marketplace/use-es-query';
 import { useWPCOMPlugin } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { getPluginPurchased } from 'calypso/lib/plugins/utils';
-import { AUTOMOMANAGED_PLUGINS, PREINSTALLED_PLUGINS } from 'calypso/my-sites/plugins/constants';
 import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
 import PluginDetailsCTA from 'calypso/my-sites/plugins/plugin-details-CTA';
 import PluginDetailsHeader from 'calypso/my-sites/plugins/plugin-details-header';
+import PluginDetailsNotices from 'calypso/my-sites/plugins/plugin-details-notices';
 import PluginDetailsSidebar from 'calypso/my-sites/plugins/plugin-details-sidebar';
 import PluginDetailsV2 from 'calypso/my-sites/plugins/plugin-management-v2/plugin-details-v2';
 import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
@@ -57,10 +56,6 @@ import {
 	getProductsList,
 	isSaasProduct as isSaasProductSelector,
 } from 'calypso/state/products-list/selectors';
-import {
-	getSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -189,16 +184,6 @@ function PluginDetails( props ) {
 		isMarketplaceProduct,
 		isSaasProduct,
 	] );
-
-	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
-	const isFullPluginAndPurchasesFetched = hasLoadedSitePurchases && fullPlugin?.fetched;
-	const isWpcomPreinstalled =
-		PREINSTALLED_PLUGINS.includes( props.pluginSlug ) ||
-		AUTOMOMANAGED_PLUGINS.includes( props.pluginSlug );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
-	const marketplacePluginHasSubscription = !! (
-		isMarketplaceProduct && getPluginPurchased( fullPlugin, purchases )?.active
-	);
 
 	const existingPlugin = useMemo( () => {
 		if (
@@ -351,22 +336,7 @@ function PluginDetails( props ) {
 					</NoticeAction>
 				</Notice>
 			) }
-			{ isFullPluginAndPurchasesFetched &&
-				fullPlugin?.active &&
-				! marketplacePluginHasSubscription &&
-				! isWpcomPreinstalled && (
-					<Notice
-						icon="notice"
-						showDismiss={ false }
-						status="is-warning"
-						text={ translate(
-							'Plugin subscription not found or you have purchased the plugin outside of WordPress.com. Purchase a WordPress.com subscription if you want to receive updates and support.',
-							{
-								textOnly: true,
-							}
-						) }
-					></Notice>
-				) }
+			<PluginDetailsNotices selectedSite={ selectedSite } plugin={ fullPlugin } />
 			<div className="plugin-details__page">
 				<div className={ classnames( 'plugin-details__layout', { 'is-logged-in': isLoggedIn } ) }>
 					<div className="plugin-details__header">
