@@ -26,14 +26,16 @@ const ReaderTagSidebar = ( { tag } ) => {
 		<>
 			{ tagLinks && (
 				<div className="reader-tag-sidebar-related-tags">
-					<h1>{ translate( 'Related Tags' ) }</h1>
-					{ tagLinks }
-					<a href="/tags">{ translate( 'See all tags' ) }</a>
+					<h2>{ translate( 'Related Tags' ) }</h2>
+					<div className="reader-post-card__tags">{ tagLinks }</div>
+					<a className="reader-tag-sidebar-related-tags__link" href="/tags">
+						{ translate( 'See all tags' ) }
+					</a>
 				</div>
 			) }
 			{ relatedSitesLinks && (
 				<div className="reader-tag-sidebar-related-sites">
-					<h1>{ translate( 'Related Sites' ) }</h1>
+					<h2>{ translate( 'Related Sites' ) }</h2>
 					{ relatedSitesLinks }
 				</div>
 			) }
