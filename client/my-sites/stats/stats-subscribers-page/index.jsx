@@ -12,11 +12,11 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import AnnualHighlightsSection from '../annual-highlights-section';
 import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
 import Reach from '../stats-reach';
 import SubscribersSection from '../subscribers-section';
+import SubscriberHighlights from './subsriber-highlights';
 
 const StatsSubscribersPage = ( { period } ) => {
 	const translate = useTranslate();
@@ -56,8 +56,7 @@ const StatsSubscribersPage = ( { period } ) => {
 					align="left"
 				/>
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
-				{ /* TODO: replace annual highlight */ }
-				<AnnualHighlightsSection siteId={ siteId } />
+				<SubscriberHighlights />
 				{ siteId && (
 					<DomainTip
 						siteId={ siteId }
