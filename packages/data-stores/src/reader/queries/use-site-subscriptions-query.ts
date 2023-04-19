@@ -27,8 +27,8 @@ const sortByDateSubscribed = ( a: SiteSubscription, b: SiteSubscription ) =>
 	b.date_subscribed.getTime() - a.date_subscribed.getTime();
 
 const sortByLastUpdated = ( a: SiteSubscription, b: SiteSubscription ) =>
-	a.last_updated.getTime && b.last_updated.getTime
-		? b.date_subscribed.getTime() - a.date_subscribed.getTime()
+	a.last_updated instanceof Date && b.last_updated instanceof Date
+		? b.last_updated.getTime() - a.last_updated.getTime()
 		: 0;
 
 const sortBySiteName = ( a: SiteSubscription, b: SiteSubscription ) =>

@@ -8,7 +8,7 @@ type PendingSiteDeleteParams = {
 };
 
 type PendingSiteDeleteResponse = {
-	confirmed: boolean;
+	deleted: boolean;
 };
 
 const usePendingSiteDeleteMutation = () => {
@@ -28,7 +28,7 @@ const usePendingSiteDeleteMutation = () => {
 				method: 'POST',
 				apiVersion: '2',
 			} );
-			if ( ! response.confirmed ) {
+			if ( ! response.deleted ) {
 				throw new Error(
 					// reminder: translate this string when we add it to the UI
 					'Something went wrong while deleting pending subscription.'
