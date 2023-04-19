@@ -33,8 +33,6 @@ export function getEnhancedChecklist(
 	const productSlug = site?.plan?.product_slug;
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	const siteEditCompleted = checklistStatuses?.site_edited || false;
-
 	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
 
 	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
@@ -86,17 +84,10 @@ export function getEnhancedChecklist(
 						},
 					};
 					break;
-				case 'setup_general':
-					taskData = {
-						title: translate( 'Set up your site' ),
-					};
-					break;
 				case 'design_edited':
 					taskData = {
-						title: translate( 'Edit site design' ),
-						completed: siteEditCompleted,
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, siteEditCompleted, task.id );
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
 								addQueryArgs( `/site-editor/${ siteSlug }`, {
 									canvas: 'edit',
@@ -141,7 +132,6 @@ export function getEnhancedChecklist(
 					break;
 				case 'first_post_published':
 					taskData = {
-						title: translate( 'Write your first post' ),
 						disabled: mustVerifyEmailBeforePosting || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
