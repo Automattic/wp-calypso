@@ -24,8 +24,8 @@ const usePendingSiteDeleteMutation = () => {
 			}
 
 			const response = await callApi< PendingSiteDeleteResponse >( {
-				path: `/pending-blog-subscriptions/${ params.id }`,
-				method: 'DELETE',
+				path: `/pending-blog-subscriptions/${ params.id }/delete`,
+				method: 'POST',
 				apiVersion: '2',
 			} );
 			if ( ! response.confirmed ) {

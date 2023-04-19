@@ -25,7 +25,7 @@ const usePendingSiteConfirmMutation = () => {
 			}
 
 			const response = await callApi< PendingSiteConfirmResponse >( {
-				path: `/pending-blog-subscriptions/${ params.activation_key }`,
+				path: `/pending-blog-subscriptions/${ params.activation_key }/confirm`,
 				method: 'POST',
 				apiVersion: '2',
 			} );

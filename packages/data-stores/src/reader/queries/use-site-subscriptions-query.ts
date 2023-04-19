@@ -27,7 +27,9 @@ const sortByDateSubscribed = ( a: SiteSubscription, b: SiteSubscription ) =>
 	b.date_subscribed.getTime() - a.date_subscribed.getTime();
 
 const sortByLastUpdated = ( a: SiteSubscription, b: SiteSubscription ) =>
-	b.last_updated.getTime() - a.last_updated.getTime();
+	a.last_updated.getTime && b.last_updated.getTime
+		? b.date_subscribed.getTime() - a.date_subscribed.getTime()
+		: 0;
 
 const sortBySiteName = ( a: SiteSubscription, b: SiteSubscription ) =>
 	a.name.localeCompare( b.name );
