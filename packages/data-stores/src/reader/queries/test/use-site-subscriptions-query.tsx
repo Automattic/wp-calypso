@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react-hooks';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import '@testing-library/jest-dom/extend-expect';
 import { callApi, getSubkey } from '../../helpers';
 import useSiteSubscriptionsQuery, {
