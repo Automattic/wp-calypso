@@ -5,7 +5,7 @@ import { useState, useRef } from 'react';
 import { eye } from '../icons';
 import Popover from '../popover';
 import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
-import HighlightCard from './highlight-card';
+import HighlightCard from './count-comparison-card';
 import './style.scss';
 
 type WeeklyHighlightCardsProps = {

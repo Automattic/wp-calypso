@@ -1,7 +1,7 @@
 import { comment, Icon, paragraph, people, postContent, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import HighlightCard from './highlight-card';
+import HighlightCard from './count-comparison-card';
 import './style.scss';
 
 export type AnnualHighlightCardsProps = {
