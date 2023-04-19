@@ -7,6 +7,7 @@ import usePromoteParams from 'calypso/data/promote-post/use-promote-params';
 import PostItem, { Post } from 'calypso/my-sites/promote-post-i2/components/post-item';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import './style.scss';
+import SearchBar from '../search-bar';
 import PostsListHeader from './header';
 
 interface Props {
@@ -23,6 +24,8 @@ export default function PostsList( { content, isLoading }: Props ) {
 	const isEmpty = ! content || ! content.length;
 	return (
 		<>
+			<SearchBar mode="posts" />
+
 			{ isLoading && (
 				<div className="posts-list__loading-container">
 					<SitePlaceholder />

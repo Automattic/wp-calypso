@@ -1,4 +1,5 @@
-import { useTranslate } from 'i18n-calypso';
+import { sprintf } from '@wordpress/i18n';
+import { translate } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
 import Gridicon from 'calypso/../packages/components/src/gridicon';
@@ -10,16 +11,25 @@ interface Props {
 	mode: 'campaigns' | 'posts';
 }
 
-const sortOptions = [
-	{
-		label: 'Last published',
-		value: 'last_published',
-	},
-];
+type SortOption = {
+	label: string;
+	value: string;
+};
+
 export default function SearchBar( props: Props ) {
 	const { mode } = props;
 
-	const translate = useTranslate();
+	const sortOptions: Array< SortOption > = [
+		{
+			label: translate( 'Last published' ),
+			value: 'last_published',
+		},
+		// { // TODO: Add the rest of sorting option after asking Bart
+		// 	label: translate( 'Most viewed' ),
+		// 	value: 'most_viewed',
+		// },
+	];
+
 	const [ searchInput, setSearchInput ] = React.useState( '' );
 	const [ currentSortOption, setSortOption ] = React.useState( sortOptions[ 0 ].value );
 
@@ -34,6 +44,20 @@ export default function SearchBar( props: Props ) {
 	const onChangeFilter = () => {
 		setSearchInput( '' ); // TODO: Filter by status: All | Active | In Moderation | Rejected.
 	};
+
+	function getSelectedSortOption( value: string ) {
+		if ( ! value ) {
+			return null;
+		}
+
+		const index = sortOptions.findIndex( ( item ) => item.value === value );
+		if ( index > -1 ) {
+			// translators: %s is a sort option like "Last Published"
+			return sprintf( translate( 'Sort: %s' ), sortOptions[ index ].label );
+		}
+
+		return null;
+	}
 
 	return (
 		<div className="promote-post__search-bar-wrapper">
@@ -66,21 +90,10 @@ export default function SearchBar( props: Props ) {
 			{ mode === 'posts' && (
 				<SelectDropdown
 					className="promote-post__search-bar-dropdown"
-					selectedText=""
-					/*
-				selectedIcon={ <Gridicon size={ 18 } icon={ selectedDevice.icon } /> }
-*/
-				>
-					{ sortOptions.map( ( sortOption ) => (
-						<SelectDropdown.Item
-							key={ sortOption.value }
-							selected={ sortOption.value === currentSortOption }
-							onClick={ () => setSortOption( sortOption.value ) }
-						>
-							{ sortOption.label }
-						</SelectDropdown.Item>
-					) ) }
-				</SelectDropdown>
+					onSelect={ ( option: SortOption ) => setSortOption( option.value ) }
+					options={ sortOptions }
+					selectedText={ getSelectedSortOption( currentSortOption ) }
+				/>
 			) }
 
 			{ mode === 'campaigns' && (
