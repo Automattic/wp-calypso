@@ -20,6 +20,9 @@
 .has-no-sidebar .layout__content {
 	padding-left: 24px;
 	padding-right: 24px;
+	max-width: 1140px;
+	margin: 0 auto;
+
 	@include break-medium {
 		padding-left: 108px;
 		padding-right: 108px;
@@ -86,6 +89,8 @@
 	border-bottom: 1px solid var(--studio-gray-5);
 	margin-bottom: 26px;
 	padding-left: 10px;
+	position: sticky;
+
 	@include break-small {
 		padding-left: 0;
 	}
@@ -146,6 +151,8 @@
 	.alphabetic-tags__letter-title {
 		font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		margin-bottom: 22px;
+		font-weight: 500;
+
 		&:focus-visible {
 			text-decoration: underline;
 		}
@@ -170,7 +177,12 @@
 			a {
 				color: var(--studio-gray-80);
 				font-weight: 400;
+				display: inline-block;
+				border-bottom: 1px solid transparent;
 
+				&:hover {
+					border-bottom: 1px solid var(--studio-gray-80);
+				}
 				&:focus {
 					outline: none;
 				}
