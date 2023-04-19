@@ -8,7 +8,6 @@ import Highlights from './highlights';
 import MiniChart from './mini-chart';
 import Modules from './modules';
 
-import 'calypso/assets/stylesheets/style.scss';
 import './index.scss';
 
 /**
