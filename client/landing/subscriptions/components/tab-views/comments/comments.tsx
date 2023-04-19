@@ -8,7 +8,7 @@ import { Notice } from 'calypso/landing/subscriptions/components/notice';
 import useSearch from 'calypso/landing/subscriptions/hooks/use-search';
 import TabView from '../tab-view';
 
-const isListControlsEnabled = config.isEnabled( 'subscription-management/sites-list-controls' );
+const isListControlsEnabled = config.isEnabled( 'subscription-management/comments-list-controls' );
 
 const Comments = () => {
 	const translate = useTranslate();
