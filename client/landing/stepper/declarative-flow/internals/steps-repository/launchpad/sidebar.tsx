@@ -52,13 +52,14 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
+
 	const {
-		data: { checklist_statuses },
+		data: { site_intent: siteIntentOption },
 	} = useLaunchpad( siteSlug );
 
 	const {
 		data: { checklist: launchpadChecklist },
-	} = useLaunchpadChecklist( siteSlug, 'link-in-bio' );
+	} = useLaunchpadChecklist( siteSlug, siteIntentOption );
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
@@ -74,8 +75,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			globalStylesInUse && shouldLimitGlobalStyles,
 			goToStep,
 			flow,
-			isEmailVerified,
-			checklist_statuses
+			isEmailVerified
 		);
 
 	const currentTask = enhancedChecklist?.filter( ( task ) => task.completed ).length;
