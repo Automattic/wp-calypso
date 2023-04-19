@@ -108,10 +108,10 @@ export function activate(
 			return page( `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }` );
 		}
 
-		/**
-		 * Check if the theme is a .org Theme and not provided by .com as well (as Premium themes)
+		/* Check if the theme is a .org Theme and not provided by .com as well (as Premium themes)
 		 * and redirect it to the Marketplace theme installation page
-		 */ const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
+		 */
+		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
 		if ( isDotOrgTheme && ! isDotComTheme ) {
 			const siteSlug = getSiteSlug( getState(), siteId );
 
