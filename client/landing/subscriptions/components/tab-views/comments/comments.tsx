@@ -34,7 +34,8 @@ const Comments = () => {
 			{ isSearchEnabled && (
 				<div className="subscriptions-manager__list-actions-bar">
 					<SearchInput
-						placeholder={ translate( 'Search by post name…' ) }
+						// todo: translate when we have agreed on the placeholder
+						placeholder="Search by post name…"
 						searchIcon={ <SearchIcon size={ 18 } /> }
 						onSearch={ handleSearch }
 					/>
