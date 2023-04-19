@@ -15,7 +15,7 @@ type RequestActionType = Action< typeof JETPACK_BACKUP_STAGING_LIST_REQUEST > &
 		siteId: number | null;
 	};
 
-export const requestStagingList = ( siteId: number | null ): RequestActionType => ( {
+export const requestBackupStagingSitesList = ( siteId: number | null ): RequestActionType => ( {
 	type: JETPACK_BACKUP_STAGING_LIST_REQUEST,
 	siteId,
 	...trackRequests,
