@@ -13,7 +13,7 @@ function queryModuleData( module ) {
 
 export default function useModuleDataQuery( module ) {
 	return useQuery( [ 'stats-widget', 'module-data', module ], () => queryModuleData( module ), {
-		// The data could be an integer if module is active. Otherwise, it could be `not_active` or `not_installed`.
+		// The data could be an integer if module is active. Otherwise, it could be `not_active`, `not_installed` or `invalid_key`.
 		select: ( data ) => data,
 		staleTime: 5 * 60 * 1000,
 		// If the module is not active, we don't want to retry the query.
