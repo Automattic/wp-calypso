@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
 import {
+	isAkismetFreeProduct,
 	isDomainTransfer,
 	isJetpackPlan,
 	isJetpackProduct,
 	JETPACK_LEGACY_PLANS,
-	PRODUCT_AKISMET_FREE,
 } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -62,7 +62,7 @@ function PurchaseMetaExpiration( {
 		! purchase ||
 		isDomainTransfer( purchase ) ||
 		purchase?.isInAppPurchase ||
-		PRODUCT_AKISMET_FREE === purchase?.productSlug
+		isAkismetFreeProduct( purchase )
 	) {
 		return null;
 	}

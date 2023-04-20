@@ -1,4 +1,4 @@
-import { PRODUCT_AKISMET_FREE, isDomainTransfer } from '@automattic/calypso-products';
+import { isAkismetFreeProduct, isDomainTransfer } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isOneTimePurchase, isPaidWithCreditCard } from 'calypso/lib/purchases';
 import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
@@ -27,7 +27,7 @@ function PurchaseMetaPaymentDetails( {
 	if (
 		isOneTimePurchase( purchase ) ||
 		isDomainTransfer( purchase ) ||
-		PRODUCT_AKISMET_FREE === purchase.productSlug
+		isAkismetFreeProduct( purchase )
 	) {
 		return null;
 	}

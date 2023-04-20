@@ -31,9 +31,9 @@ import {
 	hasMarketplaceProduct,
 	isDIFMProduct,
 	isAkismetProduct,
+	isAkismetFreeProduct,
 	isJetpackBackupT1Slug,
 	AKISMET_UPGRADES_PRODUCTS_MAP,
-	PRODUCT_AKISMET_FREE,
 } from '@automattic/calypso-products';
 import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -249,17 +249,13 @@ class ManagePurchase extends Component {
 		return hasSetupAds && isPlan( purchase );
 	}
 
-	isAkismetFreeProduct( purchase ) {
-		return purchase.productSlug === PRODUCT_AKISMET_FREE;
-	}
-
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
 		if (
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
 			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) ||
-			this.isAkismetFreeProduct( purchase )
+			isAkismetFreeProduct( purchase )
 		) {
 			return null;
 		}
@@ -329,7 +325,7 @@ class ManagePurchase extends Component {
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
 			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) ||
-			this.isAkismetFreeProduct( purchase )
+			isAkismetFreeProduct( purchase )
 		) {
 			return null;
 		}
