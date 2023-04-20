@@ -52,7 +52,7 @@ describe( 'Plugins: Add multiple to cart', function () {
 			await page.getByText( 'You need to upgrade your plan to install plugins' ).waitFor();
 		} );
 
-		it( 'Click on plan upgrade CTA button', async function () {
+		it( 'Click on install button', async function () {
 			await pluginsPage.clickInstallPlugin();
 		} );
 
