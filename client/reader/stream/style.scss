@@ -603,8 +603,7 @@
 		width: 32px;
 	}
 
-	.reader-sidebar-site_sitename,
-	.reader-tag-sidebar-related-tags__link {
+	.reader-sidebar-site_sitename {
 		color: var(--color-neutral-100);
 		font-weight: 600;
 		font-size: $font-body-small;
@@ -622,13 +621,6 @@
 			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
 		}
-	}
-
-	.reader-tag-sidebar-related-tags__link {
-		padding: 20px 0 32px 0;
-		position: relative;
-		float: left;
-		font-size: $font-body-extra-small;
 	}
 
 	.reader-tag-sidebar-related-sites {
