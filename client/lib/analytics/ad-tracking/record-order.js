@@ -577,10 +577,33 @@ function recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo ) {
 	}
 
 	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
-		const akismetParams = cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo );
-		fireEcommercePurchaseGA4( akismetParams, Ga4PropertyGtag.AKISMET );
+		fireEcommercePurchaseGA4(
+			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo ),
+			Ga4PropertyGtag.AKISMET
+		);
 
+		const akismetParams = [
+			'event',
+			'purchase',
+			{
+				send_to: TRACKING_IDS.akismetGoogleAnalyticsGtag,
+				value: wpcomJetpackCartInfo.akismetCostUSD,
+				currency: 'USD',
+				transaction_id: orderId,
+				coupon: cart.coupon?.toString() ?? '',
+				items: wpcomJetpackCartInfo.akismetProducts.map(
+					( { product_id, product_name_en, cost, volume } ) => ( {
+						id: product_id.toString(),
+						name: product_name_en.toString(),
+						quantity: parseInt( volume ),
+						price: ( costToUSD( cost, cart.currency ) ?? '' ).toString(),
+						brand: GA_PRODUCT_BRAND_JETPACK,
+					} )
+				),
+			},
+		];
 		debug( 'recordOrderInAkismetGA: Record Akismet Purchase', akismetParams );
+		window.gtag( ...akismetParams );
 	}
 }
 
