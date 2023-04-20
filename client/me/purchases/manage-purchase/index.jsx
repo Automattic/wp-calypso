@@ -383,16 +383,16 @@ class ManagePurchase extends Component {
 	}
 
 	renderRenewBienniallyNavItem() {
-		const { translate, relatedBiennialPlanPrice, relatedMonthlyPlanPrice } = this.props;
+		const { translate, purchase, relatedBiennialPlanPrice } = this.props;
+		const annualPrice = getRenewalPrice( purchase );
 		const savings = Math.round(
-			( 100 * ( relatedMonthlyPlanPrice - relatedBiennialPlanPrice / 24 ) ) /
-				relatedMonthlyPlanPrice
+			( 100 * ( annualPrice - relatedBiennialPlanPrice / 2 ) ) / annualPrice
 		);
 		return this.renderRenewalNavItem(
 			<div>
 				{ translate( 'Renew for two years' ) }
 				<Badge className="manage-purchase__savings-badge" type="success">
-					{ translate( '%(savings)d%% cheaper than monthly', {
+					{ translate( '%(savings)d%% cheaper than annually', {
 						args: {
 							savings,
 						},
