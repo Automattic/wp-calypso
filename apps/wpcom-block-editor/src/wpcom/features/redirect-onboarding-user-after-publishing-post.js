@@ -4,7 +4,6 @@ import { getQueryArg } from '@wordpress/url';
 
 export function redirectOnboardingUserAfterPublishingPost() {
 	const showLaunchpad = getQueryArg( window.location.search, 'showLaunchpad' );
-
 	if ( 'true' !== showLaunchpad ) {
 		return false;
 	}
@@ -13,10 +12,11 @@ export function redirectOnboardingUserAfterPublishingPost() {
 	const siteSlug = window.location.hostname;
 
 	const unsubscribe = subscribe( () => {
+		const isSavingPost = select( 'core/editor' ).isSavingPost();
 		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
 		const getCurrentPostRevisionsCount = select( 'core/editor' ).getCurrentPostRevisionsCount();
 
-		if ( isCurrentPostPublished && getCurrentPostRevisionsCount === 1 ) {
+		if ( false === isSavingPost && isCurrentPostPublished && getCurrentPostRevisionsCount === 1 ) {
 			unsubscribe();
 
 			window.location.href =
