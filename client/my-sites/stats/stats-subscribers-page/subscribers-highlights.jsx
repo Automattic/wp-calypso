@@ -40,31 +40,26 @@ function SubscriberHighlightsHeader() {
 	const localizedTitle = translate( 'All time stats', {
 		comment: 'Heading for Subscribers page highlights section',
 	} );
-	const showNotices = true;
 	const tooltipContent = <p>Tooltip content goes here.</p>;
 	return (
 		<h1 className="highlight-cards-heading">
 			{ localizedTitle }{ ' ' }
-			{ showNotices && (
-				<>
-					<span
-						className="info-wrapper"
-						ref={ infoReferenceElement }
-						onMouseEnter={ () => setTooltipVisible( true ) }
-						onMouseLeave={ () => setTooltipVisible( false ) }
-					>
-						<Icon className="info-icon" icon={ info } />
-					</span>
-					<Popover
-						className="tooltip tooltip--darker tooltip-wordads highlight-card-tooltip"
-						isVisible={ isTooltipVisible }
-						position="bottom right"
-						context={ infoReferenceElement.current }
-					>
-						<div className="highlight-card-tooltip-content">{ tooltipContent }</div>
-					</Popover>
-				</>
-			) }
+			<span
+				className="info-wrapper"
+				ref={ infoReferenceElement }
+				onMouseEnter={ () => setTooltipVisible( true ) }
+				onMouseLeave={ () => setTooltipVisible( false ) }
+			>
+				<Icon className="info-icon" icon={ info } />
+			</span>
+			<Popover
+				className="tooltip tooltip--darker tooltip-wordads highlight-card-tooltip"
+				isVisible={ isTooltipVisible }
+				position="bottom right"
+				context={ infoReferenceElement.current }
+			>
+				<div className="highlight-card-tooltip-content">{ tooltipContent }</div>
+			</Popover>
 		</h1>
 	);
 }
