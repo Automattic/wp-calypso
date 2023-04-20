@@ -5,7 +5,7 @@ import { render, waitFor } from '@testing-library/react';
 import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { callApi } from '../../helpers';
-import usePostUnsubscribeMutation from '../../mutations/use-post-unsubscribe-mutation';
+import usePostUnsubscribeMutation from '../use-post-unsubscribe-mutation';
 
 // Mock the useIsLoggedIn function
 jest.mock( '../../hooks', () => ( {
