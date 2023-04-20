@@ -234,6 +234,19 @@ class ManagePurchase extends Component {
 		page( checkoutUrlWithArgs );
 	};
 
+	handleRenewBiennially = () => {
+		const { relatedBiennialPlanSlug, siteSlug, redirectTo } = this.props;
+		recordTracksEvent( 'calypso_purchases_renew_biennially_click', {
+			product_slug: relatedBiennialPlanSlug,
+		} );
+
+		const checkoutUrlWithArgs = addQueryArgs(
+			{ ...( redirectTo && { redirect_to: redirectTo } ) },
+			`/checkout/${ relatedBiennialPlanSlug }/${ siteSlug || '' }`
+		);
+		page( checkoutUrlWithArgs );
+	};
+
 	handleRenewMultiplePurchases = ( purchases ) => {
 		const { siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
@@ -386,7 +399,7 @@ class ManagePurchase extends Component {
 					} ) }
 				</Badge>
 			</div>,
-			this.handleRenew
+			this.handleRenewBiennially
 		);
 	}
 
