@@ -9,9 +9,9 @@ type ImgProps = {
 	onLoad: ImageEventHandler;
 	onError: ImageEventHandler;
 };
-type UseImage = ( mode?: ImageMode ) => [ ImageMode | undefined, boolean, ImgProps ];
+type UseImage = ( arg0: { mode?: ImageMode } ) => [ ImageMode | undefined, boolean, ImgProps ];
 
-const useImage: UseImage = ( initialMode ) => {
+const useImage: UseImage = ( { mode: initialMode } ) => {
 	const [ mode, setMode ] = useState< ImageMode | undefined >( initialMode );
 	const [ isLoadingImage, setLoadingImage ] = useState< boolean >( true );
 

@@ -12,7 +12,7 @@ const FacebookPostPreview: React.FC< FacebookPreviewProps > = ( {
 	customImage,
 	imageMode,
 } ) => {
-	const [ mode, isLoadingImage, imgProps ] = useImage( imageMode );
+	const [ mode, isLoadingImage, imgProps ] = useImage( { mode: imageMode } );
 	const modeClass = `is-${ mode === PORTRAIT_MODE ? 'portrait' : 'landscape' }`;
 
 	return (
