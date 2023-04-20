@@ -87,6 +87,7 @@ import {
 } from 'calypso/state/sites/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import useIsLargeCurrency from '../plans/hooks/use-is-large-currency';
+import { PLANS_STORE } from '../plans-features-main/store';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
 import PlanFeatures2023GridActions from './components/actions';
 import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe';
@@ -98,7 +99,6 @@ import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from './hooks/use-highlight-label';
-import { PLANS_STORE } from './store';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { IAppState } from 'calypso/state/types';

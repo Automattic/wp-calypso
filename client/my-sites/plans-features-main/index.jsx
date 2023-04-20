@@ -32,10 +32,11 @@ import {
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { withSelect } from '@wordpress/data';
 import { hasTranslation } from '@wordpress/i18n';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { localize, getLocaleSlug } from 'i18n-calypso';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -51,6 +52,7 @@ import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
+import { PLANS_STORE } from 'calypso/my-sites/plans-features-main/store';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
@@ -621,6 +623,7 @@ export class PlansFeaturesMain extends Component {
 			hidePlanTypeSelector,
 			is2023PricingGridVisible,
 			planTypeSelectorProps,
+			datastorePlansLoaded,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -648,16 +651,20 @@ export class PlansFeaturesMain extends Component {
 				<QuerySitePlans siteId={ siteId } />
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
-				{ ! hidePlanSelector && (
-					<TermExperimentPlanTypeSelector
-						isEligible={ is2023PricingGridVisible }
-						kind={ kindOfPlanTypeSelector }
-						plans={ visiblePlans }
-						planTypeSelectorProps={ planTypeSelectorProps }
-					/>
+				{ datastorePlansLoaded && (
+					<>
+						{ ! hidePlanSelector && (
+							<TermExperimentPlanTypeSelector
+								isEligible={ is2023PricingGridVisible }
+								kind={ kindOfPlanTypeSelector }
+								plans={ visiblePlans }
+								planTypeSelectorProps={ planTypeSelectorProps }
+							/>
+						) }
+						{ this.renderPlansGrid() }
+						{ this.mayRenderFAQ() }
+					</>
 				) }
-				{ this.renderPlansGrid() }
-				{ this.mayRenderFAQ() }
 			</div>
 		);
 	}
@@ -705,6 +712,7 @@ PlansFeaturesMain.propTypes = {
 	isPlansInsideStepper: PropTypes.bool,
 	planTypeSelector: PropTypes.string,
 	busyOnUpgradeClick: PropTypes.bool,
+	datastorePlansLoaded: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -726,7 +734,7 @@ PlansFeaturesMain.defaultProps = {
 	isStepperUpgradeFlow: false,
 };
 
-export default connect(
+const ConnectedPlansFeaturesMain = connect(
 	( state, props ) => {
 		const siteId = get( props.site, [ 'ID' ] );
 		const sitePlan = getSitePlan( state, siteId );
@@ -782,9 +790,20 @@ export default connect(
 			is2023PricingGridVisible,
 			showFAQ: !! props.showFAQ && ! is2023PricingGridVisible,
 			planTypeSelectorProps,
+			datastorePlansLoaded: props.datastorePlansLoaded,
 		};
 	},
 	{
 		selectHappychatSiteId,
 	}
 )( localize( PlansFeaturesMain ) );
+
+export default withSelect( ( select, ownProps ) => {
+	const locale = getLocaleSlug();
+	locale && select( PLANS_STORE ).getSupportedPlans( locale );
+	const datastorePlansLoaded = select( PLANS_STORE ).hasFinishedResolution( 'getSupportedPlans', [
+		locale,
+	] );
+
+	return { ...ownProps, datastorePlansLoaded };
+} )( ConnectedPlansFeaturesMain );

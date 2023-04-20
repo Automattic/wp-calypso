@@ -2,8 +2,9 @@ import { is2023PricingGridActivePage, getPlan, PLAN_FREE } from '@automattic/cal
 import { Button } from '@automattic/components';
 import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
+import { withSelect } from '@wordpress/data';
 import classNames from 'classnames';
-import i18n, { localize } from 'i18n-calypso';
+import i18n, { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { parse as parseQs } from 'qs';
 import { Component } from 'react';
@@ -22,6 +23,7 @@ import PlansComparison, {
 } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import { ExperimentalIntervalTypeToggle } from 'calypso/my-sites/plans-features-main/plan-type-selector';
+import { PLANS_STORE } from 'calypso/my-sites/plans-features-main/store';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
@@ -32,6 +34,7 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getDomainName, getIntervalType } from './util';
+
 import './style.scss';
 
 export class PlansStep extends Component {
@@ -375,10 +378,14 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 	return is_domain_registration && getTld( meta ) === 'blog';
 };
 
-export default connect(
+const ConnectedPlansStep = connect(
 	(
 		state,
-		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
+		{
+			path,
+			signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation },
+			datastorePlansLoaded,
+		}
 	) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
@@ -397,9 +404,21 @@ export default connect(
 		// in https://github.com/Automattic/wp-calypso/issues/50896, till a proper cleanup and deploy of
 		// treatment for the `vertical_plan_listing_v2` experiment is implemented.
 		isInVerticalScrollingPlansExperiment: true,
-		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
+		plansLoaded:
+			Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ) &&
+			datastorePlansLoaded,
 		eligibleForProPlan: isEligibleForProPlan( state, getSiteBySlug( state, siteSlug )?.ID ),
 		is2023PricingGridVisible: is2023PricingGridActivePage( window ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep, errorNotice }
 )( localize( PlansStep ) );
+
+export default withSelect( ( select, ownProps ) => {
+	const locale = getLocaleSlug();
+	locale && select( PLANS_STORE ).getSupportedPlans( locale );
+	const datastorePlansLoaded = select( PLANS_STORE ).hasFinishedResolution( 'getSupportedPlans', [
+		locale,
+	] );
+
+	return { ...ownProps, datastorePlansLoaded };
+} )( ConnectedPlansStep );
