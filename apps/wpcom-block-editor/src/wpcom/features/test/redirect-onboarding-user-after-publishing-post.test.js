@@ -6,6 +6,7 @@ import { redirectOnboardingUserAfterPublishingPost } from '../redirect-onboardin
 beforeAll( () => {} );
 
 const mockUnSubscribe = jest.fn();
+const mockClosePublishSidebar = jest.fn();
 let mockSubscribeFunction = null;
 let mockIsSaving = false;
 
@@ -23,6 +24,13 @@ jest.mock( '@wordpress/data', () => ( {
 				getCurrentPostRevisionsCount: () => 1,
 			};
 		}
+	},
+	dispatch: () => {
+		return {
+			closePublishSidebar: () => {
+				mockClosePublishSidebar();
+			},
+		};
 	},
 } ) );
 
@@ -74,6 +82,7 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 		mockSubscribeFunction();
 
 		expect( mockUnSubscribe ).toBeCalledTimes( 1 );
+		expect( mockClosePublishSidebar ).toBeCalledTimes( 1 );
 		expect( global.window.location.href ).toBe(
 			'https://calypso.localhost:3000/setup/write/launchpad?siteSlug=wordpress.com&showLaunchpad=true'
 		);
