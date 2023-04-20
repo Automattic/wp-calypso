@@ -7,6 +7,7 @@ import {
 	firstValid,
 	formatTweetDate,
 	hardTruncation,
+	preparePreviewText,
 	shortEnough,
 	stripHtmlTags,
 } from '../helpers';
@@ -67,22 +68,17 @@ export class Tweet extends PureComponent {
 	 * Renders the text section of the tweet.
 	 *
 	 * @param {string} text The text of the tweet.
-	 * @param {Array} urls Optional. An array of URLs that are in the text.
 	 * @param {Object} card Optional. The card data for this tweet.
 	 * @returns {import('react').Element} The text section.
 	 */
-	renderText( text, urls = [], card = {} ) {
+	renderText( text, card = {} ) {
 		// If the text ends with the card URL, remove it.
 		const cardUrl = card.url || '';
 		const deCardedText = text.endsWith( cardUrl )
 			? text.substring( 0, text.lastIndexOf( cardUrl ) )
 			: text;
 
-		const __html = urls.reduce(
-			( html, url ) =>
-				html.replace( new RegExp( '\\(' + url + '\\)', 'g' ), `(<a href="${ url }">${ url }</a>)` ),
-			stripHtmlTags( deCardedText ).replace( new RegExp( '\\n', 'g' ), '<br/>' )
-		);
+		const __html = preparePreviewText( deCardedText, { platform: 'twitter' } );
 
 		// We can enable dangerouslySetInnerHTML here, since the text we're using is stripped
 		// of all HTML tags, then only has safe tags added in createTweetMarkup().
@@ -144,16 +140,13 @@ export class Tweet extends PureComponent {
 
 		return (
 			<div className={ mediaClasses }>
-				{
-					/* eslint-disable jsx-a11y/media-has-caption */
-					isVideo &&
-						filteredMedia.map( ( mediaItem, index ) => (
-							<video key={ `twitter-preview__media-item-${ index }` } controls>
-								<source src={ mediaItem.url } type={ mediaItem.type } />{ ' ' }
-							</video>
-						) )
-					/* eslint-disable jsx-a11y/media-has-caption */
-				}
+				{ isVideo &&
+					filteredMedia.map( ( mediaItem, index ) => (
+						// eslint-disable-next-line jsx-a11y/media-has-caption
+						<video key={ `twitter-preview__media-item-${ index }` } controls>
+							<source src={ mediaItem.url } type={ mediaItem.type } />{ ' ' }
+						</video>
+					) ) }
 				{ ! isVideo &&
 					filteredMedia.map( ( mediaItem, index ) => (
 						<img
@@ -260,8 +253,7 @@ export class Tweet extends PureComponent {
 	}
 
 	render() {
-		const { isLast, profileImage, name, screenName, date, text, media, tweet, urls, card } =
-			this.props;
+		const { isLast, profileImage, name, screenName, date, text, media, tweet, card } = this.props;
 
 		return (
 			<div className="twitter-preview__container">
@@ -269,7 +261,7 @@ export class Tweet extends PureComponent {
 				<div className="twitter-preview__main">
 					{ this.renderHeader( name, screenName, date ) }
 					<div className="twitter-preview__content">
-						{ this.renderText( text, urls, card ) }
+						{ this.renderText( text, card ) }
 						{ this.renderMedia( media ) }
 						{ this.renderQuoteTweet( tweet ) }
 						{ this.renderCard( card ) }
@@ -291,7 +283,6 @@ Tweet.propTypes = {
 	text: PropTypes.string,
 	media: PropTypes.array,
 	tweet: PropTypes.string,
-	urls: PropTypes.array,
 	card: PropTypes.object,
 };
 

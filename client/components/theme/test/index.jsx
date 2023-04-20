@@ -17,6 +17,7 @@ describe( 'Theme', () => {
 			screenshot:
 				'https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?ssl=1',
 		},
+		actionLabel: 'Info',
 		buttonContents: { dummyAction: { label: 'Dummy action', action: jest.fn() } }, // TODO: test if called when clicked
 		translate: ( string ) => string,
 		setThemesBookmark: () => {},

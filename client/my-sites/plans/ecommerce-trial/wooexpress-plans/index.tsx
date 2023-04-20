@@ -2,6 +2,7 @@ import {
 	PLAN_FREE,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_PLUS,
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	getPlanPath,
@@ -102,8 +103,8 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 	);
 
 	const plansTableProps = {
-		plans: [ smallPlan, mediumPlan ],
-		hidePlansFeatureComparison: true,
+		plans: [ smallPlan, mediumPlan, PLAN_WOOEXPRESS_PLUS ],
+		hidePlansFeatureComparison: false,
 		siteId,
 		onUpgradeClick,
 	};

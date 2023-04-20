@@ -10,12 +10,13 @@ type CommentRowProps = PostSubscription & {
 };
 
 const CommentRow = ( {
-	title,
-	excerpt,
+	post_title,
+	post_excerpt,
+	post_url,
 	site_title,
 	site_icon,
 	site_url,
-	date_subscribed,
+	subscription_date,
 	forwardedRef,
 	style,
 }: CommentRowProps ) => {
@@ -30,8 +31,12 @@ const CommentRow = ( {
 		<div style={ style } ref={ forwardedRef } className="row-wrapper">
 			<div className="row" role="row">
 				<span className="post" role="cell">
-					<div className="title">{ title }</div>
-					<div className="excerpt">{ excerpt }</div>
+					<div className="title">
+						<a href={ post_url } target="_blank" rel="noreferrer noopener">
+							{ post_title }
+						</a>
+					</div>
+					<div className="excerpt">{ post_excerpt }</div>
 				</span>
 				<a href={ site_url } rel="noreferrer noopener" className="title-box" target="_blank">
 					<span className="title-box" role="cell">
@@ -43,7 +48,7 @@ const CommentRow = ( {
 					</span>
 				</a>
 				<span className="date" role="cell">
-					<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
+					<TimeSince date={ subscription_date.toISOString?.() ?? subscription_date } />
 				</span>
 				<span className="actions" role="cell">
 					<CommentSettings onUnfollow={ () => undefined } unfollowing={ false } />

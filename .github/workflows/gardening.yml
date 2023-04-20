@@ -44,5 +44,4 @@ jobs:
          slack_team_channel: ${{ secrets.SLACK_TEAM_CHANNEL }}
          slack_he_triage_channel: ${{ secrets.SLACK_HE_TRIAGE_CHANNEL }}
          slack_quality_channel: ${{ secrets.SLACK_QUALITY_CHANNEL }}
-         slack_kitkat_channel: ${{ secrets.SLACK_KITKAT_CHANNEL }}
-         tasks: 'assignIssues,cleanLabels,notifyDesign,notifyEditorial,flagOss,triageNewIssues,gatherSupportReferences,replyToCustomersReminder,notifyKitKat'
+         tasks: 'assignIssues,cleanLabels,notifyDesign,notifyEditorial,flagOss,triageIssues,gatherSupportReferences,replyToCustomersReminder'

@@ -1,8 +1,6 @@
 import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import styled from '@emotion/styled';
-import { useSelector } from 'react-redux';
 import JetpackLogo from 'calypso/components/jetpack-logo';
-import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { isNotAtomicJetpack } from '../utils';
 import { PlanRenewNag } from './sites-plan-renew-nag';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
@@ -32,7 +30,7 @@ interface SitePlanProps {
 const STAGING_PLAN_LABEL = 'Staging';
 
 export const SitePlan = ( { site, userId }: SitePlanProps ) => {
-	const isWpcomStagingSite = useSelector( ( state ) => isSiteWpcomStaging( state, site.ID ) );
+	const isWpcomStagingSite = site?.is_wpcom_staging_site ?? false;
 	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
 	return (
@@ -44,7 +42,7 @@ export const SitePlan = ( { site, userId }: SitePlanProps ) => {
 							<JetpackLogo size={ 16 } />
 						</SitePlanIcon>
 					) }
-					{ site.plan?.expired && (
+					{ site.plan?.expired ? (
 						<PlanRenewNagContainer>
 							<PlanRenewNag
 								plan={ site.plan }
@@ -53,8 +51,9 @@ export const SitePlan = ( { site, userId }: SitePlanProps ) => {
 								hideRenewLink={ isECommerceTrialSite }
 							/>
 						</PlanRenewNagContainer>
+					) : (
+						site.plan?.product_name_short
 					) }
-					{ site.plan?.product_name_short }
 				</>
 			) : (
 				STAGING_PLAN_LABEL

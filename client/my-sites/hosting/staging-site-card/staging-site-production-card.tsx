@@ -79,10 +79,10 @@ function StagingSiteProductionCard( { disabled, siteId }: CardProps ) {
 				<ActionButtons>
 					<Button
 						primary
-						href={ `/home/${ urlToSlug( productionSite.url ) }` }
+						href={ `/hosting-config/${ urlToSlug( productionSite.url ) }` }
 						disabled={ disabled }
 					>
-						<span>{ __( 'Manage production site' ) }</span>
+						<span>{ __( 'Go back to production' ) }</span>
 					</Button>
 				</ActionButtons>
 			</>

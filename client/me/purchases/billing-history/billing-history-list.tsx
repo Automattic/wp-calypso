@@ -271,12 +271,9 @@ export default connect(
 		const transactions = getPastBillingTransactions( state );
 		const filter = getBillingTransactionFilters( state, 'past' );
 		const pageSize = 5;
-		const filteredTransactions = filterTransactions( transactions, filter, siteId );
-		const paginatedTransactions = paginateTransactions(
-			filteredTransactions,
-			filter.page,
-			pageSize
-		);
+		const filteredTransactions = transactions && filterTransactions( transactions, filter, siteId );
+		const paginatedTransactions =
+			filteredTransactions && paginateTransactions( filteredTransactions, filter.page, pageSize );
 
 		return {
 			app: filter.app,
@@ -284,7 +281,7 @@ export default connect(
 			page: filter.page,
 			pageSize,
 			query: filter.query,
-			total: filteredTransactions.length,
+			total: filteredTransactions?.length ?? 0,
 			transactions: paginatedTransactions,
 			sendingBillingReceiptEmail: getIsSendingReceiptEmail( state ),
 		};

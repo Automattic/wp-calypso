@@ -12,6 +12,7 @@ import { PLAN_RENEW_NAG_EVENT_NAMES } from '../utils';
 
 interface SitesGridActionRenewProps {
 	site: SiteExcerptData;
+	hideRenewLink?: boolean;
 }
 
 const Container = styled.div( {
@@ -36,7 +37,7 @@ const RenewLink = styled.a( {
 	},
 } );
 
-export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
+export function SitesGridActionRenew( { site, hideRenewLink }: SitesGridActionRenewProps ) {
 	const { __ } = useI18n();
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const isSiteOwner = site.site_owner === userId;
@@ -63,7 +64,7 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 						sprintf( __( '%s Plan expired.' ), site.plan?.product_name_short )
 					}
 				</span>
-				{ isSiteOwner && (
+				{ isSiteOwner && ! hideRenewLink && (
 					<RenewLink
 						href={ `/checkout/${ site.slug }/${ productSlug }` }
 						onClick={ () => {

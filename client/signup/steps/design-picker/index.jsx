@@ -200,7 +200,7 @@ export default function DesignPickerStep( props ) {
 	}
 
 	function renderCheckoutModal() {
-		return <AsyncCheckoutModal />;
+		return <AsyncCheckoutModal siteId={ siteId } />;
 	}
 
 	function renderDesignPicker() {

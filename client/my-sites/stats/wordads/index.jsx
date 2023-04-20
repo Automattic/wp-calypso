@@ -16,7 +16,6 @@ import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -30,6 +29,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import PromoCards from '../promo-cards';
 import DatePicker from '../stats-date-picker';
+import StatsPageHeader from '../stats-page-header';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import WordAdsChartTabs from '../wordads-chart-tabs';
@@ -172,12 +172,9 @@ class WordAds extends Component {
 				/>
 
 				<div className="stats">
-					<FormattedHeader
-						brandFont
-						className="stats__section-header modernized-header"
-						headerText={ translate( 'Jetpack Stats' ) }
+					<StatsPageHeader
+						page="wordads"
 						subHeaderText={ translate( 'See how ads are performing on your site.' ) }
-						align="left"
 					/>
 
 					{ ! canAccessAds && (

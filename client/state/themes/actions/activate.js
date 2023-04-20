@@ -1,7 +1,8 @@
 import { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
+import { productToBeInstalled } from 'calypso/state/marketplace/purchase-flow/actions';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { activateTheme } from 'calypso/state/themes/actions/activate-theme';
 import { installAndActivateTheme } from 'calypso/state/themes/actions/install-and-activate-theme';
 import { showAtomicTransferDialog } from 'calypso/state/themes/actions/show-atomic-transfer-dialog';
@@ -105,6 +106,17 @@ export function activate(
 
 			const siteSlug = getSiteSlug( getState(), siteId );
 			return page( `/marketplace/thank-you/${ siteSlug }?themes=${ themeId }` );
+		}
+
+		/* Check if the theme is a .org Theme and not provided by .com as well (as Premium themes)
+		 * and redirect it to the Marketplace theme installation page
+		 */
+		const isDotOrgTheme = !! getTheme( getState(), 'wporg', themeId );
+		if ( isDotOrgTheme && ! isDotComTheme ) {
+			const siteSlug = getSiteSlug( getState(), siteId );
+
+			dispatch( productToBeInstalled( themeId, siteSlug ) );
+			return page( `/marketplace/theme/${ themeId }/install/${ siteSlug }` );
 		}
 
 		return dispatchActivateAction(

@@ -5,7 +5,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
-import { Button, FormInputValidation, Popover } from '@automattic/components';
+import { FormInputValidation, Popover } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
 	useSubmitForumsMutation,
@@ -18,7 +18,7 @@ import {
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
-import { TextControl, CheckboxControl, Tip } from '@wordpress/components';
+import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
@@ -441,7 +441,7 @@ export const HelpCenterContactForm = () => {
 				<Button
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
-					primary
+					isPrimary
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }
@@ -548,7 +548,8 @@ export const HelpCenterContactForm = () => {
 				<Button
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
-					primary
+					isPrimary
+					isLarge
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }

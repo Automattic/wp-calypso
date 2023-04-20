@@ -1,3 +1,4 @@
+@import "@automattic/typography/styles/variables";
 @import "./keyframes";
 
 @font-face {
@@ -208,6 +209,7 @@ $font-family: "SF Pro Text", $sans;
 		}
 
 		.pattern-selector__body {
+			position: relative;
 			margin-bottom: 32px;
 			padding: 2px;
 			overflow-y: scroll;
@@ -228,7 +230,6 @@ $font-family: "SF Pro Text", $sans;
 				border: 1px solid rgba(0, 0, 0, 5%);
 				border-radius: 4px;
 				width: 100%;
-				transform: translateZ(0);
 				overflow: hidden;
 				user-select: none;
 				cursor: pointer;

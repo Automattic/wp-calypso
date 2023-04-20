@@ -349,6 +349,34 @@ import {
 	FEATURE_RECOMMEND_ADD_ONS,
 	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
 	FEATURE_MIN_MAX_ORDER_QUANTITY,
+	FEATURE_WOOCOMMERCE_STORE,
+	FEATURE_WOOCOMMERCE_MOBILE_APP,
+	FEATURE_WORDPRESS_CMS,
+	FEATURE_WORDPRESS_MOBILE_APP,
+	FEATURE_FREE_SSL_CERTIFICATE,
+	FEATURE_GOOGLE_ANALYTICS_V3,
+	FEATURE_LIST_UNLIMITED_PRODUCTS,
+	FEATURE_GIFT_CARDS,
+	FEATURE_PRODUCT_BUNDLES,
+	FEATURE_CUSTOM_PRODUCT_KITS,
+	FEATURE_LIST_PRODUCTS_BY_BRAND,
+	FEATURE_PRODUCT_RECOMMENDATIONS,
+	FEATURE_INTEGRATED_PAYMENTS,
+	FEATURE_INTERNATIONAL_PAYMENTS,
+	FEATURE_AUTOMATED_SALES_TAXES,
+	FEATURE_ACCEPT_LOCAL_PAYMENTS,
+	FEATURE_RECURRING_PAYMENTS,
+	FEATURE_PROMOTE_ON_TIKTOK,
+	FEATURE_SYNC_WITH_PINTEREST,
+	FEATURE_CONNECT_WITH_FACEBOOK,
+	FEATURE_ABANDONED_CART_RECOVERY,
+	FEATURE_ADVERTISE_ON_GOOGLE,
+	FEATURE_CUSTOM_ORDER_EMAILS,
+	FEATURE_LIVE_SHIPPING_RATES,
+	FEATURE_DISCOUNTED_SHIPPING,
+	FEATURE_PRINT_SHIPPING_LABELS,
+	PLAN_WOOEXPRESS_PLUS,
+	TYPE_WOO_EXPRESS_PLUS,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -869,6 +897,27 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
+	getHostingSignupFeatures: ( term ) => () =>
+		compact( [
+			term !== TERM_MONTHLY && FEATURE_CUSTOM_DOMAIN,
+			FEATURE_SELL_SHIP,
+			FEATURE_CUSTOM_STORE,
+			FEATURE_INVENTORY,
+			FEATURE_CHECKOUT,
+			FEATURE_ACCEPT_PAYMENTS_V2,
+			FEATURE_SALES_REPORTS,
+			FEATURE_SHIPPING_CARRIERS,
+			FEATURE_EXTENSIONS,
+			FEATURE_BANDWIDTH,
+			FEATURE_GLOBAL_EDGE_CACHING,
+			FEATURE_BURST,
+			FEATURE_WAF_V2,
+			FEATURE_CDN,
+			FEATURE_CPUS,
+			FEATURE_DATACENTRE_FAILOVER,
+			FEATURE_SECURITY_MALWARE,
+			FEATURE_SECURITY_DDOS,
+		] ),
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -918,11 +967,97 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		},
 	} ),
 } );
+
+const getWooExpressMediumPlanCompareFeatures = (): string[] => [
+	FEATURE_WOOCOMMERCE_STORE,
+	FEATURE_WOOCOMMERCE_MOBILE_APP,
+	FEATURE_WORDPRESS_CMS,
+	FEATURE_WORDPRESS_MOBILE_APP,
+	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_FREE_SSL_CERTIFICATE,
+	FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+	FEATURE_AD_FREE_EXPERIENCE,
+	FEATURE_UNLIMITED_ADMINS,
+	FEATURE_LIVE_CHAT_SUPPORT,
+	FEATURE_EMAIL_SUPPORT,
+	FEATURE_PREMIUM_THEMES_V2,
+	FEATURE_SALES_REPORTS,
+	FEATURE_GOOGLE_ANALYTICS_V3,
+	FEATURE_LIST_UNLIMITED_PRODUCTS,
+	FEATURE_GIFT_CARDS,
+	FEATURE_MIN_MAX_ORDER_QUANTITY,
+	FEATURE_PRODUCT_BUNDLES,
+	FEATURE_CUSTOM_PRODUCT_KITS,
+	FEATURE_LIST_PRODUCTS_BY_BRAND,
+	FEATURE_PRODUCT_RECOMMENDATIONS,
+	FEATURE_INTEGRATED_PAYMENTS,
+	FEATURE_INTERNATIONAL_PAYMENTS,
+	FEATURE_AUTOMATED_SALES_TAXES,
+	FEATURE_ACCEPT_LOCAL_PAYMENTS,
+	FEATURE_RECURRING_PAYMENTS,
+	FEATURE_MIN_MAX_ORDER_QUANTITY,
+	FEATURE_PROMOTE_ON_TIKTOK,
+	FEATURE_SYNC_WITH_PINTEREST,
+	FEATURE_CONNECT_WITH_FACEBOOK,
+	FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+	FEATURE_MARKETING_AUTOMATION,
+	FEATURE_ABANDONED_CART_RECOVERY,
+	FEATURE_ADVANCED_SEO_TOOLS,
+	FEATURE_ADVERTISE_ON_GOOGLE,
+	FEATURE_REFERRAL_PROGRAMS,
+	FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
+	FEATURE_CUSTOM_ORDER_EMAILS,
+	FEATURE_LOYALTY_POINTS_PROGRAMS,
+	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
+	FEATURE_LIVE_SHIPPING_RATES,
+	FEATURE_DISCOUNTED_SHIPPING,
+	FEATURE_PRINT_SHIPPING_LABELS,
+];
+const getWooExpressSmallPlanCompareFeatures = (): string[] => [
+	FEATURE_WOOCOMMERCE_STORE,
+	FEATURE_WOOCOMMERCE_MOBILE_APP,
+	FEATURE_WORDPRESS_CMS,
+	FEATURE_WORDPRESS_MOBILE_APP,
+	FEATURE_CUSTOM_DOMAIN,
+	FEATURE_FREE_SSL_CERTIFICATE,
+	FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+	FEATURE_AD_FREE_EXPERIENCE,
+	FEATURE_UNLIMITED_ADMINS,
+	FEATURE_LIVE_CHAT_SUPPORT,
+	FEATURE_EMAIL_SUPPORT,
+	FEATURE_PREMIUM_THEMES_V2,
+	FEATURE_SALES_REPORTS,
+	FEATURE_GOOGLE_ANALYTICS_V3,
+	FEATURE_LIST_UNLIMITED_PRODUCTS,
+	FEATURE_GIFT_CARDS,
+	FEATURE_LIST_PRODUCTS_BY_BRAND,
+	FEATURE_INTEGRATED_PAYMENTS,
+	FEATURE_INTERNATIONAL_PAYMENTS,
+	FEATURE_AUTOMATED_SALES_TAXES,
+	FEATURE_ACCEPT_LOCAL_PAYMENTS,
+	FEATURE_RECURRING_PAYMENTS,
+	FEATURE_PROMOTE_ON_TIKTOK,
+	FEATURE_SYNC_WITH_PINTEREST,
+	FEATURE_CONNECT_WITH_FACEBOOK,
+	FEATURE_ADVANCED_SEO_TOOLS,
+	FEATURE_ADVERTISE_ON_GOOGLE,
+	FEATURE_CUSTOM_ORDER_EMAILS,
+	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
+	FEATURE_LIVE_SHIPPING_RATES,
+	FEATURE_PRINT_SHIPPING_LABELS,
+];
+
+const getWooExpressPlanCompareFeatures = (): string[] => [
+	...getWooExpressSmallPlanCompareFeatures(),
+	...getWooExpressMediumPlanCompareFeatures(),
+];
+
 const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 	...getPlanEcommerceDetails(),
 	getTitle: () => i18n.translate( 'Performance' ),
 	getPlanTagline: () => i18n.translate( 'Accelerate your growth with advanced features.' ),
 	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_200GB_STORAGE,
 		FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
 		FEATURE_MARKETING_AUTOMATION,
 		FEATURE_AUTOMATED_EMAIL_TRIGGERS,
@@ -935,7 +1070,9 @@ const getPlanWooExpressMediumDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
 		FEATURE_MIN_MAX_ORDER_QUANTITY,
 	],
-	get2023PricingGridSignupStorageOptions: () => [],
+	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
+	get2023PlanComparisonFeatureOverride: () => getWooExpressMediumPlanCompareFeatures(),
+	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
 	getTagline: () =>
 		i18n.translate(
 			'Learn more about everything included with Woo Express Performance and take advantage of its powerful marketplace features.'
@@ -961,7 +1098,9 @@ const getPlanWooExpressSmallDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
 		FEATURE_ADVANCED_SEO_TOOLS,
 	],
-	get2023PricingGridSignupStorageOptions: () => [],
+	getPlanCompareFeatures: () => getWooExpressPlanCompareFeatures(),
+	get2023PlanComparisonFeatureOverride: () => getWooExpressSmallPlanCompareFeatures(),
+	get2023PricingGridSignupStorageOptions: () => [ FEATURE_50GB_STORAGE ],
 	getTitle: () => i18n.translate( 'Essential' ),
 	getPlanTagline: () =>
 		i18n.translate( 'Everything you need to set up your store and start selling your products.' ),
@@ -1289,6 +1428,24 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 	],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
+	getHostingSignupFeatures: ( term ) => () =>
+		compact( [
+			term !== TERM_MONTHLY && FEATURE_CUSTOM_DOMAIN,
+			FEATURE_PLUGINS_THEMES,
+			FEATURE_BANDWIDTH,
+			FEATURE_GLOBAL_EDGE_CACHING,
+			FEATURE_BURST,
+			FEATURE_WAF_V2,
+			FEATURE_CDN,
+			FEATURE_CPUS,
+			FEATURE_DATACENTRE_FAILOVER,
+			FEATURE_ISOLATED_INFRA,
+			FEATURE_SECURITY_MALWARE,
+			FEATURE_SECURITY_DDOS,
+			FEATURE_DEV_TOOLS,
+			FEATURE_WP_UPDATES,
+			FEATURE_MULTI_SITE,
+		] ),
 	// Features not displayed but used for checking plan abilities
 	getIncludedFeatures: () => [
 		FEATURE_AUDIO_UPLOADS,
@@ -1341,9 +1498,15 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 	group: GROUP_WPCOM,
 	type: TYPE_PRO,
 	getTitle: () => i18n.translate( 'WordPress Pro' ),
+	getTagline: () =>
+		i18n.translate(
+			'This plan gives you access to our most powerful features at an affordable price for an unmatched value you won’t get anywhere else. No longer available to new users.'
+		),
 	getDescription: () =>
 		i18n.translate(
-			'Unlock the full power of WordPress with plugins, custom themes and much more.'
+			'You’ve got our best deal on hosting! ' +
+				'Your Pro plan includes access to all the most popular features WordPress.com has to offer, including premium themes and access to over 50,000 plugins. ' +
+				'As an existing customer, you can keep your site on this plan as long as your subscription remains active.'
 		),
 	getSubTitle: () => i18n.translate( 'Unlimited features. Unbeatable value.' ),
 	getPlanCompareFeatures: () => [
@@ -1398,6 +1561,14 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 		WPCOM_FEATURES_ANTISPAM,
 		WPCOM_FEATURES_BACKUPS,
 	],
+	getPlanCancellationDescription: () =>
+		i18n.translate(
+			'Heads up — you are currently on a legacy plan that is no longer available for new subscribers. ' +
+				'Your Pro plan includes access to all the most popular features WordPress.com has to offer, ' +
+				'including premium themes and access to over 50,000 plugins. As an existing Pro plan subscriber, ' +
+				'you can keep your site on this legacy plan as long as your subscription remains active. ' +
+				'If canceled, the WordPress.com Pro plan can no longer be added to your account.'
+		),
 	getCancellationFeatureList: (): CancellationFeatureLists => ( {
 		monthly: {
 			featureList: [
@@ -1429,6 +1600,21 @@ const getPlanProDetails = (): IncompleteWPcomPlan => ( {
 			andMore: true,
 		},
 	} ),
+} );
+
+// The following is not a real plan, we are adding it here so that
+// Woo Express Plus gets its own column in the plans grid.
+const getPlanWooExpressPlusDetails = (): IncompleteWPcomPlan => ( {
+	...getDotcomPlanDetails(),
+	group: GROUP_WPCOM,
+	type: TYPE_WOO_EXPRESS_PLUS,
+	getTitle: () => i18n.translate( 'Plus' ),
+	getPlanTagline: () =>
+		i18n.translate( 'For fast-growing businesses that need access to the most powerful tools.' ),
+	getDescription: () => '',
+	get2023PricingGridSignupWpcomFeatures: () => [],
+	get2023PricingGridSignupJetpackFeatures: () => [],
+	get2023PricingGridSignupStorageOptions: () => [],
 } );
 
 // The following is not a real plan, we are adding it here so that
@@ -2328,6 +2514,15 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		getProductId: () => 1056,
 		getStoreSlug: () => PLAN_WOOEXPRESS_SMALL,
 		getPathSlug: () => 'wooexpress-small-yearly',
+	},
+
+	// Not a real plan. This is used to show the Plus offering in the Woo Express plans grid
+	[ PLAN_WOOEXPRESS_PLUS ]: {
+		...getPlanWooExpressPlusDetails(),
+		term: TERM_ANNUALLY,
+		getBillingTimeFrame: () => '',
+		getProductId: () => 0,
+		getStoreSlug: () => PLAN_WOOEXPRESS_PLUS,
 	},
 
 	// Not a real plan. This is used to show the Enterprise (VIP) offering in

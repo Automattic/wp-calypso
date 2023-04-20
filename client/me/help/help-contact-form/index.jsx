@@ -488,6 +488,19 @@ export class HelpContactForm extends PureComponent {
 			<div className="help-contact-form">
 				{ formDescription && <p>{ formDescription }</p> }
 
+				{ showChatStagingNotice && (
+					<Notice
+						className="help-contact-form__site-notice"
+						status="is-warning"
+						showDismiss={ false }
+						text="Targeting HappyChat staging"
+					>
+						<NoticeAction href="https://wp.me/PCYsg-Q7X" external>
+							Learn More
+						</NoticeAction>
+					</Notice>
+				) }
+
 				{ showSiteField && (
 					<div className="help-contact-form__site-selection">
 						{ ! hasNoSites && (
@@ -562,18 +575,6 @@ export class HelpContactForm extends PureComponent {
 								{ actionMessage }
 							</NoticeAction>
 						) }
-					</Notice>
-				) }
-				{ showChatStagingNotice && (
-					<Notice
-						className="help-contact-form__site-notice"
-						status="is-warning"
-						showDismiss={ false }
-						text="Targeting HappyChat staging"
-					>
-						<NoticeAction href="https://hud-staging.happychat.io/" external>
-							HUD
-						</NoticeAction>
 					</Notice>
 				) }
 

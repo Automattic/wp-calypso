@@ -46,6 +46,7 @@
 		{ "path": "./shopping-cart" },
 		{ "path": "./sites" },
 		{ "path": "./state-utils" },
+		{ "path": "./social-previews" },
 		{ "path": "./subscriber" },
 		{ "path": "./tree-select" },
 		{ "path": "./viewport" },

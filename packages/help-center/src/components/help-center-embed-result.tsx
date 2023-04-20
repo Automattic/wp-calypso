@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button } from '@automattic/components';
-import { Flex, FlexItem } from '@wordpress/components';
+import { Button, Flex, FlexItem } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
 import { Icon, external } from '@wordpress/icons';
 import React from 'react';
@@ -56,7 +55,6 @@ export const HelpCenterEmbedResult: React.FC = () => {
 					</FlexItem>
 					<FlexItem>
 						<Button
-							borderless={ true }
 							href={ link ?? '' }
 							target="_blank"
 							className="help-center-embed-result__external-button"
