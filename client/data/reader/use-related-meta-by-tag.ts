@@ -26,11 +26,15 @@ export interface RelatedMetaByTag {
 interface Card {
 	type: string;
 	data?: {
+		ID: number;
 		site_ID: number;
 		feed_ID: number;
 		name: string;
 		URL: string;
 		icon: string;
+		slug: string;
+		title: string;
+		score: number;
 	}[];
 }
 
@@ -50,8 +54,11 @@ interface Tag {
 
 const selectRelatedSites = ( response: { cards: Card[] } ): RelatedSiteByTag[] | null => {
 	const relatedSitesByTag: RelatedSiteByTag[] = response.cards
+		// Filter the cards array to only include cards of type "recommended_blogs" that have a data property
 		.filter( ( card ) => card.type === 'recommended_blogs' && card.data )
+		// Use flatMap to flatten the data arrays of each of the filtered cards into a single array (ignoring arrays without data property)
 		.flatMap( ( card ) => card.data! )
+		// Map over the flattened data array to create a new array of objects with properties for site_ID, feed_ID, name, URL, last_updated, unseen_count, and site_icon.
 		.map( ( site: Site ) => ( {
 			site_ID: site.ID,
 			feed_ID: site.feed_ID,
@@ -67,13 +74,18 @@ const selectRelatedSites = ( response: { cards: Card[] } ): RelatedSiteByTag[] |
 
 const selectRelatedTags = ( response: { cards: Card[] } ): RelatedTagByTag[] | null => {
 	const relatedTagByTag: RelatedTagByTag[] = response.cards
+		// Filter the cards array to only include cards of type "interests_you_may_like" that have a data property
 		.filter( ( card ) => card.type === 'interests_you_may_like' && card.data )
+		// Use flatMap to flatten the data arrays of each of the filtered cards into a single array (ignoring arrays without data property)
 		.flatMap( ( card ) => card.data! )
+		// Map over the flattened data array to create a new array of objects with properties for slug, title, and score.
 		.map( ( tag: Tag ) => ( {
 			slug: tag.slug,
 			title: tag.title,
 			score: tag.score,
-		} ) );
+		} ) )
+		// Sort the array by score in descending order (highest score first)
+		.sort( ( a, b ) => b.score - a.score );
 
 	return relatedTagByTag.length > 0 ? relatedTagByTag : null;
 };
@@ -95,7 +107,7 @@ export const useRelatedMetaByTag = ( tag: string ): UseQueryResult< RelatedMetaB
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
-			staleTime: 86400000, // 1 day
+			staleTime: 3600000, // 1 hour
 			select: selectFromCards,
 		}
 	);

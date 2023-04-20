@@ -11,16 +11,12 @@ const ReaderTagSidebar = ( { tag } ) => {
 		return null;
 	}
 
-	const tagLinks = relatedMetaByTag.data?.related_tags
-		.sort( ( a, b ) => b.score - a.score )
-		.map( ( relatedTag ) => <TagLink tag={ relatedTag } key={ relatedTag.slug } /> );
-
-	const relatedSitesLinks =
-		relatedMetaByTag.data?.related_sites && relatedMetaByTag.data.related_sites.length > 0
-			? relatedMetaByTag.data.related_sites.map( ( relatedSite ) => (
-					<ReaderListFollowingItem key={ relatedSite.feed_ID } site={ relatedSite } path="/" />
-			  ) )
-			: null;
+	const tagLinks = relatedMetaByTag.data?.related_tags?.map( ( relatedTag ) => (
+		<TagLink tag={ relatedTag } key={ relatedTag.slug } />
+	) );
+	const relatedSitesLinks = relatedMetaByTag.data?.related_sites?.map( ( relatedSite ) => (
+		<ReaderListFollowingItem key={ relatedSite.feed_ID } site={ relatedSite } path="/" />
+	) );
 
 	return (
 		<>
