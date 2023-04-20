@@ -25,6 +25,7 @@ function ModuleCard( { icon, title, value, activateProduct, className = null, in
 			{ ! isFinite( value ) && (
 				<div className="stats-widget-module__info">
 					{ value === 'not_active' && <button onClick={ activateProduct }>Activate</button> }
+					{ /* Module `protect` is always installed. So it wouldn't go to the branch below. */ }
 					{ value === 'not_installed' && info && <a href={ info.link }>{ info.text }</a> }
 				</div>
 			) }
@@ -54,6 +55,10 @@ export default function Modules() {
 			} );
 	};
 
+	const activateModule = ( module ) => () => {
+		return module;
+	};
+
 	return (
 		<div className="stats-widget-modules">
 			<ModuleCard
@@ -61,13 +66,7 @@ export default function Modules() {
 				title={ translate( 'Total blocked login attempts' ) }
 				value={ protectData }
 				active={ isProductActive( jetpackProducts, 'protect' ) }
-				activateProduct={ () => {
-					/** activate jetpack brute force protection module */
-				} }
-				info={ {
-					link: '/wp-admin/admin.php?page=jetpack#/security?term=protect', //generate proper admin URL.
-					text: translate( 'Jetpack helps to keep you secure from brute-force login attacks.' ),
-				} }
+				activateProduct={ activateModule( 'protect' ) }
 			/>
 			<ModuleCard
 				icon={ akismet }
