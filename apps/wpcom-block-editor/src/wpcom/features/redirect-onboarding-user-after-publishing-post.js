@@ -1,4 +1,4 @@
-import { select, subscribe } from '@wordpress/data';
+import { dispatch, select, subscribe } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { getQueryArg } from '@wordpress/url';
 
@@ -19,6 +19,7 @@ export function redirectOnboardingUserAfterPublishingPost() {
 		if ( ! isSavingPost && isCurrentPostPublished && getCurrentPostRevisionsCount === 1 ) {
 			unsubscribe();
 
+			dispatch( 'core/edit-post' ).closePublishSidebar();
 			window.location.href =
 				siteOrigin + '/setup/write/launchpad?siteSlug=' + siteSlug + '&showLaunchpad=true';
 		}
