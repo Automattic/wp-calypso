@@ -5,6 +5,8 @@ $display-type-font: $sans;
 $display-type-weight: 400;
 $display-type-line-height: 40px;
 
+$emerald-hover-color: #414141;
+
 // Manual styling override mixin for Jetpack.
 @mixin stats-section-header-for-jetpack {
 	font-family: $display-type-font;
@@ -30,12 +32,12 @@ $display-type-line-height: 40px;
 	border-radius: 4px;
 
 	&:hover {
-		color: var(--studio-black);
-		background: var(--studio-white);
+		border-color: $emerald-hover-color;
+		background: $emerald-hover-color;
 	}
 
-	&:visited {
-		color: var(--studio-white);
-		background: var(--studio-black);
+	&:disabled {
+		color: var(--studio-gray-20);
+		background-color: var(--studio-gray-60);
 	}
 }

@@ -2,6 +2,7 @@ import { ShortenedNumber } from '@automattic/components';
 import { protect, akismet } from '@automattic/components/src/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../hooks/use-module-data-query';
 import config from '../lib/config-api';
@@ -26,6 +27,7 @@ function ModuleCard( {
 	info = null,
 } ) {
 	const translate = useTranslate();
+	const [ disabled, setDisabled ] = useState( false );
 	return (
 		<div className={ classNames( 'stats-widget-module stats-widget-card', className ) }>
 			<div className="stats-widget-module__icon">{ icon }</div>
@@ -37,7 +39,17 @@ function ModuleCard( {
 			) }
 			{ ! active && activateProduct && (
 				<div className="stats-widget-module__info">
-					{ value === 'not_active' && <button onClick={ activateProduct }>Activate</button> }
+					{ value === 'not_active' && (
+						<button
+							disabled={ disabled }
+							onClick={ () => {
+								setDisabled( true );
+								activateProduct();
+							} }
+						>
+							Activate
+						</button>
+					) }
 					{ /* TODO: add button to install plugins. */ }
 					{ value !== 'not_active' && info && (
 						<a href={ info.link } target="__blank">
