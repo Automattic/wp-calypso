@@ -301,6 +301,8 @@ export class PluginsPage {
 				// the text shown on the install button is slightly different.
 				this.page.getByRole( 'button', { name: /(Purchase|Upgrade) and activate/ } ).click(),
 			] );
+			// Modal will appear to re-confirm to the user that an upgrade is necessary.
+			// Accept the confirmation.
 			await this.page.getByRole( 'button', { name: 'Upgrade and activate plugin' } ).click();
 		} else {
 			await Promise.all( [
