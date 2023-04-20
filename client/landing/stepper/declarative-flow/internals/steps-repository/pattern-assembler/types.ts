@@ -2,7 +2,7 @@ export type Pattern = {
 	ID: number;
 	name: string;
 	title: string;
-	description: string;
+	description?: string;
 	category?: Category;
 	categories: {
 		[ key: string ]: Category | undefined;
