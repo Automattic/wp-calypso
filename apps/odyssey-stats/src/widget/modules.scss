@@ -27,3 +27,7 @@
 	line-height: 1;
 	letter-spacing: -0.02em;
 }
+
+.stats-widget-module button {
+	@include emerald-button-style;
+}
