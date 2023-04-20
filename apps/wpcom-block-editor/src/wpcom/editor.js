@@ -10,6 +10,7 @@ import InserterMenuTrackingEvent from './features/tracking/wpcom-inserter-menu-s
 import './features/site-editor-env-consistency';
 import './editor.scss';
 import './features/redirect-onboarding-user-after-publishing-post';
+import './features/hide-post-editor-sidebar';
 
 registerPlugin( 'track-inserter-menu-events', {
 	render() {
