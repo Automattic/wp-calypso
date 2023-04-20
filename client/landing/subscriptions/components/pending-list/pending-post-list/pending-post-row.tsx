@@ -9,6 +9,9 @@ export default function PendingPostRow( {
 	site_icon,
 	post_title,
 	post_url,
+	post_excerpt,
+	site_url,
+	site_title,
 }: PendingPostSubscription ) {
 	const hostname = useMemo( () => new URL( post_url ).hostname, [ post_url ] );
 	const siteIcon = useMemo( () => {
@@ -28,27 +31,37 @@ export default function PendingPostRow( {
 	};
 
 	return (
-		<li className="row" role="row">
-			<a href={ post_url } rel="noreferrer noopener" className="title-box" target="_blank">
-				<span className="title-box" role="cell">
-					{ siteIcon }
-					<span className="title-column">
-						<span className="name">{ post_title }</span>
-						<span className="url">{ hostname }</span>
-					</span>
+		<div className="row-wrapper">
+			<div className="row" role="row">
+				<span className="post" role="cell">
+					<div className="title">
+						<a href={ post_url } target="_blank" rel="noreferrer noopener">
+							{ post_title }
+						</a>
+					</div>
+					<div className="excerpt">{ post_excerpt }</div>
 				</span>
-			</a>
-			<span className="date" role="cell">
-				<TimeSince date={ subscription_date.toISOString?.() ?? subscription_date } />
-			</span>
-			<span className="actions" role="cell">
-				<PendingPostSettings
-					onConfirm={ () => confirmPendingSubscription() }
-					onDelete={ () => deletePendingSubscription() }
-					confirming={ confirmingPendingSubscription }
-					deleting={ deletingPendingSubscription }
-				/>
-			</span>
-		</li>
+				<a href={ site_url } rel="noreferrer noopener" className="title-box" target="_blank">
+					<span className="title-box" role="cell">
+						{ siteIcon }
+						<span className="title-column">
+							<span className="name">{ site_title }</span>
+							<span className="url">{ hostname }</span>
+						</span>
+					</span>
+				</a>
+				<span className="date" role="cell">
+					<TimeSince date={ subscription_date.toISOString?.() ?? subscription_date } />
+				</span>
+				<span className="actions" role="cell">
+					<PendingPostSettings
+						onConfirm={ () => confirmPendingSubscription() }
+						onDelete={ () => deletePendingSubscription() }
+						confirming={ confirmingPendingSubscription }
+						deleting={ deletingPendingSubscription }
+					/>
+				</span>
+			</div>
+		</div>
 	);
 }
