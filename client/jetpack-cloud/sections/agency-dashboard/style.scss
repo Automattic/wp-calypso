@@ -10,11 +10,8 @@
 	box-shadow: none;
 	background: transparent;
 
-	&.is-loading {
-		.site-icon {
-			animation: pulse-light 0.8s ease-in-out infinite;
-		}
-
+	&.is-loading,
+	&.is-no-sites {
 		.site__title {
 			color: var(--color-neutral-50);
 			line-height: 35px;
@@ -27,6 +24,10 @@
 				visibility: hidden;
 			}
 		}
+	}
+
+	&.is-loading .site-icon {
+		animation: pulse-light 0.8s ease-in-out infinite;
 	}
 }
 
@@ -143,4 +144,8 @@
 			height: 50px;
 		}
 	}
+}
+
+.padding-0 {
+	padding: 0 !important;
 }

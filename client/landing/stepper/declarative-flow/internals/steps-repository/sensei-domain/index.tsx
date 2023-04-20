@@ -1,27 +1,30 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
+import { ProductsList } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import ReskinSideExplainer from 'calypso/components/domains/reskin-side-explainer';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { ONBOARD_STORE, PRODUCTS_LIST_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { SenseiStepContainer } from '../components/sensei-step-container';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
 const SenseiDomain: Step = ( { navigation } ) => {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const [ siteTitle, domain, productsList ] = useSelect( ( select ) => {
-		return [
-			select( ONBOARD_STORE ).getSelectedSiteTitle(),
-			select( ONBOARD_STORE ).getSelectedDomain(),
-			select( PRODUCTS_LIST_STORE ).getProductsList(),
-		];
-	} );
+	const { siteTitle, domain, productsList } = useSelect(
+		( select ) => ( {
+			siteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+			domain: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+			productsList: select( ProductsList.store ).getProductsList(),
+		} ),
+		[]
+	);
 	const { setDomain } = useDispatch( ONBOARD_STORE );
 
 	const onSkip = () => {
@@ -37,14 +40,16 @@ const SenseiDomain: Step = ( { navigation } ) => {
 	const domainSuggestion = domain?.domain_name ?? siteTitle;
 
 	return (
-		<SenseiStepContainer stepName="senseiDomain" recordTracksEvent={ recordTracksEvent }>
-			<CalypsoShoppingCartProvider>
+		<SenseiStepContainer
+			stepName="senseiDomain"
+			recordTracksEvent={ recordTracksEvent }
+			formattedHeader={
 				<FormattedHeader
 					id="choose-a-domain-header"
-					headerText="Choose a domain"
+					headerText={ __( 'Choose a domain' ) }
 					subHeaderText={
 						<>
-							{ __( 'Make your course site shine with a custom domain. Not sure yet ?' ) }
+							{ __( 'Make your course site shine with a custom domain. Not sure yet?' ) }{ ' ' }
 							<button
 								className="button navigation-link step-container__navigation-link has-underline is-borderless"
 								onClick={ onSkip }
@@ -55,6 +60,9 @@ const SenseiDomain: Step = ( { navigation } ) => {
 					}
 					align="center"
 				/>
+			}
+		>
+			<CalypsoShoppingCartProvider>
 				<div className="container domains__step-content domains__step-content-domain-step">
 					<RegisterDomainStep
 						vendor="sensei"

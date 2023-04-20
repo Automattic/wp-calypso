@@ -42,6 +42,14 @@
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
+
+	--color-text: var(--videopress-color-text);
+	--color-accent: var(--videopress-color-link);
+	--color-text-inverted: var(--videopress-color-background-dark);
+	--color-text-subtle: var(--videopress-color-text-dark);
+	--color-link: var(--videopress-color-link);
+	--color-link-dark: var(--videopress-color-link-dark);
+	--color-accent-60: var(--videopress-color-link-dark);
 }
 
 .videopress-step-wrapper__top {

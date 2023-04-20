@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { eye } from '@automattic/components/src/icons';
 import { Icon } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -9,7 +10,6 @@ import {
 	getEmailStatsNormalizedData,
 	isRequestingEmailStats,
 } from 'calypso/state/stats/emails/selectors';
-import { eye } from './icons';
 import TopCard from './top-card';
 import './style.scss';
 

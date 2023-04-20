@@ -1,7 +1,5 @@
-import { select } from '@wordpress/data';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
@@ -10,23 +8,19 @@ import {
 } from './use-site-global-styles-status';
 import type { GlobalStylesStatus } from './use-site-global-styles-status';
 
-export function usePremiumGlobalStyles(): GlobalStylesStatus {
-	const params = new URLSearchParams( window.location.search );
-	const siteSlugParam = params.get( 'siteSlug' );
-	const siteIdParam = params.get( 'siteId' );
+export function usePremiumGlobalStyles(
+	siteIdOrSlug: number | string | null = 0
+): GlobalStylesStatus {
 	const selectedSiteId = useSelector( getSelectedSiteId );
-	const onboard = select( ONBOARD_STORE ).getState();
 
 	// When site id is null it means that the site hasn't been created yet.
 	const siteId = useSelector( ( state ) => {
-		const siteIdOrSlug =
-			onboard?.stepProgress !== undefined ? siteIdParam ?? siteSlugParam : selectedSiteId;
-
-		if ( ! siteIdOrSlug ) {
+		const currentSiteId = siteIdOrSlug ?? selectedSiteId;
+		if ( ! currentSiteId ) {
 			return null;
 		}
 
-		const site = getSite( state, siteIdOrSlug );
+		const site = getSite( state, currentSiteId );
 		return site?.ID ?? null;
 	} );
 

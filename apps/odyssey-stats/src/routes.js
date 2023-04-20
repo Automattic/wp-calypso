@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from 'page';
 import {
 	follows,
@@ -7,11 +6,13 @@ import {
 	site,
 	summary,
 	wordAds,
+	subscribers,
 	redirectToActivity,
 	redirectToDefaultModulePage,
 	redirectToDefaultWordAdsPeriod,
 } from 'calypso/my-sites/stats/controller';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import config from './lib/config-api';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
 
 import 'calypso/my-sites/stats/style.scss';
@@ -53,6 +54,11 @@ export default function ( pageBase = '/' ) {
 
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
+
+	if ( config.isEnabled( 'stats/subscribers-section' ) ) {
+		// Stat Subscribers Page (do not cofuse with people/subscribers/)
+		statsPage( '/stats/subscribers/:site', subscribers );
+	}
 
 	// Stat Site Pages
 	statsPage( `/stats/:period(${ validPeriods })/:site`, site );

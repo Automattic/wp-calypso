@@ -2,12 +2,16 @@
 @import "@wordpress/base-styles/mixins";
 
 .backup-retention-management {
-	--color-accent: var(--studio-green-50);
 	box-sizing: border-box;
 	margin: auto;
 	max-width: 720px;
-	padding-left: 16px;
-	padding-right: 16px;
+	margin-left: -16px;
+	margin-right: -16px;
+
+	@include break-medium {
+		margin-left: auto;
+		margin-right: auto;
+	}
 
 	h3 {
 		font-size: $font-body;
@@ -29,6 +33,10 @@
 			color: var(--studio-gray-60);
 		}
 	}
+
+	.display-price__billing-time-frame .compact {
+		display: none;
+	}
 }
 
 .backup-retention-management .setting-title {
@@ -45,7 +53,7 @@
 
 .backup-retention-management .retention-form {
 	&__instructions {
-		margin-bottom: 24px;
+		margin-bottom: 16px;
 		font-size: 1rem;
 		font-weight: 400;
 		line-height: 24px;
@@ -70,6 +78,32 @@
 
 	&__submit {
 		text-align: right;
+	}
+
+	&__short-retention-notice {
+		font-size: 0.75rem;
+		margin-bottom: 16px;
+		background: #f7ebec;
+		padding: 12px;
+		font-weight: 400;
+		color: var(--studio-gray-80);
+
+		a {
+			font-weight: 600;
+			text-decoration: underline;
+			color: var(--studio-gray-80);
+
+			.gridicon {
+				position: relative;
+				top: 4px;
+				height: 16px;
+				margin-left: 1px;
+			}
+		}
+
+		.highlight-days {
+			color: var(--studio-red-50);
+		}
 	}
 }
 

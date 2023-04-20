@@ -8,7 +8,7 @@
  *
  *
  *
- * @see /client/components/data/media-list-data/utils.js
+ * @see /client/components/data/media-list-data/utils.ts
  * @param {string} filter Media filter path segment
  * @returns {string}        Media mime type prefix
  */

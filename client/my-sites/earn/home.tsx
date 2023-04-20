@@ -6,7 +6,6 @@ import {
 	FEATURE_PREMIUM_CONTENT_CONTAINER,
 	FEATURE_DONATIONS,
 	FEATURE_RECURRING_PAYMENTS,
-	WPCOM_FEATURES_WORDADS,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
@@ -18,7 +17,6 @@ import { connect } from 'react-redux';
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
-import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
 import EmptyContent from 'calypso/components/empty-content';
 import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
 import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
@@ -28,6 +26,7 @@ import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/ana
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
@@ -44,7 +43,7 @@ interface ConnectedProps {
 	isNonAtomicJetpack: boolean;
 	isLoading: boolean;
 	hasSimplePayments: boolean;
-	hasWordAds: boolean;
+	hasWordAdsFeature: boolean;
 	hasConnectedAccount: boolean | null;
 	hasSetupAds: boolean;
 	trackUpgrade: ( plan: string, feature: string ) => void;
@@ -64,7 +63,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	isUserAdmin,
 	isLoading,
 	hasSimplePayments,
-	hasWordAds,
+	hasWordAdsFeature,
 	hasConnectedAccount,
 	hasSetupAds,
 	eligibleForProPlan,
@@ -463,7 +462,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 	 */
 	const getAdsCard = () => {
 		const cta =
-			hasWordAds || hasSetupAds
+			hasWordAdsFeature || hasSetupAds
 				? {
 						text: hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' ),
 						action: () => {
@@ -482,7 +481,9 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 							);
 						},
 				  };
+
 		const title = hasSetupAds ? translate( 'View ad dashboard' ) : translate( 'Earn ad revenue' );
+
 		const body = hasSetupAds ? (
 			translate(
 				"Check out your ad earnings history, including total earnings, total paid to date, and the amount that you've still yet to be paid."
@@ -492,11 +493,11 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 				{ translate(
 					'Make money each time someone visits your site by displaying advertisements on all your posts and pages.'
 				) }
-				{ ! hasWordAds && <em>{ getPremiumPlanNames() }</em> }
+				{ ! hasWordAdsFeature && <em>{ getPremiumPlanNames() }</em> }
 			</>
 		);
 
-		const learnMoreLink = ! ( hasWordAds || hasSetupAds )
+		const learnMoreLink = ! ( hasWordAdsFeature || hasSetupAds )
 			? { url: 'https://wordads.co/', onClick: () => trackLearnLink( 'ads' ) }
 			: null;
 		return {
@@ -560,7 +561,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 
 	return (
 		<Fragment>
-			{ ! hasWordAds && <QueryWordadsStatus siteId={ siteId } /> }
 			<QueryMembershipsSettings siteId={ siteId } />
 			{ isLoading && (
 				<div className="earn__placeholder-promo-card">
@@ -586,6 +586,7 @@ export default connect(
 			state?.memberships?.settings?.[ siteId ]?.connectedAccountId ?? null;
 		const sitePlanSlug = getSitePlanSlug( state, siteId );
 		const hasPaidPlan = isCurrentPlanPaid( state, siteId );
+		const hasWordAdsFeature = siteHasWordAds( state, siteId );
 		const isLoading = ( hasConnectedAccount === null && hasPaidPlan ) || sitePlanSlug === null;
 
 		return {
@@ -595,7 +596,7 @@ export default connect(
 				isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 			),
 			isUserAdmin: canCurrentUser( state, siteId, 'manage_options' ),
-			hasWordAds: siteHasFeature( state, siteId, WPCOM_FEATURES_WORDADS ),
+			hasWordAdsFeature,
 			hasSimplePayments: siteHasFeature( state, siteId, FEATURE_SIMPLE_PAYMENTS ),
 			hasConnectedAccount,
 			eligibleForProPlan: isEligibleForProPlan( state, siteId ),

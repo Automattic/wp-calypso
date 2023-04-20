@@ -21,7 +21,6 @@ const allowedKeys = [
 	'logout_URL',
 	'primary_blog',
 	'primary_blog_is_jetpack',
-	'has_promote_widget',
 	'has_jetpack_partner_access',
 	'jetpack_partner_types',
 	'primary_blog_url',
@@ -32,7 +31,6 @@ const allowedKeys = [
 	'lasagna_jwt',
 	'i18n_empathy_mode',
 	'use_fallback_for_incomplete_languages',
-	'calypso_sidebar_upsell_experiment',
 ];
 const requiredKeys = [ 'ID' ];
 const decodedKeys = [ 'display_name', 'description', 'user_URL' ];

@@ -1,11 +1,11 @@
 import { COMMENTS_REPLY_WRITE } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	dispatchNewCommentRequest,
 	updatePlaceholderComment,
 	handleWriteCommentFailure,
 } from 'calypso/state/data-layer/wpcom/sites/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 export const writeReplyComment = ( action ) =>
 	dispatchNewCommentRequest(

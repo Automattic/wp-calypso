@@ -1,15 +1,10 @@
 import { WPCOM_FEATURES_REAL_TIME_BACKUPS } from '@automattic/calypso-products';
-import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import useRewindableActivityLogQuery from 'calypso/data/activity-log/use-rewindable-activity-log-query';
 import {
 	SUCCESSFUL_BACKUP_ACTIVITIES,
 	BACKUP_ATTEMPT_ACTIVITIES,
 } from 'calypso/lib/jetpack/backup-utils';
-import { applySiteOffset } from 'calypso/lib/site/timezone';
-import getActivityLogVisibleDays from 'calypso/state/rewind/selectors/get-activity-log-visible-days';
-import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 
 const byActivityTsDescending = ( a, b ) => ( a.activityTs > b.activityTs ? -1 : 1 );
@@ -99,29 +94,4 @@ export const useFirstMatchingBackupAttempt = (
 	}
 
 	return { isLoading, backupAttempt };
-};
-
-/**
- * A React hook that creates a callback to test whether or not a given date
- * should be visible in the Backup UI (if display rules are enabled).
- *
- * @param {number|null} siteId The site whose display rules we'll be testing against.
- * @returns A callback that returns true if a given date should be visible, and false otherwise.
- */
-export const useIsDateVisible = ( siteId ) => {
-	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
-	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
-	const visibleDays = useSelector( ( state ) => getActivityLogVisibleDays( state, siteId ) );
-
-	return useCallback(
-		( date ) => {
-			if ( visibleDays === undefined ) {
-				return true;
-			}
-
-			const today = applySiteOffset( Date.now(), { gmtOffset, timezone } ).startOf( 'day' );
-			return today.diff( date, 'days' ) <= visibleDays;
-		},
-		[ gmtOffset, timezone, visibleDays ]
-	);
 };

@@ -4,9 +4,10 @@ import { closeSmall, chevronUp, lineSolid, commentContent, page, Icon } from '@w
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useCallback } from 'react';
-import { Route, Switch, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { HELP_CENTER_STORE } from '../stores';
 import type { Header } from '../types';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 
 export function ArticleTitle() {
 	const location = useLocation();
@@ -49,7 +50,10 @@ const SupportModeTitle = () => {
 };
 
 const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDismiss }: Header ) => {
-	const unreadCount = useSelect( ( select ) => select( HELP_CENTER_STORE ).getUnreadCount() );
+	const unreadCount = useSelect(
+		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).getUnreadCount(),
+		[]
+	);
 	const classNames = classnames( 'help-center__container-header' );
 	const { __ } = useI18n();
 	const formattedUnreadCount = unreadCount > 9 ? '9+' : unreadCount;
@@ -74,18 +78,17 @@ const HelpCenterHeader = ( { isMinimized = false, onMinimize, onMaximize, onDism
 					role="presentation"
 				>
 					{ isMinimized ? (
-						<Switch>
-							<Route path="/" exact>
-								{ __( 'Help Center', __i18n_text_domain__ ) }
-							</Route>
-							<Route path="/contact-options">
-								{ __( 'Contact Options', __i18n_text_domain__ ) }
-							</Route>
-							<Route path="/inline-chat">{ __( 'Live Chat', __i18n_text_domain__ ) }</Route>
-							<Route path="/contact-form" component={ SupportModeTitle }></Route>
-							<Route path="/post" component={ ArticleTitle }></Route>
-							<Route path="/success">{ __( 'Message Submitted', __i18n_text_domain__ ) }</Route>
-						</Switch>
+						<Routes>
+							<Route path="/" element={ __( 'Help Center', __i18n_text_domain__ ) } />
+							<Route
+								path="/contact-options"
+								element={ __( 'Contact Options', __i18n_text_domain__ ) }
+							/>
+							<Route path="/inline-chat" element={ __( 'Live Chat', __i18n_text_domain__ ) } />
+							<Route path="/contact-form" element={ SupportModeTitle } />
+							<Route path="/post" element={ ArticleTitle } />
+							<Route path="/success" element={ __( 'Message Submitted', __i18n_text_domain__ ) } />
+						</Routes>
 					) : (
 						__( 'Help Center', __i18n_text_domain__ )
 					) }

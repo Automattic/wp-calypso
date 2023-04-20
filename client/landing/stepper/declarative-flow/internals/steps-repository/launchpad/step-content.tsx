@@ -1,20 +1,15 @@
 import { useSelect } from '@wordpress/data';
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { NEWSLETTER_FLOW } from 'calypso/../packages/onboarding/src';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import {
-	getCurrentUserEmail,
-	isCurrentUserEmailVerified,
-} from 'calypso/state/current-user/selectors';
 import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
-import EmailValidationBanner from './email-validation-banner';
 import LaunchpadSitePreview from './launchpad-site-preview';
 import Sidebar from './sidebar';
+import { getLaunchpadTranslations } from './translations';
+import type { SiteSelect } from '@automattic/data-stores';
 
 type StepContentProps = {
 	siteSlug: string | null;
@@ -29,9 +24,12 @@ function sortByRegistrationDate( domainObjectA: ResponseDomain, domainObjectB: R
 }
 
 const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentProps ) => {
+	const { flowName } = getLaunchpadTranslations( flow );
 	const site = useSite();
 	const adminUrl = useSelect(
-		( select ) => site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' )
+		( select ) =>
+			site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
+		[ site ]
 	);
 	const { data: allDomains = [] } = useGetDomainsQuery( site?.ID ?? null, {
 		retry: false,
@@ -52,26 +50,12 @@ const StepContent = ( { siteSlug, submit, goNext, goToStep, flow }: StepContentP
 	// The adminUrl points to the .wordpress.com domain for this site, so we'll use this for the preview.
 	const iFrameURL = adminUrl ? new URL( adminUrl as string ).host : null;
 
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-	const email = useSelector( getCurrentUserEmail );
-	const [ showEmailValidationBanner, setShowEmailValidationBanner ] = useState( false );
-
-	useEffect( () => {
-		// check if the current user's email hasn't been verified yet
-		// only show the email banner for newsletter flow
-		if ( email && ! isEmailVerified && flow === NEWSLETTER_FLOW ) {
-			setShowEmailValidationBanner( true );
-		}
-	}, [ email, isEmailVerified ] );
-
 	return (
 		<main className="launchpad__container">
-			{ showEmailValidationBanner && (
-				<EmailValidationBanner
-					email={ email }
-					closeBanner={ () => setShowEmailValidationBanner( false ) }
-				/>
-			) }
+			<div className="launchpad__sidebar-header">
+				<WordPressLogo className="launchpad__sidebar-header-logo" size={ 24 } />
+				<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
+			</div>
 			<div className="launchpad__content">
 				<Sidebar
 					sidebarDomain={ sidebarDomain }

@@ -46,7 +46,7 @@ interface BlockingHoldNoticeProps {
 }
 
 // This gets the values of the object transferStates.
-export type TransferStatus = typeof transferStates[ keyof typeof transferStates ];
+export type TransferStatus = ( typeof transferStates )[ keyof typeof transferStates ];
 
 interface TransferFailureNoticeProps {
 	transferStatus: TransferStatus | null;

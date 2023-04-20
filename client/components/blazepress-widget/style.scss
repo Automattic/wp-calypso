@@ -67,6 +67,16 @@ $headerHeight: 72px;
 			height: 100%;
 		}
 	}
+
+	&.hidden-header {
+		.blazepress-widget__header-bar {
+			display: none;
+		}
+		.blazepress-widget__content {
+			height: 100%;
+			margin-top: 0;
+		}
+	}
 }
 
 .blazepress-widget.dialog__backdrop {

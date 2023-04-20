@@ -5,6 +5,7 @@ import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { getQueryArg } from '@wordpress/url';
+import { getEditorType } from './get-editor-type';
 import type { WpcomStep } from '@automattic/tour-kit';
 
 interface TourAsset {
@@ -63,15 +64,19 @@ function getTourSteps(
 	localeSlug: string,
 	referencePositioning = false,
 	isSiteEditor = false,
-	themeName: string | null = null
+	themeName: string | null = null,
+	siteIntent: string | undefined = undefined
 ): WpcomStep[] {
 	const completedFlow = getQueryArg( window.location.href, 'completedFlow' );
 	const isVideoMaker = 'videomaker' === ( themeName ?? '' );
 	const isPatternAssemblerFlow = 'pattern_assembler' === completedFlow;
 	const siteEditorCourseUrl = `https://wordpress.com/home/${ window.location.hostname }?courseSlug=site-editor-quick-start`;
+	const editorType = getEditorType();
 	const onSiteEditorCourseLinkClick = () => {
 		recordTracksEvent( 'calypso_editor_wpcom_tour_site_editor_course_link_click', {
 			is_pattern_assembler: isPatternAssemblerFlow,
+			intent: siteIntent,
+			editor_type: editorType,
 		} );
 	};
 

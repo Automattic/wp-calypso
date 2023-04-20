@@ -543,7 +543,11 @@ ul.module-content-list-item-action-submenu {
 
 	// Color follow action when already following
 	.module-content-list-item-action-wrapper.following .module-content-list-item-action-label {
-		color: var(--color-success);
+		color: var(--studio-white);
+
+		&:hover {
+			color: var(--studio-white);
+		}
 	}
 
 	// Display hidden label and change icon for Unfollow action
@@ -551,7 +555,6 @@ ul.module-content-list-item-action-submenu {
 	.module-content-list-item-action-wrapper.following:hover {
 		.module-content-list-item-action-label {
 			display: none;
-			color: var(--color-link-dark);
 		}
 
 		.module-content-list-item-action-label.unfollow {

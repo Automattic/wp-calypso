@@ -39,6 +39,7 @@ import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-secti
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
@@ -353,7 +354,6 @@ export class SiteSettingsFormGeneral extends Component {
 			siteId,
 			site,
 			isComingSoon,
-			isSiteOnECommerceTrial,
 		} = this.props;
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
@@ -371,7 +371,7 @@ export class SiteSettingsFormGeneral extends Component {
 				'is-coming-soon-disabled': isComingSoonDisabled,
 			}
 		);
-		const showPreviewLink = isComingSoon && hasSitePreviewLink && ! isSiteOnECommerceTrial;
+		const showPreviewLink = isComingSoon && hasSitePreviewLink;
 		return (
 			<FormFieldset>
 				{ ! isNonAtomicJetpackSite &&
@@ -602,7 +602,7 @@ export class SiteSettingsFormGeneral extends Component {
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 
-		const showPreviewLink = isComingSoon && hasSitePreviewLink && ! isSiteOnECommerceTrial;
+		const showPreviewLink = isComingSoon && hasSitePreviewLink;
 
 		const LaunchCard = showPreviewLink ? CompactCard : Card;
 
@@ -757,6 +757,7 @@ export class SiteSettingsFormGeneral extends Component {
 			siteIsAtomic,
 			translate,
 			isAtomicAndEditingToolkitDeactivated,
+			isWpcomStagingSite,
 		} = this.props;
 
 		const classes = classNames( 'site-settings__general-settings', {
@@ -789,7 +790,7 @@ export class SiteSettingsFormGeneral extends Component {
 					? this.renderLaunchSite()
 					: this.privacySettings() }
 
-				{ this.giftOptions() }
+				{ ! isWpcomStagingSite && this.giftOptions() }
 				{ ! isWPForTeamsSite && ! ( siteIsJetpack && ! siteIsAtomic ) && (
 					<div className="site-settings__footer-credit-container">
 						<SettingsSectionHeader
@@ -888,6 +889,7 @@ const connectComponent = connect( ( state ) => {
 		isPaidPlan: isCurrentPlanPaid( state, siteId ),
 		isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
 		selectedSite: getSelectedSite( state ),
 		siteDomains: getDomainsBySiteId( state, siteId ),
 		siteIsJetpack: isJetpackSite( state, siteId ),
@@ -939,7 +941,7 @@ const getFormSettings = ( settings ) => {
 };
 
 const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
-	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( props.site?.ID );
 
 	return (
 		<SiteSettingsFormGeneral

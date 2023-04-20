@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { HOSTING_LP_FLOW, setupSiteAfterCreation } from '@automattic/onboarding';
+import { HOSTING_LP_FLOW } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 
 const noop = () => {};
@@ -21,7 +21,7 @@ export function generateFlows( {
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
-			steps: [ 'plans', 'user', 'domains' ],
+			steps: [ 'plans-hosting', 'user-hosting', 'domains' ],
 			destination: getHomeDestination,
 			description:
 				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
@@ -94,6 +94,8 @@ export function generateFlows( {
 			description: 'Preselect a theme to activate/buy from an external source',
 			lastModified: '2022-11-28',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'theme' ],
+			optionalDependenciesInQuery: [ 'theme_type', 'style_variation' ],
 		},
 		{
 			name: 'with-theme-assembler',
@@ -126,6 +128,7 @@ export function generateFlows( {
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
 			lastModified: '2020-12-10',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'onboarding-2023-pricing-grid',
@@ -139,25 +142,12 @@ export function generateFlows( {
 		},
 		{
 			name: 'onboarding-pm',
-			steps: [ 'user', 'domains', 'plans' ],
+			steps: [ 'user', 'domains', 'plans-pm' ],
 			destination: getSignupDestination,
 			description:
 				'Paid media version of the onboarding flow. Read more in https://wp.me/pau2Xa-4Kk.',
 			lastModified: '2023-01-10',
 			showRecaptcha: true,
-		},
-		{
-			name: 'newsletter',
-			steps: [ 'domains', 'plans-newsletter' ],
-			destination: ( dependencies ) =>
-				`/setup/newsletter/subscribers?siteSlug=${ dependencies.siteSlug }`,
-			description: 'Beginning of the flow to create a newsletter',
-			lastModified: '2022-11-01',
-			showRecaptcha: true,
-			get pageTitle() {
-				return translate( 'Newsletter' );
-			},
-			postCompleteCallback: setupSiteAfterCreation,
 		},
 		{
 			name: 'import',
@@ -214,6 +204,7 @@ export function generateFlows( {
 			description: 'Allow new Pressable users to grant permission to server credentials',
 			lastModified: '2017-11-20',
 			disallowResume: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'rewind-switch',
@@ -332,6 +323,7 @@ export function generateFlows( {
 			disallowResume: true,
 			lastModified: '2022-02-15',
 			showRecaptcha: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'add-domain',
@@ -454,6 +446,7 @@ export function generateFlows( {
 				return translate( 'Set up your site' );
 			},
 			enableBranchSteps: true,
+			hideProgressIndicator: true,
 		},
 		{
 			name: 'do-it-for-me',
@@ -520,6 +513,44 @@ export function generateFlows( {
 			optionalDependenciesInQuery: [ 'back_to' ],
 			lastModified: '2021-12-21',
 			disallowResume: false,
+		},
+
+		{
+			name: 'ecommerce-2y',
+			steps: [ 'user', 'domains', 'plans-ecommerce-2y' ],
+			destination: getSignupDestination,
+			description: 'Signup flow for creating an online store with an Atomic site',
+			lastModified: '2023-03-15',
+			showRecaptcha: true,
+		},
+
+		{
+			name: 'business-2y',
+			steps: [ 'user', 'domains', 'plans-business-2y' ],
+			destination: getSignupDestination,
+			description:
+				'Create an account and a blog and then add the business 2y plan to the users cart.',
+			lastModified: '2023-03-15',
+			showRecaptcha: true,
+		},
+
+		{
+			name: 'premium-2y',
+			steps: [ 'user', 'domains', 'plans-premium-2y' ],
+			destination: getSignupDestination,
+			description:
+				'Create an account and a blog and then add the premium 2y plan to the users cart.',
+			lastModified: '2023-03-15',
+			showRecaptcha: true,
+		},
+		{
+			name: 'personal-2y',
+			steps: [ 'user', 'domains', 'plans-personal-2y' ],
+			destination: getSignupDestination,
+			description:
+				'Create an account and a blog and then add the personal 2y plan to the users cart.',
+			lastModified: '2023-03-15',
+			showRecaptcha: true,
 		},
 	];
 

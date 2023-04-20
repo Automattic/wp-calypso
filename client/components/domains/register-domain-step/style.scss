@@ -271,6 +271,11 @@ body.is-section-signup.is-white-signup {
 			@include break-mobile {
 				padding: 0.65em 2.8em;
 			}
+
+			&:focus {
+				border-color: var(--color-primary);
+				box-shadow: 0 0 0 2px var(--color-primary-light);
+			}
 		}
 	}
 }
@@ -347,7 +352,7 @@ body.is-section-signup.is-white-signup {
 	overflow: hidden;
 }
 
-.is-domain-sidebar-experiment-user {
+.is-domain-plan-package-flow {
 
 	.register-domain-step {
 		box-shadow: none;

@@ -197,8 +197,8 @@ export const isPlanSelectionAvailableLaterInFlow = ( flowSteps ) => {
 	 * i.e. Check flow "domain"
 	 */
 
-	const plansIndex = flowSteps.findIndex(
-		( stepName ) => getStepModuleName( stepName ) === 'plans'
+	const plansIndex = flowSteps.findIndex( ( stepName ) =>
+		[ 'plans', 'plans-pm' ].includes( getStepModuleName( stepName ) )
 	);
 	const domainsIndex = flowSteps.findIndex(
 		( stepName ) => getStepModuleName( stepName ) === 'domains'

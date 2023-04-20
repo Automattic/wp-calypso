@@ -10,6 +10,7 @@ interface BadgesProps {
 	variations: StyleVariation[];
 	onMoreClick?: () => void;
 	onClick?: ( variation: StyleVariation ) => void;
+	selectedVariation?: StyleVariation;
 }
 
 const Badges: React.FC< BadgesProps > = ( {
@@ -17,16 +18,24 @@ const Badges: React.FC< BadgesProps > = ( {
 	variations = [],
 	onMoreClick,
 	onClick,
+	selectedVariation,
 } ) => {
-	const variationsToShow = useMemo(
-		() => variations.slice( 0, maxVariationsToShow ),
-		[ variations, maxVariationsToShow ]
-	);
+	const variationsToShow = useMemo( () => {
+		return variations.slice( 0, maxVariationsToShow );
+	}, [ variations, maxVariationsToShow ] );
 
 	return (
 		<>
 			{ variationsToShow.map( ( variation ) => (
-				<Badge key={ variation.slug } variation={ variation } onClick={ onClick } />
+				<Badge
+					key={ variation.slug }
+					variation={ variation }
+					onClick={ onClick }
+					isSelected={
+						( ! selectedVariation && variation.slug === 'default' ) ||
+						variation.slug === selectedVariation?.slug
+					}
+				/>
 			) ) }
 			{ variations.length > variationsToShow.length && (
 				<div
@@ -44,6 +53,7 @@ const Badges: React.FC< BadgesProps > = ( {
 						if ( onMoreClick && e.keyCode === SPACE_BAR_KEYCODE ) {
 							// Prevent the event from bubbling to the the parent button.
 							e.stopPropagation();
+							e.preventDefault();
 							onMoreClick();
 						}
 					} }

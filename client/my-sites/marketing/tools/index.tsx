@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
-import builtByWp from 'calypso/assets/images/illustrations/built-by-wp-vert-blue.svg';
+import builtByWp from 'calypso/assets/images/illustrations/built-by-wp-vert-blue.png';
 import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
 import facebookLogo from 'calypso/assets/images/illustrations/facebook-logo.png';
 import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
@@ -106,7 +106,7 @@ export const MarketingTools: FunctionComponent = () => {
 				>
 					<Button
 						onClick={ handleBuiltByWpClick }
-						href="https://builtbywp.com/?utm_campaign=theme-all&utm_medium=automattic_referred&utm_source=WordPresscom"
+						href="https://wordpress.com/built-by/?ref=tools-banner"
 						target="_blank"
 					>
 						{ translate( 'Get started' ) }

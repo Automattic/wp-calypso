@@ -56,11 +56,13 @@ function Chart( {
 	chartXPadding,
 	sliceFromBeginning,
 	onChangeMaxBars,
+	minBarsToBeShown,
+	hideYAxis,
+	hideXAxis,
 } ) {
 	const [ tooltip, setTooltip ] = useState( { isTooltipVisible: false } );
-	const [ sizing, setSizing ] = useState( { clientWidth: 650, hasResized: false } );
+	const [ sizing, setSizing ] = useState( { clientWidth: 0, hasResized: false } );
 	const [ yAxisSize, setYAxisSize ] = useState( { clientWidth: 0, hasResized: false } );
-	const { hasResized } = sizing;
 
 	// Callback to handle tooltip changes.
 	// Needs to be memoized to avoid assigning children a new function every render.
@@ -72,7 +74,10 @@ function Chart( {
 		}
 	}, [] );
 
-	const handleYAxisSizeChange = useCallback( ( contentRect ) => {
+	const handleYAxisSizeChange = ( contentRect ) => {
+		if ( ! contentRect ) {
+			return;
+		}
 		setYAxisSize( ( prevSizing ) => {
 			const clientWidth = contentRect.width;
 			if ( ! prevSizing.hasResized || clientWidth !== prevSizing.clientWidth ) {
@@ -80,7 +85,7 @@ function Chart( {
 			}
 			return prevSizing;
 		} );
-	}, [] );
+	};
 
 	const yAxisRef = useWindowResizeCallback( handleYAxisSizeChange );
 
@@ -88,6 +93,9 @@ function Chart( {
 	// Needs to be memoized to avoid causing the `useWindowResizeCallback` custom hook to re-subscribe.
 	const handleContentRectChange = useCallback(
 		( contentRect ) => {
+			if ( ! contentRect ) {
+				return;
+			}
 			setSizing( ( prevSizing ) => {
 				const effectiveYAxisSize =
 					yAxisRef && yAxisRef.current ? yAxisRef.current.clientWidth : yAxisSize.clientWidth;
@@ -98,7 +106,7 @@ function Chart( {
 				return prevSizing;
 			} );
 		},
-		[ yAxisSize ]
+		[ yAxisRef, yAxisSize.clientWidth ]
 	);
 
 	// Subscribe to changes to element size and position.
@@ -107,7 +115,8 @@ function Chart( {
 	const minWidth = isTouch ? minTouchBarWidth : minBarWidth;
 
 	const width = isTouch && sizing.clientWidth <= 0 ? 350 : sizing.clientWidth - chartXPadding; // mobile safari bug with zero width
-	const maxBars = Math.floor( width / minWidth );
+	// Max number of bars that can fit in the chart. If minBarsToBeShown is set, use that instead.
+	const maxBars = minBarsToBeShown ?? Math.floor( width / minWidth );
 
 	useEffect( () => {
 		if ( onChangeMaxBars ) {
@@ -134,16 +143,33 @@ function Chart( {
 			isEmptyChart: Boolean( ! nextVals.some( ( a ) => a > 0 ) ),
 			yMax: getYAxisMax( nextVals ),
 		};
-	}, [ data, maxBars, hasResized, sliceFromBeginning ] );
+	}, [ data, maxBars, sliceFromBeginning ] );
 
-	// Recover the chart with data even if no sizing is updated on the first loading.
-	// If we don't have any sizing info yet, render an empty chart with the ref.
-	// if ( ! hasResized ) {
-	// 	return <div ref={ resizeRef } className="chart" />;
-	// }
-
-	// Otherwise, render full chart.
 	const { isTooltipVisible, tooltipContext, tooltipPosition, tooltipData } = tooltip;
+
+	const ChartYAxis = () => (
+		<div ref={ yAxisRef } className="chart__y-axis">
+			<div className="chart__y-axis-width-fix">{ numberFormat( 1e5 ) }</div>
+			<div className="chart__y-axis-label is-hundred">
+				{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, 2 ) }
+			</div>
+			<div className="chart__y-axis-label is-fifty">
+				{ yMax > 1 ? numberFormat( yMax / 2 ) : numberFormat( yMax / 2, 2 ) }
+			</div>
+			<div className="chart__y-axis-label is-zero">{ numberFormat( 0 ) }</div>
+		</div>
+	);
+
+	// This is a hack to avoid the flickering on page load.
+	// The component listens on the resize event of its own, which would resize on initialization.
+	// The hack renders an empty div, which triggers the resize event, and then the actual component would be rendered.
+	if ( sizing.clientWidth <= 0 || yAxisSize.clientWidth <= 0 ) {
+		return (
+			<div ref={ resizeRef } className="chart">
+				<ChartYAxis />
+			</div>
+		);
+	}
 
 	return (
 		<div ref={ resizeRef } className={ classNames( 'chart', { 'is-placeholder': isPlaceholder } ) }>
@@ -169,18 +195,7 @@ function Chart( {
 					</div>
 				) }
 			</div>
-			{ ! isPlaceholder && (
-				<div ref={ yAxisRef } className="chart__y-axis">
-					<div className="chart__y-axis-width-fix">{ numberFormat( 1e5 ) }</div>
-					<div className="chart__y-axis-label is-hundred">
-						{ yMax > 1 ? numberFormat( yMax ) : numberFormat( yMax, 2 ) }
-					</div>
-					<div className="chart__y-axis-label is-fifty">
-						{ yMax > 1 ? numberFormat( yMax / 2 ) : numberFormat( yMax / 2, 2 ) }
-					</div>
-					<div className="chart__y-axis-label is-zero">{ numberFormat( 0 ) }</div>
-				</div>
-			) }
+			{ ! isPlaceholder && ! hideYAxis && <ChartYAxis /> }
 			<BarContainer
 				barClick={ barClick }
 				chartWidth={ width }
@@ -190,6 +205,7 @@ function Chart( {
 				isTouch={ hasTouch() }
 				setTooltip={ handleTooltipChange }
 				yAxisMax={ yMax }
+				hideXAxis={ hideXAxis }
 			/>
 			{ isTooltipVisible && (
 				<Tooltip
@@ -217,6 +233,9 @@ Chart.propTypes = {
 	translate: PropTypes.func,
 	chartXPadding: PropTypes.number,
 	sliceFromBeginning: PropTypes.bool,
+	minBarsToBeShown: PropTypes.number,
+	hideYAxis: PropTypes.bool,
+	hideXAxis: PropTypes.bool,
 };
 
 Chart.defaultProps = {
@@ -226,6 +245,8 @@ Chart.defaultProps = {
 	minTouchBarWidth: 42,
 	chartXPadding: 20,
 	sliceFromBeginning: true,
+	hideYAxis: false,
+	hideXAxis: false,
 };
 
 export default withRtl( localize( Chart ) );

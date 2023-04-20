@@ -56,6 +56,33 @@
 				}
 			}
 
+			&.is-wooexpress-medium-plan {
+				background-color: var(--color-accent);
+				color: var(--color-text-inverted);
+				font-weight: 400;
+
+				&:focus {
+					box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 4px var(--color-accent);
+				}
+			}
+
+			&.is-wooexpress-small-plan {
+				background-color: var(--color-surface);
+				color: var(--color-accent);
+				border: 1px solid var(--color-accent);
+				font-weight: 400;
+			}
+
+			&.is-wooexpress-plus-plan {
+				display: inline-block;
+				width: 85%;
+				text-align: center;
+				background-color: var(--color-surface);
+				color: var(--color-accent);
+				border: 1px solid  var(--color-accent);
+				font-weight: 400;
+			}
+
 			&.is-ecommerce-plan {
 				background-color: #55347d;
 				color: var(--studio-purple-0);
@@ -101,9 +128,10 @@
 	position: relative;
 	display: flex;
 	align-items: flex-start;
-	padding: 0 0 8px 20px;
+	padding-inline: 20px 0;
+	padding-block: 0 8px;
 	background-color: var(--color-surface);
-	justify-content: left;
+	justify-content: flex-start;
 	font-weight: 400;
 }
 
@@ -136,19 +164,19 @@
 	text-align: center;
 }
 
+.plan-features-2023-grid__actions-downgrade-context-mobile {
+	font-size: $font-body-extra-small;
+	margin-top: 10px;
+}
+
 .is-2023-pricing-grid .plans-wrapper {
 	margin: 0 auto;
 	padding: 28px 0 10px;
 	transform: translateY(-20px);
-	overflow-x: hidden;
+	overflow-x: visible;
 
 	@include plans-2023-break-small {
 		padding-top: 64px;
-		overflow-x: auto;
-	}
-
-	@include plans-2023-break-medium {
-		overflow-x: auto;
 	}
 }
 
@@ -179,8 +207,13 @@
 			border: 1px solid #e0e0e0;
 			/* stylelint-disable-next-line */
 			border-radius: 5px;
-			margin: 20px;
 			padding: 38px 0 20px 0;
+			margin: 20px;
+
+			@include plans-section-custom-mobile-breakpoint {
+				margin-left: 0;
+				margin-right: 0;
+			}
 
 			&:first-of-type {
 				margin-top: 0;
@@ -322,6 +355,10 @@
 			font-weight: 600;
 		}
 
+		&.is-bottom-aligned {
+			vertical-align: bottom;
+		}
+
 
 		&.is-top-buttons {
 			padding: 0 20px;
@@ -330,85 +367,6 @@
 
 		@include plans-2023-break-small {
 			border-left: solid 1px #e0e0e0;
-		}
-	}
-
-	.plan-features-2023-grid__pricing {
-		padding: 0 20px;
-		margin: 0;
-
-		.plan-price {
-			color: var(--studio-gray-100);
-			margin-right: 10px;
-			line-height: $font-title-large;
-			display: flex;
-			@include onboarding-font-recoleta;
-			padding: 3px 0 6px;
-		}
-
-		.plan-price__currency-symbol,
-		.plan-price.is-discounted .plan-price__currency-symbol {
-			font-size: $font-title-medium;
-			color: var(--studio-gray-100);
-			position: relative;
-			top: -7px;
-		}
-
-		.plan-price__integer {
-			font-size: 2.75rem;
-		}
-
-		.plan-price__term {
-			font-size: $font-body-extra-small;
-			font-weight: 400;
-		}
-
-		.plan-price.is-original {
-			color: var(--color-neutral-light);
-
-			&::before {
-				left: -1%;
-				top: 43%;
-				right: 80%;
-				transform: rotate(16deg);
-				border-color: #000;
-
-				@include plans-2023-break-small {
-					right: 68%;
-				}
-			}
-
-			.plan-price__currency-symbol,
-			.plan-price__tax-amount {
-				color: var(--color-text-subtle);
-			}
-
-			.plan-price__integer {
-				font-size: $font-title-medium;
-			}
-			.plan-price__currency-symbol {
-				font-size: $font-body-extra-small;
-				top: -4px;
-			}
-		}
-
-		.plan-price.is-discounted {
-			color: var(--color-neutral-70);
-
-			.plan-price__integer-fraction {
-				color: var(--color-success);
-			}
-		}
-
-		.plan-price.is-large-currency {
-			.plan-price__integer {
-				font-size: rem(38px);
-			}
-			&.is-original {
-				.plan-price__integer {
-					font-size: $font-body-small;
-				}
-			}
 		}
 	}
 
@@ -563,28 +521,6 @@ body.is-section-signup.is-white-signup,
 			}
 		}
 
-		.plan-pill {
-			font-family: Inter, $sans;
-			font-size: 0.75rem;
-			font-weight: 500;
-			color: var(--studio-white);
-			letter-spacing: 0.2px;
-			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-			line-height: 1.25rem;
-			padding: 0 9px;
-			right: unset;
-			left: unset;
-			top: unset;
-			bottom: 0;
-			border-radius: 4px;
-			background-color: var(--studio-gray-80);
-			transform: translate(20px, -50px);
-			text-transform: unset;
-			@include plans-2023-break-small {
-				transform: translate(20px, 0);
-			}
-		}
-
 		&.popular-plan-parent-class {
 			position: relative;
 
@@ -598,15 +534,66 @@ body.is-section-signup.is-white-signup,
 
 				@include plans-2023-break-small {
 					position: absolute;
-					top: -38px;
+					top: -35px; // at -35px this covers the top border of the table, including its top-right radius, as intended
 					right: -1px;
 					border-color: #e0e0e0;
 					border-width: 1px 1px 0 1px;
-					/* stylelint-disable-next-line */
+					/* stylelint-disable-next-line scales/radii */
 					border-radius: 5px 5px 0 0;
 					border-style: solid;
 					padding-top: 20px;
 					margin-bottom: 0;
+				}
+
+				.plan-pill {
+					font-family: Inter, $sans;
+					font-size: 0.75rem;
+					font-weight: 500;
+					color: var(--studio-white);
+					letter-spacing: 0.2px;
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+					line-height: 1.25rem;
+					padding: 0 9px;
+					right: unset;
+					left: unset;
+					top: unset;
+					bottom: 0;
+					border-radius: 4px;
+					background-color: var(--studio-gray-80);
+					transform: translate(20px, -50px);
+					text-transform: unset;
+					@include plans-2023-break-small {
+						transform: translate(20px, 0);
+					}
+				}
+
+				&:not(.with-plan-logo) {
+					.plan-pill {
+						transform: translate(20px, 0);
+					}
+				}
+
+				&.is-current-plan {
+					color: unset;
+					.plan-pill {
+						background: #e0e0e0;
+						color: var(--studio-gray-100);
+					}
+				}
+			}
+
+			&.is-left-of-highlight {
+				&:not(.is-last-in-row) {
+					.plan-features-2023-grid__popular-badge {
+						border-top-right-radius: 0;
+					}
+				}
+			}
+			&.is-right-of-highlight {
+				&:not(.is-first-in-row) {
+					.plan-features-2023-grid__popular-badge {
+						border-top-left-radius: 0;
+					}
 				}
 			}
 		}
@@ -753,7 +740,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 	.plan-features-2023-gridrison__actions-buttons {
 		min-height: 40px;
 	}
-	.plan-comparison-grid__header {
+	.plan-comparison-grid__header-cell {
 		display: flex;
 		flex-direction: column;
 		align-items: stretch;
@@ -784,6 +771,17 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 			}
 		}
 
+		&.popular-plan-parent-class {
+			.plan-features-2023-grid__popular-badge {
+				&.is-current-plan {
+					.plan-pill {
+						background: #e0e0e0;
+						color: var(--studio-gray-100);
+					}
+				}
+			}
+		}
+
 		&.popular-plan-parent-class:not(.plan-is-footer) {
 			.plan-features-2023-grid__popular-badge {
 				width: 100%;
@@ -808,8 +806,55 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 					border-style: solid;
 				}
 
-				&:last-of-type .plan-features-2023-grid__popular-badge {
-					padding-right: 20px;
+				&.is-left-of-highlight {
+					.plan-features-2023-grid__popular-badge {
+						border-top-right-radius: 0;
+					}
+				}
+
+				&.is-right-of-highlight {
+					.plan-features-2023-grid__popular-badge {
+						border-top-left-radius: 0;
+						left: 0;
+					}
+
+					// fixes border alignment
+					// on badge that is on the last popular plan but not last in row
+					// (so second to last with last being a personal plan)
+					&:not(:last-of-type) {
+						&:not(.is-last-in-row) {
+							.plan-features-2023-grid__popular-badge {
+								border-left: 0;
+								box-sizing: border-box;
+								left: 1px;
+							}
+						}
+					}
+
+				}
+
+				&:last-of-type {
+					&:not(.is-only-highlight) {
+						.plan-features-2023-grid__popular-badge {
+							padding-right: 19px;
+						}
+
+						// fixes border alignment
+						// on last popular plan that is not adjacent to another popular plan
+						// (so last with second to last being a personal plan)
+						&:not(.is-right-of-highlight) {
+							.plan-features-2023-grid__popular-badge {
+								padding-right: 20px;
+							}
+						}
+					}
+					// fixes border alignment
+					// on last popular plan that is only popular plan (3 column layout)
+					&.is-only-highlight {
+						.plan-features-2023-grid__popular-badge {
+							padding-right: 20px;
+						}
+					}
 				}
 			}
 		}
@@ -864,7 +909,15 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 			@extend %plan-comparison-grid__plan-subtitle;
 		}
 
-		&:not(.has-feature) {
+		.plan-comparison-grid__plan-conditional-title {
+			@extend %plan-comparison-grid__plan-subtitle;
+			@include plans-2023-break-small {
+				color: unset;
+				margin-bottom: 0;
+			}
+		}
+
+		&:not(.has-feature):not(.has-conditional-feature) {
 			.plan-comparison-grid__plan-title,
 			.plan-comparison-grid__plan-subtitle {
 				text-decoration: line-through;
@@ -884,7 +937,7 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 	}
 	.popular-plan-parent-class {
 		position: relative;
-		&::before,
+		&:not(.is-right-of-highlight)::before,
 		&::after {
 			content: "";
 			display: none;
@@ -917,28 +970,6 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 		line-height: 1.2;
 		color: var(--studio-gray-100);
 		font-weight: 400;
-	}
-
-	.plan-features-2023-grid__pricing {
-		padding: 0;
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		justify-content: flex-end;
-
-		.plan-price.is-discounted {
-			color: var(--color-neutral-70);
-
-			.plan-price__integer-fraction {
-				color: inherit;
-			}
-		}
-
-		.plan-price.is-large-currency {
-			.plan-price__integer {
-				font-size: rem(30px);
-			}
-		}
 	}
 
 	.plan-comparison-grid__billing-info {
@@ -976,6 +1007,13 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 	display: flex;
 	justify-content: center;
 	margin-top: 32px;
+	margin-left: 20px;
+	margin-right: 20px;
+
+	@include plans-section-custom-mobile-breakpoint {
+		margin-left: 0;
+		margin-right: 0;
+	}
 
 	button {
 		background: var(--studio-white);
@@ -1017,4 +1055,27 @@ body.is-section-signup.is-white-signup .is-onboarding-2023-pricing-grid .signup_
 
 .formatted-header {
 	margin-bottom: 0;
+}
+
+
+/* Hosting onboarding flow */
+.is-hosting div.plan-features-2023-grid__content {
+	max-width: 768px;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+.plan-features-2023-grid__refund-notice {
+	text-align: center;
+	padding-top: 8px;
+	font-size: $font-body-extra-small;
+	line-height: 16px;
+
+	&.is-business-plan {
+		color: #7f54b3;
+	}
+
+	&.is-ecommerce-plan {
+		color: #55347d;
+	}
 }

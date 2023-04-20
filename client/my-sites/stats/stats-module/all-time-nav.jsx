@@ -77,7 +77,10 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		</SegmentedControl>
 	);
 	const select = (
-		<SelectDropdown className="section-nav-tabs__dropdown" selectedText={ selected.label }>
+		<SelectDropdown
+			className="section-nav-tabs__dropdown stats-summary-nav__select"
+			selectedText={ selected.label }
+		>
 			{ options.map( ( i, index ) => (
 				<SelectDropdown.Item
 					{ ...i }
@@ -91,10 +94,22 @@ export const StatsModuleSummaryLinks = ( props ) => {
 		</SelectDropdown>
 	);
 
+	const navClassName = classnames( 'stats-summary-nav', {
+		[ 'stats-summary-nav--with-button' ]: hideNavigation && navigationSwap,
+	} );
+
 	return (
 		<>
 			{ isHorizontalBarComponentEnabledEverywhere && (
-				<div className="stats-summary-nav">
+				<div className={ navClassName }>
+					{ ! hideNavigation && (
+						<ComponentSwapper
+							className={ classnames( 'stats-summary-nav__intervals-container' ) }
+							breakpoint="<660px"
+							breakpointActiveComponent={ select }
+							breakpointInactiveComponent={ tabs }
+						/>
+					) }
 					<div className="stats-summary-nav__header">
 						<DatePicker
 							period={ period.period }
@@ -104,14 +119,6 @@ export const StatsModuleSummaryLinks = ( props ) => {
 							summary={ false }
 						/>
 					</div>
-					{ ! hideNavigation && (
-						<ComponentSwapper
-							className={ classnames( 'stats-summary-nav__intervals-container' ) }
-							breakpoint="<660px"
-							breakpointActiveComponent={ select }
-							breakpointInactiveComponent={ tabs }
-						/>
-					) }
 					{ hideNavigation && navigationSwap }
 				</div>
 			) }

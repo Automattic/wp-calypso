@@ -36,6 +36,11 @@
 			text-decoration: underline;
 			cursor: pointer;
 			font-weight: 500;
+
+			&:focus {
+				border-color: var(--color-primary);
+				box-shadow: 0 0 0 2px var(--color-primary-light);
+			}
 		}
 	}
 	.is-loading {

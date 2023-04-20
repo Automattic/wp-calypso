@@ -12,6 +12,10 @@ export const getSettingsUrl = ( slug: string ) => {
 	return `/settings/general/${ slug }`;
 };
 
+export const getSiteLogsUrl = ( slug: string ) => {
+	return `/site-logs/${ slug }`;
+};
+
 export const getPluginsUrl = ( slug: string ) => {
 	return `/plugins/${ slug }`;
 };
@@ -28,8 +32,20 @@ export const displaySiteUrl = ( siteUrl: string ) => {
 	return siteUrl.replace( 'https://', '' ).replace( 'http://', '' );
 };
 
+export function isCustomDomain( siteSlug: string ): boolean {
+	return ! siteSlug.endsWith( '.wordpress.com' ) && ! siteSlug.endsWith( '.wpcomstaging.com' );
+}
+
 export const isNotAtomicJetpack = ( site: SiteExcerptNetworkData ) => {
 	return site.jetpack && ! site?.is_wpcom_atomic;
+};
+
+export const isP2Site = ( site: SiteExcerptNetworkData ) => {
+	return site.options?.is_wpforteams_site;
+};
+
+export const isStagingSite = ( site: SiteExcerptNetworkData ) => {
+	return site.is_wpcom_staging_site;
 };
 
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';

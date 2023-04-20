@@ -5,7 +5,7 @@ import {
 	NEWSLETTER_FLOW,
 	BUILD_FLOW,
 	WRITE_FLOW,
-	SENSEI_FLOW,
+	isNewsletterFlow,
 } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -25,10 +25,10 @@ const LaunchpadSitePreview = ( {
 	flow: string | null;
 } ) => {
 	const translate = useTranslate();
-	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
 	const site = useSite();
+	const { globalStylesInUse } = usePremiumGlobalStyles( site?.ID );
 	const isInVideoPressFlow = isVideoPressFlow( flow );
-	const isSenseiFlow = SENSEI_FLOW === flow;
+	const enableEditOverlay = ! isNewsletterFlow( flow );
 
 	let previewUrl = siteSlug ? 'https://' + siteSlug : null;
 	const devicesToShow: Device[] = [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];
@@ -37,7 +37,7 @@ const LaunchpadSitePreview = ( {
 		components: { strong: <strong /> },
 	} );
 
-	if ( isInVideoPressFlow || isSenseiFlow ) {
+	if ( isInVideoPressFlow ) {
 		const windowWidth = window.innerWidth;
 		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPES.COMPUTER : DEVICE_TYPES.PHONE;
 		const productSlug = site?.plan?.product_slug;
@@ -74,7 +74,7 @@ const LaunchpadSitePreview = ( {
 			// hide cookies popup
 			preview: true,
 			do_preview_no_interactions: ! isInVideoPressFlow,
-			...( globalStylesInUse && shouldLimitGlobalStyles && { 'preview-global-styles': true } ),
+			...( globalStylesInUse && { 'preview-global-styles': true } ),
 		} );
 	}
 
@@ -113,7 +113,7 @@ const LaunchpadSitePreview = ( {
 				defaultViewportDevice={ defaultDevice }
 				devicesToShow={ devicesToShow }
 				showSiteAddressBar={ false }
-				enableEditOverlay
+				enableEditOverlay={ enableEditOverlay }
 			/>
 		</div>
 	);

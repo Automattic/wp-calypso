@@ -9,9 +9,9 @@
 <!-- TOC -->
 
 - [Setup](#setup)
-  - [Regular setup](#regular-setup)
-  - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
-  - [Apple Silicon arm64](#apple-silicon-arm64)
+    - [Regular setup](#regular-setup)
+    - [Apple Silicon emulated x86_64](#apple-silicon-emulated-x86_64)
+    - [Apple Silicon arm64](#apple-silicon-arm64)
 
 <!-- /TOC -->
 
@@ -72,17 +72,6 @@ At any point, run `arch` to verify whether shell is running with Rosetta 2 emula
 
 ## Apple Silicon (arm64)
 
-Steps in the [Setup](../README.md#quick-start) will get users up and running.
-However, between Step 7 and Step 8, this additional step may be required:
+Steps in the [Setup](../README.md#quick-start) should be enough to get the user up and running.
 
-7. set the following environment variables:
-
-```
-PUPPETEER_SKIP_DOWNLOAD=true
-```
-
-8. install dependencies:
-
-```
-yarn install
-```
+In case there is an unexpected issue, please reach out to @automattic/KitKat.

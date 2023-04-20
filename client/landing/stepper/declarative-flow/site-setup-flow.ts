@@ -2,13 +2,16 @@ import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { Design, isBlankCanvasDesign } from '@automattic/design-picker';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useEffect } from 'react';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
+import wpcomRequest from 'wpcom-proxy-request';
 import { ImporterMainPlatform } from 'calypso/blocks/import/types';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
@@ -26,21 +29,22 @@ import EditEmail from './internals/steps-repository/edit-email';
 import ErrorStep from './internals/steps-repository/error-step';
 import GoalsStep from './internals/steps-repository/goals';
 import ImportStep from './internals/steps-repository/import';
+import { redirect } from './internals/steps-repository/import/util';
 import ImportLight from './internals/steps-repository/import-light';
 import ImportList from './internals/steps-repository/import-list';
 import ImportReady from './internals/steps-repository/import-ready';
 import ImportReadyNot from './internals/steps-repository/import-ready-not';
 import ImportReadyPreview from './internals/steps-repository/import-ready-preview';
 import ImportReadyWpcom from './internals/steps-repository/import-ready-wpcom';
-import { redirect } from './internals/steps-repository/import/util';
 import ImporterBlogger from './internals/steps-repository/importer-blogger';
 import ImporterMedium from './internals/steps-repository/importer-medium';
 import ImporterSquarespace from './internals/steps-repository/importer-squarespace';
 import ImporterWix from './internals/steps-repository/importer-wix';
 import ImporterWordpress from './internals/steps-repository/importer-wordpress';
 import IntentStep from './internals/steps-repository/intent-step';
-import PatternAssembler from './internals/steps-repository/pattern-assembler';
-import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
+import PatternAssembler from './internals/steps-repository/pattern-assembler/lazy';
+import ProcessingStep from './internals/steps-repository/processing-step';
+import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import SiteOptions from './internals/steps-repository/site-options';
 import SiteVertical from './internals/steps-repository/site-vertical';
 import StoreAddress from './internals/steps-repository/store-address';
@@ -54,9 +58,8 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
+import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const WRITE_INTENT_DEFAULT_THEME = 'livro';
-const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
 
@@ -66,6 +69,20 @@ function isLaunchpadIntent( intent: string ) {
 
 const siteSetupFlow: Flow = {
 	name: 'site-setup',
+
+	useSideEffect( currentStep, navigate ) {
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
+
+		useEffect( () => {
+			// Require to start the flow from the first step
+			if ( currentStep === 'patternAssembler' && ! selectedDesign ) {
+				navigate( 'goals' );
+			}
+		}, [] );
+	},
 
 	useSteps() {
 		return [
@@ -110,10 +127,23 @@ const siteSetupFlow: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
-		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
-		const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
-		const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
-		const startingPoint = useSelect( ( select ) => select( ONBOARD_STORE ).getStartingPoint() );
+		const intent = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+			[]
+		);
+		const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
+		const goals = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+			[]
+		);
+		const selectedDesign = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+			[]
+		);
+		const startingPoint = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStartingPoint(),
+			[]
+		);
 		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
@@ -121,6 +151,7 @@ const siteSetupFlow: Flow = {
 		const currentTheme = useSelector( ( state ) =>
 			getCanonicalTheme( state, site?.ID || -1, currentThemeId )
 		);
+		const isLaunched = site?.launch_status === 'launched' ? true : false;
 
 		const urlQueryParams = useQuery();
 		const isPluginBundleEligible = useIsPluginBundleEligible();
@@ -133,16 +164,21 @@ const siteSetupFlow: Flow = {
 		}
 
 		const adminUrl = useSelect(
-			( select ) => site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' )
+			( select ) =>
+				site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
+			[ site ]
 		);
 		const isAtomic = useSelect(
-			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID )
+			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
+			[ site ]
 		);
-		const storeType = useSelect( ( select ) => select( ONBOARD_STORE ).getStoreType() );
-		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
+		const storeType = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStoreType(),
+			[]
+		);
+		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags, setIntent } =
 			useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite, saveSiteSettings } =
-			useDispatch( SITE_STORE );
+		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
@@ -166,35 +202,47 @@ const siteSetupFlow: Flow = {
 						return;
 					}
 					const siteId = site?.ID;
-					const pendingActions = [
-						setIntentOnSite( siteSlug, intent ),
-						setGoalsOnSite( siteSlug, goals ),
-					];
-					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push(
-							setThemeOnSite(
-								siteSlug,
-								WRITE_INTENT_DEFAULT_THEME,
-								WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION
-							)
-						);
+					const siteIntent = getIntent();
+
+					const settings = {
+						site_intent: siteIntent,
+						site_goals: goals,
+						launchpad_screen: undefined as string | undefined,
+					};
+
+					const formData: string[][] = [];
+					const pendingActions = [];
+
+					if ( siteIntent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
+						pendingActions.push( setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN ) );
 					}
 
 					// Update Launchpad option based on site intent
 					if ( typeof siteId === 'number' ) {
-						pendingActions.push(
-							saveSiteSettings( siteId, {
-								launchpad_screen: isLaunchpadIntent( intent ) ? 'full' : 'off',
-							} )
-						);
+						const launchpadScreen =
+							isLaunchpadIntent( siteIntent ) && ! isLaunched ? 'full' : 'off';
+
+						settings.launchpad_screen = launchpadScreen;
 					}
 
 					let redirectionUrl = to;
 
 					// Forcing cache invalidation to retrieve latest launchpad_screen option value
-					if ( isLaunchpadIntent( intent ) ) {
+					if ( isLaunchpadIntent( siteIntent ) ) {
 						redirectionUrl = addQueryArgs( { showLaunchpad: true }, to );
 					}
+
+					formData.push( [ 'settings', JSON.stringify( settings ) ] );
+
+					pendingActions.push(
+						wpcomRequest( {
+							path: `/sites/${ siteId }/onboarding-customization`,
+							method: 'POST',
+							apiNamespace: 'wpcom/v2',
+							apiVersion: '2',
+							formData,
+						} )
+					);
 
 					Promise.all( pendingActions ).then( () => window.location.assign( redirectionUrl ) );
 				} );
@@ -203,7 +251,7 @@ const siteSetupFlow: Flow = {
 			navigate( 'processing' );
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction' ] );
+			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
 		};
 
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
@@ -243,7 +291,7 @@ const siteSetupFlow: Flow = {
 					// End of Pattern Assembler flow
 					if ( isBlankCanvasDesign( selectedDesign ) ) {
 						window.sessionStorage.setItem( 'wpcom_signup_completed_flow', 'pattern_assembler' );
-						return exitFlow( `/site-editor/${ siteSlug }` );
+						return exitFlow( `/site-editor/${ siteSlug }?canvas=edit` );
 					}
 
 					// If the user skips starting point, redirect them to the post editor
@@ -532,6 +580,7 @@ const siteSetupFlow: Flow = {
 
 				case 'goals':
 					// Skip to dashboard must have been pressed
+					setIntent( SiteIntent.Build );
 					return exitFlow( `/home/${ siteSlug }` );
 
 				case 'vertical':
@@ -559,9 +608,13 @@ const siteSetupFlow: Flow = {
 	useAssertConditions(): AssertConditionResult {
 		const siteSlug = useSiteSlugParam();
 		const siteId = useSiteIdParam();
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const fetchingSiteError = useSelect( ( select ) =>
-			select( SITE_STORE ).getFetchingSiteError()
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+		const fetchingSiteError = useSelect(
+			( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+			[]
 		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 

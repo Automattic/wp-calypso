@@ -34,7 +34,7 @@ export const useComparisonData = () => {
 		() => [
 			{
 				sectionId: 'security',
-				sectionName: translate( 'Security' ),
+				sectionName: translate( 'Security', { context: 'Jetpack product name' } ),
 				icon: LockIcon,
 				features: [
 					{

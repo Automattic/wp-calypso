@@ -8,6 +8,10 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_STARTER,
 	TYPE_FREE,
@@ -133,6 +137,24 @@ export function generateSteps( {
 			},
 		},
 
+		'user-hosting': {
+			stepName: 'user-hosting',
+			apiRequestFunction: createAccount,
+			providesToken: true,
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'plans_reorder_abtest_variation',
+				'redirect',
+			],
+			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+				isPasswordless: true,
+			},
+		},
+
 		'user-new': {
 			stepName: 'user-new',
 			apiRequestFunction: createAccount,
@@ -205,19 +227,30 @@ export function generateSteps( {
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
-		'plans-newsletter': {
+		'plans-hosting': {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			optionalDependencies: [ 'emailItem' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo', 'comingSoon' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 			props: {
-				themeSlugWithRepo: 'pub/lettre',
-				launchSite: true,
+				hideFreePlan: true,
+				hidePremiumPlan: true,
+				hidePersonalPlan: true,
+				hideEnterprisePlan: true,
+				shouldHideNavButtons: true,
 			},
 		},
 
+		'plans-pm': {
+			stepName: 'plans-pm',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
 		'plans-new': {
 			stepName: 'plans',
 			providesDependencies: [ 'cartItem' ],
@@ -685,6 +718,51 @@ export function generateSteps( {
 			},
 		},
 
+		'plans-personal-2y': {
+			stepName: 'plans-personal-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PERSONAL_2_YEARS,
+			},
+		},
+
+		'plans-premium-2y': {
+			stepName: 'plans-premium-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PREMIUM_2_YEARS,
+			},
+		},
+
+		'plans-business-2y': {
+			stepName: 'plans-business-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_BUSINESS_2_YEARS,
+			},
+		},
+
+		'plans-ecommerce-2y': {
+			stepName: 'plans-ecommerce-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			defaultDependencies: {
+				cartItem: PLAN_ECOMMERCE_2_YEARS,
+				themeSlugWithRepo: 'pub/twentytwentytwo',
+			},
+		},
+
 		intent: {
 			stepName: 'intent',
 			dependencies: [ 'siteSlug' ],
@@ -771,7 +849,7 @@ export function generateSteps( {
 		},
 		'difm-options': {
 			stepName: 'site-options',
-			providesDependencies: [ 'siteTitle', 'tagline', 'newOrExistingSiteChoice' ],
+			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
 			optionalDependencies: [ 'newOrExistingSiteChoice' ],
 			defaultDependencies: {
 				newOrExistingSiteChoice: 'existing-site',
@@ -782,7 +860,7 @@ export function generateSteps( {
 		},
 		'difm-store-options': {
 			stepName: 'site-options',
-			providesDependencies: [ 'siteTitle', 'tagline', 'newOrExistingSiteChoice' ],
+			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
 			optionalDependencies: [ 'newOrExistingSiteChoice' ],
 			defaultDependencies: {
 				newOrExistingSiteChoice: 'existing-site',

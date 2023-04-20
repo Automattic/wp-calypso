@@ -8,20 +8,26 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
+import { AssignTrialResult } from './constants';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
-
-export enum AssignTrialResult {
-	SUCCESS = 'success',
-	FAILURE = 'failure',
-}
 
 const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, data, flow } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress() );
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const progress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgress(),
+		[]
+	);
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
+	);
+	const profilerData =
+		useSelect( ( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProfilerData(), [] ) ||
+		{};
 
 	useEffect( () => {
 		if ( submit ) {
@@ -35,6 +41,9 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 						`/sites/${ data?.siteSlug }/ecommerce-trial/add/ecommerce-trial-bundle-monthly`,
 						{
 							apiVersion: '1.1',
+						},
+						{
+							wpcom_woocommerce_onboarding: profilerData,
 						}
 					);
 
@@ -51,6 +60,12 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 
 	const getCurrentMessage = () => {
 		return __( "Woo! We're creating your store" );
+	};
+
+	const getSubTitle = () => {
+		return __(
+			'#FunWooFact: Did you know that Woo powers almost 4 million stores worldwide? You’re in good company.'
+		);
 	};
 
 	return (
@@ -71,6 +86,7 @@ const AssignTrialPlanStep: Step = function AssignTrialPlanStep( { navigation, da
 							) : (
 								<LoadingEllipsis />
 							) }
+							<p className="processing-step__subtitle">{ getSubTitle() }</p>
 						</div>
 					</>
 				}

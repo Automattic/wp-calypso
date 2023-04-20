@@ -85,7 +85,7 @@ class Page extends Component {
 	recordEllipsisMenuItemClickEvent = ( item ) => {
 		this.props.recordTracksEvent( 'calypso_pages_ellipsismenu_item_click', {
 			page_type: 'real',
-			blog_id: this.props.site.ID,
+			blog_id: this.props.site?.ID,
 			item,
 		} );
 	};

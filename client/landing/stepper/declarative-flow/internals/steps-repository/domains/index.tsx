@@ -5,6 +5,8 @@ import {
 	LINK_IN_BIO_TLD_FLOW,
 	COPY_SITE_FLOW,
 	isCopySiteFlow,
+	NEWSLETTER_FLOW,
+	DOMAIN_UPSELL_FLOW,
 } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
@@ -12,6 +14,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import {
 	domainRegistration,
 	domainMapping,
@@ -35,12 +39,13 @@ import './style.scss';
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
-
 	const { __ } = useI18n();
 
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
 
 	const dispatch = useReduxDispatch();
+	const flowToReturnTo = useQuery().get( 'flowToReturnTo' );
+	const siteSlug = useSiteSlug();
 
 	const { submit, exitFlow } = navigation;
 
@@ -94,6 +99,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
 			setDomainCartItem( domainCartItem );
+		} else {
+			setDomainCartItem( undefined );
 		}
 
 		submit?.();
@@ -111,6 +118,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 
 		dispatch( recordTracksEvent( 'calypso_signup_skip_step', tracksProperties ) );
 
+		if ( flow === DOMAIN_UPSELL_FLOW ) {
+			return submit?.( { deferDomainSelection: true } );
+		}
+
 		submitWithDomain( undefined, shouldHideFreePlan );
 	};
 
@@ -126,11 +137,15 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			),
 		};
 
+		if ( showUseYourDomain ) {
+			return '';
+		}
+
 		switch ( flow ) {
-			case 'newsletter':
+			case NEWSLETTER_FLOW:
 				return createInterpolateElement(
 					__(
-						'Help your Newsletter stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
+						'Make your newsletter stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
 					),
 					decideLaterComponent
 				);
@@ -144,6 +159,8 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 				);
 			case COPY_SITE_FLOW:
 				return __( 'Make your copied site unique with a custom domain all of its own.' );
+			case DOMAIN_UPSELL_FLOW:
+				return __( 'Enter some descriptive keywords to get started' );
 			default:
 				return createInterpolateElement(
 					__(
@@ -157,6 +174,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const getHeaderText = () => {
 		if ( showUseYourDomain ) {
 			return '';
+		}
+
+		if ( flow === NEWSLETTER_FLOW ) {
+			return __( 'Your domain. Your identity.' );
 		}
 
 		return __( 'Choose a domain' );
@@ -192,11 +213,12 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		submit?.();
 	};
 
-	const handleAddDomain = ( suggestion: DomainSuggestion ) => {
+	const handleAddDomain = ( suggestion: DomainSuggestion, position: number ) => {
 		dispatch(
 			recordAddDomainButtonClick(
 				suggestion.domain_name,
 				getAnalyticsSection(),
+				position,
 				suggestion?.is_premium
 			)
 		);
@@ -217,17 +239,42 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		/>
 	);
 
+	const handleGoBack = () => {
+		if ( showUseYourDomain ) {
+			return setShowUseYourDomain( false );
+		}
+
+		if ( flow === DOMAIN_UPSELL_FLOW ) {
+			return exitFlow?.( `/setup/${ flowToReturnTo }/launchpad?siteSlug=${ siteSlug }` );
+		}
+		return exitFlow?.( '/sites' );
+	};
+
+	const getBackLabelText = () => {
+		if ( flow === DOMAIN_UPSELL_FLOW ) {
+			return __( 'Back' );
+		}
+		return __( 'Back to sites' );
+	};
+
+	const shouldHideBackButton = () => {
+		if ( flow === DOMAIN_UPSELL_FLOW ) {
+			return false;
+		}
+		return ! isCopySiteFlow( flow );
+	};
+
 	return (
 		<StepContainer
 			stepName="domains"
 			isWideLayout={ true }
-			hideBack={ ! isCopySiteFlow( flow ) }
-			backLabelText={ __( 'Back to Sites' ) }
+			hideBack={ shouldHideBackButton() }
+			backLabelText={ getBackLabelText() }
 			hideSkip={ true }
-			flowName={ isCopySiteFlow( flow ) ? ( flow as string ) : 'linkInBio' }
+			flowName={ flow as string }
 			stepContent={ <div className="domains__content">{ renderContent() }</div> }
 			recordTracksEvent={ recordTracksEvent }
-			goBack={ () => exitFlow?.( '/sites' ) }
+			goBack={ handleGoBack }
 			goNext={ () => submit?.() }
 			formattedHeader={
 				<FormattedHeader

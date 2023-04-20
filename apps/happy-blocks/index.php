@@ -35,135 +35,113 @@
  *      ```
  */
 
- /**
-	* Load the shared assets for the custom block (view and editor).
-	* @return void
-	*/
- function a8c_happyblocks_shared_assets() {
-	$assets = require plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
-
-	wp_register_script( 'a8c-happyblocks-pricing-plans', '', array(), '20221212', true );
-	wp_enqueue_script( 'a8c-happyblocks-pricing-plans' );
-	wp_add_inline_script(
-		'a8c-happyblocks-pricing-plans',
-		sprintf(
-			'window.A8C_HAPPY_BLOCKS_CONFIG = %s;
-			window.configData ||= {};',
-			wp_json_encode( a8c_happyblocks_get_config() )
-		),
-		'before'
-	);
-
-	$style_file = 'dist/view' . ( is_rtl() ? '.rtl.css' : '.css' );
-	wp_enqueue_style(
-		'a8c-happyblock-view-css',
-		plugins_url( $style_file, __FILE__ ),
-		array(),
-		$assets['version']
-	);
-}
-
 /**
- * Load editor assets.
+ * Load Pricing Plans Block
  */
-function a8c_happyblocks_edit_assets() {
-	a8c_happyblocks_shared_assets();
-
-	$assets = require plugin_dir_path( __FILE__ ) . 'dist/editor.min.asset.php';
-
-	wp_enqueue_script(
-		'a8c-happyblocks-edit-js',
-		plugins_url( 'dist/editor.min.js', __FILE__ ),
-		array_merge( array( 'a8c-happyblocks-pricing-plans' ), $assets['dependencies'] ),
-		$assets['version'],
-		true
-	);
-}
+require_once __DIR__ . '/block-library/pricing-plans/index.php';
 
 /**
- * Load view assets.
+ * Returns the current site locale.
  */
-function a8c_happyblocks_view_assets() {
-	a8c_happyblocks_shared_assets();
-
-	$assets = require plugin_dir_path( __FILE__ ) . 'dist/view.min.asset.php';
-
-	$script_file = 'dist/view.js';
-	wp_enqueue_script(
-		'a8c-happyblock-view-js',
-		plugins_url( $script_file, __FILE__ ),
-		array_merge( $assets['dependencies'], array( 'a8c-happyblocks-pricing-plans' ) ),
-		$assets['version'],
-		true
-	);
+function happy_blocks_get_site_locale() {
+	$lang = get_blog_lang_code( get_current_blog_id() );
+	return $lang;
 }
-add_action( 'enqueue_block_editor_assets', 'a8c_happyblocks_edit_assets' );
-add_action( 'wp_enqueue_scripts', 'a8c_happyblocks_view_assets' );
 
 /**
- * Decide if the current logged in user is the topic author.
+ * Return the correct asset relative path to determine the translation file name,
+ * when loading the translation files from wp.com CDN.
  *
- * @return bool true if the current user is the topic author, false otherwise.
+ * @param string|false $relative The relative path of the script. False if it could not be determined.
+ * @param string       $src      The full source URL of the script.
+ * @return string|false          The new relative path
  */
-function a8c_happyblocks_pricing_plans_is_author() {
-
-	// If the user is not authenticated, then we can't get their domain.
-	if ( ! is_user_logged_in() ) {
-		return false;
+function happyblocks_normalize_translations_relative_path( $relative, $src ) {
+	// happy blocks use the site language, not the user language.
+	if ( stripos( $src, 'a8c-plugins/happy-blocks' ) !== false ) {
+		add_filter( 'determine_locale', 'happy_blocks_get_site_locale' );
+	} else {
+		remove_filter( 'determine_locale', 'happy_blocks_get_site_locale' );
 	}
-
-	// If BBPress is not active, we can't tell if the current user is the author.
-	if ( ! function_exists( 'bbp_get_topic_id' ) ) {
-		return false;
+	// Rewrite our CDN path to a relative path to calculate the right filename.
+	if ( preg_match( '#/wp-content/a8c-plugins/happy-blocks/(.*\.js)#', $src, $m ) ) {
+		// Fix the path to support `yarn dev --sync`.
+		$relative = str_replace( 'build/', '', $m[1] );
+		return $relative;
 	}
-
-	$topic_id  = bbp_get_topic_id();
-	$author_id = intval( get_post_field( 'post_author', $topic_id ) );
-
-	return get_current_user_id() === $author_id;
+	return $relative;
 }
+add_filter( 'load_script_textdomain_relative_path', 'happyblocks_normalize_translations_relative_path', 10, 2 );
 
 /**
- * Get the pricing plans configuration
+ * Adjust the file path for loading script translations to match the files structure on WordPress.com
  *
+ * @param string|false $file   Path to the translation file to load. False if there isn't one.
+ * @param string       $handle Name of the script to register a translation domain to.
+ * @param string       $domain The text domain.
+ */
+function happyblocks_normalize_translations_filepath( $file, $handle, $domain ) {
+	if ( ! $file ) {
+		return $file;
+	}
+	// Fix the filepath to use the correct location for the translation file.
+	if ( 'happy-blocks' === $domain ) {
+		$old_path = WP_LANG_DIR . '/happy-blocks';
+		$new_path = WP_LANG_DIR . '/a8c-plugins/happy-blocks';
+		$file     = str_replace( $old_path, $new_path, $file );
+	}
+	return $file;
+}
+add_filter( 'load_script_translation_file', 'happyblocks_normalize_translations_filepath', 10, 3 );
+
+/**
+ * Allow SVG, select and input tags in the footer.
+ *
+ * @param array $tags Allowed tags, attributes, and/or entities.
  * @return array
  */
-function a8c_happyblocks_get_config() {
-
-	return array(
-		'features' => array(),
-		'locale'   => get_user_locale(),
+function happyblocks_allow_footer_tags( $tags ) {
+	$tags['svg']    = array(
+		'xmlns'       => array(),
+		'fill'        => array(),
+		'viewbox'     => array(),
+		'role'        => array(),
+		'aria-hidden' => array(),
+		'focusable'   => array(),
+		'class'       => array(),
 	);
-}
+	$tags['path']   = array(
+		'd'    => array(),
+		'fill' => array(),
+	);
+	$tags['select'] = array(
+		'class' => array(),
+		'title' => array(),
+	);
+	$tags['option'] = array(
+		'value'    => array(),
+		'disabled' => array(),
+		'lang'     => array(),
+	);
+	$tags['stop']   = array(
+		'stopColor' => array(),
+		'offset'    => array(),
+	);
+	$tags['defs']   = array();
 
-/**
- * Render happy-tools/pricing-plans block view placeholder.
- *
- * @param array $attributes Block attributes.
- * @return string
- */
-function a8c_happyblocks_render_pricing_plans_callback( $attributes ) {
-	// The domain should be set to false instead of null when not available, see https://github.com/Automattic/wp-calypso/pull/70402#discussion_r1033299970.
-	$attributes['domain'] = a8c_happyblocks_pricing_plans_is_author() ? $attributes['domain'] : false;
-
-	$json_attributes = htmlspecialchars( wp_json_encode( $attributes ), ENT_QUOTES, 'UTF-8' );
-
-	return <<<HTML
-		<div data-attributes="${json_attributes}" class="a8c-happy-tools-pricing-plans-block-placeholder" />
-HTML;
-}
-
-/**
- * Register happy-blocks.
- */
-function a8c_happyblocks_register() {
-	register_block_type(
-		'happy-blocks/pricing-plans',
+	$tags['footer'] = array_merge(
+		$tags['footer'],
 		array(
-			'render_callback' => 'a8c_happyblocks_render_pricing_plans_callback',
+			'data-locale' => array(),
 		)
 	);
 
+	return $tags;
 }
 
-add_action( 'init', 'a8c_happyblocks_register' );
+add_filter(
+	'wp_kses_allowed_html',
+	'happyblocks_allow_footer_tags',
+	10,
+	2
+);

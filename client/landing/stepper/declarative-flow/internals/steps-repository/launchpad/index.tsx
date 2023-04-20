@@ -1,11 +1,14 @@
 import { StepContainer } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
+import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
+import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
@@ -14,7 +17,10 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
+import { areLaunchpadTasksCompleted } from './task-helper';
+import { launchpadFlowTasks } from './tasks';
 import type { Step } from '../../types';
+import type { SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -29,18 +35,51 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const siteSlug = useSiteSlugParam();
 	const verifiedParam = useQuery().get( 'verified' );
 	const site = useSite();
-	const launchpadScreenOption = site?.options?.launchpad_screen;
+	const {
+		isError: launchpadFetchError,
+		data: { launchpad_screen: launchpadScreenOption, checklist_statuses, site_intent },
+	} = useLaunchpad( siteSlug );
+	const isSiteLaunched = site?.launch_status === 'launched' || false;
+	const recordSignupComplete = useRecordSignupComplete( flow );
 	const dispatch = useDispatch();
+	const { saveSiteSettings } = useWPDispatch( SITE_STORE );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
-	const fetchingSiteError = useSelect( ( select ) => select( SITE_STORE ).getFetchingSiteError() );
+	const fetchingSiteError = useSelect(
+		( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+		[]
+	);
 
-	if ( ! isLoggedIn ) {
-		window.location.replace( `/home/${ siteSlug }` );
+	if ( ! siteSlug || fetchingSiteError?.error || launchpadFetchError ) {
+		window.location.replace( '/home' );
 	}
 
-	if ( ! siteSlug || fetchingSiteError?.error ) {
-		window.location.replace( '/home' );
+	// This is temporary until we can use the launchpad inside the editor.
+	const newWriterFlow = 'true' === getQueryArg( window.location.search, 'showLaunchpad' );
+
+	if (
+		! isLoggedIn ||
+		launchpadScreenOption === 'off' ||
+		( launchpadScreenOption === false && 'videopress' !== flow && ! newWriterFlow )
+	) {
+		redirectToSiteHome( siteSlug, flow );
+	}
+
+	if (
+		areLaunchpadTasksCompleted(
+			site_intent,
+			launchpadFlowTasks,
+			checklist_statuses,
+			isSiteLaunched
+		)
+	) {
+		saveSiteSettings( site?.ID, { launchpad_screen: 'off' } );
+		redirectToSiteHome( siteSlug, flow );
+	}
+
+	function redirectToSiteHome( siteSlug: string | null, flow: string | null ) {
+		recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
+		window.location.replace( `/home/${ siteSlug }` );
 	}
 
 	useEffect( () => {
@@ -55,21 +94,11 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	}, [ verifiedParam, translate, dispatch ] );
 
 	useEffect( () => {
-		// launchpadScreenOption changes from undefined to either 'off' or 'full'
-		// we need to check if it's defined to avoid recording the same action twice
-		if ( launchpadScreenOption !== undefined ) {
-			// The screen option returns false for sites that have never set the option
-			if (
-				( 'videopress' !== flow && launchpadScreenOption === false ) ||
-				launchpadScreenOption === 'off'
-			) {
-				window.location.replace( `/home/${ siteSlug }` );
-				recordTracksEvent( 'calypso_launchpad_redirect_to_home', { flow: flow } );
-			} else {
-				recordTracksEvent( 'calypso_launchpad_loaded', { flow: flow } );
-			}
+		if ( siteSlug && site && localStorage.getItem( 'launchpad_siteSlug' ) !== siteSlug ) {
+			recordSignupComplete();
+			localStorage.setItem( 'launchpad_siteSlug', siteSlug );
 		}
-	}, [ launchpadScreenOption, siteSlug, flow ] );
+	}, [ recordSignupComplete, siteSlug, site ] );
 
 	return (
 		<>

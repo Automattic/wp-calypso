@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { WordPressWordmark } from '@automattic/components';
 import { isDefaultLocale, addLocaleToPath } from '@automattic/i18n-utils';
 import { getLocaleSlug, localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -6,7 +7,6 @@ import { Component } from 'react';
 import AsyncLoad from 'calypso/components/async-load';
 import { withCurrentRoute } from 'calypso/components/route';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import WordPressWordmark from 'calypso/components/wordpress-wordmark';
 import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 import { login } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -150,7 +150,7 @@ class MasterbarLoggedOut extends Component {
 
 		return (
 			<Masterbar>
-				<Item className="masterbar__item-logo">
+				<Item className="masterbar__item-logo masterbar__item--always-show-content">
 					<WordPressLogo className="masterbar__wpcom-logo" />
 					<WordPressWordmark className="masterbar__wpcom-wordmark" />
 				</Item>

@@ -51,6 +51,13 @@
 		}
 	}
 
+	&.mastodon {
+		h2,
+		.sharing-service__logo {
+			color: var(--color-mastodon);
+		}
+	}
+
 	.sharing-service__name {
 		float: left;
 	}
@@ -131,6 +138,18 @@
 			@include breakpoint-deprecated( "<480px" ) {
 				margin-bottom: 16px;
 				padding: 0 0 16px;
+			}
+		}
+
+		.form-button {
+			margin-top: 26px;
+
+			@include breakpoint-deprecated( "<660px" ) {
+				margin-top: 0;
+			}
+
+			@include breakpoint-deprecated( "<480px" ) {
+				width: 100%;
 			}
 		}
 
@@ -281,6 +300,7 @@
 @include sharing-service( "tumblr", var( --color-tumblr ) );
 @include sharing-service( "linkedin", var( --color-linkedin ) );
 @include sharing-service( "instagram-basic-display", var( --color-instagram ) );
+@include sharing-service( "mastodon", var( --color-mastodon ) );
 
 .sharing-service__name {
 	clear: none;
@@ -612,7 +632,8 @@
 }
 
 .sharing-buttons-preview__reblog-like .sharing-buttons-preview-button {
-	margin: 0 1em 3px 0;
+	margin-bottom: 3px;
+	margin-top: 0;
 }
 
 .sharing-buttons-preview__reblog,
@@ -637,12 +658,13 @@
 }
 
 .sharing-buttons-preview__fake-user {
-	border: 1px solid var(--color-neutral-10);
 	display: inline-block;
-	height: 24px;
-	width: 24px;
+	height: 32px;
+	width: 32px;
 	line-height: 1;
 	vertical-align: top;
+	position: relative;
+	top: -1px;
 }
 
 .sharing-buttons-preview__fake-like {
@@ -825,14 +847,18 @@
 	display: inline-block;
 	margin: 8px 8px 0 0;
 	cursor: default;
-	font-size: $font-body-extra-small;
-	border-radius: 2px;
-	color: #777;
-	background: #f8f8f8;
-	border: 1px solid #ccc;
-	box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+	font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	font-weight: 500;
+	border-radius: 4px;
+	color: var(--color-neutral-80);
+	background: #fff;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.12);
 	line-height: 23px;
-	padding: 1px 8px 0 5px;
+	padding: 4px 11px 3px 9px;
+
+	&:hover {
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.22);
+	}
 
 	&.style-icon {
 		border-radius: 50%;
@@ -869,7 +895,7 @@
 
 .sharing-buttons-preview-button__service {
 	line-height: 23px;
-	margin-left: 3px;
+	margin-left: 5px;
 }
 
 .sharing-buttons-preview-button.style-icon .sharing-buttons-preview-button__service {
@@ -971,6 +997,7 @@
 			box-shadow: none;
 			box-sizing: border-box;
 			line-height: 1;
+			border-style: solid;
 			border-radius: 2px;
 			padding: 7px;
 			float: left;

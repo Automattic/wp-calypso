@@ -1,30 +1,51 @@
 import type { ReactChild } from 'react';
 
 // All types based on which the data is populated on the agency dashboard table rows
-export type AllowedTypes = 'site' | 'backup' | 'scan' | 'monitor' | 'plugin';
+export type AllowedTypes = 'site' | 'stats' | 'boost' | 'backup' | 'scan' | 'monitor' | 'plugin';
 
 // Site column object which holds key and title of each column
 export type SiteColumns = Array< {
-	key: string;
+	key: AllowedTypes;
 	title: ReactChild;
 	className?: string;
+	isExpandable?: boolean;
+	isSortable?: boolean;
 } >;
 
 export type AllowedStatusTypes =
+	| 'active'
 	| 'inactive'
 	| 'progress'
 	| 'failed'
 	| 'warning'
 	| 'success'
-	| 'disabled';
+	| 'disabled'
+	| 'critical';
 
 export interface MonitorSettings {
 	monitor_active: boolean;
+	monitor_site_status: boolean;
 	last_down_time: string;
 	monitor_deferment_time: number;
 	monitor_user_emails: Array< string >;
 	monitor_user_email_notifications: boolean;
 	monitor_user_wp_note_notifications: boolean;
+}
+
+interface StatsObject {
+	total: number;
+	trend: 'up' | 'down' | 'same';
+	trend_change: number;
+}
+export interface SiteStats {
+	views: StatsObject;
+	visitors: StatsObject;
+}
+
+export interface BoostData {
+	overall: number;
+	mobile: number;
+	desktop: number;
 }
 
 export interface Site {
@@ -35,7 +56,8 @@ export interface Site {
 	monitor_site_status: boolean;
 	has_scan: boolean;
 	has_backup: boolean;
-	latest_scan_threats_found: Array< any >;
+	has_boost: boolean;
+	latest_scan_threats_found: Array< string >;
 	latest_backup_status: string;
 	is_connection_healthy: boolean;
 	awaiting_plugin_updates: Array< string >;
@@ -43,24 +65,38 @@ export interface Site {
 	monitor_settings: MonitorSettings;
 	monitor_last_status_change: string;
 	isSelected?: boolean;
-	onSelect?: ( value: boolean ) => void;
+	site_stats: SiteStats;
+	onSelect?: () => void;
+	jetpack_boost_scores: BoostData;
+	php_version_num: number;
 }
 export interface SiteNode {
 	value: Site;
 	error: boolean;
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
+	status: AllowedStatusTypes;
 }
 
+export interface StatsNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes;
+	value: SiteStats;
+}
+
+export interface BoostNode {
+	type: AllowedTypes;
+	status: AllowedStatusTypes;
+	value: BoostData;
+}
 export interface BackupNode {
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
+	status: AllowedStatusTypes;
 	value: ReactChild;
 }
 
 export interface ScanNode {
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
+	status: AllowedStatusTypes;
 	value: ReactChild;
 	threats: number;
 }
@@ -73,25 +109,28 @@ interface PluginNode {
 }
 export interface MonitorNode {
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
+	status: AllowedStatusTypes;
 	value: ReactChild;
 	error?: boolean;
 	settings?: MonitorSettings;
 }
 export interface SiteData {
 	site: SiteNode;
+	stats: StatsNode;
+	boost: BoostNode;
 	backup: BackupNode;
 	scan: ScanNode;
 	plugin: PluginNode;
 	monitor: MonitorNode;
 	isFavorite?: boolean;
-	[ key: string ]: any;
+	isSelected?: boolean;
+	onSelect?: () => void;
 }
 
 export interface RowMetaData {
 	row: {
-		value: Site | any;
-		status: AllowedStatusTypes | string;
+		value: Site | SiteStats | BoostData | ReactChild;
+		status: AllowedStatusTypes;
 		error?: boolean;
 	};
 	link: string;
@@ -111,11 +150,11 @@ export type Preference = {
 };
 
 export type StatusEventNames = {
-	[ key in AllowedStatusTypes | string ]: { small_screen: string; large_screen: string };
+	[ key in AllowedStatusTypes ]?: { small_screen: string; large_screen: string };
 };
 
 export type StatusTooltip = {
-	[ key in AllowedStatusTypes | string ]: ReactChild;
+	[ key in AllowedStatusTypes ]?: ReactChild;
 };
 
 export type AllowedActionTypes = 'issue_license' | 'view_activity' | 'view_site' | 'visit_wp_admin';
@@ -124,10 +163,15 @@ export type ActionEventNames = {
 	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };
 };
 
+export interface DashboardSortInterface {
+	field: string;
+	direction: 'asc' | 'desc' | '';
+}
 export interface DashboardOverviewContextInterface {
 	search: string;
 	currentPage: number;
 	filter: { issueTypes: Array< AgencyDashboardFilterOption >; showOnlyFavorites: boolean };
+	sort: DashboardSortInterface;
 }
 
 export interface SitesOverviewContextInterface extends DashboardOverviewContextInterface {
@@ -142,10 +186,11 @@ export type AgencyDashboardFilterOption =
 	| 'backup_warning'
 	| 'threats_found'
 	| 'site_disconnected'
+	| 'site_down'
 	| 'plugin_updates';
 
 export type AgencyDashboardFilter = {
-	issueTypes: Array< AgencyDashboardFilterOption | string >;
+	issueTypes: Array< AgencyDashboardFilterOption >;
 	showOnlyFavorites: boolean;
 };
 
@@ -170,7 +215,6 @@ export interface APIToggleFavorite {
 export interface UpdateMonitorSettingsAPIResponse {
 	success: boolean;
 	settings: {
-		monitor_active: boolean;
 		email_notifications: boolean;
 		wp_note_notifications: boolean;
 		jetmon_defer_status_down_minutes: number;
@@ -178,7 +222,6 @@ export interface UpdateMonitorSettingsAPIResponse {
 }
 
 export interface UpdateMonitorSettingsParams {
-	monitor_active?: boolean;
 	wp_note_notifications?: boolean;
 	email_notifications?: boolean;
 	jetmon_defer_status_down_minutes?: number;
@@ -191,3 +234,23 @@ export interface UpdateMonitorSettingsArgs {
 export type SiteMonitorStatus = {
 	[ siteId: number ]: 'loading' | 'completed';
 };
+
+export interface ToggleActivaateMonitorAPIResponse {
+	code: 'success' | 'error';
+	message: string;
+}
+export interface ToggleActivateMonitorArgs {
+	siteId: number;
+	params: { monitor_active: boolean };
+}
+
+export interface Backup {
+	activityTitle: string;
+	activityDescription: { children: { text: string }[] }[];
+}
+
+export type AllowedMonitorPeriods = 'day' | 'week' | '30 days' | '90 days';
+
+export interface MonitorUptimeAPIResponse {
+	[ key: string ]: { status: string; downtime_in_minutes?: number };
+}

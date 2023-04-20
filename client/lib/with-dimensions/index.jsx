@@ -39,7 +39,7 @@ export default ( EnhancedComponent ) =>
 			height: 0,
 		};
 
-		handleResize = afterLayoutFlush( () => {
+		handleResize = afterLayoutFlush( ( prevState ) => {
 			const domElement = this.props.domTarget || this.setRef || this.divRef;
 
 			if ( domElement ) {
@@ -51,7 +51,15 @@ export default ( EnhancedComponent ) =>
 				const { width, height } = dimensions;
 				const overflowX = domElement.scrollWidth > domElement.clientWidth + OVERFLOW_BUFFER;
 				const overflowY = domElement.scrollHeight > domElement.clientHeight + OVERFLOW_BUFFER;
-
+				if (
+					prevState &&
+					prevState.width === width &&
+					prevState.height === height &&
+					prevState.overflowX === overflowX &&
+					prevState.overflowY === overflowY
+				) {
+					return;
+				}
 				this.setState( { width, height, overflowX, overflowY } );
 			}
 		} );
@@ -64,8 +72,8 @@ export default ( EnhancedComponent ) =>
 			this.handleResize();
 		}
 
-		componentDidUpdate() {
-			this.handleResize();
+		componentDidUpdate( prevProps, prevState ) {
+			this.handleResize( prevState );
 		}
 
 		componentWillUnmount() {

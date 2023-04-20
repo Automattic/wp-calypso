@@ -3,10 +3,10 @@ import {
 	isDomainRegistration,
 	isDomainTransfer,
 	isDomainMapping,
-	is2023PricingGridEnabled,
+	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { isNewsletterOrLinkInBioFlow, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import { camelToSnakeCase } from '@automattic/js-utils';
 import debugModule from 'debug';
 import {
 	clone,
@@ -37,6 +37,7 @@ import {
 	recordSignupProcessingScreen,
 	recordSignupPlanChange,
 } from 'calypso/lib/analytics/signup';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import * as oauthToken from 'calypso/lib/oauth-token';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
@@ -45,7 +46,6 @@ import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
 import SignupProcessingScreen from 'calypso/signup/processing-screen';
 import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
 import SignupHeader from 'calypso/signup/signup-header';
-import TailoredFlowProcessingScreen from 'calypso/signup/tailored-flow-processing-screen';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
@@ -120,15 +120,8 @@ function removeLoadingScreenClassNamesFromBody() {
 }
 
 function showProgressIndicator( flowName ) {
-	const DISABLED_PROGRESS_INDICATOR_FLOWS = [
-		'pressable-nux',
-		'setup-site',
-		'importer',
-		'domain',
-		LINK_IN_BIO_TLD_FLOW,
-	];
-
-	return ! DISABLED_PROGRESS_INDICATOR_FLOWS.includes( flowName );
+	const flow = flows.getFlow( flowName );
+	return ! flow.hideProgressIndicator;
 }
 
 class Signup extends Component {
@@ -216,6 +209,11 @@ class Signup extends Component {
 				)
 			);
 		}
+
+		// preload the experiment to minimize the perceived loading time
+		if ( this.props.flowName === flows.defaultFlowName ) {
+			loadExperimentAssignment( 'calypso_plans_2yr_toggle' );
+		}
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -255,7 +253,9 @@ class Signup extends Component {
 		debug( 'Signup component mounted' );
 		this.props.flowName === 'onboarding' && ! this.props.isLoggedIn && addHotJarScript();
 		this.startTrackingForBusinessSite();
+
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
+
 		if ( ! this.state.shouldShowLoadingScreen ) {
 			recordSignupStep( this.props.flowName, this.props.stepName, this.getRecordProps() );
 		}
@@ -313,11 +313,37 @@ class Signup extends Component {
 		}
 	}
 
+	getRecordPropsFromFlow = () => {
+		const requiredDeps = this.getCurrentFlowSupportedQueryParams();
+
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		const optionalDependenciesInQuery = flow?.optionalDependenciesInQuery ?? [];
+		const optionalDeps = this.extractFlowDependenciesFromQuery( optionalDependenciesInQuery );
+
+		const deps = { ...requiredDeps, ...optionalDeps };
+
+		const snakeCaseDeps = {};
+
+		for ( const depsKey in deps ) {
+			snakeCaseDeps[ camelToSnakeCase( depsKey ) ] = deps[ depsKey ];
+		}
+
+		return snakeCaseDeps;
+	};
+
 	getRecordProps() {
 		const { signupDependencies } = this.props;
+		let theme = get( signupDependencies, 'selectedDesign.theme' );
+
+		if ( ! theme && signupDependencies.themeParameter ) {
+			theme = signupDependencies.themeParameter;
+		}
+
+		const deps = this.getRecordPropsFromFlow();
 
 		return {
-			theme: get( signupDependencies, 'selectedDesign.theme' ),
+			...deps,
+			theme,
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
 		};
@@ -597,14 +623,11 @@ class Signup extends Component {
 		return window.location.origin + path;
 	};
 
-	getDependenciesInQuery = () => {
+	extractFlowDependenciesFromQuery = ( dependencies ) => {
 		const queryObject = this.props.initialContext?.query ?? {};
-		const dependenciesInQuery =
-			flows.getFlow( this.props.flowName, this.props.isLoggedIn )?.providesDependenciesInQuery ??
-			[];
 
 		const result = {};
-		for ( const dependencyKey of dependenciesInQuery ) {
+		for ( const dependencyKey of dependencies ) {
 			const value = queryObject[ dependencyKey ];
 			if ( value != null ) {
 				result[ dependencyKey ] = value;
@@ -612,6 +635,13 @@ class Signup extends Component {
 		}
 
 		return result;
+	};
+
+	getDependenciesInQuery = () => {
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		const requiredDependenciesInQuery = flow?.providesDependenciesInQuery ?? [];
+
+		return this.extractFlowDependenciesFromQuery( requiredDependenciesInQuery );
 	};
 
 	getCurrentFlowSupportedQueryParams = () => {
@@ -730,10 +760,6 @@ class Signup extends Component {
 			return <P2SignupProcessingScreen signupSiteName={ this.state.signupSiteName } />;
 		}
 
-		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
-			return <TailoredFlowProcessingScreen flowName={ this.props.flowName } />;
-		}
-
 		if ( isReskinned ) {
 			const domainItem = get( this.props, 'signupDependencies.domainItem', {} );
 			const hasPaidDomain = isDomainRegistration( domainItem );
@@ -775,7 +801,7 @@ class Signup extends Component {
 		// If there is any condition upon which the free plan should be hidden these issues need to be resolved.
 		// For now we always show the free plan for the 2023-pricing-grid
 		// More Context : Automattic/martech#1464
-		const hideFreePlan = is2023PricingGridEnabled()
+		const hideFreePlan = is2023PricingGridActivePage( window )
 			? false
 			: planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
@@ -790,9 +816,11 @@ class Signup extends Component {
 			};
 		}
 
+		const stepClassName = this.props.stepName === 'user-hosting' ? 'user' : this.props.stepName;
+
 		return (
 			<div className="signup__step" key={ stepKey }>
-				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
+				<div className={ `signup__step is-${ stepClassName }` }>
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
@@ -848,12 +876,6 @@ class Signup extends Component {
 			return <QuerySiteDomains siteId={ this.props.siteId } />;
 		}
 	}
-
-	getPageTitle() {
-		if ( isNewsletterOrLinkInBioFlow( this.props.flowName ) ) {
-			return this.props.pageTitle;
-		}
-	}
 	render() {
 		// Prevent rendering a step if in the middle of performing a redirect or resuming progress.
 		if (
@@ -882,7 +904,6 @@ class Signup extends Component {
 								flowName: this.props.flowName,
 								stepName: this.props.stepName,
 							} }
-							pageTitle={ this.getPageTitle() }
 							shouldShowLoadingScreen={ this.state.shouldShowLoadingScreen }
 							isReskinned={ isReskinned }
 							rightComponent={

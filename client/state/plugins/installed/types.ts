@@ -37,7 +37,7 @@ export type Plugin = {
 };
 
 export type PluginSites = {
-	[ key: string ]: {
+	[ siteId: string ]: {
 		active: boolean;
 		autoupdate: boolean;
 		update?: PluginUpdate;

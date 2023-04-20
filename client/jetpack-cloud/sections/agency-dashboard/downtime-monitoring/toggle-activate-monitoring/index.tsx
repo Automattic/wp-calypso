@@ -1,6 +1,5 @@
 import { Button } from '@automattic/components';
 import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { ReactChild, useState, useRef } from 'react';
 import { useSelector } from 'react-redux';
@@ -137,22 +136,35 @@ export default function ToggleActivateMonitoring( {
 		);
 	};
 
+	const toggleContent = (
+		<ToggleControl
+			onChange={ handleToggleActivateMonitoring }
+			checked={ isChecked }
+			disabled={ isLoading || siteError }
+			label={ isChecked && currentSettings() }
+		/>
+	);
+
+	if ( siteError ) {
+		return (
+			<span className="toggle-activate-monitoring__toggle-button sites-overview__disabled">
+				{ toggleContent }
+			</span>
+		);
+	}
+
 	return (
 		<>
 			<span
 				ref={ statusContentRef }
+				role="button"
+				tabIndex={ 0 }
 				onMouseEnter={ handleShowTooltip }
 				onMouseLeave={ handleHideTooltip }
-				className={ classNames( 'toggle-activate-monitoring__toggle-button', {
-					[ 'sites-overview__disabled' ]: siteError,
-				} ) }
+				onMouseDown={ handleHideTooltip }
+				className="toggle-activate-monitoring__toggle-button"
 			>
-				<ToggleControl
-					onChange={ handleToggleActivateMonitoring }
-					checked={ isChecked }
-					disabled={ isLoading || siteError }
-					label={ isChecked && currentSettings() }
-				/>
+				{ toggleContent }
 			</span>
 			{ showNotificationSettings && (
 				<NotificationSettings

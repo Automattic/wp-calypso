@@ -10,7 +10,6 @@ $sidebar-appearance-break-point: 783px;
 
 // Elements above main layout content per pages
 .stats__section-header,
-.store-stats__section-header,
 .stats-navigation,
 .stats-banner-wrapper {
 	background-color: var(--studio-white);
@@ -32,9 +31,12 @@ $sidebar-appearance-break-point: 783px;
 	}
 
 	// Ensures horizontal padding for all sections.
-	@media ( min-width: $custom-mobile-breakpoint ) {
-		> * {
-			padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
+	> * {
+		padding: 0 max(calc(50% - #{math.div($stats-sections-max-width, 2)}), 32px);
+
+		@media ( max-width: $custom-mobile-breakpoint ) {
+			padding-left: 0;
+			padding-right: 0;
 		}
 	}
 

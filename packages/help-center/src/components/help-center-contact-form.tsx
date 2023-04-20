@@ -4,8 +4,8 @@
  */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { getPlan, getPlanTermLabel } from '@automattic/calypso-products';
-import { Button, FormInputValidation, Popover } from '@automattic/components';
+import { getPlan, getPlanTermLabel, isFreePlanProduct } from '@automattic/calypso-products';
+import { FormInputValidation, Popover } from '@automattic/components';
 import {
 	useSubmitTicketMutation,
 	useSubmitForumsMutation,
@@ -18,14 +18,14 @@ import {
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
-import { TextControl, CheckboxControl, Tip } from '@wordpress/components';
+import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import React, { useEffect, useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { getQueryArgs } from 'calypso/lib/query-args';
@@ -40,6 +40,7 @@ import { SitePicker } from '../types';
 import { BackButton } from './back-button';
 import { HelpCenterOwnershipNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
+import type { HelpCenterSelect } from '@automattic/data-stores';
 import './help-center-contact-form.scss';
 
 export const SITE_STORE = 'automattic/site';
@@ -151,7 +152,7 @@ export const HelpCenterContactForm = () => {
 	const params = new URLSearchParams( search );
 	const mode = params.get( 'mode' ) as Mode;
 	const overflow = params.get( 'overflow' ) === 'true';
-	const history = useHistory();
+	const navigate = useNavigate();
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
@@ -166,13 +167,14 @@ export const HelpCenterContactForm = () => {
 		'CURRENT_SITE'
 	);
 	const { currentSite, subject, message, userDeclaredSiteUrl } = useSelect( ( select ) => {
+		const helpCenterSelect: HelpCenterSelect = select( HELP_CENTER_STORE );
 		return {
-			currentSite: select( HELP_CENTER_STORE ).getSite(),
-			subject: select( HELP_CENTER_STORE ).getSubject(),
-			message: select( HELP_CENTER_STORE ).getMessage(),
-			userDeclaredSiteUrl: select( HELP_CENTER_STORE ).getUserDeclaredSiteUrl(),
+			currentSite: helpCenterSelect.getSite(),
+			subject: helpCenterSelect.getSubject(),
+			message: helpCenterSelect.getMessage(),
+			userDeclaredSiteUrl: helpCenterSelect.getUserDeclaredSiteUrl(),
 		};
-	} );
+	}, [] );
 
 	const {
 		setSite,
@@ -249,7 +251,7 @@ export const HelpCenterContactForm = () => {
 	function handleCTA() {
 		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
 			params.set( 'show-results', 'true' );
-			history.push( {
+			navigate( {
 				pathname: '/contact-form',
 				search: params.toString(),
 			} );
@@ -273,12 +275,12 @@ export const HelpCenterContactForm = () => {
 
 					recordTracksEvent( 'calypso_help_live_chat_begin', {
 						site_plan_product_id: productId,
-						is_automated_transfer: supportSite.is_wpcom_atomic,
+						is_automated_transfer: supportSite?.is_wpcom_atomic,
 						force_site_id: true,
 						location: 'help-center',
 						section: sectionName,
 					} );
-					history.push( '/inline-chat' );
+					navigate( '/inline-chat' );
 					break;
 				}
 				break;
@@ -316,7 +318,7 @@ export const HelpCenterContactForm = () => {
 								location: 'help-center',
 								section: sectionName,
 							} );
-							history.push( '/success' );
+							navigate( '/success' );
 							resetStore();
 							// reset support-history cache
 							setTimeout( () => {
@@ -347,7 +349,7 @@ export const HelpCenterContactForm = () => {
 							location: 'help-center',
 							section: sectionName,
 						} );
-						history.push( `/success?forumTopic=${ encodeURIComponent( response.topic_URL ) }` );
+						navigate( `/success?forumTopic=${ encodeURIComponent( response.topic_URL ) }` );
 						resetStore();
 					} )
 					.catch( () => {
@@ -439,7 +441,7 @@ export const HelpCenterContactForm = () => {
 				<Button
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
-					primary
+					isPrimary
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }
@@ -471,7 +473,12 @@ export const HelpCenterContactForm = () => {
 			{ ! userWithNoSites && (
 				<section>
 					<HelpCenterSitePicker
-						enabled={ mode === 'FORUM' }
+						enabled={
+							mode === 'FORUM' &&
+							( ( supportSite?.plan?.product_slug &&
+								isFreePlanProduct( { product_slug: supportSite.plan?.product_slug } ) ) ||
+								userWithNoSites )
+						}
 						currentSite={ currentSite }
 						onSelect={ ( id: string | number ) => {
 							if ( id !== 0 ) {
@@ -541,7 +548,8 @@ export const HelpCenterContactForm = () => {
 				<Button
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
-					primary
+					isPrimary
+					isLarge
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }

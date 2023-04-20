@@ -6,18 +6,19 @@ import NoResults from 'calypso/my-sites/no-results';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleListSectionHeader from '../people-list-section-header';
-import type { Member } from '../types';
 import type { UsersQuery } from './types';
+import type { Member } from '../types';
 
 import './style.scss';
 
 interface Props {
 	search?: string;
 	usersQuery: UsersQuery;
+	showAddTeamMembersBtn?: boolean;
 }
 function TeamMembers( props: Props ) {
 	const translate = useTranslate();
-	const { search, usersQuery } = props;
+	const { search, usersQuery, showAddTeamMembersBtn = true } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
 
 	const listKey = [ 'team-members', site?.ID, search ].join( '-' );
@@ -78,9 +79,11 @@ function TeamMembers( props: Props ) {
 			return (
 				<>
 					<PeopleListSectionHeader isPlaceholder={ isLoading } label={ getHeaderLabel() }>
-						<Button compact primary href={ addTeamMemberLink }>
-							{ translate( 'Add a team member' ) }
-						</Button>
+						{ showAddTeamMembersBtn && (
+							<Button compact primary href={ addTeamMemberLink }>
+								{ translate( 'Add a team member' ) }
+							</Button>
+						) }
 					</PeopleListSectionHeader>
 					<Card className="people-team-members-list">
 						{ isLoading && renderLoadingPeople() }

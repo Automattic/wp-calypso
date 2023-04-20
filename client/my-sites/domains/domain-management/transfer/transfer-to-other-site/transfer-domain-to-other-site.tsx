@@ -9,11 +9,11 @@ import SiteSelector from 'calypso/components/site-selector';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { getSelectedDomain, isMappedDomain } from 'calypso/lib/domains';
 import wpcom from 'calypso/lib/wp';
-import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import AftermarketAutcionNotice from 'calypso/my-sites/domains/domain-management/components/domain/aftermarket-auction-notice';
 import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
 import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 import NonTransferrableDomainNotice from 'calypso/my-sites/domains/domain-management/components/domain/non-transferrable-domain-notice';
+import DomainHeader from 'calypso/my-sites/domains/domain-management/components/domain-header';
 import {
 	domainManagementEdit,
 	domainManagementList,
@@ -50,10 +50,12 @@ export class TransferDomainToOtherSite extends Component< TransferDomainToOtherS
 	isSiteEligible = ( site: TransferDomainToOtherSiteProps[ 'selectedSite' ] ): boolean => {
 		// check if it's an Atomic site from the site options
 		const isAtomic = site?.options?.is_automated_transfer ?? false;
+		const isWpcomStagingSite = site?.is_wpcom_staging_site ?? false;
 
 		return (
 			site.capabilities.manage_options &&
 			! ( site.jetpack && ! isAtomic ) && // Simple and Atomic sites. Not Jetpack sites.
+			! isWpcomStagingSite &&
 			! ( site?.options?.is_domain_only ?? false ) &&
 			site.ID !== this.props.selectedSite.ID
 		);

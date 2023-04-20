@@ -1,12 +1,10 @@
 import config from '@automattic/calypso-config';
-import { getUrlParts } from '@automattic/calypso-url';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, starEmpty, commentContent } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate } from 'i18n-calypso';
 import { find } from 'lodash';
 import page from 'page';
-import { parse as parseQs, stringify as stringifyQs } from 'qs';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
@@ -20,7 +18,6 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
@@ -44,26 +41,13 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
+import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
+import StatsPageHeader from './stats-page-header';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
-
-function getPageUrl() {
-	return getUrlParts( page.current );
-}
-
-function updateQueryString( url = null, query = {} ) {
-	let search = window.location.search;
-	if ( url ) {
-		search = url.search;
-	}
-
-	return {
-		...parseQs( search.substring( 1 ) ),
-		...query,
-	};
-}
+import { getPathWithUpdatedQueryString } from './utils';
 
 const memoizedQuery = memoizeLast( ( period, endOf ) => ( {
 	period,
@@ -143,9 +127,7 @@ class StatsSite extends Component {
 
 	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'Stats', 'Clicked Chart Bar' );
-		const parsed = getPageUrl();
-		const updatedQs = stringifyQs( updateQueryString( parsed, { startDate: bar.data.period } ) );
-		page.redirect( `${ parsed.pathname }?${ updatedQs }` );
+		page.redirect( getPathWithUpdatedQueryString( { startDate: bar.data.period } ) );
 	};
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
@@ -154,8 +136,7 @@ class StatsSite extends Component {
 		if ( ! tab.loading && tab.attr !== this.props.chartTab ) {
 			this.props.recordGoogleEvent( 'Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
 			// switch the tab by navigating to route with updated query string
-			const updatedQs = stringifyQs( updateQueryString( getPageUrl(), { tab: tab.attr } ) );
-			page.show( `${ getPageUrl().pathname }?${ updatedQs }` );
+			page.show( getPathWithUpdatedQueryString( { tab: tab.attr } ) );
 		}
 	};
 
@@ -189,39 +170,25 @@ class StatsSite extends Component {
 						<JetpackBackupCredsBanner event="stats-backup-credentials" />
 					</div>
 				) }
-
-				<FormattedHeader
-					brandFont
-					className="stats__section-header modernized-header"
-					headerText={ translate( 'Jetpack Stats' ) }
-					align="left"
+				<StatsPageHeader
+					page="traffic"
 					subHeaderText={ translate(
 						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
 							components: {
-								learnMoreLink: (
-									<InlineSupportLink
-										supportContext="stats"
-										showIcon={ false }
-										showSupportModal={ ! isOdysseyStats }
-									/>
-								),
+								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
 							},
 						}
 					) }
 				/>
-
 				<StatsNavigation
 					selectedItem="traffic"
 					interval={ period }
 					siteId={ siteId }
 					slug={ slug }
 				/>
-
 				{ isOdysseyStats && <StatsNotices siteId={ siteId } /> }
-
 				<HighlightsSection siteId={ siteId } />
-
 				<div id="my-stats-content" className={ wrapperClass }>
 					<>
 						<StatsPeriodHeader>
@@ -257,11 +224,7 @@ class StatsSite extends Component {
 						/>
 					</>
 
-					<MiniCarousel
-						isOdysseyStats={ isOdysseyStats }
-						slug={ slug }
-						isSitePrivate={ isSitePrivate }
-					/>
+					{ ! isOdysseyStats && <MiniCarousel slug={ slug } isSitePrivate={ isSitePrivate } /> }
 
 					<div className="stats__module-list stats__module-list--traffic is-events stats__module--unified">
 						<StatsModule
@@ -322,31 +285,8 @@ class StatsSite extends Component {
 							statType="statsVideoPlays"
 							showSummaryLink
 						/>
-						{ config.isEnabled( 'newsletter/stats' ) && (
-							<>
-								<StatsModule
-									additionalColumns={ {
-										header: (
-											<>
-												<span>{ translate( 'Opens' ) }</span>
-											</>
-										),
-										body: ( item ) => (
-											<>
-												<span>{ item.opens }</span>
-											</>
-										),
-									} }
-									path="emails"
-									moduleStrings={ moduleStrings.emails }
-									period={ this.props.period }
-									query={ query }
-									statType="statsEmailsSummary"
-									mainItemLabel={ translate( 'Latest Emails' ) }
-									metricLabel={ translate( 'Clicks' ) }
-									showSummaryLink
-								/>
-							</>
+						{ config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats && (
+							<StatsModuleEmails period={ this.props.period } query={ query } />
 						) }
 						{
 							// File downloads are not yet supported in Jetpack Stats
@@ -366,6 +306,10 @@ class StatsSite extends Component {
 						}
 					</div>
 				</div>
+				{ /* Only load Jetpack Upsell Section for Odyssey Stats */ }
+				{ ! isOdysseyStats ? null : (
+					<AsyncLoad require="calypso/my-sites/stats/jetpack-upsell-section" />
+				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
 				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
@@ -401,7 +345,7 @@ class StatsSite extends Component {
 		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
 		return (
-			<Main fullWidthLayout>
+			<Main fullWidthLayout ariaLabel={ translate( 'Jetpack Stats' ) }>
 				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>

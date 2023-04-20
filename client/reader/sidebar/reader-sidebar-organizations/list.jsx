@@ -9,10 +9,10 @@ import SidebarItem from 'calypso/layout/sidebar/item';
 import ReaderA8cIcon from 'calypso/reader/components/icons/a8c-icon';
 import ReaderP2Icon from 'calypso/reader/components/icons/p2-icon';
 import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
-import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
-import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import getOrganizationSites from 'calypso/state/reader/follows/selectors/get-reader-follows-organization';
 import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
+import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
+import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
 import ReaderSidebarOrganizationsListItem from './list-item';
 import '../style.scss';
 

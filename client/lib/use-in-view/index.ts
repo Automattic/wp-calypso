@@ -2,6 +2,7 @@ import { RefObject, useEffect, useRef } from 'react';
 
 export function useInView< T extends Element >(
 	oneTimeCallback: () => void,
+	options: IntersectionObserverInit = {},
 	dependencies: any[] = []
 ): RefObject< T > {
 	const elementRef = useRef< T >( null );
@@ -32,6 +33,7 @@ export function useInView< T extends Element >(
 			{
 				// Only fire the event when 100% of the element becomes visible
 				threshold: [ 1 ],
+				...options,
 			}
 		);
 

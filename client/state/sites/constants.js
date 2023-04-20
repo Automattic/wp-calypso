@@ -21,6 +21,8 @@ export const SITE_REQUEST_FIELDS = [
 	'site_owner',
 	'is_core_site_editor_enabled',
 	'is_wpcom_atomic',
+	'is_wpcom_staging_site',
+	'was_ecommerce_trial',
 	'description',
 	'user_interactions',
 ].join();
@@ -76,4 +78,7 @@ export const SITE_REQUEST_OPTIONS = [
 	'site_intent',
 	'launchpad_screen',
 	'launchpad_checklist_tasks_statuses',
+	'wpcom_production_blog_id',
+	'wpcom_staging_blog_ids',
+	'can_blaze',
 ].join();

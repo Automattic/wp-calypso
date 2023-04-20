@@ -2,20 +2,12 @@
 @import "@wordpress/base-styles/mixins";
 @import "@automattic/typography/styles/fonts";
 
-$break-design-preview: 1024px;
-
-@mixin break-design-preview() {
-	@media (min-width: #{ ($break-design-preview) }) {
-		@content;
-	}
-}
-
 .design-preview {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
 
-	@include break-design-preview {
+	@include break-xlarge {
 		flex-direction: row;
 		margin: 0;
 		gap: 32px;
@@ -52,7 +44,7 @@ $break-design-preview: 1024px;
 			box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			bottom: 8px;
 			display: flex;
 			flex-direction: column;
@@ -66,12 +58,11 @@ $break-design-preview: 1024px;
 		justify-content: center;
 	}
 
-	@include break-design-preview {
+	@include break-xlarge {
 		border: 0;
 		box-shadow: none;
 		display: block;
-		height: 100%;
-		overflow: scroll;
+		height: auto;
 		padding: 0;
 		position: relative;
 		width: 311px;
@@ -94,6 +85,7 @@ $break-design-preview: 1024px;
 		h1 {
 			color: var(--studio-gray-100);
 			font-family: $brand-serif;
+			font-size: 2rem;
 			font-weight: 400;
 			letter-spacing: -0.4px;
 			line-height: 32px;
@@ -113,7 +105,7 @@ $break-design-preview: 1024px;
 			}
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: block;
 		}
 	}
@@ -122,7 +114,7 @@ $break-design-preview: 1024px;
 		display: none;
 		font-size: $font-body-small;
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: block;
 			margin-top: 0.25rem;
 		}
@@ -151,7 +143,7 @@ $break-design-preview: 1024px;
 			}
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 8px 4px;
@@ -181,21 +173,17 @@ $break-design-preview: 1024px;
 			}
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: block;
 			margin-top: 2rem;
 		}
 	}
 
-	@include break-design-preview {
+	@include break-xlarge {
 		h2 {
 			display: block;
 		}
 	}
-}
-
-.design-preview__style-variation-wrapper {
-	padding: 3px;
 }
 
 .design-preview__sidebar-variations {
@@ -208,25 +196,26 @@ $break-design-preview: 1024px;
 		line-height: 20px;
 	}
 
-	.design-preview__sidebar-variations-grid {
+	.global-styles-variations {
 		align-items: center;
 		display: flex;
 		gap: 8px;
 
-		.design-preview__style-variation {
+		.global-styles-variations__item {
 			flex-shrink: 0;
+			padding: 3px;
 			width: 100px;
 		}
 	}
 
-	@include break-design-preview {
+	@include break-xlarge {
 		margin: 2rem 0 0;
 
 		> p {
 			display: block;
 		}
 
-		.design-preview__sidebar-variations-grid {
+		.global-styles-variations {
 			box-sizing: border-box;
 			display: grid;
 			gap: 12px;
@@ -235,7 +224,7 @@ $break-design-preview: 1024px;
 			padding: 2px;
 			width: 100%;
 
-			.design-preview__style-variation {
+			.global-styles-variations__item {
 				box-sizing: border-box;
 				width: 100%;
 			}
@@ -243,80 +232,17 @@ $break-design-preview: 1024px;
 	}
 }
 
-.design-preview__style-variation {
-	cursor: pointer;
-	position: relative;
-
-	&:hover,
-	&:focus-visible,
-	&--is-selected {
-		&::after {
-			border-radius: 3px; /* stylelint-disable-line scales/radii */
-			bottom: -3px;
-			content: "";
-			display: block;
-			left: -3px;
-			pointer-events: none;
-			position: absolute;
-			right: -3px;
-			top: -3px;
-		}
-	}
-
-	&:hover,
-	&:focus-visible {
-		&::after {
-			box-shadow: 0 0 0 2px var(--studio-blue-50);
-		}
-	}
-
-	&--is-selected {
-		&::after {
-			box-shadow: 0 0 0 2px var(--studio-gray);
-		}
-	}
-
-	&:focus-visible {
-		outline: none;
-	}
-
-	.edit-site-global-styles-preview__iframe {
-		border-radius: 3px; /* stylelint-disable-line scales/radii */
-		box-shadow: 0 0 0 1px rgb(0 0 0 / 10%);
-		border: 0;
-		display: block;
-		max-height: 61.2903px;
-		max-width: 100%;
-		overflow: hidden;
-
-		@include break-design-preview {
-			max-height: 77.2258px;
-		}
-	}
-
-	.design-picker__premium-badge {
-		background-color: var(--color-neutral-80);
-		color: var(--color-neutral-0);
-		font-size: 0.75rem;
-		margin: 0;
-		padding: 2px 12px 2px 6px;
-		position: absolute;
-		top: 6px;
-		left: 6px;
-	}
-}
-
 .design-preview__site-preview {
 	flex-grow: 1;
 	position: relative;
 
-	@include break-design-preview {
+	@include break-xlarge {
 		margin-bottom: 32px;
 	}
 
 	.theme-preview__frame-wrapper {
 		.theme-preview__frame {
-			@media ( max-width: $break-design-preview ) {
+			@media ( max-width: $break-xlarge ) {
 				border: 0;
 				border-radius: 0;
 				box-shadow: none;
@@ -331,10 +257,21 @@ $break-design-preview: 1024px;
 		display: none;
 		margin-top: -11px;
 
-		@include break-design-preview {
+		@include break-xlarge {
 			display: block;
 		}
 	}
+}
+
+.design-picker__premium-badge {
+	background-color: var(--color-neutral-80);
+	color: var(--color-neutral-0);
+	font-size: 0.75rem;
+	margin: 0;
+	padding: 2px 12px 2px 6px;
+	position: absolute;
+	top: 9px;
+	left: 9px;
 }
 
 .design-picker__premium-badge-tooltip.popover {

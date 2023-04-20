@@ -6,7 +6,6 @@ import {
 import page from 'page';
 import { Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import Layout from 'calypso/components/layout';
@@ -17,6 +16,7 @@ import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import {
@@ -24,7 +24,6 @@ import {
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { hasLoadedStoredCardsFromServer } from 'calypso/state/stored-cards/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PaymentMethodSelector from '../payment-method-selector';
 import getPaymentMethodIdFromPayment from '../payment-method-selector/get-payment-method-id-from-payment';
@@ -44,16 +43,16 @@ function ChangePaymentMethod( {
 	siteSlug,
 }: ChangePaymentMethodProps ) {
 	const hasLoadedSites = useSelector( ( state ) => ! isRequestingSites( state ) );
-	const hasLoadedStoredCards = useSelector( hasLoadedStoredCardsFromServer );
 	const hasLoadedUserPurchases = useSelector( hasLoadedUserPurchasesFromServer );
 	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
 	const payment = useSelector( ( state ) => getByPurchaseId( state, purchaseId )?.payment );
 	const selectedSite = useSelector( getSelectedSite );
+	const { isLoading: isLoadingStoredCards } = useStoredPaymentMethods( { type: 'card' } );
 
 	const { isStripeLoading } = useStripe();
 
 	const isDataLoading =
-		! hasLoadedSites || ! hasLoadedUserPurchases || ! hasLoadedStoredCards || isStripeLoading;
+		! hasLoadedSites || ! hasLoadedUserPurchases || isLoadingStoredCards || isStripeLoading;
 	const isDataValid = purchase && selectedSite;
 
 	useEffect( () => {
@@ -71,7 +70,6 @@ function ChangePaymentMethod( {
 	if ( isDataLoading || ! isDataValid ) {
 		return (
 			<Fragment>
-				<QueryStoredCards />
 				<QueryUserPurchases />
 				<PaymentMethodLoader title={ changePaymentMethodTitle } />
 			</Fragment>

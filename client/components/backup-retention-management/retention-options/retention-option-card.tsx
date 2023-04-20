@@ -1,21 +1,20 @@
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import type { TranslateResult } from 'i18n-calypso';
+import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
+import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 
 interface RetentionOptionCardProps {
-	label: string;
-	spaceNeeded: TranslateResult | string;
+	spaceNeededInBytes: number;
 	upgradeRequired: boolean;
 	isCurrentPlan: boolean;
-	value: number;
+	value: RetentionPeriod;
 	checked?: boolean;
 	onChange: ( value: number ) => void;
 }
 
 const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
-	label,
-	spaceNeeded,
+	spaceNeededInBytes,
 	upgradeRequired,
 	isCurrentPlan,
 	value,
@@ -28,6 +27,15 @@ const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 		onChange( value );
 	};
 
+	const spaceNeededText = useStorageText( spaceNeededInBytes );
+
+	const RETENTION_OPTIONS_LABELS: Record< RetentionPeriod, TranslateResult > = {
+		[ 7 ]: translate( '7 days' ),
+		[ 30 ]: translate( '30 days' ),
+		[ 120 ]: translate( '120 days' ),
+		[ 365 ]: translate( '1 year' ),
+	};
+
 	return (
 		<div
 			className="retention-option"
@@ -38,7 +46,7 @@ const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 			tabIndex={ 0 }
 		>
 			<div className="retention-option__headline">
-				<div className="headline__label">{ label }</div>
+				<div className="headline__label">{ RETENTION_OPTIONS_LABELS[ value ] }</div>
 				<input
 					className="headline__input components-radio-control__input"
 					type="radio"
@@ -52,7 +60,7 @@ const RetentionOptionCard: FunctionComponent< RetentionOptionCardProps > = ( {
 			</div>
 			<div className="retention-option__space-needed">
 				<div className="space-needed__label">{ translate( 'Space needed:' ) }</div>
-				<div className="space-needed__value">{ spaceNeeded }</div>
+				<div className="space-needed__value">{ spaceNeededText }</div>
 			</div>
 			<div
 				className={ classnames( 'retention-option__upgrade-required', {

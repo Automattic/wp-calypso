@@ -1,8 +1,12 @@
 import path from 'path';
 import { getMag16Locales, getViewports } from './data-helper';
 import { TEST_ACCOUNT_NAMES } from './secrets';
+import {
+	SupportedEnvVariables,
+	EnvVariableValue,
+	JetpackTarget,
+} from './types/env-variables.types';
 import { TestAccountName } from '.';
-import type { SupportedEnvVariables, EnvVariableValue } from './types/env-variables.types';
 
 const VIEWPORT_NAMES = getViewports();
 const MAG16_LOCALES = getMag16Locales();
@@ -18,7 +22,7 @@ const defaultEnvVariables: SupportedEnvVariables = {
 	COOKIES_PATH: path.join( process.cwd(), 'cookies' ),
 	ARTIFACTS_PATH: path.join( process.cwd(), 'results' ),
 	TEST_ON_ATOMIC: false,
-	TEST_ON_JETPACK: false,
+	JETPACK_TARGET: 'wpcom-production',
 	CALYPSO_BASE_URL: 'https://wordpress.com',
 	BROWSER_NAME: 'chromium',
 	ALLURE_RESULTS_PATH: '',
@@ -103,6 +107,22 @@ const castKnownEnvVariable = ( name: string, value: string ): EnvVariableValue =
 					`Invalid CALYPSO_BASE_URL value: ${ output }.\nYou must provide a valid URL.`
 				);
 			}
+			break;
+		}
+		case 'JETPACK_TARGET': {
+			const supportedValues: JetpackTarget[] = [
+				'remote-site',
+				'wpcom-production',
+				'wpcom-staging',
+			];
+			if ( ! supportedValues.includes( output as JetpackTarget ) ) {
+				throw new Error(
+					`Unknown JETPACK_TARGET value: ${ output }.\nSupported values: ${ supportedValues.join(
+						' | '
+					) }`
+				);
+			}
+			break;
 		}
 	}
 

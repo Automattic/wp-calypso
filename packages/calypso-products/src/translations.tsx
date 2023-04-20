@@ -1,5 +1,5 @@
 import { translate, useTranslate } from 'i18n-calypso';
-import { createElement, useMemo } from 'react';
+import { createElement, useCallback, useMemo } from 'react';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
@@ -44,9 +44,13 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
 } from './constants';
 import type { SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
@@ -181,6 +185,18 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		count: 1,
 		args: { numberOfTerabytes: 1 },
 	} );
+	const text3tb = translate( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', {
+		comment:
+			'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
+		count: 3,
+		args: { numberOfTerabytes: 3 },
+	} );
+	const text5tb = translate( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', {
+		comment:
+			'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
+		count: 5,
+		args: { numberOfTerabytes: 5 },
+	} );
 
 	//Backup Add-on products
 	const backupAddon10gb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
@@ -191,6 +207,12 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 	} );
 	const backupAddon1tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
 		args: { storageAmount: text1tb },
+	} );
+	const backupAddon3tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text3tb },
+	} );
+	const backupAddon5tb = translate( 'VaultPress Backup Add-on Storage (%(storageAmount)s)', {
+		args: { storageAmount: text5tb },
 	} );
 
 	return {
@@ -223,9 +245,13 @@ export const getJetpackProductsDisplayNames = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: backupAddon10gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: backupAddon100gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: backupAddon1tb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_MONTHLY ]: backupAddon3tb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY ]: backupAddon5tb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY ]: backupAddon10gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY ]: backupAddon100gb,
 		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY ]: backupAddon1tb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY ]: backupAddon3tb,
+		[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY ]: backupAddon5tb,
 	};
 };
 
@@ -780,6 +806,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Defer non-essential JavaScript' ),
 		translate( 'Optimize CSS loading' ),
 		translate( 'Lazy image loading' ),
+		translate( 'Image Guide to discover and fix large images on your site' ),
 	];
 	const socialBasicIncludesInfo = [
 		translate( 'Automatically share your posts and products on social media' ),
@@ -943,69 +970,107 @@ export const getJetpackProductsRecommendedFor = (): Record< string, TranslateRes
 };
 
 export const useJetpack10GbStorageAmountText = (): TranslateResult => {
-	const _translate = useTranslate();
+	const translate = useTranslate();
 
 	return useMemo(
 		() =>
-			_translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
+			translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 				comment:
 					'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
 				count: 10,
 				args: { numberOfGigabytes: 10 },
 			} ),
-		[ _translate ]
+		[ translate ]
 	);
 };
 
 export const useJetpack100GbStorageAmountText = (): TranslateResult => {
-	const _translate = useTranslate();
+	const translate = useTranslate();
 
 	return useMemo(
 		() =>
-			_translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
+			translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
 				comment:
 					'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
 				count: 100,
 				args: { numberOfGigabytes: 100 },
 			} ),
-		[ _translate ]
+		[ translate ]
 	);
 };
 
 export const useJetpack1TbStorageAmountText = (): TranslateResult => {
-	const _translate = useTranslate();
+	const translate = useTranslate();
 
 	return useMemo(
 		() =>
-			_translate( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', {
+			translate( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', {
 				comment:
 					'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
 				count: 1,
 				args: { numberOfTerabytes: 1 },
 			} ),
-		[ _translate ]
+		[ translate ]
 	);
 };
 
-export const useJetpackStorageAmountTextByProductSlug = (
-	productSlug: string
-): TranslateResult | undefined => {
-	const TEN_GIGABYTES = useJetpack10GbStorageAmountText();
-	const ONE_TERABYTE = useJetpack1TbStorageAmountText();
+export const useJetpackGbStorageAmountText = ( amount: number ): TranslateResult => {
+	const translate = useTranslate();
 
 	return useMemo(
 		() =>
+			translate( '%(numberOfGigabytes)dGB', '%(numberOfGigabytes)dGB', {
+				comment:
+					'Displays an amount of gigabytes. Plural string used in case GB needs to be pluralized.',
+				count: amount,
+				args: { numberOfGigabytes: amount },
+			} ),
+		[ translate, amount ]
+	);
+};
+
+export const useJetpackTbStorageAmountText = ( amount: number ): TranslateResult => {
+	const translate = useTranslate();
+
+	return useMemo(
+		() =>
+			translate( '%(numberOfTerabytes)dTB', '%(numberOfTerabytes)dTB', {
+				comment:
+					'Displays an amount of terabytes. Plural string used in case TB needs to be pluralized.',
+				count: amount,
+				args: { numberOfTerabytes: amount },
+			} ),
+		[ translate, amount ]
+	);
+};
+
+export const useJetpackStorageAmountTextByProductSlug = (): ( (
+	slug: string
+) => TranslateResult | undefined ) => {
+	const TEN_GIGABYTES = useJetpackGbStorageAmountText( 10 );
+	const HUNDRED_GIGABYTES = useJetpackGbStorageAmountText( 100 );
+	const ONE_TERABYTE = useJetpackTbStorageAmountText( 1 );
+	const THREE_TERABYTE = useJetpackTbStorageAmountText( 3 );
+	const FIVE_TERABYTE = useJetpackTbStorageAmountText( 5 );
+
+	return useCallback(
+		( productSlug ) =>
 			( {
 				[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: TEN_GIGABYTES,
 				[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: TEN_GIGABYTES,
 				[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: ONE_TERABYTE,
 				[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: ONE_TERABYTE,
+				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY ]: TEN_GIGABYTES,
+				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY ]: HUNDRED_GIGABYTES,
+				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY ]: ONE_TERABYTE,
+				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_MONTHLY ]: THREE_TERABYTE,
+				[ PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY ]: FIVE_TERABYTE,
 
 				[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: TEN_GIGABYTES,
 				[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: TEN_GIGABYTES,
 				[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: ONE_TERABYTE,
 				[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: ONE_TERABYTE,
 			}[ productSlug ] ),
-		[ TEN_GIGABYTES, ONE_TERABYTE, productSlug ]
+		[ TEN_GIGABYTES, HUNDRED_GIGABYTES, ONE_TERABYTE, THREE_TERABYTE, FIVE_TERABYTE ]
 	);
 };

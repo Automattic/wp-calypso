@@ -26,7 +26,7 @@ type UpsellPriceProps = {
 	isPriceFetching: boolean | null;
 	currencyCode: string | null;
 };
-const UpsellPrice: React.FC< UpsellPriceProps > = ( {
+export const UpsellPrice: React.FC< UpsellPriceProps > = ( {
 	upsellSlug,
 	originalPrice,
 	isPriceFetching,

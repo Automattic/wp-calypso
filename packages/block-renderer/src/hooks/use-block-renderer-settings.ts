@@ -1,17 +1,20 @@
 import { useQuery, UseQueryResult, UseQueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
+import type { BlockRendererSettings } from '../types';
 
 const useBlockRendererSettings = (
 	siteId: number | string,
 	stylesheet: string,
-	queryOptions: UseQueryOptions< unknown, unknown, unknown > = {}
-): UseQueryResult< unknown > => {
+	useInlineStyles = false,
+	queryOptions: UseQueryOptions< unknown, unknown, BlockRendererSettings > = {}
+): UseQueryResult< BlockRendererSettings > => {
 	const params = new URLSearchParams( {
 		stylesheet,
+		use_inline_styles: useInlineStyles.toString(),
 	} );
 
-	return useQuery< any, unknown, unknown >(
-		[ siteId, 'block-renderer' ],
+	return useQuery< any, unknown, BlockRendererSettings >(
+		[ siteId, 'block-renderer', stylesheet, useInlineStyles ],
 		() =>
 			wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteId ) }/block-renderer/settings`,

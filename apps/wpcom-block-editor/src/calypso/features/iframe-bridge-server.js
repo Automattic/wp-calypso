@@ -698,7 +698,7 @@ async function openLinksInParentFrame( calypsoPort ) {
 		}
 	} );
 	const popoverSlotElem = document.querySelector( '.interface-interface-skeleton ~ .popover-slot' );
-	popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
+	popoverSlotElem && popoverSlotObserver.observe( popoverSlotElem, { childList: true } );
 
 	// Sidebar might already be open before this script is executed.
 	// post and site editors
@@ -1020,29 +1020,28 @@ function handleInlineHelpButton( calypsoPort ) {
  * @param {MessagePort} calypsoPort Port used for communication with parent frame.
  */
 function handleSiteEditorBackButton( calypsoPort ) {
+	// We use the traversal helper because the target element may be the SVG or an SVG element inside.
+	function traverseToFindLink( element, link, depth = 2 ) {
+		let foundLink = false;
+		while ( depth >= 0 ) {
+			if ( element.tagName.toLowerCase() === 'a' && element?.href === link ) {
+				foundLink = true;
+				break;
+			}
+			element = element.parentElement;
+			depth--;
+		}
+		return foundLink;
+	}
+
 	// have to do this event delegation style because the Editor isn't fully initialized yet.
 	document.getElementById( 'wpwrap' ).addEventListener( 'click', ( event ) => {
-		const clickedElement = event.target;
-		const isOldDashboardButton =
-			clickedElement.classList.contains( 'edit-site-navigation-panel__back-to-dashboard' ) ||
-			// The above fails if user clicked internal SVG. So check the parent again.
-			clickedElement.parentElement?.classList.contains(
-				'edit-site-navigation-panel__back-to-dashboard'
-			) ||
-			// The above fails if the user clicked the internal path. So check the parent's parent...
-			clickedElement.parentElement?.parentElement?.classList.contains(
-				'edit-site-navigation-panel__back-to-dashboard'
-			);
-
-		// The new dashboard button proposed with Gutenberg 14.8 has no useful class selector for
-		// this state. Instead, lets treat any element with an href corresponding to the
-		// dashboardLink setting as the close button.
 		const dashboardLink = select( 'core/edit-site' )?.getSettings?.().__experimentalDashboardLink;
-		const isNewDashboardButton =
-			clickedElement.attributes?.href?.value &&
-			clickedElement.attributes?.href?.value === dashboardLink;
+		// The link has changed. Pray it doesn't change any further.
+		// This is how to find it in Gutenberg 15.2.
+		const isDashboardLink = traverseToFindLink( event.target, dashboardLink );
 
-		if ( isOldDashboardButton || isNewDashboardButton ) {
+		if ( isDashboardLink ) {
 			event.preventDefault();
 			calypsoPort.postMessage( { action: 'navigateToHome' } );
 		}

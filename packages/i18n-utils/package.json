@@ -30,8 +30,8 @@
 	"dependencies": {
 		"@automattic/calypso-url": "workspace:^",
 		"@automattic/languages": "workspace:^",
-		"@wordpress/compose": "^5.7.0",
-		"@wordpress/i18n": "^4.9.0",
+		"@wordpress/compose": "^5.20.0",
+		"@wordpress/i18n": "^4.22.0",
 		"react": "^17.0.2",
 		"tslib": "^2.3.0"
 	},

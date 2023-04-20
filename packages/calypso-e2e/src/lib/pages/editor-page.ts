@@ -41,7 +41,8 @@ const selectors = {
 	// Welcome tour
 	welcomeTourCloseButton: 'button[aria-label="Close Tour"]',
 };
-export const EXTENDED_EDITOR_WAIT_TIMEOUT = 30 * 1000;
+export const EXTENDED_EDITOR_WAIT_TIMEOUT = 20 * 1000;
+export const EXTENDED_EDITOR_WAIT_ATOMIC_TIMEOUT = 60 * 1000;
 
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
@@ -151,10 +152,16 @@ export class EditorPage {
 	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< void > {
+		const timeout =
+			this.target === 'atomic' ? EXTENDED_EDITOR_WAIT_ATOMIC_TIMEOUT : EXTENDED_EDITOR_WAIT_TIMEOUT;
+
 		// In a typical loading scenario, this request is one of the last to fire.
 		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
 		// it is a fairly good stand-in.
-		await this.page.waitForResponse( /.*posts.*/, { timeout: EXTENDED_EDITOR_WAIT_TIMEOUT } );
+		await Promise.all( [
+			this.page.waitForURL( /(post|page|post-new.php)/ ),
+			this.page.waitForResponse( /.*posts.*/, { timeout: timeout } ),
+		] );
 
 		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
@@ -304,11 +311,14 @@ export class EditorPage {
 	 */
 	async addBlockFromSidebar(
 		blockName: string,
-		blockEditorSelector: string
+		blockEditorSelector: string,
+		{ noSearch }: { noSearch?: boolean } = {}
 	): Promise< ElementHandle > {
 		await this.editorGutenbergComponent.resetSelectedBlock();
 		await this.editorToolbarComponent.openBlockInserter();
-		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent );
+		await this.addBlockFromInserter( blockName, this.editorSidebarBlockInserterComponent, {
+			noSearch: noSearch,
+		} );
 
 		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
 			blockEditorSelector
@@ -377,9 +387,12 @@ export class EditorPage {
 	 */
 	private async addBlockFromInserter(
 		blockName: string,
-		inserter: BlockInserter
+		inserter: BlockInserter,
+		{ noSearch }: { noSearch?: boolean } = {}
 	): Promise< void > {
-		await inserter.searchBlockInserter( blockName );
+		if ( ! noSearch ) {
+			await inserter.searchBlockInserter( blockName );
+		}
 		await inserter.selectBlockInserterResult( blockName );
 	}
 
@@ -642,14 +655,13 @@ export class EditorPage {
 
 		const json = await response.json();
 
+		// AT and Simple sites have slightly differing response from the API.
 		let publishedURL: string;
-		if ( this.target === 'atomic' ) {
+		if ( json.link ) {
 			publishedURL = json.link;
-		} else {
+		} else if ( json.body.link ) {
 			publishedURL = json.body.link;
-		}
-
-		if ( ! publishedURL ) {
+		} else {
 			throw new Error( 'No published article URL found in response.' );
 		}
 

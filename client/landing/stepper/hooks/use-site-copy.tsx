@@ -1,4 +1,5 @@
 import { WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
+import { COPY_SITE_FLOW, addProductsToCart } from '@automattic/onboarding';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useMemo, useCallback } from 'react';
@@ -15,7 +16,9 @@ import {
 import getSiteFeatures from 'calypso/state/selectors/get-site-features';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
+import type { SiteSelect } from '@automattic/data-stores';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 interface SiteCopyOptions {
 	enabled: boolean;
@@ -38,6 +41,20 @@ function useSafeSiteHasFeature( siteId: number | undefined, feature: string, ena
 	} );
 }
 
+function getMarketplaceProducts( purchases: Purchase[] | null, siteId: number ) {
+	return ( purchases || [] )
+		.filter(
+			( purchase ) =>
+				[ 'marketplace_plugin', 'marketplace_theme' ].includes( purchase.productType ) &&
+				purchase.siteId === siteId
+		)
+		.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
+}
+
+function getPlanProduct( plan: SiteExcerptData[ 'plan' ] ) {
+	return { product_slug: plan?.product_slug as string };
+}
+
 export const useSiteCopy = (
 	site: Pick< SiteExcerptData, 'ID' | 'site_owner' | 'plan' > | undefined,
 	options: SiteCopyOptions = { enabled: true }
@@ -53,8 +70,9 @@ export const useSiteCopy = (
 		return siteFeatures ? siteFeatures : { isRequesting: true };
 	} );
 	const isAtomic = useSelect(
-		( select ) => site && options.enabled && select( SITE_STORE ).isSiteAtomic( site?.ID ),
-		[ site?.ID, options.enabled ]
+		( select ) =>
+			site && options.enabled && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site?.ID ),
+		[ site, options.enabled ]
 	);
 	const plan = site?.plan;
 	const isSiteOwner = site?.site_owner === userId;
@@ -73,39 +91,52 @@ export const useSiteCopy = (
 	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchases, isAtomic ] );
 
 	const startSiteCopy = useCallback( () => {
-		if ( ! shouldShowSiteCopyItem ) {
+		if ( ! shouldShowSiteCopyItem || ! site?.ID ) {
 			return;
 		}
 		clearSignupDestinationCookie();
 		resetOnboardStore();
-		setPlanCartItem( { product_slug: plan?.product_slug as string } );
-
-		const marketplacePluginProducts = ( purchases || [] )
-			.filter(
-				( purchase ) =>
-					[ 'marketplace_plugin', 'marketplace_theme' ].includes( purchase.productType ) &&
-					purchase.siteId === site?.ID
-			)
-			.map( ( purchase ) => ( { product_slug: purchase.productSlug } ) );
-
-		setProductCartItems( marketplacePluginProducts );
+		const planProduct = getPlanProduct( plan );
+		setPlanCartItem( planProduct );
+		const marketplaceProducts = getMarketplaceProducts( purchases, site?.ID );
+		setProductCartItems( marketplaceProducts );
 	}, [
+		shouldShowSiteCopyItem,
+		site?.ID,
+		resetOnboardStore,
 		plan,
 		setPlanCartItem,
 		purchases,
-		resetOnboardStore,
-		shouldShowSiteCopyItem,
 		setProductCartItems,
-		site?.ID,
 	] );
+
+	const resumeSiteCopy = useCallback(
+		async ( destinationSiteSlug: string ) => {
+			if ( ! shouldShowSiteCopyItem || ! site?.ID ) {
+				return;
+			}
+			await addProductsToCart( destinationSiteSlug, COPY_SITE_FLOW, [
+				getPlanProduct( plan ),
+				...getMarketplaceProducts( purchases, site.ID ),
+			] );
+		},
+		[ plan, purchases, shouldShowSiteCopyItem, site?.ID ]
+	);
 
 	return useMemo(
 		() => ( {
 			shouldShowSiteCopyItem,
 			startSiteCopy,
+			resumeSiteCopy,
 			isFetching: isLoadingPurchases || isRequestingSiteFeatures,
 		} ),
-		[ isLoadingPurchases, isRequestingSiteFeatures, shouldShowSiteCopyItem, startSiteCopy ]
+		[
+			isLoadingPurchases,
+			isRequestingSiteFeatures,
+			resumeSiteCopy,
+			shouldShowSiteCopyItem,
+			startSiteCopy,
+		]
 	);
 };
 

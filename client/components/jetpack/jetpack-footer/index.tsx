@@ -1,8 +1,8 @@
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import React from 'react';
-import JetpackLogo from 'calypso/components/jetpack-logo';
 import AutomatticBylineLogo from 'calypso/components/jetpack/automattic-byline-logo';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 import type { JetpackFooterProps } from './types';
 
 import './style.scss';

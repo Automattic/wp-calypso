@@ -21,6 +21,11 @@ const BlazePressStrings = () => {
 	translate( 'Ad destination' );
 	translate( 'Audience' );
 	translate( 'Budget & Duration' );
+	translate( 'Save' );
+	translate( 'Save selection' );
+	translate( 'Use post image' );
+	translate( 'Upload' );
+	translate( 'Use + / - or simply drag the image to adjust it' );
 	translate( 'Payment' );
 	translate( 'You won’t be charged until the ad is approved and starts running.' );
 	translate( 'You can pause spending at any time.' );
@@ -47,6 +52,12 @@ const BlazePressStrings = () => {
 	translate(
 		'Cannot create subscription. Please {{supportLink}}contact support{{/supportLink}} or try again later.'
 	);
+	translate(
+		'There was an error with the address. Please, verify that all the required data is valid'
+	);
+	translate(
+		'There was an error with the address. The province, state or region should be filled'
+	);
 	translate( 'State field is required' );
 	translate( 'Use saved card' );
 	translate( 'First Name' );
@@ -62,7 +73,6 @@ const BlazePressStrings = () => {
 	translate( 'Checking payment information' );
 	translate( 'Appearance' );
 	translate( 'Image' );
-	translate( 'Change' );
 	translate( 'Title' );
 	translate( '%(charactersLeft)s characters remaining' );
 	translate( 'Snippet' );
@@ -80,13 +90,21 @@ const BlazePressStrings = () => {
 	translate( 'Audience & Budget' );
 	translate( 'Save and Submit' );
 	translate( 'Next' );
+	translate( 'Close' );
+	translate( 'Make the most of your Blaze campaign' );
+	translate( 'Choose an eye-catching image for your ad' );
+	translate( 'Adjust your title to make it more engaging' );
+	translate( 'Pick the right audience, budget and duration' );
+	translate( 'Get started' );
+	translate( 'Learn more' );
+	translate( "Don't show me this step again." );
 	translate( 'Drop image here' );
 	translate( 'Click or Drag an image here' );
-	translate( 'Reset' );
-	translate( 'Save selection' );
-	translate( 'Crop ad image' );
 	translate( 'All fields marked as required' );
 	translate( 'must be completed to continue' );
+	translate( 'All' );
+	translate( 'Mobile devices' );
+	translate( 'Desktop devices' );
 };
 
 if ( window.BlazePress ) {

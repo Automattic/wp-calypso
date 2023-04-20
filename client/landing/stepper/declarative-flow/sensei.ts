@@ -2,9 +2,6 @@ import { useLocale } from '@automattic/i18n-utils';
 import { SENSEI_FLOW, useFlowProgress } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE, USER_STORE } from '../stores';
 import ProcessingStep from './internals/steps-repository/processing-step';
@@ -14,6 +11,7 @@ import SenseiPlan from './internals/steps-repository/sensei-plan';
 import SenseiPurpose from './internals/steps-repository/sensei-purpose';
 import SenseiSetup from './internals/steps-repository/sensei-setup';
 import { AssertConditionState, Flow } from './internals/types';
+import type { UserSelect } from '@automattic/data-stores';
 import './internals/sensei.scss';
 
 const sensei: Flow = {
@@ -22,11 +20,6 @@ const sensei: Flow = {
 		return translate( 'Sensei' );
 	},
 	useSteps() {
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
-			recordFullStoryEvent( 'calypso_signup_start_sensei', { flow: this.name } );
-		}, [] );
-
 		return [
 			{ slug: 'senseiSetup', component: SenseiSetup },
 			{ slug: 'senseiDomain', component: SenseiDomain },
@@ -70,7 +63,10 @@ const sensei: Flow = {
 
 	useAssertConditions() {
 		const flowName = this.name;
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 		const locale = useLocale();
 		const logInUrl =
 			locale && locale !== 'en'

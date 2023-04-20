@@ -1,6 +1,4 @@
 import debugFactory from 'debug';
-import { Provider as ReduxProvider } from 'react-redux';
-import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { requestTheme, setBackPath } from 'calypso/state/themes/actions';
 import { getTheme, getThemeRequestErrors } from 'calypso/state/themes/selectors';
 import ThemeSheetComponent from './main';
@@ -62,17 +60,18 @@ export function details( context, next ) {
 	}
 
 	context.primary = (
-		<ThemeSheetComponent id={ slug } section={ section } pathName={ context.pathname } />
+		<ThemeSheetComponent
+			id={ slug }
+			section={ section }
+			pathName={ context.pathname }
+			syncActiveTheme={ context.query?.[ 'sync-active-theme' ] === 'true' }
+		/>
 	);
 
 	next();
 }
 
 export function notFoundError( err, context, next ) {
-	context.layout = (
-		<ReduxProvider store={ context.store }>
-			<LayoutLoggedOut primary={ <ThemeNotFoundError /> } />
-		</ReduxProvider>
-	);
+	context.primary = <ThemeNotFoundError />;
 	next( err );
 }

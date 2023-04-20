@@ -2,58 +2,72 @@
 
 exports[`Theme rendering with default display buttonContents should match snapshot 1`] = `
 <div
-  class="card theme is-actionable is-clickable"
+  class="card theme-card theme-card--is-actionable is-clickable"
   data-e2e-theme="twenty-seventeen"
 >
   <div
-    class="theme__content"
+    class="theme-card__content"
   >
-    <a
-      aria-label="Twenty Seventeen"
-      class="theme__thumbnail"
-      href="javascript:;"
-    >
-      <div
-        class="theme__thumbnail-label"
-      />
-      <img
-        class="theme__img"
-        src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
-        srcset="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
-      />
-    </a>
     <div
-      class="theme__info"
+      class="theme-card__image-container"
+    >
+      <a
+        aria-label="Twenty Seventeen"
+        class="theme-card__image"
+        href="#"
+      >
+        <div
+          class="theme-card__image-label"
+        >
+          Info
+        </div>
+        <img
+          class="theme__img"
+          src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
+          srcset="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
+        />
+      </a>
+    </div>
+    <div
+      class="theme-card__info"
     >
       <h2
-        class="theme__info-title"
+        class="theme-card__info-title"
       >
-        Twenty Seventeen
+        <span>
+          Twenty Seventeen
+        </span>
       </h2>
-      <span
-        class="theme__info-upsell-description"
+      <div
+        class="theme-card__info-pricing"
       >
-        Free
-      </span>
-      <span
-        class="theme__more-button"
+        <span>
+          Free
+        </span>
+      </div>
+      <div
+        class="theme-card__info-options"
       >
-        <button
-          aria-label="More options for theme Twenty Seventeen"
+        <span
+          class="theme__more-button"
         >
-          <svg
-            class="gridicon gridicons-ellipsis"
-            height="24"
-            viewBox="0 0 24 24"
-            width="24"
-            xmlns="http://www.w3.org/2000/svg"
+          <button
+            aria-label="More options for theme Twenty Seventeen"
           >
-            <use
-              xlink:href="gridicons.svg#gridicons-ellipsis"
-            />
-          </svg>
-        </button>
-      </span>
+            <svg
+              class="gridicon gridicons-ellipsis"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <use
+                xlink:href="gridicons.svg#gridicons-ellipsis"
+              />
+            </svg>
+          </button>
+        </span>
+      </div>
     </div>
   </div>
 </div>

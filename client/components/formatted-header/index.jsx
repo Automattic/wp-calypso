@@ -35,20 +35,22 @@ function FormattedHeader( {
 
 	return (
 		<header id={ id } className={ classes }>
+			<div>
+				{ ! isSecondary && (
+					<h1 className={ headerClasses }>
+						{ preventWidows( headerText, 2 ) } { tooltip }
+					</h1>
+				) }
+				{ isSecondary && (
+					<h2 className={ headerClasses }>
+						{ preventWidows( headerText, 2 ) } { tooltip }
+					</h2>
+				) }
+				{ subHeaderText && (
+					<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
+				) }
+			</div>
 			{ children }
-			{ ! isSecondary && (
-				<h1 className={ headerClasses }>
-					{ preventWidows( headerText, 2 ) } { tooltip }
-				</h1>
-			) }
-			{ isSecondary && (
-				<h2 className={ headerClasses }>
-					{ preventWidows( headerText, 2 ) } { tooltip }
-				</h2>
-			) }
-			{ subHeaderText && (
-				<p className="formatted-header__subtitle">{ preventWidows( subHeaderText, 2 ) }</p>
-			) }
 		</header>
 	);
 }

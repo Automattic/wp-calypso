@@ -13,10 +13,10 @@ const BlankCanvas = ( { className, children } ) => {
 	const dispatch = useDispatch();
 
 	useEffect( () => {
-		document.body.classList.add( 'has-blank-canvas' );
+		document.documentElement.classList.add( 'has-blank-canvas' );
 		dispatch( setLayoutFocus( 'content' ) );
 
-		return () => document.body.classList.remove( 'has-blank-canvas' );
+		return () => document.documentElement.classList.remove( 'has-blank-canvas' );
 	}, [] );
 
 	return ReactDOM.createPortal(

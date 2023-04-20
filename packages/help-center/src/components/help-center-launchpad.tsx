@@ -8,7 +8,9 @@ import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
+// import { useLaunchpadChecklist } from '../hooks/use-launchpad';
 import { SITE_STORE } from '../stores';
+import type { SiteSelect } from '@automattic/data-stores';
 
 const getEnvironmentHostname = () => {
 	try {
@@ -28,13 +30,29 @@ const getEnvironmentHostname = () => {
 
 export const HelpCenterLaunchpad = () => {
 	const { __ } = useI18n();
+
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
-	const site = useSelect( ( select ) => siteId && select( SITE_STORE ).getSite( siteId ) );
-	const siteIntent = site && site?.options?.site_intent;
-	const siteSlug = site && new URL( site.URL ).host;
+	const site = useSelect(
+		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ),
+		[ siteId ]
+	);
+	let siteIntent = site && site?.options?.site_intent;
+	let siteSlug = site && new URL( site.URL ).host;
+
+	if ( ! siteIntent || ! siteSlug ) {
+		siteIntent = window?.helpCenterData?.currentSite?.site_intent;
+		siteSlug = window?.location?.host;
+	}
+
+	// We are commenting this out temporarily while we wait
+	// for new endpoint in jetpack-mu-wpcom to be deployed.
+	// const { data } = useLaunchpadChecklist( siteSlug, siteIntent || '' );
+	// const totalLaunchpadSteps = data?.checklist?.length || 4;
+	// const completeLaunchpadSteps =
+	// 	data?.checklist?.filter( ( checklistItem ) => checklistItem.completed ).length || 1;
+
 	const launchpadURL = `${ getEnvironmentHostname() }/setup/${ siteIntent }/launchpad?siteSlug=${ siteSlug }`;
 	const sectionName = useSelector( ( state ) => getSectionName( state ) );
-
 	const handleLaunchpadHelpLinkClick = () => {
 		recordTracksEvent( 'calypso_help_launchpad_click', {
 			link: launchpadURL,
@@ -44,7 +62,7 @@ export const HelpCenterLaunchpad = () => {
 		} );
 	};
 
-	if ( ! site || ! siteIntent || ! siteSlug ) {
+	if ( ! siteIntent || ! siteSlug ) {
 		return null;
 	}
 	return (

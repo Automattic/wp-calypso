@@ -1,29 +1,34 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-
 import {
 	getYearlyPlanByMonthly,
 	isWpComPlan,
 	plansLink,
 	isMonthly,
+	PLAN_ANNUAL_PERIOD,
 } from '@automattic/calypso-products';
 import { Popover } from '@automattic/components';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { omit } from 'lodash';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import CSSTransition from 'react-transition-group/CSSTransition';
 import { Primitive } from 'utility-types';
 import SegmentedControl from 'calypso/components/segmented-control';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ProvideExperimentData } from 'calypso/lib/explat';
 import { addQueryArgs } from 'calypso/lib/url';
 import {
 	getPlanBySlug,
 	getPlanRawPrice,
 	getDiscountedRawPrice,
+	getPlanBillPeriod,
 } from 'calypso/state/plans/selectors';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import type { IAppState } from 'calypso/state/types';
 
 export type PlanTypeSelectorProps = {
 	kind: 'interval' | 'customer';
@@ -35,12 +40,14 @@ export type PlanTypeSelectorProps = {
 	siteSlug?: string | null;
 	selectedPlan?: string;
 	selectedFeature?: string;
+	showBiannualToggle?: boolean;
 	isInSignup: boolean;
 	plans: string[];
 	eligibleForWpcomMonthlyPlans?: boolean;
 	isPlansInsideStepper: boolean;
 	hideDiscountLabel: boolean;
 	redirectTo?: string | null;
+	isStepperUpgradeFlow: boolean;
 };
 
 interface PathArgs {
@@ -58,7 +65,7 @@ export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} )
 		plan: props.selectedPlan,
 	};
 
-	if ( props.isInSignup || 'customerType' in additionalArgs ) {
+	if ( props.isInSignup || 'customerType' in additionalArgs || props.isStepperUpgradeFlow ) {
 		return addQueryArgs(
 			{
 				...defaultArgs,
@@ -123,27 +130,51 @@ export type IntervalTypeProps = Pick<
 	| 'isPlansInsideStepper'
 	| 'hideDiscountLabel'
 	| 'redirectTo'
+	| 'showBiannualToggle'
 >;
 
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();
-	const { intervalType, isInSignup, eligibleForWpcomMonthlyPlans, hideDiscountLabel } = props;
+	const {
+		intervalType,
+		isInSignup,
+		eligibleForWpcomMonthlyPlans,
+		hideDiscountLabel,
+		showBiannualToggle,
+	} = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
 		'is-signup': isInSignup,
 	} );
 	const popupIsVisible = Boolean( intervalType === 'monthly' && isInSignup && props.plans.length );
 	const maxDiscount = useMaxDiscount( props.plans );
+	const currentPlanBillingPeriod = useSelector( ( state ) => {
+		const currentSitePlanSlug = getSitePlanSlug( state, getSelectedSiteId( state ) );
+		return currentSitePlanSlug ? getPlanBillPeriod( state, currentSitePlanSlug ) : null;
+	} );
 
-	if ( ! eligibleForWpcomMonthlyPlans ) {
-		return null;
+	if ( showBiannualToggle ) {
+		// skip showing toggle if current plan's term is higher than 1 year
+		if ( currentPlanBillingPeriod && PLAN_ANNUAL_PERIOD < currentPlanBillingPeriod ) {
+			return null;
+		}
+	}
+
+	if ( ! showBiannualToggle ) {
+		if ( ! eligibleForWpcomMonthlyPlans ) {
+			return null;
+		}
 	}
 
 	const additionalPathProps = props.redirectTo ? { redirect_to: props.redirectTo } : {};
 
-	const domainFromHomeUpsellFlow = new URLSearchParams( window.location.search ).get(
-		'get_domain'
+	const isDomainUpsellFlow = new URLSearchParams( window.location.search ).get( 'domain' );
+
+	const isDomainAndPlanPackageFlow = new URLSearchParams( window.location.search ).get(
+		'domainAndPlanPackage'
 	);
+
+	const intervalTabs = showBiannualToggle ? [ 'yearly', '2yearly' ] : [ 'monthly', 'yearly' ];
 
 	return (
 		<IntervalTypeToggleWrapper
@@ -151,40 +182,37 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 			isInSignup={ isInSignup }
 		>
 			<SegmentedControl compact className={ segmentClasses } primary={ true }>
-				<SegmentedControl.Item
-					selected={ intervalType === 'monthly' }
-					path={ generatePath( props, {
-						intervalType: 'monthly',
-						get_domain: domainFromHomeUpsellFlow,
-						...additionalPathProps,
-					} ) }
-					isPlansInsideStepper={ props.isPlansInsideStepper }
-				>
-					<span>{ translate( 'Pay monthly' ) }</span>
-				</SegmentedControl.Item>
-
-				<SegmentedControl.Item
-					selected={ intervalType === 'yearly' }
-					path={ generatePath( props, {
-						intervalType: 'yearly',
-						get_domain: domainFromHomeUpsellFlow,
-						...additionalPathProps,
-					} ) }
-					isPlansInsideStepper={ props.isPlansInsideStepper }
-				>
-					<span ref={ ( ref ) => ref && setSpanRef( ref ) }>{ translate( 'Pay annually' ) }</span>
-					{ hideDiscountLabel ? null : (
-						<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
-							{ translate(
-								'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
-								{
-									args: { maxDiscount },
-									comment: 'Will be like "Save up to 30% by paying annually..."',
-								}
-							) }
-						</PopupMessages>
-					) }
-				</SegmentedControl.Item>
+				{ intervalTabs.map( ( interval ) => (
+					<SegmentedControl.Item
+						key={ interval }
+						selected={ intervalType === interval }
+						path={ generatePath( props, {
+							intervalType: interval,
+							domain: isDomainUpsellFlow,
+							domainAndPlanPackage: isDomainAndPlanPackageFlow,
+							...additionalPathProps,
+						} ) }
+						isPlansInsideStepper={ props.isPlansInsideStepper }
+					>
+						<span ref={ intervalType === 'monthly' ? ( ref ) => ref && setSpanRef( ref ) : null }>
+							{ interval === 'monthly' ? translate( 'Pay monthly' ) : null }
+							{ interval === 'yearly' && ! showBiannualToggle ? translate( 'Pay annually' ) : null }
+							{ interval === 'yearly' && showBiannualToggle ? translate( 'Pay 1 year' ) : null }
+							{ interval === '2yearly' ? translate( 'Pay 2 years' ) : null }
+						</span>
+						{ ! showBiannualToggle && hideDiscountLabel ? null : (
+							<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
+								{ translate(
+									'Save up to %(maxDiscount)d%% by paying annually and get a free domain for one year',
+									{
+										args: { maxDiscount },
+										comment: 'Will be like "Save up to 30% by paying annually..."',
+									}
+								) }
+							</PopupMessages>
+						) }
+					</SegmentedControl.Item>
+				) ) }
 			</SegmentedControl>
 		</IntervalTypeToggleWrapper>
 	);
@@ -240,6 +268,12 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 	kind,
 	...props
 } ) => {
+	useEffect( () => {
+		recordTracksEvent( 'calypso_plans_plan_type_selector_view', {
+			kind,
+		} );
+	}, [] );
+
 	if ( kind === 'interval' ) {
 		return <IntervalTypeToggle { ...props } />;
 	}
@@ -254,7 +288,7 @@ const PlanTypeSelector: React.FunctionComponent< PlanTypeSelectorProps > = ( {
 function useMaxDiscount( plans: string[] ): number {
 	const wpcomMonthlyPlans = ( plans || [] ).filter( isWpComPlan ).filter( isMonthly );
 	const [ maxDiscount, setMaxDiscount ] = useState( 0 );
-	const discounts = useSelector( ( state ) => {
+	const discounts = useSelector( ( state: IAppState ) => {
 		return wpcomMonthlyPlans.map( ( planSlug ) => {
 			const monthlyPlan = getPlanBySlug( state, planSlug );
 			const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( planSlug ) );

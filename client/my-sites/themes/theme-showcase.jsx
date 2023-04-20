@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { localize, translate } from 'i18n-calypso';
-import { compact, omit, pickBy } from 'lodash';
+import { compact, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -26,6 +26,7 @@ import getSiteFeaturesById from 'calypso/state/selectors/get-site-features';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { setBackPath } from 'calypso/state/themes/actions';
 import {
 	arePremiumThemesEnabled,
 	getThemeFilterTerms,
@@ -36,13 +37,13 @@ import {
 	isUpsellCardDisplayed as isUpsellCardDisplayedSelector,
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
+import EligibilityWarningModal from './atomic-transfer-dialog';
 import { addTracking, getSubjectsFromTermTable, trackClick, localizeThemesPath } from './helpers';
 import InstallThemeButton from './install-theme-button';
 import ThemePreview from './theme-preview';
 import ThemesHeader from './themes-header';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
-
 import './theme-showcase.scss';
 
 const optionShape = PropTypes.shape( {
@@ -68,7 +69,7 @@ class ThemeShowcase extends Component {
 
 	static propTypes = {
 		emptyContent: PropTypes.element,
-		tier: PropTypes.oneOf( [ '', 'free', 'premium' ] ),
+		tier: PropTypes.oneOf( [ '', 'free', 'premium', 'marketplace' ] ),
 		search: PropTypes.string,
 		pathName: PropTypes.string,
 		// Connected props
@@ -118,6 +119,10 @@ class ThemeShowcase extends Component {
 		) {
 			this.scrollToSearchInput();
 		}
+	}
+
+	componentWillUnmount() {
+		this.props.setBackPath( this.constructUrl( { searchString: this.props.search } ) );
 	}
 
 	isStaticFilter = ( tabFilter ) => {
@@ -172,6 +177,7 @@ class ThemeShowcase extends Component {
 			{ value: 'all', label: this.props.translate( 'All' ) },
 			{ value: 'free', label: this.props.translate( 'Free' ) },
 			{ value: 'premium', label: this.props.translate( 'Premium' ) },
+			{ value: 'marketplace', label: this.props.translate( 'Paid' ) },
 		];
 	};
 
@@ -377,16 +383,16 @@ class ThemeShowcase extends Component {
 			// these are from the time we rely on the redirect.
 			// See p2-pau2Xa-4nq#comment-12480
 			let location = 'theme-banner';
-			let utmCampaign = 'built-by-wordpress-com-redirect';
+			let refURLParam = 'built-by-wordpress-com-redirect';
 
 			// See p2-pau2Xa-4nq#comment-12458 for the context regarding the utm campaign value.
 			switch ( tabKey ) {
 				case staticFilters.ALL.key:
 					location = 'all-theme-banner';
-					utmCampaign = 'theme-all';
+					refURLParam = 'themes';
 			}
 
-			return <UpworkBanner location={ location } utmCampaign={ utmCampaign } />;
+			return <UpworkBanner location={ location } refURLParam={ refURLParam } />;
 		}
 
 		return upsellBanner;
@@ -435,6 +441,7 @@ class ThemeShowcase extends Component {
 			vertical: this.props.vertical,
 			siteId: this.props.siteId,
 			upsellUrl: this.props.upsellUrl,
+			upsellBanner: this.props.upsellBanner,
 			search: search,
 			tier: this.props.tier,
 			defaultOption: this.props.defaultOption,
@@ -472,7 +479,6 @@ class ThemeShowcase extends Component {
 		const tabFilters = this.getTabFilters();
 		const tiers = this.getTiers();
 
-		// FIXME: Logged-in title should only be 'Themes'
 		return (
 			<div className="theme-showcase">
 				<DocumentHead title={ title } meta={ metas } />
@@ -481,58 +487,78 @@ class ThemeShowcase extends Component {
 					title={ this.props.analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				{ isLoggedIn && (
-					<ThemesHeader
-						description={ translate(
-							'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
-							{
-								components: {
-									learnMoreLink: <InlineSupportLink supportContext="themes" showIcon={ false } />,
-								},
-							}
-						) }
-					>
-						<div className="themes__install-theme-button-container">
-							<InstallThemeButton />
-						</div>
-						<ScreenOptionsTab wpAdminPath="themes.php" />
-					</ThemesHeader>
-				) }
+				<ThemesHeader
+					title={
+						isLoggedIn
+							? translate( 'Themes' )
+							: translate( 'Find the perfect theme for your website' )
+					}
+					description={
+						isLoggedIn
+							? translate(
+									'Select or update the visual design for your site. {{learnMoreLink}}Learn more{{/learnMoreLink}}.',
+									{
+										components: {
+											learnMoreLink: (
+												<InlineSupportLink supportContext="themes" showIcon={ false } />
+											),
+										},
+									}
+							  )
+							: translate(
+									'Beautiful and responsive WordPress.com themes. Choose from free and premium options for all types of websites. Then, install the one that is right for you.'
+							  )
+					}
+				>
+					{ isLoggedIn && (
+						<>
+							<div className="themes__install-theme-button-container">
+								<InstallThemeButton />
+							</div>
+							<ScreenOptionsTab wpAdminPath="themes.php" />
+						</>
+					) }
+				</ThemesHeader>
 				<div className="themes__content" ref={ this.scrollRef }>
 					<QueryThemeFilters />
-					<SearchThemes
-						query={ filterString + search }
-						onSearch={ this.doSearch }
-						recordTracksEvent={ this.recordSearchThemesTracksEvent }
-					/>
-					{ tabFilters && (
-						<div className="theme__filters">
-							<ThemesToolbarGroup
-								items={ Object.values( tabFilters ) }
-								selectedKey={ this.state.tabFilter.key }
-								onSelect={ ( key ) =>
-									this.onFilterClick(
-										Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
-									)
-								}
-							/>
-							{ premiumThemesEnabled && ! isMultisite && (
-								<SimplifiedSegmentedControl
-									key={ tier }
-									initialSelected={ tier || 'all' }
-									options={ tiers }
-									onSelect={ this.onTierSelect }
+					<div className="themes__controls">
+						<SearchThemes
+							query={ filterString + search }
+							onSearch={ this.doSearch }
+							recordTracksEvent={ this.recordSearchThemesTracksEvent }
+						/>
+						{ tabFilters && (
+							<div className="theme__filters">
+								<ThemesToolbarGroup
+									items={ Object.values( tabFilters ) }
+									selectedKey={ this.state.tabFilter.key }
+									onSelect={ ( key ) =>
+										this.onFilterClick(
+											Object.values( tabFilters ).find( ( tabFilter ) => tabFilter.key === key )
+										)
+									}
 								/>
-							) }
-						</div>
-					) }
-					{ this.renderBanner() }
-					{ this.renderThemes( themeProps ) }
+								{ premiumThemesEnabled && ! isMultisite && (
+									<SimplifiedSegmentedControl
+										key={ tier }
+										initialSelected={ tier || 'all' }
+										options={ tiers }
+										onSelect={ this.onTierSelect }
+									/>
+								) }
+							</div>
+						) }
+					</div>
+					<div className="themes__showcase">
+						{ this.renderBanner() }
+						{ this.renderThemes( themeProps ) }
+					</div>
 					{ siteId && <QuerySitePlans siteId={ siteId } /> }
 					{ siteId && <QuerySitePurchases siteId={ siteId } /> }
 					<QueryProductsList />
 					<ThanksModal source="list" />
 					<AutoLoadingHomepageModal source="list" />
+					<EligibilityWarningModal />
 					<ThemePreview />
 				</div>
 			</div>
@@ -541,8 +567,6 @@ class ThemeShowcase extends Component {
 }
 
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
-	const allowedSubjects = omit( getThemeFilterTerms( state, 'subject' ) || {}, [ 'newsletter' ] );
-
 	return {
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
@@ -552,7 +576,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
 		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
-		subjects: allowedSubjects,
+		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
 		filterString: prependThemeFilterKeys( state, filter ),
 		filterToTermTable: getThemeFilterToTermTable( state ),
@@ -561,4 +585,4 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 	};
 };
 
-export default connect( mapStateToProps, null )( localize( ThemeShowcase ) );
+export default connect( mapStateToProps, { setBackPath } )( localize( ThemeShowcase ) );

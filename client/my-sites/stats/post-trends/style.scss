@@ -26,10 +26,10 @@ $lowestLevelColor: var(--color-neutral-5);
 
 .post-trends__heading,
 .post-trends__wrapper {
-	margin: 0 $mobile-container-margin;
+	margin: 0;
 
-	@media (min-width: 660px) {
-		margin: 0;
+	@media (max-width: $custom-mobile-breakpoint) {
+		margin: 0 $mobile-container-margin;
 	}
 }
 

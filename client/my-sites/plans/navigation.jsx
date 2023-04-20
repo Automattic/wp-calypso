@@ -1,3 +1,4 @@
+import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { isMobile } from '@automattic/viewport';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -28,6 +29,7 @@ class PlansNavigation extends Component {
 			case '/plans':
 			case '/plans/monthly':
 			case '/plans/yearly':
+			case '/plans/2yearly':
 				return 'Plans';
 
 			default:
@@ -40,6 +42,9 @@ class PlansNavigation extends Component {
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
 		const hasPinnedItems = Boolean( site ) && isMobile();
+		const currentPlanSlug = site?.plan?.product_slug;
+		const isEcommerceTrial = currentPlanSlug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+		const myPlanItemTitle = isEcommerceTrial ? translate( 'Free trial' ) : translate( 'My Plan' );
 
 		return (
 			site &&
@@ -51,12 +56,15 @@ class PlansNavigation extends Component {
 								path={ `/plans/my-plan/${ site.slug }` }
 								selected={ path === '/plans/my-plan' }
 							>
-								{ translate( 'My Plan' ) }
+								{ myPlanItemTitle }
 							</NavItem>
 							<NavItem
 								path={ `/plans/${ site.slug }` }
 								selected={
-									path === '/plans' || path === '/plans/monthly' || path === '/plans/yearly'
+									path === '/plans' ||
+									path === '/plans/monthly' ||
+									path === '/plans/yearly' ||
+									path === '/plans/2yearly'
 								}
 							>
 								{ translate( 'Plans' ) }

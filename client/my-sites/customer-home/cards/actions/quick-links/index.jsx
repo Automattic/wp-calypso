@@ -2,7 +2,6 @@ import i18n, { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { useDebouncedCallback } from 'use-debounce';
-import anchorLogoIcon from 'calypso/assets/images/customer-home/anchor-logo-grey.svg';
 import fiverrIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 import blazeIcon from 'calypso/assets/images/icons/blaze-icon.svg';
 import FoldableCard from 'calypso/components/foldable-card';
@@ -20,6 +19,7 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteFrontPage,
@@ -40,7 +40,7 @@ export const QuickLinks = ( {
 	canManageSite,
 	canModerateComments,
 	customizeUrl,
-	isAtomic,
+	isWpcomStagingSite,
 	isStaticHomePage,
 	canAddEmail,
 	menusUrl,
@@ -54,7 +54,6 @@ export const QuickLinks = ( {
 	trackCustomizeThemeAction,
 	trackChangeThemeAction,
 	trackDesignLogoAction,
-	trackAnchorPodcastAction,
 	trackAddEmailAction,
 	trackAddDomainAction,
 	trackExplorePluginsAction,
@@ -104,7 +103,7 @@ export const QuickLinks = ( {
 				label={ translate( 'Write blog post' ) }
 				materialIcon="edit"
 			/>
-			{ isPromotePostActive && (
+			{ isPromotePostActive && ! isWpcomStagingSite && (
 				<ActionBox
 					href={ `/advertising/${ siteSlug }` }
 					hideLinkIndicator
@@ -158,7 +157,7 @@ export const QuickLinks = ( {
 					materialIcon="view_quilt"
 				/>
 			) }
-			{ canManageSite && (
+			{ canManageSite && ! isWpcomStagingSite && (
 				<>
 					{ canAddEmail ? (
 						<ActionBox
@@ -211,16 +210,6 @@ export const QuickLinks = ( {
 						iconSrc={ fiverrIcon }
 					/>
 				</>
-			) }
-			{ canManageSite && ! isAtomic && (
-				<ActionBox
-					href="https://anchor.fm/wordpressdotcom"
-					onClick={ trackAnchorPodcastAction }
-					target="_blank"
-					label={ translate( 'Create a podcast with Anchor' ) }
-					external
-					iconSrc={ anchorLogoIcon }
-				/>
 			) }
 		</div>
 	);
@@ -414,6 +403,7 @@ const mapStateToProps = ( state ) => {
 		isStaticHomePage,
 		editHomePageUrl,
 		isAtomic: isSiteAtomic( state, siteId ),
+		isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
 		isExpanded: getPreference( state, 'homeQuickLinksToggleStatus' ) !== 'collapsed',
 		siteAdminUrl: getSiteAdminUrl( state, siteId ),
 	};

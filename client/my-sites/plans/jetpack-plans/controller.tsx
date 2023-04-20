@@ -90,15 +90,10 @@ export const productSelect =
 	};
 
 export function offerJetpackComplete( context: PageJS.Context, next: () => void ): void {
-	const { site, lang } = context.params;
+	const { site } = context.params;
 	const urlQueryArgs: QueryArgs = context.query;
 	context.primary = (
-		<JetpackCompletePage
-			defaultDuration={ TERM_ANNUALLY }
-			urlQueryArgs={ urlQueryArgs }
-			siteSlug={ site || context.query.site }
-			locale={ lang }
-		/>
+		<JetpackCompletePage urlQueryArgs={ urlQueryArgs } siteSlug={ site || context.query.site } />
 	);
 	next();
 }

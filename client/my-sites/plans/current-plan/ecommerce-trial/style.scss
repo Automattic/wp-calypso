@@ -1,6 +1,47 @@
 @import "@wordpress/base-styles/breakpoints";
+@import "@automattic/typography/styles/woo-commerce";
 
 body.is-section-plans.is-ecommerce-trial-plan {
+
+	// Overwrite section nav styles so they look like the desktop version on mobile as well
+	.section-nav {
+		.section-nav__mobile-header {
+			display: none;
+		}
+
+		.section-nav-group {
+			display: flex;
+		}
+
+		.section-nav-tabs__list {
+			display: flex;
+		}
+
+		.section-nav-tab {
+			border-bottom: 2px solid transparent;
+
+			&.is-selected {
+				border-bottom-color: var(--color-neutral-100);
+
+				.section-nav-tab__link {
+					background: none;
+				}
+
+				.section-nav-tab__text {
+					color: var(--color-neutral-100);
+				}
+			}
+		}
+
+		.section-nav-tab__link {
+			display: block;
+			font-weight: inherit;
+		}
+
+		.section-nav-tab__text {
+			display: inline;
+		}
+	}
 
 	&.color-scheme {
 		--color-surface-backdrop: var(--color-surface);
@@ -13,66 +54,6 @@ body.is-section-plans.is-ecommerce-trial-plan {
 
 		.e-commerce-trial-current-plan__banner-wrapper {
 			margin: 20px 0;
-		}
-
-		.e-commerce-trial-current-plan__trial-card {
-			display: flex;
-			padding: 40px;
-			background-color: rgba(var(--color-neutral-0-rgb), 0.8);
-			box-shadow: none;
-
-			@media (max-width: $break-mobile) {
-				padding: 24px;
-				margin: 0 20px;
-			}
-
-			.e-commerce-trial-current-plan__trial-card-content {
-				flex: 1;
-
-				.e-commerce-trial-current-plan__card-title {
-					font-size: $font-title-medium;
-					font-weight: 400;
-					color: var(--studio-black);
-					margin: 0;
-
-					@media (max-width: $break-mobile) {
-						font-size: $font-body-small;
-					}
-				}
-
-				.e-commerce-trial-current-plan__card-subtitle {
-					font-size: $font-body;
-					font-weight: 400;
-					margin: 15px 0;
-					color: var(--color-neutral-40);
-
-					@media (max-width: $break-mobile) {
-						font-size: $font-body-extra-small;
-						color: var(--color-neutral-80);
-					}
-				}
-			}
-
-			.e-commerce-trial-current-plan__trial-card-cta {
-				@media (max-width: $break-mobile) {
-					width: 100%;
-					line-height: 30px;
-				}
-			}
-
-			.plans__chart-wrapper {
-				@media (max-width: $break-mobile) {
-					display: none;
-				}
-
-				margin-left: 50px;
-				text-align: center;
-				padding: 0 20px;
-
-				.plans__chart-label {
-					color: var(--color-neutral);
-				}
-			}
 		}
 
 		.e-commerce-trial-current-plan__section-title {
@@ -97,7 +78,7 @@ body.is-section-plans.is-ecommerce-trial-plan {
 
 			@media (max-width: $break-mobile) {
 				text-align: left;
-				font-size: $font-body-extra-small;
+				font-size: $woo-font-body-extra-small;
 				padding: 0 20px;
 			}
 		}
@@ -114,12 +95,16 @@ body.is-section-plans.is-ecommerce-trial-plan {
 
 				.e-commerce-trial-current-plan__included-view-all {
 					color: var(--color-accent);
-					font-size: $font-body-extra-small;
+					font-size: $woo-font-body-extra-small;
 					border: 0;
 					padding: 0;
 					text-align: center;
 					width: 100%;
 					margin-top: 20px;
+				}
+
+				.feature-included-card__text {
+					font-size: $woo-font-body-extra-small;
 				}
 			}
 		}
@@ -130,11 +115,18 @@ body.is-section-plans.is-ecommerce-trial-plan {
 			list-style: none;
 			padding: 20px;
 			margin-top: 30px;
+
+			@media (max-width: $break-mobile) {
+				.feature-not-included-card__text {
+					font-size: $woo-font-body-extra-small;
+				}
+			}
 		}
 
 		.e-commerce-trial-current-plan__cta-wrapper {
 			text-align: center;
 			margin-top: 30px;
+			margin-bottom: 30px;
 
 			@media (max-width: $break-mobile) {
 				padding: 0 20px;

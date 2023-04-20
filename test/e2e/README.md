@@ -101,7 +101,7 @@ yarn workspace wp-e2e-tests build --watch
 12. run test.
 
 ```bash
-yarn workspace wp-e2e-tests start -- <test_path>
+yarn workspace wp-e2e-tests test -- <test_path>
 ```
 
 ## Advanced setup

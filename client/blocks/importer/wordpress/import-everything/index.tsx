@@ -40,6 +40,11 @@ interface State {
 	migrationStatus: string;
 	percent: number | null;
 }
+
+type ExtraParams = {
+	[ key: string ]: any;
+};
+
 export class ImportEverything extends SectionMigrate {
 	componentDidUpdate( prevProps: any, prevState: State ) {
 		super.componentDidUpdate( prevProps, prevState );
@@ -47,9 +52,12 @@ export class ImportEverything extends SectionMigrate {
 	}
 
 	goToCart = () => {
-		const { stepNavigator } = this.props;
-
-		stepNavigator?.goToCheckoutPage();
+		const { stepNavigator, isMigrateFromWp } = this.props;
+		const extraParamsArg: ExtraParams = {};
+		if ( isMigrateFromWp ) {
+			extraParamsArg[ 'skipCta' ] = true;
+		}
+		stepNavigator?.goToCheckoutPage( extraParamsArg );
 	};
 
 	resetMigration = () => {
@@ -130,12 +138,14 @@ export class ImportEverything extends SectionMigrate {
 			isTargetSitePlanCompatible,
 			stepNavigator,
 			showConfirmDialog = true,
+			isMigrateFromWp,
 		} = this.props;
 
 		if ( sourceSite ) {
 			return (
 				<Confirm
 					startImport={ this.startMigration }
+					isMigrateFromWp={ isMigrateFromWp }
 					isTargetSitePlanCompatible={ isTargetSitePlanCompatible }
 					targetSite={ targetSite }
 					targetSiteSlug={ targetSiteSlug }

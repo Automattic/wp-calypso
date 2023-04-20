@@ -3,10 +3,11 @@ import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
 import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
-import { FeatureId } from '../wpcom-features/types';
 import { SiteGoal, STORE_KEY } from './constants';
+import { ProfilerData } from './types';
 import type { State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
+import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -128,6 +129,7 @@ export function* createSenseiSite( {
 			use_patterns: true,
 			site_intent: 'sensei',
 			selected_features: selectedFeatures,
+			wpcom_public_coming_soon: 1,
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
 		},
 	} );
@@ -458,6 +460,16 @@ export const setIsMigrateFromWp = ( isMigrateFromWp: boolean ) => ( {
 	isMigrateFromWp,
 } );
 
+export const setPluginsToVerify = ( pluginSlugs: string[] ) => ( {
+	type: 'SET_PLUGIN_SLUGS_TO_VERIFY' as const,
+	pluginSlugs,
+} );
+
+export const setProfilerData = ( profilerData: ProfilerData ) => ( {
+	type: 'SET_PROFILER_DATA' as const,
+	profilerData,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -474,6 +486,8 @@ export type OnboardAction = ReturnType<
 	| typeof setIsRedirecting
 	| typeof setLastLocation
 	| typeof setPlanProductId
+	| typeof setPluginsToVerify
+	| typeof setProfilerData
 	| typeof setRandomizedDesigns
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation

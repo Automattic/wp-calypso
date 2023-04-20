@@ -15,6 +15,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import AdsSettings from 'calypso/my-sites/earn/ads/form-settings';
 import WordAdsPayments from 'calypso/my-sites/earn/ads/payments';
 import WordAdsEarnings from 'calypso/my-sites/stats/wordads/earnings';
+import WordAdsHighlightsSection from 'calypso/my-sites/stats/wordads/highlights-section';
 import { canAccessWordAds } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
@@ -74,6 +75,7 @@ class EarningsMain extends Component {
 			case 'ads-earnings':
 				return (
 					<AdsWrapper section={ this.props.section }>
+						<WordAdsHighlightsSection siteId={ this.props.siteId } />
 						<WordAdsEarnings site={ this.props.site } />
 					</AdsWrapper>
 				);

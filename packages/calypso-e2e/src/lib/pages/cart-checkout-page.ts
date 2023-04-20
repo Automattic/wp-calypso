@@ -15,6 +15,7 @@ const selectors = {
 		`[data-testid="review-order-step--visible"] .checkout-line-item >> text=${ itemName.trim() }`,
 	removeCartItemButton: ( itemName: string ) =>
 		`[data-testid="review-order-step--visible"] button[aria-label*="Remove ${ itemName.trim() } from cart"]`,
+	cartItems: `[data-testid="review-order-step--visible"] .checkout-line-item`,
 
 	// Order Summary
 	editOrderButton: 'button[aria-label="Edit your order"]',
@@ -65,7 +66,12 @@ const selectors = {
 			? '.wp-checkout__total-price'
 			: '.wp-checkout-order-summary__total-price',
 	purchaseButton: `button.checkout-button:has-text("Pay")`,
-	closeCheckout: 'button[data-tip-target="close"]',
+	thirdPartyDeveloperCheckboxLabel:
+		'You agree that an account may be created on a third party developer’s site related to the products you have purchased.',
+
+	// Cancel purchase
+	closeLeaveButton: 'button:text("Leave items")',
+	closeEmptyCartButton: 'button:text("Empty cart")',
 };
 
 /**
@@ -119,6 +125,18 @@ export class CartCheckoutPage {
 	async removeCartItem( cartItemName: string ): Promise< void > {
 		await this.page.click( selectors.removeCartItemButton( cartItemName ) );
 		await this.page.click( selectors.modalContinueButton );
+	}
+
+	/**
+	 * Validates that the cart contains the expected number of items.
+	 */
+	async validateCartItemsCount( totalItems: number ): Promise< void > {
+		await this.page.waitForSelector( selectors.cartItems );
+		const cartItemsLocator = this.page.locator( selectors.cartItems );
+		const itemsCount = await cartItemsLocator.count();
+		if ( itemsCount !== totalItems ) {
+			throw new Error( `Expected ${ totalItems } items in cart, but found ${ itemsCount }` );
+		}
 	}
 
 	/**
@@ -288,6 +306,18 @@ export class CartCheckoutPage {
 		await Promise.all( [
 			this.page.waitForResponse( /.*me\/transactions.*/, { timeout: timeout } ),
 			this.page.click( selectors.purchaseButton ),
+		] );
+	}
+
+	/**
+	 * Close checkout and leave/empty items from cart.
+	 *
+	 * @param {boolean} leaveItems Leave items in cart or not.
+	 */
+	async closeCheckout( leaveItems: boolean ): Promise< void > {
+		await this.page.getByRole( 'button', { name: 'Close Checkout' } ).click();
+		await Promise.all( [
+			this.page.click( leaveItems ? selectors.closeLeaveButton : selectors.closeEmptyCartButton ),
 		] );
 	}
 }

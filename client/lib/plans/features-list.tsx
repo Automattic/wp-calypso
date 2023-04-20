@@ -59,6 +59,7 @@ import {
 	FEATURE_FREE_THEMES_SIGNUP,
 	FEATURE_FREE_WORDPRESS_THEMES,
 	FEATURE_GOOGLE_ANALYTICS,
+	FEATURE_GOOGLE_ANALYTICS_V3,
 	FEATURE_GOOGLE_MY_BUSINESS,
 	FEATURE_HOSTING,
 	FEATURE_INSTALL_PLUGINS,
@@ -196,6 +197,15 @@ import {
 	FEATURE_WP_UPDATES,
 	FEATURE_MULTI_SITE,
 	FEATURE_SELL_SHIP,
+	FEATURE_SELL_INTERNATIONALLY,
+	FEATURE_AUTOMATIC_SALES_TAX,
+	FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+	FEATURE_INTEGRATED_SHIPMENT_TRACKING,
+	FEATURE_SELL_EGIFTS_AND_VOUCHERS,
+	FEATURE_EMAIL_MARKETING,
+	FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
+	FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+	FEATURE_MARKETING_AUTOMATION,
 	FEATURE_CUSTOM_STORE,
 	FEATURE_INVENTORY,
 	FEATURE_CHECKOUT,
@@ -205,6 +215,7 @@ import {
 	FEATURE_STATS_JP,
 	FEATURE_SPAM_JP,
 	FEATURE_LTD_SOCIAL_MEDIA_JP,
+	FEATURE_SHARES_SOCIAL_MEDIA_JP,
 	FEATURE_CONTACT_FORM_JP,
 	FEATURE_PAID_SUBSCRIBERS_JP,
 	FEATURE_VIDEOPRESS_JP,
@@ -219,6 +230,45 @@ import {
 	FEATURE_SITE_ACTIVITY_LOG_JP,
 	FEATURE_GLOBAL_EDGE_CACHING,
 	is2023PricingGridEnabled,
+	FEATURE_AUTOMATED_EMAIL_TRIGGERS,
+	FEATURE_CART_ABANDONMENT_EMAILS,
+	FEATURE_REFERRAL_PROGRAMS,
+	FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
+	FEATURE_LOYALTY_POINTS_PROGRAMS,
+	FEATURE_OFFER_BULK_DISCOUNTS,
+	FEATURE_RECOMMEND_ADD_ONS,
+	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
+	FEATURE_MIN_MAX_ORDER_QUANTITY,
+	FEATURE_WOOCOMMERCE_STORE,
+	FEATURE_WOOCOMMERCE_MOBILE_APP,
+	FEATURE_WORDPRESS_CMS,
+	FEATURE_WORDPRESS_MOBILE_APP,
+	FEATURE_FREE_SSL_CERTIFICATE,
+	FEATURE_LIST_UNLIMITED_PRODUCTS,
+	FEATURE_GIFT_CARDS,
+	FEATURE_PRODUCT_BUNDLES,
+	FEATURE_CUSTOM_PRODUCT_KITS,
+	FEATURE_LIST_PRODUCTS_BY_BRAND,
+	FEATURE_PRODUCT_RECOMMENDATIONS,
+	FEATURE_INTEGRATED_PAYMENTS,
+	FEATURE_INTERNATIONAL_PAYMENTS,
+	FEATURE_AUTOMATED_SALES_TAXES,
+	FEATURE_ACCEPT_LOCAL_PAYMENTS,
+	FEATURE_RECURRING_PAYMENTS,
+	FEATURE_PROMOTE_ON_TIKTOK,
+	FEATURE_SYNC_WITH_PINTEREST,
+	FEATURE_CONNECT_WITH_FACEBOOK,
+	FEATURE_ABANDONED_CART_RECOVERY,
+	FEATURE_ADVERTISE_ON_GOOGLE,
+	FEATURE_CUSTOM_ORDER_EMAILS,
+	FEATURE_LIVE_SHIPPING_RATES,
+	FEATURE_DISCOUNTED_SHIPPING,
+	FEATURE_PRINT_SHIPPING_LABELS,
+	isPersonalPlan,
+	isPremiumPlan,
+	isEcommercePlan,
+	isBusinessPlan,
+	isFreePlan,
 } from '@automattic/calypso-products';
 import { localizeUrl } from '@automattic/i18n-utils';
 import i18n, { TranslateResult } from 'i18n-calypso';
@@ -236,10 +286,12 @@ export type FeatureObject = {
 	getSlug: () => string;
 	getTitle: ( domainName?: string ) => TranslateResult;
 	getAlternativeTitle?: () => TranslateResult;
+	getConditionalTitle?: ( planSlug?: string ) => TranslateResult;
 	getHeader?: () => TranslateResult;
 	getDescription?: ( domainName?: string ) => TranslateResult;
 	getStoreSlug?: () => string;
 	getCompareTitle?: () => TranslateResult;
+	getCompareSubtitle?: () => TranslateResult;
 	getIcon?: () => string | { icon: string; component: MemoExoticComponent< any > } | JSX.Element;
 	isPlan?: boolean;
 };
@@ -1047,6 +1099,8 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Ship physical products in a snap and show live rates from shipping carriers like UPS and other shipping options.'
 			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 
 	[ FEATURE_UNLIMITED_PRODUCTS_SERVICES ]: {
@@ -1835,7 +1889,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_MULTI_SITE ]: {
 		getSlug: () => FEATURE_MULTI_SITE,
-		getTitle: () => i18n.translate( 'Multi-site management' ),
+		getTitle: () => i18n.translate( 'Centralized Site Management' ),
 		getDescription: () =>
 			i18n.translate( 'Seamlessly switch between 2, 20, or 200 sites. All from one place.' ),
 	},
@@ -1843,6 +1897,119 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SELL_SHIP,
 		getTitle: () => i18n.translate( 'Sell and ship products' ),
 		getDescription: () => i18n.translate( 'Sell and ship out physical goods from your site.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
+	},
+	[ FEATURE_SELL_INTERNATIONALLY ]: {
+		getSlug: () => FEATURE_SELL_INTERNATIONALLY,
+		getTitle: () => i18n.translate( 'Sell internationally' ),
+	},
+	[ FEATURE_AUTOMATIC_SALES_TAX ]: {
+		getSlug: () => FEATURE_AUTOMATIC_SALES_TAX,
+		getTitle: () => i18n.translate( 'Automatic sales tax' ),
+	},
+	[ FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN ]: {
+		getSlug: () => FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN,
+		getTitle: () => i18n.translate( 'Automated backup + quick restore' ),
+	},
+	[ FEATURE_INTEGRATED_SHIPMENT_TRACKING ]: {
+		getSlug: () => FEATURE_INTEGRATED_SHIPMENT_TRACKING,
+		getTitle: () => i18n.translate( 'Shipment tracking' ),
+	},
+	[ FEATURE_SELL_EGIFTS_AND_VOUCHERS ]: {
+		getSlug: () => FEATURE_SELL_EGIFTS_AND_VOUCHERS,
+		getTitle: () => i18n.translate( 'Sell and accept e-gift vouchers' ),
+	},
+	[ FEATURE_EMAIL_MARKETING ]: {
+		getSlug: () => FEATURE_EMAIL_MARKETING,
+		getTitle: () => i18n.translate( 'Email marketing built-in' ),
+	},
+	[ FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION ]: {
+		getSlug: () => FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION,
+		getTitle: () => i18n.translate( 'Marketplace sync and social media integrations' ),
+		getDescription: () => i18n.translate( 'Sync your store with marketplaces and social media.' ),
+	},
+	[ FEATURE_BACK_IN_STOCK_NOTIFICATIONS ]: {
+		getSlug: () => FEATURE_BACK_IN_STOCK_NOTIFICATIONS,
+		getTitle: () => i18n.translate( 'Back in stock emails' ),
+		getDescription: () =>
+			i18n.translate( 'Notify customers when an out-of-stock item is back in stock.' ),
+	},
+	[ FEATURE_MARKETING_AUTOMATION ]: {
+		getSlug: () => FEATURE_MARKETING_AUTOMATION,
+		getTitle: () => i18n.translate( 'Marketing automation' ),
+		getDescription: () =>
+			i18n.translate(
+				'Automate marketing campaigns to send targeted and personalized messages to customers.'
+			),
+	},
+	[ FEATURE_AUTOMATED_EMAIL_TRIGGERS ]: {
+		getSlug: () => FEATURE_AUTOMATED_EMAIL_TRIGGERS,
+		getTitle: () => i18n.translate( 'Automated email triggers' ),
+		getDescription: () =>
+			i18n.translate(
+				'Set up automatic emails triggered by customer behavior, such as abandoned carts or completed purchases.'
+			),
+	},
+	[ FEATURE_CART_ABANDONMENT_EMAILS ]: {
+		getSlug: () => FEATURE_CART_ABANDONMENT_EMAILS,
+		getTitle: () => i18n.translate( 'Cart abandonment emails' ),
+		getDescription: () =>
+			i18n.translate(
+				'Send reminder emails to customers who have abandoned items in their cart to encourage them to complete their purchase.'
+			),
+	},
+	[ FEATURE_REFERRAL_PROGRAMS ]: {
+		getSlug: () => FEATURE_REFERRAL_PROGRAMS,
+		getTitle: () => i18n.translate( 'Referral programs' ),
+		getDescription: () =>
+			i18n.translate(
+				'Encourage existing customers to refer new customers by offering rewards or incentives.'
+			),
+	},
+	[ FEATURE_CUSTOMER_BIRTHDAY_EMAILS ]: {
+		getSlug: () => FEATURE_CUSTOMER_BIRTHDAY_EMAILS,
+		getTitle: () => i18n.translate( 'Customer birthday emails' ),
+		getDescription: () =>
+			i18n.translate(
+				'Send personalized birthday emails to customers with exclusive discounts or promotions.'
+			),
+	},
+	[ FEATURE_LOYALTY_POINTS_PROGRAMS ]: {
+		getSlug: () => FEATURE_LOYALTY_POINTS_PROGRAMS,
+		getTitle: () => i18n.translate( 'Loyalty points programs' ),
+		getDescription: () =>
+			i18n.translate(
+				'Reward customers for repeat purchases or other actions with loyalty points that can be redeemed for discounts or other benefits.'
+			),
+	},
+	[ FEATURE_OFFER_BULK_DISCOUNTS ]: {
+		getSlug: () => FEATURE_OFFER_BULK_DISCOUNTS,
+		getTitle: () => i18n.translate( 'Offer bulk discounts' ),
+		getDescription: () =>
+			i18n.translate( 'Offer discounts for customers who purchase multiple items at once.' ),
+	},
+	[ FEATURE_RECOMMEND_ADD_ONS ]: {
+		getSlug: () => FEATURE_RECOMMEND_ADD_ONS,
+		getTitle: () => i18n.translate( 'Recommend add-ons' ),
+		getDescription: () =>
+			i18n.translate(
+				'Recommend additional products to customers based on their purchase history.'
+			),
+	},
+	[ FEATURE_ASSEMBLED_PRODUCTS_AND_KITS ]: {
+		getSlug: () => FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
+		getTitle: () => i18n.translate( 'Assembled products and kits' ),
+		getDescription: () =>
+			i18n.translate( 'Sell products that are assembled from multiple components.' ),
+	},
+	[ FEATURE_MIN_MAX_ORDER_QUANTITY ]: {
+		getSlug: () => FEATURE_MIN_MAX_ORDER_QUANTITY,
+		getTitle: () => i18n.translate( 'Min/max order quantity' ),
+		getDescription: () =>
+			i18n.translate(
+				'Set minimum and maximum quantity limits for orders to prevent over-ordering or under-ordering.'
+			),
 	},
 	[ FEATURE_CUSTOM_STORE ]: {
 		getSlug: () => FEATURE_CUSTOM_STORE,
@@ -1851,12 +2018,16 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Offer customers a personalized shopping experience that they cannot find anywhere else.'
 			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins and themes' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_INVENTORY ]: {
 		getSlug: () => FEATURE_INVENTORY,
 		getTitle: () => i18n.translate( 'Inventory management' ),
 		getDescription: () =>
 			i18n.translate( 'Stay on top of your stock with inventory management tools.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_CHECKOUT ]: {
 		getSlug: () => FEATURE_CHECKOUT,
@@ -1865,12 +2036,16 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Reduce cart abandonment and increase sales with a fast, low-friction checkout.'
 			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_ACCEPT_PAYMENTS_V2 ]: {
 		getSlug: () => FEATURE_ACCEPT_PAYMENTS_V2,
 		getTitle: () => i18n.translate( 'Payments in 60+ countries' ),
 		getDescription: () =>
 			i18n.translate( 'Accept payments for goods and services, just about anywhere.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_SALES_REPORTS ]: {
 		getSlug: () => FEATURE_SALES_REPORTS,
@@ -1879,12 +2054,16 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Stay up to date on sales and identify trends with intuitive sales reports.'
 			),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	[ FEATURE_EXTENSIONS ]: {
 		getSlug: () => FEATURE_EXTENSIONS,
 		getTitle: () => i18n.translate( 'Extensions marketplace' ),
 		getDescription: () =>
 			i18n.translate( 'Find and install powerful add-ons for your site, all in one place.' ),
+		getConditionalTitle: () => i18n.translate( 'Available with plugins' ),
+		getCompareSubtitle: () => i18n.translate( 'Seamlessly integrated with your plan' ),
 	},
 	// FOLLOWING ARE JETPACK FEATURES BUNDLED IN WPCOM
 	[ FEATURE_STATS_JP ]: {
@@ -1906,6 +2085,30 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate(
 				'Get 30 social shares per month to promote your posts on Facebook, Twitter, Tumblr, and more.'
 			),
+	},
+	[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: {
+		getSlug: () => FEATURE_SHARES_SOCIAL_MEDIA_JP,
+		getTitle: () => i18n.translate( 'Shares on social media' ),
+		getDescription: () =>
+			i18n.translate(
+				'Automatically share your latest post on Facebook, Twitter, Tumblr, and more.'
+			),
+		getConditionalTitle: ( planSlug ) => {
+			if ( ! planSlug ) {
+				return '';
+			}
+			if ( isPersonalPlan( planSlug ) || isFreePlan( planSlug ) ) {
+				return i18n.translate( '%d shares per month', { args: [ 30 ] } );
+			}
+			if (
+				isPremiumPlan( planSlug ) ||
+				isBusinessPlan( planSlug ) ||
+				isEcommercePlan( planSlug )
+			) {
+				return i18n.translate( 'Unlimited shares' );
+			}
+			return '';
+		},
 	},
 	[ FEATURE_CONTACT_FORM_JP ]: {
 		getSlug: () => FEATURE_CONTACT_FORM_JP,
@@ -1991,6 +2194,139 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
 	},
 	/* END: 2023 Pricing Grid Features */
+
+	/* START: Woo Express Features */
+	[ FEATURE_WOOCOMMERCE_STORE ]: {
+		getSlug: () => FEATURE_WOOCOMMERCE_STORE,
+		getTitle: () => i18n.translate( 'WooCommerce store' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOOCOMMERCE_MOBILE_APP ]: {
+		getSlug: () => FEATURE_WOOCOMMERCE_MOBILE_APP,
+		getTitle: () => i18n.translate( 'WooCommerce mobile app' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WORDPRESS_CMS ]: {
+		getSlug: () => FEATURE_WORDPRESS_CMS,
+		getTitle: () => i18n.translate( 'WordPress CMS' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WORDPRESS_MOBILE_APP ]: {
+		getSlug: () => FEATURE_WORDPRESS_MOBILE_APP,
+		getTitle: () => i18n.translate( 'WordPress mobile app' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_FREE_SSL_CERTIFICATE ]: {
+		getSlug: () => FEATURE_FREE_SSL_CERTIFICATE,
+		getTitle: () => i18n.translate( 'Free SSL certificate' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_GOOGLE_ANALYTICS_V3 ]: {
+		getSlug: () => FEATURE_GOOGLE_ANALYTICS_V3,
+		getTitle: () => i18n.translate( 'Google Analytics' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_LIST_UNLIMITED_PRODUCTS ]: {
+		getSlug: () => FEATURE_LIST_UNLIMITED_PRODUCTS,
+		getTitle: () => i18n.translate( 'List unlimited products' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_GIFT_CARDS ]: {
+		getSlug: () => FEATURE_GIFT_CARDS,
+		getTitle: () => i18n.translate( 'Gift cards' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_PRODUCT_BUNDLES ]: {
+		getSlug: () => FEATURE_PRODUCT_BUNDLES,
+		getTitle: () => i18n.translate( 'Product bundles' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_CUSTOM_PRODUCT_KITS ]: {
+		getSlug: () => FEATURE_CUSTOM_PRODUCT_KITS,
+		getTitle: () => i18n.translate( 'Custom product kits' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_LIST_PRODUCTS_BY_BRAND ]: {
+		getSlug: () => FEATURE_LIST_PRODUCTS_BY_BRAND,
+		getTitle: () => i18n.translate( 'List products by brand' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_PRODUCT_RECOMMENDATIONS ]: {
+		getSlug: () => FEATURE_PRODUCT_RECOMMENDATIONS,
+		getTitle: () => i18n.translate( 'Product recommendations' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_INTEGRATED_PAYMENTS ]: {
+		getSlug: () => FEATURE_INTEGRATED_PAYMENTS,
+		getTitle: () => i18n.translate( 'Integrated payments' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_INTERNATIONAL_PAYMENTS ]: {
+		getSlug: () => FEATURE_INTERNATIONAL_PAYMENTS,
+		getTitle: () => i18n.translate( 'International payments' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_AUTOMATED_SALES_TAXES ]: {
+		getSlug: () => FEATURE_AUTOMATED_SALES_TAXES,
+		getTitle: () => i18n.translate( 'Automated sales taxes' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_ACCEPT_LOCAL_PAYMENTS ]: {
+		getSlug: () => FEATURE_ACCEPT_LOCAL_PAYMENTS,
+		getTitle: () => i18n.translate( 'Accept local payments' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_RECURRING_PAYMENTS ]: {
+		getSlug: () => FEATURE_RECURRING_PAYMENTS,
+		getTitle: () => i18n.translate( 'Recurring payments' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_PROMOTE_ON_TIKTOK ]: {
+		getSlug: () => FEATURE_PROMOTE_ON_TIKTOK,
+		getTitle: () => i18n.translate( 'Promote on TikTok' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_SYNC_WITH_PINTEREST ]: {
+		getSlug: () => FEATURE_SYNC_WITH_PINTEREST,
+		getTitle: () => i18n.translate( 'Sync with Pinterest' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_CONNECT_WITH_FACEBOOK ]: {
+		getSlug: () => FEATURE_CONNECT_WITH_FACEBOOK,
+		getTitle: () => i18n.translate( 'Connect with Facebook' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_ABANDONED_CART_RECOVERY ]: {
+		getSlug: () => FEATURE_ABANDONED_CART_RECOVERY,
+		getTitle: () => i18n.translate( 'Abandoned cart recovery' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_ADVERTISE_ON_GOOGLE ]: {
+		getSlug: () => FEATURE_ADVERTISE_ON_GOOGLE,
+		getTitle: () => i18n.translate( 'Advertise on Google' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_CUSTOM_ORDER_EMAILS ]: {
+		getSlug: () => FEATURE_CUSTOM_ORDER_EMAILS,
+		getTitle: () => i18n.translate( 'Custom order emails' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_LIVE_SHIPPING_RATES ]: {
+		getSlug: () => FEATURE_LIVE_SHIPPING_RATES,
+		getTitle: () => i18n.translate( 'Live shipping rates' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_DISCOUNTED_SHIPPING ]: {
+		getSlug: () => FEATURE_DISCOUNTED_SHIPPING,
+		getTitle: () => i18n.translate( 'Discounted shipping' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_PRINT_SHIPPING_LABELS ]: {
+		getSlug: () => FEATURE_PRINT_SHIPPING_LABELS,
+		getTitle: () => i18n.translate( 'Print shipping labels' ),
+		getDescription: () => '',
+	},
+	/* END: Woo Express Features */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {

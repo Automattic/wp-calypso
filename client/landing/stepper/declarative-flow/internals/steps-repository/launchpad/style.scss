@@ -28,12 +28,19 @@
 		}
 	}
 
+	.step-container__content {
+		@include break-large {
+			height: 100vh;
+		}
+	}
+
 	.button.is-borderless.navigation-link {
 		color: var(--studio-gray-100);
 	}
 }
 
 .launchpad__container {
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 }
@@ -102,6 +109,7 @@
 	flex-direction: column;
 
 	@include break-large {
+		height: 100%;
 		flex-direction: row;
 	}
 }
@@ -110,14 +118,14 @@
 
 .launchpad__sidebar {
 	max-width: 100%;
-	margin: 24px 16px 32px;
+	margin: 0 16px 32px;
 	display: flex;
 	flex-direction: column;
 
 	@include break-large {
 		max-width: 360px;
-		margin: 24px 20px 24px 24px;
-		height: 95vh;
+		margin: 0 20px 24px 24px;
+		gap: 80px;
 	}
 }
 
@@ -135,7 +143,7 @@
 // Launchpad - Sidebar heading text
 
 .newsletter,
-.link-in-bio:not(.domains),
+.link-in-bio.launchpad,
 .link-in-bio-tld:not(.domains),
 .free,
 .build,
@@ -162,12 +170,8 @@
 
 .launchpad__sidebar-header {
 	display: flex;
-	margin-left: 8px;
-	margin-top: 4px;
-
-	@include break-large {
-		margin-left: 0;
-	}
+	padding-left: 24px;
+	padding-top: 28px;
 }
 
 .launchpad__sidebar-header-logo {
@@ -203,6 +207,8 @@
 
 	.launchpad__url-box-domain {
 		display: flex;
+		flex-direction: row;
+		align-items: center;
 		flex-grow: 1;
 		width: 0;
 	}
@@ -212,27 +218,21 @@
 		white-space: nowrap;
 		overflow: hidden;
 		padding: 4px 0;
-		padding-right: 12px;
+		padding-right: 8px;
 		letter-spacing: -0.24px;
 		font-size: $font-body-small;
 	}
 
 	.launchpad__url-box-domain:hover > .launchpad__clipboard-button {
-		position: inherit;
-		top: 0;
+		opacity: 1;
 	}
 
 	.launchpad__clipboard-button:focus {
-		position: inherit;
-		top: 0;
+		opacity: 1;
 	}
 
 	.launchpad__clipboard-button {
-		padding-left: 8px;
-		padding-right: 8px;
-		position: absolute;
-		top: -1000em;
-		min-width: 34px;
+		opacity: 0;
 	}
 }
 
@@ -242,16 +242,17 @@
 
 .launchpad__domain-notification {
 	display: flex;
-	margin-bottom: 16px;
+	gap: 8px;
+	font-size: 0.875rem;
+	margin-bottom: 36px;
 
-	@include break-large {
-		margin-bottom: 10px;
+	&-icon {
+		padding-top: 2px;
 	}
 }
 
 .launchpad__domain-checkmark-icon {
-	flex: 0 0 36px;
-	fill: var(--studio-green-40);
+	fill: var(--studio-green-50);
 }
 
 .launchpad__domain-upgrade-badge {
@@ -262,7 +263,7 @@
 }
 
 .launchpad__sidebar-admin-link {
-	padding: 80px 20px 10px;
+	padding-left: 20px;
 	display: none;
 
 	.button.navigation-link {
@@ -349,6 +350,10 @@
 .launchpad__checklist-item[disabled]:focus {
 	background-color: transparent;
 	pointer-events: none;
+}
+
+.launchpad__checklist-item[data-task="verify_email"] {
+	color: var(--color-text);
 }
 
 .launchpad__checklist-item-checkmark-container,
@@ -447,7 +452,7 @@
 	flex-grow: 1;
 
 	@include break-large {
-		margin: 53px 20px 12px 20px;
+		margin: 0 20px 20px 20px;
 	}
 
 	.preview-toolbar__toolbar {
@@ -458,11 +463,48 @@
 		}
 	}
 
+	.web-preview__inner {
+		height: 680px;
+		@include break-large {
+			height: 100%;
+		}
+	}
+
+	.launchpad__-web-preview.web-preview__inner.is-visible.is-phone {
+		height: 680px;
+		@include break-large {
+			height: 767px;
+		}
+	}
+
+	.is-phone .web-preview__placeholder {
+		margin: 0 auto;
+		box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07), 0 3px 10px rgba(0, 0, 0, 0.04);
+		background: var(--color-print);
+		border-radius: 40px; /* stylelint-disable-line scales/radii */
+		transition: max-width 0.2s linear;
+
+		@include break-large {
+			max-width: 340px;
+			height: 713px;
+		}
+	}
+
 	.web-preview__placeholder {
 		overflow-y: visible;
+		max-width: 100%;
+		box-shadow: 0 5px 15px rgba(0 0 0 / 7%), 0 3px 10px rgba(0 0 0 / 4%);
+		border-radius: 40px; /* stylelint-disable-line scales/radii */
+		width: 95%;
+		margin: 0 auto;
+		transition: max-width 0.2s linear;
 		display: flex;
-		justify-content: center;
-		align-items: start;
+		flex-direction: column;
+
+		@include break-large {
+			width: 95%;
+			border-radius: 20px; /* stylelint-disable-line scales/radii */
+		}
 	}
 
 	.preview-toolbar__devices {
@@ -470,11 +512,9 @@
 	}
 
 	.is-phone .web-preview__frame-wrapper.is-resizable {
-		height: 100%;
 
 		@include break-large {
-			max-width: 340px;
-			height: 680px;
+			margin: 0 auto;
 		}
 
 		.web-preview__frame-edit-overlay {
@@ -491,11 +531,7 @@
 		padding: 0;
 		background-color: transparent;
 		position: relative;
-		max-width: 95%;
 
-		@include break-large {
-			height: 880px;
-		}
 
 		.web-preview__frame-edit-overlay {
 			position: absolute;
@@ -531,51 +567,31 @@
 		border: 10px solid var(--color-print);
 		border-radius: 40px; /* stylelint-disable-line scales/radii */
 		box-sizing: border-box;
-		box-shadow: 0 5px 15px rgba(0 0 0 / 7%), 0 3px 10px rgba(0 0 0 / 4%);
-		min-height: 720px;
 
 		@include break-large {
 			margin-top: 0;
-			box-shadow:
-				0 15px 20px rgb(0 0 0 / 4%),
-				0 13px 10px rgb(0 0 0 / 3%),
-				0 6px 6px rgb(0 0 0 / 2%);
 			border-radius: 20px; /* stylelint-disable-line scales/radii */
 		}
 	}
 
 	.is-phone .web-preview__frame-wrapper.is-resizable .web-preview__frame {
+		margin: 0 auto;
 		max-width: 100%;
 
 		@include break-large {
-			box-shadow:
-				0 76px 65px rgba(0 0 0 / 4%),
-				0 50px 40px rgba(0 0 0 / 3%),
-				0 30px 20px rgba(0 0 0 / 3%),
-				0 15px 13px rgba(0 0 0 / 2%),
-				0 6px 5px rgba(0 0 0 / 2%),
-				0 2px 3px rgba(0 0 0 / 1%);
 			border-radius: 40px; /* stylelint-disable-line scales/radii */
-			min-height: 680px;
 		}
 	}
 
 	.spinner-line {
 		display: none;
 	}
+
+
 }
 
 // Launchpad - Processing Screens
 .processing {
-	.wordpress-logo {
-		position: absolute;
-		inset-inline-start: 20px;
-		inset-block-start: 20px;
-		fill: var(--color-text);
-		stroke: var(--color-text);
-		transform-origin: 0 0;
-	}
-
 	.processing-step__progress-bar {
 		background-color: #fff;
 	}
@@ -637,6 +653,14 @@
 		display: none;
 	}
 
+	.launchpad__sidebar-header-flow-name {
+		display: none;
+	}
+}
+
+// Write and Build flow
+.write.launchpad,
+.build.launchpad {
 	.launchpad__sidebar-header-flow-name {
 		display: none;
 	}

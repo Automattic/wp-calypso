@@ -24,8 +24,14 @@ import {
 	FEATURE_JETPACK_SEARCH_MONTHLY,
 	TYPE_P2_PLUS,
 	TYPE_ENTERPRISE_GRID_WPCOM,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOOEXPRESS_PLUS,
+	WOO_EXPRESS_PLANS,
 } from './constants';
-import { featureGroups } from './feature-group-plan-map';
+import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
 import { PLANS_LIST } from './plans-list';
 import {
 	isJetpackBusiness,
@@ -55,6 +61,10 @@ export function getPlans(): Record< string, Plan > {
 
 export function getPlanFeaturesGrouped(): Partial< FeatureGroupMap > {
 	return featureGroups;
+}
+
+export function getWooExpressFeaturesGrouped(): Partial< FeatureGroupMap > {
+	return wooExpressFeatureGroups;
 }
 
 export function getPlansSlugs(): string[] {
@@ -110,6 +120,18 @@ export function getPlanClass( planKey: string ): string {
 
 	if ( isBusinessPlan( planKey ) ) {
 		return 'is-business-plan';
+	}
+
+	if ( isWooExpressPlusPlan( planKey ) ) {
+		return 'is-wooexpress-plus-plan';
+	}
+
+	if ( isWooExpressMediumPlan( planKey ) ) {
+		return 'is-wooexpress-medium-plan';
+	}
+
+	if ( isWooExpressSmallPlan( planKey ) ) {
+		return 'is-wooexpress-small-plan';
 	}
 
 	if ( isEcommercePlan( planKey ) ) {
@@ -304,6 +326,22 @@ export function isFreePlan( planSlug: string ): boolean {
 // This is not a real plan, but added to display Enterprise in the pricing grid.
 export function isWpcomEnterpriseGridPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_ENTERPRISE_GRID_WPCOM, group: GROUP_WPCOM } );
+}
+
+export function isWooExpressPlusPlan( planSlug: string ): boolean {
+	return PLAN_WOOEXPRESS_PLUS === planSlug;
+}
+
+export function isWooExpressMediumPlan( planSlug: string ): boolean {
+	return [ PLAN_WOOEXPRESS_MEDIUM, PLAN_WOOEXPRESS_MEDIUM_MONTHLY ].includes( planSlug );
+}
+
+export function isWooExpressSmallPlan( planSlug: string ): boolean {
+	return [ PLAN_WOOEXPRESS_SMALL, PLAN_WOOEXPRESS_SMALL_MONTHLY ].includes( planSlug );
+}
+
+export function isWooExpressPlan( planSlug: string ): boolean {
+	return ( WOO_EXPRESS_PLANS as ReadonlyArray< string > ).includes( planSlug );
 }
 
 export function isFlexiblePlan( planSlug: string ): boolean {

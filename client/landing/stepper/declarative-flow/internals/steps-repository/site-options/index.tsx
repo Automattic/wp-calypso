@@ -19,21 +19,26 @@ import { tip } from 'calypso/signup/icons';
 import { useSite } from '../../../../hooks/use-site';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 const SiteOptions: Step = function SiteOptions( { navigation, flow } ) {
-	const [ currentSiteTitle, currentTagling ] = useSelect( ( select ) => {
-		return [
-			select( ONBOARD_STORE ).getSelectedSiteTitle(),
-			select( ONBOARD_STORE ).getSelectedSiteDescription(),
-		];
-	} );
+	const { currentSiteTitle, currentTagling } = useSelect(
+		( select ) => ( {
+			currentSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+			currentTagling: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteDescription(),
+		} ),
+		[]
+	);
 
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( currentSiteTitle ?? '' );
 	const [ tagline, setTagline ] = React.useState( currentTagling ?? '' );
 	const [ formTouched, setFormTouched ] = React.useState( false );
-	const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+	const intent = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+		[]
+	);
 	const translate = useTranslate();
 	const site = useSite();
 	const isVideoPressFlow = 'videopress' === flow;

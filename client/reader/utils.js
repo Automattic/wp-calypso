@@ -1,5 +1,6 @@
 import page from 'page';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 
 export function isSpecialClick( event ) {
@@ -26,6 +27,12 @@ export function showSelectedPost( { postKey, comments } ) {
 		}
 
 		const post = getPostByKey( getState(), postKey );
+
+		const isLoggedIn = isUserLoggedIn( getState() );
+
+		if ( ! isLoggedIn ) {
+			return window.open( post.URL, '_blank' );
+		}
 
 		if ( isXPost( post ) ) {
 			return showFullXPost( XPostHelper.getXPostMetadata( post ) );

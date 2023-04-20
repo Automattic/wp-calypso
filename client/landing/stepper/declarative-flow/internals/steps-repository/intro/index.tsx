@@ -1,3 +1,4 @@
+import { useLocale } from '@automattic/i18n-utils';
 import {
 	NEWSLETTER_FLOW,
 	ECOMMERCE_FLOW,
@@ -5,9 +6,15 @@ import {
 	FREE_FLOW,
 	isLinkInBioFlow,
 } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { createInterpolateElement, useMemo } from '@wordpress/element';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { ReactElement } from 'react';
+import { PlansSelect } from 'calypso/../packages/data-stores/src';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
+import { useSupportedPlans } from 'calypso/../packages/plans-grid/src/hooks';
+import { PLANS_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import IntroStep, { IntroContent } from './intro';
 import VideoPressIntroModalContent from './videopress-intro-modal-content';
@@ -17,6 +24,44 @@ import './styles.scss';
 
 const useIntroContent = ( flowName: string | null ): IntroContent => {
 	const { __ } = useI18n();
+	const locale = useLocale();
+	const { supportedPlans } = useSupportedPlans( locale, 'ANNUALLY' );
+	const getPlanProduct = useSelect(
+		( select ) => ( select( PLANS_STORE ) as PlansSelect ).getPlanProduct,
+		[]
+	);
+	// VideoPress: we should always send a non-empty string so the spacing stays the same on the intro page
+	let videoPressGetStartedText: string | ReactElement = createInterpolateElement( '<nbsp />', {
+		nbsp: <>&nbsp;</>,
+	} );
+
+	if ( VIDEOPRESS_FLOW === flowName ) {
+		let defaultSupportedPlan = supportedPlans.find( ( plan ) => {
+			return plan.periodAgnosticSlug === 'premium';
+		} );
+		if ( ! defaultSupportedPlan ) {
+			defaultSupportedPlan = supportedPlans.find( ( plan ) => {
+				return plan.periodAgnosticSlug === 'business';
+			} );
+		}
+
+		if ( defaultSupportedPlan ) {
+			const planProductObject = getPlanProduct(
+				defaultSupportedPlan.periodAgnosticSlug,
+				'ANNUALLY'
+			);
+
+			if ( planProductObject ) {
+				// eslint-disable-next-line @wordpress/valid-sprintf
+				videoPressGetStartedText = sprintf(
+					/* translators: Price displayed on VideoPress intro page. First %s is monthly price, second is annual price */
+					__( 'Starts at %s per month, %s billed annually' ),
+					planProductObject.price,
+					planProductObject.annualPrice
+				);
+			}
+		}
+	}
 
 	return useMemo( () => {
 		if ( isLinkInBioFlow( flowName ) ) {
@@ -40,11 +85,11 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 
 		if ( flowName === NEWSLETTER_FLOW ) {
 			return {
-				title: __( 'Sign in. Set up. Send out.' ),
+				title: __( 'The Newsletter. Elevated.' ),
 				text: __(
-					`You’re a few steps away from launching a beautiful Newsletter with everything you’ll ever need to grow your audience.`
+					'Unlimited subscribers. Beautiful design. And everything you need to grow your audience. Powered by WordPress.com.'
 				),
-				buttonText: __( 'Start building your Newsletter' ),
+				buttonText: __( 'Launch your Newsletter' ),
 			};
 		}
 
@@ -54,6 +99,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 					__( 'A home for all your videos.<br />Play. Roll. Share.' ),
 					{ br: <br /> }
 				),
+				secondaryText: videoPressGetStartedText,
 				buttonText: __( 'Get started' ),
 				modal: {
 					buttonText: __( 'Learn more' ),
@@ -80,7 +126,7 @@ const useIntroContent = ( flowName: string | null ): IntroContent => {
 			),
 			buttonText: __( 'Get started' ),
 		};
-	}, [ flowName, __ ] );
+	}, [ flowName, __, videoPressGetStartedText ] );
 };
 
 const Intro: Step = function Intro( { navigation, flow } ) {

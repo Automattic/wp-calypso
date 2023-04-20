@@ -115,7 +115,15 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com/support/': prefixLocalizedUrlPath( supportSiteLocales ),
 	'wordpress.com/forums/': prefixLocalizedUrlPath( forumLocales ),
 	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog, /^\/blog\/?$/ ),
-	'wordpress.com/go/': prefixLocalizedUrlPath( localesWithGoBlog, /^\/go\/?$/ ),
+	'wordpress.com/go/': ( url: URL, localeSlug: Locale ): URL => {
+		// Rewrite non-home URLs (e.g. posts) only for Spanish, because that's
+		// the only language into which we're currently translating content.
+		const isHome = [ '/go/', '/go' ].includes( url.pathname );
+		if ( ! isHome && 'es' !== localeSlug ) {
+			return url;
+		}
+		return prefixLocalizedUrlPath( localesWithGoBlog )( url, localeSlug );
+	},
 	'wordpress.com/tos/': prefixLocalizedUrlPath( magnificentNonEnLocales ),
 	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),

@@ -3,11 +3,14 @@
  */
 
 import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import PurchaseMeta from '../purchase-meta';
 
 describe( 'PurchaseMeta', () => {
+	const queryClient = new QueryClient();
+
 	it( 'does render "Free with Plan"', () => {
 		const store = createReduxStore(
 			{
@@ -32,14 +35,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( screen.getByText( /Free with Plan/ ) ).toBeInTheDocument();
 	} );
@@ -69,14 +74,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( screen.getByText( /\/ year\b/ ) ).toBeInTheDocument();
 	} );
@@ -106,14 +113,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( screen.getByText( /\/ year\b/ ) ).toBeInTheDocument();
 	} );
@@ -143,14 +152,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( screen.getByText( /\/ month\b/ ) ).toBeInTheDocument();
 	} );
@@ -180,14 +191,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( screen.getByText( /\/ week\b/ ) ).toBeInTheDocument();
 	} );
@@ -217,14 +230,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( screen.getByText( /\/ day\b/ ) ).toBeInTheDocument();
 	} );
@@ -254,14 +269,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 
 		expect( screen.getByText( /\/ two years\b/ ) ).toBeInTheDocument();
@@ -292,14 +309,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 
 		expect( screen.getByText( /\/ three years\b/ ) ).toBeInTheDocument();
@@ -330,14 +349,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 
 		expect( screen.getByText( /Never Expires/ ) ).toBeInTheDocument();

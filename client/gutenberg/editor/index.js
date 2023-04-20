@@ -1,18 +1,10 @@
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import { siteSelection, sites } from 'calypso/my-sites/controller';
-import { authenticate, post, redirect, siteEditor, exitPost } from './controller';
+import { authenticate, post, redirect, exitPost, redirectSiteEditor } from './controller';
 
 export default function () {
-	page(
-		'/site-editor/:site?',
-		siteSelection,
-		redirect,
-		authenticate,
-		siteEditor,
-		makeLayout,
-		clientRender
-	);
+	page( '/site-editor/:site?', siteSelection, redirectSiteEditor );
 
 	page( '/post', siteSelection, sites, makeLayout, clientRender );
 	page( '/post/new', '/post' ); // redirect from beep-beep-boop

@@ -8,7 +8,7 @@ const HoverAreaContainer = styled.span``;
 const StyledTooltip = styled( Tooltip )`
 	&.tooltip.popover .popover__inner {
 		background: var( --color-masterbar-background );
-		text-align: center;
+		text-align: start;
 		border-radius: 4px;
 		min-height: 32px;
 		width: 210px;
@@ -17,6 +17,7 @@ const StyledTooltip = styled( Tooltip )`
 		font-weight: 400;
 		font-size: 1em;
 		padding: 8px 10px;
+		top: -8px;
 	}
 `;
 

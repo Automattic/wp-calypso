@@ -30,7 +30,7 @@ const EVENT_NO_CONTENT_BANNER_VIEW = 'calypso_stats_no_content_banner_view';
 const EVENT_NO_CONTENT_BANNER_CLICK = 'calypso_stats_no_content_banner_click';
 const EVENT_NO_CONTENT_BANNER_DISMISS = 'calypso_stats_no_content_banner_dismiss';
 
-const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
+const MiniCarousel = ( { slug, isSitePrivate } ) => {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 
 	const { data: hasNeverPublishedPost, isLoading: isHasNeverPublishedPostLoading } =
@@ -62,14 +62,11 @@ const MiniCarousel = ( { slug, isOdysseyStats, isSitePrivate } ) => {
 	// Blaze promo is disabled for Odyssey.
 	const showBlazePromo =
 		! useSelector( isBlockDismissed( EVENT_TRAFFIC_BLAZE_PROMO_DISMISS ) ) &&
-		! isOdysseyStats &&
 		shouldShowAdvertisingOption;
 
 	// Yoast promo is disabled for Odyssey & self-hosted & non-traffic pages.
 	const showYoastPromo =
-		! useSelector( isBlockDismissed( EVENT_YOAST_PROMO_DISMISS ) ) &&
-		! isOdysseyStats &&
-		! jetpackNonAtomic;
+		! useSelector( isBlockDismissed( EVENT_YOAST_PROMO_DISMISS ) ) && ! jetpackNonAtomic;
 
 	const viewEvents = useMemo( () => {
 		const events = [];

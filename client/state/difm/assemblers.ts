@@ -11,6 +11,7 @@ export function buildDIFMCartExtrasObject( dependencies: Partial< DIFMDependenci
 		siteTitle,
 		siteDescription,
 		tagline,
+		searchTerms,
 		selectedDesign,
 		selectedSiteCategory,
 		isLetUsChooseSelected,
@@ -29,6 +30,7 @@ export function buildDIFMCartExtrasObject( dependencies: Partial< DIFMDependenci
 		new_or_existing_site_choice: newOrExistingSiteChoice,
 		site_title: siteTitle,
 		site_description: siteDescription || tagline,
+		search_terms: searchTerms,
 		selected_design: selectedDesign?.theme,
 		site_category: selectedSiteCategory,
 		let_us_choose_selected: isLetUsChooseSelected,
@@ -49,7 +51,7 @@ export function buildDIFMWebsiteContentRequestDTO(
 ): WebsiteContentRequestDTO {
 	const {
 		pages,
-		siteLogoSection: { siteLogoUrl: site_logo_url },
+		siteInformationSection: { siteLogoUrl: site_logo_url, searchTerms: search_terms },
 		feedbackSection: { genericFeedback: generic_feedback },
 	} = websiteContent;
 	const pagesDTO = pages.map( ( page ) => mapRecordKeysRecursively( page, camelToSnakeCase ) );
@@ -57,5 +59,6 @@ export function buildDIFMWebsiteContentRequestDTO(
 		pages: pagesDTO,
 		site_logo_url: site_logo_url ?? '',
 		generic_feedback: generic_feedback ?? '',
+		search_terms: search_terms ?? '',
 	};
 }

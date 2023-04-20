@@ -1,5 +1,9 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { FEATURE_UPLOAD_THEMES, PLAN_BUSINESS } from '@automattic/calypso-products';
+import {
+	FEATURE_UPLOAD_THEMES,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { pickBy } from 'lodash';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -7,7 +11,6 @@ import QueryActiveTheme from 'calypso/components/data/query-active-theme';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import Main from 'calypso/components/main';
 import { useRequestSiteChecklistTaskUpdate } from 'calypso/data/site-checklist';
-import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
@@ -49,41 +52,63 @@ const ConnectedSingleSiteJetpack = connectOptions( ( props ) => {
 		requestingSitePlans,
 	} = props;
 
-	const isNewDetailsAndPreview = isEnabled( 'themes/showcase-i4/details-and-preview' );
-	const displayUpsellBanner = isAtomic && ! requestingSitePlans && currentPlan;
-	const upsellUrl =
-		isAtomic && `/plans/${ siteId }?feature=${ FEATURE_UPLOAD_THEMES }&plan=${ PLAN_BUSINESS }`;
+	const isWooExpressTrial = PLAN_ECOMMERCE_TRIAL_MONTHLY === currentPlan?.productSlug;
 
-	const upsellBanner = (
-		<UpsellNudge
-			className="themes__showcase-banner"
-			event="calypso_themes_list_install_themes"
-			feature={ FEATURE_UPLOAD_THEMES }
-			plan={ PLAN_BUSINESS }
-			title={ translate(
-				'Unlock ALL premium themes and upload your own themes with our Business and eCommerce plans!'
-			) }
-			callToAction={ translate( 'Upgrade now' ) }
-			showIcon={ true }
-		/>
-	);
+	const upsellBanner = () => {
+		if ( isWooExpressTrial ) {
+			return (
+				<UpsellNudge
+					className="themes__showcase-banner"
+					event="calypso_themes_list_install_themes"
+					feature={ FEATURE_UPLOAD_THEMES }
+					plan={ PLAN_ECOMMERCE }
+					title={ translate( 'Upgrade to a plan to upload your own themes!' ) }
+					callToAction={ translate( 'Upgrade now' ) }
+					showIcon={ true }
+				/>
+			);
+		}
+
+		return (
+			<UpsellNudge
+				className="themes__showcase-banner"
+				event="calypso_themes_list_install_themes"
+				feature={ FEATURE_UPLOAD_THEMES }
+				plan={ PLAN_BUSINESS }
+				title={ translate(
+					'Unlock ALL premium themes and upload your own themes with our Business and eCommerce plans!'
+				) }
+				callToAction={ translate( 'Upgrade now' ) }
+				showIcon={ true }
+			/>
+		);
+	};
+
+	const upsellUrl = () => {
+		if ( isWooExpressTrial ) {
+			return `/plans/${ siteId }?feature=${ FEATURE_UPLOAD_THEMES }&plan=${ PLAN_ECOMMERCE }`;
+		}
+
+		return (
+			isAtomic && `/plans/${ siteId }?feature=${ FEATURE_UPLOAD_THEMES }&plan=${ PLAN_BUSINESS }`
+		);
+	};
+
+	const displayUpsellBanner = isAtomic && ! requestingSitePlans && currentPlan;
 
 	useRequestSiteChecklistTaskUpdate( siteId, CHECKLIST_KNOWN_TASKS.THEMES_BROWSED );
 
 	return (
 		<Main fullWidthLayout className="themes">
-			<BodySectionCssClass
-				bodyClass={ [ ...( isNewDetailsAndPreview ? [ 'is-section-themes-i4-2' ] : [] ) ] }
-			/>
 			<QueryActiveTheme siteId={ siteId } />
 			{ currentThemeId && <QueryCanonicalTheme themeId={ currentThemeId } siteId={ siteId } /> }
 
 			<ThemeShowcase
 				{ ...props }
-				upsellUrl={ upsellUrl }
+				upsellUrl={ upsellUrl() }
 				siteId={ siteId }
 				isJetpackSite={ true }
-				upsellBanner={ displayUpsellBanner ? upsellBanner : null }
+				upsellBanner={ displayUpsellBanner ? upsellBanner() : null }
 			>
 				{ showWpcomThemesList && (
 					<div>

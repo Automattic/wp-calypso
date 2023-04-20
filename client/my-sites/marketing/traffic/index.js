@@ -2,7 +2,7 @@ import config from '@automattic/calypso-config';
 import { localize } from 'i18n-calypso';
 import { pick } from 'lodash';
 import { connect } from 'react-redux';
-import blazeDropDownIllustration from 'calypso/assets/images/illustrations/blaze-drop-down.svg';
+import blazeIllustration from 'calypso/assets/images/customer-home/illustration--blaze.svg';
 import PromoCardBlock from 'calypso/blocks/promo-card-block';
 import AsyncLoad from 'calypso/components/async-load';
 import EmptyContent from 'calypso/components/empty-content';
@@ -61,7 +61,7 @@ const SiteSettingsTraffic = ( {
 					'Use WordPress Blaze to increase your reach by promoting your work to the larger WordPress.com community of blogs and sites. '
 				) }
 				ctaText={ translate( 'Get started' ) }
-				image={ blazeDropDownIllustration }
+				image={ blazeIllustration }
 				href={ `/advertising/${ siteSlug || '' }` }
 			/>
 		) }

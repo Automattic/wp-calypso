@@ -76,6 +76,10 @@ function mockTaxLocationEndpoint( { isSet = false } = {} ) {
 }
 
 describe( 'Existing credit card payment methods', () => {
+	beforeEach( () => {
+		nock.cleanAll();
+	} );
+
 	it( 'renders an existing card option for a stored card', async () => {
 		mockTaxLocationEndpoint();
 		const existingCard = getExistingCardPaymentMethod();

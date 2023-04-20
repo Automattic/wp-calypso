@@ -4,7 +4,12 @@ import {
 	getBackupCurrentSiteSize,
 	getBackupRetentionDays,
 	getBackupRetentionUpdateRequestStatus,
+	getBackupStoppedFlag,
+	isFetchingStagingSitesList,
+	hasFetchedStagingSitesList,
+	getBackupStagingSites,
 } from '../selectors';
+import { stagingSites } from '../staging/test/fixtures';
 import { StorageUsageLevels } from '../storage/types';
 
 describe( 'getRewindStorageUsageLevel()', () => {
@@ -143,5 +148,105 @@ describe( 'getBackupRetentionUpdateRequestStatus()', () => {
 		expect( getBackupRetentionUpdateRequestStatus( state, TEST_SITE_ID ) ).toEqual(
 			BACKUP_RETENTION_UPDATE_REQUEST.PENDING
 		);
+	} );
+} );
+describe( 'getBackupStoppedFlag()', () => {
+	const TEST_SITE_ID = 123;
+
+	test( 'should default to false when the state does not contain the flag.', () => {
+		const state = {
+			rewind: {
+				[ TEST_SITE_ID ]: {},
+			},
+		};
+		expect( getBackupStoppedFlag( state, TEST_SITE_ID ) ).toEqual( false );
+	} );
+
+	test( 'should return the value as is when the state contains the value for flag.', () => {
+		const state = {
+			rewind: {
+				[ TEST_SITE_ID ]: {
+					size: { backupsStopped: true },
+				},
+			},
+		};
+		expect( getBackupStoppedFlag( state, TEST_SITE_ID ) ).toEqual( true );
+	} );
+} );
+
+describe( 'Backup staging sites selectors', () => {
+	const TEST_SITE_ID = 123456;
+	const fixtures = {
+		emptyRewindState: {
+			rewind: {},
+		},
+		fetchingStagingSites: {
+			rewind: {
+				[ TEST_SITE_ID ]: {
+					staging: {
+						isFetchingStagingSitesList: true,
+						hasFetchedStagingSitesList: false,
+						sites: [],
+					},
+				},
+			},
+		},
+		stagingSitesLoaded: {
+			rewind: {
+				[ TEST_SITE_ID ]: {
+					staging: {
+						isFetchingStagingSitesList: false,
+						hasFetchedStagingSitesList: true,
+						sites: stagingSites,
+					},
+				},
+			},
+		},
+	};
+
+	describe( 'isFetchingStagingSitesList', () => {
+		test( 'should return false if the rewind state is empty', () => {
+			const stateIn = fixtures.emptyRewindState;
+			expect( isFetchingStagingSitesList( stateIn, TEST_SITE_ID ) ).toBe( false );
+		} );
+
+		test( 'should return true if staging sites are being fetch', () => {
+			const stateIn = fixtures.fetchingStagingSites;
+			expect( isFetchingStagingSitesList( stateIn, TEST_SITE_ID ) ).toBe( true );
+		} );
+
+		test( 'should return false if staging sites has been loaded', () => {
+			const stateIn = fixtures.stagingSitesLoaded;
+			expect( isFetchingStagingSitesList( stateIn, TEST_SITE_ID ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'hasFetchedStagingSitesList', () => {
+		test( 'should return false if the rewind state is empty', () => {
+			const stateIn = fixtures.emptyRewindState;
+			expect( hasFetchedStagingSitesList( stateIn, TEST_SITE_ID ) ).toBe( false );
+		} );
+
+		test( 'should return false if staging sites are being fetch', () => {
+			const stateIn = fixtures.fetchingStagingSites;
+			expect( hasFetchedStagingSitesList( stateIn, TEST_SITE_ID ) ).toBe( false );
+		} );
+
+		test( 'should return true if staging sites has been loaded', () => {
+			const stateIn = fixtures.stagingSitesLoaded;
+			expect( hasFetchedStagingSitesList( stateIn, TEST_SITE_ID ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'getBackupStagingSites', () => {
+		test( 'should return empty array if the rewind state is empty', () => {
+			const stateIn = fixtures.emptyRewindState;
+			expect( getBackupStagingSites( stateIn, TEST_SITE_ID ) ).toStrictEqual( [] );
+		} );
+
+		test( 'should return the staging sites related to specified site ID', () => {
+			const stateIn = fixtures.stagingSitesLoaded;
+			expect( getBackupStagingSites( stateIn, TEST_SITE_ID ) ).toStrictEqual( stagingSites );
+		} );
 	} );
 } );

@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import i18n from 'i18n-calypso';
 import page from 'page';
 import { createElement } from 'react';
@@ -9,6 +10,7 @@ import StreamComponent from 'calypso/reader/following/main';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { getPrettyFeedUrl, getPrettySiteUrl } from 'calypso/reader/route';
 import { recordTrack } from 'calypso/reader/stats';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { getLastPath } from 'calypso/state/reader-ui/selectors';
 import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
 import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
@@ -96,9 +98,12 @@ export function incompleteUrlRedirects( context, next ) {
 }
 
 export function sidebar( context, next ) {
-	context.secondary = (
-		<AsyncLoad require="calypso/reader/sidebar" path={ context.path } placeholder={ null } />
-	);
+	const state = context.store.getState();
+	if ( isUserLoggedIn( state ) ) {
+		context.secondary = (
+			<AsyncLoad require="calypso/reader/sidebar" path={ context.path } placeholder={ null } />
+		);
+	}
 
 	next();
 }
@@ -343,4 +348,13 @@ export async function blogDiscoveryByFeedId( context, next ) {
 		.catch( () => {
 			renderFeedError( context, next );
 		} );
+}
+
+export async function sitesSubscriptionManager( context, next ) {
+	if ( config.isEnabled( 'reader/subscription-management' ) ) {
+		context.primary = <AsyncLoad require="calypso/reader/subscriptions" />;
+		return next();
+	}
+
+	return context.redirect( '/read' );
 }

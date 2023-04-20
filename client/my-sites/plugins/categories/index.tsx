@@ -5,6 +5,8 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { ALLOWED_CATEGORIES, useCategories } from './use-categories';
 import { useGetCategoryUrl } from './use-get-category-url';
 
+import './style.scss';
+
 export type Category = {
 	menu: string;
 	title: string;
@@ -58,7 +60,9 @@ const Categories = ( { selected, noSelection }: { selected?: string; noSelection
 			forceSwipe={ 'undefined' === typeof window }
 		>
 			{ categories.map( ( category ) => (
-				<span key={ `category-${ category.slug }` }>{ category.menu }</span>
+				<span key={ `category-${ category.slug }` } title={ category.menu }>
+					{ category.menu }
+				</span>
 			) ) }
 		</ResponsiveToolbarGroup>
 	);

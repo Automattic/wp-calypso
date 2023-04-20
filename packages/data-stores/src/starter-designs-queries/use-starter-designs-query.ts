@@ -8,6 +8,7 @@ import type {
 	DesignRecipe,
 	SoftwareSet,
 	StyleVariation,
+	PreviewData,
 } from '@automattic/design-picker/src/types';
 
 interface StarterDesignsQueryParams {
@@ -16,6 +17,7 @@ interface StarterDesignsQueryParams {
 	seed?: string;
 	_locale: string;
 	include_virtual_designs?: boolean;
+	include_pattern_virtual_designs?: boolean;
 }
 
 interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
@@ -24,6 +26,7 @@ interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
 }
 
 interface StarterDesignsResponse {
+	filters: { subject: Record< string, Category > };
 	generated: { designs: GeneratedDesign[] };
 	static: { designs: StaticDesign[] };
 }
@@ -39,7 +42,7 @@ interface StaticDesign {
 	style_variations?: StyleVariation[];
 	software_sets?: SoftwareSet[];
 	is_virtual: boolean;
-	style_variation_slug: string | null;
+	preview_data: PreviewData | null;
 }
 
 interface GeneratedDesign {
@@ -56,6 +59,9 @@ export function useStarterDesignsQuery(
 	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
 		select: ( response: StarterDesignsResponse ) => {
 			const allDesigns = {
+				filters: {
+					subject: response.filters?.subject || {},
+				},
 				generated: {
 					designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
 				},
@@ -93,8 +99,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		price,
 		style_variations,
 		software_sets,
-		is_virtual,
-		style_variation_slug,
+		preview_data,
 	} = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
@@ -102,9 +107,6 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 	const is_bundled_with_woo_commerce = ( design.software_sets || [] ).some(
 		( { slug } ) => slug === 'woo-on-plans'
 	);
-
-	const style_variation =
-		style_variations?.find( ( { slug } ) => slug === style_variation_slug ) ?? null;
 
 	return {
 		slug,
@@ -119,8 +121,8 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		software_sets,
 		design_type: is_premium ? 'premium' : 'standard',
 		style_variations,
-		is_virtual,
-		style_variation,
+		is_virtual: design.is_virtual && !! design.recipe?.pattern_ids?.length,
+		...( preview_data && { preview_data } ),
 		// Deprecated; used for /start flow
 		features: [],
 		template: '',

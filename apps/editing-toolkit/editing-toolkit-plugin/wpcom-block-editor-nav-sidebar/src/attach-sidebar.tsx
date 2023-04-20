@@ -2,8 +2,13 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { useEffect, createPortal, useState } from '@wordpress/element';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
+import { getQueryArg } from '@wordpress/url';
 import WpcomBlockEditorNavSidebar from './components/nav-sidebar';
 import ToggleSidebarButton from './components/toggle-sidebar-button';
+
+type CoreEditPostPlaceholder = {
+	isFeatureActive: ( ...args: unknown[] ) => boolean;
+};
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	originalRegisterPlugin( name, settings as PluginSettings );
@@ -29,6 +34,7 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 				// eslint-disable-next-line react-hooks/exhaustive-deps
 			}, [] );
 
+			const showLaunchpad = getQueryArg( window.location.search, 'showLaunchpad' );
 			const [ clickGuardRoot ] = useState( () => document.createElement( 'div' ) );
 			useEffect( () => {
 				document.body.appendChild( clickGuardRoot );
@@ -38,12 +44,20 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 			} );
 
 			// Uses presence of data store to detect whether this is the experimental site editor.
-			const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
+			const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ), [] );
 
 			// Disable sidebar nav if the editor is not in fullscreen mode
-			const isFullscreenActive = useSelect( ( select ) =>
-				select( 'core/edit-post' ).isFeatureActive( 'fullscreenMode' )
+			const isFullscreenActive = useSelect(
+				( select ) =>
+					( select( 'core/edit-post' ) as CoreEditPostPlaceholder ).isFeatureActive(
+						'fullscreenMode'
+					),
+				[]
 			);
+
+			if ( showLaunchpad ) {
+				return <MainDashboardButton></MainDashboardButton>;
+			}
 
 			if ( isSiteEditor || ! isFullscreenActive ) {
 				return null;

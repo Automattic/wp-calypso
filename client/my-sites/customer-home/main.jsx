@@ -12,11 +12,13 @@ import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { preventWidows } from 'calypso/lib/formatting';
+import { getQueryArgs } from 'calypso/lib/query-args';
 import Primary from 'calypso/my-sites/customer-home/locations/primary';
 import Secondary from 'calypso/my-sites/customer-home/locations/secondary';
 import Tertiary from 'calypso/my-sites/customer-home/locations/tertiary';
@@ -50,13 +52,15 @@ const Home = ( {
 	sitePlan,
 	isNew7DUser,
 } ) => {
-	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState(
-		window.location.href.includes( 'celebrateLaunch=true' )
-	);
+	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 
 	const translate = useTranslate();
 
 	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
+
+	const { data: allDomains = [], isSuccess } = useGetDomainsQuery( site?.ID ?? null, {
+		retry: false,
+	} );
 
 	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
 	useEffect( () => {
@@ -78,6 +82,12 @@ const Home = ( {
 			window.hj( 'trigger', 'pnp_survey_1' );
 		}
 	}, [ detectedCountryCode, sitePlan, isNew7DUser ] );
+
+	useEffect( () => {
+		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
+			setCelebrateLaunchModalIsOpen( true );
+		}
+	}, [ isSuccess ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -150,7 +160,11 @@ const Home = ( {
 				</>
 			) }
 			{ celebrateLaunchModalIsOpen && (
-				<CelebrateLaunchModal setModalIsOpen={ setCelebrateLaunchModalIsOpen } site={ site } />
+				<CelebrateLaunchModal
+					setModalIsOpen={ setCelebrateLaunchModalIsOpen }
+					site={ site }
+					allDomains={ allDomains }
+				/>
 			) }
 			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</Main>

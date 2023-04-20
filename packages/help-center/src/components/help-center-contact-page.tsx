@@ -13,7 +13,7 @@ import { hasTranslation, sprintf } from '@wordpress/i18n';
 import { comment, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import React from 'react';
+import { FC } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, LinkProps } from 'react-router-dom';
 import { useActiveSupportTicketsQuery } from 'calypso/data/help/use-active-support-tickets-query';
@@ -26,18 +26,18 @@ import { BackButton } from '..';
 import { useShouldRenderChatOption } from '../hooks/use-should-render-chat-option';
 import { useShouldRenderEmailOption } from '../hooks/use-should-render-email-option';
 import { useStillNeedHelpURL } from '../hooks/use-still-need-help-url';
-import Mail from '../icons/mail';
+import { Mail, Forum } from '../icons';
 import { HelpCenterActiveTicketNotice } from './help-center-notice';
 import { SibylArticles } from './help-center-sibyl-articles';
 
-const ConditionalLink: React.FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
+const ConditionalLink: FC< { active: boolean } & LinkProps > = ( { active, ...props } ) => {
 	if ( active ) {
 		return <Link { ...props } />;
 	}
 	return <span { ...props }></span>;
 };
 
-export const HelpCenterContactPage: React.FC = () => {
+export const HelpCenterContactPage: FC = () => {
 	const { __ } = useI18n();
 	const locale = useLocale();
 
@@ -97,6 +97,14 @@ export const HelpCenterContactPage: React.FC = () => {
 		return __( 'Email', __i18n_text_domain__ );
 	}, [ __, locale ] );
 
+	const forumtHeaderText = useMemo( () => {
+		if ( isDefaultLocale( locale ) || ! hasTranslation( 'Public Forums (English)' ) ) {
+			return __( 'Public Forums', __i18n_text_domain__ );
+		}
+
+		return __( 'Public Forums (English)', __i18n_text_domain__ );
+	}, [ __, locale ] );
+
 	if ( isLoading ) {
 		return (
 			<div className="help-center-contact-page__loading">
@@ -115,27 +123,43 @@ export const HelpCenterContactPage: React.FC = () => {
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
 				<HelpCenterActiveTicketNotice tickets={ tickets } />
-				{ /* Christmas */ }
+				{ /* Easter */ }
 				<GMClosureNotice
-					displayAt="2022-12-17 00:00Z"
-					closesAt="2022-12-24 00:00Z"
-					reopensAt="2022-12-26 07:00Z"
+					displayAt="2023-04-03 00:00Z"
+					closesAt="2023-04-09 00:00Z"
+					reopensAt="2023-04-10 07:00Z"
 					enabled={ hasAccessToLivechat }
 				/>
-				{ /* NY's */ }
-				<GMClosureNotice
-					displayAt="2022-12-26 07:00Z"
-					closesAt="2022-12-31 00:00Z"
-					reopensAt="2023-01-02 07:00Z"
-					enabled={ hasAccessToLivechat }
-				/>
-				<div
-					className={ classnames( 'help-center-contact-page__boxes', {
-						'is-reversed': ! renderChat.render || renderChat.state !== 'AVAILABLE',
-					} ) }
-				>
+				{ renderChat.env === 'staging' && (
+					<Notice
+						status="warning"
+						actions={ [ { label: 'Learn more', url: 'https://wp.me/PCYsg-Q7X' } ] }
+						className="help-center-contact-page__staging-notice"
+						isDismissible={ false }
+					>
+						Targeting HappyChat staging
+					</Notice>
+				) }
+
+				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
+					<Link to="/contact-form?mode=FORUM">
+						<div
+							className={ classnames( 'help-center-contact-page__box', 'forum' ) }
+							role="button"
+							tabIndex={ 0 }
+						>
+							<div className="help-center-contact-page__box-icon">
+								<Icon icon={ <Forum /> } />
+							</div>
+							<div>
+								<h2>{ forumtHeaderText }</h2>
+								<p>{ __( 'Ask our WordPress.com community', __i18n_text_domain__ ) }</p>
+							</div>
+						</div>
+					</Link>
+
 					{ renderChat.render && (
-						<div>
+						<div className={ classnames( { disabled: renderChat.state !== 'AVAILABLE' } ) }>
 							<ConditionalLink
 								active={ renderChat.state === 'AVAILABLE' }
 								to="/contact-form?mode=CHAT"
@@ -160,16 +184,6 @@ export const HelpCenterContactPage: React.FC = () => {
 									</div>
 								</div>
 							</ConditionalLink>
-							{ renderChat.env === 'staging' && (
-								<Notice
-									status="warning"
-									actions={ [ { label: 'HUD', url: 'https://hud-staging.happychat.io/' } ] }
-									className="help-center-contact-page__staging-notice"
-									isDismissible={ false }
-								>
-									Using HappyChat staging
-								</Notice>
-							) }
 						</div>
 					) }
 
@@ -204,7 +218,7 @@ export const HelpCenterContactPage: React.FC = () => {
 	);
 };
 
-export const HelpCenterContactButton: React.FC = () => {
+export const HelpCenterContactButton: FC = () => {
 	const { __ } = useI18n();
 	const { url, isLoading } = useStillNeedHelpURL();
 	const sectionName = useSelector( getSectionName );

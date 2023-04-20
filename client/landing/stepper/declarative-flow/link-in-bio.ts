@@ -1,10 +1,8 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, LINK_IN_BIO_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { useEffect } from 'react';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
@@ -15,15 +13,8 @@ import {
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { USER_STORE, ONBOARD_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import DomainsStep from './internals/steps-repository/domains';
-import Intro from './internals/steps-repository/intro';
-import LaunchPad from './internals/steps-repository/launchpad';
-import LinkInBioSetup from './internals/steps-repository/link-in-bio-setup';
-import PatternsStep from './internals/steps-repository/patterns';
-import PlansStep from './internals/steps-repository/plans';
-import Processing from './internals/steps-repository/processing-step';
-import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import type { Flow, ProvidedDependencies } from './internals/types';
+import type { UserSelect } from '@automattic/data-stores';
 
 const linkInBio: Flow = {
 	name: LINK_IN_BIO_FLOW,
@@ -31,20 +22,27 @@ const linkInBio: Flow = {
 		return translate( 'Link in Bio' );
 	},
 	useSteps() {
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
-			recordFullStoryEvent( 'calypso_signup_start_link_in_bio', { flow: this.name } );
-		}, [] );
-
 		return [
-			{ slug: 'intro', component: Intro },
-			{ slug: 'linkInBioSetup', component: LinkInBioSetup },
-			{ slug: 'domains', component: DomainsStep },
-			{ slug: 'plans', component: PlansStep },
-			{ slug: 'patterns', component: PatternsStep },
-			{ slug: 'siteCreationStep', component: SiteCreationStep },
-			{ slug: 'processing', component: Processing },
-			{ slug: 'launchpad', component: LaunchPad },
+			{ slug: 'intro', asyncComponent: () => import( './internals/steps-repository/intro' ) },
+			{
+				slug: 'linkInBioSetup',
+				asyncComponent: () => import( './internals/steps-repository/link-in-bio-setup' ),
+			},
+			{ slug: 'domains', asyncComponent: () => import( './internals/steps-repository/domains' ) },
+			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
+			{ slug: 'patterns', asyncComponent: () => import( './internals/steps-repository/patterns' ) },
+			{
+				slug: 'siteCreationStep',
+				asyncComponent: () => import( './internals/steps-repository/site-creation-step' ),
+			},
+			{
+				slug: 'processing',
+				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{
+				slug: 'launchpad',
+				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
+			},
 		];
 	},
 
@@ -53,7 +51,10 @@ const linkInBio: Flow = {
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const siteSlug = useSiteSlug();
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 		const locale = useLocale();
 
 		setStepProgress( flowProgress );
@@ -105,7 +106,10 @@ const linkInBio: Flow = {
 				case 'processing':
 					if ( providedDependencies?.goToHome && providedDependencies?.siteSlug ) {
 						return window.location.replace(
-							`/home/${ providedDependencies?.siteSlug }?celebrateLaunch=true`
+							addQueryArgs( `/home/${ providedDependencies?.siteSlug }`, {
+								celebrateLaunch: true,
+								launchpadComplete: true,
+							} )
 						);
 					}
 

@@ -22,7 +22,7 @@ export const key = ( memoryStore ) => {
 
 export const setItem = ( memoryStore, allowedKeys, original ) => {
 	return ( _key, value ) => {
-		if ( original && allowedKeys.indexOf( _key ) > -1 ) {
+		if ( original && allowedKeys.includes( _key ) ) {
 			original( _key, value );
 			return;
 		}
@@ -34,7 +34,7 @@ export const setItem = ( memoryStore, allowedKeys, original ) => {
 
 export const getItem = ( memoryStore, allowedKeys, original ) => {
 	return ( _key ) => {
-		if ( original && allowedKeys.indexOf( _key ) > -1 ) {
+		if ( original && allowedKeys.includes( _key ) ) {
 			return original( _key );
 		}
 
@@ -45,7 +45,7 @@ export const getItem = ( memoryStore, allowedKeys, original ) => {
 
 export const removeItem = ( memoryStore, allowedKeys, original ) => {
 	return ( _key ) => {
-		if ( original && allowedKeys.indexOf( _key ) > -1 ) {
+		if ( original && allowedKeys.includes( _key ) ) {
 			original( _key );
 			return;
 		}
@@ -76,7 +76,7 @@ export const clear = ( memoryStore ) => {
  * @param {Object}   [args.root]       Allow alternate "window" object to support tests in non-browser environments
  * @param {string[]} [args.allowedKeys] An array of localStorage keys that are proxied to the real localStorage
  */
-export default function ( {
+export default function localStorageBypass( {
 	root = typeof window === 'undefined' ? undefined : window,
 	allowedKeys = [],
 } = {} ) {

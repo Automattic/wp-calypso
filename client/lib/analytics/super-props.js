@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { shouldReportOmitBlogId } from 'calypso/lib/analytics/utils';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
@@ -14,8 +15,9 @@ const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 		client: config( 'client_slug' ),
 	};
 
-	const omitSelectedSite =
-		! eventProperties.force_site_id && shouldReportOmitBlogId( eventProperties.path );
+	const path = eventProperties.path ?? getCurrentRoute( state );
+
+	const omitSelectedSite = ! eventProperties.force_site_id && shouldReportOmitBlogId( path );
 	const selectedSite = omitSelectedSite ? null : getSelectedSite( state );
 
 	if ( selectedSite ) {

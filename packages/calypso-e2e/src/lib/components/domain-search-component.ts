@@ -4,6 +4,7 @@ import { reloadAndRetry } from '../../element-helper';
 const selectors = {
 	searchInput: `.search-component__input`,
 	resultItem: ( keyword: string ) => `.domain-suggestion__content:has-text("${ keyword }")`,
+	firstResultItem: `.domain-suggestion:first-child .domain-suggestion__content`,
 };
 
 /**
@@ -33,17 +34,28 @@ export class DomainSearchComponent {
 	 */
 	async search( keyword: string ): Promise< void > {
 		/**
+		 *
 		 * Closure to pass into the retry method.
+		 *
+		 * @param {Page} page Page object.
 		 */
-		const searchDomainClosure = async (): Promise< void > => {
-			await Promise.all( [
-				this.page.waitForResponse( /suggestions\?/ ),
-				this.page.waitForResponse( /tlds\?/ ),
-				this.page.fill( selectors.searchInput, keyword ),
+		async function searchDomainClosure( page: Page ): Promise< void > {
+			const [ response ] = await Promise.all( [
+				page.waitForResponse( /suggestions\?/ ),
+				page.getByRole( 'searchbox' ).fill( keyword ),
 			] );
-		};
 
-		reloadAndRetry( this.page, searchDomainClosure );
+			if ( ! response ) {
+				const errorText = await page.getByRole( 'status', { name: 'Notice' } ).innerText();
+				throw new Error(
+					`Encountered error while searching for domain.\nOriginal error: ${ errorText }`
+				);
+			}
+		}
+
+		// Domain lookup service is external to Automattic and sometimes it returns an error.
+		// Retry a few times when this is encountered.
+		await reloadAndRetry( this.page, searchDomainClosure );
 	}
 
 	/**
@@ -63,6 +75,23 @@ export class DomainSearchComponent {
 	 */
 	async selectDomain( keyword: string ): Promise< string > {
 		const targetItem = await this.page.waitForSelector( selectors.resultItem( keyword ) );
+		// Heading element inside a given result contains the full domain name string.
+		const selectedDomain = await targetItem
+			.waitForSelector( 'h3' )
+			.then( ( el ) => el.innerText() );
+
+		await Promise.all( [ this.page.waitForNavigation(), targetItem.click() ] );
+
+		return selectedDomain;
+	}
+
+	/**
+	 * Select the first domain suggestion.
+	 *
+	 * @returns {string} Domain that was selected.
+	 */
+	async selectFirstSuggestion(): Promise< string > {
+		const targetItem = await this.page.waitForSelector( selectors.firstResultItem );
 		// Heading element inside a given result contains the full domain name string.
 		const selectedDomain = await targetItem
 			.waitForSelector( 'h3' )

@@ -380,7 +380,14 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 		}
 
 		if ( EditorActions.CloseEditor === action || EditorActions.GoToAllPosts === action ) {
-			const { unsavedChanges = false, destinationUrl = this.props.closeUrl } = payload;
+			let unsavedChanges = false;
+			let destinationUrl = this.props.closeUrl;
+			if ( payload?.unsavedChanges ) {
+				unsavedChanges = payload.unsavedChanges;
+			}
+			if ( payload?.destinationUrl ) {
+				destinationUrl = payload.destinationUrl;
+			}
 			this.props.setEditorIframeLoaded( false );
 			this.navigate( destinationUrl, unsavedChanges );
 		}
@@ -735,6 +742,9 @@ class CalypsoifyIframe extends Component< ComponentProps, State > {
 							// This styling hides the iframe until it loads or
 							// the redirect is executed.
 							style={ isIframeLoaded ? undefined : { opacity: 0 } }
+							// Allow clipboard access for the iframe origin.
+							// This will still require users' permissions.
+							allow="clipboard-read; clipboard-write"
 						/>
 					) }
 				</div>
@@ -815,7 +825,7 @@ const mapStateToProps = (
 		...pressThisData,
 		answer_prompt: getQueryArg( window.location.href, 'answer_prompt' ),
 		completedFlow,
-		canvas: 'edit', // Load side editor in edit mode instead of displaying sidebar by default (Gutenberg v15.0.0)
+		canvas: getQueryArg( window.location.href, 'canvas' ), // Site editor can initially load with or without nav sidebar (Gutenberg v15.0.0)
 	} );
 
 	// needed for loading the editor in SU sessions

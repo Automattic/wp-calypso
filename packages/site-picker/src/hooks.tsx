@@ -11,7 +11,7 @@ export const useArrowNavigation = (
 		( event ) => {
 			const focusableElements = (
 				element ? focus.focusable.find( element ) : []
-			 ) as HTMLButtonElement[];
+			) as HTMLButtonElement[];
 
 			let focusedIndex = focusableElements.findIndex( ( el ) => document.activeElement === el );
 			focusedIndex = focusedIndex === -1 ? 0 : focusedIndex;

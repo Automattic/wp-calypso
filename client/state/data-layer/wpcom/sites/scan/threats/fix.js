@@ -1,7 +1,7 @@
 import { JETPACK_SCAN_THREAT_FIX } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
-import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import * as sitesAlertsFixHandlers from 'calypso/state/data-layer/wpcom/sites/alerts/fix';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	updateThreat,
 	updateThreatCompleted,

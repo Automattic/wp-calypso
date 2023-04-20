@@ -9,7 +9,7 @@ It works by running some evaluations and proposing fixes if the results are not 
 - **Docker > Memory allocated**: Ensures Docker is configured to run with 8 gb of memory or more (OSX only).
 - **Node.js > Node memory**: Ensure Node.js processes run with up to 75% of available system memory.
 - **Node.js > npm cache**: Configure npm to store some caches in the same folder than yarn's cache.
-- **Node.js > Skip Puppeteer download**: Do not download puppeteer when running `yarn install`.
+- **Node.js > Skip Playwright download**: Do not download Playwright when running `yarn install`.
 
 ## Add new evaluations
 

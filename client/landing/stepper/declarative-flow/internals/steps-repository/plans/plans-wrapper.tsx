@@ -1,8 +1,8 @@
 // import { subscribeIsDesktop } from '@automattic/viewport';
-import { getPlan, PLAN_FREE, is2023PricingGridEnabled } from '@automattic/calypso-products';
+import { getPlan, PLAN_FREE, is2023PricingGridActivePage } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { DOMAIN_UPSELL_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -18,6 +18,7 @@ import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getPlanSlug } from 'calypso/state/plans/selectors';
 import { ONBOARD_STORE } from '../../../../stores';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 type IntervalType = 'yearly' | 'monthly';
@@ -30,10 +31,10 @@ interface Props {
 const PlansWrapper: React.FC< Props > = ( props ) => {
 	const { hideFreePlan, domainCartItem } = useSelect( ( select ) => {
 		return {
-			hideFreePlan: select( ONBOARD_STORE ).getHideFreePlan(),
-			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
+			hideFreePlan: ( select( ONBOARD_STORE ) as OnboardSelect ).getHideFreePlan(),
+			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
 		};
-	} );
+	}, [] );
 
 	const { setPlanCartItem } = useDispatch( ONBOARD_STORE );
 
@@ -47,6 +48,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isInVerticalScrollingPlansExperiment = true;
 	const planTypes = undefined;
 	const headerText = __( 'Choose a plan' );
+	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
 
 	const translate = useTranslate();
 
@@ -109,7 +111,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isPlansInsideStepper={ true }
 					site={ site || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
 					hideFreePlan={ hideFreePlan }
-					isInSignup={ true }
+					isInSignup={ isInSignup }
+					isStepperUpgradeFlow={ true }
 					intervalType={ getIntervalType() }
 					onUpgradeClick={ onSelectPlan }
 					showFAQ={ false }
@@ -129,6 +132,15 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getHeaderText = () => {
+		const { flowName } = props;
+		if ( flowName === DOMAIN_UPSELL_FLOW ) {
+			return __( 'Choose your flavor of WordPress' );
+		}
+
+		if ( flowName === NEWSLETTER_FLOW ) {
+			return __( `There's a plan for you.` );
+		}
+
 		if ( isDesktop ) {
 			return headerText;
 		}
@@ -152,6 +164,10 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 				  );
 		}
 
+		if ( flowName === DOMAIN_UPSELL_FLOW ) {
+			return;
+		}
+
 		return hideFreePlan
 			? __( 'Unlock a powerful bundle of features for your Link in Bio.' )
 			: translate(
@@ -159,7 +175,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					{ components: { link: freePlanButton } }
 			  );
 	};
-	const is2023OnboardingPricingGrid = is2023PricingGridEnabled();
+	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
 	const plansFeaturesSelection = () => {
 		const { flowName } = props;
@@ -177,8 +193,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					shouldHideNavButtons={ true }
 					fallbackHeaderText={ fallbackHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }
-					isWideLayout={ ! is2023OnboardingPricingGrid }
-					isExtraWideLayout={ is2023OnboardingPricingGrid }
+					isWideLayout={ ! is2023PricingGridVisible }
+					isExtraWideLayout={ is2023PricingGridVisible }
 					stepContent={ plansFeaturesList() }
 					allowBackFirstStep={ false }
 				/>
@@ -189,8 +205,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const classes = classNames( 'plans-step', {
 		'in-vertically-scrolled-plans-experiment': isInVerticalScrollingPlansExperiment,
 		'has-no-sidebar': true,
-		'is-wide-layout': ! is2023OnboardingPricingGrid,
-		'is-extra-wide-layout': is2023OnboardingPricingGrid,
+		'is-wide-layout': ! is2023PricingGridVisible,
+		'is-extra-wide-layout': is2023PricingGridVisible,
 	} );
 
 	return (

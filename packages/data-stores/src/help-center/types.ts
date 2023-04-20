@@ -1,5 +1,6 @@
 import * as actions from './actions';
-import type { DispatchFromMap } from '../mapped-types';
+import * as selectors from './selectors';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 
 export type Location = {
 	pathname: string;
@@ -37,3 +38,5 @@ export interface APIFetchOptions {
 	global: boolean;
 	path: string;
 }
+
+export type HelpCenterSelect = SelectFromMap< typeof selectors >;

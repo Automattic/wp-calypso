@@ -1,10 +1,15 @@
-import type { TranslateResult } from 'i18n-calypso';
+import type { RetentionPeriod } from 'calypso/state/rewind/retention/types';
 
 export interface RetentionRadioOptionType {
-	label: string; // 7 days
-	spaceNeeded: TranslateResult | string; // 700MB
+	spaceNeededInBytes: number;
 	upgradeRequired: boolean;
 	isCurrentPlan: boolean;
-	value: number; // 7
+	value: RetentionPeriod; // The number of days
 	checked: boolean;
+}
+
+export interface RetentionOptionInput {
+	id: RetentionPeriod;
+	spaceNeededInBytes: number;
+	upgradeRequired: boolean;
 }

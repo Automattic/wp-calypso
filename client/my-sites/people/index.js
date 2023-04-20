@@ -55,6 +55,16 @@ export default function () {
 	);
 
 	page(
+		'/people/pending-invites/:site_id',
+		peopleController.enforceSiteEnding,
+		siteSelection,
+		navigation,
+		peopleController.peoplePendingInvites,
+		makeLayout,
+		clientRender
+	);
+
+	page(
 		'/people/:filter(subscribers)/:site_id',
 		peopleController.enforceSiteEnding,
 		siteSelection,

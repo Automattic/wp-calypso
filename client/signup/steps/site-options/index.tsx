@@ -38,22 +38,26 @@ export default function SiteOptionsStep( props: Props ) {
 					headerText: translate( "First, let's give your store a name" ),
 					headerImage: storeImageUrl,
 					siteTitleLabel: translate( 'Store name' ),
-					siteTitleExplanation: translate(
-						'Enter the name of your business or store as it should appear on your site.'
-					),
+					siteTitleExplanation: translate( 'Enter the name of your business or store.' ),
 					taglineExplanation: translate( 'In a few words, explain what your store is about.' ),
 					isSiteTitleRequired: true,
+					acceptSearchTerms: true,
+					searchTermsExplanation: translate(
+						'What phrases would someone search on Google to find you?'
+					),
 				};
 			case 'difm-options':
 				return {
 					headerText: translate( "First, let's give your site a name" ),
 					headerImage: siteOptionsImage,
 					siteTitleLabel: translate( 'Site name' ),
-					siteTitleExplanation: translate(
-						'Enter the name of your business or project as it should appear on your site.'
-					),
+					siteTitleExplanation: translate( 'Enter the name of your business or project.' ),
 					taglineExplanation: translate( 'In a few words, explain what your site is about.' ),
 					isSiteTitleRequired: true,
+					acceptSearchTerms: true,
+					searchTermsExplanation: translate(
+						'What phrases would someone search on Google to find you?'
+					),
 				};
 
 			// Regular blog
@@ -74,14 +78,17 @@ export default function SiteOptionsStep( props: Props ) {
 		siteTitleExplanation,
 		taglineExplanation,
 		isSiteTitleRequired,
+		acceptSearchTerms,
+		searchTermsExplanation,
 	} = getSiteOptionsProps( stepName );
 
-	const submitSiteOptions = ( { siteTitle, tagline }: SiteOptionsFormValues ) => {
+	const submitSiteOptions = ( { siteTitle, tagline, searchTerms }: SiteOptionsFormValues ) => {
 		recordTracksEvent( 'calypso_signup_site_options_submit', {
 			has_site_title: !! siteTitle,
 			has_tagline: !! tagline,
+			has_search_terms: !! searchTerms,
 		} );
-		dispatch( submitSignupStep( { stepName }, { siteTitle, tagline } ) );
+		dispatch( submitSignupStep( { stepName }, { siteTitle, tagline, searchTerms } ) );
 		goToNextStep();
 	};
 
@@ -105,6 +112,8 @@ export default function SiteOptionsStep( props: Props ) {
 					siteTitleExplanation={ siteTitleExplanation }
 					taglineExplanation={ taglineExplanation }
 					isSiteTitleRequired={ isSiteTitleRequired }
+					acceptSearchTerms={ acceptSearchTerms }
+					searchTermsExplanation={ searchTermsExplanation }
 					onSubmit={ submitSiteOptions }
 				/>
 			}
@@ -115,6 +124,7 @@ export default function SiteOptionsStep( props: Props ) {
 			defaultDependencies={ {
 				siteTitle: '',
 				tagline: '',
+				searchTerms: '',
 			} }
 			{ ...props }
 		/>

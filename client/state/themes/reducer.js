@@ -37,8 +37,13 @@ import {
 	THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_HIDE_AUTO_LOADING_HOMEPAGE_WARNING,
 	THEME_ACCEPT_AUTO_LOADING_HOMEPAGE_WARNING,
+	THEME_SHOW_ATOMIC_TRANSFER_DIALOG,
+	THEME_ACCEPT_ATOMIC_TRANSFER_DIALOG,
+	THEME_DISMISS_ATOMIC_TRANSFER_DIALOG,
 	UPSELL_CARD_DISPLAYED,
 	THEMES_LOADING_CART,
+	THEME_START_ACTIVATION_SYNC,
+	THEME_STOP_ACTIVATION_SYNC,
 } from 'calypso/state/themes/action-types';
 import { combineReducers, withSchemaValidation, withPersistence } from 'calypso/state/utils';
 import {
@@ -618,6 +623,53 @@ export function isLoadingCart( state = false, action ) {
 	return state;
 }
 
+export function startActivationSync( state = {}, { type, siteId, themeId } ) {
+	switch ( type ) {
+		case THEME_START_ACTIVATION_SYNC: {
+			return {
+				...state,
+				[ siteId ]: {
+					...state[ siteId ],
+					[ themeId ]: true,
+				},
+			};
+		}
+		case THEME_STOP_ACTIVATION_SYNC: {
+			return {
+				...state,
+				[ siteId ]: omit( state[ siteId ], themeId ),
+			};
+		}
+	}
+
+	return state;
+}
+export const themeHasAtomicTransferDialog = ( state = null, action ) => {
+	switch ( action.type ) {
+		case THEME_SHOW_ATOMIC_TRANSFER_DIALOG: {
+			return {
+				themeId: action.themeId,
+				show: true,
+				accepted: false,
+			};
+		}
+
+		case THEME_ACCEPT_ATOMIC_TRANSFER_DIALOG: {
+			return {
+				themeId: action.themeId,
+				show: false,
+				accepted: true,
+			};
+		}
+
+		case THEME_DISMISS_ATOMIC_TRANSFER_DIALOG: {
+			return null;
+		}
+	}
+
+	return state;
+};
+
 const combinedReducer = combineReducers( {
 	queries,
 	queryRequests,
@@ -642,6 +694,8 @@ const combinedReducer = combineReducers( {
 	themesUpdate,
 	upsellCardDisplayed,
 	isLoadingCart,
+	startActivationSync,
+	themeHasAtomicTransferDialog,
 } );
 const themesReducer = withStorageKey( 'themes', combinedReducer );
 

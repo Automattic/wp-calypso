@@ -13,7 +13,7 @@ import { useSelect } from '@wordpress/data';
 import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import useCachedDomainContactDetails from 'calypso/my-sites/checkout/composite-checkout/hooks/use-cached-domain-contact-details';
-import { useWpcomStore } from 'calypso/my-sites/checkout/composite-checkout/hooks/wpcom-store';
+import { CHECKOUT_STORE } from 'calypso/my-sites/checkout/composite-checkout/lib/wpcom-store';
 import {
 	countryList,
 	createTestReduxStore,
@@ -59,12 +59,11 @@ function MyTestWrapper( {
 }
 
 function MyTestContent( { countries }: { countries: CountryListItem[] } ) {
-	useWpcomStore();
 	const { responseCart, reloadFromServer, updateLocation } = useShoppingCart(
 		initialCart.cart_key
 	);
 	useCachedDomainContactDetails( () => null, countries );
-	const contactInfo = useSelect( ( select ) => select( 'wpcom-checkout' ).getContactInfo() );
+	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 	const [ localLocation, setLocation ] = useState( { countryCode: '', postalCode: '' } );
 	const onChangeCountry = ( evt ) => {
 		const newVal = evt.target.value;

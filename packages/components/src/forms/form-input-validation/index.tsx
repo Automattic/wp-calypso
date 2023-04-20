@@ -11,6 +11,7 @@ interface Props {
 	isHidden?: boolean;
 	isValid?: boolean;
 	text: ReactNode;
+	ariaLabel?: string;
 	icon?: string;
 	id?: string;
 	className?: string;
@@ -22,6 +23,7 @@ const FormInputValidation: React.FC< Props > = ( {
 	isWarning,
 	isHidden,
 	className,
+	ariaLabel = '',
 	text,
 	icon,
 	id,
@@ -37,7 +39,7 @@ const FormInputValidation: React.FC< Props > = ( {
 	const defaultIcon = isError || isWarning ? info : check;
 
 	return (
-		<div className={ classes } role="alert">
+		<div aria-label={ ariaLabel } className={ classes } role="alert">
 			<span id={ id }>
 				{ icon ? (
 					<Gridicon size={ 24 } icon={ icon } />

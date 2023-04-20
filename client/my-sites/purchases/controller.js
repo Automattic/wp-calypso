@@ -84,7 +84,10 @@ export const billingHistory = ( context, next ) => {
 
 export const receiptView = ( context, next ) => {
 	context.primary = (
-		<ReceiptView receiptId={ context.params.receiptId } siteSlug={ context.params.site } />
+		<ReceiptView
+			receiptId={ parseInt( context.params.receiptId, 10 ) }
+			siteSlug={ context.params.site }
+		/>
 	);
 	next();
 };

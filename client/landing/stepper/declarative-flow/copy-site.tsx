@@ -5,8 +5,6 @@ import { translate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
-import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -25,6 +23,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from './internals/types';
+import type { SiteSelect } from '@automattic/data-stores';
 
 function useIsValidSite() {
 	const urlQueryParams = useQuery();
@@ -37,16 +36,19 @@ function useIsValidSite() {
 		isFetchingSiteDetails,
 		isFetchingError,
 		site: sourceSite,
-	} = useSelect( ( select ) => {
-		if ( ! sourceSlug ) {
-			return {};
-		}
-		return {
-			isFetchingError: select( SITE_STORE ).getFetchingSiteError(),
-			isFetchingSiteDetails: select( SITE_STORE ).isFetchingSiteDetails(),
-			site: select( SITE_STORE ).getSite( sourceSlug ),
-		};
-	} );
+	} = useSelect(
+		( select ) => {
+			if ( ! sourceSlug ) {
+				return {};
+			}
+			return {
+				isFetchingError: ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+				isFetchingSiteDetails: ( select( SITE_STORE ) as SiteSelect ).isFetchingSiteDetails(),
+				site: ( select( SITE_STORE ) as SiteSelect ).getSite( sourceSlug ),
+			};
+		},
+		[ sourceSlug ]
+	);
 
 	useEffect( () => {
 		if ( isFetchingSiteDetails && siteRequestStatus === 'init' ) {
@@ -75,21 +77,9 @@ const copySite: Flow = {
 	},
 
 	useSteps() {
-		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
-			recordFullStoryEvent( 'calypso_signup_start_copy_site', { flow: this.name } );
-		}, [] );
-
-		const urlQueryParams = useQuery();
-		const siteSlug = urlQueryParams.get( 'siteSlug' );
-
 		return [
-			...( ! siteSlug
-				? [
-						{ slug: 'domains', component: DomainsStep },
-						{ slug: 'site-creation-step', component: SiteCreationStep },
-				  ]
-				: [] ),
+			{ slug: 'domains', component: DomainsStep },
+			{ slug: 'site-creation-step', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
 			{ slug: 'automated-copy', component: AutomatedCopySite },
 			{
@@ -104,6 +94,7 @@ const copySite: Flow = {
 					/>
 				),
 			},
+			{ slug: 'resuming', component: ProcessingStep }, // Needs siteSlug param
 		];
 	},
 
@@ -130,6 +121,7 @@ const copySite: Flow = {
 					return navigate( 'processing' );
 				}
 
+				case 'resuming':
 				case 'processing': {
 					const siteSlug = providedDependencies?.siteSlug || urlQueryParams.get( 'siteSlug' );
 					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {

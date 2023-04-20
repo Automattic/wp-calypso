@@ -10,6 +10,7 @@ import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import domainManagementReducer from 'calypso/state/domains/management/reducer';
+import type { PricedAPIPlan, StorePlanSlug } from '@automattic/data-stores';
 import type {
 	CartKey,
 	SetCart,
@@ -27,7 +28,7 @@ export const stripeConfiguration = {
 	processor_id: 'IE',
 	js_url: 'https://stripe-js-url',
 	public_key: 'stripe-public-key',
-	setup_intent_id: null,
+	setup_intent_id: undefined,
 };
 
 export const processorOptions = {
@@ -64,33 +65,80 @@ export const countryList: CountryListItem[] = [
 		code: 'US',
 		name: 'United States',
 		has_postal_codes: true,
+		vat_supported: false,
 	},
 	{
 		code: 'CW',
 		name: 'Curacao',
 		has_postal_codes: false,
+		vat_supported: false,
 	},
 	{
 		code: 'AU',
 		name: 'Australia',
 		has_postal_codes: true,
+		vat_supported: false,
 	},
 	{
 		code: 'ES',
 		name: 'Spain',
 		has_postal_codes: true,
+		vat_supported: true,
+		tax_country_codes: [ 'ES' ],
 	},
 	{
 		code: 'CA',
 		name: 'Canada',
 		has_postal_codes: true,
+		tax_needs_city: true,
+		tax_needs_subdivision: true,
+		vat_supported: true,
+		tax_country_codes: [ 'CA' ],
+	},
+	{
+		code: 'CH',
+		name: 'Switzerland',
+		has_postal_codes: true,
+		tax_needs_address: true,
+		vat_supported: true,
+		tax_country_codes: [ 'CH' ],
 	},
 	{
 		code: 'GB',
 		name: 'United Kingdom',
 		has_postal_codes: true,
+		tax_needs_organization: true, // added for testing, not present in API data
+		vat_supported: true,
+		tax_country_codes: [ 'GB', 'XI' ],
+	},
+	{
+		code: 'IN',
+		name: 'India',
+		has_postal_codes: true,
+		tax_needs_subdivision: true,
+		vat_supported: false,
+	},
+	{
+		code: 'JP',
+		name: 'Japan',
+		has_postal_codes: true,
+		tax_needs_organization: true,
+		vat_supported: false,
+	},
+	{
+		code: 'NO',
+		name: 'Norway',
+		has_postal_codes: true,
+		tax_needs_city: true,
+		tax_needs_organization: true,
+		vat_supported: false,
 	},
 ];
+
+export const stateList = {
+	ca: [ { code: 'QC', name: 'Quebec' } ],
+	in: [ { code: 'KA', name: 'Karnataka' } ],
+};
 
 export const siteId = 13579;
 
@@ -283,10 +331,46 @@ export const planLevel2Biannual: ResponseCartProduct = {
 	months_per_bill_period: 24,
 };
 
+export const professionalEmailAnnual: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'Professional Email',
+	product_slug: 'wp_titan_mail_yearly',
+	currency: 'USD',
+	extra: {
+		email_users: [],
+		new_quantity: 1,
+	},
+	meta: 'example.com',
+	product_id: 401,
+	volume: 1,
+	item_original_cost_integer: 3500,
+	item_subtotal_integer: 3500,
+	bill_period: '365',
+	months_per_bill_period: 12,
+};
+
+export const professionalEmailMonthly: ResponseCartProduct = {
+	...getEmptyResponseCartProduct(),
+	product_name: 'Professional Email',
+	product_slug: 'wp_titan_mail_monthly',
+	currency: 'USD',
+	extra: {
+		email_users: [],
+		new_quantity: 1,
+	},
+	meta: 'example.com',
+	product_id: 400,
+	volume: 1,
+	item_original_cost_integer: 350,
+	item_subtotal_integer: 350,
+	bill_period: '31',
+	months_per_bill_period: 1,
+};
+
 export const fetchStripeConfiguration = async () => stripeConfiguration;
 
 export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
-	return async ( _: number, requestCart: RequestCart ): Promise< ResponseCart > => {
+	return async ( _: CartKey, requestCart: RequestCart ): Promise< ResponseCart > => {
 		const { products: requestProducts, coupon: requestCoupon } = requestCart;
 		const products = requestProducts.map( convertRequestProductToResponseProduct( currency ) );
 
@@ -306,7 +390,6 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			coupon: requestCoupon,
 			coupon_discounts_integer: [],
 			coupon_savings_total_integer: requestCoupon ? 1000 : 0,
-			create_new_blog: false,
 			credits_integer: 0,
 			currency,
 			is_coupon_applied: true,
@@ -326,26 +409,110 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 			total_tax_breakdown: [],
 			total_tax_integer: taxInteger,
 			next_domain_condition: '',
+			messages: { errors: [], success: [] },
 		};
 	};
 }
 
-export function convertProductSlugToResponseProduct( productSlug: string ) {
+export function convertProductSlugToResponseProduct( productSlug: string ): ResponseCartProduct {
 	switch ( productSlug ) {
+		case 'jetpack_anti_spam_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2111,
+				product_name: 'Jetpack Akismet Anti-spam',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_anti_spam':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2110,
+				product_name: 'Jetpack Akismet Anti-spam',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
 		case 'jetpack_backup_t1_monthly':
 			return {
 				...getEmptyResponseCartProduct(),
-				product_id: 2100,
+				product_id: 2113,
 				product_name: 'Jetpack VaultPress Backup (10GB)',
-				product_slug: 'jetpack_backup_t1_monthly',
+				product_slug: productSlug,
+				bill_period: 'monthly',
 				currency: 'USD',
 			};
 		case 'jetpack_backup_t1_yearly':
 			return {
 				...getEmptyResponseCartProduct(),
-				product_id: 2100,
+				product_id: 2112,
 				product_name: 'Jetpack VaultPress Backup (10GB)',
-				product_slug: 'jetpack_backup_t1_yearly',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_backup_t2_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2115,
+				product_name: 'Jetpack VaultPress Backup (1TB)',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_backup_t2_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2114,
+				product_name: 'Jetpack VaultPress Backup (1TB)',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_boost_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2400,
+				product_name: 'Jetpack Boost',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_boost_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2401,
+				product_name: 'Jetpack Boost',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_complete_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2015,
+				product_name: 'Jetpack Complete',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_complete':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2014,
+				product_name: 'Jetpack Complete',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_scan_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2107,
+				product_name: 'Jetpack Scan',
+				product_slug: productSlug,
+				bill_period: 'monthly',
 				currency: 'USD',
 			};
 		case 'jetpack_scan':
@@ -353,7 +520,116 @@ export function convertProductSlugToResponseProduct( productSlug: string ) {
 				...getEmptyResponseCartProduct(),
 				product_id: 2106,
 				product_name: 'Jetpack Scan Daily',
-				product_slug: 'jetpack_scan',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_search_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2105,
+				product_name: 'Jetpack Search',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_search':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2104,
+				product_name: 'Jetpack Search',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t1_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2017,
+				product_name: 'Jetpack Security T1',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t1_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2016,
+				product_name: 'Jetpack Security T1',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t2_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2020,
+				product_name: 'Jetpack Security T2',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_security_t2_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2019,
+				product_name: 'Jetpack Security T2',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_social_basic_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2504,
+				product_name: 'Jetpack Social Basic',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_social_basic_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2503,
+				product_name: 'Jetpack Social Basic',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_social_advanced_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2603,
+				product_name: 'Jetpack Social Advanced',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_social_advanced_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2602,
+				product_name: 'Jetpack Social Advanced',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'jetpack_videopress_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2117,
+				product_name: 'Jetpack VideoPress',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'jetpack_videopress_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2116,
+				product_name: 'Jetpack VideoPress',
+				product_slug: productSlug,
+				bill_period: 'yearly',
 				currency: 'USD',
 			};
 		default:
@@ -471,6 +747,7 @@ function convertRequestProductToResponseProduct(
 								lastname: 'Person',
 								recoveryEmail: 'foo@example.com',
 								hash: '1234567',
+								password: '1234567',
 							},
 						],
 					},
@@ -539,6 +816,43 @@ function convertRequestProductToResponseProduct(
 					volume: 1,
 					extra: {},
 				};
+
+			case 'ak_plus_yearly_1':
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: 2311,
+					product_name: 'Akismet Plus (10K requests/month)',
+					product_slug: 'ak_plus_yearly_1',
+					bill_period: '365',
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 10000,
+					item_subtotal_integer: 10000,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {
+						isAkismetSitelessCheckout: true,
+					},
+				};
+			case 'ak_plus_yearly_2':
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: 2313,
+					product_name: 'Akismet Plus (20K requests/month)',
+					product_slug: 'ak_plus_yearly_2',
+					bill_period: '365',
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: 20000,
+					item_subtotal_integer: 20000,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: {
+						isAkismetSitelessCheckout: true,
+					},
+				};
 			case planLevel2.product_slug:
 				return {
 					...getEmptyResponseCartProduct(),
@@ -572,6 +886,40 @@ function convertRequestProductToResponseProduct(
 					meta: product.meta,
 					volume: 1,
 					extra: {},
+				};
+			case professionalEmailAnnual.product_slug:
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: professionalEmailAnnual.product_id,
+					product_name: professionalEmailAnnual.product_name,
+					product_slug: professionalEmailAnnual.product_slug,
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: professionalEmailAnnual.item_original_cost_integer,
+					item_subtotal_integer: professionalEmailAnnual.item_subtotal_integer,
+					bill_period: professionalEmailAnnual.bill_period,
+					months_per_bill_period: professionalEmailAnnual.months_per_bill_period,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: product.extra,
+				};
+			case professionalEmailMonthly.product_slug:
+				return {
+					...getEmptyResponseCartProduct(),
+					product_id: professionalEmailMonthly.product_id,
+					product_name: professionalEmailMonthly.product_name,
+					product_slug: professionalEmailMonthly.product_slug,
+					currency: currency,
+					is_domain_registration: false,
+					item_original_cost_integer: professionalEmailMonthly.item_original_cost_integer,
+					item_subtotal_integer: professionalEmailMonthly.item_subtotal_integer,
+					bill_period: professionalEmailMonthly.bill_period,
+					months_per_bill_period: professionalEmailMonthly.months_per_bill_period,
+					item_tax: 0,
+					meta: product.meta,
+					volume: 1,
+					extra: product.extra,
 				};
 		}
 
@@ -725,67 +1073,73 @@ export function getPlanSubtitleTextForInterval( type: string ) {
 	}
 }
 
-export function getPlansItemsState() {
+export function getPlansItemsState(): PricedAPIPlan[] {
 	return [
 		{
 			product_id: planWithoutDomain.product_id,
-			product_slug: planWithoutDomain.product_slug,
-			bill_period: '365',
+			product_slug: planWithoutDomain.product_slug as StorePlanSlug,
+			product_name: planWithoutDomain.product_name,
+			product_name_short: planWithoutDomain.product_name,
+			currency_code: 'USD',
+			bill_period: 365,
 			product_type: 'bundle',
-			available: true,
-			price: '$48',
-			formatted_price: '$48',
 			raw_price: 48,
+			raw_price_integer: 4800,
 		},
 		{
 			product_id: planWithoutDomainMonthly.product_id,
-			product_slug: planWithoutDomainMonthly.product_slug,
-			bill_period: '31',
+			product_slug: planWithoutDomainMonthly.product_slug as StorePlanSlug,
+			product_name: planWithoutDomainMonthly.product_name,
+			product_name_short: planWithoutDomainMonthly.product_name,
+			currency_code: 'USD',
+			bill_period: 31,
 			product_type: 'bundle',
-			available: true,
-			price: '$7',
-			formatted_price: '$7',
 			raw_price: 7,
+			raw_price_integer: 700,
 		},
 		{
 			product_id: planWithoutDomainBiannual.product_id,
-			product_slug: planWithoutDomainBiannual.product_slug,
-			bill_period: '730',
+			product_slug: planWithoutDomainBiannual.product_slug as StorePlanSlug,
+			product_name: planWithoutDomainBiannual.product_name,
+			product_name_short: planWithoutDomainBiannual.product_name,
+			currency_code: 'USD',
+			bill_period: 730,
 			product_type: 'bundle',
-			available: true,
-			price: '$84',
-			formatted_price: '$84',
 			raw_price: 84,
+			raw_price_integer: 8400,
 		},
 		{
 			product_id: planLevel2.product_id,
-			product_slug: planLevel2.product_slug,
-			bill_period: '365',
+			product_slug: planLevel2.product_slug as StorePlanSlug,
+			product_name: planLevel2.product_name,
+			product_name_short: planLevel2.product_name,
+			currency_code: 'USD',
+			bill_period: 365,
 			product_type: 'bundle',
-			available: true,
-			price: '$300',
-			formatted_price: '$300',
 			raw_price: 300,
+			raw_price_integer: 30000,
 		},
 		{
 			product_id: planLevel2Monthly.product_id,
-			product_slug: planLevel2Monthly.product_slug,
-			bill_period: '30',
+			product_slug: planLevel2Monthly.product_slug as StorePlanSlug,
+			product_name: planLevel2Monthly.product_name,
+			product_name_short: planLevel2Monthly.product_name,
+			currency_code: 'USD',
+			bill_period: 31,
 			product_type: 'bundle',
-			available: true,
-			price: '$33',
-			formatted_price: '$33',
 			raw_price: 33,
+			raw_price_integer: 3300,
 		},
 		{
 			product_id: planLevel2Biannual.product_id,
-			product_slug: planLevel2Biannual.product_slug,
-			bill_period: '730',
+			product_slug: planLevel2Biannual.product_slug as StorePlanSlug,
+			product_name: planLevel2Biannual.product_name,
+			product_name_short: planLevel2Biannual.product_name,
+			currency_code: 'USD',
+			bill_period: 730,
 			product_type: 'bundle',
-			available: true,
-			price: '$499',
-			formatted_price: '$499',
 			raw_price: 499,
+			raw_price_integer: 49900,
 		},
 	];
 }
@@ -885,6 +1239,7 @@ export function createTestReduxStore() {
 			purchases: {},
 			countries: { payments: countryList, domains: countryList },
 			domains: { management: domainManagementReducer( state?.domains?.management ?? {}, action ) },
+			countryStates: { items: stateList },
 		};
 	};
 	return createStore( rootReducer, applyMiddleware( thunk ) );
@@ -1122,7 +1477,7 @@ expect.extend( {
 	 */
 	async toNeverAppear( elementPromise: Promise< HTMLElement > ) {
 		let pass = false;
-		let element = null;
+		let element: HTMLElement | null = null;
 		try {
 			element = await elementPromise;
 		} catch {
@@ -1186,7 +1541,7 @@ function getVariantPrice( data: ResponseCartProduct ): number {
 	if ( ! variantData ) {
 		throw new Error( `Unknown price for variant ${ data.product_slug }` );
 	}
-	return variantData.raw_price;
+	return variantData.raw_price_integer;
 }
 
 function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
@@ -1194,7 +1549,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 		case planLevel2Monthly.product_slug:
 			return {
 				product_id: planLevel2Monthly.product_id,
-				bill_period_in_months: planLevel2Monthly.months_per_bill_period,
+				bill_period_in_months: planLevel2Monthly.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planLevel2Monthly.currency,
 				price_integer: getVariantPrice( planLevel2Monthly ),
@@ -1204,7 +1559,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 		case planLevel2.product_slug:
 			return {
 				product_id: planLevel2.product_id,
-				bill_period_in_months: planLevel2.months_per_bill_period,
+				bill_period_in_months: planLevel2.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planLevel2.currency,
 				price_integer: getVariantPrice( planLevel2 ),
@@ -1214,7 +1569,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 		case planLevel2Biannual.product_slug:
 			return {
 				product_id: planLevel2Biannual.product_id,
-				bill_period_in_months: planLevel2Biannual.months_per_bill_period,
+				bill_period_in_months: planLevel2Biannual.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planLevel2Biannual.currency,
 				price_integer: getVariantPrice( planLevel2Biannual ),
@@ -1224,7 +1579,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 		case planWithoutDomainMonthly.product_slug:
 			return {
 				product_id: planWithoutDomainMonthly.product_id,
-				bill_period_in_months: planWithoutDomainMonthly.months_per_bill_period,
+				bill_period_in_months: planWithoutDomainMonthly.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planWithoutDomainMonthly.currency,
 				price_integer: getVariantPrice( planWithoutDomainMonthly ),
@@ -1234,7 +1589,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 		case planWithoutDomain.product_slug:
 			return {
 				product_id: planWithoutDomain.product_id,
-				bill_period_in_months: planWithoutDomain.months_per_bill_period,
+				bill_period_in_months: planWithoutDomain.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planWithoutDomain.currency,
 				price_integer: getVariantPrice( planWithoutDomain ),
@@ -1244,7 +1599,7 @@ function buildVariant( data: ResponseCartProduct ): ResponseCartProductVariant {
 		case planWithoutDomainBiannual.product_slug:
 			return {
 				product_id: planWithoutDomainBiannual.product_id,
-				bill_period_in_months: planWithoutDomainBiannual.months_per_bill_period,
+				bill_period_in_months: planWithoutDomainBiannual.months_per_bill_period as number,
 				product_slug: data.product_slug,
 				currency: planWithoutDomainBiannual.currency,
 				price_integer: getVariantPrice( planWithoutDomainBiannual ),

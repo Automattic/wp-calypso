@@ -65,12 +65,25 @@ describe( 'useStorageUsageText', () => {
 	);
 
 	test.each( [
+		[ TERABYTE + GIGABYTE * 10, '1.01' ],
+		[ TERABYTE + GIGABYTE * 100, '1.10' ],
+		[ TERABYTE * 2 + GIGABYTE * 10, '2.01' ],
+		[ TERABYTE * 2 + GIGABYTE * 100, '2.10' ],
+	] )(
+		'displays available storage in terabytes with two decimals when it exceeds 1TB and the amount is not a whole number.',
+		( bytesAvailable, expectedTB ) => {
+			const text = renderStorageUsageText( 0, bytesAvailable );
+			expect( text ).toHaveTextContent( `${ expectedTB }TB` );
+		}
+	);
+
+	test.each( [
 		[ TERABYTE, 1 ],
-		[ TERABYTE + 1, 1 ],
-		[ TERABYTE * 4 - 1, 3 ],
+		[ TERABYTE * 2, 2 ],
+		[ TERABYTE * 3, 3 ],
 		[ TERABYTE * 4, 4 ],
 	] )(
-		'shows available storage in integer terabytes if bytesAvailable is >= 1TB',
+		'shows available storage in integer terabytes if bytesAvailable is >= 1TB and the amount is a whole number',
 		( bytesAvailable, expectedTB ) => {
 			const text = renderStorageUsageText( 0, bytesAvailable );
 			expect( text ).toHaveTextContent( `${ expectedTB }TB` );
@@ -124,11 +137,19 @@ describe( 'useDaysOfBackupsSavedText', () => {
 		expect( text ).toHaveTextContent( '7 days of backups saved' );
 	} );
 
-	test( 'renders `7 days of backups saved` with link to activity log with site-slug', () => {
+	test( 'renders `7 days of backups saved` with link to settings page with site-slug in Calypso Blue', () => {
 		const text = renderDaysOfBackupsSavedText( 7, 'site-slug' );
-		expect( text.childNodes[ 0 ] ).toContainHTML(
-			'<a href="/activity-log/site-slug?group=rewind">7 days of backups saved</a>'
-		);
+		const link = text.childNodes[ 0 ];
+		expect( link ).toHaveAttribute( 'href', '/settings/jetpack/site-slug' );
+		expect( link ).toHaveTextContent( '7 days of backups saved' );
+	} );
+
+	test( 'renders `7 days of backups saved` with link to settings page with site-slug in Jetpack Cloud', () => {
+		isJetpackCloud.mockImplementation( () => true );
+		const text = renderDaysOfBackupsSavedText( 7, 'site-slug' );
+		const link = text.childNodes[ 0 ];
+		expect( link ).toHaveAttribute( 'href', '/settings/site-slug' );
+		expect( link ).toHaveTextContent( '7 days of backups saved' );
 	} );
 } );
 
@@ -139,7 +160,7 @@ describe( 'useStorageText', () => {
 		[ 2 ** 30 * 3, '3GB' ],
 		[ 2 ** 40 / 2, '512GB' ],
 		[ 2 ** 40 * 2, '2TB' ],
-		[ 2 ** 40 * 3.5, '3.5TB' ],
+		[ 2 ** 40 * 3.5, '3.50TB' ],
 		[ null, '' ],
 		[ -1, '' ],
 	] )( 'renders storage in human readable format for %s bytes', ( storageInBytes, expected ) => {

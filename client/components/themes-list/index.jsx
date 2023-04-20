@@ -7,7 +7,7 @@ import { Icon, addTemplate, brush, cloudUpload } from '@wordpress/icons';
 import { localize } from 'i18n-calypso';
 import { isEmpty, times } from 'lodash';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
@@ -23,8 +23,41 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const noop = () => {};
+/* Used for second upsell nudge */
+const getGridColumns = ( gridContainerRef, minColumnWidth, margin ) => {
+	const container = gridContainerRef.current;
+	if ( ! container ) {
+		return null;
+	}
+	const containerWidth = container.offsetWidth;
+	const availableWidth = containerWidth - margin;
+
+	// Changing from desktop to mobile view can cause the container width to be smaller than the
+	// minimum column width because it calculates before hiding the sidebar, which would result
+	// in a division by zero. In that case, we just assume that there's only one column.
+	const columnsPerRow = Math.floor( availableWidth / ( minColumnWidth + margin ) ) || 1;
+	return columnsPerRow;
+};
 
 export const ThemesList = ( props ) => {
+	const themesListRef = useRef( null );
+	const [ showSecondUpsellNudge, setShowSecondUpsellNudge ] = useState( false );
+	const updateShowSecondUpsellNudge = useCallback( () => {
+		const minColumnWidth = 320; // $theme-item-min-width: 320px;
+		const margin = 32; // $theme-item-horizontal-margin: 32px;
+		const columnsPerRow = getGridColumns( themesListRef, minColumnWidth, margin );
+		const result = columnsPerRow && props.themes.length >= columnsPerRow * 6;
+		setShowSecondUpsellNudge( result );
+	}, [ props.themes.length ] );
+
+	useEffect( () => {
+		updateShowSecondUpsellNudge();
+		window.addEventListener( 'resize', updateShowSecondUpsellNudge );
+		return () => {
+			window.removeEventListener( 'resize', updateShowSecondUpsellNudge );
+		};
+	}, [ updateShowSecondUpsellNudge ] );
+
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const isPatternAssemblerCTAEnabled =
@@ -49,28 +82,25 @@ export const ThemesList = ( props ) => {
 		window.location.assign( `/start/${ WITH_THEME_ASSEMBLER_FLOW }?${ params }` );
 	};
 
-	const matchingWpOrgThemes = useMemo(
-		() =>
+	const matchingWpOrgThemes = useMemo( () => {
+		const themeSlugs = props.themes.map( ( theme ) => theme.id );
+
+		return (
 			props.wpOrgThemes?.filter(
 				( wpOrgTheme ) =>
-					wpOrgTheme?.name?.toLowerCase() === props.searchTerm.toLowerCase() ||
-					wpOrgTheme?.id?.toLowerCase() === props.searchTerm.toLowerCase()
-			) || [],
-		[ props.wpOrgThemes, props.searchTerm ]
+					! themeSlugs.includes( wpOrgTheme?.id?.toLowerCase() ) && // Avoid duplicate themes. Some free themes are available in both wpcom and wporg.
+					( wpOrgTheme?.name?.toLowerCase() === props.searchTerm.toLowerCase() ||
+						wpOrgTheme?.id?.toLowerCase() === props.searchTerm.toLowerCase() )
+			) || []
+		);
+	}, [ props.wpOrgThemes, props.searchTerm, props.themes ] );
+
+	const themes = useMemo(
+		() => [ ...props.themes, ...matchingWpOrgThemes ],
+		[ props.themes, matchingWpOrgThemes ]
 	);
 
-	if ( ! props.loading && props.themes.length === 0 ) {
-		if ( matchingWpOrgThemes.length ) {
-			return (
-				<>
-					<WPOrgMatchingThemes matchingThemes={ matchingWpOrgThemes } { ...props } />
-					{ isPatternAssemblerCTAEnabled && (
-						<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
-					) }
-				</>
-			);
-		}
-
+	if ( ! props.loading && themes.length === 0 ) {
 		return (
 			<Empty
 				isFSEActive={ props.isFSEActive }
@@ -82,13 +112,24 @@ export const ThemesList = ( props ) => {
 		);
 	}
 
+	const SecondUpsellNudge = props.upsellBanner && (
+		<div className="second-upsell-wrapper">
+			{ React.cloneElement( props.upsellBanner, {
+				event: `${ props.upsellBanner.props.event }_second_upsell_nudge`,
+			} ) }
+		</div>
+	);
+
 	return (
-		<div className="themes-list">
-			{ props.themes.map( ( theme, index ) => (
+		<div className="themes-list" ref={ themesListRef }>
+			{ themes.map( ( theme, index ) => (
 				<ThemeBlock key={ 'theme-block' + index } theme={ theme } index={ index } { ...props } />
 			) ) }
+			{ /* Don't show second upsell nudge when less than 6 rows are present.
+				 Second plan upsell at 7th row is implemented through CSS. */ }
+			{ showSecondUpsellNudge && SecondUpsellNudge }
 			{ /* The Pattern Assembler CTA will display on the 9th row and the behavior is controlled by CSS */ }
-			{ isPatternAssemblerCTAEnabled && props.themes.length > 0 && (
+			{ isPatternAssemblerCTAEnabled && themes.length > 0 && (
 				<PatternAssemblerCta onButtonClick={ goToSiteAssemblerFlow } />
 			) }
 			{ props.loading && <LoadingPlaceholders placeholderCount={ props.placeholderCount } /> }
@@ -230,9 +271,9 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 				site_plan: sitePlan,
 				search_term: searchTerm,
 			} );
-			window.location.replace( 'https://wordpress.com/do-it-for-me/' );
+			window.location.replace( 'https://wordpress.com/built-by/?ref=no-themes' );
 		},
-		url: 'https://wordpress.com/do-it-for-me/',
+		url: 'https://wordpress.com/built-by/?ref=no-themes',
 		buttonText: translate( 'Hire an expert' ),
 	} );
 
@@ -334,36 +375,6 @@ function Empty( props ) {
 				upsellCardDisplayed={ props.upsellCardDisplayed }
 			/>
 		</>
-	);
-}
-
-function WPOrgMatchingThemes( props ) {
-	const { matchingThemes } = props;
-
-	const onWPOrgCardClick = useCallback(
-		( theme ) => {
-			props.recordTracksEvent( 'calypso_themeshowcase_search_empty_wp_org_card_click', {
-				site_plan: props.selectedSite?.plan?.product_slug,
-				theme_id: theme?.id,
-			} );
-		},
-		[ props.recordTracksEvent, props.selectedSite ]
-	);
-
-	return (
-		<div className="themes-list">
-			{ matchingThemes.map( ( theme, index ) => (
-				<div
-					onClick={ () => onWPOrgCardClick( theme ) }
-					key={ 'theme-block' + index }
-					role="button"
-					tabIndex={ 0 }
-					onKeyUp={ () => onWPOrgCardClick( theme ) }
-				>
-					<ThemeBlock theme={ theme } index={ index } { ...props } />
-				</div>
-			) ) }
-		</div>
 	);
 }
 

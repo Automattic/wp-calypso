@@ -122,12 +122,11 @@ function initLoadedTrackingScripts() {
 
 	// init Twitter
 	if ( mayWeTrackByTracker( 'twitter' ) ) {
-		window.twq(
-			'init',
-			isJetpackCloud() || isJetpackCheckout()
-				? TRACKING_IDS.jetpackTwitterPixelId
-				: TRACKING_IDS.twitterPixelId
-		);
+		if ( isJetpackCloud() || isJetpackCheckout() ) {
+			window.twq( 'config', TRACKING_IDS.jetpackTwitterPixelId );
+		} else {
+			window.twq( 'init', TRACKING_IDS.twitterPixelId );
+		}
 	}
 
 	// init Quora

@@ -1,8 +1,8 @@
 import deepFreeze from 'deep-freeze';
 import { map } from 'lodash';
 import { NOTICE_CREATE } from 'calypso/state/action-types';
-import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { fromApi } from 'calypso/state/data-layer/wpcom/read/tags/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	requestTags as requestTagsAction,
 	receiveTags as receiveTagsAction,

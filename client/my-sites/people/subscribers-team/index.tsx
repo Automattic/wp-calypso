@@ -9,6 +9,7 @@ import SectionNav from 'calypso/components/section-nav';
 import useFollowersQuery from 'calypso/data/followers/use-followers-query';
 import useUsersQuery from 'calypso/data/users/use-users-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getPendingInvitesForSite } from 'calypso/state/invites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PeopleSectionNavCompact from '../people-section-nav-compact';
 import Subscribers from '../subscribers';
@@ -25,6 +26,9 @@ function SubscribersTeam( props: Props ) {
 	const translate = useTranslate();
 	const { filter, search } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const pendingInvites = useSelector( ( state ) =>
+		getPendingInvitesForSite( state, site?.ID as number )
+	);
 
 	// fetching data config
 	const followersFetchOptions = { search };
@@ -102,8 +106,12 @@ function SubscribersTeam( props: Props ) {
 										title="People > Team Members / Invites"
 									/>
 
-									<TeamMembers search={ search } usersQuery={ usersQuery } />
-									<TeamInvites />
+									<TeamInvites singleInviteView={ true } />
+									<TeamMembers
+										search={ search }
+										usersQuery={ usersQuery }
+										showAddTeamMembersBtn={ ! pendingInvites?.length }
+									/>
 								</>
 							);
 					}

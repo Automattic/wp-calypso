@@ -1,6 +1,5 @@
-import { WPCOM_FEATURES_WORDADS } from '@automattic/calypso-products';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
+import siteHasWordAds from 'calypso/state/selectors/site-has-wordads';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSiteOption from './get-site-option';
 
@@ -16,7 +15,7 @@ export default function canAccessWordAds( state, siteId = 0 ) {
 		siteId = getSelectedSiteId( state );
 	}
 
-	const hasWordAdsFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_WORDADS );
+	const hasWordAdsFeature = siteHasWordAds( state, siteId );
 
 	if ( hasWordAdsFeature && canCurrentUser( state, siteId, 'activate_wordads' ) ) {
 		return true;

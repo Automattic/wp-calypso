@@ -5,6 +5,7 @@ import { once } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import JetpackPluginUpdateWarning from 'calypso/blocks/jetpack-plugin-update-warning';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 import EmptyContent from 'calypso/components/empty-content';
@@ -31,7 +32,7 @@ import {
 	isImporterStatusHydrated,
 } from 'calypso/state/imports/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
-import { getSiteTitle } from 'calypso/state/sites/selectors';
+import { getSiteTitle, getSiteOption } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -57,6 +58,11 @@ const importerComponents = {
 };
 
 const getImporterTypeForEngine = ( engine ) => `importer-type-${ engine }`;
+
+/**
+ * The minimum version of the Jetpack plugin required to use the Jetpack Importer API.
+ */
+const JETPACK_IMPORT_MIN_PLUGIN_VERSION = '12.0';
 
 class SectionImport extends Component {
 	static propTypes = {
@@ -284,6 +290,9 @@ class SectionImport extends Component {
 			options: { is_wpcom_atomic: isAtomic },
 		} = site;
 
+		const jetpackVersionInCompatible =
+			this.props.siteJetpackVersion < JETPACK_IMPORT_MIN_PLUGIN_VERSION;
+
 		return (
 			<Main>
 				<ScreenOptionsTab wpAdminPath="import.php" />
@@ -307,7 +316,19 @@ class SectionImport extends Component {
 					{ isJetpack && ! isAtomic && ! isEnabled( 'importer/unified' ) ? (
 						<JetpackImporter />
 					) : (
-						this.renderImportersList()
+						<>
+							{ /** Show a plugin update warning if Jetpack version does not support import endpoints */ }
+							{ isJetpack && ! isAtomic && (
+								<JetpackPluginUpdateWarning
+									siteId={ this.props.siteId }
+									minJetpackVersion={ JETPACK_IMPORT_MIN_PLUGIN_VERSION }
+									warningRequirement={ translate( 'To make sure you can import reliably' ) }
+								/>
+							) }
+							{ isJetpack && ! isAtomic && jetpackVersionInCompatible
+								? this.renderIdleImporters( appStates.DISABLED )
+								: this.renderImportersList() }
+						</>
 					) }
 				</EmailVerificationGate>
 			</Main>
@@ -326,6 +347,7 @@ export default connect(
 			siteImports: getImporterStatusForSiteId( state, siteId ),
 			canImport: canCurrentUser( state, siteId, 'manage_options' ),
 			isImporterStatusHydrated: isImporterStatusHydrated( state ),
+			siteJetpackVersion: getSiteOption( state, siteId, 'jetpack_version' ),
 		};
 	},
 	{ recordTracksEvent, startImport, fetchImporterState, cancelImport }

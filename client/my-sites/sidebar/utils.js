@@ -71,5 +71,13 @@ export const itemLinkMatches = ( path, currentPath ) => {
 		return isManageAllSitesPluginsPath( path );
 	}
 
+	// For `/store/stats/*` and `/google-my-business/stats/*` paths, show Stats menu as selected.
+	if (
+		currentPath.startsWith( '/store/stats/' ) ||
+		currentPath.startsWith( '/google-my-business/stats/' )
+	) {
+		return path.startsWith( '/stats/' );
+	}
+
 	return fragmentIsEqual( path, currentPath, 1 );
 };

@@ -65,7 +65,7 @@ import { themesUpdated } from '../actions/theme-update';
 jest.mock( '@automattic/calypso-config', () => {
 	const mock = () => 'development';
 	mock.isEnabled = jest.fn( ( flag ) => {
-		const allowedFlags = [ 'themes/third-party-premium' ];
+		const allowedFlags = [];
 		if ( allowedFlags.includes( flag ) ) {
 			return true;
 		}
@@ -198,10 +198,7 @@ describe( 'actions', () => {
 					'/rest/v1.2/themes' +
 					( config.isEnabled( 'pattern-assembler/logged-out-showcase' )
 						? '?include_blankcanvas_theme=true'
-						: '?include_blankcanvas_theme=' ) +
-					( config.isEnabled( 'themes/third-party-premium' )
-						? '&include_marketplace_themes=true'
-						: '&include_marketplace_themes=' );
+						: '?include_blankcanvas_theme=' );
 				nockScope = nock( 'https://public-api.wordpress.com:443' )
 					.get( url )
 					.reply( 200, {

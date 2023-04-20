@@ -2,8 +2,12 @@ import config from '@automattic/calypso-config';
 import { Card, PostStatsCard } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import Count from 'calypso/components/count';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
 import StatsDetailsNavigation from '../stats-details-navigation';
 import PostLikes from '../stats-post-likes';
@@ -15,21 +19,13 @@ type PostThumbnail = {
 	URL: string;
 };
 
-type PostDiscussion = {
-	comment_count: number;
-	comment_status: string;
-	comments_open: boolean;
-	ping_status: string;
-	pings_open: boolean;
-};
-
 type Post = {
-	date: string;
+	date: string | null;
 	title: string;
-	type: string;
-	like_count: number;
+	type: string | null;
+	like_count: number | null;
 	post_thumbnail: PostThumbnail | null;
-	discussion: PostDiscussion;
+	comment_count: number | null;
 };
 
 const POST_STATS_CARD_TITLE_LIMIT = 48;
@@ -55,6 +51,7 @@ export default function PostDetailHighlightsSection( {
 	post: Post;
 } ) {
 	const translate = useTranslate();
+	const userLocale = useSelector( getCurrentUserLocale );
 
 	const viewCount = useSelector( ( state ) => getPostStat( state, siteId, postId, 'views' ) || 0 );
 
@@ -63,6 +60,14 @@ export default function PostDetailHighlightsSection( {
 		post_thumbnail: post?.post_thumbnail?.URL || null,
 		title: decodeEntities( stripHTML( textTruncator( post?.title, POST_STATS_CARD_TITLE_LIMIT ) ) ),
 	};
+
+	const isJetpack = useSelector( ( state ) => siteId && isJetpackSite( state, siteId ) );
+	const isAtomic = useSelector( ( state ) => siteId && isSiteWpcomAtomic( state, siteId ) );
+	const isWPcomSite = ! isJetpack || isAtomic;
+
+	// postId > 0: Show the tabs for posts except for the Home Page (postId = 0).
+	// isWPcomSite: The Newsletter Stats is only covering `WPCOM sites` for now.
+	const isEmailTabsAvailable = config.isEnabled( 'newsletter/stats' ) && postId > 0 && isWPcomSite;
 
 	return (
 		<div className="stats__post-detail-highlights-section">
@@ -76,27 +81,26 @@ export default function PostDetailHighlightsSection( {
 			<div className="highlight-cards">
 				<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
 
-				{ config.isEnabled( 'newsletter/stats' ) && (
+				{ isEmailTabsAvailable && (
 					<StatsDetailsNavigation postId={ postId } givenSiteId={ siteId } />
 				) }
 
 				<div className="highlight-cards-list">
 					<PostStatsCard
 						heading={ translate( 'All-time stats' ) }
-						likeCount={ post?.like_count }
+						likeCount={ post?.like_count || 0 }
 						post={ postData }
 						viewCount={ viewCount }
-						commentCount={ post?.discussion?.comment_count }
+						commentCount={ post?.comment_count || 0 }
+						locale={ userLocale }
 					/>
 
 					<Card className="highlight-card">
 						<div className="highlight-card-heading">
 							<span>{ translate( 'Post likes' ) }</span>
-							<span className="likes-count">{ post?.like_count || 0 }</span>
+							<Count count={ post?.like_count || 0 } />
 						</div>
-						{ !! postId && (
-							<PostLikes siteId={ siteId } postId={ postId } postType={ post?.type } />
-						) }
+						<PostLikes siteId={ siteId } postId={ postId } postType={ post?.type } />
 					</Card>
 				</div>
 			</div>

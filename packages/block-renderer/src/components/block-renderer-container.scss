@@ -13,7 +13,9 @@
 		min-height: auto;
 
 		iframe {
+			max-width: initial;
 			border: none;
+			transition: opacity 0.15s ease-in-out;
 		}
 	}
 }

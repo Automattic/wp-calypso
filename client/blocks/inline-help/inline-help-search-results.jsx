@@ -24,6 +24,8 @@ import {
 } from './constants';
 import PlaceholderLines from './placeholder-lines';
 
+import './style.scss';
+
 const noop = () => {};
 
 function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
@@ -142,7 +144,7 @@ function HelpSearchResults( {
 		};
 
 		return (
-			<Fragment key={ link ?? title }>
+			<Fragment key={ title ?? link }>
 				<li className="inline-help__results-item">
 					<div className="inline-help__results-cell">
 						<a

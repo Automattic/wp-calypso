@@ -5,7 +5,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import ConnectDomainStepSupportInfoLink from 'calypso/components/domains/connect-domain-step/connect-domain-step-support-info-link';
 import DomainTransferRecommendation from 'calypso/components/domains/domain-transfer-recommendation';
@@ -19,7 +19,9 @@ import {
 	domainManagementEdit,
 	domainManagementList,
 	domainUseMyDomain,
+	domainMappingSetup,
 } from 'calypso/my-sites/domains/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConnectDomainStepSwitchSetupInfoLink from './connect-domain-step-switch-setup-info-link';
@@ -35,11 +37,12 @@ import './style.scss';
 
 function ConnectDomainStep( {
 	domain,
-	selectedSite,
-	initialSetupInfo,
 	initialStep,
+	selectedSite,
 	showErrors,
 	isFirstVisit,
+	queryError,
+	queryErrorDescription,
 } ) {
 	const { __ } = useI18n();
 	const stepsDefinition = isSubdomain( domain )
@@ -64,11 +67,48 @@ function ConnectDomainStep( {
 
 	const statusRef = useRef( {} );
 
-	useEffect( () => {
-		if ( initialStep && Object.values( stepSlug ).includes( initialStep ) ) {
-			setPageSlug( initialStep );
-		}
-	}, [ initialStep, setPageSlug ] );
+	const dispatch = useDispatch();
+	const recordMappingSetupTracksEvent = useCallback(
+		( resolvedPageSlug ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_domain_mapping_setup_page_view', {
+					domain,
+					page_slug: resolvedPageSlug,
+					query_error: queryError,
+					query_error_description: queryErrorDescription,
+				} )
+			);
+		},
+		[ dispatch, domain, queryError, queryErrorDescription ]
+	);
+
+	const resolveMappingSetupStep = useCallback(
+		( connectionMode, supportsDomainConnect, domainName ) => {
+			if ( initialStep ) {
+				return initialStep;
+			}
+			// If connectionMode is present we'll send you to the last step of the relevant flow
+			if ( connectionMode ) {
+				if ( isSubdomain( domainName ) ) {
+					return connectionMode === modeType.ADVANCED
+						? stepSlug.SUBDOMAIN_ADVANCED_UPDATE
+						: stepSlug.SUBDOMAIN_SUGGESTED_UPDATE;
+				}
+				if ( connectionMode === modeType.ADVANCED ) {
+					return stepSlug.ADVANCED_UPDATE;
+				} else if ( connectionMode === modeType.DC ) {
+					return stepSlug.DC_START;
+				}
+				return stepSlug.SUGGESTED_UPDATE;
+			}
+			// If connectionMode is not present we'll send you to one of the start steps
+			if ( supportsDomainConnect ) {
+				return stepSlug.DC_START;
+			}
+			return firstStep;
+		},
+		[ initialStep, firstStep ]
+	);
 
 	const verifyConnection = useCallback(
 		( setStepAfterVerify = true ) => {
@@ -120,20 +160,37 @@ function ConnectDomainStep( {
 			return;
 		}
 
-		( () => {
-			setDomainSetupInfoError( {} );
-			setLoadingDomainSetupInfo( true );
-			wpcom
-				.domain( domain )
-				.mappingSetupInfo( selectedSite.ID, domain )
-				.then( ( data ) => {
-					setDomainSetupInfo( { data } );
-					statusRef.current.hasLoadedStatusInfo = { [ domain ]: true };
-				} )
-				.catch( ( error ) => setDomainSetupInfoError( { error } ) )
-				.finally( () => setLoadingDomainSetupInfo( false ) );
-		} )();
-	}, [ domain, domainSetupInfo, initialSetupInfo, loadingDomainSetupInfo, selectedSite.ID ] );
+		setDomainSetupInfoError( {} );
+		setLoadingDomainSetupInfo( true );
+		wpcom
+			.domain( domain )
+			.mappingSetupInfo( selectedSite.ID, {
+				redirect_uri:
+					'https://wordpress.com' +
+					domainMappingSetup( selectedSite.slug, domain, stepSlug.DC_RETURN ),
+			} )
+			.then( ( data ) => {
+				setDomainSetupInfo( { data } );
+				const resolvedPageSlug = resolveMappingSetupStep(
+					data?.connection_mode,
+					!! data?.domain_connect_apply_wpcom_hosting,
+					domain
+				);
+				setPageSlug( resolvedPageSlug );
+				recordMappingSetupTracksEvent( resolvedPageSlug );
+				statusRef.current.hasLoadedStatusInfo = { [ domain ]: true };
+			} )
+			.catch( ( error ) => setDomainSetupInfoError( { error } ) )
+			.finally( () => setLoadingDomainSetupInfo( false ) );
+	}, [
+		selectedSite,
+		domain,
+		resolveMappingSetupStep,
+		domainSetupInfo,
+		loadingDomainSetupInfo,
+		selectedSite.ID,
+		recordMappingSetupTracksEvent,
+	] );
 
 	useEffect( () => {
 		if ( ! showErrors || statusRef.current?.hasFetchedVerificationStatus ) {
@@ -221,6 +278,18 @@ function ConnectDomainStep( {
 	};
 
 	const renderContent = () => {
+		if ( loadingDomainSetupInfo === true ) {
+			return (
+				<div className={ baseClassName + '__content-placeholder' }>
+					<p></p>
+					<p></p>
+					<p></p>
+					<p></p>
+					<p></p>
+				</div>
+			);
+		}
+
 		return (
 			<>
 				{ prevPageSlug && (
@@ -241,15 +310,22 @@ function ConnectDomainStep( {
 					domainSetupInfo={ domainSetupInfo }
 					domainSetupInfoError={ domainSetupInfoError }
 					showErrors={ showErrors }
+					queryError={ queryError }
+					queryErrorDescription={ queryErrorDescription }
 				/>
 			</>
 		);
 	};
 
 	const renderSidebar = () => {
+		if ( loadingDomainSetupInfo === true ) {
+			return <div className={ baseClassName + '__sidebar-placeholder' }></div>;
+		}
+
 		if ( ! isStepStart ) {
 			return null;
 		}
+
 		return <DomainTransferRecommendation />;
 	};
 
@@ -263,14 +339,19 @@ function ConnectDomainStep( {
 			) : (
 				renderContent()
 			) }
-			<ConnectDomainStepSupportInfoLink baseClassName={ baseClassName } mode={ mode } />
-			<ConnectDomainStepSwitchSetupInfoLink
-				baseClassName={ baseClassName }
-				currentMode={ mode }
-				currentStep={ step }
-				isSubdomain={ isSubdomain( domain ) }
-				setPage={ setPageSlug }
-			/>
+			{ loadingDomainSetupInfo === false && (
+				<>
+					<ConnectDomainStepSupportInfoLink baseClassName={ baseClassName } mode={ mode } />
+					<ConnectDomainStepSwitchSetupInfoLink
+						baseClassName={ baseClassName }
+						supportsDomainConnect={ !! domainSetupInfo?.data?.domain_connect_apply_wpcom_hosting }
+						currentMode={ mode }
+						currentStep={ step }
+						isSubdomain={ isSubdomain( domain ) }
+						setPage={ setPageSlug }
+					/>
+				</>
+			) }
 		</>
 	);
 }
@@ -283,6 +364,8 @@ ConnectDomainStep.propTypes = {
 	showErrors: PropTypes.bool,
 	hasSiteDomainsLoaded: PropTypes.bool,
 	isFirstVisit: PropTypes.bool,
+	queryError: PropTypes.string,
+	queryErrorDescription: PropTypes.string,
 };
 
 export default connect( ( state ) => {

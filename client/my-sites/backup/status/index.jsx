@@ -8,7 +8,6 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import isRewindBackupsInitialized from 'calypso/state/rewind/selectors/is-rewind-backups-initialized';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import { useIsDateVisible } from '../hooks';
 import { useDailyBackupStatus, useRealtimeBackupStatus } from './hooks';
 
 export const DailyStatus = ( { selectedDate } ) => {
@@ -40,7 +39,6 @@ export const DailyStatus = ( { selectedDate } ) => {
 
 export const RealtimeStatus = ( { selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
-	const isDateVisible = useIsDateVisible( siteId );
 
 	const moment = useLocalizedMoment();
 
@@ -80,7 +78,7 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 
 			<BackupGettingStarted />
 
-			{ isDateVisible( selectedDate ) && lastBackupAttemptOnDate && (
+			{ lastBackupAttemptOnDate && (
 				<BackupDelta
 					{ ...{
 						realtimeBackups: backupAttemptsOnDate,

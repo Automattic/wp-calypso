@@ -111,14 +111,13 @@ class ReskinSideExplainer extends Component {
 				</div>
 				{ ctaText && (
 					<div className="reskin-side-explainer__cta">
-						<span
+						<button
 							className="reskin-side-explainer__cta-text"
-							role="button"
 							onClick={ this.props.onClick }
 							tabIndex="0"
 						>
 							{ ctaText }
-						</span>
+						</button>
 					</div>
 				) }
 			</div>

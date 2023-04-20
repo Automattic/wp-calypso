@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import {
 	useQuery,
 	UseQueryResult,
@@ -18,7 +17,6 @@ import { BASE_STALE_TIME } from 'calypso/state/initial-state';
 type Type = 'all' | 'featured' | 'launched';
 
 const pluginsApiBase = '/marketplace/products';
-const dynamicPluginsApiBase = '/marketplace/products-dynamic';
 const featuredPluginsApiBase = '/plugins/featured';
 const pluginsApiNamespace = 'wpcom/v2';
 
@@ -81,17 +79,11 @@ export const useWPCOMPluginsList = (
 	} );
 };
 
-const fetchWPCOMPlugin = ( slug: string ) => {
-	// eslint-disable-next-line no-constant-condition
-	const pluginBase = config.isEnabled( 'marketplace-fetch-dynamic-plugin-details' )
-		? dynamicPluginsApiBase
-		: pluginsApiBase;
-
-	return wpcom.req.get( {
-		path: `${ pluginBase }/${ slug }`,
+const fetchWPCOMPlugin = ( slug: string ) =>
+	wpcom.req.get( {
+		path: `${ pluginsApiBase }/${ slug }`,
 		apiNamespace: pluginsApiNamespace,
 	} );
-};
 
 export const getWPCOMPluginQueryParams = ( slug: string ): [ QueryKey, QueryFunction ] => {
 	const cacheKey = getCacheKey( slug + '-normalized' );
@@ -126,13 +118,16 @@ export const useWPCOMPlugins = ( slugs: Array< string > ): Array< UseQueryResult
 		slugs.map( ( slug ) => {
 			const [ cacheKey, fetchFn ] = getWPCOMPluginQueryParams( slug );
 
-			return { queryKey: cacheKey, queryFn: fetchFn };
+			return {
+				queryKey: cacheKey,
+				queryFn: fetchFn,
+			};
 		} )
 	);
 };
 
 export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< any[] > ] => {
-	const cacheKey = 'plugins-featured-list-normalized';
+	const cacheKey = [ 'plugins-featured-list-normalized' ];
 	const fetchFn = () =>
 		wpcom.req
 			.get( {

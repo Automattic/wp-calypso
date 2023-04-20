@@ -307,7 +307,7 @@ export class PlanFeatures extends Component {
 	renderMobileView() {
 		const {
 			redirectToAddDomainFlow,
-			domainAndPlanPackage,
+			hidePlanTypeSelector,
 			basePlansPath,
 			canPurchase,
 			isInSignup,
@@ -355,7 +355,7 @@ export class PlanFeatures extends Component {
 		let buttonText = null;
 		let forceDisplayButton = false;
 
-		if ( redirectToAddDomainFlow === true || domainAndPlanPackage ) {
+		if ( redirectToAddDomainFlow === true || hidePlanTypeSelector ) {
 			buttonText = translate( 'Add to Cart' );
 			forceDisplayButton = true;
 		}
@@ -578,7 +578,7 @@ export class PlanFeatures extends Component {
 			selectedSiteSlug,
 			shoppingCartManager,
 			redirectToAddDomainFlow,
-			domainAndPlanPackage,
+			hidePlanTypeSelector,
 		} = this.props;
 
 		const {
@@ -603,7 +603,7 @@ export class PlanFeatures extends Component {
 			return;
 		}
 
-		if ( domainAndPlanPackage ) {
+		if ( hidePlanTypeSelector ) {
 			try {
 				// In this flow we redirect to checkout with both the plan and domain
 				// product in the cart.
@@ -994,7 +994,7 @@ const ConnectedPlanFeatures = connect(
 				}
 
 				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
-				const isMonthlyObj = { isMonthly: showMonthlyPrice };
+				const isMonthlyObj = { returnMonthly: showMonthlyPrice };
 				const rawPrice = siteId
 					? getSitePlanRawPrice( state, selectedSiteId, plan, isMonthlyObj )
 					: getPlanRawPrice( state, planProductId, showMonthlyPrice );

@@ -9,6 +9,7 @@ import {
 	isJetpackProduct,
 	isPlan,
 	isTitanMail,
+	isAkismetProduct,
 } from '@automattic/calypso-products';
 import { Button, CompactCard, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -25,6 +26,7 @@ import GSuiteCancellationPurchaseDialog from 'calypso/components/marketing-surve
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { getName, isRemovable } from 'calypso/lib/purchases';
 import NonPrimaryDomainDialog from 'calypso/me/purchases/non-primary-domain-dialog';
+import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
@@ -39,15 +41,19 @@ import { setAllSitesSelected } from 'calypso/state/ui/actions';
 import { MarketPlaceSubscriptionsDialog } from '../marketplace-subscriptions-dialog';
 import { purchasesRoot } from '../paths';
 import { PreCancellationDialog } from '../pre-cancellation-dialog';
-import { isDataLoading } from '../utils';
+import {
+	isDataLoading,
+	isAkismetTemporarySitePurchase,
+	isJetpackTemporarySitePurchase,
+} from '../utils';
 import RemoveDomainDialog from './remove-domain-dialog';
-
 import './style.scss';
 
 class RemovePurchase extends Component {
 	static propTypes = {
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
+		hasSetupAds: PropTypes.bool,
 		isDomainOnlySite: PropTypes.bool,
 		hasCustomPrimaryDomain: PropTypes.bool,
 		receiveDeletedSite: PropTypes.func.isRequired,
@@ -74,6 +80,7 @@ class RemovePurchase extends Component {
 		isShowingNonPrimaryDomainWarning: false,
 		isShowingMarketplaceSubscriptionsDialog: false,
 		isShowingPreCancellationDialog: false,
+		isShowingWordAdsEligibilityWarningDialog: false,
 	};
 
 	closeDialog = () => {
@@ -82,6 +89,7 @@ class RemovePurchase extends Component {
 			isShowingNonPrimaryDomainWarning: false,
 			isShowingMarketplaceSubscriptionsDialog: false,
 			isShowingPreCancellationDialog: false,
+			isShowingWordAdsEligibilityWarningDialog: false,
 		} );
 	};
 
@@ -90,6 +98,7 @@ class RemovePurchase extends Component {
 			isShowingMarketplaceSubscriptionsDialog: false,
 			isShowingNonPrimaryDomainWarning: false,
 			isShowingPreCancellationDialog: false,
+			isShowingWordAdsEligibilityWarningDialog: false,
 			isDialogVisible: true,
 		} );
 	};
@@ -105,6 +114,7 @@ class RemovePurchase extends Component {
 				isShowingNonPrimaryDomainWarning: false,
 				isShowingMarketplaceSubscriptionsDialog: false,
 				isShowingPreCancellationDialog: true,
+				isShowingWordAdsEligibilityWarningDialog: false,
 				isDialogVisible: false,
 			} );
 		} else if (
@@ -115,6 +125,7 @@ class RemovePurchase extends Component {
 				isShowingNonPrimaryDomainWarning: true,
 				isShowingMarketplaceSubscriptionsDialog: false,
 				isShowingPreCancellationDialog: false,
+				isShowingWordAdsEligibilityWarningDialog: false,
 				isDialogVisible: false,
 			} );
 		} else if (
@@ -125,6 +136,18 @@ class RemovePurchase extends Component {
 				isShowingNonPrimaryDomainWarning: false,
 				isShowingMarketplaceSubscriptionsDialog: true,
 				isShowingPreCancellationDialog: false,
+				isShowingWordAdsEligibilityWarningDialog: false,
+				isDialogVisible: false,
+			} );
+		} else if (
+			this.shouldShowWordAdsEligibilityWarning() &&
+			! this.state.isShowingWordAdsEligibilityWarningDialog
+		) {
+			this.setState( {
+				isShowingNonPrimaryDomainWarning: false,
+				isShowingMarketplaceSubscriptionsDialog: false,
+				isShowingPreCancellationDialog: false,
+				isShowingWordAdsEligibilityWarningDialog: true,
 				isDialogVisible: false,
 			} );
 		} else {
@@ -132,6 +155,7 @@ class RemovePurchase extends Component {
 				isShowingNonPrimaryDomainWarning: false,
 				isShowingMarketplaceSubscriptionsDialog: false,
 				isShowingPreCancellationDialog: false,
+				isShowingWordAdsEligibilityWarningDialog: false,
 				isDialogVisible: true,
 			} );
 		}
@@ -174,6 +198,20 @@ class RemovePurchase extends Component {
 			return;
 		}
 
+		successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
+			args: { productName },
+			components: { siteName: <em>{ purchase.domain }</em> },
+		} );
+
+		if (
+			isAkismetTemporarySitePurchase( purchase ) ||
+			isJetpackTemporarySitePurchase( purchase )
+		) {
+			successMessage = translate( '%(productName)s was removed from your account.', {
+				args: { productName },
+			} );
+		}
+
 		if ( isDomainRegistration( purchase ) ) {
 			if ( isDomainOnlySite ) {
 				this.props.receiveDeletedSite( purchase.siteId );
@@ -182,11 +220,6 @@ class RemovePurchase extends Component {
 
 			successMessage = translate( 'The domain {{domain/}} was removed from your account.', {
 				components: { domain: <em>{ productName }</em> },
-			} );
-		} else {
-			successMessage = translate( '%(productName)s was removed from {{siteName/}}.', {
-				args: { productName },
-				components: { siteName: <em>{ purchase.domain }</em> },
 			} );
 		}
 
@@ -216,8 +249,13 @@ class RemovePurchase extends Component {
 		);
 	}
 
+	shouldShowWordAdsEligibilityWarning() {
+		const { hasSetupAds, purchase } = this.props;
+		return hasSetupAds && isPlan( purchase );
+	}
+
 	renderNonPrimaryDomainWarningDialog() {
-		const { purchase, site } = this.props;
+		const { hasSetupAds, purchase, site } = this.props;
 		return (
 			<NonPrimaryDomainDialog
 				isDialogVisible={ this.state.isShowingNonPrimaryDomainWarning }
@@ -226,6 +264,19 @@ class RemovePurchase extends Component {
 				planName={ getName( purchase ) }
 				oldDomainName={ site.domain }
 				newDomainName={ site.wpcom_url }
+				hasSetupAds={ hasSetupAds }
+			/>
+		);
+	}
+
+	renderWordAdsEligibilityWarningDialog() {
+		const { purchase } = this.props;
+		return (
+			<WordAdsEligibilityWarningDialog
+				isDialogVisible={ this.state.isShowingWordAdsEligibilityWarningDialog }
+				closeDialog={ this.closeDialog }
+				removePlan={ this.showRemovePlanDialog }
+				planName={ getName( purchase ) }
 			/>
 		);
 	}
@@ -377,8 +428,8 @@ class RemovePurchase extends Component {
 			return null;
 		}
 
-		// If we have a disconnected site that is _not_ a Jetpack purchase, no removal allowed.
-		if ( ! this.props.site && ! this.props.isJetpack ) {
+		// If we have a disconnected site that is _not_ a Jetpack purchase _or_ an Akismet purchase, no removal allowed.
+		if ( ! this.props.site && ! this.props.isJetpack && ! this.props.isAkismet ) {
 			return null;
 		}
 
@@ -413,6 +464,10 @@ class RemovePurchase extends Component {
 				return this.renderMarketplaceSubscriptionsDialog();
 			}
 
+			if ( this.shouldShowWordAdsEligibilityWarning() ) {
+				return this.renderWordAdsEligibilityWarningDialog();
+			}
+
 			return null;
 		};
 
@@ -432,11 +487,13 @@ class RemovePurchase extends Component {
 export default connect(
 	( state, { purchase } ) => {
 		const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
+		const isAkismet = purchase && isAkismetProduct( purchase );
 		return {
 			isDomainOnlySite: purchase && isDomainOnly( state, purchase.siteId ),
 			isAtomicSite: isSiteAutomatedTransfer( state, purchase.siteId ),
 			isChatAvailable: isHappychatAvailable( state ),
 			isJetpack,
+			isAkismet,
 			purchasesError: getPurchasesError( state ),
 			userId: getCurrentUserId( state ),
 			primaryDomain: getPrimaryDomainBySiteId( state, purchase.siteId ),

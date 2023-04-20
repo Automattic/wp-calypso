@@ -32,7 +32,7 @@ export class GoogleLoginPage {
 	private async waitUntilStable( locator: Locator ) {
 		const elementHandle = await locator.elementHandle();
 		await Promise.all( [
-			locator.waitFor( { state: 'visible' } ),
+			locator.first().waitFor( { state: 'visible' } ),
 			elementHandle?.waitForElementState( 'stable' ),
 		] );
 	}

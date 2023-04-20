@@ -113,7 +113,7 @@ class StatModuleChartTabs extends Component {
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
 				<StatsModulePlaceholder className="is-chart" isLoading={ isActiveTabLoading } />
 				<Chart barClick={ this.props.barClick } data={ this.props.chartData } minBarWidth={ 35 }>
-					<StatsEmptyState stateType={ this.props.activeTab && this.props.activeTab.label } />
+					<StatsEmptyState />
 				</Chart>
 				<StatTabs
 					data={ this.props.counts }

@@ -39,6 +39,7 @@ class TrademarkClaimsNotice extends Component {
 
 	getDefaultState() {
 		return {
+			isLoading: false,
 			hasScrolledToBottom: false,
 			showFullNotice: false,
 			trademarkClaimsNoticeInfo: this.props.trademarkClaimsNoticeInfo,
@@ -151,13 +152,23 @@ class TrademarkClaimsNotice extends Component {
 	onAccept = () => {
 		const { domain } = this.props;
 		this.props.recordAcknowledgeTrademarkButtonClickInTrademarkNotice( domain );
-		this.props.onAccept();
+		this.setState(
+			{
+				isLoading: true,
+			},
+			this.props.onAccept
+		);
 	};
 
 	onReject = () => {
 		const { domain } = this.props;
 		this.props.recordChooseAnotherDomainButtonClickInTrademarkNotice( domain );
-		this.props.onReject();
+		this.setState(
+			{
+				isLoading: true,
+			},
+			this.props.onReject
+		);
 	};
 
 	renderPlaceholder = () => {
@@ -178,7 +189,8 @@ class TrademarkClaimsNotice extends Component {
 	};
 
 	renderTrademarkClaimsNotice = () => {
-		const { hasScrolledToBottom, showFullNotice, trademarkClaimsNoticeInfo } = this.state;
+		const { hasScrolledToBottom, isLoading, showFullNotice, trademarkClaimsNoticeInfo } =
+			this.state;
 
 		return (
 			<Fragment>
@@ -186,9 +198,10 @@ class TrademarkClaimsNotice extends Component {
 				{ /*{ showFullNotice ? this.renderNotice() : this.renderShowNoticeLink() }*/ }
 				{ showFullNotice ? (
 					<TrademarkNotice
-						buttonsEnabled={ hasScrolledToBottom }
+						buttonsEnabled={ ! isLoading && hasScrolledToBottom }
 						onAccept={ this.onAccept }
 						onReject={ this.onReject }
+						isLoading={ isLoading }
 						trademarkClaimsInfo={ trademarkClaimsNoticeInfo }
 					/>
 				) : (

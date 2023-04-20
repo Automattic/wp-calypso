@@ -13,6 +13,10 @@
 		font-size: 3rem;
 		color: var(--studio-gray-100);
 		margin-bottom: 0.75rem;
+
+		@media ( max-width: 1080px ) {
+			line-height: 1;
+		}
 	}
 
 	.onboarding-subtitle {
@@ -20,19 +24,11 @@
 		margin-bottom: 1.5em;
 	}
 
-	.components-button.is-normal-width.action-buttons__next.is-primary {
+	.components-button.action-buttons__next {
 		min-width: 100px;
-		padding: 10px 24px;
-	}
-
-	.components-button.action-buttons__next.is-secondary {
-		min-width: 100px;
-		margin-left: 8px;
-		padding: 10px 24px;
-
-		@include break-mobile {
-			margin-left: 24px;
-		}
+		padding: 10px 24px !important;
+		margin: 0 0.75em 0.75em 0.75em;
+		border-radius: 4px;
 	}
 }
 

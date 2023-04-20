@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { isNewsletterFlow } from '@automattic/onboarding';
 import { isMobile } from '@automattic/viewport';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -176,10 +177,11 @@ export class UserStep extends Component {
 						  );
 			} else if ( isWooOAuth2Client( oauth2Client ) && ! wccomFrom ) {
 				subHeaderText = translate(
-					"First, let's create your account. Already registered? {{a}}Log in{{/a}}",
+					'All Woo stores are powered by WordPress.com.{{br/}}Please create an account to continue. Already registered? {{a}}Log in{{/a}}',
 					{
 						components: {
 							a: <a href={ loginUrl } />,
+							br: <br />,
 						},
 						comment:
 							'Link displayed on the Signup page to users having account to log in WooCommerce via WordPress.com',
@@ -224,12 +226,20 @@ export class UserStep extends Component {
 		}
 
 		if ( isReskinned && 0 === positionInFlow ) {
-			subHeaderText = translate(
-				'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
-				{
+			const { queryObject } = this.props;
+
+			if ( queryObject?.variationName && isNewsletterFlow( queryObject.variationName ) ) {
+				subHeaderText = translate( 'Already have a WordPress.com account? {{a}}Log in{{/a}}', {
 					components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
-				}
-			);
+				} );
+			} else {
+				subHeaderText = translate(
+					'First, create your WordPress.com account. Have an account? {{a}}Log in{{/a}}',
+					{
+						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
+					}
+				);
+			}
 		}
 
 		if ( this.props.userLoggedIn ) {
@@ -348,12 +358,18 @@ export class UserStep extends Component {
 			return;
 		}
 
+		const query = initialContext?.query || {};
+		if ( typeof window !== 'undefined' && window.sessionStorage.getItem( 'signup_redirect_to' ) ) {
+			query.redirect_to = window.sessionStorage.getItem( 'signup_redirect_to' );
+			window.sessionStorage.removeItem( 'signup_redirect_to' );
+		}
+
 		this.submit( {
 			service,
 			access_token,
 			id_token,
 			userData,
-			queryArgs: initialContext?.query || {},
+			queryArgs: query,
 		} );
 	};
 
@@ -387,7 +403,7 @@ export class UserStep extends Component {
 
 			return (
 				<div className={ classNames( 'signup-form__woo-wrapper' ) }>
-					<h3>{ translate( 'Get started in minutes' ) }</h3>
+					<h3>{ translate( "Let's get started" ) }</h3>
 				</div>
 			);
 		}
@@ -439,7 +455,7 @@ export class UserStep extends Component {
 	}
 
 	renderSignupForm() {
-		const { oauth2Client, isReskinned } = this.props;
+		const { oauth2Client, isReskinned, isPasswordless } = this.props;
 		let socialService;
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
@@ -469,7 +485,7 @@ export class UserStep extends Component {
 					submitButtonText={ this.submitButtonText() }
 					suggestedUsername={ this.props.suggestedUsername }
 					handleSocialResponse={ this.handleSocialResponse }
-					isPasswordless={ isMobile() }
+					isPasswordless={ isMobile() || isPasswordless }
 					queryArgs={ this.props.initialContext?.query || {} }
 					isSocialSignupEnabled={ isSocialSignupEnabled }
 					socialService={ socialService }

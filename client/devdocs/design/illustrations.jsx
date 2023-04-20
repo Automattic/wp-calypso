@@ -22,7 +22,6 @@ import dashboard from 'calypso/assets/images/illustrations/dashboard.svg';
 import dotcomSupport from 'calypso/assets/images/illustrations/dotcom-support.svg';
 import dotcomWordAds from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
 import fireworks from 'calypso/assets/images/illustrations/fireworks.svg';
-import getAppsBanner from 'calypso/assets/images/illustrations/get-apps-banner.svg';
 import googleAnalytics from 'calypso/assets/images/illustrations/google-analytics.svg';
 import googleMyBusinessFeature from 'calypso/assets/images/illustrations/google-my-business-feature.svg';
 import helpDomains from 'calypso/assets/images/illustrations/help-domains.svg';
@@ -92,9 +91,6 @@ export default class Illustrations extends PureComponent {
 						</div>
 						<div className="design__illustrations-illustration">
 							<img src={ fireworks } alt="" />
-						</div>
-						<div className="design__illustrations-illustration">
-							<img src={ getAppsBanner } alt="" />
 						</div>
 						<div className="design__illustrations-illustration">
 							<img src={ googleAnalytics } alt="" />

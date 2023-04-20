@@ -1,8 +1,6 @@
-interface CurrencyOverride {
-	symbol?: string;
-}
+import type { CurrencyOverride } from './types';
 
-const CURRENCIES: Record< string, CurrencyOverride > = {
+export const defaultCurrencyOverrides: Record< string, CurrencyOverride > = {
 	AED: {
 		symbol: 'د.إ.‏',
 	},
@@ -438,7 +436,9 @@ const CURRENCIES: Record< string, CurrencyOverride > = {
 	UGX: {
 		symbol: 'USh',
 	},
-	USD: {},
+	USD: {
+		// No override. Do what the locale thinks is best.
+	},
 	UYU: {
 		symbol: '$U',
 	},
@@ -485,11 +485,3 @@ const CURRENCIES: Record< string, CurrencyOverride > = {
 		symbol: '₩',
 	},
 };
-
-export function getCurrencyOverride( code: string ): CurrencyOverride | undefined {
-	return CURRENCIES[ code ];
-}
-
-export function doesCurrencyExist( code: string ): boolean {
-	return Boolean( CURRENCIES[ code ] );
-}

@@ -1,3 +1,7 @@
+export type BlockRendererSettings = {
+	[ key: string ]: any;
+};
+
 export type RenderedStyle = {
 	css: string;
 	isGlobalStyles: boolean;

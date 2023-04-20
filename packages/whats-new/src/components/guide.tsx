@@ -70,6 +70,8 @@ const Guide: React.FC< Props > = ( { children, className, onFinish } ) => {
 							<div className="guide__buttons">
 								{ currentPage > 0 && (
 									<Button className="guide__back-button" isTertiary onClick={ goBack }>
+										{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
+										{ /* @ts-ignore This is declared as a global variable and provided by webpack. */ }
 										{ __( 'Back', __i18n_text_domain__ ) }
 									</Button>
 								) }

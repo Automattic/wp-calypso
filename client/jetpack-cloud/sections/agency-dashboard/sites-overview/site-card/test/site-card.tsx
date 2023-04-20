@@ -4,6 +4,7 @@
 
 import { render, fireEvent } from '@testing-library/react';
 import nock from 'nock';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
@@ -12,6 +13,18 @@ import SiteCard from '../index';
 import type { SiteData } from '../../types';
 
 describe( '<SiteCard>', () => {
+	beforeAll( () => {
+		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
+			return {
+				matches: true,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(),
+				removeListener: jest.fn(),
+			};
+		} );
+	} );
+
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/rest/v1.1/jetpack-blogs/1234/test-connection?is_stale_connection_healthy=true' )
@@ -19,6 +32,7 @@ describe( '<SiteCard>', () => {
 			connected: true,
 		} );
 	test( 'should render correctly and expand card on click', () => {
+		const blogId = 1234;
 		const siteObj = {
 			blog_id: 1234,
 			url: 'test.jurassic.ninja',
@@ -38,14 +52,30 @@ describe( '<SiteCard>', () => {
 				value: siteObj,
 				error: true,
 				type: 'site',
-				status: '',
+				status: 'active',
+			},
+			stats: {
+				type: 'stats',
+				status: 'active',
+				value: {
+					views: {
+						total: 0,
+						trend: 'up',
+						trend_change: 0,
+					},
+					visitors: {
+						total: 0,
+						trend: 'up',
+						trend_change: 0,
+					},
+				},
 			},
 			backup: {
 				type: 'backup',
-				status: '',
+				status: 'inactive',
 				value: '',
 			},
-			monitor: { error: false, type: 'monitor', status: '', value: '' },
+			monitor: { error: false, type: 'monitor', status: 'inactive', value: '' },
 			scan: { threats: 3, type: 'scan', status: 'failed', value: '3 Threats' },
 			plugin: { updates: 3, type: 'plugin', status: 'warning', value: '3 Available' },
 		};
@@ -53,6 +83,11 @@ describe( '<SiteCard>', () => {
 			partnerPortal: {
 				partner: {
 					isPartnerOAuthTokenLoaded: true,
+				},
+			},
+			sites: {
+				items: {
+					[ blogId ]: siteObj,
 				},
 			},
 		};

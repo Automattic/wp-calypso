@@ -1,4 +1,4 @@
-import { LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import { DOMAIN_UPSELL_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { isEmpty } from 'lodash';
 import { useState } from 'react';
@@ -21,12 +21,12 @@ import { getAvailableProductsList } from 'calypso/state/products-list/selectors'
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { useQuery } from '../../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../../stores';
-import type { DomainSuggestion, DomainForm } from '@automattic/data-stores';
+import type { DomainSuggestion, DomainForm, OnboardSelect } from '@automattic/data-stores';
 
 interface DomainFormControlProps {
 	analyticsSection: string;
 	flow: string | null;
-	onAddDomain: ( suggestion: DomainSuggestion ) => void;
+	onAddDomain: ( suggestion: DomainSuggestion, position: number ) => void;
 	onAddMapping: ( domain: string ) => void;
 	onAddTransfer: ( { domain, authCode }: { domain: string; authCode: string } ) => void;
 	onSkip: ( _googleAppsCartItem?: any, shouldHideFreePlan?: boolean ) => void;
@@ -51,10 +51,13 @@ export function DomainFormControl( {
 		};
 	} );
 
-	const { domainForm, siteTitle } = useSelect( ( select ) => ( {
-		domainForm: select( ONBOARD_STORE ).getDomainForm(),
-		siteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-	} ) );
+	const { domainForm, siteTitle } = useSelect(
+		( select ) => ( {
+			domainForm: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainForm(),
+			siteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+		} ),
+		[]
+	);
 
 	const { setDomainForm } = useDispatch( ONBOARD_STORE );
 
@@ -83,6 +86,10 @@ export function DomainFormControl( {
 	}
 
 	if ( flow === LINK_IN_BIO_TLD_FLOW ) {
+		includeWordPressDotCom = false;
+	}
+
+	if ( flow === DOMAIN_UPSELL_FLOW ) {
 		includeWordPressDotCom = false;
 	}
 
@@ -135,7 +142,7 @@ export function DomainFormControl( {
 
 	const getOtherManagedSubdomainsCountOverride = () => {
 		if ( flow === LINK_IN_BIO_TLD_FLOW ) {
-			return 2;
+			return 1;
 		}
 	};
 
@@ -182,6 +189,14 @@ export function DomainFormControl( {
 				</CalypsoShoppingCartProvider>
 			</div>
 		);
+	};
+
+	const isReskinnedSupportedFlow = () => {
+		if ( ! flow ) {
+			return false;
+		}
+
+		return [ DOMAIN_UPSELL_FLOW ].includes( flow );
 	};
 
 	const renderDomainForm = () => {
@@ -257,27 +272,23 @@ export function DomainFormControl( {
 	};
 
 	let content;
+	let sideContent;
 	if ( showUseYourDomain ) {
 		content = renderYourDomainForm();
 	} else {
 		content = renderDomainForm();
 	}
 
-	// if ( 'invalid' === this.props.step.status ) {
-	// 	content = (
-	// 		<div className="domains__step-section-wrapper">
-	// 			<Notice status="is-error" showDismiss={ false }>
-	// 				{ this.props.step.errors.message }
-	// 			</Notice>
-	// 			{ content }
-	// 		</div>
-	// 	);
-	// }
+	if ( isReskinnedSupportedFlow() && ! showUseYourDomain ) {
+		sideContent = getSideContent();
+	}
 
 	return (
 		<>
 			{ isEmpty( productsList ) && <QueryProductsList /> }
-			<div className="domains__step-content domains__step-content-domain-step">{ content }</div>
+			<div className="domains__step-content domains__step-content-domain-step">
+				{ content } { sideContent }
+			</div>
 		</>
 	);
 }

@@ -37,6 +37,10 @@ export const PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY =
 	'jetpack_backup_addon_storage_100gb_monthly';
 export const PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY =
 	'jetpack_backup_addon_storage_1tb_monthly';
+export const PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_MONTHLY =
+	'jetpack_backup_addon_storage_3tb_monthly';
+export const PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY =
+	'jetpack_backup_addon_storage_5tb_monthly';
 
 export const PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY =
 	'jetpack_backup_addon_storage_10gb_yearly';
@@ -44,6 +48,10 @@ export const PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY =
 	'jetpack_backup_addon_storage_100gb_yearly';
 export const PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY =
 	'jetpack_backup_addon_storage_1tb_yearly';
+export const PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY =
+	'jetpack_backup_addon_storage_3tb_yearly';
+export const PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY =
+	'jetpack_backup_addon_storage_5tb_yearly';
 
 // Legacy Products
 export const PRODUCT_JETPACK_BACKUP_DAILY = 'jetpack_backup_daily';
@@ -72,11 +80,15 @@ export const JETPACK_BACKUP_ADDON_MONTHLY = <const>[
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_MONTHLY,
 ];
 export const JETPACK_BACKUP_ADDON_YEARLY = <const>[
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_10GB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_100GB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_1TB_YEARLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
+	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
 ];
 export const JETPACK_BACKUP_ADDON_PRODUCTS = <const>[
 	...JETPACK_BACKUP_ADDON_MONTHLY,
@@ -284,6 +296,7 @@ export const PLAN_JETPACK_SECURITY_T2_YEARLY = 'jetpack_security_t2_yearly';
 export const PLAN_JETPACK_SECURITY_T2_MONTHLY = 'jetpack_security_t2_monthly';
 export const PLAN_JETPACK_COMPLETE = 'jetpack_complete';
 export const PLAN_JETPACK_COMPLETE_MONTHLY = 'jetpack_complete_monthly';
+export const PLAN_JETPACK_GOLDEN_TOKEN = 'jetpack_golden_token_lifetime';
 
 // Legacy Security Plans
 export const PLAN_JETPACK_SECURITY_DAILY = 'jetpack_security_daily';
@@ -338,7 +351,11 @@ export const JETPACK_MONTHLY_PLANS = <const>[
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
-export const JETPACK_RESET_PLANS = <const>[ ...JETPACK_SECURITY_PLANS, ...JETPACK_COMPLETE_PLANS ];
+export const JETPACK_RESET_PLANS = <const>[
+	...JETPACK_SECURITY_PLANS,
+	...JETPACK_COMPLETE_PLANS,
+	PLAN_JETPACK_GOLDEN_TOKEN,
+];
 export const JETPACK_RESET_PLANS_BY_TERM = <const>[
 	{
 		yearly: PLAN_JETPACK_COMPLETE,
@@ -409,6 +426,10 @@ export const JETPACK_BACKUP_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgr
 export const JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/search/';
 export const JETPACK_SCAN_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/scan/';
 export const JETPACK_ANTI_SPAM_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/upgrade/anti-spam/';
+export const JETPACK_BOOST_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/boost/';
+export const JETPACK_SOCIAL_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/social/';
+export const JETPACK_VIDEOPRESS_PRODUCT_LANDING_PAGE_URL = 'https://jetpack.com/videopress/';
+export const JETPACK_CRM_PRODUCT_LANDING_PAGE_URL = 'https://jetpackcrm.com/';
 // If JETPACK_CLOUD_REDIRECT_CHECKOUT_TO_WPADMIN is true, checkout will redirect to the site's wp-admin,
 // otherwise it will redirect to the JETPACK_REDIRECT_URL. Checkout references these constants in:
 // client/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url.ts
@@ -418,37 +439,21 @@ export const JETPACK_REDIRECT_URL =
 
 // Key/value maps related products to a given one
 export const JETPACK_RELATED_PRODUCTS_MAP: Record< string, string[] > = {
-	[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: [
-		PRODUCT_JETPACK_BACKUP_T1_YEARLY,
-		PRODUCT_JETPACK_BACKUP_T2_YEARLY,
-	],
-	[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: [
-		PRODUCT_JETPACK_BACKUP_T1_YEARLY,
-		PRODUCT_JETPACK_BACKUP_T2_YEARLY,
-	],
-	[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: [
-		PLAN_JETPACK_SECURITY_T1_YEARLY,
-		PLAN_JETPACK_SECURITY_T2_YEARLY,
-	],
-	[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: [
-		PLAN_JETPACK_SECURITY_T1_YEARLY,
-		PLAN_JETPACK_SECURITY_T2_YEARLY,
-	],
 	[ PRODUCT_JETPACK_SOCIAL_BASIC ]: [
-		PRODUCT_JETPACK_SOCIAL_BASIC,
 		PRODUCT_JETPACK_SOCIAL_ADVANCED,
+		PRODUCT_JETPACK_SOCIAL_BASIC,
 	],
 	[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: [
-		PRODUCT_JETPACK_SOCIAL_BASIC,
 		PRODUCT_JETPACK_SOCIAL_ADVANCED,
+		PRODUCT_JETPACK_SOCIAL_BASIC,
 	],
 	[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: [
-		PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 		PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+		PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 	],
 	[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: [
-		PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 		PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
+		PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 	],
 };
 

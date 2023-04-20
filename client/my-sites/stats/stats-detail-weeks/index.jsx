@@ -1,7 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
-import config from '@automattic/calypso-config';
-import { Card, Gridicon } from '@automattic/components';
+import { Gridicon } from '@automattic/components';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
@@ -11,25 +10,12 @@ import QueryPosts from 'calypso/components/data/query-posts';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import { getPostStats, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
-import StatsModuleContent from '../stats-module/content-text';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import toggleInfo from '../toggle-info';
 
 const StatsPostDetailWeeks = ( props ) => {
-	const {
-		isRequesting,
-		opened,
-		post,
-		postId,
-		moment,
-		numberFormat,
-		siteId,
-		stats,
-		toggle,
-		translate,
-	} = props;
+	const { isRequesting, post, postId, moment, numberFormat, siteId, stats, translate } = props;
 	const noData = ! stats;
-	const infoIcon = opened ? 'info' : 'info-outline';
 	const isLoading = isRequesting && noData;
 	let tableHeader;
 	let tableRows;
@@ -38,7 +24,6 @@ const StatsPostDetailWeeks = ( props ) => {
 
 	const classes = {
 		'is-loading': isLoading,
-		'is-showing-info': opened,
 		'has-no-data': noData,
 	};
 
@@ -151,61 +136,16 @@ const StatsPostDetailWeeks = ( props ) => {
 		tableBody = <tbody>{ tableRows }</tbody>;
 	}
 
-	const isFeatured = config.isEnabled( 'stats/enhance-post-detail' );
-	const tableWrapperClasses = classNames( {
-		'module-content-table': ! isFeatured,
-	} );
-
 	return (
-		<Card className={ classNames( 'stats-module', 'is-expanded', 'is-detail-weeks', classes ) }>
+		<div className={ classNames( 'is-detail-weeks', classes ) }>
 			<QueryPostStats siteId={ siteId } postId={ postId } />
 			<QueryPosts siteId={ siteId } postId={ postId } />
-			<div className="module-header">
-				<h4 className="module-header-title">{ translate( 'Recent Weeks' ) }</h4>
-				<ul className="module-header-actions">
-					<li className="module-header-action toggle-info">
-						{ /* eslint-disable-next-line jsx-a11y/anchor-is-valid */ }
-						<a
-							href="#"
-							className="module-header-action-link"
-							aria-label={ translate( 'Show or hide panel information', {
-								textOnly: true,
-								context: 'Stats panel action',
-							} ) }
-							title={ translate( 'Show or hide panel information', {
-								textOnly: true,
-								context: 'Stats panel action',
-							} ) }
-							onClick={ toggle }
-						>
-							<Gridicon icon={ infoIcon } />
-						</a>
-					</li>
-				</ul>
-			</div>
-			<StatsModuleContent className="module-content-text-info">
-				<p>
-					{ translate(
-						'This table gives you an overview of how many views your post or page has received in the recent weeks.'
-					) }
-				</p>
-				<span className="legend achievement">
-					{ translate( '%(value)s = The highest recent value', {
-						args: { value: numberFormat( highest ) },
-						context: 'Legend for post stats page in Stats',
-					} ) }
-				</span>
-			</StatsModuleContent>
 			<StatsModulePlaceholder isLoading={ isLoading } />
-			<div className={ tableWrapperClasses }>
-				<div className="module-content-table-scroll">
-					<table cellPadding="0" cellSpacing="0">
-						{ tableHeader }
-						{ tableBody }
-					</table>
-				</div>
-			</div>
-		</Card>
+			<table cellPadding="0" cellSpacing="0">
+				{ tableHeader }
+				{ tableBody }
+			</table>
+		</div>
 	);
 };
 

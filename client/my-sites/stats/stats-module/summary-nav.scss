@@ -2,27 +2,39 @@
 @import "@automattic/components/src/styles/mixins";
 @import "../modernized-mixins";
 
+$summary-small-padding: 0 16px;
+$summary-medium-padding: 0 32px;
+$summary-small-border: 1px solid var(--studio-gray-5);
+$summary-nav-swap-width: 661px;
+
 .stats-summary-nav {
 	display: flex;
 	justify-content: space-between;
 
 	@include navigation-segment-control-buttons( "auto" );
 
-	@media ( max-width: $break-medium ) {
-		padding: 0 32px;
+	@media ( min-width: 1160px ) {
+		flex-wrap: wrap;
+		flex-direction: row-reverse;
 	}
 
-	// break title and navigation into separate rows
 	@media ( max-width: 1160px ) {
-		display: block;
+		&:not(.stats-summary-nav--with-button) {
+			display: block;
+		}
 	}
 
 	@media ( min-width: $break-medium ) and ( max-width: 1160px ) {
 		padding-bottom: 24px;
 	}
 
-	@media ( max-width: $break-small ) {
-		padding: 0 16px;
+	@media ( min-width: $summary-nav-swap-width ) and ( max-width: $break-medium ) {
+		padding: $summary-medium-padding;
+	}
+
+	@media ( max-width: $summary-nav-swap-width ) {
+		padding: 0;
+		border-bottom: $summary-small-border;
 	}
 
 	.stats-section-title {
@@ -35,17 +47,43 @@
 			text-align: left;
 		}
 	}
+
+	&.stats-summary-nav--with-button {
+		flex-direction: row;
+		border-bottom: 0;
+
+		@media ( max-width: $break-medium ) {
+			padding: $summary-medium-padding;
+		}
+
+		@media ( max-width: $break-small ) {
+			padding: $summary-small-padding;
+			display: block;
+		}
+	}
 }
 
 .stats-summary-nav__header {
 	@include section-header-with-siblings;
 
-	@media ( max-width: $break-medium ) {
+	@media ( min-width: $summary-nav-swap-width ) and  ( max-width: $break-medium ) {
 		padding: 0;
+	}
+
+	@media ( max-width: $summary-nav-swap-width ) {
+		padding: $summary-medium-padding;
+	}
+
+	@media ( max-width: $break-small ) {
+		padding: $summary-small-padding;
 	}
 
 	h3 {
 		@include stats-section-header;
+	}
+
+	.stats-summary-nav--with-button & {
+		padding: 0;
 	}
 }
 
@@ -55,4 +93,23 @@
 
 .stats-summary-nav__intervals {
 	align-items: center;
+}
+
+.stats-summary-nav__select {
+	border: $summary-small-border;
+	border-left: 0;
+	border-right: 0;
+
+	.select-dropdown__header {
+		border: none;
+		padding: 0;
+	}
+
+	@media ( max-width: $break-medium ) {
+		padding: $summary-medium-padding;
+	}
+
+	@media ( max-width: $break-small ) {
+		padding: $summary-small-padding;
+	}
 }

@@ -12,6 +12,7 @@ import {
 	isWpComPlan,
 	isWpComPremiumPlan,
 	isJetpackProduct,
+	isJetpackPlan,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -20,7 +21,7 @@ import {
 	FormStatus,
 	useFormStatus,
 } from '@automattic/composite-checkout';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow, isHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
 	getCouponLineItemFromCart,
@@ -164,7 +165,8 @@ function CheckoutSummaryFeaturesWrapper( props: {
 } ) {
 	const { siteId, nextDomainIsFree } = props;
 	const signupFlowName = getSignupCompleteFlowName();
-	const shouldUseFlowFeatureList = isNewsletterOrLinkInBioFlow( signupFlowName );
+	const shouldUseFlowFeatureList =
+		isNewsletterOrLinkInBioFlow( signupFlowName ) || isHostingFlow( signupFlowName );
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const giftSiteSlug = responseCart.gift_details?.receiver_blog_slug;
@@ -192,7 +194,13 @@ function CheckoutSummaryGiftFeaturesList( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
+function CheckoutSummaryRefundWindows( {
+	cart,
+	highlight = false,
+}: {
+	cart: ResponseCart;
+	highlight?: boolean;
+} ) {
 	const translate = useTranslate();
 
 	const refundPolicies = getRefundPolicies( cart );
@@ -289,7 +297,7 @@ function CheckoutSummaryRefundWindows( { cart }: { cart: ResponseCart } ) {
 	return (
 		<CheckoutSummaryFeaturesListItem>
 			<WPCheckoutCheckIcon id="features-list-refund-text" />
-			{ text }
+			{ highlight ? <strong>{ text }</strong> : text }
 		</CheckoutSummaryFeaturesListItem>
 	);
 }
@@ -312,8 +320,12 @@ function CheckoutSummaryFeaturesList( props: {
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const hasPlanInCart = plans.length > 0;
 
-	const jetpackProducts = responseCart.products.filter( isJetpackProduct );
-	const hasJetpackProduct = jetpackProducts.length > 0;
+	const jetpackPlansAndProducts = responseCart.products.filter( ( product ) => {
+		return isJetpackProduct( product ) || isJetpackPlan( product );
+	} );
+
+	const hasJetpackProductOrPlan = jetpackPlansAndProducts.length > 0;
+
 	const hasSingleProduct = responseCart.products.length === 1;
 
 	const translate = useTranslate();
@@ -327,8 +339,8 @@ function CheckoutSummaryFeaturesList( props: {
 					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.uuid } />;
 				} ) }
 
-			{ hasSingleProduct && hasJetpackProduct && (
-				<CheckoutSummaryJetpackProductFeatures product={ jetpackProducts[ 0 ] } />
+			{ hasSingleProduct && hasJetpackProductOrPlan && (
+				<CheckoutSummaryJetpackProductFeatures product={ jetpackPlansAndProducts[ 0 ] } />
 			) }
 
 			{ hasPlanInCart && (
@@ -372,6 +384,9 @@ function CheckoutSummaryFlowFeaturesList( { flowName }: { flowName: string } ) {
 					</CheckoutSummaryFeaturesListItem>
 				);
 			} ) }
+			{ isHostingFlow( flowName ) && (
+				<CheckoutSummaryRefundWindows cart={ responseCart } highlight />
+			) }
 		</CheckoutSummaryFeaturesListWrapper>
 	);
 }

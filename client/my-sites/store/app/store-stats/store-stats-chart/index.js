@@ -167,7 +167,7 @@ class StoreStatsChart extends Component {
 					barClick={ this.barClick }
 					minBarWidth={ 35 }
 				>
-					<StatsEmptyState stateType={ selectedTab.label } />
+					<StatsEmptyState />
 				</ElementChart>
 				{ ! isLoading &&
 					renderTabs( {

@@ -4,8 +4,8 @@
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
 import React from 'react';
-import { ACTIVATE_PLUGIN } from 'calypso/lib/plugins/constants';
 import documentHead from 'calypso/state/document-head/reducer';
+import marketplace from 'calypso/state/marketplace/reducer';
 import plugins from 'calypso/state/plugins/reducer';
 import productsList from 'calypso/state/products-list/reducer';
 import siteConnection from 'calypso/state/site-connection/reducer';
@@ -27,25 +27,22 @@ const initialReduxState = {
 			plugins: {
 				[ `${ site.ID }` ]: [ plugin ],
 			},
-			status: {
-				[ `${ site.ID }` ]: {
-					[ plugin.id ]: {
-						status: 'completed',
-						action: ACTIVATE_PLUGIN,
-					},
-				},
-			},
 		},
 	},
 	productsList: {
 		items: {},
+	},
+	marketplace: {
+		billingInterval: {
+			interval: 'yearly',
+		},
 	},
 };
 
 const render = ( el ) =>
 	renderWithProvider( el, {
 		initialState: initialReduxState,
-		reducers: { ui, plugins, documentHead, productsList, siteConnection },
+		reducers: { ui, plugins, documentHead, productsList, siteConnection, marketplace },
 		store: undefined,
 	} );
 
@@ -57,6 +54,18 @@ const props = {
 };
 
 describe( '<PluginRowFormatter>', () => {
+	beforeAll( () => {
+		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
+			return {
+				matches: true,
+				media: query,
+				onchange: null,
+				addListener: jest.fn(),
+				removeListener: jest.fn(),
+			};
+		} );
+	} );
+
 	test( 'should render correctly and show site domain', () => {
 		const { container } = render( <PluginRowFormatter { ...props } /> );
 
