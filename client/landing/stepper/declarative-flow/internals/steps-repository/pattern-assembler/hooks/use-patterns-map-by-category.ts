@@ -9,7 +9,7 @@ const usePatternsMapByCategory = ( patterns: Pattern[], categories: Category[] )
 		patterns.forEach( ( pattern ) => {
 			// Filter pattern with the meta assembler_waitlist because of rendering issues
 			if (
-				pattern.pattern_meta.assembler_waitlist &&
+				pattern.pattern_meta?.assembler_waitlist &&
 				! isEnabled( 'pattern-assembler/show-waitlist-patterns' )
 			) {
 				return;

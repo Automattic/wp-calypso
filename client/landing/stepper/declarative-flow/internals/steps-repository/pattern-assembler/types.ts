@@ -7,7 +7,7 @@ export type Pattern = {
 		[ key: string ]: Category | undefined;
 	};
 	key?: string;
-	pattern_meta: {
+	pattern_meta?: {
 		[ key: string ]: boolean;
 	};
 };
