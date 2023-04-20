@@ -215,6 +215,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const queryParams = useQuery();
 	const themeFromQueryString = queryParams.get( 'theme' );
 	const styleFromQueryString = queryParams.get( 'style' );
+	const hideBackFromQueryString = queryParams.get( 'hideBack' );
 
 	useEffect( () => {
 		if ( ! themeFromQueryString || ! allDesigns ) {
@@ -687,6 +688,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
+				hideBack={ !! hideBackFromQueryString }
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
 				customizedActionButtons={ actionButtons }
@@ -697,6 +699,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
+				hideBack={ !! hideBackFromQueryString }
 				className="design-setup__preview"
 				goBack={ handleBackClick }
 				goNext={ () => pickDesign() }
