@@ -32,3 +32,4 @@ digraph {
     am_comfortable_[label="Am I comfortable\nworking with strong\nstatic types?"];
     learning_[label="Go for it!\nCreate a new .ts or .tsx file\nand see what you can do.\n\nThe types review team will review it."];
 }
+hi
