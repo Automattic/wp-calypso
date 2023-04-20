@@ -1,7 +1,7 @@
-import { JetpackFAQ } from '@automattic/calypso-products';
+import { FAQ } from '@automattic/calypso-products';
 import FoldableFAQ from 'calypso/components/foldable-faq';
 
-type FAQListProps = { items?: JetpackFAQ[] };
+type FAQListProps = { items?: FAQ[] };
 
 const FAQList: React.FC< FAQListProps > = ( { items } ) => {
 	if ( ! items || ! items.length ) {

@@ -209,6 +209,7 @@ function itemToSelectorProduct(
 				? getForCurrentCROIteration( item.getWhatIsIncluded )
 				: [],
 			benefits: item.getBenefits ? getForCurrentCROIteration( item.getBenefits ) : [],
+			faqs: item.getFAQs ? getForCurrentCROIteration( item.getFAQs ) : [],
 			recommendedFor: item.getRecommendedFor
 				? getForCurrentCROIteration( item.getRecommendedFor )
 				: [],
