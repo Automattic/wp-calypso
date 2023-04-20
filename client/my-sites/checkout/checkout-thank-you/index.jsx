@@ -59,6 +59,8 @@ import {
 } from 'calypso/state/current-user/selectors';
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
+import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
+import { getPlugins, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
@@ -167,7 +169,15 @@ export class CheckoutThankYou extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { receiptId, selectedSiteSlug, domainOnlySiteFlow } = this.props;
+		const {
+			receiptId,
+			selectedSiteSlug,
+			selectedSite,
+			domainOnlySiteFlow,
+			isRequestingSitePlugins,
+			wooCommerceInstalled,
+			transferComplete,
+		} = this.props;
 
 		this.redirectIfThemePurchased();
 
@@ -178,6 +188,11 @@ export class CheckoutThankYou extends Component {
 			this.props.selectedSite
 		) {
 			this.props.refreshSitePlans( this.props.selectedSite.ID );
+		}
+
+		// If the site has been transferred to Atomc and we're not already requesting the site plugins, request them.
+		if ( selectedSite && transferComplete && ! isRequestingSitePlugins && ! wooCommerceInstalled ) {
+			this.props.fetchSitePlugins?.( selectedSite.ID );
 		}
 
 		// Update route when an ecommerce site goes Atomic and site slug changes
@@ -437,7 +452,8 @@ export class CheckoutThankYou extends Component {
 		}
 
 		if ( wasEcommercePlanPurchased ) {
-			if ( ! this.props.transferComplete ) {
+			// Continue to show the TransferPending progress bar until both the Atomic transfer is complete _and_ we've verified WooCommerce is finished installed.
+			if ( ! this.props.transferComplete || ! this.props.wooCommerceInstalled ) {
 				return (
 					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
 				);
@@ -723,10 +739,15 @@ export class CheckoutThankYou extends Component {
 	};
 }
 
+function checkWooCommerceInstalled( sitePlugins ) {
+	return sitePlugins.length > 0 && sitePlugins.some( ( item ) => item.slug === 'woocommerce' );
+}
+
 export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
 		const activeTheme = getActiveTheme( state, siteId );
+		const sitePlugins = getPlugins( state, [ siteId ] );
 
 		return {
 			isProductsListFetching: isProductsListFetching( state ),
@@ -734,6 +755,8 @@ export default connect(
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
+			wooCommerceInstalled: checkWooCommerceInstalled( sitePlugins ),
+			isRequestingSitePlugins: isRequesting( state, siteId ),
 			upgradeIntent: props.upgradeIntent || getCheckoutUpgradeIntent( state ),
 			isSimplified:
 				[ 'install_theme', 'install_plugin', 'browse_plugins' ].indexOf( props.upgradeIntent ) !==
@@ -750,6 +773,7 @@ export default connect(
 	},
 	{
 		fetchAtomicTransfer,
+		fetchSitePlugins,
 		fetchReceipt,
 		fetchSitePlans,
 		refreshSitePlans,
