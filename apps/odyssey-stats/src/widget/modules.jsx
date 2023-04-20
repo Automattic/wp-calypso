@@ -5,12 +5,9 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../hooks/use-module-data-query';
-import config from '../lib/config-api';
+import canCurrentUser from '../lib/can-current-user';
 
 import './modules.scss';
-
-const canCurrentUser = ( siteId, capability ) =>
-	!! config( 'intial_state' )?.currentUser?.capabilities?.[ siteId ]?.[ capability ];
 
 function ModuleCard( {
 	icon,
