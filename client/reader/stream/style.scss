@@ -638,6 +638,10 @@
 		.reader-sidebar-site_nameurl {
 			margin: 6px 0;
 		}
+
+		.reader-sidebar-site_link {
+			margin-bottom: 12px;
+		}
 	}
 
 	.reader-sidebar-site_updated {
@@ -688,6 +692,7 @@
 		.reader-tag-sidebar-related-sites {
 			h2 {
 				font-size: $font-body-small;
+				margin-bottom: 20px;
 			}
 		}
 	}
