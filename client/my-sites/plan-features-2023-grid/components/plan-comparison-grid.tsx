@@ -621,13 +621,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		? getWooExpressFeaturesGrouped()
 		: getPlanFeaturesGrouped();
 	const hiddenPlans = useMemo( () => [ PLAN_WOOEXPRESS_PLUS, PLAN_ENTERPRISE_GRID_WPCOM ], [] );
-	const displayedPlansProperties = useMemo(
-		() =>
-			( planProperties ?? [] ).filter(
-				( { planName, isVisible } ) => isVisible && ! hiddenPlans.includes( planName )
-			),
-		[ planProperties, hiddenPlans ]
-	);
+
 	const isMonthly = intervalType === 'monthly';
 	const isLargestBreakpoint = usePricingBreakpoint( 1772 ); // 1500px + 272px (sidebar)
 	const isLargeBreakpoint = usePricingBreakpoint( 1612 ); // 1340px + 272px (sidebar)
@@ -641,7 +635,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 
 	const displayedPlansProperties = useMemo( () => {
 		const filteredPlanProperties = ( planProperties ?? [] ).filter(
-			( { planName, isVisible } ) => isVisible && ! ( planName === PLAN_ENTERPRISE_GRID_WPCOM )
+			( { planName, isVisible } ) => isVisible && ! hiddenPlans.includes( planName )
 		);
 		const sortedPlanProperties = sortPlans(
 			filteredPlanProperties,
@@ -649,7 +643,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			isMediumBreakpoint
 		);
 		return sortedPlanProperties;
-	}, [ planProperties, currentSitePlanSlug, isMediumBreakpoint ] );
+	}, [ planProperties, currentSitePlanSlug, isMediumBreakpoint, hiddenPlans ] );
 
 	useEffect( () => {
 		let newVisiblePlans = displayedPlansProperties.map( ( { planName } ) => planName );
