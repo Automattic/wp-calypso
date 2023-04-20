@@ -8,92 +8,61 @@ import {
 	RestAPIClient,
 	BrowserManager,
 	SecretsManager,
-	envVariables,
 	PluginsPage,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 
 declare const browser: Browser;
 
-describe( 'Plugins: Add two plugins to the cart', function () {
-	const planName = 'Business';
-	const plugin1Name =
-		envVariables.VIEWPORT_NAME === 'desktop' ? 'AutomateWoo' : 'WooCommerce Subscriptions';
-	const plugin2Name =
-		envVariables.VIEWPORT_NAME === 'desktop' ? 'Sensei Pro' : 'WooCommerce Bookings';
-	let pluginsPage: PluginsPage;
-	let page: Page;
-	let siteURL: string;
-	let siteId: number;
-	let restApiClient: RestAPIClient;
+describe( 'Plugins: Add multiple to cart', function () {
 	const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
+	const plugin1Name = 'Sensei Pro';
+	const plugin2Name = 'AutomateWoo';
+
+	let pluginsPage: PluginsPage;
+	let cartCheckoutPage: CartCheckoutPage;
+	let page: Page;
+	let restAPIClient: RestAPIClient;
+	let testAccount: TestAccount;
 
 	beforeAll( async function () {
-		// Launch browser.
 		page = await browser.newPage();
 
-		// Authenticate as simpleSiteFreePlanUser.
-		const testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
+		testAccount = new TestAccount( 'simpleSiteFreePlanUser' );
 		await testAccount.authenticate( page );
-		await BrowserManager.setStoreCookie( page );
-		siteURL = credentials.testSites?.primary.url as string;
-		siteId = credentials.testSites?.primary?.id as number;
 
-		restApiClient = new RestAPIClient( credentials );
-		await restApiClient.clearShoppingCart( siteId );
+		restAPIClient = new RestAPIClient( testAccount.credentials );
+		await restAPIClient.clearShoppingCart(
+			testAccount.credentials.testSites?.primary.id as number
+		);
+
+		await BrowserManager.setStoreCookie( page );
+		pluginsPage = new PluginsPage( page );
 	} );
 
-	describe( 'Plugin: Purchase', function () {
-		let cartCheckoutPage: CartCheckoutPage;
-
-		it( `Navigate to plugins page`, async function () {
-			pluginsPage = new PluginsPage( page );
-			await pluginsPage.visit( siteURL );
+	describe.each( [ plugin1Name, plugin2Name ] )( 'Add %s plugin to cart', function ( pluginName ) {
+		it( `Go to plugins page for ${ pluginName }`, async function () {
+			await pluginsPage.visitPage(
+				pluginName.toLowerCase().replace( ' ', '-' ),
+				testAccount.credentials.testSites?.primary.url
+			);
 		} );
 
-		it( `Purchase ${ plugin1Name } and show Elegibility warning`, async function () {
-			await pluginsPage.visitPage( plugin1Name.replace( ' ', '-' ).toLowerCase(), siteURL );
-			await pluginsPage.clickPurchasePlugin();
+		it( 'Plan upgrade CTA is shown on page', async function () {
+			await page.getByText( 'You need to upgrade your plan to install plugins' ).waitFor();
 		} );
 
-		it( `Validate Elegibility warning for ${ plugin1Name } and continue`, async function () {
-			await pluginsPage.validateAndContinueElebigilityWarning();
+		it( 'Click on plan upgrade CTA button', async function () {
+			await pluginsPage.clickInstallPlugin();
 		} );
 
-		it( `WordPress.com ${ planName } is added to cart`, async function () {
-			cartCheckoutPage = new CartCheckoutPage( page );
-			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
-		} );
-
-		it( `${ plugin1Name } is added to cart`, async function () {
-			await cartCheckoutPage.validateCartItem( `${ plugin1Name }` );
-		} );
-
-		it( `Close checkout and leave items in cart`, async function () {
-			await cartCheckoutPage.closeCheckout( true );
-		} );
-
-		it( `Purchase ${ plugin2Name } and show Elegibility warning`, async function () {
-			await pluginsPage.visitPage( plugin2Name.replace( ' ', '-' ).toLowerCase(), siteURL );
-			await pluginsPage.clickPurchasePlugin();
-		} );
-
-		it( `Validate Elegibility warning for ${ plugin2Name } and continue`, async function () {
-			await pluginsPage.validateAndContinueElebigilityWarning();
-		} );
-
-		it( `WordPress.com ${ planName } is still in cart`, async function () {
-			cartCheckoutPage = new CartCheckoutPage( page );
-			await cartCheckoutPage.validateCartItem( `WordPress.com ${ planName }` );
-		} );
-
-		it( `${ plugin1Name } is still in cart`, async function () {
-			await cartCheckoutPage.validateCartItem( `${ plugin1Name }` );
-		} );
-
-		it( `${ plugin2Name } is added to cart`, async function () {
-			await cartCheckoutPage.validateCartItem( `${ plugin2Name }` );
-		} );
+		it.each( [ 'WordPress.com Business', pluginName ] )(
+			`%s is added to cart`,
+			async function ( target ) {
+				cartCheckoutPage = new CartCheckoutPage( page );
+				await cartCheckoutPage.validateCartItem( target );
+			}
+		);
 	} );
 
 	afterAll( async function () {
