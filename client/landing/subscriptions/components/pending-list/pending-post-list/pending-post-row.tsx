@@ -1,10 +1,12 @@
 import { Gridicon } from '@automattic/components';
 import { useMemo } from 'react';
+import { SubscriptionManager } from 'calypso/../packages/data-stores/src';
 import TimeSince from 'calypso/components/time-since';
 import { PendingPostSettings } from '../../settings-popover';
 import type { PendingPostSubscription } from '@automattic/data-stores/src/reader/types';
 
 export default function PendingPostRow( {
+	id,
 	subscription_date,
 	site_icon,
 	post_title,
@@ -21,10 +23,8 @@ export default function PendingPostRow( {
 		return <Gridicon className="icon" icon="globe" size={ 48 } />;
 	}, [ site_icon, post_title ] );
 
-	const { mutate: confirmPendingSubscription, isLoading: confirmingPendingSubscription } = {
-		mutate: () => null,
-		isLoading: false,
-	};
+	const { mutate: confirmPendingSubscription, isLoading: confirmingPendingSubscription } =
+		SubscriptionManager.usePendingPostConfirmMutation();
 	const { mutate: deletePendingSubscription, isLoading: deletingPendingSubscription } = {
 		mutate: () => null,
 		isLoading: false,
@@ -55,7 +55,7 @@ export default function PendingPostRow( {
 				</span>
 				<span className="actions" role="cell">
 					<PendingPostSettings
-						onConfirm={ () => confirmPendingSubscription() }
+						onConfirm={ () => confirmPendingSubscription( { id } ) }
 						onDelete={ () => deletePendingSubscription() }
 						confirming={ confirmingPendingSubscription }
 						deleting={ deletingPendingSubscription }

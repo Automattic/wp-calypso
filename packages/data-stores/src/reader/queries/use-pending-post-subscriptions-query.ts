@@ -18,7 +18,7 @@ const callPendingBlogSubscriptionsEndpoint = async (): Promise< PendingPostSubsc
 	const perPage = 1000; // TODO: This is a temporary workaround to get all pending subscriptions. We should remove this once we decide how to handle pagination.
 
 	const incoming = await callApi< SubscriptionManagerPendingPostSubscriptions >( {
-		path: `/post-comment-subscriptions?per_page=${ perPage }`,
+		path: `/post-comment-subscriptions?status=pending&per_page=${ perPage }`,
 		apiVersion: '2',
 	} );
 
