@@ -64,7 +64,7 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 				) )
 			) }
 
-			{ product.faqs && (
+			{ product.faqs && !! product.faqs.length && (
 				<>
 					<hr />
 					<div className="product-lightbox__detail-list is-faq-list" key="faqs">
