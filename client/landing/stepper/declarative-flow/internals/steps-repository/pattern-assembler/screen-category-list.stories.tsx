@@ -1,8 +1,7 @@
 import { action } from '@storybook/addon-actions';
 import { Story, Meta } from '@storybook/react';
 import { ComponentProps } from 'react';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
+import { documentHeadStoreMock, ReduxDecorator } from 'calypso/__mocks__/storybook/redux';
 import ScreenCategoryList from './screen-category-list';
 import '../../../internals/global.scss';
 import './style.scss';
@@ -11,37 +10,33 @@ import './navigator-buttons/style.scss';
 export default {
 	title: 'client/landing/pattern-assembler/ScreenCategoryList',
 	component: ScreenCategoryList,
+	decorators: [
+		( Story ) => {
+			return (
+				<ReduxDecorator store={ { ...documentHeadStoreMock } }>
+					<Story></Story>
+				</ReduxDecorator>
+			);
+		},
+		( Story ) => {
+			return (
+				<div
+					className="pattern-assembler"
+					/**
+					 * The following style is for fixing the position of the PatternListPanel.
+					 * It depends on `348px` since it uses `margin-inline-start: 348px;` for its position.
+					 */
+					style={ { width: '348px', padding: '32px', boxSizing: 'border-box' } }
+				>
+					<Story></Story>
+				</div>
+			);
+		},
+	],
 } as Meta;
 
-const mockStore = configureStore();
-/**
- * Store mock for DocumentHead.
- *
- * @see https://github.com/Automattic/wp-calypso/blob/2186d1580ada4812c72eaa1fe799f90efa0b9642/client/components/data/document-head/index.jsx#L17
- */
-const documentHeadStoreMock = {
-	documentHead: { title: 'title' },
-	ui: { section: '', selectedSiteId: 0 },
-};
-const store = mockStore( {
-	...documentHeadStoreMock,
-} );
-
 type ScreenCategoryListStory = Story< ComponentProps< typeof ScreenCategoryList > >;
-const Template: ScreenCategoryListStory = ( args ) => (
-	<Provider store={ store }>
-		<div
-			className="pattern-assembler"
-			/**
-			 * The following style is for fixing the position of the PatternListPanel.
-			 * It depends on `348px` since it uses `margin-inline-start: 348px;` for its position.
-			 */
-			style={ { width: '348px', padding: '32px', boxSizing: 'border-box' } }
-		>
-			<ScreenCategoryList { ...args } />
-		</div>
-	</Provider>
-);
+const Template: ScreenCategoryListStory = ( args ) => <ScreenCategoryList { ...args } />;
 
 const defaultArgs = {
 	categories: [
