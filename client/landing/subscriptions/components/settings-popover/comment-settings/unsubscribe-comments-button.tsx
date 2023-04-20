@@ -1,3 +1,5 @@
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { useI18n } from '@wordpress/react-i18n';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
@@ -13,6 +15,8 @@ const UnsubscribeCommentsButton = ( {
 	unsubscribing,
 }: UnsubscribeCommentsButtonProps ) => {
 	const translate = useTranslate();
+	const { hasTranslation } = useI18n();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	return (
 		<PopoverMenuItem
@@ -21,7 +25,12 @@ const UnsubscribeCommentsButton = ( {
 			icon={ <UnsubscribeIcon className="settings-popover__item-icon" /> }
 			onClick={ onUnsubscribe }
 		>
-			{ translate( 'Unsubscribe comments' ) }
+			{
+				// todo: remove translation check once translations are in place
+				isEnglishLocale || hasTranslation( 'Unsubscribe comments' )
+					? translate( 'Unsubscribe comments' )
+					: translate( 'Unfollow comments' )
+			}
 		</PopoverMenuItem>
 	);
 };
