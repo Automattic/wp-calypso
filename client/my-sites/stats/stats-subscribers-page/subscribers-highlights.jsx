@@ -87,7 +87,7 @@ function SubscriberHighlightsListing() {
 	);
 }
 
-export default function SubscriberHighlights() {
+export default function SubscribersHighlights() {
 	return (
 		<div className="highlight-cards wordads has-odyssey-stats-bg-color">
 			<SubscriberHighlightsHeader />
