@@ -2,7 +2,7 @@ import { HighlightCard, Popover } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
-import '../wordads/highlights-section.scss';
+import './subscribers-highlights.scss';
 
 function getSubscriberHighlights() {
 	const highlights = [
@@ -52,7 +52,7 @@ function SubscriberHighlightsHeader() {
 				<Icon className="info-icon" icon={ info } />
 			</span>
 			<Popover
-				className="tooltip tooltip--darker tooltip-wordads highlight-card-tooltip"
+				className="tooltip tooltip--darker tooltip-subscribers-page highlight-card-tooltip"
 				isVisible={ isTooltipVisible }
 				position="bottom right"
 				context={ infoReferenceElement.current }
@@ -85,7 +85,7 @@ function SubscriberHighlightsListing() {
 
 export default function SubscribersHighlights() {
 	return (
-		<div className="highlight-cards wordads has-odyssey-stats-bg-color">
+		<div className="highlight-cards subscribers-page has-odyssey-stats-bg-color">
 			<SubscriberHighlightsHeader />
 			<SubscriberHighlightsListing />
 		</div>
