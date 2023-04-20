@@ -3,6 +3,14 @@ import {
 	isAkismetPersonal,
 	isAkismetPro,
 	isAkismetFree,
+	PRODUCT_AKISMET_PLUS_MONTHLY,
+	PRODUCT_AKISMET_PLUS_20K_MONTHLY,
+	PRODUCT_AKISMET_PLUS_30K_MONTHLY,
+	PRODUCT_AKISMET_PLUS_40K_MONTHLY,
+	PRODUCT_AKISMET_PLUS_YEARLY,
+	PRODUCT_AKISMET_PLUS_20K_YEARLY,
+	PRODUCT_AKISMET_PLUS_30K_YEARLY,
+	PRODUCT_AKISMET_PLUS_40K_YEARLY,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import type { WithSnakeCaseSlug } from '@automattic/calypso-products';
@@ -61,16 +69,28 @@ export default function getAkismetProductFeatures(
 
 	if ( isAkismetPro( product ) ) {
 		const productSlug = product.product_slug;
-		if ( productSlug.endsWith( '1' ) ) {
+		if (
+			productSlug === PRODUCT_AKISMET_PLUS_MONTHLY ||
+			productSlug === PRODUCT_AKISMET_PLUS_YEARLY
+		) {
 			return getFeatureStrings( 'pro_10k', translate );
 		}
-		if ( productSlug.endsWith( '2' ) ) {
+		if (
+			productSlug === PRODUCT_AKISMET_PLUS_20K_MONTHLY ||
+			productSlug === PRODUCT_AKISMET_PLUS_20K_YEARLY
+		) {
 			return getFeatureStrings( 'pro_20k', translate );
 		}
-		if ( productSlug.endsWith( '3' ) ) {
+		if (
+			productSlug === PRODUCT_AKISMET_PLUS_30K_MONTHLY ||
+			productSlug === PRODUCT_AKISMET_PLUS_30K_YEARLY
+		) {
 			return getFeatureStrings( 'pro_30k', translate );
 		}
-		if ( productSlug.endsWith( '4' ) ) {
+		if (
+			productSlug === PRODUCT_AKISMET_PLUS_40K_MONTHLY ||
+			productSlug === PRODUCT_AKISMET_PLUS_40K_YEARLY
+		) {
 			return getFeatureStrings( 'pro_40k', translate );
 		}
 	}
