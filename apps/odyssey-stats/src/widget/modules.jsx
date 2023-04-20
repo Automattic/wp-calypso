@@ -39,7 +39,11 @@ function ModuleCard( {
 				<div className="stats-widget-module__info">
 					{ value === 'not_active' && <button onClick={ activateProduct }>Activate</button> }
 					{ /* TODO: add button to install plugins. */ }
-					{ value !== 'not_active' && info && <a href={ info.link }>{ info.text }</a> }
+					{ value !== 'not_active' && info && (
+						<a href={ info.link } target="__blank">
+							{ info.text }
+						</a>
+					) }
 					{ value !== 'not_active' && ! info && <p>{ translate( 'An error occurred.' ) }</p> }
 				</div>
 			) }
