@@ -4,13 +4,9 @@ export type Pattern = {
 	title: string;
 	description?: string;
 	category?: Category;
-	categories: {
-		[ key: string ]: Category | undefined;
-	};
+	categories: Record< string, Category | undefined >;
 	key?: string;
-	pattern_meta?: {
-		[ key: string ]: boolean;
-	};
+	pattern_meta?: Record< string, boolean | undefined >;
 };
 
 export interface NavigatorLocation {
