@@ -27,6 +27,7 @@ function ModuleCard( { icon, title, value, activateProduct, className = null, in
 					{ value === 'not_active' && <button onClick={ activateProduct }>Activate</button> }
 					{ /* Module `protect` is always installed. So it wouldn't go to the branch below. */ }
 					{ value === 'not_installed' && info && <a href={ info.link }>{ info.text }</a> }
+					{ /** TODO: deal with `invalid_key`, probably just use an `else` */ }
 				</div>
 			) }
 		</div>
