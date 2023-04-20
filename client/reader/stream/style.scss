@@ -642,9 +642,7 @@
 	}
 
 	.stream__right-column {
-		border-left: 1px solid var(--color-neutral-5);
 		margin: 16px 0 0;
-		padding-left: 24px;
 		min-width: 270px;
 
 		h2 {
@@ -708,13 +706,6 @@
 
 	.reader-tag-sidebar-related-tags {
 		margin-bottom: 32px;
-	}
-}
-
-.reader-two-column.following {
-	.stream__two-column .stream__right-column {
-		border-left: none;
-		padding-left: 8px;
 	}
 }
 
