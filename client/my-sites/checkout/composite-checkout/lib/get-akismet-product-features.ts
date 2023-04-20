@@ -79,5 +79,5 @@ export default function getAkismetProductFeatures(
 		return getFeatureStrings( 'business', translate );
 	}
 
-	return getFeatureStrings( 'free', translate );
+	return [];
 }
