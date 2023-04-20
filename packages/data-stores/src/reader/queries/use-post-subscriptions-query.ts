@@ -23,7 +23,7 @@ const usePostSubscriptionsQuery = ( {
 	searchTerm = '',
 	filter = defaultFilter,
 	sort = defaultSort,
-	number = 100,
+	number = 500,
 }: SubscriptionManagerPostSubscriptionsQueryProps = {} ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
@@ -42,9 +42,8 @@ const usePostSubscriptionsQuery = ( {
 			{
 				enabled,
 				getNextPageParam: ( lastPage, pages ) => {
-					return pages.length < lastPage.total_comment_subscriptions_count
-						? pages.length + 1
-						: undefined;
+					const total = pages.reduce( ( sum, page ) => sum + page.comment_subscriptions.length, 0 );
+					return total < lastPage.total_comment_subscriptions_count ? pages.length + 1 : undefined;
 				},
 				refetchOnWindowFocus: false,
 			}
