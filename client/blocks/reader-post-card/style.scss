@@ -502,7 +502,7 @@
 	.reader-post-card__post {
 		margin-left: 0;
 	}
-	.reader-post-card__tags {
+	.reader-post-card__tags:not(:has(>.reader-tag-sidebar-related-tags)) {
 		margin-left: -52px;
 		width: calc(100% + 75px);
 	}

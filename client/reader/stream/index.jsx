@@ -474,6 +474,7 @@ class ReaderStream extends Component {
 		}
 
 		const path = window.location.pathname;
+		const isTagPage = path.startsWith( '/tag/' );
 		const streamType = getStreamType( streamKey );
 
 		let baseClassnames = classnames( 'following', this.props.className );
@@ -502,13 +503,13 @@ class ReaderStream extends Component {
 				/>
 			);
 
-			const sidebarContent = tag ? (
+			const sidebarContent = isTagPage ? (
 				<ReaderTagSidebar tag={ tag } />
 			) : (
 				<ReaderListFollowedSites path={ path } />
 			);
 
-			const tabTitle = tag ? translate( 'Related' ) : translate( 'Sites' );
+			const tabTitle = isTagPage ? translate( 'Related' ) : translate( 'Sites' );
 
 			if ( excludesSidebar.includes( streamType ) ) {
 				body = bodyContent;
