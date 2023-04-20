@@ -4,7 +4,7 @@ import { Button } from '@automattic/components';
 import { Onboard, useStarterDesignBySlug, useStarterDesignsQuery } from '@automattic/data-stores';
 import {
 	UnifiedDesignPicker,
-	useCategorization,
+	useCategorizationFromApi,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
 } from '@automattic/design-picker';
@@ -172,7 +172,10 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		generatedDesigns.length > 0 ? siteVertical?.title : undefined
 	);
 
-	const categorization = useCategorization( staticDesigns, categorizationOptions );
+	const categorization = useCategorizationFromApi(
+		allDesigns?.filters?.subject || {},
+		categorizationOptions
+	);
 
 	// ********** Logic for selecting a design and style variation
 

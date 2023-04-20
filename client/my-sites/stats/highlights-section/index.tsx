@@ -1,4 +1,4 @@
-import { HighlightCards } from '@automattic/components';
+import { WeeklyHighlightCards } from '@automattic/components';
 import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestHighlights } from 'calypso/state/stats/highlights/actions';
@@ -33,7 +33,7 @@ export default function HighlightsSection( { siteId }: { siteId: number } ) {
 	);
 
 	return (
-		<HighlightCards
+		<WeeklyHighlightCards
 			className="has-odyssey-stats-bg-color"
 			counts={ counts }
 			previousCounts={ previousCounts }

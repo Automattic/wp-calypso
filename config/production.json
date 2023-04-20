@@ -103,6 +103,7 @@
 		"pattern-assembler/logged-out-showcase": true,
 		"pattern-assembler/inline-styles": false,
 		"pattern-assembler/notices": true,
+		"pattern-assembler/show-waitlist-patterns": false,
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,

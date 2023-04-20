@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { Card, ShortenedNumber, formattedNumber } from '../';
 import Popover from '../popover';
 
-export type HighlightCardProps = {
+type CountComparisonCardProps = {
 	count: number | null;
 	heading: React.ReactNode;
 	icon: React.ReactNode;
@@ -30,13 +30,13 @@ export function percentCalculator( part: number | null, whole: number | null | u
 	return Math.abs( answer ) === Infinity ? 100 : Math.round( answer );
 }
 
-export default function HighlightCard( {
+export default function CountComparisonCard( {
 	count,
 	previousCount,
 	icon,
 	heading,
 	showValueTooltip,
-}: HighlightCardProps ) {
+}: CountComparisonCardProps ) {
 	const difference = subtract( count, previousCount );
 	const differenceMagnitude = Math.abs( difference as number );
 	const percentage = Number.isFinite( difference )

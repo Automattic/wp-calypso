@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { callApi } from '../helpers';
-import { useIsLoggedIn } from '../hooks';
+import { useCacheKey, useIsLoggedIn } from '../hooks';
 import { PostSubscription, SubscriptionManagerSubscriptionsCount } from '../types';
 
 type PostSubscriptionUnfollowParams = {
@@ -14,9 +14,21 @@ type PostSubscriptionUnfollowResponse = {
 	subscription: null;
 };
 
+type SubscriptionManagerPostSubscriptions = {
+	comment_subscriptions: PostSubscription[];
+	total_comment_subscriptions_count: number;
+};
+
+type SubscriptionManagerPostSubscriptionsPages = {
+	pageParams: [];
+	pages: SubscriptionManagerPostSubscriptions[];
+};
+
 const usePostUnfollowMutation = () => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
+	const postSubscriptionsCacheKey = useCacheKey( [ 'read', 'post-subscriptions' ] );
+
 	return useMutation(
 		async ( params: PostSubscriptionUnfollowParams ) => {
 			if ( ! params.blog_id ) {
@@ -44,31 +56,34 @@ const usePostUnfollowMutation = () => {
 		},
 		{
 			onMutate: async ( params ) => {
-				await queryClient.cancelQueries( [ 'read', 'post-subscriptions', isLoggedIn ] );
+				await queryClient.cancelQueries( postSubscriptionsCacheKey );
 				await queryClient.cancelQueries( [ 'read', 'subscriptions-count', isLoggedIn ] );
 
-				const previousPostSubscriptions = queryClient.getQueryData< PostSubscription[] >( [
-					'read',
-					'post-subscriptions',
-					isLoggedIn,
-				] );
+				const previousPostSubscriptions =
+					queryClient.getQueryData< SubscriptionManagerPostSubscriptionsPages >(
+						postSubscriptionsCacheKey
+					);
 
 				// remove post from comment subscriptions
 				if ( previousPostSubscriptions ) {
-					queryClient.setQueryData< PostSubscription[] >(
-						[ [ 'read', 'post-subscriptions', isLoggedIn ] ],
-						previousPostSubscriptions.filter(
-							( postSubscription ) => postSubscription.post_id !== params.post_id
-						)
+					previousPostSubscriptions.pages = previousPostSubscriptions?.pages.filter(
+						( page ) =>
+							( page.comment_subscriptions = page.comment_subscriptions.filter(
+								( subscription ) =>
+									subscription.post_id !== params.post_id && subscription.blog_id !== params.blog_id
+							) )
+					);
+
+					queryClient.setQueryData< SubscriptionManagerPostSubscriptionsPages >(
+						postSubscriptionsCacheKey,
+						previousPostSubscriptions
 					);
 				}
 
 				const previousSubscriptionsCount =
-					queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >( [
-						'read',
-						'subscriptions-count',
-						isLoggedIn,
-					] );
+					queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >(
+						postSubscriptionsCacheKey
+					);
 
 				// decrement the comments count
 				if ( previousSubscriptionsCount ) {
@@ -86,12 +101,12 @@ const usePostUnfollowMutation = () => {
 				return { previousPostSubscriptions, previousSubscriptionsCount };
 			},
 			onError: ( error, variables, context ) => {
-				if ( context?.previousPostSubscriptions ) {
-					queryClient.setQueryData< PostSubscription[] >(
-						[ 'read', 'post-subscriptions', isLoggedIn ],
-						context.previousPostSubscriptions
-					);
-				}
+				// if ( context?.previousPostSubscriptions ) {
+				// 	queryClient.setQueryData< PostSubscription[] >(
+				// 		postSubscriptionsCacheKey,
+				// 		context.previousPostSubscriptions
+				// 	);
+				// }
 				if ( context?.previousSubscriptionsCount ) {
 					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
 						[ 'read', 'subscriptions-count', isLoggedIn ],
@@ -100,7 +115,7 @@ const usePostUnfollowMutation = () => {
 				}
 			},
 			onSettled: () => {
-				queryClient.invalidateQueries( [ 'read', 'post-subscriptions', isLoggedIn ] );
+				queryClient.invalidateQueries( postSubscriptionsCacheKey );
 				queryClient.invalidateQueries( [ 'read', 'subscriptions-count', isLoggedIn ] );
 			},
 		}

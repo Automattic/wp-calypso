@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { FontPairingVariations } from '@automattic/global-styles';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import NavigatorHeader from './navigator-header';
@@ -23,14 +24,23 @@ const ScreenFontPairings = ( {
 	onDoneClick,
 }: Props ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	return (
 		<>
 			<NavigatorHeader
 				title={ translate( 'Fonts' ) }
-				description={ translate(
-					'Select from our hand-picked font pairings or expanded library when you upgrade to the Premium plan or higher.'
-				) }
+				description={
+					hasEnTranslation(
+						'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
+					)
+						? translate(
+								'Choose from our curated font pairings when you upgrade to the Premium plan or above.'
+						  )
+						: translate(
+								'Select from our hand-picked font pairings or expanded library when you upgrade to the Premium plan or higher.'
+						  )
+				}
 				isPremium
 				onBack={ onBack }
 			/>
