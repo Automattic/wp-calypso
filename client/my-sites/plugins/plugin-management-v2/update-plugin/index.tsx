@@ -34,7 +34,7 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 			return {
 				...site,
 				...plugin.sites[ siteId ],
-			};
+			} as any;
 		} );
 	};
 
