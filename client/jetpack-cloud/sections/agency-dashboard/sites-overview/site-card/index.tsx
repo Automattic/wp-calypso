@@ -127,7 +127,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 									<div
 										className={ classNames(
 											'site-card__expanded-content-list',
-											! site.error && 'site-card__content-list-no-error'
+											isSiteConnected && 'site-card__content-list-no-error'
 										) }
 										key={ index }
 									>

@@ -43,7 +43,7 @@ export default function SiteStatusContent( {
 	const {
 		link,
 		isExternalLink,
-		row: { value, status, error },
+		row: { value, status },
 		tooltipId,
 		siteDown,
 		eventName,
@@ -126,7 +126,7 @@ export default function SiteStatusContent( {
 			isHighSeverityError = true;
 		}
 		let errorContent;
-		if ( error ) {
+		if ( siteError ) {
 			errorContent = (
 				<span className="sites-overview__status-critical">
 					<Gridicon size={ 24 } icon="notice-outline" />

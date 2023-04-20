@@ -131,7 +131,6 @@ export interface RowMetaData {
 	row: {
 		value: Site | SiteStats | BoostData | ReactChild;
 		status: AllowedStatusTypes;
-		error?: boolean;
 	};
 	link: string;
 	isExternalLink: boolean;
