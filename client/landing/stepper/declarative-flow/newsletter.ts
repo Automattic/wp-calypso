@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -39,10 +38,6 @@ const newsletter: Flow = {
 			{
 				slug: 'subscribers',
 				asyncComponent: () => import( './internals/steps-repository/subscribers' ),
-			},
-			{
-				slug: 'paidSubscribers',
-				asyncComponent: () => import( './internals/steps-repository/paid-subscribers' ),
 			},
 			{
 				slug: 'siteCreationStep',
@@ -144,11 +139,6 @@ const newsletter: Flow = {
 					);
 
 				case 'subscribers':
-					return isEnabled( 'newsletter/paid-subscribers' )
-						? navigate( 'paidSubscribers' )
-						: navigate( 'launchpad' );
-
-				case 'paidSubscribers':
 					return navigate( 'launchpad' );
 			}
 		}

@@ -1,8 +1,12 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { hexToRgb, StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
@@ -38,6 +42,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		useDispatch( ONBOARD_STORE );
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
+	const [ paidSubscribers, setPaidSubscribers ] = useState( false );
 	const [ siteTitle, setComponentSiteTitle ] = useState( '' );
 	const [ tagline, setTagline ] = useState( '' );
 	const [ accentColor, setAccentColor ] = useState< AccentColor >( defaultAccentColor );
@@ -46,7 +51,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const state = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] ).getState();
 
 	useEffect( () => {
-		const { siteAccentColor, siteTitle, siteDescription, siteLogo } = state;
+		const { siteAccentColor, siteTitle, siteDescription, siteLogo, paidSubscribers } = state;
 		if ( siteAccentColor && siteAccentColor !== '' && siteAccentColor !== defaultAccentColor.hex ) {
 			setAccentColor( { hex: siteAccentColor, rgb: hexToRgb( siteAccentColor ) } );
 		} else {
@@ -55,6 +60,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 		setTagline( siteDescription );
 		setComponentSiteTitle( siteTitle );
+		setPaidSubscribers( paidSubscribers );
 		if ( siteLogo ) {
 			const file = new File( [ base64ImageToBlob( siteLogo ) ], 'site-logo.png' );
 			setSelectedFile( file );
@@ -77,6 +83,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
 		setSiteAccentColor( accentColor.hex );
+		setPaidSubscribers( paidSubscribers );
 
 		if ( selectedFile && base64Image ) {
 			try {
@@ -87,8 +94,13 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		}
 
 		if ( siteTitle.trim().length ) {
+			// TODO: decide how we store "paid subscriber" intent at the created site
 			submit?.( { siteTitle, tagline, siteAccentColor: accentColor.hex } );
 		}
+	};
+
+	const onPaidSubscribersChanged = ( event: ChangeEvent< HTMLInputElement > ) => {
+		setPaidSubscribers( !! event?.target.checked );
 	};
 
 	return (
@@ -122,11 +134,31 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 					handleSubmit={ handleSubmit }
 					translatedText={ newsletterFormText }
 				>
-					<AccentColorControl
-						accentColor={ accentColor }
-						setAccentColor={ setAccentColor }
-						labelText={ newsletterFormText?.colorLabel }
-					/>
+					<>
+						<AccentColorControl
+							accentColor={ accentColor }
+							setAccentColor={ setAccentColor }
+							labelText={ newsletterFormText?.colorLabel }
+						/>
+						{ isEnabled( 'newsletter/paid-subscribers' ) && (
+							<FormFieldset className="newsletter-setup__paid-subscribers">
+								<FormLabel>
+									<FormInputCheckbox
+										name="paid_newsletters"
+										checked={ paidSubscribers }
+										onChange={ onPaidSubscribersChanged }
+									/>
+									<span>
+										{ translate( 'I want to create a Paid Newsletter {{span}}(optional){{/span}}', {
+											components: {
+												span: <span className="site-setup__optional" />,
+											},
+										} ) }
+									</span>
+								</FormLabel>
+							</FormFieldset>
+						) }
+					</>
 				</SetupForm>
 			}
 			recordTracksEvent={ recordTracksEvent }

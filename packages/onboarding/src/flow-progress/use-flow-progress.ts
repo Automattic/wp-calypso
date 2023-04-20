@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	ECOMMERCE_FLOW,
 	LINK_IN_BIO_FLOW,
@@ -23,7 +22,6 @@ const flows: Record< string, { [ step: string ]: number } > = {
 		domains: 2,
 		'plans-newsletter': 3,
 		subscribers: 4,
-		...( isEnabled( 'newsletter/paid-subscribers' ) && { paidSubscribers: 5 } ),
 		launchpad: 5,
 	},
 	[ LINK_IN_BIO_FLOW ]: {
