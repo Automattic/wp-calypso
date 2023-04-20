@@ -14,6 +14,7 @@ import {
 	FullSiteEditorPage,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
+import { skipDescribeIf } from '../../jest-helpers';
 
 declare const browser: Browser;
 
@@ -24,42 +25,46 @@ declare const browser: Browser;
  * The goal here is to catch major breaks with the integration -- i.e. Calypso navigation no long working,
  * or getting a WSOD when trying to load the editor.
  */
-describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
-	let page: Page;
-	let fullSiteEditorPage: FullSiteEditorPage;
+// None of our CoBlocks users use block themes.
+skipDescribeIf( envVariables.COBLOCKS_EDGE )(
+	DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ),
+	function () {
+		let page: Page;
+		let fullSiteEditorPage: FullSiteEditorPage;
 
-	const features = envToFeatureKey( envVariables );
-	const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
+		const features = envToFeatureKey( envVariables );
+		const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
 
-	beforeAll( async () => {
-		page = await browser.newPage();
+		beforeAll( async () => {
+			page = await browser.newPage();
 
-		const testAccount = new TestAccount( accountName );
-		await testAccount.authenticate( page );
-	} );
+			const testAccount = new TestAccount( accountName );
+			await testAccount.authenticate( page );
+		} );
 
-	it( 'Navigate to Full Site Editor', async function () {
-		// Explicitly doing sidebar navigation to ensure Calypso navigation is intact.
-		const sidebarComponent = new SidebarComponent( page );
-		await sidebarComponent.navigate( 'Appearance', 'Editor' );
-	} );
+		it( 'Navigate to Full Site Editor', async function () {
+			// Explicitly doing sidebar navigation to ensure Calypso navigation is intact.
+			const sidebarComponent = new SidebarComponent( page );
+			await sidebarComponent.navigate( 'Appearance', 'Editor' );
+		} );
 
-	it( 'Editor endpoint loads', async function () {
-		await page.waitForURL( /site-editor/ );
-	} );
+		it( 'Editor endpoint loads', async function () {
+			await page.waitForURL( /site-editor/ );
+		} );
 
-	it( 'Open the Page template', async function () {
-		fullSiteEditorPage = new FullSiteEditorPage( page );
+		it( 'Open the Page template', async function () {
+			fullSiteEditorPage = new FullSiteEditorPage( page );
 
-		await fullSiteEditorPage.prepareForInteraction();
+			await fullSiteEditorPage.prepareForInteraction();
 
-		await fullSiteEditorPage.ensureNavigationTopLevel();
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Templates' );
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Page' );
-		await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );
-	} );
+			await fullSiteEditorPage.ensureNavigationTopLevel();
+			await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Templates' );
+			await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Page' );
+			await fullSiteEditorPage.clickFullSiteNavigatorButton( 'Edit' );
+		} );
 
-	it( 'Editor canvas loads', async function () {
-		await fullSiteEditorPage.waitUntilLoaded();
-	} );
-} );
+		it( 'Editor canvas loads', async function () {
+			await fullSiteEditorPage.waitUntilLoaded();
+		} );
+	}
+);
