@@ -24,9 +24,6 @@ const ReaderTagSidebar = ( { tag } ) => {
 				<div className="reader-tag-sidebar-related-tags">
 					<h2>{ translate( 'Related Tags' ) }</h2>
 					<div className="reader-post-card__tags">{ tagLinks }</div>
-					<a className="reader-tag-sidebar-related-tags__link" href="/tags">
-						{ translate( 'See all tags' ) }
-					</a>
 				</div>
 			) }
 			{ relatedSitesLinks && (
