@@ -3,9 +3,13 @@ import { Story, Meta } from '@storybook/react';
 import { ComponentProps } from 'react';
 import { documentHeadStoreMock, ReduxDecorator } from 'calypso/__mocks__/storybook/redux';
 import ScreenCategoryList from './screen-category-list';
+
+/**
+ * FIXME: This component should depend only on local `./style.scss`.
+ */
 import '../../../internals/global.scss';
-import './style.scss';
 import './navigator-buttons/style.scss';
+import './style.scss';
 
 export default {
 	title: 'client/landing/pattern-assembler/ScreenCategoryList',
