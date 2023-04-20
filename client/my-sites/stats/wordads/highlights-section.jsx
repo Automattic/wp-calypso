@@ -97,7 +97,7 @@ function HighlightsSectionHeader( props ) {
 	} );
 	const showNotices = notices?.length > 0;
 	return (
-		<h1 className="highlight-cards-heading">
+		<h3 className="highlight-cards-heading">
 			{ localizedTitle }{ ' ' }
 			{ showNotices && (
 				<>
@@ -123,7 +123,7 @@ function HighlightsSectionHeader( props ) {
 					</Popover>
 				</>
 			) }
-		</h1>
+		</h3>
 	);
 }
 

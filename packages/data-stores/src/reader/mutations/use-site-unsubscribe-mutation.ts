@@ -63,6 +63,7 @@ const useSiteUnsubscribeMutation = () => {
 						SiteSubscription
 					>( previousSiteSubscriptions, ( page ) => {
 						return {
+							...page,
 							subscriptions: page.subscriptions.filter(
 								( siteSubscription ) => siteSubscription.blog_ID !== params.blog_id
 							),
