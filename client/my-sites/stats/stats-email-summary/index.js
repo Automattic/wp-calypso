@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
@@ -38,13 +37,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 	}
 	const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
-	const isHorizontalBarComponentEnabledEverywhere = config.isEnabled(
-		'stats/horizontal-bars-everywhere'
-	);
-
-	const cardParentClassName = classNames( 'stats-summary-view', {
-		'stats-summary__positioned': isHorizontalBarComponentEnabledEverywhere,
-	} );
+	const cardParentClassName = classNames( 'stats-summary-view', 'stats-summary__positioned' );
 	return (
 		<Main className="has-fixed-nav" wideLayout>
 			<PageViewTracker

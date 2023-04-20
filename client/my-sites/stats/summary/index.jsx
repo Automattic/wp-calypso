@@ -1,10 +1,11 @@
-import config from '@automattic/calypso-config';
+import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMedia from 'calypso/components/data/query-media';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
@@ -141,6 +142,18 @@ class StatsSummary extends Component {
 							query={ moduleQuery }
 							summary
 							listItemClassName={ listItemClassName }
+						/>
+						<UpsellNudge
+							title={ translate( 'Add Google Analytics' ) }
+							description={ translate(
+								'Upgrade to a Premium Plan for Google Analytics integration.'
+							) }
+							event="googleAnalytics-stats-countries"
+							feature={ FEATURE_GOOGLE_ANALYTICS }
+							plan={ PLAN_PREMIUM }
+							tracksImpressionName="calypso_upgrade_nudge_impression"
+							tracksClickName="calypso_upgrade_nudge_cta_click"
+							showIcon={ true }
 						/>
 					</>
 				);
@@ -320,13 +333,7 @@ class StatsSummary extends Component {
 		}
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
-		const isHorizontalBarComponentEnabledEverywhere = config.isEnabled(
-			'stats/horizontal-bars-everywhere'
-		);
-
-		const cardParentClassName = classNames( 'stats-summary-view', {
-			'stats-summary__positioned': isHorizontalBarComponentEnabledEverywhere,
-		} );
+		const cardParentClassName = classNames( 'stats-summary-view', 'stats-summary__positioned' );
 
 		return (
 			<Main className="has-fixed-nav" wideLayout>
