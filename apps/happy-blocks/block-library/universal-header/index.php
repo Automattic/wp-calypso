@@ -29,6 +29,7 @@ $happy_blocks_tabs = array(
 )
 ?>
 
+<?php if ( ! is_user_logged_in() ) : ?>
 <div id="lpc-header-nav" class="lpc lpc-header-nav">
 	<div class="x-root lpc-header-nav-wrapper">
 		<div class="lpc-header-nav-container">
@@ -380,21 +381,25 @@ $happy_blocks_tabs = array(
 		</div>
 	</div>
 </div>
+<?php endif; ?>
 <div class="happy-blocks-mini-search">
 	<div class="happy-blocks-search-container">
-			<div class="happy-blocks-global-header__top">
+		<div class="happy-blocks-global-header__top">
+			<div class="happy-blocks-global-header__tabs-wrapper">
 				<div class="happy-blocks-global-header__tabs">
 					<?php foreach ( $happy_blocks_tabs as $key => $happy_blocks_tab ) { ?>
 							<a href="<?php echo esc_attr( $happy_blocks_tab['url'] ); ?>" class="happy-blocks-global-header__tab<?php echo $happy_blocks_current_tab === $key ? ' active' : ''; ?>"><?php echo esc_html( $happy_blocks_tab['title'] ); ?></a>
 					<?php } ?>
 				</div>
+			</div>
+			<div class="happy-blocks-global-header__title-wrapper">
+				<?php if ( $args['include_site_title'] ) : ?>
+					<div class="happy-blocks-global-header-site__title">
+						<h1><?php echo esc_html( $args['site_title'] ); ?></h1>
+						<p><?php echo esc_html( $args['site_tagline'] ); ?></p>
+					</div>
+				<?php endif; ?>
 				<form role="search" method="get" action=""><label for="wp-block-search__input-1" class="screen-reader-text"><?php echo esc_html( $args['search_placeholder'] ); ?></label><div class="happy-blocks-search__inside-wrapper"><input type="search" id="wp-block-search__input-1" name="s" value="" placeholder="<?php echo esc_html( $args['search_placeholder'] ); ?>"></div></form>
 			</div>
-			<?php if ( $args['include_site_title'] ) : ?>
-			<div class="happy-blocks-global-header-site__title">
-				<h1><?php echo esc_html( $args['site_title'] ); ?></h1>
-				<p><?php echo esc_html( $args['site_tagline'] ); ?></p>
-			</div>
-			<?php endif; ?>
 	</div>
 </div>
