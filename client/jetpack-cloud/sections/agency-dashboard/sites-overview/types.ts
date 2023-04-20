@@ -135,7 +135,6 @@ export interface RowMetaData {
 	};
 	link: string;
 	isExternalLink: boolean;
-	siteError: boolean;
 	tooltip: ReactChild | undefined;
 	tooltipId: string;
 	siteDown?: boolean;

@@ -28,6 +28,7 @@ interface Props {
 	type: AllowedTypes;
 	isLargeScreen?: boolean;
 	isFavorite?: boolean;
+	siteError: boolean;
 }
 
 export default function SiteStatusContent( {
@@ -35,6 +36,7 @@ export default function SiteStatusContent( {
 	type,
 	isLargeScreen = false,
 	isFavorite = false,
+	siteError,
 }: Props ) {
 	const dispatch = useDispatch();
 
@@ -42,7 +44,6 @@ export default function SiteStatusContent( {
 		link,
 		isExternalLink,
 		row: { value, status, error },
-		siteError,
 		tooltipId,
 		siteDown,
 		eventName,

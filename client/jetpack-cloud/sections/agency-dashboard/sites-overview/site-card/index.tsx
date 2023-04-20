@@ -74,7 +74,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const headerItem = rows[ 'site' ];
 
 	const site = rows.site;
-	const siteError = site.error || rows.monitor.error || ! isSiteConnected;
+	const siteError = rows.monitor.error || ! isSiteConnected;
 	const siteUrl = site.value.url;
 	const isFavorite = rows.isFavorite;
 
@@ -105,7 +105,12 @@ export default function SiteCard( { rows, columns }: Props ) {
 					tabIndex={ 0 }
 				>
 					{ toggleContent }
-					<SiteStatusContent rows={ rows } type={ headerItem.type } isFavorite={ isFavorite } />
+					<SiteStatusContent
+						rows={ rows }
+						type={ headerItem.type }
+						isFavorite={ isFavorite }
+						siteError={ siteError }
+					/>
 				</span>
 				<SiteActions site={ site } siteError={ siteError } />
 			</div>
@@ -131,7 +136,11 @@ export default function SiteCard( { rows, columns }: Props ) {
 												<span className="site-card__expanded-content-key">{ column.title }</span>
 												<span className="site-card__expanded-content-value">
 													<span className="site-card__expanded-content-status">
-														<SiteStatusContent rows={ rows } type={ row.type } />
+														<SiteStatusContent
+															rows={ rows }
+															type={ row.type }
+															siteError={ siteError }
+														/>
 													</span>
 													<span className="site-card__expanded-column">
 														{ column.isExpandable && (
@@ -152,7 +161,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 													isSmallScreen
 													site={ rows.site.value }
 													columns={ [ column.key ] }
-													hasError={ site.error || ! isSiteConnected }
+													hasError={ siteError }
 												/>
 											) }
 										</>
