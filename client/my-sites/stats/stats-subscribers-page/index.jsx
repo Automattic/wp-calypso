@@ -16,7 +16,7 @@ import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
 import Reach from '../stats-reach';
 import SubscribersSection from '../subscribers-section';
-import SubscribersHighlights from './subscribers-highlights';
+import SubscribersHighlightSection from './subscribers-highlight-section';
 
 const StatsSubscribersPage = ( { period } ) => {
 	const translate = useTranslate();
@@ -56,7 +56,7 @@ const StatsSubscribersPage = ( { period } ) => {
 					align="left"
 				/>
 				<StatsNavigation selectedItem="subscribers" siteId={ siteId } slug={ siteSlug } />
-				<SubscribersHighlights />
+				<SubscribersHighlightSection />
 				{ siteId && (
 					<DomainTip
 						siteId={ siteId }

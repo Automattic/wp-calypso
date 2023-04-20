@@ -83,7 +83,7 @@ function SubscriberHighlightsListing() {
 	);
 }
 
-export default function SubscribersHighlights() {
+export default function SubscribersHighlightSection() {
 	return (
 		<div className="highlight-cards subscribers-page has-odyssey-stats-bg-color">
 			<SubscriberHighlightsHeader />
