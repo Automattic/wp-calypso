@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ActivityCardList from 'calypso/components/activity-card-list';
 import AdvancedCredentials from 'calypso/components/advanced-credentials';
 import DocumentHead from 'calypso/components/data/document-head';
+import QueryBackupStagingSitesList from 'calypso/components/data/query-backup-staging-sites-list';
 import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
 import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -21,6 +22,7 @@ import { rewindClone } from 'calypso/state/activity-log/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
+import getBackupStagingSites from 'calypso/state/rewind/selectors/get-backup-staging-sites';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -61,6 +63,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 	const [ userHasSetDestination, setUserHasSetDestination ] = useState< boolean >( false );
 	const [ cloneDestination, setCloneDestination ] = useState< string >( '' );
+	const [ isCloneToStaging, setIsCloneToStaging ] = useState< boolean >( false );
 	const [ userHasSetBackupPeriod, setUserHasSetBackupPeriod ] = useState< boolean >( false );
 	const [ backupPeriod, setBackupPeriod ] = useState< string >( '' );
 	const [ backupDisplayDate, setBackupDisplayDate ] = useState< string >( '' );
@@ -82,6 +85,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const cloneRoleCredentials = useSelector( ( state ) => {
 		return getJetpackCredentials( state, siteId, cloneDestination );
 	} );
+
 	const getUrlFromCreds = () => {
 		if ( ! cloneRoleCredentials ) {
 			return '';
@@ -108,25 +112,28 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		role: 'alternate',
 	};
 
-	const stagingSites = [
-		{ url: 'www.example.com', blog_id: 123456 },
-		{ url: 'www.foo.com', blog_id: 123457 },
-		{ url: 'www.bar.com', blog_id: 123458 },
-	];
+	const stagingSites = useSelector( ( state ) => getBackupStagingSites( state, siteId ) );
 
-	const siteSuggestions = stagingSites.map( ( site ) => {
-		return { label: site.url, category: 'Staging Sites' };
-	} );
+	const getDestinationUrl = () => {
+		if ( ! isCloneToStaging ) {
+			return getUrlFromCreds();
+		}
+
+		return (
+			stagingSites.find( ( site ) => site.blog_id.toString() === cloneDestination )?.siteurl || ''
+		);
+	};
 
 	function onSearchChange( newValue: string, isNavigating: boolean ) {
 		if ( true === isNavigating ) {
 			if ( 'new' === newValue ) {
 				setShowCredentialForm( true );
 			} else {
-				const selectedSite = stagingSites.find( ( site ) => site.url === newValue );
+				const selectedSite = stagingSites.find( ( site ) => site.siteurl === newValue );
 				if ( selectedSite ) {
 					setCloneDestination( selectedSite.blog_id.toString() );
 					setUserHasSetDestination( true );
+					setIsCloneToStaging( true );
 				}
 			}
 		}
@@ -139,6 +146,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			),
 		[ dispatch, siteId, backupPeriod, rewindConfig, CredSettings.role ]
 	);
+
 	const onConfirm = useCallback( () => {
 		dispatch( setValidFrom( 'restore', Date.now() ) );
 		setUserHasRequestedRestore( true );
@@ -186,7 +194,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			</p>
 			<div className="clone-flow__advanced-credentials">
 				<CloneFlowSuggestionSearch
-					siteSuggestions={ siteSuggestions }
+					siteSuggestions={ stagingSites }
 					onSearchChange={ onSearchChange }
 				/>
 				{ showCredentialForm && (
@@ -242,7 +250,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					'Before continue, be aware that any current content on {{strong}}%(destinationUrl)s{{/strong}} will be overriden based on what you configured to copy.',
 					{
 						args: {
-							destinationUrl: getUrlFromCreds(),
+							destinationUrl: getDestinationUrl(),
 						},
 						components: {
 							strong: <strong />,
@@ -279,7 +287,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					'Select the items you want to copy to {{strong}}%(destinationUrl)s{{/strong}}.',
 					{
 						args: {
-							destinationUrl: getUrlFromCreds(),
+							destinationUrl: getDestinationUrl(),
 						},
 						components: {
 							strong: <strong />,
@@ -355,7 +363,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					{ translate( 'Copying site to %(destinationUrl)s', {
 						args: {
 							backupDisplayDate,
-							destinationUrl: getUrlFromCreds(),
+							destinationUrl: getDestinationUrl(),
 						},
 					} ) }
 				</h3>
@@ -407,7 +415,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 				<Button className="clone-flow__activity-log-button" href={ activityLogPath }>
 					{ translate( 'Go to Activity Log' ) }
 				</Button>
-				<Button primary href={ getUrlFromCreds() }>
+				<Button primary href={ getDestinationUrl() }>
 					{ translate( 'View your website' ) }
 					<Gridicon icon="external" size={ 18 } />
 				</Button>
@@ -467,6 +475,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 				<div className="clone-flow__content">
 					<QueryRewindBackups siteId={ siteId } />
 					<QueryRewindState siteId={ siteId } />
+					<QueryBackupStagingSitesList siteId={ siteId } />
 					{ restoreId && 'running' === inProgressRewindStatus && (
 						<QueryRewindRestoreStatus siteId={ siteId } restoreId={ restoreId } />
 					) }
