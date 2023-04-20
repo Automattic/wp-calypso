@@ -22,10 +22,12 @@ function ModuleCard( { icon, title, value, activateProduct, className = null, in
 					<ShortenedNumber value={ value } />
 				</div>
 			) }
-			<div className="stats-widget-module__info">
-				{ value === 'not_active' && <button onClick={ activateProduct }>Activate</button> }
-				{ value === 'not_installed' && info && <a href={ info.link }>{ info.text }</a> }
-			</div>
+			{ ! isFinite( value ) && (
+				<div className="stats-widget-module__info">
+					{ value === 'not_active' && <button onClick={ activateProduct }>Activate</button> }
+					{ value === 'not_installed' && info && <a href={ info.link }>{ info.text }</a> }
+				</div>
+			) }
 		</div>
 	);
 }
