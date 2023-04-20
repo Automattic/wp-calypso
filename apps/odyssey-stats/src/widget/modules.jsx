@@ -12,14 +12,19 @@ function isProductActive( products, productSlug ) {
 	return products && products[ productSlug ]?.is_plugin_active;
 }
 
-function ModuleCard( { icon, title, value, activateProduct, className = null, active = true } ) {
+function ModuleCard( { icon, title, value, activateProduct, className = null, info = null } ) {
 	return (
 		<div className={ classNames( 'stats-widget-module stats-widget-card', className ) }>
 			<div className="stats-widget-module__icon">{ icon }</div>
 			<div className="stats-widget-module__title">{ title }</div>
-			<div className="stats-widget-module__value">
-				{ active && <ShortenedNumber value={ value } /> }
-				{ ! active && <button onClick={ activateProduct }>Activate</button> }
+			{ isFinite( value ) && (
+				<div className="stats-widget-module__value">
+					<ShortenedNumber value={ value } />
+				</div>
+			) }
+			<div className="stats-widget-module__info">
+				{ value === 'not_active' && <button onClick={ activateProduct }>Activate</button> }
+				{ value === 'not_installed' && info && <a href={ info.link }>{ info.text }</a> }
 			</div>
 		</div>
 	);
@@ -54,7 +59,13 @@ export default function Modules() {
 				title={ translate( 'Total blocked login attempts' ) }
 				value={ protectData }
 				active={ isProductActive( jetpackProducts, 'protect' ) }
-				activateProduct={ activateProduct( 'protect' ) }
+				activateProduct={ () => {
+					/** activate jetpack brute force protection module */
+				} }
+				info={ {
+					link: '/wp-admin/admin.php?page=jetpack#/security?term=protect', //generate proper admin URL.
+					text: translate( 'Jetpack helps to keep you secure from brute-force login attacks.' ),
+				} }
 			/>
 			<ModuleCard
 				icon={ akismet }
@@ -62,6 +73,10 @@ export default function Modules() {
 				value={ akismetData }
 				active={ isProductActive( jetpackProducts, 'anti-spam' ) }
 				activateProduct={ activateProduct( 'anti-spam' ) }
+				info={ {
+					link: 'https://akismet.com/?utm_source=jetpack&utm_medium=link&utm_campaign=Jetpack%20Dashboard%20Widget%20Footer%20Link',
+					text: translate( 'Anti-spam can help to keep your blog safe from spam!' ),
+				} }
 			/>
 		</div>
 	);

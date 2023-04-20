@@ -13,8 +13,8 @@ function queryModuleData( module ) {
 
 export default function useModuleDataQuery( module ) {
 	return useQuery( [ 'stats-widget', 'module-data', module ], () => queryModuleData( module ), {
-		// Verify that the data is an integer. Otherwise, it is `N/A` or `not_active`.
-		select: ( data ) => ( isNaN( data ) ? null : parseInt( data ) ),
+		// The data could be an integer if module is active. Otherwise, it could be `not_active` or `not_installed`.
+		select: ( data ) => data,
 		staleTime: 5 * 60 * 1000,
 		// If the module is not active, we don't want to retry the query.
 		retry: false,
