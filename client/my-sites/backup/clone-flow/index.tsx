@@ -193,9 +193,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		<>
 			<CloneFlowStepProgress currentStep="destination" />
 			<h3 className="clone-flow__title">{ translate( 'Set a destination site' ) }</h3>
-			<p className="clone-flow__info">
-				{ translate( 'Input information about the site you want to clone to' ) }
-			</p>
+			<p className="clone-flow__info">{ translate( 'Where do you want to copy this site to?' ) }</p>
 			<div className="clone-flow__advanced-credentials">
 				<CloneFlowSuggestionSearch
 					siteSuggestions={ stagingSites }
@@ -220,9 +218,16 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const renderSetBackupPeriod = () => (
 		<>
 			<CloneFlowStepProgress currentStep="clonePoint" />
-			<h3 className="clone-flow__title">{ translate( 'Select a Backup Point to Copy' ) }</h3>
+			<h3 className="clone-flow__title">{ translate( 'Select a point to copy' ) }</h3>
 			<p className="clone-flow__info">
-				{ translate( "Which point in your site's history would you like to copy from?" ) }
+				{ translate( 'What do you want to copy to {{strong}}%(destinationUrl)s{{/strong}}?', {
+					args: {
+						destinationUrl: getDestinationUrl(),
+					},
+					components: {
+						strong: <strong />,
+					},
+				} ) }
 			</p>
 			<div className="activity-log-v2__content">
 				{ lastBackup && (
