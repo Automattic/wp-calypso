@@ -115,37 +115,41 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const stagingSites = useSelector( ( state ) => getBackupStagingSites( state, siteId ) );
 
 	const getDestinationUrl = () => {
-		if ( ! isCloneToStaging ) {
-			return getUrlFromCreds();
+		if ( isCloneToStaging ) {
+			return (
+				stagingSites.find( ( site ) => site.blog_id.toString() === cloneDestination )?.siteurl || ''
+			);
 		}
 
-		return (
-			stagingSites.find( ( site ) => site.blog_id.toString() === cloneDestination )?.siteurl || ''
-		);
+		return getUrlFromCreds();
 	};
+
+	function onAddNewClick() {
+		setShowCredentialForm( true );
+		setIsCloneToStaging( false );
+	}
 
 	function onSearchChange( newValue: string, isNavigating: boolean ) {
 		if ( true === isNavigating ) {
-			if ( 'new' === newValue ) {
-				setShowCredentialForm( true );
-			} else {
-				const selectedSite = stagingSites.find( ( site ) => site.siteurl === newValue );
-				if ( selectedSite ) {
-					setCloneDestination( selectedSite.blog_id.toString() );
-					setUserHasSetDestination( true );
-					setIsCloneToStaging( true );
-				}
+			const selectedSite = stagingSites.find( ( site ) => site.siteurl === newValue );
+			if ( selectedSite ) {
+				setCloneDestination( selectedSite.blog_id.toString() );
+				setUserHasSetDestination( true );
+				setIsCloneToStaging( true );
 			}
 		}
 	}
 
-	const requestClone = useCallback(
-		() =>
-			dispatch(
-				rewindClone( siteId, backupPeriod, { types: rewindConfig, roleName: CredSettings.role } )
-			),
-		[ dispatch, siteId, backupPeriod, rewindConfig, CredSettings.role ]
-	);
+	const requestClone = useCallback( () => {
+		if ( isCloneToStaging ) {
+			// If we're cloning to staging, we should use a new staging action
+			return;
+		}
+
+		return dispatch(
+			rewindClone( siteId, backupPeriod, { types: rewindConfig, roleName: CredSettings.role } )
+		);
+	}, [ isCloneToStaging, dispatch, siteId, backupPeriod, rewindConfig, CredSettings.role ] );
 
 	const onConfirm = useCallback( () => {
 		dispatch( setValidFrom( 'restore', Date.now() ) );
@@ -196,6 +200,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 				<CloneFlowSuggestionSearch
 					siteSuggestions={ stagingSites }
 					onSearchChange={ onSearchChange }
+					onAddNewClick={ onAddNewClick }
 				/>
 				{ showCredentialForm && (
 					<AdvancedCredentials

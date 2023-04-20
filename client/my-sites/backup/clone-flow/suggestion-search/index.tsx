@@ -1,19 +1,19 @@
-import { Button, Card } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import SuggestionSearch from 'calypso/components/suggestion-search';
-import './style.scss';
 import { APIRewindStagingSiteInfo } from 'calypso/state/rewind/staging/types';
-
+import './style.scss';
 interface Props {
 	siteSuggestions: APIRewindStagingSiteInfo[];
 	onSearchChange: ( newValue: string, isNavigating: boolean ) => void;
+	onAddNewClick: () => void;
 }
 
-const addNewClicked = ( onSearchChange: ( newValue: string, isNavigating: boolean ) => void ) => {
-	onSearchChange( 'new', true );
-};
-
-export default function CloneFlowSuggestionSearch( { siteSuggestions, onSearchChange }: Props ) {
+export default function CloneFlowSuggestionSearch( {
+	siteSuggestions,
+	onSearchChange,
+	onAddNewClick,
+}: Props ) {
 	const translate = useTranslate();
 
 	const suggestions = siteSuggestions.map( ( site ) => {
@@ -22,6 +22,8 @@ export default function CloneFlowSuggestionSearch( { siteSuggestions, onSearchCh
 			category: 'Staging sites',
 		};
 	} );
+
+	const addNewDestinationLabel = translate( 'Enter credentials for a new destination site' );
 
 	return (
 		<div className="clone-flow-suggestion-search">
@@ -32,12 +34,12 @@ export default function CloneFlowSuggestionSearch( { siteSuggestions, onSearchCh
 					onChange={ onSearchChange }
 				/>
 				<Button
+					borderless={ true }
 					className="clone-flow-suggestion-search__add-new-button"
-					onClick={ () => {
-						addNewClicked( onSearchChange );
-					} }
+					onClick={ onAddNewClick }
 				>
-					{ translate( 'Enter credentials for a new destination site' ) }
+					{ addNewDestinationLabel }
+					<Gridicon icon="plus-small" size={ 12 } />
 				</Button>
 			</Card>
 		</div>
