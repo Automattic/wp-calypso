@@ -22,6 +22,7 @@ declare module '@wordpress/components' {
 	interface NavigatorLocation {
 		path: string;
 		isInitial: boolean;
+		isBack: boolean;
 	}
 
 	export const __experimentalUseNavigator: () => {
