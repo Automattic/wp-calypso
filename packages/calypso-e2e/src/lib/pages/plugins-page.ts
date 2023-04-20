@@ -39,9 +39,6 @@ const selectors = {
 	openRemoveMenuButton: '.plugin-details-cta__manage-plugin-menu button[title="Toggle menu"]',
 	removeButton: '.popover__menu button:has-text("Remove")',
 
-	// Elegibility warnings
-	eligibilityWarning: '.eligibility-warnings__title',
-
 	// Category selector
 	selectedCategory: ( categoryTitle: string ) => `.categories__header:text("${ categoryTitle }")`,
 
