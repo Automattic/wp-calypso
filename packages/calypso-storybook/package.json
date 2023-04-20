@@ -21,13 +21,13 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"@automattic/calypso-typescript-config": "workspace:^"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@storybook/addon-controls": "^6.4.19",
+		"@storybook/addon-viewport": "^6.4.19"
 	},
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@storybook/addon-actions": "^6.4.19",
-		"@storybook/addon-controls": "^6.4.19",
-		"@storybook/addon-viewport": "^6.4.19",
 		"@storybook/builder-webpack5": "^6.4.19",
 		"@storybook/manager-webpack5": "^6.4.19",
 		"@storybook/preset-scss": "^1.0.3",
