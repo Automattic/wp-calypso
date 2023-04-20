@@ -50,7 +50,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	const shouldDisableLicenseSelection =
 		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
-	const hasSiteError = site.error || ! isSiteConnected;
+	const hasSiteError = ! isSiteConnected;
 
 	return (
 		<Fragment>
