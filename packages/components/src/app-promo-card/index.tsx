@@ -83,7 +83,7 @@ export default function AppPromoCard( { className, isWoo, clickHandler }: AppPro
 					components: {
 						a: (
 							<a
-								className="app-promo-card__woo-link"
+								className="app-promo-card__link app-promo-card__woo-link"
 								href={ getRedirectUrl( 'wooA8C' ) ?? 'https://woo.com/mobile' }
 								onClick={ () => onClickHandler( CLICK_EVENTS.wooClickA8C ) }
 							/>
@@ -98,7 +98,7 @@ export default function AppPromoCard( { className, isWoo, clickHandler }: AppPro
 				components: {
 					a: (
 						<a
-							className="app-promo-card__jetpack-link"
+							className="app-promo-card__link app-promo-card__jetpack-link"
 							href={ localizeUrl( 'https://apps.wordpress.com/get/?campaign=calypso-stats-promo' ) }
 							onClick={ () => onClickHandler( CLICK_EVENTS.jetpackClickA8C ) }
 						/>
