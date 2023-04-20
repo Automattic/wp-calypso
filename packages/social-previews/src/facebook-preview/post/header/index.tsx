@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { useCallback, useState } from 'react';
 import FacebookPostIcon from '../icons';
 import defaultAvatar from './default-avatar.png';
 import type { FacebookUser } from '../../types';
@@ -6,13 +7,21 @@ import type { FacebookUser } from '../../types';
 import './styles.scss';
 
 const FacebookPostHeader: React.FC< { user?: FacebookUser } > = ( { user } ) => {
+	const [ avatarSrc, setAvatarSrc ] = useState< string >( user?.avatarUrl || defaultAvatar );
+	const onImageError = useCallback( () => {
+		if ( avatarSrc !== defaultAvatar ) {
+			setAvatarSrc( defaultAvatar );
+		}
+	}, [ avatarSrc ] );
+
 	return (
 		<div className="facebook-preview__post-header">
 			<div className="facebook-preview__post-header-content">
 				<img
 					className="facebook-preview__post-header-avatar"
-					src={ user?.avatarUrl || defaultAvatar }
+					src={ avatarSrc }
 					alt=""
+					onError={ onImageError }
 				/>
 				<div>
 					<div className="facebook-preview__post-header-name">
