@@ -89,6 +89,11 @@ body.is-section-plans.is-ecommerce-trial-plan {
 	}
 
 	.feature-not-included-card__card {
+
+		&:last-of-type {
+			margin-bottom: 4px;
+		}
+
 		.feature-not-included-card__content {
 			padding-left: 16px;
 
@@ -188,6 +193,7 @@ body.is-section-plans.is-ecommerce-trial-plan {
 				.feature-not-included-card__text {
 					font-size: $woo-font-body-extra-small;
 				}
+				margin-top: 12px;
 			}
 		}
 
