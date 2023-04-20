@@ -7,6 +7,7 @@ beforeAll( () => {} );
 
 const mockUnSubscribe = jest.fn();
 let mockSubscribeFunction = null;
+let mockIsSaving = false;
 
 jest.mock( '@wordpress/data', () => ( {
 	subscribe: ( userFunction ) => {
@@ -17,6 +18,7 @@ jest.mock( '@wordpress/data', () => ( {
 	select: ( item ) => {
 		if ( item === 'core/editor' ) {
 			return {
+				isSavingPost: () => mockIsSaving,
 				isCurrentPostPublished: () => true,
 				getCurrentPostRevisionsCount: () => 1,
 			};
@@ -39,7 +41,26 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 		expect( global.window.location.href ).toBe( undefined );
 	} );
 
+	it( 'should NOT redirect while saving the POST', () => {
+		mockIsSaving = true;
+		delete global.window;
+		global.window = {
+			location: {
+				search: '?showLaunchpad=true&origin=https://calypso.localhost:3000',
+				hostname: 'wordpress.com',
+			},
+		};
+
+		redirectOnboardingUserAfterPublishingPost();
+		expect( mockSubscribeFunction ).not.toBe( null );
+		mockSubscribeFunction();
+
+		expect( mockUnSubscribe ).toBeCalledTimes( 0 );
+		expect( global.window.location.href ).toBe( undefined );
+	} );
+
 	it( 'should redirect the user to the launchpad when a post is published and the showLaunchpad query parameter is present', () => {
+		mockIsSaving = false;
 		delete global.window;
 		global.window = {
 			location: {
