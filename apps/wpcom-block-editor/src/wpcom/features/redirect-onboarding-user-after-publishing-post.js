@@ -16,7 +16,7 @@ export function redirectOnboardingUserAfterPublishingPost() {
 		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
 		const getCurrentPostRevisionsCount = select( 'core/editor' ).getCurrentPostRevisionsCount();
 
-		if ( false === isSavingPost && isCurrentPostPublished && getCurrentPostRevisionsCount === 1 ) {
+		if ( ! isSavingPost && isCurrentPostPublished && getCurrentPostRevisionsCount === 1 ) {
 			unsubscribe();
 
 			window.location.href =
