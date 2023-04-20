@@ -2,7 +2,7 @@ import { HighlightCard, Popover } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
 import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
-import './subscribers-highlights.scss';
+import './subscribers-highlight-section.scss';
 
 function getSubscriberHighlights() {
 	const highlights = [
