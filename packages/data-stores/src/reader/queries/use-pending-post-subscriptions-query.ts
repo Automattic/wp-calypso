@@ -5,7 +5,7 @@ import type { PendingPostSubscription } from '../types';
 
 type SubscriptionManagerPendingPostSubscriptions = {
 	comment_subscriptions: PendingPostSubscription[];
-	total_comment_subscriptions_count: number;
+	total_comment_subscriptions_count: string; // TODO: This should be a number, but the API returns a string.
 };
 
 type SubscriptionManagerPendingPostSubscriptionsQueryProps = {
@@ -13,26 +13,35 @@ type SubscriptionManagerPendingPostSubscriptionsQueryProps = {
 	sort?: ( a?: PendingPostSubscription, b?: PendingPostSubscription ) => number;
 };
 
-const callPendingBlogSubscriptionsEndpoint = async (): Promise< PendingPostSubscription[] > => {
-	const data = [];
-	const perPage = 1000; // TODO: This is a temporary workaround to get all pending subscriptions. We should remove this once we decide how to handle pagination.
-
-	const incoming = await callApi< SubscriptionManagerPendingPostSubscriptions >( {
-		path: `/post-comment-subscriptions?status=pending&per_page=${ perPage }`,
-		apiVersion: '2',
-	} );
-
-	if ( incoming && incoming.comment_subscriptions ) {
-		data.push(
-			...incoming.comment_subscriptions.map( ( pendingSubscription ) => ( {
-				...pendingSubscription,
-				subscription_date: new Date( pendingSubscription.subscription_date ),
-			} ) )
-		);
-	}
-
-	return data;
+type PendingPostSubscriptionQueryResult = {
+	pendingPosts: PendingPostSubscription[];
+	totalCount: string; // TODO: This should be a number, but the API returns a string.
 };
+
+const callPendingBlogSubscriptionsEndpoint =
+	async (): Promise< PendingPostSubscriptionQueryResult > => {
+		const pendingPosts = [];
+		const perPage = 1000; // TODO: This is a temporary workaround to get all pending subscriptions. We should remove this once we decide how to handle pagination.
+
+		const incoming = await callApi< SubscriptionManagerPendingPostSubscriptions >( {
+			path: `/post-comment-subscriptions?status=pending&per_page=${ perPage }`,
+			apiVersion: '2',
+		} );
+
+		if ( incoming && incoming.comment_subscriptions ) {
+			pendingPosts.push(
+				...incoming.comment_subscriptions.map( ( pendingSubscription ) => ( {
+					...pendingSubscription,
+					subscription_date: new Date( pendingSubscription.subscription_date ),
+				} ) )
+			);
+		}
+
+		return {
+			pendingPosts,
+			totalCount: incoming.total_comment_subscriptions_count,
+		};
+	};
 
 const defaultFilter = () => true;
 const defaultSort = () => 0;
@@ -44,7 +53,7 @@ const usePendingPostSubscriptionsQuery = ( {
 	const isLoggedIn = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 
-	const { data, ...rest } = useQuery< PendingPostSubscription[] >(
+	const { data, ...rest } = useQuery< PendingPostSubscriptionQueryResult >(
 		[ 'read', 'pending-post-subscriptions', isLoggedIn ],
 		async () => {
 			return await callPendingBlogSubscriptionsEndpoint();
@@ -56,7 +65,10 @@ const usePendingPostSubscriptionsQuery = ( {
 	);
 
 	return {
-		data: data?.filter( filter ).sort( sort ),
+		data: {
+			pendingPosts: data?.pendingPosts.filter( filter ).sort( sort ),
+			totalCount: data?.totalCount,
+		},
 		...rest,
 	};
 };

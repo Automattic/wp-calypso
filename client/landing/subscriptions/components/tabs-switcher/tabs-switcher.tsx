@@ -60,7 +60,7 @@ const TabsSwitcher = () => {
 						{ translate( 'Comments' ) }
 					</NavItem>
 
-					{ shouldEnablePendingTab && counts?.pending ? (
+					{ shouldEnablePendingTab && ( counts?.pending || pathname.includes( 'pending' ) ) ? (
 						<NavItem
 							onClick={ () => {
 								shouldEnablePendingTab
