@@ -472,7 +472,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		if ( shouldGoToAssembler ) {
 			const assemblerDesign = {
 				..._selectedDesign,
-				design_type: 'assembler',
+				design_type: BLANK_CANVAS_DESIGN.design_type,
 			} as Design;
 
 			setSelectedDesign( assemblerDesign );
