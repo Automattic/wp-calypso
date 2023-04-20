@@ -8,6 +8,7 @@ import type {
 	DesignRecipe,
 	SoftwareSet,
 	StyleVariation,
+	PreviewData,
 } from '@automattic/design-picker/src/types';
 
 interface StarterDesignsQueryParams {
@@ -25,6 +26,7 @@ interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
 }
 
 interface StarterDesignsResponse {
+	filters: { subject: Record< string, Category > };
 	generated: { designs: GeneratedDesign[] };
 	static: { designs: StaticDesign[] };
 }
@@ -40,6 +42,7 @@ interface StaticDesign {
 	style_variations?: StyleVariation[];
 	software_sets?: SoftwareSet[];
 	is_virtual: boolean;
+	preview_data: PreviewData | null;
 }
 
 interface GeneratedDesign {
@@ -56,6 +59,9 @@ export function useStarterDesignsQuery(
 	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
 		select: ( response: StarterDesignsResponse ) => {
 			const allDesigns = {
+				filters: {
+					subject: response.filters?.subject || {},
+				},
 				generated: {
 					designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
 				},
@@ -93,6 +99,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		price,
 		style_variations,
 		software_sets,
+		preview_data,
 	} = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
@@ -115,6 +122,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		design_type: is_premium ? 'premium' : 'standard',
 		style_variations,
 		is_virtual: design.is_virtual && !! design.recipe?.pattern_ids?.length,
+		...( preview_data && { preview_data } ),
 		// Deprecated; used for /start flow
 		features: [],
 		template: '',

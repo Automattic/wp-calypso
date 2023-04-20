@@ -10,6 +10,7 @@ type SubscriptionManagerPostSubscriptions = {
 };
 
 type SubscriptionManagerPostSubscriptionsQueryProps = {
+	searchTerm?: string;
 	filter?: ( item?: PostSubscription ) => boolean;
 	sort?: ( a?: PostSubscription, b?: PostSubscription ) => number;
 	number?: number;
@@ -19,9 +20,10 @@ const defaultFilter = () => true;
 const defaultSort = () => 0;
 
 const usePostSubscriptionsQuery = ( {
+	searchTerm = '',
 	filter = defaultFilter,
 	sort = defaultSort,
-	number = 100,
+	number = 500,
 }: SubscriptionManagerPostSubscriptionsQueryProps = {} ) => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
@@ -40,9 +42,8 @@ const usePostSubscriptionsQuery = ( {
 			{
 				enabled,
 				getNextPageParam: ( lastPage, pages ) => {
-					return pages.length < lastPage.total_comment_subscriptions_count
-						? pages.length + 1
-						: undefined;
+					const total = pages.reduce( ( sum, page ) => sum + page.comment_subscriptions.length, 0 );
+					return total < lastPage.total_comment_subscriptions_count ? pages.length + 1 : undefined;
 				},
 				refetchOnWindowFocus: false,
 			}
@@ -57,13 +58,30 @@ const usePostSubscriptionsQuery = ( {
 	const outputData = useMemo( () => {
 		// Flatten all the pages into a single array containing all subscriptions
 		const flattenedData = data?.pages?.map( ( page ) => page.comment_subscriptions ).flat();
+
 		// Transform the dates into Date objects
 		const transformedData = flattenedData?.map( ( comment_subscription ) => ( {
 			...comment_subscription,
 			subscription_date: new Date( comment_subscription.subscription_date ),
 		} ) );
-		return transformedData?.filter( filter ).sort( sort );
-	}, [ data, filter, sort ] );
+
+		const searchTermLowerCase = searchTerm.toLowerCase();
+
+		const searchFilter = ( item: PostSubscription ) =>
+			searchTermLowerCase
+				? item.post_title.toLocaleLowerCase().includes( searchTermLowerCase ) ||
+				  item.post_excerpt.toLocaleLowerCase().includes( searchTermLowerCase ) ||
+				  item.post_url.includes( searchTermLowerCase ) ||
+				  item.site_title.toLocaleLowerCase().includes( searchTermLowerCase )
+				: true;
+
+		return {
+			posts: transformedData
+				?.filter( ( item ) => item && filter( item ) && searchFilter( item ) )
+				.sort( sort ),
+			totalCount: data?.pages?.[ 0 ]?.total_comment_subscriptions_count ?? 0,
+		};
+	}, [ data?.pages, filter, searchTerm, sort ] );
 
 	return {
 		data: outputData,

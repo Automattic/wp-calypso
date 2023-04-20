@@ -1,4 +1,4 @@
 export type MarketplacePluginInstallProps = {
-	productSlug?: string;
+	pluginSlug?: string;
 	themeSlug?: string;
 };

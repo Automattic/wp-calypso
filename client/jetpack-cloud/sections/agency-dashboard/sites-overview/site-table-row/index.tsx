@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import classNames from 'classnames';
 import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -53,8 +52,6 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 
 	const hasSiteError = site.error || ! isSiteConnected;
 
-	const isExpandedContentEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
-
 	return (
 		<Fragment>
 			<tr
@@ -102,9 +99,8 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 				{ /* Show error content when there is a site error */ }
 				{ hasSiteError && (
 					<td
-						className={ classNames( 'site-table__error', {
+						className={ classNames( 'site-table__error padding-0', {
 							'site-table__td-without-border-bottom': isExpanded,
-							'padding-0': isExpandedContentEnabled,
 						} ) }
 						// If there is an error, we need to span the whole row because we don't show any column.
 						colSpan={ columns.length - 1 }
@@ -113,22 +109,18 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 					</td>
 				) }
 				<td
-					className={ classNames( 'site-table__actions', {
+					className={ classNames( 'site-table__actions site-table__actions-button', {
 						'site-table__td-without-border-bottom': isExpanded,
-						'site-table__actions-button': isExpandedContentEnabled,
 					} ) }
 				>
 					<SiteActions isLargeScreen site={ site } siteError={ siteError } />
 				</td>
-				{ /* Show expand buttons only when the feature is enabled */ }
-				{ isExpandedContentEnabled && (
-					<SiteTableExpand
-						index={ index }
-						isExpanded={ isExpanded }
-						setExpanded={ setExpanded }
-						siteId={ site.value.blog_id }
-					/>
-				) }
+				<SiteTableExpand
+					index={ index }
+					isExpanded={ isExpanded }
+					setExpanded={ setExpanded }
+					siteId={ site.value.blog_id }
+				/>
 			</tr>
 			{ /* Show expanded content when expandable block is enabled. */ }
 			{ isExpanded && (

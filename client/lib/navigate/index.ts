@@ -7,9 +7,21 @@ function isSameOrigin( path: string ): boolean {
 	return new URL( path, window.location.href ).origin === window.location.origin;
 }
 
+// Check whether the section is defined as a page.js routing path or not.
+// For example, the section "/setup" is registered by react-router-dom instead of page.js
+function isPageRegistered() {
+	return !! String( page.base() );
+}
+
 export function navigate( path: string ): void {
 	if ( isSameOrigin( path ) ) {
-		page.show( path );
+		if ( ! isPageRegistered() ) {
+			const state = { path };
+			window.history.pushState( state, '', path );
+			dispatchEvent( new PopStateEvent( 'popstate', { state } ) );
+		} else {
+			page.show( path );
+		}
 	} else {
 		window.location.href = logmeinUrl( path );
 	}

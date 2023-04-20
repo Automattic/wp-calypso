@@ -1139,7 +1139,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				( planConstantObj.get2023PricingGridSignupStorageOptions &&
 					planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
 				[];
-
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
 			const isCurrentPlan = isCurrentSitePlan( state, siteId, planProductId ) ?? false;
 			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
