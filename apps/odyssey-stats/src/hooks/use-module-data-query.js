@@ -13,8 +13,22 @@ function queryModuleData( module ) {
 
 export default function useModuleDataQuery( module ) {
 	return useQuery( [ 'stats-widget', 'module-data', module ], () => queryModuleData( module ), {
-		// The data could be an integer if module is active. Otherwise, it could be `not_active`, `not_installed` or `invalid_key`.
-		select: ( data ) => data,
+		select: ( data ) => {
+			switch ( module ) {
+				case 'protect':
+					// The API for protect returns `false` when the counter is 0.
+					//                     return 404 error, when the module is not active.
+					if ( data === 'false' || data === false ) {
+						return 0;
+					}
+
+				// For Akismet, the API returns an integer if module is active.
+				// Otherwise, it returns `not_active`, `not_installed` or `invalid_key`.
+
+				default:
+					return data;
+			}
+		},
 		staleTime: 5 * 60 * 1000,
 		// If the module is not active, we don't want to retry the query.
 		retry: false,
