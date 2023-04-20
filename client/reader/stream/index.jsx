@@ -502,11 +502,13 @@ class ReaderStream extends Component {
 				/>
 			);
 
-			const sidebarContent = path.startsWith( '/tag/' ) ? (
+			const sidebarContent = tag ? (
 				<ReaderTagSidebar tag={ tag } />
 			) : (
 				<ReaderListFollowedSites path={ path } />
 			);
+
+			const tabTitle = tag ? translate( 'Related' ) : translate( 'Sites' );
 
 			if ( excludesSidebar.includes( streamType ) ) {
 				body = bodyContent;
@@ -536,7 +538,7 @@ class ReaderStream extends Component {
 										selected={ this.state.selectedTab === 'sites' }
 										onClick={ this.handleSitesSelected }
 									>
-										{ translate( 'Sites' ) }
+										{ tabTitle }
 									</NavItem>
 								</NavTabs>
 							</SectionNav>
