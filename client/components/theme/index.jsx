@@ -457,11 +457,12 @@ export class Theme extends Component {
 			return (
 				<PremiumBadge
 					{ ...commonProps }
-					className={ classNames( commonProps.className, 'theme__community-theme' ) }
+					className={ classNames( commonProps.className, 'badge--info' ) }
 					labelText={ translate( 'Community', {
 						context: 'This theme is developed and supported by a community',
 						textOnly: true,
 					} ) }
+					shouldHideIcon
 				/>
 			);
 		}
