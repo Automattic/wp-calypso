@@ -25,10 +25,8 @@ export default function PendingPostRow( {
 
 	const { mutate: confirmPendingSubscription, isLoading: confirmingPendingSubscription } =
 		SubscriptionManager.usePendingPostConfirmMutation();
-	const { mutate: deletePendingSubscription, isLoading: deletingPendingSubscription } = {
-		mutate: () => null,
-		isLoading: false,
-	};
+	const { mutate: deletePendingSubscription, isLoading: deletingPendingSubscription } =
+		SubscriptionManager.usePendingPostDeleteMutation();
 
 	return (
 		<div className="row-wrapper">
@@ -56,7 +54,7 @@ export default function PendingPostRow( {
 				<span className="actions" role="cell">
 					<PendingPostSettings
 						onConfirm={ () => confirmPendingSubscription( { id } ) }
-						onDelete={ () => deletePendingSubscription() }
+						onDelete={ () => deletePendingSubscription( { id } ) }
 						confirming={ confirmingPendingSubscription }
 						deleting={ deletingPendingSubscription }
 					/>
