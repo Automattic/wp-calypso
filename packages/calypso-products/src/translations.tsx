@@ -52,7 +52,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
 } from './constants';
-import type { JetpackFAQ, SelectorProductFeaturesItem } from './types';
+import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 // Translatable strings
@@ -955,8 +955,8 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 	};
 };
 
-export const getJetpackProductsFAQs = (): Record< string, Array< JetpackFAQ > > => {
-	const backupFAQs: Array< JetpackFAQ > = [
+export const getJetpackProductsFAQs = (): Record< string, Array< FAQ > > => {
+	const backupFAQs: Array< FAQ > = [
 		{
 			question: translate( '*How do backup storage limits work?' ),
 			answer: translate(
