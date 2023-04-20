@@ -22,12 +22,16 @@ import {
 	PlanSlug,
 	isWooExpressPlusPlan,
 } from '@automattic/calypso-products';
+import { PlansSelect } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
 import { isHostingFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
+import { withSelect } from '@wordpress/data';
+import { SelectFunction } from '@wordpress/data/build-types/types';
 import classNames from 'classnames';
 import {
+	getLocaleSlug,
 	localize,
 	LocalizedComponent,
 	LocalizeProps,
@@ -94,9 +98,11 @@ import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from './hooks/use-highlight-label';
+import { PLANS_STORE } from './store';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { IAppState } from 'calypso/state/types';
+
 import './style.scss';
 
 type PlanRowOptions = {
@@ -137,6 +143,7 @@ type PlanFeatures2023GridProps = {
 	discountEndDate: Date;
 	hidePlansFeatureComparison: boolean;
 	hideUnavailableFeatures: boolean;
+	datastorePlansLoaded: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -306,7 +313,13 @@ export class PlanFeatures2023Grid extends Component<
 			translate,
 			selectedSiteSlug,
 			hidePlansFeatureComparison,
+			datastorePlansLoaded,
 		} = this.props;
+
+		if ( ! datastorePlansLoaded ) {
+			return null;
+		}
+
 		return (
 			<div className="plans-wrapper">
 				<QueryActivePromotions />
@@ -1217,4 +1230,15 @@ const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 	);
 };
 
-export default WrappedPlanFeatures2023Grid;
+export default withSelect( ( select: SelectFunction, ownProps: PlanFeatures2023GridType ) => {
+	const locale = getLocaleSlug();
+	// This is a temporary workaround to force the data-store to fetch the plans data.
+	// It should be updated once plans are retrieved via a data-store selector.
+	locale && ( select( PLANS_STORE ) as PlansSelect ).getSupportedPlans( locale );
+	const datastorePlansLoaded = ( select( PLANS_STORE ) as PlansSelect ).hasFinishedResolution(
+		'getSupportedPlans',
+		[ locale ]
+	);
+
+	return { ...ownProps, datastorePlansLoaded };
+} )( WrappedPlanFeatures2023Grid );

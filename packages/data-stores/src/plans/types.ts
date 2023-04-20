@@ -138,4 +138,7 @@ export interface DetailsAPIResponse {
 	features: DetailsAPIFeature[];
 }
 
-export type PlansSelect = SelectFromMap< typeof selectors >;
+export type PlansSelect = SelectFromMap< typeof selectors > & {
+	// @wp/core-data selector. must be a better way to do this
+	isResolving: ( ...args: unknown[] ) => boolean;
+};
