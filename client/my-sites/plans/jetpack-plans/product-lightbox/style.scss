@@ -178,7 +178,7 @@
 		margin: 0;
 	}
 
-	li {
+	&:not(.is-faq-list) li {
 		background: url(./icons/check.svg) no-repeat 0 2px;
 		padding-left: 20px;
 		font-weight: 400;
@@ -214,6 +214,34 @@
 
 	.foldable-card.card.is-expanded {
 		margin: 0;
+	}
+
+	.foldable-faq {
+		padding: 0;
+		margin-bottom: 8px;
+	}
+
+	.foldable-faq__question {
+		padding: 0;
+		min-height: 24px;
+
+		.gridicon {
+			width: 20px;
+			height: 20px;
+		}
+	}
+
+	.foldable-faq__question-text {
+		font-size: 1rem;
+		font-weight: 500;
+		padding: 0;
+		margin-inline-start: 4px;
+	}
+
+	.foldable-faq__answer {
+		border: none;
+		padding-inline-start: 24px;
+		padding-bottom: 0;
 	}
 }
 

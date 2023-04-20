@@ -5,6 +5,7 @@ import FoldableCard from 'calypso/components/foldable-card';
 import { useIncludedProductDescriptionMap } from '../product-store/hooks/use-included-product-description-map';
 import { SelectorProduct } from '../types';
 import DescriptionList from './description-list';
+import FAQList from './faq-list';
 import IncludedProductList from './included-product-list';
 
 type ProductDetailsProps = {
@@ -61,6 +62,32 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 						{ index !== infoList.length - 1 && <hr /> }
 					</div>
 				) )
+			) }
+
+			{ product.faqs && (
+				<>
+					<hr />
+					<div className="product-lightbox__detail-list is-faq-list" key="faqs">
+						{ isMobile ? (
+							<FoldableCard
+								hideSummary
+								header={ translate( "FAQ's" ) }
+								clickableHeader={ true }
+								smooth
+								contentExpandedStyle={ contentStlye }
+							>
+								<div ref={ ref }>
+									<FAQList items={ product.faqs } />
+								</div>
+							</FoldableCard>
+						) : (
+							<>
+								<p>{ translate( "FAQ's" ) }</p>
+								<FAQList items={ product.faqs } />
+							</>
+						) }
+					</div>
+				</>
 			) }
 		</>
 	);
