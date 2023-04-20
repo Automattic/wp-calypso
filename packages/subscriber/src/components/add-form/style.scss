@@ -190,17 +190,17 @@
 	}
 
 	.add-subscriber__form--disclaimer {
-		font-size: 0.875rem;
+		font-size: $font-body-small;
 		line-height: 1.25;
 		color: var(--studio-gray-50);
 		margin-bottom: 1.5rem;
 
 		a,
 		button {
+			font-size: $font-body-small;
 			color: var(--color-text);
 			text-decoration: underline;
 			height: unset;
-			font-size: 0.875rem;
 
 			&:hover {
 				color: var(--color-text-subtle);
