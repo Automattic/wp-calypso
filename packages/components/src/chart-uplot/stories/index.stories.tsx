@@ -3,7 +3,7 @@
 import { useRef } from 'react';
 import UplotChart from '../';
 
-export default { title: 'Chart (uPlot)' };
+export default { title: 'packages/@automattic/components/Chart (uPlot)' };
 
 const SAMPLE_DATA = [
 	[

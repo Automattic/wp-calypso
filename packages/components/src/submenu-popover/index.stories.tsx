@@ -3,7 +3,7 @@ import { DropdownMenu, Icon, MenuGroup, MenuItem } from '@wordpress/components';
 import { chevronRight } from '@wordpress/icons';
 import SubmenuPopover, { useSubmenuPopoverProps } from '.';
 
-export default { title: 'SubmenuPopover' };
+export default { title: 'packages/@automattic/components/SubmenuPopover' };
 
 export const Default = () => {
 	const submenu = useSubmenuPopoverProps< HTMLDivElement >();

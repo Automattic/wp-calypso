@@ -1,7 +1,7 @@
 import { css } from '@emotion/css';
 import { LoadingPlaceholder } from '.';
 
-export default { title: 'LoadingPlaceholder' };
+export default { title: 'packages/@automattic/components/LoadingPlaceholder' };
 
 export const Normal = () => <LoadingPlaceholder />;
 export const Width = () => <LoadingPlaceholder className={ css( { maxWidth: 300 } ) } />;
