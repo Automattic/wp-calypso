@@ -9,7 +9,6 @@ $max-list-width: 1300px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 }
-
 .subscription-manager__comment-list {
 	max-width: $max-list-width;
 	min-width: 300px;
@@ -23,11 +22,11 @@ $max-list-width: 1300px;
 			}
 		}
 	}
-
 	.row {
 		display: flex;
 		align-items: center;
 		flex-direction: row;
+		min-height: 44px;
 		margin-top: 20px;
 		margin-bottom: 20px;
 		justify-content: space-between;
@@ -37,6 +36,7 @@ $max-list-width: 1300px;
 		}
 
 		&.header {
+			min-height: auto;
 			padding-bottom: $font-code;
 			padding-top: 0;
 			margin: 0;
@@ -46,6 +46,7 @@ $max-list-width: 1300px;
 			flex: 0 0 403px;
 			font-size: $font-body-small;
 			line-height: 20px;
+			color: $studio-gray-60;
 
 			.title {
 				max-width: 350px;

@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 import { SubscriptionManager } from '@automattic/data-stores';
 import { memo, useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
@@ -24,6 +25,7 @@ const CommentRow = ( {
 	forwardedRef,
 	style,
 }: CommentRowProps ) => {
+	const translate = useTranslate();
 	const hostname = useMemo( () => new URL( site_url ).hostname, [ site_url ] );
 	const siteIcon = useMemo( () => {
 		if ( site_icon ) {
@@ -39,10 +41,10 @@ const CommentRow = ( {
 				<span className="post" role="cell">
 					<div className="title">
 						<a href={ post_url } target="_blank" rel="noreferrer noopener">
-							{ post_title }
+							{ post_title || translate( 'Untitled' ) }
 						</a>
 					</div>
-					<div className="excerpt">{ post_excerpt }</div>
+					{ post_excerpt && <div className="excerpt">{ post_excerpt }</div> }
 				</span>
 				<a href={ site_url } rel="noreferrer noopener" className="title-box" target="_blank">
 					<span className="title-box" role="cell">
