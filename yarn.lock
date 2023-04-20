@@ -1124,8 +1124,9 @@ __metadata:
     "@automattic/calypso-apps-builder": "workspace:^"
     "@automattic/calypso-babel-config": "workspace:^"
     "@automattic/calypso-build": "workspace:^"
-    "@automattic/calypso-config": "workspace:^"
+    "@automattic/calypso-color-schemes": "workspace:^"
     "@automattic/calypso-eslint-overrides": "workspace:^"
+    "@automattic/calypso-jest": "workspace:^"
     "@automattic/calypso-polyfills": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/components": "workspace:^"
@@ -1133,15 +1134,20 @@ __metadata:
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
+    "@babel/core": ^7.17.5
     "@wordpress/data": ^7.6.0
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
+    "@wordpress/icons": ^9.22.0
+    "@wordpress/scripts": ^24.6.0
     autoprefixer: ^10.2.5
+    babel-jest: ^27.5
     calypso: "workspace:^"
     classnames: ^2.3.1
     debug: ^4.3.4
     gettext-parser: ^6.0.0
     html-webpack-plugin: ^5.0.0-beta.4
     jest: ^27.2.4
+    jest-teamcity: ^1.9.0
     lodash: ^4.17.21
     mkdirp: ^1.0.4
     moment: ^2.26.0
@@ -7087,6 +7093,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/redux-mock-store@npm:1.0.3":
+  version: 1.0.3
+  resolution: "@types/redux-mock-store@npm:1.0.3"
+  dependencies:
+    redux: ^4.0.5
+  checksum: 5027e4ecd654efc8b98418c41e9286c257db54206943ee2f541d751f6579e740b733597d58d1a79df133da0693f8c34772e6bed85c5ef6d9ae8636d342d7df88
+  languageName: node
+  linkType: hard
+
 "@types/resolve@npm:0.0.8":
   version: 0.0.8
   resolution: "@types/resolve@npm:0.0.8"
@@ -8857,14 +8872,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/icons@npm:^9.13.0, @wordpress/icons@npm:^9.4.0":
-  version: 9.18.0
-  resolution: "@wordpress/icons@npm:9.18.0"
+"@wordpress/icons@npm:^9.13.0, @wordpress/icons@npm:^9.22.0, @wordpress/icons@npm:^9.4.0":
+  version: 9.22.0
+  resolution: "@wordpress/icons@npm:9.22.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^5.4.0
-    "@wordpress/primitives": ^3.25.0
-  checksum: 4faa7d2698dc4a0740047c54913688b0b37e21f8ece9eafd09b6f34ec4d57eb8fd55e09cdf191ebe13abaa06d27ee27722e193e1f109bff16ec3da16b08f9caf
+    "@wordpress/element": ^5.8.0
+    "@wordpress/primitives": ^3.29.0
+  checksum: 9dea77b6981951987629c84e6c8e7a2170eb47a57407b78b49f602b3c6cdae65bf659ef85796c62d36cf943b3564f494f4cd63db9bd4d504a01ef85c6ae1480c
   languageName: node
   linkType: hard
 
@@ -9060,14 +9075,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.11.0, @wordpress/primitives@npm:^3.20.0, @wordpress/primitives@npm:^3.25.0":
-  version: 3.25.0
-  resolution: "@wordpress/primitives@npm:3.25.0"
+"@wordpress/primitives@npm:^3.1.1, @wordpress/primitives@npm:^3.11.0, @wordpress/primitives@npm:^3.20.0, @wordpress/primitives@npm:^3.29.0":
+  version: 3.29.0
+  resolution: "@wordpress/primitives@npm:3.29.0"
   dependencies:
     "@babel/runtime": ^7.16.0
-    "@wordpress/element": ^5.4.0
+    "@wordpress/element": ^5.8.0
     classnames: ^2.3.1
-  checksum: 72f570d9cc269c6827b56e8e6e000277c80495b329cb30706bdedf54462ce49b91d28f4418d71f4a3cda676b7c451359575c20c9640003aca2242cdd1420aadd
+  checksum: e0e6113fcc0b6fba13ab34e6a277dae6b91ab08a98929358e5ba64dff658f046ed8d0e267cd54ebfe1da477e814da6c21d288d76a6cdf0103d70489f2434ad0d
   languageName: node
   linkType: hard
 
@@ -10516,7 +10531,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-jest@npm:^27.2.4, babel-jest@npm:^27.3.1, babel-jest@npm:^27.4.5, babel-jest@npm:^27.5.1":
+"babel-jest@npm:^27.2.4, babel-jest@npm:^27.3.1, babel-jest@npm:^27.4.5, babel-jest@npm:^27.5, babel-jest@npm:^27.5.1":
   version: 27.5.1
   resolution: "babel-jest@npm:27.5.1"
   dependencies:
@@ -11668,6 +11683,7 @@ __metadata:
     "@testing-library/react-hooks": 7.0.2
     "@testing-library/user-event": ^14.2.0
     "@types/jest": ^27.4.0
+    "@types/redux-mock-store": 1.0.3
     "@wordpress/a11y": ^3.22.0
     "@wordpress/api-fetch": ^6.19.0
     "@wordpress/base-styles": ^4.13.0
@@ -11675,6 +11691,7 @@ __metadata:
     "@wordpress/components": ^22.1.0
     "@wordpress/compose": ^5.20.0
     "@wordpress/data": ^7.6.0
+    "@wordpress/dom": ^3.22.0
     "@wordpress/edit-post": ^6.19.0
     "@wordpress/element": ^4.20.0
     "@wordpress/html-entities": ^3.22.0
@@ -27550,7 +27567,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"redux@npm:^4.0.0, redux@npm:^4.0.4, redux@npm:^4.1.2, redux@npm:^4.2.0":
+"redux@npm:^4.0.0, redux@npm:^4.0.4, redux@npm:^4.0.5, redux@npm:^4.1.2, redux@npm:^4.2.0":
   version: 4.2.1
   resolution: "redux@npm:4.2.1"
   dependencies:
@@ -33579,7 +33596,7 @@ fsevents@^1.2.7:
     "@wordpress/element": ^4.20.0
     "@wordpress/eslint-plugin": ^13.6.0
     "@wordpress/i18n": ^4.22.0
-    "@wordpress/icons": ^9.13.0
+    "@wordpress/icons": ^9.22.0
     "@wordpress/is-shallow-equal": ^4.22.0
     "@wordpress/jest-preset-default": ^10.3.0
     "@wordpress/primitives": ^3.20.0
