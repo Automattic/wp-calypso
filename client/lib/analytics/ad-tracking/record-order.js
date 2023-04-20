@@ -61,6 +61,7 @@ export async function recordOrder( cart, orderId, sitePlanSlug ) {
 	recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWooGTM( cart, orderId, sitePlanSlug );
 	recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo );
 
@@ -559,6 +560,27 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 		];
 		debug( 'recordOrderInJetpackGA: Record Jetpack Purchase', jetpackParams );
 		window.gtag( ...jetpackParams );
+	}
+}
+
+/**
+ * Records an order in the Akismet.com GA4 Property
+ *
+ * @param {Object} cart - cart as `ResponseCart` object
+ * @param {number} orderId - the order id
+ * @param {Object} wpcomJetpackCartInfo - info about WPCOM, Jetpack, and Akismet in the cart
+ * @returns {void}
+ */
+function recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo ) {
+	if ( ! mayWeTrackByTracker( 'ga' ) ) {
+		return;
+	}
+
+	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
+		const akismetParams = cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo );
+		fireEcommercePurchaseGA4( akismetParams, Ga4PropertyGtag.AKISMET );
+
+		debug( 'recordOrderInAkismetGA: Record Akismet Purchase', akismetParams );
 	}
 }
 
