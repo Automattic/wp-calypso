@@ -1,1 +1,5 @@
-import '@wordpress/components/build-style/style.css';
+import './index.scss';
+
+export const parameters = {
+	layout: 'fullscreen',
+};
