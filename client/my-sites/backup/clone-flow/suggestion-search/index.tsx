@@ -33,14 +33,12 @@ export default function CloneFlowSuggestionSearch( {
 					suggestions={ suggestions }
 					onChange={ onSearchChange }
 				/>
-				<Button
-					borderless={ true }
-					className="clone-flow-suggestion-search__add-new-button"
-					onClick={ onAddNewClick }
-				>
-					{ addNewDestinationLabel }
-					<Gridicon icon="plus-small" size={ 12 } />
-				</Button>
+				<div className="clone-flow-suggestion-search__add-new-button">
+					<Button borderless={ true } onClick={ onAddNewClick }>
+						{ addNewDestinationLabel }
+						<Gridicon icon="plus-small" size={ 12 } />
+					</Button>
+				</div>
 			</Card>
 		</div>
 	);
