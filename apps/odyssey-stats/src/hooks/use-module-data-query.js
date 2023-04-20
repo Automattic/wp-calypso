@@ -17,7 +17,7 @@ export default function useModuleDataQuery( module ) {
 			switch ( module ) {
 				case 'protect':
 					// The API for protect returns `false` when the counter is 0.
-					//                     return 404 error, when the module is not active.
+					//                     returns 404 error, when the module is not active.
 					if ( data === 'false' || data === false ) {
 						return 0;
 					}
