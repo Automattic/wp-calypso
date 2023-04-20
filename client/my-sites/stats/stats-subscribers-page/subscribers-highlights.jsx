@@ -40,7 +40,6 @@ function SubscriberHighlightsHeader() {
 	const localizedTitle = translate( 'All time stats', {
 		comment: 'Heading for Subscribers page highlights section',
 	} );
-	const tooltipContent = <p>Tooltip content goes here.</p>;
 	return (
 		<h1 className="highlight-cards-heading">
 			{ localizedTitle }{ ' ' }
@@ -58,7 +57,9 @@ function SubscriberHighlightsHeader() {
 				position="bottom right"
 				context={ infoReferenceElement.current }
 			>
-				<div className="highlight-card-tooltip-content">{ tooltipContent }</div>
+				<div className="highlight-card-tooltip-content">
+					<p>Tooltip content goes here.</p>
+				</div>
 			</Popover>
 		</h1>
 	);
