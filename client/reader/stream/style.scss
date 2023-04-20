@@ -627,6 +627,19 @@
 		}
 	}
 
+	.reader-tag-sidebar-related-tags__link {
+		padding: 20px 0 32px 0;
+		position: relative;
+		float: left;
+		font-size: $font-body-extra-small;
+	}
+
+	.reader-tag-sidebar-related-sites {
+		.reader-sidebar-site_nameurl {
+			margin: 6px 0;
+		}
+	}
+
 	.reader-sidebar-site_updated {
 		color: var(--color-neutral-50);
 		display: block;
@@ -669,6 +682,13 @@
 		ul {
 			margin-left: 0;
 			width: 100%;
+		}
+
+		.reader-tag-sidebar-related-tags,
+		.reader-tag-sidebar-related-sites {
+			h2 {
+				font-size: $font-body-small;
+			}
 		}
 	}
 
