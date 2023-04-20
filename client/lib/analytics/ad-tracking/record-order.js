@@ -665,12 +665,12 @@ function recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo ) {
 						transaction_id: orderId,
 						currency: 'USD',
 						items: wpcomJetpackCartInfo.akismetProducts.map(
-							( { product_id, product_name, cost, volume } ) => ( {
+							( { product_id, product_name, cost, volume, bill_period } ) => ( {
 								id: product_id.toString(),
 								name: product_name.toString(),
 								quantity: parseInt( volume ),
 								price: costToUSD( cost, cart.currency ) ?? 0,
-								billing_term: cart.billing?.interval_unit,
+								billing_term: bill_period === '365' ? 'yearly' : 'monthly',
 							} )
 						),
 						value: wpcomJetpackCartInfo.akismetCostUSD,
