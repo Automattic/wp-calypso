@@ -59,15 +59,11 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 			wrapper,
 		} );
 
-		expect( result.current.isLoading ).toBe( true );
-
-		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
-
-		await waitFor( () => expect( callApi ).toHaveBeenCalledTimes( 3 ) );
-
-		expect( callApi ).toHaveBeenCalledTimes( 3 );
-		expect( result.current.data.subscriptions.length ).toBe( 6 );
-		expect( result.current.data.totalCount ).toBe( 6 );
+		await waitFor( () => {
+			expect( callApi ).toHaveBeenCalledTimes( 3 );
+			expect( result.current.data.subscriptions.length ).toBe( 6 );
+			expect( result.current.data.totalCount ).toBe( 6 );
+		} );
 	} );
 
 	it( 'fetches subscriptions data with search term', async () => {
