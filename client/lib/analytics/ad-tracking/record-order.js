@@ -12,6 +12,7 @@ import {
 	ICON_MEDIA_ORDER_PIXEL_URL,
 	GA_PRODUCT_BRAND_WPCOM,
 	GA_PRODUCT_BRAND_JETPACK,
+	GA_PRODUCT_BRAND_AKISMET,
 } from './constants';
 import { cartToCriteoItems, recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
@@ -597,7 +598,7 @@ function recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo ) {
 						name: product_name_en.toString(),
 						quantity: parseInt( volume ),
 						price: ( costToUSD( cost, cart.currency ) ?? '' ).toString(),
-						brand: GA_PRODUCT_BRAND_JETPACK,
+						brand: GA_PRODUCT_BRAND_AKISMET,
 					} )
 				),
 			},
@@ -640,52 +641,50 @@ function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
  *
  * @param {import('@automattic/shopping-cart').ResponseCart} cart
  * @param {string} orderId
- * @param {Object} wpcomJetpackCartInfo - info about WPCOM and Jetpack in the cart
+ * @param {Object} wpcomJetpackCartInfo - info about WPCOM, Akismet, and Jetpack in the cart
  * @returns {void}
  */
 function recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo ) {
-	if ( ! wpcomJetpackCartInfo.containsAkismetProducts ) {
-		return;
+	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
+		loadGTMContainer( TRACKING_IDS.akismetGoogleTagManagerId )
+			.then( () => initGTMContainer() )
+			.then( () => {
+				debug(
+					`recordOrderInAkismetGTM: Initialized GTM container ${ TRACKING_IDS.akismetGoogleTagManagerId }`
+				);
+
+				// We ensure that we can track with GTM
+				if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
+					return;
+				}
+
+				const purchaseEventMeta = {
+					event: 'purchase',
+					ecommerce: {
+						coupon: cart.coupon?.toString() ?? '',
+						transaction_id: orderId,
+						currency: 'USD',
+						items: wpcomJetpackCartInfo.akismetProducts.map(
+							( { product_id, product_name, cost, volume } ) => ( {
+								id: product_id.toString(),
+								name: product_name.toString(),
+								quantity: parseInt( volume ),
+								price: costToUSD( cost, cart.currency ) ?? 0,
+								billing_term: cart.billing?.interval_unit,
+							} )
+						),
+						value: wpcomJetpackCartInfo.akismetCostUSD,
+					},
+				};
+
+				window.dataLayer.push( purchaseEventMeta );
+
+				debug( `recordOrderInAkismetGTM: Record Akismet GTM purchase`, purchaseEventMeta );
+			} )
+			.catch( ( error ) => {
+				debug( 'recordOrderInAkismetGTM: Error loading GTM container', error );
+			} );
 	}
-
-	loadGTMContainer( TRACKING_IDS.wooGoogleTagManagerId )
-		.then( () => initGTMContainer() )
-		.then( () => {
-			debug(
-				`recordOrderInAkismetGTM: Initialized GTM container ${ TRACKING_IDS.wooGoogleTagManagerId }`
-			);
-
-			// We ensure that we can track with GTM
-			if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
-				return;
-			}
-
-			const purchaseEventMeta = {
-				event: 'purchase',
-				ecommerce: {
-					coupon: cart.coupon?.toString() ?? '',
-					transaction_id: orderId,
-					currency: 'USD',
-					items: wpcomJetpackCartInfo.akismetProducts.map(
-						( { product_id, product_name, cost, volume } ) => ( {
-							id: product_id.toString(),
-							name: product_name.toString(),
-							quantity: parseInt( volume ),
-							price: costToUSD( cost, cart.currency ) ?? 0,
-							billing_term: cart.billing?.interval_unit,
-						} )
-					),
-					value: wpcomJetpackCartInfo.akismetCostUSD,
-				},
-			};
-
-			window.dataLayer.push( purchaseEventMeta );
-
-			debug( `recordOrderInAkismetGTM: Record Akismet GTM purchase`, purchaseEventMeta );
-		} )
-		.catch( ( error ) => {
-			debug( 'recordOrderInAkismetGTM: Error loading GTM container', error );
-		} );
 }
 
 /**

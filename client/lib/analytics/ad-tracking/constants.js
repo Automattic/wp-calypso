@@ -65,6 +65,7 @@ export const TRACKING_IDS = {
 	jetpackGoogleGA4Gtag: 'G-YELRMVV4YG',
 	jetpackGoogleAdsGtagPurchase: 'AW-946162814/kIF1CL3ApfsBEP6YlcMD',
 	akismetGoogleGA4Gtag: 'G-V8X5PZE9F8',
+	akismetGoogleTagManagerId: 'GTM-NLFBXG5',
 	akismetGoogleAnalyticsGtag: 'UA-19309600-2', // Akismet Gtag (Analytics) for use in Akismet x WordPress.com Flows
 	akismetGoogleAdsGtagPurchase: 'AW-10778599042/U-01CImL14MDEIK90ZMo', // "Akismet.com Purchase Gtag"
 	jetpackLinkedinId: '4537722',
@@ -77,3 +78,4 @@ export const DCM_FLOODLIGHT_SESSION_LENGTH_IN_SECONDS = 1800;
 
 export const GA_PRODUCT_BRAND_WPCOM = 'WordPress.com';
 export const GA_PRODUCT_BRAND_JETPACK = 'Jetpack';
+export const GA_PRODUCT_BRAND_AKISMET = 'Akismet';
