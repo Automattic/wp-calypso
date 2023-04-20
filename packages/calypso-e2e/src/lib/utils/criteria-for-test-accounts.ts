@@ -23,20 +23,6 @@ const defaultCriteria: FeatureCriteria[] = [
 		accountName: 'coBlocksSimpleSiteEdgeUser',
 	},
 	{
-		coblocks: 'edge',
-		gutenberg: 'stable',
-		variant: 'siteEditor',
-		siteType: 'simple',
-		accountName: 'coBlocksSimpleSiteEdgeUser',
-	},
-	{
-		coblocks: 'edge',
-		gutenberg: 'edge',
-		variant: 'siteEditor',
-		siteType: 'simple',
-		accountName: 'coBlocksSimpleSiteEdgeUser',
-	},
-	{
 		// CoBlocks on Atomic: https://github.com/Automattic/wp-calypso/pull/73052
 		coblocks: 'edge',
 		gutenberg: 'stable',
@@ -46,20 +32,6 @@ const defaultCriteria: FeatureCriteria[] = [
 	{
 		coblocks: 'edge',
 		gutenberg: 'edge',
-		siteType: 'atomic',
-		accountName: 'coBlocksAtomicSiteEdgeUser',
-	},
-	{
-		coblocks: 'edge',
-		gutenberg: 'stable',
-		variant: 'siteEditor',
-		siteType: 'atomic',
-		accountName: 'coBlocksAtomicSiteEdgeUser',
-	},
-	{
-		coblocks: 'edge',
-		gutenberg: 'edge',
-		variant: 'siteEditor',
 		siteType: 'atomic',
 		accountName: 'coBlocksAtomicSiteEdgeUser',
 	},
