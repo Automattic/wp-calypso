@@ -1,12 +1,11 @@
 import { Gridicon } from '@automattic/components';
-import { useStarterDesignsQuery } from '@automattic/data-stores';
-import { useLocale } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { Icon, chevronLeft, chevronRight } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Swiper from 'swiper';
 import { Item } from './item';
+import { useLinkInBioDesigns } from './use-link-in-bio-designs';
 import type { Pattern } from './types';
 import type { Design } from '@automattic/design-picker';
 import 'swiper/dist/css/swiper.css';
@@ -15,24 +14,7 @@ type Props = { onPick: ( design: Design ) => void };
 
 export default function PatternPicker( { onPick }: Props ) {
 	const { __ } = useI18n();
-	const { data: allDesigns } = useStarterDesignsQuery( {
-		vertical_id: '',
-		intent: '',
-		_locale: useLocale(),
-		include_pattern_virtual_designs: true,
-	} );
-
-	const designs = useMemo( () => {
-		if ( ! allDesigns ) {
-			return [];
-		}
-
-		return allDesigns.static.designs.filter(
-			( design ) =>
-				design.is_virtual &&
-				design.categories.some( ( category ) => category.slug === 'link-in-bio' )
-		);
-	}, [ allDesigns ] );
+	const designs = useLinkInBioDesigns();
 
 	const swiperInstance = useRef< Swiper | null >( null );
 
