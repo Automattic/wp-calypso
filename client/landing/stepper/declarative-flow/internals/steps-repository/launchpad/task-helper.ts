@@ -19,7 +19,7 @@ import { LaunchpadFlowTaskList, LaunchpadStatuses, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
- * API, making those enhancements here unnecessary ( Ex. title, subtitle, completed,
+ * API, making said enhancements here unnecessary ( Ex. title, subtitle, completed,
  * subtitle, badge text, etc. ). This will allow us to access checklist and task information
  * outside of the Calypso client.
  *
