@@ -52,7 +52,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
 } from './constants';
-import type { SelectorProductFeaturesItem } from './types';
+import type { JetpackFAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 // Translatable strings
@@ -734,7 +734,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		}
 	);
 
-	const backupIncludesInfoT1Log = translate( '30-day activity log archive' );
+	const backupIncludesInfoT1Log = translate( '30-day activity log archive*' );
 	const backupIncludesInfoT2Log = translate( '{{strong}}1 year{{/strong}} activity log archive', {
 		components: {
 			strong: <strong />,
@@ -952,6 +952,29 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
+	};
+};
+
+export const getJetpackProductsFAQs = (): Record< string, Array< JetpackFAQ > > => {
+	const backupFAQs: Array< JetpackFAQ > = [
+		{
+			question: translate( '*How do backup storage limits work?' ),
+			answer: translate(
+				'If your backup storage limit is reached, older backups will be deleted and, depending on your site’s size, the backup retention period (archive) might be reduced to 7 days. This will affect how far back you can see backups in your activity log. Existing backups can still be restored, but new updates won’t be backed up until you upgrade or free up storage.'
+			),
+		},
+		{
+			question: translate( 'What is your cancellation policy?' ),
+			answer: translate(
+				'If you are dissatisfied for any reason, we offer full refunds within 14 days for yearly plans, and within 7 days for monthly plans. If you have a question about our paid plans, please let us know!'
+			),
+		},
+	];
+	return {
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupFAQs,
 	};
 };
 

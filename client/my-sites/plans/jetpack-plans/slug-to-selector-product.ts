@@ -27,6 +27,7 @@ import {
 	TERM_MONTHLY,
 	getJetpackProductWhatIsIncluded,
 	getJetpackProductBenefits,
+	getJetpackProductFAQs,
 	getJetpackProductRecommendedFor,
 	TERM_TRIENNIALLY,
 } from '@automattic/calypso-products';
@@ -165,6 +166,7 @@ function itemToSelectorProduct(
 			buttonLabel: getJetpackProductCallToAction( item ),
 			whatIsIncluded: getJetpackProductWhatIsIncluded( item ),
 			benefits: getJetpackProductBenefits( item ),
+			faqs: getJetpackProductFAQs( item ),
 			recommendedFor: getJetpackProductRecommendedFor( item ),
 			monthlyProductSlug,
 			term: item.term,
