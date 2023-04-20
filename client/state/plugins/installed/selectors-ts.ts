@@ -228,6 +228,15 @@ export const getFilteredAndSortedPlugins = createSelector(
 	}
 );
 
+export function getPluginsWithUpdates( state: AppState, siteIds: number[] ) {
+	return getFilteredAndSortedPlugins( state, siteIds, undefined )
+		.filter( _filters.updates )
+		.map( ( plugin ) => ( {
+			...plugin,
+			type: 'plugin',
+		} ) );
+}
+
 export function getPluginsOnSites( state: AppState, plugins: Plugin[] ) {
 	return plugins.reduce( ( acc: { [ pluginSlug: string ]: Plugin }, plugin: Plugin ) => {
 		const siteIds = Object.keys( plugin.sites ).map( Number );
