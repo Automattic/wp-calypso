@@ -7,6 +7,7 @@ import {
 	useCategorizationFromApi,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
+	BLANK_CANVAS_DESIGN,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
@@ -67,6 +68,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const locale = useLocale();
 
 	const isMobile = ! useViewportMatch( 'small' );
+	const isDesktop = useViewportMatch( 'large' );
 
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -461,6 +463,27 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
+		const shouldGoToAssembler =
+			_selectedDesign?.is_virtual &&
+			_selectedDesign?.slug === BLANK_CANVAS_DESIGN.slug &&
+			isDesktop &&
+			isEnabled( 'pattern-assembler/dotcompatterns' );
+
+		if ( shouldGoToAssembler ) {
+			const assemblerDesign = {
+				..._selectedDesign,
+				design_type: 'assembler',
+			} as Design;
+
+			setSelectedDesign( assemblerDesign );
+
+			handleSubmit( {
+				selectedDesign: assemblerDesign,
+				selectedSiteCategory: categorization.selection,
+			} );
+			return;
+		}
+
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlugOrId && _selectedDesign ) {
 			let positionIndex = generatedDesigns.findIndex(
