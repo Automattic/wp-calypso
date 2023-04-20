@@ -7,6 +7,9 @@ export type Pattern = {
 		[ key: string ]: Category | undefined;
 	};
 	key?: string;
+	pattern_meta?: {
+		[ key: string ]: boolean;
+	};
 };
 
 export interface NavigatorLocation {
