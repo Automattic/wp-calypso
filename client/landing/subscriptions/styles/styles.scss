@@ -62,6 +62,10 @@ body {
 				.select-dropdown__header {
 					height: 48px;
 				}
+
+				.select-dropdown__item.is-selected {
+					background-color: var(--color-primary);
+				}
 			}
 		}
 
