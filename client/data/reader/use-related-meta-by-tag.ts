@@ -31,7 +31,10 @@ interface Card {
 		feed_ID: number;
 		name: string;
 		URL: string;
-		icon: string;
+		icon: {
+			img: string;
+			ico: string;
+		};
 		slug: string;
 		title: string;
 		score: number;
@@ -43,7 +46,10 @@ interface Site {
 	feed_ID: number;
 	name: string;
 	URL: string;
-	icon: string;
+	icon: {
+		img: string;
+		ico: string;
+	};
 }
 
 interface Tag {
@@ -98,12 +104,14 @@ const selectFromCards = ( response: {
 	related_tags: selectRelatedTags( response ),
 } );
 
-export const useRelatedMetaByTag = ( tag: string ): UseQueryResult< RelatedMetaByTag | null > =>
-	useQuery(
-		[ 'related-meta-by-tag', tag ],
+export const useRelatedMetaByTag = ( tag: string ): UseQueryResult< RelatedMetaByTag | null > => {
+	const tag_recs_per_card = 10;
+	const site_recs_per_card = 5;
+	return useQuery(
+		[ 'related-meta-by-tag-' + tag_recs_per_card + '-' + site_recs_per_card, tag ],
 		() =>
 			wp.req.get( {
-				path: `/read/tags/${ tag }/cards`,
+				path: `/read/tags/${ tag }/cards?tag_recs_per_card=${ tag_recs_per_card }&site_recs_per_card=${ site_recs_per_card }`,
 				apiNamespace: 'wpcom/v2',
 			} ),
 		{
@@ -111,3 +119,4 @@ export const useRelatedMetaByTag = ( tag: string ): UseQueryResult< RelatedMetaB
 			select: selectFromCards,
 		}
 	);
+};
