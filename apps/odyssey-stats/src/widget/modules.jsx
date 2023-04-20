@@ -9,13 +9,8 @@ import config from '../lib/config-api';
 
 import './modules.scss';
 
-const canCurrentUser = ( siteId, capability ) => {
-	const capatibilities = config( 'intial_state' )?.currentUser?.capabilities?.[ siteId ];
-	if ( ! capatibilities ) {
-		return false;
-	}
-	return capatibilities[ capability ];
-};
+const canCurrentUser = ( siteId, capability ) =>
+	!! config( 'intial_state' )?.currentUser?.capabilities?.[ siteId ]?.[ capability ];
 
 function ModuleCard( {
 	icon,
