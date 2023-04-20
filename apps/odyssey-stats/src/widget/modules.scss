@@ -26,7 +26,9 @@
 	font-size: $font-headline-small;
 	line-height: 1;
 	letter-spacing: -0.02em;
+}
 
+.stats-widget-module__info {
 	button {
 		@include emerald-button-style;
 	}

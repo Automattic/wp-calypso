@@ -57,7 +57,17 @@ export default function Modules() {
 	};
 
 	const activateModule = ( module ) => () => {
-		return module;
+		return wpcom.req
+			.post(
+				{
+					apiNamespace: 'jetpack/v4',
+					path: `/settings`,
+				},
+				{
+					[ module ]: true,
+				}
+			)
+			.then( () => window.location.reload() );
 	};
 
 	return (
