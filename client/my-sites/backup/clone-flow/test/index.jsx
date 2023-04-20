@@ -41,6 +41,14 @@ jest.mock( 'calypso/data/activity-log/use-rewindable-activity-log-query' );
 jest.mock( 'calypso/state/selectors/get-in-progress-rewind-status' );
 jest.mock( 'calypso/state/selectors/get-rewind-state' );
 
+jest.mock( 'calypso/state/rewind/selectors/get-backup-staging-sites', () =>
+	jest.fn().mockImplementation( () => [] )
+);
+
+jest.mock( 'calypso/state/rewind/selectors/is-fetching-staging-sites-list', () =>
+	jest.fn().mockImplementation( () => [] )
+);
+
 jest.mock( 'calypso/state/selectors/get-site-gmt-offset', () =>
 	jest.fn().mockImplementation( () => null )
 );
@@ -191,18 +199,22 @@ function initializeUseStateMockCloneFlow( {
 	userHasRequestedRestore = false,
 	userHasSetDestination = false,
 	cloneDestination = '',
+	isCloneToStaging = false,
 	userHasSetBackupPeriod = false,
 	backupPeriod = '',
 	backupDisplayDate = '',
+	showCredentialForm = false,
 } = {} ) {
 	useState
 		.mockReturnValueOnce( [ rewindConfig, jest.fn() ] )
 		.mockReturnValueOnce( [ userHasRequestedRestore, jest.fn() ] )
 		.mockReturnValueOnce( [ userHasSetDestination, jest.fn() ] )
 		.mockReturnValueOnce( [ cloneDestination, jest.fn() ] )
+		.mockReturnValueOnce( [ isCloneToStaging, jest.fn() ] )
 		.mockReturnValueOnce( [ userHasSetBackupPeriod, jest.fn() ] )
 		.mockReturnValueOnce( [ backupPeriod, jest.fn() ] )
-		.mockReturnValueOnce( [ backupDisplayDate, jest.fn() ] );
+		.mockReturnValueOnce( [ backupDisplayDate, jest.fn() ] )
+		.mockReturnValueOnce( [ showCredentialForm, jest.fn() ] );
 }
 
 describe( 'BackupCloneFlow render', () => {
@@ -247,7 +259,7 @@ describe( 'BackupCloneFlow render', () => {
 			const queryClient = new QueryClient();
 
 			// Initialize mock UseState on BackupCloneFlow and set userHasSetDestination: false
-			initializeUseStateMockCloneFlow( { userHasSetDestination: false } );
+			initializeUseStateMockCloneFlow( { userHasSetDestination: false, showCredentialForm: true } );
 
 			// Render component
 			render(
