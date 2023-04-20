@@ -22,7 +22,7 @@ export default function EditButton( { sites, isLargeScreen, isLoading }: Props )
 
 	const handleToggleSelect = () => {
 		// Filter sites with site error as they are not selectable.
-		const filteredSite = sites.filter( ( site ) => ! site.site.error );
+		const filteredSite = sites.filter( ( site ) => site.site.value.is_connected );
 		setSelectedSites( filteredSite.map( ( item ) => item.site.value ) );
 	};
 

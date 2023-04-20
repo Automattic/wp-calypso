@@ -31,7 +31,7 @@ export default function SiteBulkSelect( { sites, isLoading, isLargeScreen }: Pro
 
 	const handleToggleSelect = () => {
 		// Filter sites with site error as they are not selectable.
-		const filteredSites = sites.filter( ( { site: { error } } ) => ! error );
+		const filteredSites = sites.filter( ( site ) => site.site.value.is_connected );
 		const isChecked = isAllChecked( filteredSites );
 
 		const allSelectedSites = isChecked
