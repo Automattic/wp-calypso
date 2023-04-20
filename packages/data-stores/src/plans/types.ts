@@ -139,6 +139,7 @@ export interface DetailsAPIResponse {
 }
 
 export type PlansSelect = SelectFromMap< typeof selectors > & {
-	// @wp/core-data selector. must be a better way to do this
+	// @wp/core-data selectors. must be a better way to do this
 	isResolving: ( ...args: unknown[] ) => boolean;
+	hasFinishedResolution: ( ...args: unknown[] ) => boolean;
 };

@@ -1232,8 +1232,6 @@ const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
 
 export default withSelect( ( select: SelectFunction, ownProps: PlanFeatures2023GridType ) => {
 	const locale = getLocaleSlug();
-	// This is a temporary workaround to force the data-store to fetch the plans data.
-	// It should be updated once plans are retrieved via a data-store selector.
 	locale && ( select( PLANS_STORE ) as PlansSelect ).getSupportedPlans( locale );
 	const datastorePlansLoaded = ( select( PLANS_STORE ) as PlansSelect ).hasFinishedResolution(
 		'getSupportedPlans',
