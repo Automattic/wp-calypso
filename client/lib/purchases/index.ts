@@ -867,7 +867,7 @@ export function purchaseType( purchase: Purchase ) {
 	}
 
 	if ( purchase.productType === 'marketplace_plugin' || purchase.productType === 'saas_plugin' ) {
-		return i18n.translate( 'Marketplace Product' );
+		return null;
 	}
 
 	if ( purchase.meta ) {
