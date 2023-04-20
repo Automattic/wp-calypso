@@ -39,7 +39,7 @@ function ModuleCard( {
 							disabled={ disabled }
 							onClick={ () => {
 								setDisabled( true );
-								activateProduct();
+								activateProduct().catch( () => setDisabled( false ) );
 							} }
 						>
 							Activate
@@ -61,8 +61,12 @@ function ModuleCard( {
 export default function Modules( { siteId } ) {
 	const translate = useTranslate();
 
-	const { data: akismetData } = useModuleDataQuery( 'akismet' );
-	const { data: protectData, isError: isProtectError } = useModuleDataQuery( 'protect' );
+	const { data: akismetData, refetch: refetchAkismetData } = useModuleDataQuery( 'akismet' );
+	const {
+		data: protectData,
+		isError: isProtectError,
+		refetch: refetchProtectData,
+	} = useModuleDataQuery( 'protect' );
 
 	const activateProduct = ( productSlug ) => () => {
 		return wpcom.req
@@ -70,7 +74,7 @@ export default function Modules( { siteId } ) {
 				apiNamespace: 'my-jetpack/v1',
 				path: `/site/products/${ productSlug }`,
 			} )
-			.then( () => window.location.reload() );
+			.then( refetchAkismetData );
 	};
 
 	const activateModule = ( module ) => () => {
@@ -84,7 +88,7 @@ export default function Modules( { siteId } ) {
 					[ module ]: true,
 				}
 			)
-			.then( () => window.location.reload() );
+			.then( refetchProtectData );
 	};
 
 	return (
