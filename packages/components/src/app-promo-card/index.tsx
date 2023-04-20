@@ -44,17 +44,13 @@ const CLICK_EVENTS = {
 	wooClickGoogle: 'woo-click-google',
 };
 
-export type AppPromoFullWidthProps = {
+export type AppPromoCardProps = {
 	className?: string;
 	isWoo?: boolean;
 	clickHandler?: ( eventName: string ) => void;
 };
 
-export default function AppPromoFullWidth( {
-	className,
-	isWoo,
-	clickHandler,
-}: AppPromoFullWidthProps ) {
+export default function AppPromoCard( { className, isWoo, clickHandler }: AppPromoCardProps ) {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	// Basic user agent testing so we can show app store badges on moble.
@@ -87,7 +83,7 @@ export default function AppPromoFullWidth( {
 					components: {
 						a: (
 							<a
-								className="woo"
+								className="app-promo-card__woo-link"
 								href={ getRedirectUrl( 'wooA8C' ) ?? 'https://woo.com/mobile' }
 								onClick={ () => onClickHandler( CLICK_EVENTS.wooClickA8C ) }
 							/>
@@ -102,7 +98,7 @@ export default function AppPromoFullWidth( {
 				components: {
 					a: (
 						<a
-							className="jetpack"
+							className="app-promo-card__jetpack-link"
 							href={ localizeUrl( 'https://apps.wordpress.com/get/?campaign=calypso-stats-promo' ) }
 							onClick={ () => onClickHandler( CLICK_EVENTS.jetpackClickA8C ) }
 						/>
@@ -124,7 +120,7 @@ export default function AppPromoFullWidth( {
 					onClick={ () => onClickHandler( tracksEventName ) }
 				>
 					<img
-						className="promo-store-badge"
+						className="app-promo-card__store-badge"
 						src={ storeBadgeApple }
 						alt="Badge for the Apple App Store"
 					/>
@@ -142,7 +138,7 @@ export default function AppPromoFullWidth( {
 					onClick={ () => onClickHandler( tracksEventName ) }
 				>
 					<img
-						className="promo-store-badge"
+						className="app-promo-card__store-badge"
 						src={ storeBadgeGoogle }
 						alt="Badge for the Google Play Store"
 					/>
@@ -150,10 +146,10 @@ export default function AppPromoFullWidth( {
 			);
 		}
 		return isWoo ? (
-			<img className="promo-qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />
+			<img className="app-promo-card__qr-code" src={ qrCodeWoo } alt="QR Code for Woo mobile app" />
 		) : (
 			<QRCode
-				className="promo-qr-code"
+				className="app-promo-card__qr-code"
 				value={ localizeUrl( 'https://apps.wordpress.com/get/?campaign=calypso-qrcode-apps' ) }
 				size={ 300 }
 			/>
@@ -161,22 +157,26 @@ export default function AppPromoFullWidth( {
 	};
 
 	return (
-		<div className={ classNames( 'promo-card', className ?? null ) }>
-			<div className="promo-lhs">
-				<div className="promo-card__icons">
+		<div className={ classNames( 'app-promo-card', className ?? null ) }>
+			<div className="app-promo-card__lhs">
+				<div className="app-promo-card__icons">
 					{ isWoo && (
-						<img className="woo-icon" src={ iconWoo } alt="Icon for the Woo mobile app" />
+						<img
+							className="app-promo-card__woo-icon"
+							src={ iconWoo }
+							alt="Icon for the Woo mobile app"
+						/>
 					) }
 					{ ! isWoo && <WordPressJetpackSVG /> }
 				</div>
-				<p className="promo-card__title">
+				<p className="app-promo-card__title">
 					{ isWoo
 						? translate( 'Bring your Store stats with you using the Woo mobile app' )
 						: translate( 'Bring your stats with you using the Jetpack mobile app' ) }
 				</p>
-				<p className="promo-card__message">{ getMessage() }</p>
+				<p className="app-promo-card__message">{ getMessage() }</p>
 			</div>
-			<div className="promo-rhs">{ getPromoImage() }</div>
+			<div className="app-promo-card__rhs">{ getPromoImage() }</div>
 		</div>
 	);
 }
