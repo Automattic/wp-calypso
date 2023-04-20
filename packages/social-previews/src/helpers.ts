@@ -4,7 +4,6 @@ type AugmentFormatterReturnType< T extends Formatter, TNewReturn > = (
 ) => ReturnType< T > | TNewReturn;
 type ConditionalFormatter = AugmentFormatterReturnType< Formatter, boolean >;
 type NullableFormatter = AugmentFormatterReturnType< Formatter, undefined >;
-type DateFormatter = ( arg0: Date ) => string;
 
 export const baseDomain = ( url: string ): string =>
 	url
@@ -44,7 +43,7 @@ export const hasTag = ( text: string, tag: string ): boolean => {
 	return pattern.test( text );
 };
 
-export const formatTweetDate: DateFormatter = new Intl.DateTimeFormat( 'en-US', {
+export const formatTweetDate = new Intl.DateTimeFormat( 'en-US', {
 	// Result: "Apr 7", "Dec 31"
 	month: 'short',
 	day: 'numeric',
