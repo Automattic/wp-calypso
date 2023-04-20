@@ -85,7 +85,7 @@ export class PluginsPage {
 			this.page.waitForResponse( /\/sites\/\d+\/plugins/, { timeout: 20 * 1000 } ),
 			// This is one of the last, reliable web requests to finish on this page
 			// and is a pretty good indicator the async loading is done.
-			this.page.goto( getCalypsoURL( `plugins/${ site }` ) ),
+			this.page.goto( getCalypsoURL( `plugins/${ site }` ), { timeout: 20 * 1000 } ),
 		] );
 	}
 
