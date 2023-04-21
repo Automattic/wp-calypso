@@ -4,17 +4,18 @@ import type { PlanProduct } from '../../types';
 export const STORE_PRODUCT_FREE: PlanProduct = {
 	productId: 1,
 	billingPeriod: 'ANNUALLY',
+	billingTerm: null,
 	periodAgnosticSlug: 'free',
 	storeSlug: 'free_plan',
 	rawPrice: 0,
 	pathSlug: 'free',
 	price: '€0',
 	annualPrice: '€0',
-	term: null,
 };
 export const STORE_PRODUCT_PREMIUM_ANNUALLY: PlanProduct = {
 	productId: 1003,
 	billingPeriod: 'ANNUALLY',
+	billingTerm: 'TERM_ANNUALLY',
 	periodAgnosticSlug: 'premium',
 	storeSlug: 'value_bundle',
 	rawPrice: 96,
@@ -22,16 +23,15 @@ export const STORE_PRODUCT_PREMIUM_ANNUALLY: PlanProduct = {
 	price: '€8',
 	annualPrice: '€96',
 	annualDiscount: 43,
-	term: 'TERM_ANNUALLY',
 };
 export const STORE_PRODUCT_PREMIUM_MONTHLY: PlanProduct = {
 	productId: 1013,
 	billingPeriod: 'MONTHLY',
+	billingTerm: 'TERM_MONTHLY',
 	periodAgnosticSlug: 'premium',
 	storeSlug: 'value_bundle_monthly',
 	rawPrice: 14,
 	price: '€14',
 	annualPrice: '€168',
 	annualDiscount: 43,
-	term: 'TERM_MONTHLY',
 };

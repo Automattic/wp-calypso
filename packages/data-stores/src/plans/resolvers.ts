@@ -143,27 +143,30 @@ function normalizePlanProducts(
 			( plan ) => plan.productIds.indexOf( planProduct.product_id ) > -1
 		) as Plan;
 
-		let term: ( typeof TERMS_LIST )[ number ] | null = null;
+		let billingTerm: ( typeof TERMS_LIST )[ number ] | null = null;
 		switch ( planProduct.bill_period ) {
 			case PLAN_ANNUAL_PERIOD:
-				term = TERM_ANNUALLY;
+				billingTerm = TERM_ANNUALLY;
 				break;
 			case PLAN_BIENNIAL_PERIOD:
-				term = TERM_BIENNIALLY;
+				billingTerm = TERM_BIENNIALLY;
 				break;
 			case PLAN_TRIENNIAL_PERIOD:
-				term = TERM_TRIENNIALLY;
+				billingTerm = TERM_TRIENNIALLY;
 				break;
 			case PLAN_MONTHLY_PERIOD:
-				term = TERM_MONTHLY;
+				billingTerm = TERM_MONTHLY;
 				break;
 		}
 
 		plans.push( {
 			productId: planProduct.product_id,
 			// This means that free plan is considered "annually billed"
+			// `billingPeriod` is deprecated as-is and will be refactored to the raw integer value
+			// use `billingTerm` instead for the sting value of the billing period
 			billingPeriod:
 				planProduct.bill_period === MONTHLY_PLAN_BILLING_PERIOD ? 'MONTHLY' : 'ANNUALLY',
+			billingTerm,
 			periodAgnosticSlug: periodAgnosticPlan.periodAgnosticSlug,
 			storeSlug: planProduct.product_slug,
 			rawPrice: planProduct.raw_price,
@@ -177,7 +180,6 @@ function normalizePlanProducts(
 				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD
 					? getAnnualPrice( planProduct )
 					: getFormattedPrice( planProduct ),
-			term,
 		} );
 		return plans;
 	}, [] as PlanProduct[] );
