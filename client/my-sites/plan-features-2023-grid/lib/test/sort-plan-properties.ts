@@ -1,10 +1,12 @@
-import { isFreePlan } from '@automattic/calypso-products';
-import { isPopularPlan } from '../is-popular-plan';
 import { sortPlans } from '../sort-plan-properties';
 import type { PlanProperties } from '../../types';
 
-jest.mock( '../is-popular-plan' );
-jest.mock( '@automattic/calypso-products' );
+jest.mock( '../is-popular-plan', () => ( {
+	isPopularPlan: ( planSlug ) => planSlug === 'premium',
+} ) );
+jest.mock( '@automattic/calypso-products', () => ( {
+	isFreePlan: ( planSlug ) => planSlug === 'free',
+} ) );
 
 describe( 'sortPlans', () => {
 	const planFree = {
@@ -32,14 +34,10 @@ describe( 'sortPlans', () => {
 		planName: 'ecommerce',
 	} as PlanProperties;
 
-	const defaultPlanOrder = [ planFree, planPersonal, planPremium, planBusiness, planEcommerce ];
-
-	it( 'should sort plans in default order when current plan slug is empty', () => {
-		expect( sortPlans( defaultPlanOrder ) ).toEqual( defaultPlanOrder );
-	} );
+	const plansInDefaultOrder = [ planFree, planPersonal, planPremium, planBusiness, planEcommerce ];
 
 	it( 'should sort plans in descending order of value when current plan slug is personal', () => {
-		expect( sortPlans( defaultPlanOrder, 'personal' ) ).toEqual( [
+		expect( sortPlans( plansInDefaultOrder, 'personal' ) ).toEqual( [
 			planPersonal,
 			planPremium,
 			planBusiness,
@@ -49,7 +47,7 @@ describe( 'sortPlans', () => {
 	} );
 
 	it( 'should sort plans in descending order of value when current plan slug is ecommerce', () => {
-		expect( sortPlans( defaultPlanOrder, 'ecommerce' ) ).toEqual( [
+		expect( sortPlans( plansInDefaultOrder, 'ecommerce' ) ).toEqual( [
 			planEcommerce,
 			planBusiness,
 			planPremium,
@@ -59,8 +57,17 @@ describe( 'sortPlans', () => {
 	} );
 
 	it( 'should show the popular plan first if current plan slug is empty', () => {
-		isPopularPlan.mockImplementation( ( planSlug ) => planSlug === 'premium' );
-		expect( sortPlans( defaultPlanOrder ) ).toEqual( [
+		expect( sortPlans( plansInDefaultOrder ) ).toEqual( [
+			planPremium,
+			planBusiness,
+			planEcommerce,
+			planPersonal,
+			planFree,
+		] );
+	} );
+
+	it( 'should show the popular plan first when current plan slug is empty', () => {
+		expect( sortPlans( plansInDefaultOrder ) ).toEqual( [
 			planPremium,
 			planBusiness,
 			planEcommerce,
@@ -70,9 +77,7 @@ describe( 'sortPlans', () => {
 	} );
 
 	it( 'should show the popular plan first if current plan slug is the free plan', () => {
-		isPopularPlan.mockImplementation( ( planSlug ) => planSlug === 'premium' );
-		isFreePlan.mockImplementation( ( planSlug ) => planSlug === 'free' );
-		expect( sortPlans( defaultPlanOrder, 'free' ) ).toEqual( [
+		expect( sortPlans( plansInDefaultOrder, 'free' ) ).toEqual( [
 			planPremium,
 			planBusiness,
 			planEcommerce,
@@ -82,9 +87,7 @@ describe( 'sortPlans', () => {
 	} );
 
 	it( 'should show the popular plan second if current plan slug is empty/free and user is on mobile', () => {
-		isPopularPlan.mockImplementation( ( planSlug ) => planSlug === 'premium' );
-		isFreePlan.mockImplementation( ( planSlug ) => planSlug === 'free' );
-		expect( sortPlans( defaultPlanOrder, 'free', true ) ).toEqual( [
+		expect( sortPlans( plansInDefaultOrder, 'free', true ) ).toEqual( [
 			planPersonal,
 			planPremium,
 			planBusiness,
