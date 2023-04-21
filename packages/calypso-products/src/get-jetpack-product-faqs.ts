@@ -1,6 +1,6 @@
 import { getJetpackProductsFAQs } from './translations';
 /**
- * Get Jetpack product "FAQs" info based on the product purchase object.
+ * Get Jetpack product "FAQs" info based on the product slug.
  */
 export function getJetpackProductFAQs(
 	product_slug: string,
