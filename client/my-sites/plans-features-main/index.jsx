@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	chooseDefaultCustomerType,
 	findPlansKeys,
@@ -415,10 +414,6 @@ export class PlansFeaturesMain extends Component {
 			plans = plans.filter(
 				( planSlug ) => ! isBusinessPlan( planSlug ) && ! isEcommercePlan( planSlug )
 			);
-		}
-
-		if ( ! isEnabled( 'plans/personal-plan' ) ) {
-			plans.splice( plans.indexOf( plans.filter( ( p ) => p === PLAN_PERSONAL )[ 0 ] ), 1 );
 		}
 
 		if ( showTreatmentPlansReorderTest ) {
