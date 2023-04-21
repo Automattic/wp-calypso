@@ -146,6 +146,7 @@
 		"subscription-gifting": true,
 		"subscription-management": true,
 		"subscription-management-comments-view": true,
+		"subscription-management-pending-view": true,
 		"subscription-management/comments-list-controls": false,
 		"subscription-management/sites-list-controls": false,
 		"themes/atomic-homepage-replace": true,
