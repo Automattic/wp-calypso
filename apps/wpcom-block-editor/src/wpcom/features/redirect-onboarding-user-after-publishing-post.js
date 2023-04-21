@@ -11,6 +11,8 @@ export function redirectOnboardingUserAfterPublishingPost() {
 	const siteOrigin = getQueryArg( window.location.search, 'origin' );
 	const siteSlug = window.location.hostname;
 
+	dispatch( 'core/edit-post' ).closeGeneralSidebar();
+
 	const unsubscribe = subscribe( () => {
 		const isSavingPost = select( 'core/editor' ).isSavingPost();
 		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();

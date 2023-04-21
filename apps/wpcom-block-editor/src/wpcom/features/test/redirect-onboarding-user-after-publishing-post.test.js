@@ -7,6 +7,7 @@ beforeAll( () => {} );
 
 const mockUnSubscribe = jest.fn();
 const mockClosePublishSidebar = jest.fn();
+const mockCloseSidebar = jest.fn();
 let mockSubscribeFunction = null;
 let mockIsSaving = false;
 
@@ -30,6 +31,9 @@ jest.mock( '@wordpress/data', () => ( {
 			closePublishSidebar: () => {
 				mockClosePublishSidebar();
 			},
+			closeGeneralSidebar: () => {
+				mockCloseSidebar();
+			},
 		};
 	},
 } ) );
@@ -45,6 +49,8 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 		};
 
 		redirectOnboardingUserAfterPublishingPost();
+
+		expect( mockCloseSidebar ).toBeCalledTimes( 0 );
 		expect( mockSubscribeFunction ).toBe( null );
 		expect( global.window.location.href ).toBe( undefined );
 	} );
@@ -60,7 +66,10 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 		};
 
 		redirectOnboardingUserAfterPublishingPost();
+
+		expect( mockCloseSidebar ).toBeCalledTimes( 1 );
 		expect( mockSubscribeFunction ).not.toBe( null );
+
 		mockSubscribeFunction();
 
 		expect( mockUnSubscribe ).toBeCalledTimes( 0 );
@@ -68,6 +77,7 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 	} );
 
 	it( 'should redirect the user to the launchpad when a post is published and the showLaunchpad query parameter is present', () => {
+		jest.clearAllMocks();
 		mockIsSaving = false;
 		delete global.window;
 		global.window = {
@@ -78,9 +88,10 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 		};
 
 		redirectOnboardingUserAfterPublishingPost();
-		expect( mockSubscribeFunction ).not.toBe( null );
 		mockSubscribeFunction();
 
+		expect( mockSubscribeFunction ).not.toBe( null );
+		expect( mockCloseSidebar ).toBeCalledTimes( 1 );
 		expect( mockUnSubscribe ).toBeCalledTimes( 1 );
 		expect( mockClosePublishSidebar ).toBeCalledTimes( 1 );
 		expect( global.window.location.href ).toBe(
