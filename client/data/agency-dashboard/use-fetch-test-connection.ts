@@ -39,7 +39,7 @@ const useFetchTestConnection = (
 							if ( site.blog_id === siteId ) {
 								return {
 									...site,
-									is_connected: data.connected,
+									is_connected: data?.hasOwnProperty( 'connected' ) ? data.connected : true,
 								};
 							}
 							return site;
