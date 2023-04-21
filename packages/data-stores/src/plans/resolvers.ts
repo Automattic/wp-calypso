@@ -162,16 +162,16 @@ function normalizePlanProducts(
 		plans.push( {
 			productId: planProduct.product_id,
 			// This means that free plan is considered "annually billed"
-			// `billingPeriod` is deprecated as-is and will be refactored to the raw integer value
-			// use `billingTerm` instead for the sting value of the billing period
+			// - `billingPeriod` will be refactored to the raw integer value. do not rely on it for now
+			// - use `billingTerm` instead for the sting value of the billing period
 			billingPeriod:
 				planProduct.bill_period === MONTHLY_PLAN_BILLING_PERIOD ? 'MONTHLY' : 'ANNUALLY',
 			billingTerm,
 			periodAgnosticSlug: periodAgnosticPlan.periodAgnosticSlug,
 			storeSlug: planProduct.product_slug,
-			rawPrice: planProduct.raw_price,
 			// Not all plans returned from /plans have a `path_slug` (e.g. monthly plans don't have)
 			pathSlug: planProduct.path_slug,
+			rawPrice: planProduct.raw_price,
 			price:
 				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD || planProduct.raw_price === 0
 					? getFormattedPrice( planProduct )
@@ -218,7 +218,9 @@ export function* getSupportedPlans( locale = 'en' ) {
 				slugs[ slug ] = true;
 				return slugs;
 			}, {} as Record< string, boolean > ),
+			// `isFree` may be refactored to a selector. do not rely on it for now
 			isFree: planSlug === TIMELESS_PLAN_FREE,
+			// `isPopular` may be refactored to a selector. do not rely on it for now
 			isPopular: planSlug === TIMELESS_PLAN_PREMIUM,
 			periodAgnosticSlug: planSlug,
 			productIds: plan.products.map( ( { plan_id } ) => plan_id ),
