@@ -16,8 +16,8 @@ const useSortOptions = (): Option[] => {
 	const translate = useTranslate();
 
 	return [
-		{ value: SortBy.PostName, label: translate( 'Post name' ) },
 		{ value: SortBy.RecentlySubscribed, label: translate( 'Recently subscribed' ) },
+		{ value: SortBy.PostName, label: translate( 'Post name' ) },
 	];
 };
 
