@@ -34,7 +34,7 @@ export const useLinkInBioDesigns = (): Design[] => {
 	} );
 
 	let designs = queryResult.data
-		? queryResult.data.static.designs.filter(
+		? queryResult.data.designs.filter(
 				( design ) =>
 					design.is_virtual &&
 					design.categories.some( ( category ) => category.slug === 'link-in-bio' )
