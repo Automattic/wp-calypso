@@ -31,6 +31,10 @@ const useFetchTestConnection = (
 			// five minutes after the first successful one.
 			staleTime: 1000 * 60 * 5,
 			onSuccess: ( data ) => {
+				// We are setting the "is_connected" property of the site in the query cache of the "sites"
+				// API to the value returned by the /test-connection endpoint. We are doing this to filter
+				// the site with connection issues easily in the UI and to have a single source of truth for
+				// the connection state of a site to avoid inconsistencies.
 				const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ];
 				queryClient.setQueryData( queryKey, ( oldSites: any ) => {
 					return {

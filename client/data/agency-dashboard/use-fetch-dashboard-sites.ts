@@ -58,6 +58,10 @@ const useFetchDashboardSites = (
 			select: ( data ) => {
 				return {
 					sites: data.sites.map( ( site: Site ) => {
+						// Since the "sites" API includes the "is_connected" property in the cache of the query set by
+						// the "useFetchTestConnection" hook, we are setting it here again since the "sites" API gets called
+						// more often than the "/test-connection" API which will flush the cache set by the
+						// "useFetchTestConnection" hook
 						const data: { connected: boolean } | undefined = queryClient.getQueryData( [
 							'jetpack-agency-test-connection',
 							site.blog_id,
