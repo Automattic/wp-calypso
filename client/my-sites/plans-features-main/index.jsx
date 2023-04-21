@@ -101,7 +101,7 @@ export class PlansFeaturesMain extends Component {
 		}
 	}
 
-	show2023OnboardingPricingGrid() {
+	show2023OnboardingPricingGrid( plans, visiblePlans ) {
 		const {
 			basePlansPath,
 			customerType,
@@ -128,9 +128,6 @@ export class PlansFeaturesMain extends Component {
 			busyOnUpgradeClick,
 			hidePlansFeatureComparison,
 		} = this.props;
-
-		const plans = this.getPlansForPlanFeatures();
-		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 
 		if ( is2023PricingGridVisible ) {
 			const asyncProps = {
@@ -313,7 +310,7 @@ export class PlansFeaturesMain extends Component {
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ onUpgradeClick }
-					plans={ plans }
+					plans={ visiblePlans }
 					redirectTo={ redirectTo }
 					visiblePlans={ visiblePlans }
 					selectedFeature={ selectedFeature }
@@ -368,20 +365,11 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const {
-			intervalType,
-			selectedPlan,
-			hideFreePlan,
-			hidePersonalPlan,
-			hidePremiumPlan,
-			hideEcommercePlan,
-			showTreatmentPlansReorderTest,
-			flowName,
-			is2023PricingGridVisible,
-		} = this.props;
+		const { intervalType, selectedPlan, showTreatmentPlansReorderTest, is2023PricingGridVisible } =
+			this.props;
 
 		const term = this.getPlanBillingPeriod( intervalType, getPlan( selectedPlan )?.term );
-		let plans = this.getPlansFromProps( GROUP_WPCOM, term );
+		const plans = this.getPlansFromProps( GROUP_WPCOM, term );
 
 		if ( is2023PricingGridVisible ) {
 			/*
@@ -389,28 +377,6 @@ export class PlansFeaturesMain extends Component {
 			 * Pleas use the getVisiblePlansForPlanFeatures selector to filter out the plans that should not be visible.
 			 */
 			return plans;
-		}
-
-		if ( hideFreePlan ) {
-			plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
-		}
-
-		if ( hidePersonalPlan ) {
-			plans = plans.filter( ( planSlug ) => ! isPersonalPlan( planSlug ) );
-		}
-
-		if ( hidePremiumPlan ) {
-			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
-		}
-
-		if ( hideEcommercePlan ) {
-			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
-		}
-
-		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
-			plans = plans.filter(
-				( planSlug ) => ! isBusinessPlan( planSlug ) && ! isEcommercePlan( planSlug )
-			);
 		}
 
 		if ( showTreatmentPlansReorderTest ) {
@@ -449,6 +415,7 @@ export class PlansFeaturesMain extends Component {
 	getVisiblePlansForPlanFeatures( availablePlans ) {
 		const {
 			customerType,
+			flowName,
 			selectedPlan,
 			plansWithScroll,
 			isAllPaidPlansShown,
@@ -478,6 +445,30 @@ export class PlansFeaturesMain extends Component {
 			  } )
 			: availablePlans;
 
+		if ( hideFreePlan ) {
+			plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
+		}
+
+		if ( hidePersonalPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isPersonalPlan( planSlug ) );
+		}
+
+		if ( hidePremiumPlan ) {
+			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
+		if ( hideEcommercePlan ) {
+			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
+		}
+
+		// TODO
+		// Remove this once we migrate them to the new pricing grid
+		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
+			plans = plans.filter(
+				( planSlug ) => ! isBusinessPlan( planSlug ) && ! isEcommercePlan( planSlug )
+			);
+		}
+
 		if ( is2023PricingGridVisible ) {
 			plans = plans.filter( ( plan ) =>
 				isPlanOneOfType( plan, [
@@ -489,22 +480,6 @@ export class PlansFeaturesMain extends Component {
 					TYPE_ENTERPRISE_GRID_WPCOM,
 				] )
 			);
-
-			if ( hideFreePlan ) {
-				plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
-			}
-
-			if ( hidePersonalPlan ) {
-				plans = plans.filter( ( planSlug ) => ! isPersonalPlan( planSlug ) );
-			}
-
-			if ( hidePremiumPlan ) {
-				plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
-			}
-
-			if ( hideEcommercePlan ) {
-				plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
-			}
 
 			return plans;
 		}
@@ -600,16 +575,15 @@ export class PlansFeaturesMain extends Component {
 		return props.planTypeSelector;
 	}
 
-	renderPlansGrid() {
+	renderPlansGrid( plans, visiblePlans ) {
 		const { shouldShowPlansFeatureComparison, is2023PricingGridVisible } = this.props;
 
-		if ( is2023PricingGridVisible ) {
-			return this.show2023OnboardingPricingGrid();
+		// TODO: need to figure out if we can deprecate `shouldShowPlansFeatureComparison`
+		if ( is2023PricingGridVisible || shouldShowPlansFeatureComparison ) {
+			return this.show2023OnboardingPricingGrid( plans, visiblePlans );
 		}
 
-		return shouldShowPlansFeatureComparison
-			? this.show2023OnboardingPricingGrid()
-			: this.renderPlanFeatures();
+		return this.renderPlanFeatures( plans );
 	}
 
 	render() {
@@ -654,7 +628,7 @@ export class PlansFeaturesMain extends Component {
 						planTypeSelectorProps={ planTypeSelectorProps }
 					/>
 				) }
-				{ this.renderPlansGrid() }
+				{ this.renderPlansGrid( plans, visiblePlans ) }
 				{ this.mayRenderFAQ() }
 			</div>
 		);
