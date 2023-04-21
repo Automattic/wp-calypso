@@ -228,7 +228,7 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
-	renderPlanFeatures() {
+	renderPlanFeatures( plans, visiblePlans ) {
 		const {
 			basePlansPath,
 			currentPurchaseIsInAppPurchase,
@@ -257,8 +257,6 @@ export class PlansFeaturesMain extends Component {
 			isPlansInsideStepper,
 		} = this.props;
 
-		const plans = this.getPlansForPlanFeatures();
-		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 		const legacyText =
 			locale === 'en' ||
 			hasTranslation(
@@ -310,7 +308,7 @@ export class PlansFeaturesMain extends Component {
 					isLandingPage={ isLandingPage }
 					isLaunchPage={ isLaunchPage }
 					onUpgradeClick={ onUpgradeClick }
-					plans={ visiblePlans }
+					plans={ plans }
 					redirectTo={ redirectTo }
 					visiblePlans={ visiblePlans }
 					selectedFeature={ selectedFeature }
@@ -571,7 +569,7 @@ export class PlansFeaturesMain extends Component {
 			return this.show2023OnboardingPricingGrid( plans, visiblePlans );
 		}
 
-		return this.renderPlanFeatures( plans );
+		return this.renderPlanFeatures( plans, visiblePlans );
 	}
 
 	render() {
@@ -586,7 +584,6 @@ export class PlansFeaturesMain extends Component {
 		/*
 		 * We need to pass all the plans in order to show the correct features in the plan comparison table.
 		 * Pleas use the getVisiblePlansForPlanFeatures selector to filter out the plans that should not be visible.
-		 * Also, note that the old pricing gird only needs the visible plans. Thus, when it's the old pricing grid,
 		 * we pass `visiblePlans` to its `plans` prop.
 		 */
 		const plans = this.getPlansForPlanFeatures();
