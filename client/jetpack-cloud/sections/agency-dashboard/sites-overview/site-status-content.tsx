@@ -68,6 +68,9 @@ export default function SiteStatusContent( {
 	// since monitor is clickable when site is down.
 	const disabledStatus = siteError || ( type !== 'monitor' && siteDown );
 
+	// Disale selection and toggle when there is a site error or site is down
+	const hasAnyError = !! ( siteError || siteDown );
+
 	const statusContentRef = useRef< HTMLSpanElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
 
@@ -151,7 +154,7 @@ export default function SiteStatusContent( {
 					<SiteSelectCheckbox
 						isLargeScreen={ isLargeScreen }
 						item={ rows }
-						siteError={ siteError }
+						siteError={ hasAnyError }
 					/>
 				) : (
 					<SiteSetFavorite
@@ -198,7 +201,7 @@ export default function SiteStatusContent( {
 					status={ status }
 					tooltip={ tooltip }
 					tooltipId={ tooltipId }
-					siteError={ siteError }
+					siteError={ hasAnyError }
 					isLargeScreen={ isLargeScreen }
 				/>
 			);

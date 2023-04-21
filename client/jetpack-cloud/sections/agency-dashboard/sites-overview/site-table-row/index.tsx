@@ -89,7 +89,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 									type={ row.type }
 									isLargeScreen
 									isFavorite={ isFavorite }
-									siteError={ siteError }
+									siteError={ hasSiteConnectionError }
 								/>
 							</td>
 						);

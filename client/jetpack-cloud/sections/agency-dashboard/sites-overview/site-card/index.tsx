@@ -109,7 +109,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 						rows={ rows }
 						type={ headerItem.type }
 						isFavorite={ isFavorite }
-						siteError={ siteError }
+						siteError={ ! isSiteConnected }
 					/>
 				</span>
 				<SiteActions site={ site } siteError={ siteError } />
@@ -139,7 +139,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 														<SiteStatusContent
 															rows={ rows }
 															type={ row.type }
-															siteError={ siteError }
+															siteError={ ! isSiteConnected }
 														/>
 													</span>
 													<span className="site-card__expanded-column">
