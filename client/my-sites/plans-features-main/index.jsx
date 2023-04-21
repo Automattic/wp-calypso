@@ -65,6 +65,7 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
+import PlanNotices from './plan-notices';
 import PlanFAQ from './plansStepFaq';
 import TermExperimentPlanTypeSelector from './term-experiment-plan-type-selector';
 import WpcomFAQ from './wpcom-faq';
@@ -607,7 +608,15 @@ export class PlansFeaturesMain extends Component {
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
 				<HappychatConnection />
-				<div className="plans-features-main__notice" />
+				<PlanNotices
+					visiblePlanNames={ visiblePlans }
+					siteId={ siteId }
+					isInSignup={ this.props.isInSignup }
+					discountInformation={ {
+						withDiscount: this.props.withDiscount,
+						discountEndDate: this.props.discountEndDate,
+					} }
+				/>
 				{ ! hidePlanSelector && (
 					<TermExperimentPlanTypeSelector
 						isEligible={ is2023PricingGridVisible }

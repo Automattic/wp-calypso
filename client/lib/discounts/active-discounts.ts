@@ -13,10 +13,22 @@ const simplePaymentsNoticeTextWPCOM =
 const simplePaymentsNoticeTextJetpack =
 	'Upgrade to a Premium or Professional plan today and start collecting payments with the Pay with PayPal button!';
 
+export type ActiveDiscount = {
+	name: string;
+	startsAt: Date;
+	endsAt: Date;
+	plansPageNoticeText?: string;
+	targetPlans?: {
+		type: string;
+		group: string;
+	}[];
+	plansPageNoticeTextTitle?: undefined;
+};
+
 /**
  * No translate() used on some of these since we're launching those promotions just for the EN audience
  */
-export default [
+const activeDiscounts: ActiveDiscount[] = [
 	{
 		name: 'simple_payments_wpcom',
 		startsAt: new Date( 2018, 6, 9, 0, 0, 0 ),
@@ -108,3 +120,5 @@ export default [
 		endsAt: new Date( 2120, 9, 26, 0, 0, 0 ),
 	},
 ];
+
+export default activeDiscounts;

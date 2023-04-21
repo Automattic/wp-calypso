@@ -60,7 +60,6 @@ import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-ite
 import { getDiscountByName } from 'calypso/lib/discounts';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
-import { calculatePlanCredits } from 'calypso/my-sites/plan-features';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -73,6 +72,7 @@ import {
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { calculatePlanUpgradeCredits } from 'calypso/state/sites/plans/selectors/calculate-plan-upgrade-credits';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import {
 	getSiteSlug,
@@ -97,6 +97,7 @@ import useHighlightLabel from './hooks/use-highlight-label';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { IAppState } from 'calypso/state/types';
+
 import './style.scss';
 
 type PlanRowOptions = {
@@ -1177,7 +1178,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
 				: `/plans/my-plan/${ siteId }`;
 
-		const planCredits = calculatePlanCredits( state, siteId, planProperties );
+		const planCredits = calculatePlanUpgradeCredits( state, siteId, plans );
 		const hasPlaceholders = ( planProperties: Array< PlanProperties > ) =>
 			planProperties.filter( ( planProps ) => planProps.isPlaceholder ).length > 0;
 
