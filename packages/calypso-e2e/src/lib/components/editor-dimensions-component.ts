@@ -1,5 +1,6 @@
-import { Locator, Page } from 'playwright';
+import { Page } from 'playwright';
 import { EditorPopoverMenuComponent } from './editor-popover-menu-component';
+import { EditorWindow } from './editor-window';
 
 const selectors = {
 	paddingInput: 'input[aria-label="Padding"]',
@@ -11,12 +12,10 @@ export interface DimensionsSettings {
 	margin?: number;
 }
 
-type EditorContext = 'site-styles' | 'block';
-
 /**
  * Represents a dimenstions settings component (used in blocks and site styles).
  */
-export class EditorDimensionsComponent {
+export class EditorDimensionsComponent extends EditorWindow {
 	// Usually low-level components don't contain other components like this.
 	// In this case however, because the popover is always used whereever this component is,
 	// and tieing it together at a higher level is kind of messy, it makes sense to add it here.
@@ -26,11 +25,10 @@ export class EditorDimensionsComponent {
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editor Frame-safe locator to the editor.
-	 * @param {EditorContext} context Whether we're in global styles or a block.
 	 */
-	constructor( private page: Page, private editor: Locator, private context: EditorContext ) {
-		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, editor );
+	constructor( page: Page ) {
+		super( page );
+		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent();
 	}
 
 	/**
@@ -52,7 +50,8 @@ export class EditorDimensionsComponent {
 	 * Reset all of the dimension settings.
 	 */
 	async resetAll(): Promise< void > {
-		const optionsButtonLocator = this.editor.locator( selectors.optionsButton );
+		const editorFrame = await this.getEditorFrame();
+		const optionsButtonLocator = editorFrame.locator( selectors.optionsButton );
 		await optionsButtonLocator.click();
 		await this.editorPopoverMenuComponent.clickMenuButton( 'Reset all' );
 	}
@@ -63,6 +62,7 @@ export class EditorDimensionsComponent {
 	 * @param {number} padding Padding dimension to select.
 	 */
 	private async setPadding( padding: number ): Promise< void > {
-		await this.editor.getByLabel( 'All sides padding' ).fill( padding.toString() );
+		const editorFrame = await this.getEditorFrame();
+		await editorFrame.getByLabel( 'All sides padding' ).fill( padding.toString() );
 	}
 }
