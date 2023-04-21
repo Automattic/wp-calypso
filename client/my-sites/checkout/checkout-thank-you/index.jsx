@@ -170,13 +170,13 @@ export class CheckoutThankYou extends Component {
 
 	componentDidUpdate( prevProps ) {
 		const {
-			receiptId,
-			selectedSiteSlug,
-			selectedSite,
 			domainOnlySiteFlow,
 			isRequestingSitePlugins,
-			wooCommerceInstalled,
+			receiptId,
+			selectedSite,
+			selectedSiteSlug,
 			transferComplete,
+			wooCommerceInstalled,
 		} = this.props;
 
 		this.redirectIfThemePurchased();
