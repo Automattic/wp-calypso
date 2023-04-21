@@ -80,7 +80,6 @@ interface Props {
 	stripeConnectSuccess: 'gutenberg' | null;
 	showDraftPostModal: boolean;
 	blockEditorSettings: BlockEditorSettings;
-	completedFlow?: string;
 }
 
 interface CheckoutModalOptions extends RequestCart {
@@ -797,7 +796,6 @@ const mapStateToProps = (
 		showDraftPostModal,
 		pressThisData,
 		blockEditorSettings,
-		completedFlow,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -824,7 +822,7 @@ const mapStateToProps = (
 		showDraftPostModal,
 		...pressThisData,
 		answer_prompt: getQueryArg( window.location.href, 'answer_prompt' ),
-		completedFlow,
+		assembler: getQueryArg( window.location.href, 'assembler' ), // Customize the first slide of Welcome Tour in the site editor
 		canvas: getQueryArg( window.location.href, 'canvas' ), // Site editor can initially load with or without nav sidebar (Gutenberg v15.0.0)
 	} );
 
