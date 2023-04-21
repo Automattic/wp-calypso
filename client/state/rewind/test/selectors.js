@@ -8,7 +8,9 @@ import {
 	isFetchingStagingSitesList,
 	hasFetchedStagingSitesList,
 	getBackupStagingSites,
+	getBackupStagingUpdateRequestStatus,
 } from '../selectors';
+import { BACKUP_STAGING_UPDATE_REQUEST } from '../staging/constants';
 import { stagingSites } from '../staging/test/fixtures';
 import { StorageUsageLevels } from '../storage/types';
 
@@ -248,5 +250,42 @@ describe( 'Backup staging sites selectors', () => {
 			const stateIn = fixtures.stagingSitesLoaded;
 			expect( getBackupStagingSites( stateIn, TEST_SITE_ID ) ).toStrictEqual( stagingSites );
 		} );
+	} );
+} );
+
+describe( 'getBackupStagingUpdateRequestStatus()', () => {
+	const TEST_SITE_ID = 123;
+
+	test( 'should default to UNSUBMITTED when the site under test does not exist in the state at all.', () => {
+		const state = {
+			rewind: {},
+		};
+		expect( getBackupStagingUpdateRequestStatus( state, TEST_SITE_ID ) ).toEqual(
+			BACKUP_STAGING_UPDATE_REQUEST.UNSUBMITTED
+		);
+	} );
+
+	test( 'should default to UNSUBMITTED when no staging flag update request is being made yet.', () => {
+		const state = {
+			rewind: {
+				[ TEST_SITE_ID ]: {},
+			},
+		};
+		expect( getBackupStagingUpdateRequestStatus( state, TEST_SITE_ID ) ).toEqual(
+			BACKUP_STAGING_UPDATE_REQUEST.UNSUBMITTED
+		);
+	} );
+
+	test( 'should return PENDING status when the state indicates a staging update request was initiated.', () => {
+		const state = {
+			rewind: {
+				[ TEST_SITE_ID ]: {
+					updateStagingFlagRequestStatus: BACKUP_STAGING_UPDATE_REQUEST.PENDING,
+				},
+			},
+		};
+		expect( getBackupStagingUpdateRequestStatus( state, TEST_SITE_ID ) ).toEqual(
+			BACKUP_STAGING_UPDATE_REQUEST.PENDING
+		);
 	} );
 } );
