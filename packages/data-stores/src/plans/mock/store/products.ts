@@ -10,6 +10,7 @@ export const STORE_PRODUCT_FREE: PlanProduct = {
 	pathSlug: 'free',
 	price: '€0',
 	annualPrice: '€0',
+	term: null,
 };
 export const STORE_PRODUCT_PREMIUM_ANNUALLY: PlanProduct = {
 	productId: 1003,
@@ -20,7 +21,8 @@ export const STORE_PRODUCT_PREMIUM_ANNUALLY: PlanProduct = {
 	pathSlug: 'premium',
 	price: '€8',
 	annualPrice: '€96',
-	annualDiscount: 42,
+	annualDiscount: 43,
+	term: 'TERM_ANNUALLY',
 };
 export const STORE_PRODUCT_PREMIUM_MONTHLY: PlanProduct = {
 	productId: 1013,
@@ -30,5 +32,6 @@ export const STORE_PRODUCT_PREMIUM_MONTHLY: PlanProduct = {
 	rawPrice: 14,
 	price: '€14',
 	annualPrice: '€168',
-	annualDiscount: 42,
+	annualDiscount: 43,
+	term: 'TERM_MONTHLY',
 };

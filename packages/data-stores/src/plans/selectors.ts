@@ -56,6 +56,19 @@ export const getPlanProductById = (
 		.find( ( product: PlanProduct ) => product.productId === productId );
 };
 
+export const getPlanProductByStoreSlug = (
+	_state: State,
+	planStoreSlug: string | undefined
+): PlanProduct | undefined => {
+	if ( ! planStoreSlug ) {
+		return undefined;
+	}
+
+	return ( select( STORE_KEY ) as PlansSelect )
+		.getPlansProducts()
+		.find( ( product: PlanProduct ) => product.storeSlug === planStoreSlug );
+};
+
 export const getPlanByPeriodAgnosticSlug = (
 	_state: State,
 	slug: PlanSlug | undefined,

@@ -22,16 +22,7 @@ export type {
 // plansSlugs is also used to construct the route that accepts plan slugs like '/free', '/personal', '/business'
 // plansProductSlugs is a list with the identifiers for each plan product (including the billing period); eg: 'personal-bundle', 'personal-bundle-monthly'
 // TIMELESS_* is the slug for each plan
-export {
-	plansSlugs,
-	plansProductSlugs,
-	TIMELESS_PLAN_FREE,
-	TIMELESS_PLAN_PERSONAL,
-	TIMELESS_PLAN_PREMIUM,
-	TIMELESS_PLAN_BUSINESS,
-	TIMELESS_PLAN_ECOMMERCE,
-	FREE_PLAN_PRODUCT_ID,
-} from './constants';
+export * from './constants';
 
 let isRegistered = false;
 

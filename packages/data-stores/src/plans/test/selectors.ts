@@ -170,6 +170,42 @@ describe( 'Plans selectors', () => {
 		} );
 	} );
 
+	describe( 'getPlanProductByStoreSlug', () => {
+		it( 'should return undefined if the store slug is undefined', () => {
+			expect( Selectors.getPlanProductByStoreSlug( mockState, undefined ) ).toBeUndefined();
+		} );
+
+		it( 'should return undefined if the store slug is not associated to any products', () => {
+			// Non existing product
+			expect( Selectors.getPlanProductByStoreSlug( mockState, 'foo' ) ).toBeUndefined();
+		} );
+
+		it( 'should return undefined if the store slug does not match any products in the store', () => {
+			// Existing Product, but not in store (monthly billed)
+			expect(
+				Selectors.getPlanProductByStoreSlug(
+					mockState,
+					MockData.STORE_PRODUCT_PREMIUM_MONTHLY.storeSlug
+				)
+			).toBeUndefined();
+		} );
+
+		it( 'should select the right product for a given correct store slug', () => {
+			// Free
+			expect(
+				Selectors.getPlanProductByStoreSlug( mockState, MockData.STORE_PRODUCT_FREE.storeSlug )
+			).toEqual( MockData.STORE_PRODUCT_FREE );
+
+			// Paid (annually billed)
+			expect(
+				Selectors.getPlanProductByStoreSlug(
+					mockState,
+					MockData.STORE_PRODUCT_PREMIUM_ANNUALLY.storeSlug
+				)
+			).toEqual( MockData.STORE_PRODUCT_PREMIUM_ANNUALLY );
+		} );
+	} );
+
 	describe( 'getPlanByPeriodAgnosticSlug', () => {
 		it( 'should return undefined if the plan slug is undefined', () => {
 			expect(
