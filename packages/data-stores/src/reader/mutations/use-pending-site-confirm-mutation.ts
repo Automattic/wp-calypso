@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
-import { PendingSiteSubscription, SubscriptionManagerSubscriptionsCount } from '../types';
+import { PendingSiteSubscriptionsResult, SubscriptionManagerSubscriptionsCount } from '../types';
 
 type PendingSiteConfirmParams = {
 	id: string;
@@ -44,17 +44,23 @@ const usePendingSiteConfirmMutation = () => {
 				await queryClient.cancelQueries( [ 'read', 'pending-site-subscriptions', isLoggedIn ] );
 				await queryClient.cancelQueries( countCacheKey );
 
-				const previousPendingSiteSubscriptions = queryClient.getQueryData<
-					PendingSiteSubscription[]
-				>( [ 'read', 'pending-site-subscriptions', isLoggedIn ] );
+				const previousPendingSiteSubscriptions =
+					queryClient.getQueryData< PendingSiteSubscriptionsResult >( [
+						'read',
+						'pending-site-subscriptions',
+						isLoggedIn,
+					] );
 
 				// remove blog from pending site subscriptions
-				if ( previousPendingSiteSubscriptions ) {
-					queryClient.setQueryData< PendingSiteSubscription[] >(
+				if ( previousPendingSiteSubscriptions?.pendingSites ) {
+					queryClient.setQueryData< PendingSiteSubscriptionsResult >(
 						[ [ 'read', 'pending-site-subscriptions', isLoggedIn ] ],
-						previousPendingSiteSubscriptions.filter(
-							( pendingSiteSubscription ) => pendingSiteSubscription.id !== params.id
-						)
+						{
+							pendingSites: previousPendingSiteSubscriptions.pendingSites.filter(
+								( pendingSiteSubscription ) => pendingSiteSubscription.id !== params.id
+							),
+							totalCount: previousPendingSiteSubscriptions.totalCount - 1,
+						}
 					);
 				}
 
@@ -76,7 +82,7 @@ const usePendingSiteConfirmMutation = () => {
 			},
 			onError: ( error, variables, context ) => {
 				if ( context?.previousPendingSiteSubscriptions ) {
-					queryClient.setQueryData< PendingSiteSubscription[] >(
+					queryClient.setQueryData< PendingSiteSubscriptionsResult >(
 						[ 'read', 'pending-site-subscriptions', isLoggedIn ],
 						context.previousPendingSiteSubscriptions
 					);
