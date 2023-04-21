@@ -175,11 +175,11 @@ export class CheckoutThankYou extends Component {
 		const {
 			domainOnlySiteFlow,
 			isFetchingSitePlugins,
+			isWooCommerceInstalled,
 			receiptId,
 			selectedSite,
 			selectedSiteSlug,
 			transferComplete,
-			wooCommerceInstalled,
 		} = this.props;
 
 		this.redirectIfThemePurchased();
@@ -194,7 +194,7 @@ export class CheckoutThankYou extends Component {
 		}
 
 		// If the site has been transferred to Atomc and we're not already requesting the site plugins, request them.
-		if ( selectedSite && transferComplete && ! isFetchingSitePlugins && ! wooCommerceInstalled ) {
+		if ( selectedSite && transferComplete && ! isFetchingSitePlugins && ! isWooCommerceInstalled ) {
 			this.props.fetchSitePlugins?.( selectedSite.ID );
 		}
 
@@ -456,7 +456,7 @@ export class CheckoutThankYou extends Component {
 
 		if ( wasEcommercePlanPurchased ) {
 			// Continue to show the TransferPending progress bar until both the Atomic transfer is complete _and_ we've verified WooCommerce is finished installed.
-			if ( ! this.props.transferComplete || ! this.props.wooCommerceInstalled ) {
+			if ( ! this.props.transferComplete || ! this.props.isWooCommerceInstalled ) {
 				return (
 					<TransferPending orderId={ this.props.receiptId } siteId={ this.props.selectedSite.ID } />
 				);
@@ -742,7 +742,7 @@ export class CheckoutThankYou extends Component {
 	};
 }
 
-function checkWooCommerceInstalled( sitePlugins ) {
+function isWooCommercePluginInstalled( sitePlugins ) {
 	return sitePlugins.length > 0 && sitePlugins.some( ( item ) => item.slug === 'woocommerce' );
 }
 
@@ -758,7 +758,7 @@ export default connect(
 			receipt: getReceiptById( state, props.receiptId ),
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
-			wooCommerceInstalled: checkWooCommerceInstalled( sitePlugins ),
+			isWooCommerceInstalled: isWooCommercePluginInstalled( sitePlugins ),
 			isFetchingSitePlugins: isRequestingSitePlugins( state, siteId ),
 			upgradeIntent: props.upgradeIntent || getCheckoutUpgradeIntent( state ),
 			isSimplified:
