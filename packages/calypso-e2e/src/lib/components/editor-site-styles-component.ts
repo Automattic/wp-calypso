@@ -1,9 +1,10 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
 import { DimensionsSettings, EditorDimensionsComponent } from './editor-dimensions-component';
 import {
 	ColorSettings,
 	EditorColorPickerComponent,
 	EditorTypographyComponent,
+	EditorWindow,
 	TypographySettings,
 } from '.';
 
@@ -24,10 +25,7 @@ export type ColorLocation = 'Background' | 'Text' | 'Links';
 /**
  * Represents the site editor site styles sidebar/panel.
  */
-export class EditorSiteStylesComponent {
-	private page: Page;
-	private editor: Locator;
-
+export class EditorSiteStylesComponent extends EditorWindow {
 	private editorColorPickerComponent: EditorColorPickerComponent;
 	private editorTypographyComponent: EditorTypographyComponent;
 	private editorDimensionsComponent: EditorDimensionsComponent;
@@ -36,15 +34,12 @@ export class EditorSiteStylesComponent {
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editor Frame-safe locator to the editor.
 	 */
-	constructor( page: Page, editor: Locator ) {
-		this.page = page;
-		this.editor = editor;
-
-		this.editorColorPickerComponent = new EditorColorPickerComponent( page, editor );
-		this.editorTypographyComponent = new EditorTypographyComponent( page, editor, 'site-styles' );
-		this.editorDimensionsComponent = new EditorDimensionsComponent( page, editor, 'site-styles' );
+	constructor( page: Page ) {
+		super( page );
+		this.editorColorPickerComponent = new EditorColorPickerComponent( page );
+		this.editorTypographyComponent = new EditorTypographyComponent( page );
+		this.editorDimensionsComponent = new EditorDimensionsComponent( page );
 	}
 
 	/**
@@ -55,7 +50,8 @@ export class EditorSiteStylesComponent {
 	 * @returns true if the site styles sidebar/panel is open, false otherwise.
 	 */
 	async siteStylesIsOpen(): Promise< boolean > {
-		const locator = this.editor.locator( parentSelector );
+		const editorFrame = await this.getEditorFrame();
+		const locator = editorFrame.locator( parentSelector );
 		return ( await locator.count() ) > 0;
 	}
 
@@ -64,7 +60,8 @@ export class EditorSiteStylesComponent {
 	 */
 	async closeSiteStyles(): Promise< void > {
 		if ( await this.siteStylesIsOpen() ) {
-			const locator = this.editor.locator( selectors.closeSidebarButton );
+			const editorFrame = await this.getEditorFrame();
+			const locator = editorFrame.locator( selectors.closeSidebarButton );
 			await locator.click();
 		}
 	}
@@ -139,7 +136,8 @@ export class EditorSiteStylesComponent {
 	async setStyleVariation( styleVariationName: string ): Promise< void > {
 		await this.returnToTopMenu();
 		await this.clickMenuButton( 'Browse styles' );
-		const locator = this.editor.locator( selectors.styleVariation( styleVariationName ) );
+		const editorFrame = await this.getEditorFrame();
+		const locator = editorFrame.locator( selectors.styleVariation( styleVariationName ) );
 		await locator.click();
 	}
 
@@ -149,7 +147,8 @@ export class EditorSiteStylesComponent {
 	 * @param {string} buttonName Button name.
 	 */
 	async clickMenuButton( buttonName: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.menuButton( buttonName ) );
+		const editorFrame = await this.getEditorFrame();
+		const locator = editorFrame.locator( selectors.menuButton( buttonName ) );
 		await locator.click();
 	}
 
@@ -157,7 +156,8 @@ export class EditorSiteStylesComponent {
 	 * Returns to the top-level menu in the site styles sidebar/panel.
 	 */
 	async returnToTopMenu(): Promise< void > {
-		const backButtonLocator = this.editor.locator( selectors.backButton );
+		const editorFrame = await this.getEditorFrame();
+		const backButtonLocator = editorFrame.locator( selectors.backButton );
 		// The DOM node of the current active panel is directly replaced on re-render.
 		// This means that we can safely rely on "count()" as an indicator of if there's
 		// back navigation to do.
@@ -170,7 +170,8 @@ export class EditorSiteStylesComponent {
 	 * Open the more actions menu in the site styles sidebar/panel.
 	 */
 	async openMoreActionsMenu(): Promise< void > {
-		const locator = this.editor.locator( selectors.moreActionsMenuButton );
+		const editorFrame = await this.getEditorFrame();
+		const locator = editorFrame.locator( selectors.moreActionsMenuButton );
 		await locator.click();
 	}
 }
