@@ -60,7 +60,10 @@ import {
 import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
 import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
-import { getPlugins, isRequesting } from 'calypso/state/plugins/installed/selectors';
+import {
+	getPlugins as getInstalledPlugins,
+	isRequesting as isRequestingSitePlugins,
+} from 'calypso/state/plugins/installed/selectors';
 import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 import { fetchReceipt } from 'calypso/state/receipts/actions';
 import { getReceiptById } from 'calypso/state/receipts/selectors';
@@ -171,7 +174,7 @@ export class CheckoutThankYou extends Component {
 	componentDidUpdate( prevProps ) {
 		const {
 			domainOnlySiteFlow,
-			isRequestingSitePlugins,
+			isFetchingSitePlugins,
 			receiptId,
 			selectedSite,
 			selectedSiteSlug,
@@ -191,7 +194,7 @@ export class CheckoutThankYou extends Component {
 		}
 
 		// If the site has been transferred to Atomc and we're not already requesting the site plugins, request them.
-		if ( selectedSite && transferComplete && ! isRequestingSitePlugins && ! wooCommerceInstalled ) {
+		if ( selectedSite && transferComplete && ! isFetchingSitePlugins && ! wooCommerceInstalled ) {
 			this.props.fetchSitePlugins?.( selectedSite.ID );
 		}
 
@@ -747,7 +750,7 @@ export default connect(
 	( state, props ) => {
 		const siteId = getSelectedSiteId( state );
 		const activeTheme = getActiveTheme( state, siteId );
-		const sitePlugins = getPlugins( state, [ siteId ] );
+		const sitePlugins = getInstalledPlugins( state, [ siteId ] );
 
 		return {
 			isProductsListFetching: isProductsListFetching( state ),
@@ -756,7 +759,7 @@ export default connect(
 			gsuiteReceipt: props.gsuiteReceiptId ? getReceiptById( state, props.gsuiteReceiptId ) : null,
 			sitePlans: getPlansBySite( state, props.selectedSite ),
 			wooCommerceInstalled: checkWooCommerceInstalled( sitePlugins ),
-			isRequestingSitePlugins: isRequesting( state, siteId ),
+			isFetchingSitePlugins: isRequestingSitePlugins( state, siteId ),
 			upgradeIntent: props.upgradeIntent || getCheckoutUpgradeIntent( state ),
 			isSimplified:
 				[ 'install_theme', 'install_plugin', 'browse_plugins' ].indexOf( props.upgradeIntent ) !==
