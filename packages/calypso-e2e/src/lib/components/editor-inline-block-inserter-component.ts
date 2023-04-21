@@ -1,4 +1,5 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
+import { EditorWindow } from './editor-window';
 
 const popoverParentSelector = '.block-editor-inserter__quick-inserter';
 const selectors = {
@@ -8,19 +9,14 @@ const selectors = {
 /**
  * Represents the inline, popover block inserter in the editor.
  */
-export class EditorInlineBlockInserterComponent {
-	private page: Page;
-	private editor: Locator;
-
+export class EditorInlineBlockInserterComponent extends EditorWindow {
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editor Frame-safe locator to the editor.
 	 */
-	constructor( page: Page, editor: Locator ) {
-		this.page = page;
-		this.editor = editor;
+	constructor( page: Page ) {
+		super( page );
 	}
 
 	/**
@@ -29,7 +25,8 @@ export class EditorInlineBlockInserterComponent {
 	 * @param {string} text Text to enter into the search input.
 	 */
 	async searchBlockInserter( text: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.searchInput );
+		const editorFrame = await this.getEditorFrame();
+		const locator = editorFrame.locator( selectors.searchInput );
 		await locator.fill( text );
 	}
 
@@ -40,6 +37,7 @@ export class EditorInlineBlockInserterComponent {
 	 * result will be chosen.
 	 */
 	async selectBlockInserterResult( name: string ): Promise< void > {
-		await this.editor.getByRole( 'option', { name, exact: true } ).first().click();
+		const editorFrame = await this.getEditorFrame();
+		await editorFrame.getByRole( 'option', { name, exact: true } ).first().click();
 	}
 }
