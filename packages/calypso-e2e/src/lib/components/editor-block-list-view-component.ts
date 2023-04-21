@@ -1,4 +1,5 @@
-import { Locator, Page } from 'playwright';
+import { Page } from 'playwright';
+import { EditorWindow } from './editor-window';
 
 const selectors = {
 	blockLink: ( blockName: string ) => `.block-editor-list-view-leaf a:has-text("${ blockName }")`,
@@ -16,19 +17,14 @@ interface BlockListLocation {
  * Represents an instance of the WordPress.com Editor's sidebar list view.
  * The component is available only in the Desktop viewport.
  */
-export class EditorBlockListViewComponent {
-	private page: Page;
-	private editor: Locator;
-
+export class EditorBlockListViewComponent extends EditorWindow {
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( page: Page, editor: Locator ) {
-		this.page = page;
-		this.editor = editor;
+	constructor( page: Page ) {
+		super( page );
 	}
 
 	/**
@@ -37,7 +33,8 @@ export class EditorBlockListViewComponent {
 	 * @param {string} blockName Name of the block type (e.g. "Heading").
 	 */
 	async clickFirstBlockOfType( blockName: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.blockLink( blockName ) ).first();
+		const editorFrame = await this.getEditorFrame();
+		const locator = editorFrame.locator( selectors.blockLink( blockName ) ).first();
 		await locator.click();
 	}
 
@@ -45,7 +42,8 @@ export class EditorBlockListViewComponent {
 	 * Selects and highlights all blocks in the list view.
 	 */
 	async selectAllBlocks(): Promise< void > {
-		const firstBlockLocator = this.editor.locator(
+		const editorFrame = await this.getEditorFrame();
+		const firstBlockLocator = editorFrame.locator(
 			selectors.blockByLocation( { level: 1, position: 1 } )
 		);
 		const numberOfBlocksInParentLevel = Number(
@@ -55,7 +53,7 @@ export class EditorBlockListViewComponent {
 			throw new Error( "Couldn't determine number of parent level blocks in the list view." );
 		}
 
-		const lastBlockLocator = this.editor.locator(
+		const lastBlockLocator = editorFrame.locator(
 			selectors.blockByLocation( { level: 1, position: numberOfBlocksInParentLevel } )
 		);
 
@@ -69,7 +67,8 @@ export class EditorBlockListViewComponent {
 	 * @param {BlockListLocation} location Location of block in the block list tree.
 	 */
 	async openOptionsForBlock( location: BlockListLocation ): Promise< void > {
-		const locator = this.editor.locator(
+		const editorFrame = await this.getEditorFrame();
+		const locator = editorFrame.locator(
 			`${ selectors.blockByLocation( location ) } >> ${ selectors.moreOptionsButton }`
 		);
 		await locator.click();
