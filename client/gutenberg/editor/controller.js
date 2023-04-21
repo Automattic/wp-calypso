@@ -279,7 +279,7 @@ export const redirectSiteEditor = async ( context ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
-	const queryArgs = {};
+	const queryArgs = context.query || {};
 	// Only add the origin if it's not wordpress.com.
 	if ( location.origin !== 'https://wordpress.com' ) {
 		queryArgs.calypso_origin = location.origin;
