@@ -28,8 +28,8 @@ const useFetchTestConnection = (
 			enabled: isPartnerOAuthTokenLoaded,
 			refetchOnWindowFocus: false,
 			// We don't want to trigger another API request to the /test-connection endpoint for a given site
-			// five minutes after the first successful one.
-			staleTime: 1000 * 60 * 5,
+			// one minute after the first successful one.
+			staleTime: 1000 * 60,
 			onSuccess: ( data ) => {
 				// We are setting the "is_connected" property of the site in the query cache of the "sites"
 				// API to the value returned by the /test-connection endpoint. We are doing this to filter
