@@ -297,7 +297,7 @@ export const redirectSiteEditor = async ( context ) => {
  *
  * @param {Object} context Shared context in the route.
  * @param {Function} next  Next registered callback for the route.
- * @returns {*}            Whatever the next callback returns.
+ * @returns undefined      Whatever the next callback returns.
  */
 export function redirectToPermalinkIfLoggedOut( context, next ) {
 	if ( isUserLoggedIn( context.store.getState() ) ) {
