@@ -1,24 +1,19 @@
-import { Locator, Page } from 'playwright';
-import { envVariables } from '../..';
+import { Page } from 'playwright';
+import { EditorWindow, envVariables } from '../..';
 
 type TemplateCategory = 'About';
 
 /**
  * Represents the page template selection modal when first loading a new page in the editor.
  */
-export class PageTemplateModalComponent {
-	private page: Page;
-	private editorWindow: Locator;
-
+export class PageTemplateModalComponent extends EditorWindow {
 	/**
 	 * Creates an instance of the page.
 	 *
 	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editorWindow Locator to the editor window.
 	 */
-	constructor( page: Page, editorWindow: Locator ) {
-		this.page = page;
-		this.editorWindow = editorWindow;
+	constructor( page: Page ) {
+		super( page );
 	}
 
 	/**
@@ -27,12 +22,13 @@ export class PageTemplateModalComponent {
 	 * @param {TemplateCategory} category Name of the category to select.
 	 */
 	async selectTemplateCategory( category: TemplateCategory ): Promise< void > {
+		const editorFrame = await this.getEditorFrame();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			await this.editorWindow
+			await editorFrame
 				.locator( '.page-pattern-modal__mobile-category-dropdown' )
 				.selectOption( category.toLowerCase() );
 		} else {
-			await this.editorWindow.getByRole( 'menuitem', { name: category, exact: true } ).click();
+			await editorFrame.getByRole( 'menuitem', { name: category, exact: true } ).click();
 		}
 	}
 
@@ -42,13 +38,15 @@ export class PageTemplateModalComponent {
 	 * @param {string} label Label for the template (the string underneath the preview).
 	 */
 	async selectTemplate( label: string ): Promise< void > {
-		await this.editorWindow.getByRole( 'option', { name: label, exact: true } ).click();
+		const editorFrame = await this.getEditorFrame();
+		await editorFrame.getByRole( 'option', { name: label, exact: true } ).click();
 	}
 
 	/**
 	 * Select a blank page as your template.
 	 */
 	async selectBlankPage(): Promise< void > {
-		await this.editorWindow.getByRole( 'button', { name: 'Blank page' } ).click();
+		const editorFrame = await this.getEditorFrame();
+		await editorFrame.getByRole( 'button', { name: 'Blank page' } ).click();
 	}
 }
