@@ -1,5 +1,10 @@
+import {
+	JETPACK_BACKUP_STAGING_GET_REQUEST,
+	JETPACK_BACKUP_STAGING_GET_REQUEST_SUCCESS,
+	JETPACK_BACKUP_STAGING_GET_REQUEST_FAILURE,
+} from 'calypso/state/action-types';
 import { BACKUP_STAGING_UPDATE_REQUEST } from '../constants';
-import { stagingSitesList, updateStagingFlagRequestStatus } from '../reducer';
+import { stagingSitesList, updateStagingFlagRequestStatus, site } from '../reducer';
 import { testActions, updateStagingActions } from './fixtures';
 
 const defaultState = {
@@ -77,5 +82,46 @@ describe( 'mark sites as staging', () => {
 				updateStagingFlagRequestStatus( updateStagingDefaultState, updateStagingActions.failure )
 			).toBe( BACKUP_STAGING_UPDATE_REQUEST.FAILED );
 		} );
+	} );
+} );
+
+describe( 'fetch site staging info', () => {
+	test( 'should return hasFetched = false and isFetching = true if JETPACK_BACKUP_STAGING_INFO_REQUEST action is dispatched', () => {
+		const siteReducer = site( undefined, {
+			type: JETPACK_BACKUP_STAGING_GET_REQUEST,
+			siteId: 111111,
+		} );
+
+		expect( siteReducer.hasFetched ).toBe( false );
+		expect( siteReducer.isFetching ).toBe( true );
+	} );
+
+	test( 'should return hasFetched = true, isFetching = false and site info if JETPACK_BACKUP_STAGING_INFO_REQUEST_SUCCESS action is dispatched', () => {
+		const siteInfo = {
+			blog_id: 222222,
+			domain: 'test1.jurassic.ninja',
+			siteurl: 'https://test1.jurassic.ninja',
+			staging: true,
+		};
+
+		const siteReducer = site( undefined, {
+			type: JETPACK_BACKUP_STAGING_GET_REQUEST_SUCCESS,
+			siteId: 222222,
+			site: siteInfo,
+		} );
+
+		expect( siteReducer.hasFetched ).toBe( true );
+		expect( siteReducer.isFetching ).toBe( false );
+		expect( siteReducer.info ).toEqual( siteInfo );
+	} );
+
+	test( 'should return hasFetched = false and isFetching = false if JETPACK_BACKUP_STAGING_INFO_REQUEST_FAILURE action is dispatched', () => {
+		const siteReducer = site( undefined, {
+			type: JETPACK_BACKUP_STAGING_GET_REQUEST_FAILURE,
+			siteId: 333333,
+		} );
+
+		expect( siteReducer.hasFetched ).toBe( false );
+		expect( siteReducer.isFetching ).toBe( false );
 	} );
 } );

@@ -1,5 +1,8 @@
 import { AnyAction } from 'redux';
 import {
+	JETPACK_BACKUP_STAGING_GET_REQUEST,
+	JETPACK_BACKUP_STAGING_GET_REQUEST_SUCCESS,
+	JETPACK_BACKUP_STAGING_GET_REQUEST_FAILURE,
 	JETPACK_BACKUP_STAGING_LIST_REQUEST,
 	JETPACK_BACKUP_STAGING_LIST_REQUEST_SUCCESS,
 	JETPACK_BACKUP_STAGING_LIST_REQUEST_FAILURE,
@@ -60,7 +63,42 @@ export const updateStagingFlagRequestStatus = (
 	return state;
 };
 
+export const getSiteInitialState = {
+	isFetching: false,
+	hasFetched: false,
+	info: {},
+};
+
+export const site = ( state = getSiteInitialState, action: AnyAction ) => {
+	switch ( action.type ) {
+		case JETPACK_BACKUP_STAGING_GET_REQUEST:
+			return {
+				...state,
+				hasFetched: false,
+				isFetching: true,
+			};
+
+		case JETPACK_BACKUP_STAGING_GET_REQUEST_SUCCESS:
+			return {
+				...state,
+				hasFetched: true,
+				isFetching: false,
+				info: action.site,
+			};
+
+		case JETPACK_BACKUP_STAGING_GET_REQUEST_FAILURE:
+			return {
+				...state,
+				hasFetched: false,
+				isFetching: false,
+			};
+	}
+
+	return state;
+};
+
 export default combineReducers( {
+	site,
 	stagingSitesList,
 	updateStagingFlagRequestStatus,
 } );
