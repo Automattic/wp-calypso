@@ -3,7 +3,7 @@ import { useQuery } from 'react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import type { HappychatAuth } from './types';
 
-export const happychatAuthQueryKey = 'getHappychatAuth-' + Date.now();
+export const happychatAuthQueryKey = 'getHappychatAuth';
 
 interface APIFetchOptions {
 	global: boolean;
@@ -29,5 +29,8 @@ export default function useHappychatAuth( enabled = true ) {
 	return useQuery< HappychatAuth >( [ happychatAuthQueryKey ], requestHappyChatAuth, {
 		staleTime: 10 * 60 * 1000, // 10 minutes
 		enabled,
+		meta: {
+			persist: false,
+		},
 	} );
 }
