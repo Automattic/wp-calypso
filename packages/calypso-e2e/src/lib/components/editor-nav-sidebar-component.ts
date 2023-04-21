@@ -1,4 +1,5 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
+import { EditorWindow } from './editor-window';
 
 const panel = '.wpcom-block-editor-nav-sidebar-nav-sidebar__container';
 const selectors = {
@@ -9,19 +10,15 @@ const selectors = {
  * Represents an instance of the WordPress.com Editor's navigation sidebar.
  * The component is available only in the Desktop viewport for the post editor.
  */
-export class EditorNavSidebarComponent {
-	private page: Page;
-	private editor: Locator;
-
+export class EditorNavSidebarComponent extends EditorWindow {
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
 	 * @param {Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( page: Page, editor: Locator ) {
-		this.page = page;
-		this.editor = editor;
+	constructor( page: Page ) {
+		super( page );
 	}
 
 	/**
@@ -30,7 +27,8 @@ export class EditorNavSidebarComponent {
 	 * Clicks the Dashboard menu link to exit the editor.
 	 */
 	async exitEditor(): Promise< void > {
-		const exitLinkLocator = this.editor.locator( selectors.exitLink );
+		const editorFrame = await this.getEditorFrame();
+		const exitLinkLocator = editorFrame.locator( selectors.exitLink );
 		await exitLinkLocator.click();
 	}
 }
