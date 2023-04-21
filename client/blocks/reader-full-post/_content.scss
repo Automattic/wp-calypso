@@ -455,18 +455,21 @@
 		display: flex;
 
 		.image-wrapper {
+			height: 24px !important;
+			width: 24px !important;
+
 			&:first-child {
 				margin-left: -2px;
 			}
 			&:not(:first-child) {
-				margin-left: -15px;
+				margin-left: -12px;
 			}
 
 			img {
-				border: 2px solid #fff;
-				border-radius: 50%;
-				height: 24px;
-				width: 24px;
+				border: 2px solid #fff !important;
+				border-radius: 50% !important;
+				height: 24px !important;
+				width: 24px !important;
 			}
 		}
 	}
@@ -475,7 +478,7 @@
 		color: var(--studio-gray-80);
 		font-family: sans-serif;
 		font-size: $font-body;
-		margin-left: 6px;
+		margin-left: 8px;
 		text-decoration: underline;
 
 		&:hover {
