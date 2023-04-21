@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
+import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { WpcomTourKit, usePrefetchTourAssets } from '@automattic/tour-kit';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
@@ -48,13 +49,13 @@ function LaunchWpcomWelcomeTour() {
 	const { siteIntent, siteIntentFetched } = useSiteIntent();
 	const localeSlug = useLocale();
 	const editorType = getEditorType();
-	const showLaunchpad = getQueryArg( window.location.search, 'showLaunchpad' );
+	const isStartWritingFlow = getQueryArg( window.location.search, START_WRITING_FLOW );
 
 	// Preload first card image (others preloaded after open state confirmed)
 	usePrefetchTourAssets( [ getTourSteps( localeSlug, false, false, null, siteIntent )[ 0 ] ] );
 
 	useEffect( () => {
-		if ( showLaunchpad ) {
+		if ( isStartWritingFlow ) {
 			return;
 		}
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
@@ -79,10 +80,10 @@ function LaunchWpcomWelcomeTour() {
 		siteIntent,
 		siteIntentFetched,
 		editorType,
-		showLaunchpad,
+		isStartWritingFlow,
 	] );
 
-	if ( ! show || isNewPageLayoutModalOpen || showLaunchpad ) {
+	if ( ! show || isNewPageLayoutModalOpen || isStartWritingFlow ) {
 		return null;
 	}
 
