@@ -1,4 +1,5 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
+import { EditorWindow } from './editor-window';
 
 const selectors = {
 	acceptCookie: '.a8c-cookie-banner__ok-button',
@@ -7,26 +8,22 @@ const selectors = {
 /**
  * Represents the cookie banner shown on pages when not logged in.
  */
-export class CookieBannerComponent {
-	private page: Page;
-	private editor: Locator;
-
+export class CookieBannerComponent extends EditorWindow {
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page } page The underlying page.
-	 * @param {Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( page: Page, editor: Locator ) {
-		this.page = page;
-		this.editor = editor;
+	constructor( page: Page ) {
+		super( page );
 	}
 
 	/**
 	 * Accept and clear the cookie notice.
 	 */
 	async acceptCookie(): Promise< void > {
-		const locator = this.editor.locator( selectors.acceptCookie );
+		const editorFrame = await this.getEditorFrame();
+		const locator = editorFrame.locator( selectors.acceptCookie );
 
 		// Whether the cookie banner appears is not deterministic.
 		// If it is not present, exit early.
