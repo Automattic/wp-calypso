@@ -1,4 +1,3 @@
-import { Locator } from 'playwright';
 import { OpenInlineInserter } from '../../pages';
 import { BlockFlow, EditorContext, PublishedPostContext } from '.';
 
@@ -87,8 +86,9 @@ export class LayoutGridBlockFlow implements BlockFlow {
 	): Promise< void > {
 		// The inline inserter can be opened in a lot of ways.
 		// We have to define our own function to do so, and make sure we're clicking the right button.
-		const openInlineInserter: OpenInlineInserter = async ( editor: Locator ) => {
-			const addBlockButtonLocator = editor.locator(
+		const openInlineInserter: OpenInlineInserter = async () => {
+			const editorCanvas = await context.editorPage.getEditorCanvas();
+			const addBlockButtonLocator = editorCanvas.locator(
 				selectors.addBlockButton( columnDetails.columnNumber )
 			);
 			// On mobile, a lot of clicks are eaten en route to the button. This doesn't play well with Playwright and can cause fragility.
