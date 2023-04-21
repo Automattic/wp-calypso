@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { mapSingleLicenseApiToLicense } from './utils';
 import type { UserLicenseApi, UserLicense } from './types';
