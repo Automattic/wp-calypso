@@ -6,6 +6,8 @@
 }
 
 .layout.has-header-section.is-section-reader .layout__header-section-content {
+	max-width: 1140px;
+	margin: 0 auto;
 	h1 {
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 		font-size: 60px; /* stylelint-disable-line declaration-property-unit-allowed-list */
@@ -26,6 +28,10 @@
 	@include break-medium {
 		padding-left: 108px;
 		padding-right: 108px;
+	}
+	@include break-wide {
+		padding-left: 0;
+		padding-right: 0;
 	}
 }
 
