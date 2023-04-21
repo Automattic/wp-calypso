@@ -25,7 +25,7 @@ const updateStagingFlagSuccess = ( { siteId }: UpdateStagingFlagRequestActionTyp
 		type: JETPACK_BACKUP_STAGING_UPDATE_REQUEST_SUCCESS,
 		siteId,
 	},
-	successNotice( 'Site has been marked as a Staging Site successfully.', {
+	successNotice( 'Site staging status has been successfully updated.', {
 		duration: 5000,
 		isPersistent: true,
 	} ),
@@ -40,7 +40,7 @@ const updateStagingFlagError = (
 		siteId,
 		error,
 	},
-	errorNotice( 'Marking site as a Staging Site failed. Please, try again.', {
+	errorNotice( 'Updating site staging status failed.  Please, try again.', {
 		duration: 5000,
 		isPersistent: true,
 	} ),
