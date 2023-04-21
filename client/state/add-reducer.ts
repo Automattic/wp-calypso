@@ -37,7 +37,7 @@ export const addReducerToStore =
 		const previousReducer = reducers.get( normalizedKey );
 		const init = initializations.get( normalizedKey );
 
-		if ( previousReducer && reducer !== previousReducer ) {
+		if ( previousReducer && reducer !== previousReducer && ! module.hot ) {
 			throw new Error(
 				`Different reducers on multiple calls to \`addReducerToStore\` for key: ${ normalizedKey }`
 			);
