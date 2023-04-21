@@ -365,24 +365,12 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansForPlanFeatures() {
-		const { intervalType, selectedPlan, showTreatmentPlansReorderTest, is2023PricingGridVisible } =
-			this.props;
+		const { intervalType, selectedPlan, showTreatmentPlansReorderTest } = this.props;
 
 		const term = this.getPlanBillingPeriod( intervalType, getPlan( selectedPlan )?.term );
 		const plans = this.getPlansFromProps( GROUP_WPCOM, term );
 
-		if ( is2023PricingGridVisible ) {
-			/*
-			 * We need to pass all the plans in order to show the correct features in the plan comparison table.
-			 * Pleas use the getVisiblePlansForPlanFeatures selector to filter out the plans that should not be visible.
-			 */
-			return plans;
-		}
-
-		if ( showTreatmentPlansReorderTest ) {
-			return plans.reverse();
-		}
-		return plans;
+		return showTreatmentPlansReorderTest ? plans.reverse() : plans;
 	}
 
 	getPlansFromProps( group, term ) {
@@ -595,6 +583,12 @@ export class PlansFeaturesMain extends Component {
 			planTypeSelectorProps,
 		} = this.props;
 
+		/*
+		 * We need to pass all the plans in order to show the correct features in the plan comparison table.
+		 * Pleas use the getVisiblePlansForPlanFeatures selector to filter out the plans that should not be visible.
+		 * Also, note that the old pricing gird only needs the visible plans. Thus, when it's the old pricing grid,
+		 * we pass `visiblePlans` to its `plans` prop.
+		 */
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 		const kindOfPlanTypeSelector = this.getKindOfPlanTypeSelector( this.props );
