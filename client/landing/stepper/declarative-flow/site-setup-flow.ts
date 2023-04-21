@@ -290,8 +290,12 @@ const siteSetupFlow: Flow = {
 
 					// End of Pattern Assembler flow
 					if ( isBlankCanvasDesign( selectedDesign ) ) {
-						window.sessionStorage.setItem( 'wpcom_signup_completed_flow', 'pattern_assembler' );
-						return exitFlow( `/site-editor/${ siteSlug }?canvas=edit` );
+						const params = new URLSearchParams( {
+							canvas: 'edit',
+							assembler: '1',
+						} );
+
+						return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 					}
 
 					// If the user skips starting point, redirect them to the post editor
