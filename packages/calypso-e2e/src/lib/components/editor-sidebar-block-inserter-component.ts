@@ -1,5 +1,6 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
 import envVariables from '../../env-variables';
+import { EditorWindow } from './editor-window';
 
 const sidebarParentSelector = '.block-editor-inserter__main-area';
 const selectors = {
@@ -13,19 +14,14 @@ const selectors = {
 /**
  * Represents the primary, sidebar block inserter in the editor.
  */
-export class EditorSidebarBlockInserterComponent {
-	private page: Page;
-	private editor: Locator;
-
+export class EditorSidebarBlockInserterComponent extends EditorWindow {
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editor Frame-safe locator to the editor.
 	 */
-	constructor( page: Page, editor: Locator ) {
-		this.page = page;
-		this.editor = editor;
+	constructor( page: Page ) {
+		super( page );
 	}
 
 	/**
@@ -39,7 +35,8 @@ export class EditorSidebarBlockInserterComponent {
 			return;
 		}
 
-		const blockInserterPanelLocator = this.editor.locator( selectors.closeBlockInserterButton );
+		const editorFrame = await this.getEditorFrame();
+		const blockInserterPanelLocator = editorFrame.locator( selectors.closeBlockInserterButton );
 		if ( ( await blockInserterPanelLocator.count() ) > 0 ) {
 			await blockInserterPanelLocator.click();
 		}
@@ -51,7 +48,8 @@ export class EditorSidebarBlockInserterComponent {
 	 * @param {string} text Text to enter into the search input.
 	 */
 	async searchBlockInserter( text: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.blockSearchInput );
+		const editorFrame = await this.getEditorFrame();
+		const locator = editorFrame.locator( selectors.blockSearchInput );
 		await locator.fill( text );
 	}
 
@@ -69,12 +67,13 @@ export class EditorSidebarBlockInserterComponent {
 		name: string,
 		{ type = 'block' }: { type?: 'block' | 'pattern' } = {}
 	): Promise< void > {
+		const editorFrame = await this.getEditorFrame();
 		let locator;
 
 		if ( type === 'pattern' ) {
-			locator = this.editor.locator( selectors.patternResultItem( name ) ).first();
+			locator = editorFrame.locator( selectors.patternResultItem( name ) ).first();
 		} else {
-			locator = this.editor.locator( selectors.blockResultItem( name ) ).first();
+			locator = editorFrame.locator( selectors.blockResultItem( name ) ).first();
 		}
 
 		await Promise.all( [ locator.hover(), locator.focus() ] );
