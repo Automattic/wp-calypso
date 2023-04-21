@@ -64,7 +64,7 @@ const useFetchDashboardSites = (
 						] );
 						return {
 							...site,
-							is_connected: data ? data.connected : true,
+							is_connected: data?.hasOwnProperty( 'connected' ) ? data.connected : true,
 						};
 					} ),
 					total: data.total,
