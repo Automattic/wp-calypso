@@ -348,6 +348,25 @@ export class PlansFeaturesMain extends Component {
 		return plans[ intervalType ] || defaultValue || TERM_ANNUALLY;
 	}
 
+	getDefaultPlanTypes() {
+		const { selectedPlan, sitePlanSlug, hideEnterprisePlan, is2023PricingGridVisible } = this.props;
+
+		const isBloggerAvailable = isBloggerPlan( selectedPlan ) || isBloggerPlan( sitePlanSlug );
+
+		// this should fall into the processing function for the visible plans
+		const isEnterpriseAvailable = is2023PricingGridVisible && ! hideEnterprisePlan;
+
+		return [
+			TYPE_FREE,
+			isBloggerAvailable && TYPE_BLOGGER,
+			TYPE_PERSONAL,
+			TYPE_PREMIUM,
+			TYPE_BUSINESS,
+			TYPE_ECOMMERCE,
+			isEnterpriseAvailable && TYPE_ENTERPRISE_GRID_WPCOM,
+		].filter( ( el ) => el );
+	}
+
 	getPlansForPlanFeatures() {
 		const {
 			intervalType,
@@ -356,35 +375,13 @@ export class PlansFeaturesMain extends Component {
 			hidePersonalPlan,
 			hidePremiumPlan,
 			hideEcommercePlan,
-			hideEnterprisePlan,
-			sitePlanSlug,
 			showTreatmentPlansReorderTest,
 			flowName,
 			is2023PricingGridVisible,
 		} = this.props;
 
-		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
 		const term = this.getPlanBillingPeriod( intervalType, getPlan( selectedPlan )?.term );
-		const plansFromProps = this.getPlansFromProps( GROUP_WPCOM, term );
-
-		let plans;
-		if ( plansFromProps.length ) {
-			plans = plansFromProps;
-		} else {
-			const isBloggerPlanVisible = hideBloggerPlan === true ? false : true;
-			const isEnterprisePlanVisible = is2023PricingGridVisible && ! hideEnterprisePlan;
-			plans = [
-				findPlansKeys( { group: GROUP_WPCOM, type: TYPE_FREE } )[ 0 ],
-				isBloggerPlanVisible &&
-					findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_BLOGGER } )?.[ 0 ],
-				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_PERSONAL } )[ 0 ],
-				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_PREMIUM } )[ 0 ],
-				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_BUSINESS } )[ 0 ],
-				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_ECOMMERCE } )[ 0 ],
-				isEnterprisePlanVisible &&
-					findPlansKeys( { group: GROUP_WPCOM, type: TYPE_ENTERPRISE_GRID_WPCOM } )[ 0 ],
-			].filter( ( el ) => el );
-		}
+		let plans = this.getPlansFromProps( GROUP_WPCOM, term );
 
 		if ( is2023PricingGridVisible ) {
 			/*
@@ -423,7 +420,7 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	getPlansFromProps( group, term ) {
-		const planTypes = this.props.planTypes || [];
+		const planTypes = this.props.planTypes || this.getDefaultPlanTypes();
 
 		return planTypes.reduce( ( accum, type ) => {
 			const plan = findPlansKeys( { group, term, type } )[ 0 ];
