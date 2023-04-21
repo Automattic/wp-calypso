@@ -363,7 +363,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	currentPlanFeatures,
 	shouldLimitGlobalStyles,
 } ) => {
-	const hasCategories = !! categorization?.categories.length;
+	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const filteredStaticDesigns = useMemo( () => {
 		if ( categorization?.selection ) {
 			return filterDesignsByCategory( staticDesigns, categorization.selection );
@@ -460,7 +460,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	shouldLimitGlobalStyles,
 } ) => {
 	const translate = useTranslate();
-	const hasCategories = !! categorization?.categories.length;
+	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 	const hasGeneratedDesigns = generatedDesigns.length > 0;
 	const isShowAll = ! categorization?.selection || categorization?.selection === SHOW_ALL_SLUG;
 

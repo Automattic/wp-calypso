@@ -67,6 +67,59 @@ export function useCategorization(
 	};
 }
 
+export function useCategorizationFromApi(
+	categoryMap: Record< string, Category >,
+	{ defaultSelection, showAllFilter, generatedDesignsFilter }: UseCategorizationOptions
+): Categorization {
+	const { __ } = useI18n();
+
+	const categories = useMemo( () => {
+		const categoryMapKeys = Object.keys( categoryMap ) || [];
+		const hasCategories = !! categoryMapKeys.length;
+
+		const result = categoryMapKeys.map( ( slug ) => ( {
+			...categoryMap[ slug ],
+			slug,
+		} ) );
+
+		if ( generatedDesignsFilter && hasCategories ) {
+			result.unshift( {
+				name: generatedDesignsFilter,
+				slug: SHOW_GENERATED_DESIGNS_SLUG,
+			} );
+		}
+
+		if ( showAllFilter && hasCategories ) {
+			result.unshift( {
+				name: __( 'Show All', __i18n_text_domain__ ),
+				slug: SHOW_ALL_SLUG,
+			} );
+		}
+
+		return result;
+	}, [ showAllFilter, generatedDesignsFilter, categoryMap, __ ] );
+
+	const [ selection, onSelect ] = useState< string | null >(
+		chooseDefaultSelection( categories, defaultSelection )
+	);
+
+	useEffect( () => {
+		// When the category list changes check that the current selection
+		// still matches one of the given slugs, and if it doesn't reset
+		// the current selection.
+		const findResult = categories.find( ( { slug } ) => slug === selection );
+		if ( ! findResult ) {
+			onSelect( chooseDefaultSelection( categories, defaultSelection ) );
+		}
+	}, [ categories, defaultSelection, selection ] );
+
+	return {
+		categories,
+		selection,
+		onSelect,
+	};
+}
+
 /**
  * Chooses which category is the one that should be used by default.
  * If `defaultSelection` is a valid category slug then it'll be used, otherwise it'll be whichever

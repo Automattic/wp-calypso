@@ -137,7 +137,7 @@ const makeRequest = ( originalParams, fn ) => {
 			}
 
 			called = true;
-			const body = e.response || xhr.response;
+			const body = e.response ?? xhr.response;
 			debug( 'body: ', body );
 			debug( 'headers: ', e.headers );
 			fn( null, body, e.headers );
@@ -148,7 +148,7 @@ const makeRequest = ( originalParams, fn ) => {
 			}
 
 			called = true;
-			const error = e.error || e.err || e;
+			const error = e.error ?? e.err ?? e;
 			debug( 'error: ', error );
 			debug( 'headers: ', e.headers );
 			fn( error, null, e.headers );

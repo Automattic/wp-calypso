@@ -42,6 +42,7 @@ $max-list-width: 1300px;
 			line-height: 20px;
 
 			.title {
+				max-width: 350px;
 				@extend %ellipsis;
 
 				a {
