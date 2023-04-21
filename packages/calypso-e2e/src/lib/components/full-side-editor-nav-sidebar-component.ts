@@ -1,4 +1,5 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
+import { EditorWindow } from './editor-window';
 
 const selectors = {
 	exitButton: `a[aria-label="Go back to the Dashboard"]`,
@@ -12,14 +13,15 @@ const selectors = {
  * This is distinct from the post editor because the markup is very different.
  * Unlike the post editor's, this is visible on all viewports for the site editor.
  */
-export class FullSiteEditorNavSidebarComponent {
+export class FullSiteEditorNavSidebarComponent extends EditorWindow {
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( private page: Page, private editor: Locator ) {}
+	constructor( page: Page ) {
+		super( page );
+	}
 
 	/**
 	 * Exits the site editor.
@@ -27,7 +29,8 @@ export class FullSiteEditorNavSidebarComponent {
 	 * Clicks the Dashboard menu link to exit the editor.
 	 */
 	async exit(): Promise< void > {
-		const exitButtonLocator = this.editor
+		const editorFrame = await this.getEditorFrame();
+		const exitButtonLocator = editorFrame
 			.getByRole( 'region', { name: 'Navigation sidebar' } )
 			.locator( selectors.exitButton );
 		await exitButtonLocator.click();
@@ -37,22 +40,24 @@ export class FullSiteEditorNavSidebarComponent {
 	 * Clicks sidebar link to open the template parts list.
 	 */
 	async navigateToTemplatePartsManager(): Promise< void > {
-		await this.editor.locator( selectors.templatePartsItem ).click();
-		await this.editor.locator( selectors.manageAllTemplatePartsItem ).click();
+		const editorFrame = await this.getEditorFrame();
+		await editorFrame.locator( selectors.templatePartsItem ).click();
+		await editorFrame.locator( selectors.manageAllTemplatePartsItem ).click();
 	}
 
 	/**
 	 * Ensures that the nav sidebar is at the top level ("Design")
 	 */
 	async ensureNavigationTopLevel(): Promise< void > {
+		const editorFrame = await this.getEditorFrame();
 		const waitForNavigationTopLevel = async () => {
-			await this.editor
+			await editorFrame
 				.getByRole( 'region', { name: 'Navigation sidebar' } )
 				.locator( selectors.exitButton )
 				.waitFor();
 		};
 
-		const headerLocator = this.editor.locator( selectors.navigationScreenTitle );
+		const headerLocator = editorFrame.locator( selectors.navigationScreenTitle );
 		await headerLocator.waitFor();
 		const headerText = await headerLocator.innerText();
 		if ( headerText === 'Design' ) {
@@ -78,6 +83,7 @@ export class FullSiteEditorNavSidebarComponent {
 	 * Clicks on a button with the exact name.
 	 */
 	async clickNavButtonByExactText( text: string ): Promise< void > {
-		await this.editor.getByRole( 'button', { name: text, exact: true } ).click();
+		const editorFrame = await this.getEditorFrame();
+		await editorFrame.getByRole( 'button', { name: text, exact: true } ).click();
 	}
 }
