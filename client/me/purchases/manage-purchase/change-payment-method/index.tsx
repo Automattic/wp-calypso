@@ -51,21 +51,20 @@ function ChangePaymentMethod( {
 
 	const isDataLoading =
 		! hasLoadedSites || ! hasLoadedUserPurchases || isLoadingStoredCards || isStripeLoading;
-	const isDataValid = purchase;
 
 	useEffect( () => {
-		if ( ! isDataLoading && ! isDataValid ) {
+		if ( ! isDataLoading && ! purchase ) {
 			// Redirect if invalid data
 			page( purchaseListUrl );
 		}
-	}, [ isDataLoading, isDataValid, purchaseListUrl ] );
+	}, [ isDataLoading, purchase, purchaseListUrl ] );
 
 	const currentPaymentMethodId = getPaymentMethodIdFromPayment( payment );
 	const changePaymentMethodTitle = getChangePaymentMethodTitleCopy( currentPaymentMethodId );
 	const paymentMethods = useCreateAssignablePaymentMethods( currentPaymentMethodId );
 	const reduxDispatch = useDispatch();
 
-	if ( isDataLoading || ! isDataValid ) {
+	if ( isDataLoading || ! purchase ) {
 		return (
 			<Fragment>
 				<QueryUserPurchases />

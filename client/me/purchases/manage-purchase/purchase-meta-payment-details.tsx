@@ -35,7 +35,8 @@ function PurchaseMetaPaymentDetails( {
 	if (
 		! canEditPaymentDetails( purchase ) ||
 		! isPaidWithCreditCard( purchase ) ||
-		( ( ! site || ! siteSlug ) && ! isAkismetPurchase )
+		! siteSlug ||
+		( ! site && ! isAkismetPurchase )
 	) {
 		return <li>{ paymentDetails }</li>;
 	}
