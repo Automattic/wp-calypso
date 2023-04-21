@@ -5,13 +5,13 @@ import TabView from '../tab-view';
 
 const Pending = () => {
 	const {
-		data: { pendingSites, totalCount: totalPendingSitesCount },
+		data: { pendingSites, totalCount: totalPendingSitesCount = 0 },
 		isLoading: isLoadingPendingSites,
 		error: errorPendingSites,
 	} = SubscriptionManager.usePendingSiteSubscriptionsQuery();
 
 	const {
-		data: { pendingPosts, totalCount: totalPendingPostsCount },
+		data: { pendingPosts, totalCount: totalPendingPostsCount = 0 },
 		isLoading: isLoadingPendingPosts,
 		error: errorPendingPosts,
 	} = SubscriptionManager.usePendingPostSubscriptionsQuery();
@@ -39,8 +39,8 @@ const Pending = () => {
 			errorMessage={ errorMessage }
 			isLoading={ isLoadingPendingSites || isLoadingPendingPosts }
 		>
-			{ totalPendingSitesCount && <PendingSiteList pendingSites={ pendingSites } /> }
-			{ totalPendingPostsCount && <PendingPostList pendingPosts={ pendingPosts } /> }
+			{ totalPendingSitesCount > 0 && <PendingSiteList pendingSites={ pendingSites } /> }
+			{ totalPendingPostsCount > 0 && <PendingPostList pendingPosts={ pendingPosts } /> }
 		</TabView>
 	);
 };
