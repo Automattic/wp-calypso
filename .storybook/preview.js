@@ -3,22 +3,6 @@ import './index.scss';
 export const parameters = {
 	layout: 'fullscreen',
 	viewport: {
-		/**
-		 * These viewports are from Gutenberg.
-		 * We can use this to set `parameters.viewport` in a story.
-		 *
-		 * @example
-		 * export default {
-		 *   title: 'sample',
-		 *   component: Sample,
-		 *   parameters: {
-		 *     viewport: {
-		 *       defaultViewport: 'SMALL',
-		 *     },
-		 *   },
-		 * }
-		 * @see https://github.com/WordPress/gutenberg/blob/db2f753977d1b5c28f1ff80b3fc32aa1d7a6a773/packages/base-styles/_breakpoints.scss#L6-L13
-		 */
 		viewports: {
 			HUGE: {
 				name: 'HUGE',

@@ -3,7 +3,11 @@ const devConfig = require( '../config/development.json' );
 const storybookDefaultConfig = require( '@automattic/calypso-storybook' );
 
 const storybookConfig = storybookDefaultConfig( {
-	stories: [ '../client/**/*.stories.{ts,tsx}', '../packages/design-picker/**/*.stories.{ts,tsx}' ],
+	stories: [
+		'../client/**/*.stories.{ts,tsx}',
+		'../packages/design-picker/**/*.stories.{ts,tsx}',
+		'../packages/components/**/*.stories.{ts,tsx}',
+	],
 } );
 
 const configData = { ...sharedConfig, ...devConfig };
