@@ -22,7 +22,7 @@ export type ActiveDiscount = {
 		type: string;
 		group: string;
 	}[];
-	plansPageNoticeTextTitle?: undefined;
+	plansPageNoticeTextTitle?: string;
 };
 
 /**
