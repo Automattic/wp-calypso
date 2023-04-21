@@ -2,23 +2,38 @@ import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { CommentList } from 'calypso/landing/subscriptions/components/comment-list';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice } from 'calypso/landing/subscriptions/components/notice';
+import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
 import useSearch from 'calypso/landing/subscriptions/hooks/use-search';
 import TabView from '../tab-view';
+
+const SortBy = SubscriptionManager.PostSubscriptionsSortBy;
+
+const useSortOptions = (): Option[] => {
+	const translate = useTranslate();
+
+	return [
+		{ value: SortBy.PostName, label: translate( 'Post name' ) },
+		{ value: SortBy.RecentlySubscribed, label: translate( 'Recently subscribed' ) },
+	];
+};
 
 const isListControlsEnabled = config.isEnabled( 'subscription-management/comments-list-controls' );
 
 const Comments = () => {
 	const translate = useTranslate();
+	const [ sortTerm, setSortTerm ] = useState( SortBy.RecentlyCommented );
 	const { searchTerm, handleSearch } = useSearch();
+	const sortOptions = useSortOptions();
 
 	const {
 		data: { posts, totalCount },
 		isLoading,
 		error,
-	} = SubscriptionManager.usePostSubscriptionsQuery( { searchTerm } );
+	} = SubscriptionManager.usePostSubscriptionsQuery( { searchTerm, sortTerm } );
 
 	// todo: translate when we have agreed on the error message
 	const errorMessage = error ? 'An error occurred while fetching your subscriptions.' : '';
@@ -39,6 +54,7 @@ const Comments = () => {
 						searchIcon={ <SearchIcon size={ 18 } /> }
 						onSearch={ handleSearch }
 					/>
+					<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
 				</div>
 			) }
 
