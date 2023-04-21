@@ -103,7 +103,10 @@ const JetpackFAQ: FC = () => {
 							className="jetpack-faq__section"
 						>
 							{ translate(
-								"If your site's backup storage limit is reached, your older backups will be deleted. Depending on the size of your site and your site's backup storage limit, your site's backup retention period may be reduced down to 7 days of your most recent backups. You will still be able to restore existing backups, but new site updates will not be backed up until you free up storage or upgrade your storage limit."
+								'If your backup storage limit is reached, older backups will be deleted and, depending on your site’s size, the backup retention period (archive) might be reduced to %(monthlyDays)d days. This will affect how far back you can see backups in your activity log. Existing backups can still be restored, but new updates won’t be backed up until you upgrade or free up storage.',
+								{
+									args: { monthlyDays: 7 },
+								}
 							) }
 						</FoldableFAQ>
 					</li>

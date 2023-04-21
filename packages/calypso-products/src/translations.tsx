@@ -955,18 +955,29 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 	};
 };
 
-export const getJetpackProductsFAQs = (): Record< string, Array< FAQ > > => {
+export const getJetpackProductsFAQs = (
+	getHelpLink: ( context: unknown ) => JSX.Element
+): Record< string, Array< FAQ > > => {
 	const backupFAQs: Array< FAQ > = [
 		{
+			id: 'backup-storage-limits',
 			question: translate( '*How do backup storage limits work?' ),
 			answer: translate(
-				'If your backup storage limit is reached, older backups will be deleted and, depending on your site’s size, the backup retention period (archive) might be reduced to 7 days. This will affect how far back you can see backups in your activity log. Existing backups can still be restored, but new updates won’t be backed up until you upgrade or free up storage.'
+				'If your backup storage limit is reached, older backups will be deleted and, depending on your site’s size, the backup retention period (archive) might be reduced to %(monthlyDays)d days. This will affect how far back you can see backups in your activity log. Existing backups can still be restored, but new updates won’t be backed up until you upgrade or free up storage.',
+				{
+					args: { monthlyDays: 7 },
+				}
 			),
 		},
 		{
+			id: 'cancellation-policy',
 			question: translate( 'What is your cancellation policy?' ),
 			answer: translate(
-				'If you are dissatisfied for any reason, we offer full refunds within 14 days for yearly plans, and within 7 days for monthly plans. If you have a question about our paid plans, please let us know!'
+				'If you are dissatisfied for any reason, we offer full refunds within %(annualDays)d days for yearly plans, and within %(monthlyDays)d days for monthly plans. If you have a question about our paid plans, {{helpLink}}please let us know{{/helpLink}}!',
+				{
+					args: { annualDays: 14, monthlyDays: 7 },
+					components: { helpLink: getHelpLink( 'cancellation' ) },
+				}
 			),
 		},
 	];
@@ -975,6 +986,10 @@ export const getJetpackProductsFAQs = (): Record< string, Array< FAQ > > => {
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupFAQs,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupFAQs,
 		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupFAQs,
+		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupFAQs,
+		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: backupFAQs,
+		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupFAQs,
+		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: backupFAQs,
 	};
 };
 

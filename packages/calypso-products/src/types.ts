@@ -102,6 +102,7 @@ export interface JetpackTag {
 }
 
 export interface FAQ {
+	id: string;
 	question: TranslateResult;
 	answer: TranslateResult;
 }
@@ -234,7 +235,6 @@ export type Plan = BillingTerm & {
 	getProductsIncluded?: () => ReadonlyArray< string >;
 	getWhatIsIncluded?: () => Array< TranslateResult >;
 	getBenefits?: () => Array< TranslateResult >;
-	getFAQs?: () => Array< FAQ >;
 	getRecommendedFor?: () => Array< JetpackTag >;
 	getTagline?: () => TranslateResult;
 	getPlanCardFeatures?: () => Feature[];

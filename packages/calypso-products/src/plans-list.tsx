@@ -1956,20 +1956,6 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		translate( 'Save time manually reviewing spam' ),
 		translate( 'Best-in-class support from WordPress experts' ),
 	],
-	getFAQs: () => [
-		{
-			question: translate( '*How do backup storage limits work?' ),
-			answer: translate(
-				'If your backup storage limit is reached, older backups will be deleted and, depending on your site’s size, the backup retention period (archive) might be reduced to 7 days. This will affect how far back you can see backups in your activity log. Existing backups can still be restored, but new updates won’t be backed up until you upgrade or free up storage.'
-			),
-		},
-		{
-			question: translate( 'What is your cancellation policy?' ),
-			answer: translate(
-				'If you are dissatisfied for any reason, we offer full refunds within 14 days for yearly plans, and within 7 days for monthly plans. If you have a question about our paid plans, please let us know!'
-			),
-		},
-	],
 	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
 
