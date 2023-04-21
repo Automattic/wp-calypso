@@ -13,6 +13,7 @@ const {
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
+const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
 const SentryCliPlugin = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
@@ -113,6 +114,16 @@ function filterEntrypoints( entrypoints ) {
 	return allowed;
 }
 
+function addHotMiddlewareIfDev( entry ) {
+	if ( isDevelopment ) {
+		return Object.entries( entry ).reduce( ( acc, [ key, value ] ) => {
+			acc[ key ] = [ 'webpack-hot-middleware/client', ...value ];
+			return acc;
+		}, {} );
+	}
+	return entry;
+}
+
 /**
  * Given a package name, finds the absolute path for it.
  *
@@ -176,14 +187,16 @@ const filePaths = {
 const webpackConfig = {
 	bail: ! isDevelopment,
 	context: __dirname,
-	entry: filterEntrypoints( {
-		'entry-main': [ path.join( __dirname, 'boot', 'app' ) ],
-		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
-		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
-		'entry-stepper': [ path.join( __dirname, 'landing', 'stepper' ) ],
-		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
-		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
-	} ),
+	entry: addHotMiddlewareIfDev(
+		filterEntrypoints( {
+			'entry-main': [ path.join( __dirname, 'boot', 'app' ) ],
+			'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
+			'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
+			'entry-stepper': [ path.join( __dirname, 'landing', 'stepper' ) ],
+			'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
+			'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
+		} )
+	),
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: sourceMapType,
 	output: {
@@ -403,6 +416,8 @@ const webpackConfig = {
 					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
 				},
 			} ),
+		isDevelopment && new webpack.HotModuleReplacementPlugin(),
+		isDevelopment && new ReactRefreshWebpackPlugin( { overlay: false } ),
 	].filter( Boolean ),
 	externals: [ 'keytar' ],
 
