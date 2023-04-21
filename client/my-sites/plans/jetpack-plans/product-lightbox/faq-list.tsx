@@ -11,36 +11,20 @@ const FAQList: React.FC< FAQListProps > = ( { items } ) => {
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
 
-	const onFaqToggle = useCallback(
-		( faqArgs: { id: string; buttonId: string; isExpanded: boolean; height: number } ) => {
-			const { id, buttonId, isExpanded } = faqArgs;
+	const onToggle = useCallback(
+		( faqArgs: { id: string; isExpanded: boolean } ) => {
+			const { id, isExpanded } = faqArgs;
 			const tracksArgs = {
 				site_id: siteId,
 				faq_id: id,
 			};
 
-			const removeHash = () => {
-				history.replaceState( '', document.title, location.pathname + location.search );
-			};
-
-			// Add expanded FAQ buttonId to the URL hash
-			const addHash = () => {
-				history.replaceState(
-					'',
-					document.title,
-					location.pathname + location.search + `#${ buttonId }`
-				);
-			};
-
-			if ( isExpanded ) {
-				addHash();
-				// FAQ opened
-				dispatch( recordTracksEvent( 'calypso_plans_faq_open', tracksArgs ) );
-			} else {
-				removeHash();
-				// FAQ closed
-				dispatch( recordTracksEvent( 'calypso_plans_faq_closed', tracksArgs ) );
-			}
+			dispatch(
+				recordTracksEvent(
+					isExpanded ? 'calypso_plans_faq_open' : 'calypso_plans_faq_closed',
+					tracksArgs
+				)
+			);
 		},
 		[ siteId, dispatch ]
 	);
@@ -53,7 +37,7 @@ const FAQList: React.FC< FAQListProps > = ( { items } ) => {
 		<ul>
 			{ items.map( ( item ) => (
 				<li key={ item.id }>
-					<FoldableFAQ id={ item.id } question={ item.question } onToggle={ onFaqToggle }>
+					<FoldableFAQ id={ item.id } question={ item.question } onToggle={ onToggle }>
 						{ item.answer }
 					</FoldableFAQ>
 				</li>
