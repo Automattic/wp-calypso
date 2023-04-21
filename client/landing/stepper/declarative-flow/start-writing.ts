@@ -10,6 +10,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { setDesignOnSite } from 'calypso/lib/signup/step-actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const startWriting: Flow = {
@@ -40,9 +41,21 @@ const startWriting: Flow = {
 							checklist_statuses: { first_post_published: true },
 						} );
 
+						const defaultFlowThemeSlug = 'livro';
 						const siteOrigin = window.location.origin;
-						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?showLaunchpad=true&origin=${ siteOrigin }`
+
+						setDesignOnSite(
+							() => {
+								redirect(
+									`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?showLaunchpad=true&origin=${ siteOrigin }`
+								);
+							},
+							{
+								siteSlug: providedDependencies?.siteSlug,
+								selectedDesign: {
+									theme: defaultFlowThemeSlug,
+								},
+							}
 						);
 					}
 				}

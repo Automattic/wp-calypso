@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { callApi } from '../helpers';
-import { useIsLoggedIn } from '../hooks';
+import { useCacheKey, useIsLoggedIn } from '../hooks';
 import { PendingSiteSubscription, SubscriptionManagerSubscriptionsCount } from '../types';
 
 type PendingSiteDeleteParams = {
@@ -14,6 +14,7 @@ type PendingSiteDeleteResponse = {
 const usePendingSiteDeleteMutation = () => {
 	const isLoggedIn = useIsLoggedIn();
 	const queryClient = useQueryClient();
+	const countCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 	return useMutation(
 		async ( params: PendingSiteDeleteParams ) => {
 			if ( ! params.id ) {
@@ -40,7 +41,7 @@ const usePendingSiteDeleteMutation = () => {
 		{
 			onMutate: async ( params ) => {
 				await queryClient.cancelQueries( [ 'read', 'pending-site-subscriptions', isLoggedIn ] );
-				await queryClient.cancelQueries( [ 'read', 'subscriptions-count', isLoggedIn ] );
+				await queryClient.cancelQueries( countCacheKey );
 
 				const previousPendingSiteSubscriptions = queryClient.getQueryData<
 					PendingSiteSubscription[]
@@ -57,23 +58,16 @@ const usePendingSiteDeleteMutation = () => {
 				}
 
 				const previousSubscriptionsCount =
-					queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >( [
-						'read',
-						'subscriptions-count',
-						isLoggedIn,
-					] );
+					queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >( countCacheKey );
 
 				// decrement the blog count
 				if ( previousSubscriptionsCount ) {
-					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
-						[ 'read', 'subscriptions-count', isLoggedIn ],
-						{
-							...previousSubscriptionsCount,
-							blogs: previousSubscriptionsCount?.pending
-								? previousSubscriptionsCount?.pending - 1
-								: null,
-						}
-					);
+					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >( countCacheKey, {
+						...previousSubscriptionsCount,
+						pending: previousSubscriptionsCount?.pending
+							? previousSubscriptionsCount?.pending - 1
+							: null,
+					} );
 				}
 
 				return { previousPendingSiteSubscriptions, previousSubscriptionsCount };
@@ -87,14 +81,14 @@ const usePendingSiteDeleteMutation = () => {
 				}
 				if ( context?.previousSubscriptionsCount ) {
 					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
-						[ 'read', 'subscriptions-count', isLoggedIn ],
+						countCacheKey,
 						context.previousSubscriptionsCount
 					);
 				}
 			},
 			onSettled: () => {
 				queryClient.invalidateQueries( [ 'read', 'pending-site-subscriptions', isLoggedIn ] );
-				queryClient.invalidateQueries( [ 'read', 'subscriptions-count', isLoggedIn ] );
+				queryClient.invalidateQueries( countCacheKey );
 			},
 		}
 	);

@@ -5,10 +5,10 @@ import { useState, useRef } from 'react';
 import { eye } from '../icons';
 import Popover from '../popover';
 import { comparingInfoBarsChart, comparingInfoRangeChart } from './charts';
-import HighlightCard from './highlight-card';
+import CountComparisonCard from './count-comparison-card';
 import './style.scss';
 
-export type HighlightCardsProps = {
+type WeeklyHighlightCardsProps = {
 	className?: string;
 	counts: {
 		comments: number | null;
@@ -29,7 +29,7 @@ export type HighlightCardsProps = {
 	onClickVisitors: ( event: MouseEvent ) => void;
 };
 
-export default function HighlightCards( {
+export default function WeeklyHighlightCards( {
 	className,
 	counts,
 	onClickComments,
@@ -38,7 +38,7 @@ export default function HighlightCards( {
 	onClickVisitors,
 	previousCounts,
 	showValueTooltip,
-}: HighlightCardsProps ) {
+}: WeeklyHighlightCardsProps ) {
 	const translate = useTranslate();
 
 	const textRef = useRef( null );
@@ -87,7 +87,7 @@ export default function HighlightCards( {
 			</h3>
 
 			<div className="highlight-cards-list">
-				<HighlightCard
+				<CountComparisonCard
 					heading={ translate( 'Visitors' ) }
 					icon={ <Icon icon={ people } /> }
 					count={ counts?.visitors ?? null }
@@ -95,7 +95,7 @@ export default function HighlightCards( {
 					showValueTooltip={ showValueTooltip }
 					onClick={ onClickVisitors }
 				/>
-				<HighlightCard
+				<CountComparisonCard
 					heading={ translate( 'Views' ) }
 					icon={ <Icon icon={ eye } /> }
 					count={ counts?.views ?? null }
@@ -103,7 +103,7 @@ export default function HighlightCards( {
 					showValueTooltip={ showValueTooltip }
 					onClick={ onClickViews }
 				/>
-				<HighlightCard
+				<CountComparisonCard
 					heading={ translate( 'Likes' ) }
 					icon={ <Icon icon={ starEmpty } /> }
 					count={ counts?.likes ?? null }
@@ -111,7 +111,7 @@ export default function HighlightCards( {
 					showValueTooltip={ showValueTooltip }
 					onClick={ onClickLikes }
 				/>
-				<HighlightCard
+				<CountComparisonCard
 					heading={ translate( 'Comments' ) }
 					icon={ <Icon icon={ commentContent } /> }
 					count={ counts?.comments ?? null }

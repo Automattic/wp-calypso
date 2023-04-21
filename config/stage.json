@@ -97,7 +97,7 @@
 		"p2/p2-plus": true,
 		"page/export": true,
 		"pattern-assembler/color-and-fonts": true,
-		"pattern-assembler/dotcompatterns": false,
+		"pattern-assembler/dotcompatterns": true,
 		"pattern-assembler/logged-out-showcase": true,
 		"pattern-assembler/inline-styles": true,
 		"pattern-assembler/notices": true,

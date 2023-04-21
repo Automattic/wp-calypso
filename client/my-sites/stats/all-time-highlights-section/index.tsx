@@ -1,9 +1,9 @@
 import {
 	Card,
 	ComponentSwapper,
-	PercentCalculator as percentCalculator,
-	ShortenedNumber,
 	formattedNumber,
+	percentCalculator,
+	ShortenedNumber,
 } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
@@ -149,7 +149,7 @@ export default function AllTimeHighlightsSection( {
 				},
 			],
 		};
-	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal ] );
+	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal, userLocale ] );
 
 	const mobileCards = (
 		<div className="highlight-cards-mobile">
