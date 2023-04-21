@@ -1,13 +1,13 @@
 import { action } from '@storybook/addon-actions';
-import HighlightCards from '../';
-import AnnualHighlightCards from '../annual-highlight-cards';
+import AnnualCards from '../annual-highlight-cards';
+import WeeklyCards from '../weekly-highlight-cards';
 
 export default { title: 'Highlight Cards' };
 
 const handleClick = action( 'click' );
 
-const HighlightCardsVariations = ( props ) => (
-	<HighlightCards
+const WeeklyVariations = ( props ) => (
+	<WeeklyCards
 		counts={ {
 			comments: 45,
 			likes: 0,
@@ -28,10 +28,10 @@ const HighlightCardsVariations = ( props ) => (
 	/>
 );
 
-export const Default = () => <HighlightCardsVariations />;
+export const WeeklyHighlights = () => <WeeklyVariations />;
 
-export const WithPartialPreviousCounts = () => (
-	<HighlightCardsVariations
+export const WeeklyHighlightsWithPartialPreviousCounts = () => (
+	<WeeklyVariations
 		previousCounts={ {
 			comments: null,
 			likes: null,
@@ -40,14 +40,16 @@ export const WithPartialPreviousCounts = () => (
 		} }
 	/>
 );
-export const WithoutPreviousCounts = () => <HighlightCardsVariations previousCounts={ null } />;
+export const WeeklyHighlightsWithoutPreviousCounts = () => (
+	<WeeklyVariations previousCounts={ null } />
+);
 
-export const WithoutCounts = () => (
-	<HighlightCardsVariations counts={ null } previousCounts={ null } />
+export const WeeklyHighlightsWithoutCounts = () => (
+	<WeeklyVariations counts={ null } previousCounts={ null } />
 );
 
 export const AnnualHighlights = () => (
-	<AnnualHighlightCards
+	<AnnualCards
 		counts={ {
 			comments: 72490,
 			likes: 12298,

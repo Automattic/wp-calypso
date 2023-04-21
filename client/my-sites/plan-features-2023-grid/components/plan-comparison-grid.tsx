@@ -23,17 +23,18 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/plan-type-selector';
 import TermExperimentPlanTypeSelector from 'calypso/my-sites/plans-features-main/term-experiment-plan-type-selector';
-import useIsLargeCurrency from '../plans/hooks/use-is-large-currency';
+import useIsLargeCurrency from '../../plans/hooks/use-is-large-currency';
+import useHighlightAdjacencyMatrix from '../hooks/use-highlight-adjacency-matrix';
+import useHighlightLabel from '../hooks/use-highlight-label';
+import { sortPlans } from '../lib/sort-plan-properties';
+import { plansBreakSmall } from '../media-queries';
+import { PlanProperties } from '../types';
+import { usePricingBreakpoint } from '../util';
 import PlanFeatures2023GridActions from './actions';
 import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
-import PopularBadge from './components/popular-badge';
 import PlanFeatures2023GridHeaderPrice from './header-price';
-import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
-import useHighlightLabel from './hooks/use-highlight-label';
-import { plansBreakSmall } from './media-queries';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
-import { PlanProperties } from './types';
-import { usePricingBreakpoint } from './util';
+import PopularBadge from './popular-badge';
 
 function DropdownIcon() {
 	return (
@@ -620,13 +621,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		? getWooExpressFeaturesGrouped()
 		: getPlanFeaturesGrouped();
 	const hiddenPlans = useMemo( () => [ PLAN_WOOEXPRESS_PLUS, PLAN_ENTERPRISE_GRID_WPCOM ], [] );
-	const displayedPlansProperties = useMemo(
-		() =>
-			( planProperties ?? [] ).filter(
-				( { planName, isVisible } ) => isVisible && ! hiddenPlans.includes( planName )
-			),
-		[ planProperties, hiddenPlans ]
-	);
+
 	const isMonthly = intervalType === 'monthly';
 	const isLargestBreakpoint = usePricingBreakpoint( 1772 ); // 1500px + 272px (sidebar)
 	const isLargeBreakpoint = usePricingBreakpoint( 1612 ); // 1340px + 272px (sidebar)
@@ -637,6 +632,18 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
 		firstSetOfFeatures,
 	] );
+
+	const displayedPlansProperties = useMemo( () => {
+		const filteredPlanProperties = ( planProperties ?? [] ).filter(
+			( { planName, isVisible } ) => isVisible && ! hiddenPlans.includes( planName )
+		);
+		const sortedPlanProperties = sortPlans(
+			filteredPlanProperties,
+			currentSitePlanSlug,
+			isMediumBreakpoint
+		);
+		return sortedPlanProperties;
+	}, [ planProperties, currentSitePlanSlug, isMediumBreakpoint, hiddenPlans ] );
 
 	useEffect( () => {
 		let newVisiblePlans = displayedPlansProperties.map( ( { planName } ) => planName );
@@ -650,10 +657,6 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		visibleLength = isMediumBreakpoint ? 2 : visibleLength;
 
 		if ( newVisiblePlans.length !== visibleLength ) {
-			// ensures current plan is first in the list
-			newVisiblePlans.sort( ( visiblePlan ) =>
-				[ currentSitePlanSlug ].includes( visiblePlan ) ? -1 : 1
-			);
 			newVisiblePlans = newVisiblePlans.slice( 0, visibleLength );
 		}
 
@@ -662,10 +665,8 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		isLargestBreakpoint,
 		isLargeBreakpoint,
 		isMediumBreakpoint,
-		intervalType,
 		displayedPlansProperties,
 		isInSignup,
-		currentSitePlanSlug,
 	] );
 
 	const restructuredFeatures = useMemo( () => {

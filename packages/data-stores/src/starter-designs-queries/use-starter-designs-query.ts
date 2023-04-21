@@ -27,11 +27,10 @@ interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
 
 interface StarterDesignsResponse {
 	filters: { subject: Record< string, Category > };
-	generated: { designs: GeneratedDesign[] };
-	static: { designs: StaticDesign[] };
+	static: { designs: StarterDesign[] };
 }
 
-interface StaticDesign {
+interface StarterDesign {
 	slug: string;
 	title: string;
 	description: string;
@@ -45,13 +44,6 @@ interface StaticDesign {
 	preview_data: PreviewData | null;
 }
 
-interface GeneratedDesign {
-	slug: string;
-	title: string;
-	recipe: DesignRecipe;
-	verticalizable: boolean;
-}
-
 export function useStarterDesignsQuery(
 	queryParams: StarterDesignsQueryParams,
 	{ select, ...queryOptions }: Options = {}
@@ -62,12 +54,7 @@ export function useStarterDesignsQuery(
 				filters: {
 					subject: response.filters?.subject || {},
 				},
-				generated: {
-					designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
-				},
-				static: {
-					designs: response.static?.designs?.map( apiStarterDesignsStaticToDesign ),
-				},
+				designs: response.static?.designs?.map( apiStarterDesignsToDesign ),
 			};
 
 			return select ? select( allDesigns ) : allDesigns;
@@ -88,7 +75,7 @@ function fetchStarterDesigns(
 	} );
 }
 
-function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
+function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 	const {
 		slug,
 		title,
@@ -127,22 +114,5 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		features: [],
 		template: '',
 		theme: '',
-	};
-}
-
-function apiStarterDesignsGeneratedToDesign( design: GeneratedDesign ): Design {
-	const { slug, title, recipe, verticalizable } = design;
-
-	return {
-		slug,
-		title,
-		recipe,
-		verticalizable,
-		is_premium: false,
-		categories: [],
-		features: [],
-		template: '',
-		theme: '',
-		design_type: 'vertical',
 	};
 }

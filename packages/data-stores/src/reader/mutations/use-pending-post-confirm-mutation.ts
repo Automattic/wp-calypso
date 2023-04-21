@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { callApi } from '../helpers';
-import { useIsLoggedIn } from '../hooks';
-import { PendingPostSubscription, SubscriptionManagerSubscriptionsCount } from '../types';
+import { useCacheKey, useIsLoggedIn } from '../hooks';
+import { PendingPostSubscriptionsResult, SubscriptionManagerSubscriptionsCount } from '../types';
 
 type PendingPostConfirmParams = {
 	id: string;
@@ -14,6 +14,7 @@ type PendingPostConfirmResponse = {
 const usePendingPostConfirmMutation = () => {
 	const isLoggedIn = useIsLoggedIn();
 	const queryClient = useQueryClient();
+	const countCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 	return useMutation(
 		async ( { id }: PendingPostConfirmParams ) => {
 			if ( ! id ) {
@@ -40,61 +41,63 @@ const usePendingPostConfirmMutation = () => {
 		{
 			onMutate: async ( { id } ) => {
 				await queryClient.cancelQueries( [ 'read', 'pending-post-subscriptions', isLoggedIn ] );
-				await queryClient.cancelQueries( [ 'read', 'subscriptions-count', isLoggedIn ] );
+				await queryClient.cancelQueries( countCacheKey );
 
-				const previousPendingPostSubscriptions = queryClient.getQueryData<
-					PendingPostSubscription[]
-				>( [ 'read', 'pending-post-subscriptions', isLoggedIn ] );
+				const previousPendingPostSubscriptions =
+					queryClient.getQueryData< PendingPostSubscriptionsResult >( [
+						'read',
+						'pending-post-subscriptions',
+						isLoggedIn,
+					] );
 
-				// remove blog from pending post subscriptions
-				if ( previousPendingPostSubscriptions ) {
-					queryClient.setQueryData< PendingPostSubscription[] >(
+				// remove post comment from pending post subscriptions
+				if ( previousPendingPostSubscriptions?.pendingPosts ) {
+					queryClient.setQueryData< PendingPostSubscriptionsResult >(
 						[ [ 'read', 'pending-post-subscriptions', isLoggedIn ] ],
-						previousPendingPostSubscriptions.filter(
-							( pendingPostSubscription ) => pendingPostSubscription.id !== id
-						)
+						{
+							pendingPosts: previousPendingPostSubscriptions.pendingPosts.filter(
+								( pendingPost ) => pendingPost.id !== id
+							),
+							totalCount: previousPendingPostSubscriptions.totalCount - 1,
+						}
 					);
 				}
 
 				const previousSubscriptionsCount =
-					queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >( [
-						'read',
-						'subscriptions-count',
-						isLoggedIn,
-					] );
+					queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >( countCacheKey );
 
-				// decrement the blog count
+				// decrement the post comment count
 				if ( previousSubscriptionsCount ) {
-					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
-						[ 'read', 'subscriptions-count', isLoggedIn ],
-						{
-							...previousSubscriptionsCount,
-							blogs: previousSubscriptionsCount?.pending
-								? previousSubscriptionsCount?.pending - 1
-								: null,
-						}
-					);
+					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >( countCacheKey, {
+						...previousSubscriptionsCount,
+						comments: previousSubscriptionsCount?.comments
+							? previousSubscriptionsCount?.comments + 1
+							: 1,
+						pending: previousSubscriptionsCount?.pending
+							? previousSubscriptionsCount?.pending - 1
+							: null,
+					} );
 				}
 
 				return { previousPendingPostSubscriptions, previousSubscriptionsCount };
 			},
 			onError: ( error, variables, context ) => {
 				if ( context?.previousPendingPostSubscriptions ) {
-					queryClient.setQueryData< PendingPostSubscription[] >(
+					queryClient.setQueryData< PendingPostSubscriptionsResult >(
 						[ 'read', 'pending-post-subscriptions', isLoggedIn ],
 						context.previousPendingPostSubscriptions
 					);
 				}
 				if ( context?.previousSubscriptionsCount ) {
 					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
-						[ 'read', 'subscriptions-count', isLoggedIn ],
+						countCacheKey,
 						context.previousSubscriptionsCount
 					);
 				}
 			},
 			onSettled: () => {
 				queryClient.invalidateQueries( [ 'read', 'pending-post-subscriptions', isLoggedIn ] );
-				queryClient.invalidateQueries( [ 'read', 'subscriptions-count', isLoggedIn ] );
+				queryClient.invalidateQueries( countCacheKey );
 			},
 		}
 	);

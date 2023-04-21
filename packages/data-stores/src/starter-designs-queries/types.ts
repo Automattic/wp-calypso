@@ -14,6 +14,5 @@ export interface StarterDesignsGenerated {
 
 export interface StarterDesigns {
 	filters: { subject: Record< string, Category > };
-	generated: { designs: Design[] };
-	static: { designs: Design[] };
+	designs: Design[];
 }
