@@ -141,7 +141,7 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 					borderless
 					compact
 				>
-					{ translate( '{{span}}Update to {{/span}} %s', {
+					{ translate( '{{span}}Update to {{/span}}%s', {
 						components: {
 							span: <span />,
 						},
