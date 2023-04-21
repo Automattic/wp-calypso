@@ -107,7 +107,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 		} );
 
 		it( 'Editor loads', async function () {
-			editorPage = new EditorPage( page, { target: 'simple', blockTheme: true } );
+			editorPage = new EditorPage( page );
 			await editorPage.waitUntilLoaded();
 
 			const urlRegex = `/post/${ newSiteDetails.blog_details.site_slug }`;
@@ -123,14 +123,17 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 		} );
 
 		it( 'First post congratulatory message is shown', async function () {
-			const locator = editorPage.getLocator( ':text("Your first post is published!")' );
-			await locator.waitFor();
+			const editorFrame = await editorPage.getEditorFrame();
+
+			await editorFrame.locator( ':text("Your first post is published!")' ).waitFor();
 			await page.keyboard.press( 'Escape' );
 		} );
 
 		it( 'Dismiss Launchpad modal if shown', async function () {
+			const editorFrame = await editorPage.getEditorFrame();
+
 			const selector = '.launchpad__save-modal-buttons button';
-			const locator = editorPage.getLocator( selector );
+			const locator = editorFrame.locator( selector );
 			try {
 				await locator.click( { timeout: 2000 } );
 			} catch {

@@ -28,7 +28,7 @@ export class EditorDimensionsComponent extends EditorWindow {
 	 */
 	constructor( page: Page ) {
 		super( page );
-		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent();
+		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page );
 	}
 
 	/**

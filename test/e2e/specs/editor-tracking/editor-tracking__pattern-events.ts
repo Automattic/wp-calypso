@@ -32,7 +32,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 			await testAccount.authenticate( page );
 
 			eventManager = new EditorTracksEventManager( page );
-			editorPage = new EditorPage( page, { target: features.siteType } );
+			editorPage = new EditorPage( page );
 		} );
 
 		it( 'Start a new page', async function () {
@@ -42,11 +42,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 
 		it( 'Select blank template from modal', async function () {
 			// @TODO Consider moving this to EditorPage.
-			const editorWindowLocator = editorPage.getEditorWindowLocator();
-			const pageTemplateModalComponent = new PageTemplateModalComponent(
-				page,
-				editorWindowLocator
-			);
+			const pageTemplateModalComponent = new PageTemplateModalComponent( page );
 			await pageTemplateModalComponent.selectBlankPage();
 		} );
 
@@ -80,11 +76,8 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 			} );
 
 			it( 'Add pattern from inline inserter', async function () {
-				const selector = 'button[aria-label="Add block"]';
-				const inserterLocator = await editorPage.getLocatorToSelector( selector );
-				if ( ! inserterLocator ) {
-					throw new Error( `Selector ${ selector } did not match any valid selector.` );
-				}
+				const editorCanvas = await editorPage.getEditorCanvas();
+				const inserterLocator = editorCanvas.locator( 'button[aria-label="Add block"]' );
 
 				// The code pattern here is different compared to above because
 				// we are mid-refactor.

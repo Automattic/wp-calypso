@@ -15,7 +15,6 @@ export class EditorNavSidebarComponent extends EditorWindow {
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Locator} editor Locator or FrameLocator to the editor.
 	 */
 	constructor( page: Page ) {
 		super( page );

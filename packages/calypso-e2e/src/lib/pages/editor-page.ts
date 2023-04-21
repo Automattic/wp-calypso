@@ -1,4 +1,4 @@
-import { Page, Frame, ElementHandle, Response, Locator } from 'playwright';
+import { Page, ElementHandle, Response, Locator } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
@@ -17,7 +17,6 @@ import {
 	EditorBlockToolbarComponent,
 } from '../components';
 import { BlockInserter, OpenInlineInserter } from './shared-types';
-import type { SiteType } from '../../lib/utils';
 import type {
 	EditorPreviewOptions,
 	EditorSidebarTab,
@@ -43,7 +42,6 @@ const selectors = {
  * Represents an instance of the WPCOM's Gutenberg editor page.
  */
 export class EditorPage extends EditorWindow {
-	private target: SiteType;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
@@ -63,16 +61,16 @@ export class EditorPage extends EditorWindow {
 	constructor( page: Page ) {
 		super( page );
 
-		this.editorGutenbergComponent = new EditorGutenbergComponent();
-		this.editorToolbarComponent = new EditorToolbarComponent();
-		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent();
-		this.editorPublishPanelComponent = new EditorPublishPanelComponent();
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent();
-		this.editorBlockListViewComponent = new EditorBlockListViewComponent();
-		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent();
-		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent();
-		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent();
-		this.editorInlineBlockInserterComponent = new EditorInlineBlockInserterComponent();
+		this.editorGutenbergComponent = new EditorGutenbergComponent( page );
+		this.editorToolbarComponent = new EditorToolbarComponent( page );
+		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page );
+		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page );
+		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page );
+		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page );
+		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page );
+		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page );
+		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent( page );
+		this.editorInlineBlockInserterComponent = new EditorInlineBlockInserterComponent( page );
 	}
 
 	//#region Generic and Shell Methods
@@ -92,8 +90,6 @@ export class EditorPage extends EditorWindow {
 
 	/**
 	 * Initialization steps to ensure the page is fully loaded.
-	 *
-	 * @returns {Promise<Frame>} iframe holding the editor.
 	 */
 	async waitUntilLoaded(): Promise< void > {
 		// In a typical loading scenario, this request is one of the last to fire.

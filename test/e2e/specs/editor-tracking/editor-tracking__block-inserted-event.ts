@@ -40,7 +40,7 @@ describe(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				editorPage = new EditorPage( page, { target: features.siteType } );
+				editorPage = new EditorPage( page );
 			} );
 
 			it( 'Start a new post', async function () {
@@ -147,7 +147,7 @@ describe(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				editorPage = new EditorPage( page, { target: features.siteType } );
+				editorPage = new EditorPage( page );
 			} );
 
 			it( 'Start a new page', async function () {
@@ -164,11 +164,7 @@ describe(
 			describe( 'From adding a page template', function () {
 				it( 'Add "Two column about me layout" page template', async function () {
 					// @TODO Consider moving this to EditorPage.
-					const editorWindowLocator = editorPage.getEditorWindowLocator();
-					const pageTemplateModalComponent = new PageTemplateModalComponent(
-						page,
-						editorWindowLocator
-					);
+					const pageTemplateModalComponent = new PageTemplateModalComponent( page );
 					await pageTemplateModalComponent.selectTemplateCategory( 'About' );
 					await pageTemplateModalComponent.selectTemplate( 'Two column about me layout' );
 				} );
