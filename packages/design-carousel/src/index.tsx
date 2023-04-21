@@ -27,7 +27,7 @@ export default function DesignCarousel( { onPick, selectedDesignSlugs }: DesignC
 		_locale: locale,
 	} );
 
-	let selectedDesigns = allDesigns?.static.designs;
+	let selectedDesigns = allDesigns?.designs;
 
 	if ( selectedDesigns && selectedDesignSlugs ) {
 		// If we have a restricted set of designs, filter out all unwanted designs

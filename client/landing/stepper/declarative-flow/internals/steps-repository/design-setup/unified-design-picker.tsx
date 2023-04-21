@@ -21,7 +21,6 @@ import { useQuerySitePurchases } from 'calypso/components/data/query-site-purcha
 import FormattedHeader from 'calypso/components/formatted-header';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import WebPreview from 'calypso/components/web-preview/content';
-import { useSiteVerticalQueryById } from 'calypso/data/site-verticals';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToSlug } from 'calypso/lib/url';
@@ -112,25 +111,21 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		)
 	);
 
-	// ********** Logic for vertical
-	const { data: siteVertical, isLoading: isLoadingSiteVertical } =
-		useSiteVerticalQueryById( siteVerticalId );
-
 	// ********** Logic for fetching designs
 	const selectStarterDesigns = ( allDesigns: StarterDesigns ) => {
-		allDesigns.static.designs = allDesigns.static.designs.filter(
+		allDesigns.designs = allDesigns.designs.filter(
 			( design ) => RETIRING_DESIGN_SLUGS.indexOf( design.slug ) === -1
 		);
 
-		const blankCanvasDesignOffset = allDesigns.static.designs.findIndex( isBlankCanvasDesign );
+		const blankCanvasDesignOffset = allDesigns.designs.findIndex( isBlankCanvasDesign );
 		if ( blankCanvasDesignOffset !== -1 ) {
 			// Extract the blank canvas design first and then insert it into the last one for the build and write intents
-			const blankCanvasDesign = allDesigns.static.designs.splice( blankCanvasDesignOffset, 1 );
+			const blankCanvasDesign = allDesigns.designs.splice( blankCanvasDesignOffset, 1 );
 			if (
 				isEnabled( 'signup/design-picker-pattern-assembler' ) &&
 				SITE_ASSEMBLER_AVAILABLE_INTENTS.includes( intent )
 			) {
-				allDesigns.static.designs.push( ...blankCanvasDesign );
+				allDesigns.designs.push( ...blankCanvasDesign );
 			}
 		}
 
@@ -151,29 +146,19 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		}
 	);
 
-	const generatedDesigns = allDesigns?.generated?.designs || [];
-	const staticDesigns = allDesigns?.static?.designs || [];
-
+	const designs = allDesigns?.designs || [];
 	const hasTrackedView = useRef( false );
 	useEffect( () => {
-		if ( ! hasTrackedView.current && staticDesigns.length > 0 ) {
+		if ( ! hasTrackedView.current && designs.length > 0 ) {
 			hasTrackedView.current = true;
 			recordTracksEvent( 'calypso_signup_unified_design_picker_view', {
 				vertical_id: siteVerticalId,
-				generated_designs: generatedDesigns.map( ( design ) => design.slug ).join( ',' ),
-				has_vertical_images:
-					generatedDesigns.some( ( design ) => design.verticalizable ) ||
-					staticDesigns.some( ( design ) => design.verticalizable ),
+				has_vertical_images: designs.some( ( design ) => design.verticalizable ),
 			} );
 		}
-	}, [ hasTrackedView, generatedDesigns, staticDesigns ] );
+	}, [ hasTrackedView, designs ] );
 
-	const categorizationOptions = getCategorizationOptions(
-		intent,
-		true,
-		generatedDesigns.length > 0 ? siteVertical?.title : undefined
-	);
-
+	const categorizationOptions = getCategorizationOptions( intent );
 	const categorization = useCategorizationFromApi(
 		allDesigns?.filters?.subject || {},
 		categorizationOptions
@@ -223,10 +208,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			return;
 		}
 
-		const { generated: generatedDesigns, static: staticDesigns } = allDesigns;
-
-		const designs = [ ...generatedDesigns.designs, ...staticDesigns.designs ];
-
+		const { designs } = allDesigns;
 		const requestedDesign = designs.find( ( design ) => design.slug === themeFromQueryString );
 		if ( ! requestedDesign ) {
 			return;
@@ -486,14 +468,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlugOrId && _selectedDesign ) {
-			let positionIndex = generatedDesigns.findIndex(
-				( design ) => design.slug === _selectedDesign.slug
-			);
-			if ( positionIndex === -1 ) {
-				positionIndex = staticDesigns.findIndex(
-					( design ) => design.slug === _selectedDesign.slug
-				);
-			}
+			const positionIndex = designs.findIndex( ( design ) => design.slug === _selectedDesign.slug );
+
 			setPendingAction( () => {
 				if ( _selectedDesign.is_virtual ) {
 					return applyThemeWithPatterns(
@@ -625,7 +601,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	// ********** Main render logic
 
 	// Don't render until we've done fetching all the data needed for initial render.
-	if ( ! site || isLoadingSiteVertical || isLoadingDesigns ) {
+	if ( ! site || isLoadingDesigns ) {
 		return <StepperLoader />;
 	}
 
@@ -750,8 +726,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const stepContent = (
 		<UnifiedDesignPicker
-			generatedDesigns={ generatedDesigns }
-			staticDesigns={ staticDesigns }
+			designs={ designs }
 			verticalId={ siteVerticalId }
 			locale={ locale }
 			onSelectBlankCanvas={ pickBlankCanvasDesign }

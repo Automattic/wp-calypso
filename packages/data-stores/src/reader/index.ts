@@ -6,6 +6,8 @@ import {
 	useUserSettingsMutation,
 	usePendingSiteConfirmMutation,
 	usePendingSiteDeleteMutation,
+	usePendingPostConfirmMutation,
+	usePendingPostDeleteMutation,
 } from './mutations';
 import {
 	SiteSubscriptionsSortBy,
@@ -32,6 +34,8 @@ export const SubscriptionManager = {
 	usePendingPostSubscriptionsQuery,
 	usePendingSiteConfirmMutation,
 	usePendingSiteDeleteMutation,
+	usePendingPostConfirmMutation,
+	usePendingPostDeleteMutation,
 };
 
 // Types

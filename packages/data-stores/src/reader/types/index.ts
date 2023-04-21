@@ -109,3 +109,13 @@ export type PendingPostSubscription = {
 	post_excerpt: string;
 	post_url: string;
 };
+
+export type PendingSiteSubscriptionsResult = {
+	pendingSites: PendingSiteSubscription[];
+	totalCount: number;
+};
+
+export type PendingPostSubscriptionsResult = {
+	pendingPosts: PendingPostSubscription[];
+	totalCount: number;
+};

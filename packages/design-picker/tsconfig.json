@@ -7,7 +7,7 @@
 		"types": []
 	},
 	"include": [ "src", "src/*.json" ],
-	"exclude": [ "**/__tests__/*", "**/__mocks__/*" ],
+	"exclude": [ "**/__tests__/*", "**/__mocks__/*", "**/*.stories.tsx" ],
 	"references": [
 		{ "path": "../calypso-config" },
 		{ "path": "../js-utils" },
