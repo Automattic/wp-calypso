@@ -6,7 +6,7 @@
 		display: flex;
 		font-family: $font-sf-pro-text;
 		justify-content: space-between;
-		margin-bottom: 16px;
+		margin: 0 64px 16px 64px;
 
 		@media (min-width: 661px) {
 			.formatted-header.is-left-align,
