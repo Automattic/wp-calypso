@@ -1,6 +1,6 @@
 import JetpackUpsellCard from '..';
 
-export default { title: 'packages/@automattic/components/Jetpack Upsell Card' };
+export default { title: 'packages/components/Jetpack Upsell Card' };
 
 const upgradeUrls = {
 	backup: 'https://jetpack.com',

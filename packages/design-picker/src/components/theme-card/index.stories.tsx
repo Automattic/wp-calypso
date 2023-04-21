@@ -3,7 +3,7 @@ import { ComponentProps } from 'react';
 import ThemeCard from './index';
 
 export default {
-	title: 'packages/@automattic/design-picker/ThemeCard',
+	title: 'packages/design-picker/ThemeCard',
 	component: ThemeCard,
 	parameters: {
 		viewport: {
