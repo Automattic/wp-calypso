@@ -24,6 +24,10 @@ const startWriting: Flow = {
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
+			{
+				slug: 'launchpad',
+				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
+			},
 		];
 	},
 
@@ -57,6 +61,9 @@ const startWriting: Flow = {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const locale = useLocale();
+		const currentPath = window.location.pathname;
+		const isLaunchpad = currentPath.includes( 'setup/start-writing/launchpad' );
+		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
 		const logInUrl =
 			locale && locale !== 'en'
@@ -71,7 +78,7 @@ const startWriting: Flow = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,
 			};
-		} else if ( currentUserSiteCount && currentUserSiteCount > 0 ) {
+		} else if ( userAlreadyHasSites && ! isLaunchpad ) {
 			redirect( `/post?${ START_WRITING_FLOW }=true` );
 			result = {
 				state: AssertConditionState.CHECKING,
