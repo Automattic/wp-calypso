@@ -10,6 +10,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { setDesignOnSite } from 'calypso/lib/signup/step-actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const startWriting: Flow = {
@@ -40,9 +41,21 @@ const startWriting: Flow = {
 							checklist_statuses: { first_post_published: true },
 						} );
 
+						const defaultFlowThemeSlug = 'livro';
 						const siteOrigin = window.location.origin;
-						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?showLaunchpad=true&origin=${ siteOrigin }`
+
+						setDesignOnSite(
+							() => {
+								redirect(
+									`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }`
+								);
+							},
+							{
+								siteSlug: providedDependencies?.siteSlug,
+								selectedDesign: {
+									theme: defaultFlowThemeSlug,
+								},
+							}
 						);
 					}
 				}
@@ -71,7 +84,7 @@ const startWriting: Flow = {
 				message: `${ flowName } requires a logged in user`,
 			};
 		} else if ( currentUserSiteCount && currentUserSiteCount > 0 ) {
-			redirect( '/post?showLaunchpad=true' );
+			redirect( `/post?${ START_WRITING_FLOW }=true` );
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires no preexisting sites`,

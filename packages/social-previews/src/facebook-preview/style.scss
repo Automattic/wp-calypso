@@ -17,6 +17,12 @@
 	box-shadow: $facebook-preview-card-box-shadow;
 
 	font-family: $facebook-preview-font-family;
+
+	:any-link {
+		color: $facebook-blue;
+
+		text-decoration: none;
+	}
 }
 
 .facebook-preview__custom-text {

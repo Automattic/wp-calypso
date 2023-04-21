@@ -1,26 +1,30 @@
-import { select, subscribe } from '@wordpress/data';
+import { dispatch, select, subscribe } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { getQueryArg } from '@wordpress/url';
 
-export function redirectOnboardingUserAfterPublishingPost() {
-	const showLaunchpad = getQueryArg( window.location.search, 'showLaunchpad' );
+const START_WRITING_FLOW = 'start-writing';
 
-	if ( 'true' !== showLaunchpad ) {
+export function redirectOnboardingUserAfterPublishingPost() {
+	const isStartWritingFlow = getQueryArg( window.location.search, START_WRITING_FLOW );
+	if ( 'true' !== isStartWritingFlow ) {
 		return false;
 	}
 
 	const siteOrigin = getQueryArg( window.location.search, 'origin' );
 	const siteSlug = window.location.hostname;
 
+	dispatch( 'core/edit-post' ).closeGeneralSidebar();
+
 	const unsubscribe = subscribe( () => {
+		const isSavingPost = select( 'core/editor' ).isSavingPost();
 		const isCurrentPostPublished = select( 'core/editor' ).isCurrentPostPublished();
 		const getCurrentPostRevisionsCount = select( 'core/editor' ).getCurrentPostRevisionsCount();
 
-		if ( isCurrentPostPublished && getCurrentPostRevisionsCount === 1 ) {
+		if ( ! isSavingPost && isCurrentPostPublished && getCurrentPostRevisionsCount === 1 ) {
 			unsubscribe();
 
-			window.location.href =
-				siteOrigin + '/setup/write/launchpad?siteSlug=' + siteSlug + '&showLaunchpad=true';
+			dispatch( 'core/edit-post' ).closePublishSidebar();
+			window.location.href = `${ siteOrigin }/setup/write/launchpad?siteSlug=${ siteSlug }&${ START_WRITING_FLOW }=true`;
 		}
 	} );
 }

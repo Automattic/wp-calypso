@@ -13,11 +13,8 @@ const SidebarHeading = ( { children, onClick, ...props } ) => {
 		};
 	}
 
-	const linkAttrs = { ...props };
-
-	// These are not valid HTML attribute for a <a> tag
-	delete linkAttrs.navigationLabel;
-	delete linkAttrs.url;
+	// Exclude invalid HTML attributes
+	const { navigationLabel, url, ...linkAttrs } = props;
 
 	return (
 		<li>

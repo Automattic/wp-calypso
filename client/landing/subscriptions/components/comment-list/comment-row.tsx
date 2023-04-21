@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { SubscriptionManager } from '@automattic/data-stores';
 import { memo, useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
 import { CommentSettings } from '../settings-popover';
@@ -10,9 +11,11 @@ type CommentRowProps = PostSubscription & {
 };
 
 const CommentRow = ( {
+	post_id,
 	post_title,
 	post_excerpt,
 	post_url,
+	blog_id,
 	site_title,
 	site_icon,
 	site_url,
@@ -27,6 +30,8 @@ const CommentRow = ( {
 		}
 		return <Gridicon className="icon" icon="globe" size={ 48 } />;
 	}, [ site_icon, site_title ] );
+	const { mutate: unFollow, isLoading: unfollowing } =
+		SubscriptionManager.usePostUnfollowMutation();
 	return (
 		<div style={ style } ref={ forwardedRef } className="row-wrapper">
 			<div className="row" role="row">
@@ -51,7 +56,10 @@ const CommentRow = ( {
 					<TimeSince date={ subscription_date.toISOString?.() ?? subscription_date } />
 				</span>
 				<span className="actions" role="cell">
-					<CommentSettings onUnfollow={ () => undefined } unfollowing={ false } />
+					<CommentSettings
+						onUnfollow={ () => unFollow( { post_id, blog_id } ) }
+						unfollowing={ unfollowing }
+					/>
 				</span>
 			</div>
 		</div>

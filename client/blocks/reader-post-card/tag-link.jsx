@@ -3,16 +3,18 @@ import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/
 
 class TagLink extends Component {
 	recordSingleTagClick = () => {
-		const tag = this.props.tag;
+		const { tag, post } = this.props;
 		recordAction( 'click_tag' );
 		recordGaEvent( 'Clicked Tag Link' );
-		recordTrackForPost( 'calypso_reader_tag_clicked', this.props.post, {
-			tag: tag.slug,
-		} );
+		if ( post !== undefined ) {
+			recordTrackForPost( 'calypso_reader_tag_clicked', post, {
+				tag: tag.slug,
+			} );
+		}
 	};
 
 	render() {
-		const tag = this.props.tag;
+		const { tag } = this.props;
 		return (
 			<span className="reader-post-card__tag">
 				<a
@@ -20,7 +22,7 @@ class TagLink extends Component {
 					className="reader-post-card__tag-link ignore-click"
 					onClick={ this.recordSingleTagClick }
 				>
-					{ tag.name }
+					{ tag.name || tag.slug }
 				</a>
 			</span>
 		);
