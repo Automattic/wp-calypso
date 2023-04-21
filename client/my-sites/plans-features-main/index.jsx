@@ -362,19 +362,8 @@ export class PlansFeaturesMain extends Component {
 		].filter( ( el ) => el );
 	}
 
-	getPlansForPlanFeatures() {
-		const { intervalType, selectedPlan, showTreatmentPlansReorderTest } = this.props;
-
-		const term = this.getPlanBillingPeriod( intervalType, getPlan( selectedPlan )?.term );
-		const plans = this.getPlansFromProps( GROUP_WPCOM, term );
-
-		return showTreatmentPlansReorderTest ? plans.reverse() : plans;
-	}
-
-	getPlansFromProps( group, term ) {
-		const planTypes = this.props.planTypes || this.getDefaultPlanTypes();
-
-		return planTypes.reduce( ( accum, type ) => {
+	getPlansFromTypes( planTypes, group, term ) {
+		const plans = planTypes.reduce( ( accum, type ) => {
 			// the Free plan and the Enterprise plan don't have a term.
 			// We may consider to move this logic into the underlying `planMatches` function, but that would have wider implication so it's TBD
 			const planQuery =
@@ -391,6 +380,8 @@ export class PlansFeaturesMain extends Component {
 
 			return plan ? [ ...accum, plan ] : accum;
 		}, [] );
+
+		return this.props.showTreatmentPlansReorderTest ? plans.reverse() : plans;
 	}
 
 	isPersonalCustomerTypePlanVisible() {
@@ -579,6 +570,8 @@ export class PlansFeaturesMain extends Component {
 			hidePlanTypeSelector,
 			is2023PricingGridVisible,
 			planTypeSelectorProps,
+			intervalType,
+			selectedPlan,
 		} = this.props;
 
 		/*
@@ -586,7 +579,9 @@ export class PlansFeaturesMain extends Component {
 		 * Pleas use the getVisiblePlansForPlanFeatures selector to filter out the plans that should not be visible.
 		 * we pass `visiblePlans` to its `plans` prop.
 		 */
-		const plans = this.getPlansForPlanFeatures();
+		const term = this.getPlanBillingPeriod( intervalType, getPlan( selectedPlan )?.term );
+		const planTypes = this.props.planTypes || this.getDefaultPlanTypes();
+		const plans = this.getPlansFromTypes( planTypes, GROUP_WPCOM, term );
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
 		const kindOfPlanTypeSelector = this.getKindOfPlanTypeSelector( this.props );
 
