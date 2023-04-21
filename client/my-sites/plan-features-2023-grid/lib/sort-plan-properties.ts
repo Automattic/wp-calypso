@@ -17,7 +17,7 @@ export function sortPlans(
 	}
 
 	if ( firstPlanIndex < 0 ) {
-		// The current plan is not in the plans list. Try to find the popular plan.
+		// Site is on a free plan or the current plan is not in the list. Try to find the popular plan.
 		firstPlanIndex = planProperties.findIndex( ( properties ) => {
 			return isPopularPlan( properties.planName );
 		} );
