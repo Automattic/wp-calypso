@@ -1,4 +1,5 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
+import { EditorWindow } from './editor-window';
 
 const panel = '.entities-saved-states__panel';
 const selectors = {
@@ -8,26 +9,22 @@ const selectors = {
 /**
  * Represents an instance of the FSE save confirmation panel (comparable publish panel).
  */
-export class FullSiteEditorSavePanelComponent {
-	private page: Page;
-	private editor: Locator;
-
+export class FullSiteEditorSavePanelComponent extends EditorWindow {
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( page: Page, editor: Locator ) {
-		this.page = page;
-		this.editor = editor;
+	constructor( page: Page ) {
+		super( page );
 	}
 
 	/**
 	 * Publish or schedule the article.
 	 */
 	async confirmSave(): Promise< void > {
-		const locator = this.editor.locator( selectors.saveButton );
+		const editorFrame = await this.getEditorFrame();
+		const locator = editorFrame.locator( selectors.saveButton );
 		await locator.click();
 	}
 }
