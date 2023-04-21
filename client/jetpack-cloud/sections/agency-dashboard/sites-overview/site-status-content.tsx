@@ -68,7 +68,7 @@ export default function SiteStatusContent( {
 	// since monitor is clickable when site is down.
 	const disabledStatus = siteError || ( type !== 'monitor' && siteDown );
 
-	// Disale selection and toggle when there is a site error or site is down
+	// Disable selection and toggle when there is a site error or site is down
 	const hasAnyError = !! ( siteError || siteDown );
 
 	const statusContentRef = useRef< HTMLSpanElement | null >( null );
