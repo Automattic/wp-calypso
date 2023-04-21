@@ -15,8 +15,8 @@ const simplePaymentsNoticeTextJetpack =
 
 export type ActiveDiscount = {
 	name: string;
-	startsAt: Date;
-	endsAt: Date;
+	startsAt?: Date;
+	endsAt?: Date;
 	plansPageNoticeText?: string;
 	targetPlans?: {
 		type: string;
