@@ -27,17 +27,20 @@ function usePlanUpgradeCreditsDisplay(
 	const creditsValue = useSelector( ( state ) =>
 		calculatePlanUpgradeCredits( state, siteId, visiblePlanNames )
 	);
-	const isNotJetpackOrIsAtomic = !! useSelector(
+	const isNotJetpackSiteOrIsAtomicSite = !! useSelector(
 		( state ) => ! isJetpackSite( state, siteId ) || isSiteAutomatedTransfer( state, siteId )
 	);
 
-	const visiblePlansWithoutEnterprise = visiblePlanNames.filter(
-		( planName ) => planName !== PLAN_ENTERPRISE_GRID_WPCOM
-	);
-	const highestPlanName = visiblePlansWithoutEnterprise.pop();
-	const isHigherPlanAvailable = highestPlanName !== currentSitePlanSlug;
+	const isHigherPlanAvailable = function () {
+		const visiblePlansWithoutEnterprise = visiblePlanNames.filter(
+			( planName ) => planName !== PLAN_ENTERPRISE_GRID_WPCOM
+		);
+		const highestPlanName = visiblePlansWithoutEnterprise.pop();
+		return highestPlanName !== currentSitePlanSlug;
+	};
 
-	const isUpgradeEligibleSite = isSiteOnPaidPlan && isNotJetpackOrIsAtomic && isHigherPlanAvailable;
+	const isUpgradeEligibleSite =
+		isSiteOnPaidPlan && isNotJetpackSiteOrIsAtomicSite && isHigherPlanAvailable();
 
 	return {
 		creditsValue,
