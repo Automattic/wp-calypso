@@ -1,13 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import HelpCenter, { HelpIcon } from '@automattic/help-center';
 import { LocaleProvider } from '@automattic/i18n-utils';
-import { QueryClientProvider } from '@tanstack/react-query';
 import { Button, Fill } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 import cx from 'classnames';
+import { QueryClientProvider } from 'react-query';
 import { useSelector } from 'react-redux';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { whatsNewQueryClient } from '../../common/what-new-query-client';

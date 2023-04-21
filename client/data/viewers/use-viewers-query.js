@@ -1,5 +1,5 @@
 import { uniqueBy } from '@automattic/js-utils';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
 const extractPages = ( pages = [] ) => pages.flatMap( ( page ) => page.viewers );

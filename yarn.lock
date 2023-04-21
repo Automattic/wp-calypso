@@ -86,13 +86,13 @@ __metadata:
   resolution: "@automattic/block-renderer@workspace:packages/block-renderer"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@tanstack/react-query": ^4.29.1
     "@wordpress/block-editor": ^10.5.0
     "@wordpress/compose": ^5.20.0
     "@wordpress/edit-site": ^4.19.0
     classnames: ^2.3.1
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-query: ^3.32.1
     tslib: ^2.3.0
     typescript: ^4.7.4
     utility-types: ^3.10.0
@@ -498,7 +498,6 @@ __metadata:
     "@automattic/happychat-connection": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
     "@remix-run/router": ^1.5.0
-    "@tanstack/react-query": ^4.29.1
     "@types/validator": ^13.7.1
     "@wordpress/api-fetch": ^6.19.0
     "@wordpress/data-controls": ^2.22.0
@@ -567,7 +566,6 @@ __metadata:
     "@automattic/js-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/typography": "workspace:^"
-    "@tanstack/react-query": ^4.29.1
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
     "@wordpress/components": ^22.1.0
@@ -578,6 +576,7 @@ __metadata:
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-query: ^3.32.1
     reakit-utils: ^0.15.1
     redux: ^4.1.2
     tslib: ^2.3.0
@@ -742,7 +741,6 @@ __metadata:
   resolution: "@automattic/global-styles@workspace:packages/global-styles"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@tanstack/react-query": ^4.29.1
     "@wordpress/block-editor": ^10.5.0
     "@wordpress/components": ^22.1.0
     "@wordpress/compose": ^5.20.0
@@ -752,6 +750,7 @@ __metadata:
     i18n-calypso: "workspace:^"
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-query: ^3.32.1
     tslib: ^2.3.0
     typescript: ^4.7.4
     wpcom-proxy-request: "workspace:^"
@@ -799,10 +798,10 @@ __metadata:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
-    "@tanstack/react-query": ^4.29.1
     debug: 4.3.3
     i18n-calypso: "workspace:^"
     react: ^17.0.2
+    react-query: ^3.32.1
     socket.io-client: 2.3.0
     typescript: ^4.7.4
     wpcom-proxy-request: "workspace:^"
@@ -827,7 +826,6 @@ __metadata:
     "@popperjs/core": ^2.10.2
     "@storybook/addon-backgrounds": ^6.4.19
     "@storybook/react": ^6.4.19
-    "@tanstack/react-query": ^4.29.1
     "@wordpress/base-styles": ^4.13.0
     "@wordpress/components": ^22.1.0
     "@wordpress/i18n": ^4.22.0
@@ -1243,11 +1241,11 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/onboarding": "workspace:^"
-    "@tanstack/react-query": ^4.29.1
     classnames: ^2.3.1
     postcss: ^8.4.5
     react: ^17.0.2
     react-dom: ^17.0.2
+    react-query: ^3.32.1
     redux: ^4.1.2
     swiper: ^4.5.1
     tslib: ^2.3.0
@@ -1651,7 +1649,6 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/typography": "workspace:^"
-    "@tanstack/react-query": ^4.29.1
     "@wordpress/components": ^22.1.0
     "@wordpress/element": ^4.20.0
     "@wordpress/i18n": ^4.22.0
@@ -1796,7 +1793,6 @@ __metadata:
     "@babel/core": ^7.17.5
     "@popperjs/core": ^2.10.2
     "@sentry/browser": ^7.33.0
-    "@tanstack/react-query": ^4.29.1
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
     "@types/node": ^18.11.18
@@ -1853,6 +1849,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-popper: ^2.2.5
+    react-query: ^3.32.1
     react-redux: ^7.2.6
     reakit-utils: ^0.15.1
     redux: ^4.1.2
@@ -6426,85 +6423,6 @@ __metadata:
   version: 1.1.0
   resolution: "@tannin/sprintf@npm:1.1.0"
   checksum: a1533f6a4ecf346affd4df112f69a839df5c75c58152b0a368d58be298a3bb491f1fa0a4a5c48f5a51d9cc1a0a6d2c0513430556b5388ae5551b8612a2356d11
-  languageName: node
-  linkType: hard
-
-"@tanstack/match-sorter-utils@npm:^8.7.0":
-  version: 8.7.6
-  resolution: "@tanstack/match-sorter-utils@npm:8.7.6"
-  dependencies:
-    remove-accents: 0.4.2
-  checksum: 4553ef8e4f707987cb625c616a254f683c69285e641cd30fd66e0001f4a9f52eab961a8c3c8cbc49cb2ac0bd63c45f7d67ea27b3a588630eb328312d4a397ec8
-  languageName: node
-  linkType: hard
-
-"@tanstack/query-core@npm:4.29.1":
-  version: 4.29.1
-  resolution: "@tanstack/query-core@npm:4.29.1"
-  checksum: 38fb775e370e7cd43fa4084620d855a08cb02e52adc8c3dd9eaea92ca4aa6ba3ae3a0ab627162e2f4a974f629478b660dc6f1a77723e7aaaf7408ab7c1840847
-  languageName: node
-  linkType: hard
-
-"@tanstack/query-persist-client-core@npm:4.29.1":
-  version: 4.29.1
-  resolution: "@tanstack/query-persist-client-core@npm:4.29.1"
-  dependencies:
-    "@tanstack/query-core": 4.29.1
-  checksum: 63eba46f2943cb8552c6ebaf56204d91f5030f84eb8c3ca17046665490b2e18bbcecb56b03f968a1713bd98b76a05688cc4319acbe878937ad4c6892a757d31b
-  languageName: node
-  linkType: hard
-
-"@tanstack/query-sync-storage-persister@npm:^4.29.1":
-  version: 4.29.1
-  resolution: "@tanstack/query-sync-storage-persister@npm:4.29.1"
-  dependencies:
-    "@tanstack/query-persist-client-core": 4.29.1
-  checksum: b7afab9c997b408de9cfe66bb775741f04d62f784a30cc54a0417a087b6ecfc640fc904f33cf997ab23d17363cac03e0182444cbd0d5d532ef0a76bc471b41fd
-  languageName: node
-  linkType: hard
-
-"@tanstack/react-query-devtools@npm:^4.29.1":
-  version: 4.29.1
-  resolution: "@tanstack/react-query-devtools@npm:4.29.1"
-  dependencies:
-    "@tanstack/match-sorter-utils": ^8.7.0
-    superjson: ^1.10.0
-    use-sync-external-store: ^1.2.0
-  peerDependencies:
-    "@tanstack/react-query": 4.29.1
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 74878444bc3705fa2d7055e35a6b54b2dc36694d85e9cf32e713e99d791ba4e2aba6ffb307130fa38a939ebd2aa80e1f11cb61c4e46be30d197a59c0af7ff120
-  languageName: node
-  linkType: hard
-
-"@tanstack/react-query-persist-client@npm:^4.29.1":
-  version: 4.29.1
-  resolution: "@tanstack/react-query-persist-client@npm:4.29.1"
-  dependencies:
-    "@tanstack/query-persist-client-core": 4.29.1
-  peerDependencies:
-    "@tanstack/react-query": 4.29.1
-  checksum: 2b11405dcd66e5d3085220120259736f5ff3c579c6dc23a163af3c16a552dd65cbb9c013d9f5e11fd7f4be1d8550cfb2c439e5e63bb1b2e57c57a5b06ae38e2c
-  languageName: node
-  linkType: hard
-
-"@tanstack/react-query@npm:^4.29.1":
-  version: 4.29.1
-  resolution: "@tanstack/react-query@npm:4.29.1"
-  dependencies:
-    "@tanstack/query-core": 4.29.1
-    use-sync-external-store: ^1.2.0
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-native: "*"
-  peerDependenciesMeta:
-    react-dom:
-      optional: true
-    react-native:
-      optional: true
-  checksum: a267bb4e5192ef3518aa0313c8f9a92bb0ea902caeb5598e2ea0d542d7253a99f438dcbb1a58eb40e3ad54ca52a06b024188dc1864e1d153ad1a6a4f54d088ba
   languageName: node
   linkType: hard
 
@@ -11925,10 +11843,6 @@ __metadata:
     "@sentry/webpack-plugin": ^1.18.8
     "@stripe/react-stripe-js": ^1.4.1
     "@stripe/stripe-js": 1.17.1
-    "@tanstack/query-sync-storage-persister": ^4.29.1
-    "@tanstack/react-query": ^4.29.1
-    "@tanstack/react-query-devtools": ^4.29.1
-    "@tanstack/react-query-persist-client": ^4.29.1
     "@testing-library/dom": ^8.13.0
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
@@ -12040,6 +11954,7 @@ __metadata:
     react-intersection-observer: ^9.4.3
     react-live: ^2.3.0
     react-modal: ^3.14.3
+    react-query: ^3.32.1
     react-redux: ^7.2.6
     react-router: ^6.10.0
     react-router-dom: ^6.10.0
@@ -13315,15 +13230,6 @@ __metadata:
   version: 2.1.3
   resolution: "cookiejar@npm:2.1.3"
   checksum: 32f4e2ee8156dc0c3674fbe03cf5b23560215c3cb6047dd37d37e7c7bfa77c7232fe26d3bc5108e846819f04393dfdf6a75f9b000165c49652d669ab2a23044e
-  languageName: node
-  linkType: hard
-
-"copy-anything@npm:^3.0.2":
-  version: 3.0.3
-  resolution: "copy-anything@npm:3.0.3"
-  dependencies:
-    is-what: ^4.1.8
-  checksum: 3364e872c9a47630f06623ce62b5d6a33426c6288972000774ab21165d88d3cfcdb96c0ba8e1680baa9588e36240943136c6e49db830a141b10dd26a5e47bfe9
   languageName: node
   linkType: hard
 
@@ -20523,13 +20429,6 @@ fsevents@^1.2.7:
     call-bind: ^1.0.2
     get-intrinsic: ^1.1.1
   checksum: ef5136bd446ae4603229b897f73efd0720c6ab3ec6cc05c8d5c4b51aa9f95164713c4cad0a22ff1fedf04865ff86cae4648bc1d5eead4b6388e1150525af1cc1
-  languageName: node
-  linkType: hard
-
-"is-what@npm:^4.1.8":
-  version: 4.1.8
-  resolution: "is-what@npm:4.1.8"
-  checksum: 090708c98d61d2c06c5d65d275bfb1430b0be733a89788d5fd07f2b11ee2c67ba4c6ec925de33d6566c0ecd18759e892f55ecad1ddccf2e19aec4817665d6e03
   languageName: node
   linkType: hard
 
@@ -30973,15 +30872,6 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"superjson@npm:^1.10.0":
-  version: 1.12.2
-  resolution: "superjson@npm:1.12.2"
-  dependencies:
-    copy-anything: ^3.0.2
-  checksum: 574b395d00d77ecdba6eea6ccd9f2444d53293987786b77bf22183c488644b02960788f9a33e5052802388d8f42be51ef832ef4fda294ac3eede004708d666c2
-  languageName: node
-  linkType: hard
-
 "supertest@npm:^6.1.6":
   version: 6.1.6
   resolution: "supertest@npm:6.1.6"
@@ -32799,7 +32689,7 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:1.2.0, use-sync-external-store@npm:^1.2.0":
+"use-sync-external-store@npm:1.2.0":
   version: 1.2.0
   resolution: "use-sync-external-store@npm:1.2.0"
   peerDependencies:

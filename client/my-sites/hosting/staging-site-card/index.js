@@ -1,10 +1,10 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useQueryClient } from 'react-query';
 import { connect, useDispatch } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import CardHeading from 'calypso/components/card-heading';

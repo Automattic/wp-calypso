@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from 'react-query';
 import { useStore } from 'react-redux';
 import { getJetpackSiteCollisions, getUnmappedUrl } from 'calypso/lib/site/utils';
 import { urlToSlug, withoutHttp } from 'calypso/lib/url';

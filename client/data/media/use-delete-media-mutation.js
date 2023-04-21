@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from 'react-query';
 import wp from 'calypso/lib/wp';
 
 export const useDeleteMediaMutation = ( queryOptions = {} ) => {

@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import wp from 'calypso/lib/wp';
 
 export const USE_VALID_QUOTA_QUERY_KEY = 'valid-quota';
