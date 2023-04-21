@@ -423,7 +423,13 @@ export class PlansFeaturesMain extends Component {
 		const planTypes = this.props.planTypes || this.getDefaultPlanTypes();
 
 		return planTypes.reduce( ( accum, type ) => {
-			const plan = findPlansKeys( { group, term, type } )[ 0 ];
+			// the Free plan and the Enterprise plan don't have a term.
+			// We may consider to move this logic into the underlying `planMatches` function, but that would have wider implication so it's TBD
+			const planQuery =
+				type === TYPE_FREE || type === TYPE_ENTERPRISE_GRID_WPCOM
+					? { group, type }
+					: { group, type, term };
+			const plan = findPlansKeys( planQuery )[ 0 ];
 
 			if ( ! plan ) {
 				warn(
