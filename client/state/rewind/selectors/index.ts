@@ -18,3 +18,4 @@ export { default as getBackupStoppedFlag } from './get-backup-stopped-flag';
 export { default as isFetchingStagingSitesList } from './is-fetching-staging-sites-list';
 export { default as hasFetchedStagingSitesList } from './has-fetched-staging-sites-list';
 export { default as getBackupStagingSites } from './get-backup-staging-sites';
+export { default as getBackupStagingUpdateRequestStatus } from './get-backup-staging-update-status';
