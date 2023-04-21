@@ -17,7 +17,6 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
-	TERMS_LIST,
 } from './constants';
 import type {
 	PricedAPIPlan,
@@ -29,6 +28,7 @@ import type {
 	PlanProduct,
 	PlanSlug,
 	DetailsAPIFeature,
+	PlanBillingTerm,
 } from './types';
 
 const MONTHLY_PLAN_BILLING_PERIOD = 31;
@@ -143,7 +143,7 @@ function normalizePlanProducts(
 			( plan ) => plan.productIds.indexOf( planProduct.product_id ) > -1
 		) as Plan;
 
-		let billingTerm: ( typeof TERMS_LIST )[ number ] | null = null;
+		let billingTerm: PlanBillingTerm = null;
 		switch ( planProduct.bill_period ) {
 			case PLAN_ANNUAL_PERIOD:
 				billingTerm = TERM_ANNUALLY;
