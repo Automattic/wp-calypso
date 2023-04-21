@@ -104,7 +104,7 @@
 		"purchases/new-payment-methods": true,
 		"reader": true,
 		"reader/list-management": true,
-		"reader/public-tag-pages": false,
+		"reader/public-tag-pages": true,
 		"reader/subscription-management": false,
 		"redirect-fallback-browsers": true,
 		"safari-idb-mitigation": true,
