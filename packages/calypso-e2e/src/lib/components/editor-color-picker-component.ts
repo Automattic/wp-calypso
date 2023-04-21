@@ -1,4 +1,5 @@
-import { Locator, Page } from 'playwright';
+import { Page } from 'playwright';
+import { EditorWindow } from './editor-window';
 
 const parentSelector = '.block-editor-color-gradient-control__fieldset';
 const selectors = {
@@ -66,19 +67,14 @@ function isSolidColor( colorSettings: ColorSettings ): colorSettings is SolidCol
 /**
  * Represents a color picker in the editor (used in blocks and site styles).
  */
-export class EditorColorPickerComponent {
-	private page: Page;
-	private editor: Locator;
-
+export class EditorColorPickerComponent extends EditorWindow {
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
-	 * @param {Locator} editor Frame-safe locator to the editor.
 	 */
-	constructor( page: Page, editor: Locator ) {
-		this.page = page;
-		this.editor = editor;
+	constructor( page: Page ) {
+		super( page );
 	}
 
 	/**
@@ -110,7 +106,8 @@ export class EditorColorPickerComponent {
 		}
 
 		if ( isColorSwatch( colorSettings ) ) {
-			const swatchLocator = this.editor.locator(
+			const editorFrame = await this.getEditorFrame();
+			const swatchLocator = editorFrame.locator(
 				selectors.colorSwatchButton( colorSettings.colorName )
 			);
 			await swatchLocator.click();
@@ -123,7 +120,8 @@ export class EditorColorPickerComponent {
 	 * @param {ColorType} colorType
 	 */
 	private async toggleColorType( colorType: ColorType ): Promise< void > {
-		const locator = this.editor.locator( selectors.colorTypeToggle( colorType ) );
+		const editorFrame = await this.getEditorFrame();
+		const locator = editorFrame.locator( selectors.colorTypeToggle( colorType ) );
 		await locator.click();
 	}
 
@@ -133,13 +131,14 @@ export class EditorColorPickerComponent {
 	 * @returns true if the color type toggle is there, false otherwise.
 	 */
 	private async colorTypeToggleIsAvailable(): Promise< boolean > {
+		const editorFrame = await this.getEditorFrame();
 		// Due to async loading, we need something that IS always there to key off of.
 		// The custom color picker is always there! We can reliably wait for it.
-		const customColorLocator = this.editor.locator( selectors.customColorButton );
+		const customColorLocator = editorFrame.locator( selectors.customColorButton );
 		await customColorLocator.waitFor();
 
 		// Now we know the component has fully loaded, we can check for the toggle's presence.
-		const toggleLocator = this.editor.locator( selectors.colorTypeToggle( 'Solid' ) );
+		const toggleLocator = editorFrame.locator( selectors.colorTypeToggle( 'Solid' ) );
 		return ( await toggleLocator.count() ) > 0;
 	}
 }
