@@ -104,21 +104,21 @@ describe( 'StepContent', () => {
 		it( 'renders correct sidebar tasks', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
-			expect( screen.getByText( 'Personalize Newsletter' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Choose a Plan' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Add Subscribers' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Confirm Email (Check Your Inbox)' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Personalize newsletter' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Choose a plan' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Add subscribers' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Confirm email (check your inbox)' ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'button', { name: 'Start writing' } ) ).toBeInTheDocument();
 		} );
 
 		it( 'renders correct status for each task', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
-			const personalizeListItem = screen.getByText( 'Personalize Newsletter' ).closest( 'li' );
-			const choosePlanListItem = screen.getByText( 'Choose a Plan' ).closest( 'li' );
-			const addSubscribersListItem = screen.getByText( 'Add Subscribers' ).closest( 'li' );
+			const personalizeListItem = screen.getByText( 'Personalize newsletter' ).closest( 'li' );
+			const choosePlanListItem = screen.getByText( 'Choose a plan' ).closest( 'li' );
+			const addSubscribersListItem = screen.getByText( 'Add subscribers' ).closest( 'li' );
 			const confirmEmailListItem = screen
-				.getByText( 'Confirm Email (Check Your Inbox)' )
+				.getByText( 'Confirm email (check your inbox)' )
 				.closest( 'li' );
 			const firstPostListItem = screen
 				.getByRole( 'button', { name: 'Start writing' } )
