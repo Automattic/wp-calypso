@@ -461,7 +461,11 @@ class ManagePurchase extends Component {
 	renderEditPaymentMethodNavItem() {
 		const { purchase, translate, siteSlug, getChangePaymentMethodUrlFor } = this.props;
 
-		if ( isPartnerPurchase( purchase ) || ! this.props.site ) {
+		if ( isPartnerPurchase( purchase ) ) {
+			return null;
+		}
+
+		if ( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) {
 			return null;
 		}
 
