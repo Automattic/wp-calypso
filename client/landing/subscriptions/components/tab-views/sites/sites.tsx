@@ -3,11 +3,11 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
-import { useDebounce } from 'use-debounce';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice } from 'calypso/landing/subscriptions/components/notice';
 import { SiteList } from 'calypso/landing/subscriptions/components/site-list';
 import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
+import { useSearch } from 'calypso/landing/subscriptions/hooks';
 import TabView from '../tab-view';
 
 const SortBy = SubscriptionManager.SiteSubscriptionsSortBy;
@@ -27,11 +27,10 @@ const useSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[
 
 const Sites = () => {
 	const translate = useTranslate();
-	const [ searchTerm, setSearchTerm ] = useState( '' );
-	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 300 );
+	const { searchTerm, handleSearch } = useSearch();
 	const [ sortTerm, setSortTerm ] = useState( SortBy.LastUpdated );
 	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery( {
-		searchTerm: debouncedSearchTerm,
+		searchTerm,
 		sortTerm,
 	} );
 	const { subscriptions, totalCount } = data ?? {};
@@ -42,10 +41,6 @@ const Sites = () => {
 	if ( ! isLoading && ! totalCount ) {
 		return <Notice type="warning">{ translate( 'You are not subscribed to any sites.' ) }</Notice>;
 	}
-
-	const handleSearch = ( value: string ) => {
-		setSearchTerm( value );
-	};
 
 	return (
 		<TabView errorMessage={ errorMessage } isLoading={ isLoading }>
@@ -66,7 +61,7 @@ const Sites = () => {
 				<Notice type="warning">
 					{ translate( 'Sorry, no sites match {{italic}}%s.{{/italic}}', {
 						components: { italic: <i /> },
-						args: debouncedSearchTerm,
+						args: searchTerm,
 					} ) }
 				</Notice>
 			) }

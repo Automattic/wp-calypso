@@ -11,7 +11,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useState, useRef, useMemo } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -34,6 +33,8 @@ import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
 import { useAllPatterns } from './patterns-data';
 import ScreenCategoryList from './screen-category-list';
+import ScreenColorPalettes from './screen-color-palettes';
+import ScreenFontPairings from './screen-font-pairings';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenMain from './screen-main';
@@ -554,9 +555,7 @@ const PatternAssembler = ( {
 
 				{ isEnabledColorAndFonts && (
 					<NavigatorScreen path={ NAVIGATOR_PATHS.COLOR_PALETTES }>
-						<AsyncLoad
-							require="./screen-color-palettes"
-							placeholder={ null }
+						<ScreenColorPalettes
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
 							selectedColorPaletteVariation={ colorVariation }
@@ -569,9 +568,7 @@ const PatternAssembler = ( {
 
 				{ isEnabledColorAndFonts && (
 					<NavigatorScreen path={ NAVIGATOR_PATHS.FONT_PAIRINGS }>
-						<AsyncLoad
-							require="./screen-font-pairings"
-							placeholder={ null }
+						<ScreenFontPairings
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
 							selectedFontPairingVariation={ fontVariation }
@@ -585,8 +582,6 @@ const PatternAssembler = ( {
 				<NavigatorListener
 					onLocationChange={ ( navigatorLocation ) => {
 						setNavigatorPath( navigatorLocation.path );
-						// Disable focus restoration from the Navigator Screen
-						wrapperRef.current?.focus();
 					} }
 				/>
 			</div>

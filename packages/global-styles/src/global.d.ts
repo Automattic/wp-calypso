@@ -12,7 +12,12 @@ declare module '@wordpress/components' {
 		[ key: string ]: unknown;
 	}
 
+	export const __unstableComposite: React.ComponentType< Props >;
+	export const __unstableCompositeItem: React.ComponentType< Props >;
 	export const __unstableMotion: React.ComponenType< Props >;
+	export const __unstableUseCompositeState: ( props?: {
+		orientation?: 'horizontal' | 'vertical';
+	} ) => any;
 	export const __experimentalHStack: React.ComponentType< Props >;
 	export const __experimentalVStack: React.ComponentType< Props >;
 }

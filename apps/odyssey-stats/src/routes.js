@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import page from 'page';
 import {
 	follows,
@@ -13,6 +12,7 @@ import {
 	redirectToDefaultWordAdsPeriod,
 } from 'calypso/my-sites/stats/controller';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import config from './lib/config-api';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
 
 import 'calypso/my-sites/stats/style.scss';

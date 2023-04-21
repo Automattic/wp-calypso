@@ -8,9 +8,12 @@ module.exports = {
 					{
 						'@wordpress/block-editor': [ '__unstableIframe', '__unstableEditorStyles' ],
 						'@wordpress/components': [
-							'__unstableMotion',
 							'__experimentalHStack',
 							'__experimentalVStack',
+							'__unstableComposite',
+							'__unstableCompositeItem',
+							'__unstableMotion',
+							'__unstableUseCompositeState',
 						],
 					},
 				],

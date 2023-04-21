@@ -1,11 +1,11 @@
 import { useQuery } from 'react-query';
 import { callApi } from '../helpers';
 import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
-import type { PendingSiteSubscription } from '../types';
+import type { PendingSiteSubscription, PendingSiteSubscriptionsResult } from '../types';
 
 type SubscriptionManagerPendingSiteSubscriptions = {
 	pending_blog_subscriptions: PendingSiteSubscription[];
-	total_pending_blog_subscriptions_count: number;
+	total_pending_blog_subscriptions_count: string; // TODO: This should be a number, but the API returns a string.
 };
 
 type SubscriptionManagerPendingSiteSubscriptionsQueryProps = {
@@ -13,26 +13,30 @@ type SubscriptionManagerPendingSiteSubscriptionsQueryProps = {
 	sort?: ( a?: PendingSiteSubscription, b?: PendingSiteSubscription ) => number;
 };
 
-const callPendingBlogSubscriptionsEndpoint = async (): Promise< PendingSiteSubscription[] > => {
-	const data = [];
-	const perPage = 1000; // TODO: This is a temporary workaround to get all pending subscriptions. We should remove this once we decide how to handle pagination.
+const callPendingSiteSubscriptionsEndpoint =
+	async (): Promise< PendingSiteSubscriptionsResult > => {
+		const pendingSites = [];
+		const perPage = 1000; // TODO: This is a temporary workaround to get all pending subscriptions. We should remove this once we decide how to handle pagination.
 
-	const incoming = await callApi< SubscriptionManagerPendingSiteSubscriptions >( {
-		path: `/pending-blog-subscriptions?per_page=${ perPage }`,
-		apiVersion: '2',
-	} );
+		const incoming = await callApi< SubscriptionManagerPendingSiteSubscriptions >( {
+			path: `/pending-blog-subscriptions?per_page=${ perPage }`,
+			apiVersion: '2',
+		} );
 
-	if ( incoming && incoming.pending_blog_subscriptions ) {
-		data.push(
-			...incoming.pending_blog_subscriptions.map( ( pendingSubscription ) => ( {
-				...pendingSubscription,
-				date_subscribed: new Date( pendingSubscription.date_subscribed ),
-			} ) )
-		);
-	}
+		if ( incoming && incoming.pending_blog_subscriptions ) {
+			pendingSites.push(
+				...incoming.pending_blog_subscriptions.map( ( pendingSubscription ) => ( {
+					...pendingSubscription,
+					date_subscribed: new Date( pendingSubscription.date_subscribed ),
+				} ) )
+			);
+		}
 
-	return data;
-};
+		return {
+			pendingSites,
+			totalCount: parseInt( incoming?.total_pending_blog_subscriptions_count ?? 0 ),
+		};
+	};
 
 const defaultFilter = () => true;
 const defaultSort = () => 0;
@@ -44,10 +48,10 @@ const usePendingSiteSubscriptionsQuery = ( {
 	const isLoggedIn = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 
-	const { data, ...rest } = useQuery< PendingSiteSubscription[] >(
+	const { data, ...rest } = useQuery< PendingSiteSubscriptionsResult >(
 		[ 'read', 'pending-site-subscriptions', isLoggedIn ],
 		async () => {
-			return await callPendingBlogSubscriptionsEndpoint();
+			return await callPendingSiteSubscriptionsEndpoint();
 		},
 		{
 			enabled,
@@ -56,7 +60,10 @@ const usePendingSiteSubscriptionsQuery = ( {
 	);
 
 	return {
-		data: data?.filter( filter ).sort( sort ),
+		data: {
+			pendingSites: data?.pendingSites?.filter( filter ).sort( sort ),
+			totalCount: data?.totalCount,
+		},
 		...rest,
 	};
 };
