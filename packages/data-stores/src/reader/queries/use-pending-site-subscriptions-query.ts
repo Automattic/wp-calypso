@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 import { callApi } from '../helpers';
 import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
-import type { PendingSiteSubscription } from '../types';
+import type { PendingSiteSubscription, PendingSiteSubscriptionsResult } from '../types';
 
 type SubscriptionManagerPendingSiteSubscriptions = {
 	pending_blog_subscriptions: PendingSiteSubscription[];
@@ -13,13 +13,8 @@ type SubscriptionManagerPendingSiteSubscriptionsQueryProps = {
 	sort?: ( a?: PendingSiteSubscription, b?: PendingSiteSubscription ) => number;
 };
 
-type PendingSiteSubscriptionQueryResult = {
-	pendingSites: PendingSiteSubscription[];
-	totalCount: string; // TODO: This should be a number, but the API returns a string.
-};
-
 const callPendingSiteSubscriptionsEndpoint =
-	async (): Promise< PendingSiteSubscriptionQueryResult > => {
+	async (): Promise< PendingSiteSubscriptionsResult > => {
 		const pendingSites = [];
 		const perPage = 1000; // TODO: This is a temporary workaround to get all pending subscriptions. We should remove this once we decide how to handle pagination.
 
@@ -39,7 +34,7 @@ const callPendingSiteSubscriptionsEndpoint =
 
 		return {
 			pendingSites,
-			totalCount: incoming.total_pending_blog_subscriptions_count,
+			totalCount: parseInt( incoming?.total_pending_blog_subscriptions_count ?? 0 ),
 		};
 	};
 
@@ -53,7 +48,7 @@ const usePendingSiteSubscriptionsQuery = ( {
 	const isLoggedIn = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 
-	const { data, ...rest } = useQuery< PendingSiteSubscriptionQueryResult >(
+	const { data, ...rest } = useQuery< PendingSiteSubscriptionsResult >(
 		[ 'read', 'pending-site-subscriptions', isLoggedIn ],
 		async () => {
 			return await callPendingSiteSubscriptionsEndpoint();
@@ -67,7 +62,7 @@ const usePendingSiteSubscriptionsQuery = ( {
 	return {
 		data: {
 			pendingSites: data?.pendingSites?.filter( filter ).sort( sort ),
-			totalCount: parseInt( data?.totalCount || '0' ),
+			totalCount: data?.totalCount,
 		},
 		...rest,
 	};

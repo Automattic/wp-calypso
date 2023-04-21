@@ -1,11 +1,11 @@
 import { useQuery } from 'react-query';
 import { callApi } from '../helpers';
 import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
-import type { PendingPostSubscription } from '../types';
+import type { PendingPostSubscription, PendingPostSubscriptionsResult } from '../types';
 
 type SubscriptionManagerPendingPostSubscriptions = {
 	comment_subscriptions: PendingPostSubscription[];
-	total_comment_subscriptions_count: string; // TODO: This should be a number, but the API returns a string.
+	total_comment_subscriptions_count: number;
 };
 
 type SubscriptionManagerPendingPostSubscriptionsQueryProps = {
@@ -13,13 +13,8 @@ type SubscriptionManagerPendingPostSubscriptionsQueryProps = {
 	sort?: ( a?: PendingPostSubscription, b?: PendingPostSubscription ) => number;
 };
 
-type PendingPostSubscriptionQueryResult = {
-	pendingPosts: PendingPostSubscription[];
-	totalCount: string; // TODO: This should be a number, but the API returns a string.
-};
-
 const callPendingBlogSubscriptionsEndpoint =
-	async (): Promise< PendingPostSubscriptionQueryResult > => {
+	async (): Promise< PendingPostSubscriptionsResult > => {
 		const pendingPosts = [];
 		const perPage = 1000; // TODO: This is a temporary workaround to get all pending subscriptions. We should remove this once we decide how to handle pagination.
 
@@ -39,7 +34,7 @@ const callPendingBlogSubscriptionsEndpoint =
 
 		return {
 			pendingPosts,
-			totalCount: incoming.total_comment_subscriptions_count,
+			totalCount: incoming?.total_comment_subscriptions_count ?? 0,
 		};
 	};
 
@@ -53,7 +48,7 @@ const usePendingPostSubscriptionsQuery = ( {
 	const isLoggedIn = useIsLoggedIn();
 	const enabled = useIsQueryEnabled();
 
-	const { data, ...rest } = useQuery< PendingPostSubscriptionQueryResult >(
+	const { data, ...rest } = useQuery< PendingPostSubscriptionsResult >(
 		[ 'read', 'pending-post-subscriptions', isLoggedIn ],
 		async () => {
 			return await callPendingBlogSubscriptionsEndpoint();
@@ -66,7 +61,7 @@ const usePendingPostSubscriptionsQuery = ( {
 
 	return {
 		data: {
-			pendingPosts: data?.pendingPosts.filter( filter ).sort( sort ),
+			pendingPosts: data?.pendingPosts?.filter( filter ).sort( sort ),
 			totalCount: data?.totalCount,
 		},
 		...rest,

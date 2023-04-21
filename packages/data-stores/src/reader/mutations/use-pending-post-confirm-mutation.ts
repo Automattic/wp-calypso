@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
-import { PendingPostSubscription, SubscriptionManagerSubscriptionsCount } from '../types';
+import { PendingPostSubscriptionsResult, SubscriptionManagerSubscriptionsCount } from '../types';
 
 type PendingPostConfirmParams = {
 	id: string;
@@ -43,17 +43,23 @@ const usePendingPostConfirmMutation = () => {
 				await queryClient.cancelQueries( [ 'read', 'pending-post-subscriptions', isLoggedIn ] );
 				await queryClient.cancelQueries( countCacheKey );
 
-				const previousPendingPostSubscriptions = queryClient.getQueryData<
-					PendingPostSubscription[]
-				>( [ 'read', 'pending-post-subscriptions', isLoggedIn ] );
+				const previousPendingPostSubscriptions =
+					queryClient.getQueryData< PendingPostSubscriptionsResult >( [
+						'read',
+						'pending-post-subscriptions',
+						isLoggedIn,
+					] );
 
 				// remove post comment from pending post subscriptions
-				if ( previousPendingPostSubscriptions ) {
-					queryClient.setQueryData< PendingPostSubscription[] >(
+				if ( previousPendingPostSubscriptions?.pendingPosts ) {
+					queryClient.setQueryData< PendingPostSubscriptionsResult >(
 						[ [ 'read', 'pending-post-subscriptions', isLoggedIn ] ],
-						previousPendingPostSubscriptions.filter(
-							( pendingPostSubscription ) => pendingPostSubscription.id !== id
-						)
+						{
+							pendingPosts: previousPendingPostSubscriptions.pendingPosts.filter(
+								( pendingPost ) => pendingPost.id !== id
+							),
+							totalCount: previousPendingPostSubscriptions.totalCount - 1,
+						}
 					);
 				}
 
@@ -77,7 +83,7 @@ const usePendingPostConfirmMutation = () => {
 			},
 			onError: ( error, variables, context ) => {
 				if ( context?.previousPendingPostSubscriptions ) {
-					queryClient.setQueryData< PendingPostSubscription[] >(
+					queryClient.setQueryData< PendingPostSubscriptionsResult >(
 						[ 'read', 'pending-post-subscriptions', isLoggedIn ],
 						context.previousPendingPostSubscriptions
 					);
