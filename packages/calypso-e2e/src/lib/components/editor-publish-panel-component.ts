@@ -1,4 +1,5 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
+import { EditorWindow } from './editor-window';
 
 const panel = 'div.editor-post-publish-panel';
 const selectors = {
@@ -14,19 +15,14 @@ const selectors = {
 /**
  * Represents an instance of the WordPress.com Editor's publish checklist & post-publish panel.
  */
-export class EditorPublishPanelComponent {
-	private page: Page;
-	private editor: Locator;
-
+export class EditorPublishPanelComponent extends EditorWindow {
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Locator} editor Locator or FrameLocator to the editor.
 	 */
-	constructor( page: Page, editor: Locator ) {
-		this.page = page;
-		this.editor = editor;
+	constructor( page: Page ) {
+		super( page );
 	}
 
 	/**
@@ -37,7 +33,8 @@ export class EditorPublishPanelComponent {
 	 * @returns {Promise<boolean>} True if panel is visible. False otherwise.
 	 */
 	async panelIsOpen(): Promise< boolean > {
-		const locator = this.editor.locator( `${ panel }:visible` );
+		const editorFrame = await this.getEditorFrame();
+		const locator = editorFrame.locator( `${ panel }:visible` );
 		try {
 			await locator.waitFor( { timeout: 5 * 1000 } );
 			return true;
@@ -61,8 +58,9 @@ export class EditorPublishPanelComponent {
 		if ( ! ( await this.panelIsOpen() ) ) {
 			return;
 		}
+		const editorFrame = await this.getEditorFrame();
 		const selector = `${ selectors.cancelPublishButton }:visible, ${ selectors.postPublishClosePanelButton }:visible`;
-		const locator = this.editor.locator( selector );
+		const locator = editorFrame.locator( selector );
 		await locator.click();
 	}
 
@@ -72,7 +70,8 @@ export class EditorPublishPanelComponent {
 	 * Publish or schedule the article.
 	 */
 	async publish(): Promise< void > {
-		const publishButtonLocator = this.editor.locator( selectors.publishButton );
+		const editorFrame = await this.getEditorFrame();
+		const publishButtonLocator = editorFrame.locator( selectors.publishButton );
 		await publishButtonLocator.click();
 	}
 
@@ -84,7 +83,8 @@ export class EditorPublishPanelComponent {
 	 * @returns {URL} URL to the published article.
 	 */
 	async getPublishedURL(): Promise< URL > {
-		const locator = this.editor.locator( selectors.publishedArticleURL );
+		const editorFrame = await this.getEditorFrame();
+		const locator = editorFrame.locator( selectors.publishedArticleURL );
 		const publishedURL = ( await locator.getAttribute( 'value' ) ) as string;
 		return new URL( publishedURL );
 	}
