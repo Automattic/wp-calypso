@@ -1,5 +1,4 @@
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { merge } from 'lodash';
 import { Component } from 'react';
@@ -333,8 +332,6 @@ class StatsSummary extends Component {
 		}
 		const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
-		const cardParentClassName = classNames( 'stats-summary-view', 'stats-summary__positioned' );
-
 		return (
 			<Main className="has-fixed-nav" wideLayout>
 				<PageViewTracker
@@ -343,7 +340,7 @@ class StatsSummary extends Component {
 				/>
 				<FixedNavigationHeader navigationItems={ navigationItems } />
 
-				<div id="my-stats-content" className={ cardParentClassName }>
+				<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 					{ summaryViews }
 					<JetpackColophon />
 				</div>

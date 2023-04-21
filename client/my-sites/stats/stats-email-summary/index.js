@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
@@ -37,7 +36,6 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 	}
 	const navigationItems = [ { label: backLabel, href: backLink }, { label: title } ];
 
-	const cardParentClassName = classNames( 'stats-summary-view', 'stats-summary__positioned' );
 	return (
 		<Main className="has-fixed-nav" wideLayout>
 			<PageViewTracker
@@ -46,7 +44,7 @@ const StatsEmailSummary = ( { translate, period, siteSlug } ) => {
 			/>
 			<FixedNavigationHeader navigationItems={ navigationItems } />
 
-			<div id="my-stats-content" className={ cardParentClassName }>
+			<div id="my-stats-content" className="stats-summary-view stats-summary__positioned">
 				<div className="stats-summary-nav__header">
 					<div>
 						<div className="stats-section-title">
