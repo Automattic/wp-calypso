@@ -10,6 +10,7 @@ const ReaderTagSidebar = ( { tag } ) => {
 	const translate = useTranslate();
 	const relatedMetaByTag = useRelatedMetaByTag( tag );
 	const tagStats = useTagStats( tag );
+	console.log( 'tagStats', tagStats.data );
 	if ( relatedMetaByTag === undefined ) {
 		return null;
 	}

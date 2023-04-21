@@ -8,32 +8,15 @@ export interface TagStats {
 	last_post_date_gmt: string; //(ISO 8601 datetime) Datetime for the most recent post in the time period.
 }
 
-const selectFromResponse = ( response: {
-	total_posts: number;
-	total_sites: number;
-	posts_per_day: number;
-	last_post_date_gmt: string;
-} ): TagStats | null => {
-	console.log( 'response', response );
-	return {
-		total_posts: response.total_posts,
-		total_sites: response.total_sites,
-		posts_per_day: response.posts_per_day,
-		last_post_date_gmt: response.last_post_date_gmt,
-	};
-};
-
 export const useTagStats = ( tag: string ): UseQueryResult< TagStats | null > =>
 	useQuery(
 		[ 'tag-stats', tag ],
 		() =>
-			wp.req.get( {
-				path: `/read/topics/${ tag }/stats`,
-				apiNamespace: 'rest/v1.3',
+			wp.req.get( `/read/topics/${ encodeURIComponent( tag ) }/stats`, {
+				apiVersion: '1.3',
 			} ),
 		{
 			staleTime: 86400000, // 1 day
-			select: selectFromResponse,
 			refetchOnMount: 'always',
 		}
 	);
