@@ -10,14 +10,18 @@ const selectors = {
  * Represents an instance of the WordPress.com Editor's navigation sidebar.
  * The component is available only in the Desktop viewport for the post editor.
  */
-export class EditorNavSidebarComponent extends EditorWindow {
+export class EditorNavSidebarComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
@@ -26,7 +30,7 @@ export class EditorNavSidebarComponent extends EditorWindow {
 	 * Clicks the Dashboard menu link to exit the editor.
 	 */
 	async exitEditor(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const exitLinkLocator = editorFrame.locator( selectors.exitLink );
 		await exitLinkLocator.click();
 	}

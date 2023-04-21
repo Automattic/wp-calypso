@@ -6,14 +6,18 @@ type TemplateCategory = 'About';
 /**
  * Represents the page template selection modal when first loading a new page in the editor.
  */
-export class PageTemplateModalComponent extends EditorWindow {
+export class PageTemplateModalComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Creates an instance of the page.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
@@ -22,7 +26,7 @@ export class PageTemplateModalComponent extends EditorWindow {
 	 * @param {TemplateCategory} category Name of the category to select.
 	 */
 	async selectTemplateCategory( category: TemplateCategory ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await editorFrame
 				.locator( '.page-pattern-modal__mobile-category-dropdown' )
@@ -38,7 +42,7 @@ export class PageTemplateModalComponent extends EditorWindow {
 	 * @param {string} label Label for the template (the string underneath the preview).
 	 */
 	async selectTemplate( label: string ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		await editorFrame.getByRole( 'option', { name: label, exact: true } ).click();
 	}
 
@@ -46,7 +50,7 @@ export class PageTemplateModalComponent extends EditorWindow {
 	 * Select a blank page as your template.
 	 */
 	async selectBlankPage(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		await editorFrame.getByRole( 'button', { name: 'Blank page' } ).click();
 	}
 }

@@ -67,14 +67,18 @@ function isSolidColor( colorSettings: ColorSettings ): colorSettings is SolidCol
 /**
  * Represents a color picker in the editor (used in blocks and site styles).
  */
-export class EditorColorPickerComponent extends EditorWindow {
+export class EditorColorPickerComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
@@ -106,7 +110,7 @@ export class EditorColorPickerComponent extends EditorWindow {
 		}
 
 		if ( isColorSwatch( colorSettings ) ) {
-			const editorFrame = await this.getEditorFrame();
+			const editorFrame = await this.editorWindow.getEditorFrame();
 			const swatchLocator = editorFrame.locator(
 				selectors.colorSwatchButton( colorSettings.colorName )
 			);
@@ -120,7 +124,7 @@ export class EditorColorPickerComponent extends EditorWindow {
 	 * @param {ColorType} colorType
 	 */
 	private async toggleColorType( colorType: ColorType ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.colorTypeToggle( colorType ) );
 		await locator.click();
 	}
@@ -131,7 +135,7 @@ export class EditorColorPickerComponent extends EditorWindow {
 	 * @returns true if the color type toggle is there, false otherwise.
 	 */
 	private async colorTypeToggleIsAvailable(): Promise< boolean > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		// Due to async loading, we need something that IS always there to key off of.
 		// The custom color picker is always there! We can reliably wait for it.
 		const customColorLocator = editorFrame.locator( selectors.customColorButton );

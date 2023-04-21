@@ -13,14 +13,18 @@ const selectors = {
  * This is distinct from the post editor because the markup is very different.
  * Unlike the post editor's, this is visible on all viewports for the site editor.
  */
-export class FullSiteEditorNavSidebarComponent extends EditorWindow {
+export class FullSiteEditorNavSidebarComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
@@ -29,7 +33,7 @@ export class FullSiteEditorNavSidebarComponent extends EditorWindow {
 	 * Clicks the Dashboard menu link to exit the editor.
 	 */
 	async exit(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const exitButtonLocator = editorFrame
 			.getByRole( 'region', { name: 'Navigation sidebar' } )
 			.locator( selectors.exitButton );
@@ -40,7 +44,7 @@ export class FullSiteEditorNavSidebarComponent extends EditorWindow {
 	 * Clicks sidebar link to open the template parts list.
 	 */
 	async navigateToTemplatePartsManager(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		await editorFrame.locator( selectors.templatePartsItem ).click();
 		await editorFrame.locator( selectors.manageAllTemplatePartsItem ).click();
 	}
@@ -49,7 +53,7 @@ export class FullSiteEditorNavSidebarComponent extends EditorWindow {
 	 * Ensures that the nav sidebar is at the top level ("Design")
 	 */
 	async ensureNavigationTopLevel(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const waitForNavigationTopLevel = async () => {
 			await editorFrame
 				.getByRole( 'region', { name: 'Navigation sidebar' } )
@@ -83,7 +87,7 @@ export class FullSiteEditorNavSidebarComponent extends EditorWindow {
 	 * Clicks on a button with the exact name.
 	 */
 	async clickNavButtonByExactText( text: string ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		await editorFrame.getByRole( 'button', { name: text, exact: true } ).click();
 	}
 }

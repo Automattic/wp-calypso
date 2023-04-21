@@ -12,14 +12,18 @@ const selectors = {
 /**
  * Represents the list of template parts in the full site editor.
  */
-export class TemplatePartListComponent extends EditorWindow {
+export class TemplatePartListComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
@@ -28,7 +32,7 @@ export class TemplatePartListComponent extends EditorWindow {
 	 * @param {string} name The name of the template part to delete.
 	 */
 	async deleteTemplatePart( name: string ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const actionsButtonLocator = editorFrame.locator( selectors.actionsButtonForPart( name ) );
 		await actionsButtonLocator.click();
 
@@ -42,7 +46,7 @@ export class TemplatePartListComponent extends EditorWindow {
 	 * @returns True if the template part list component is open and visible, false otherwise.
 	 */
 	async isOpen(): Promise< boolean > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const shellLocator = editorFrame.locator( parentSelector );
 		return ( await shellLocator.count() ) > 0;
 	}

@@ -9,21 +9,25 @@ const selectors = {
 /**
  * Represents an instance of the FSE save confirmation panel (comparable publish panel).
  */
-export class FullSiteEditorSavePanelComponent extends EditorWindow {
+export class FullSiteEditorSavePanelComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
 	 * Publish or schedule the article.
 	 */
 	async confirmSave(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.saveButton );
 		await locator.click();
 	}

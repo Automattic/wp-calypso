@@ -4,14 +4,18 @@ import { EditorWindow } from './editor-window';
 /**
  * Represents the welcome tour that shows in a popover when the editor loads.
  */
-export class EditorWelcomeTourComponent extends EditorWindow {
+export class EditorWelcomeTourComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
@@ -20,7 +24,7 @@ export class EditorWelcomeTourComponent extends EditorWindow {
 	 * @see {@link https://github.com/Automattic/wp-calypso/issues/57660}
 	 */
 	async forceToggleWelcomeTour( show = true ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		await editorFrame.waitForFunction( async () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const welcomeGuide = ( window as any )?.wp?.data?.select( 'automattic/wpcom-welcome-guide' );

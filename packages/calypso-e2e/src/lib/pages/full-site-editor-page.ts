@@ -44,7 +44,9 @@ const selectors = {
  * Represents an instance of the FSE site editor.
  * This class is composed of editor components, combining them into larger flows.
  */
-export class FullSiteEditorPage extends EditorWindow {
+export class FullSiteEditorPage {
+	private page: Page;
+	private editorWindow: EditorWindow;
 	private editorToolbarComponent: EditorToolbarComponent;
 	private editorSidebarBlockInserterComponent: EditorSidebarBlockInserterComponent;
 	private editorInlineBlockInserterComponent: EditorInlineBlockInserterComponent;
@@ -66,8 +68,9 @@ export class FullSiteEditorPage extends EditorWindow {
 	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
 
+		this.editorWindow = new EditorWindow( page );
 		this.editorToolbarComponent = new EditorToolbarComponent( page );
 		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page );
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page );
@@ -109,7 +112,7 @@ export class FullSiteEditorPage extends EditorWindow {
 	 * Waits until the site editor is fully loaded.
 	 */
 	async waitUntilLoaded(): Promise< void > {
-		const editorCanvas = await this.getEditorCanvas();
+		const editorCanvas = await this.editorWindow.getEditorCanvas();
 		// But then, template parts load async afterwards!
 		const spinnerLocator = editorCanvas.locator( selectors.templateLoadingSpinner );
 		// There could be many spinners, so we will keep waiting for the first to be detached.
@@ -192,7 +195,7 @@ export class FullSiteEditorPage extends EditorWindow {
 			await this.editorToolbarComponent.closeBlockInserter();
 		}
 
-		const editorCanvas = await this.getEditorCanvas();
+		const editorCanvas = await this.editorWindow.getEditorCanvas();
 		return editorCanvas.locator( `#${ addedBlockId }` );
 	}
 
@@ -226,10 +229,10 @@ export class FullSiteEditorPage extends EditorWindow {
 		openInlineInserter: OpenInlineInserter
 	): Promise< Locator > {
 		// First, launch the inline inserter in the way expected by the script.
-		await openInlineInserter(); // This needed button is almost always NOT in the canvas iframe.
+		await openInlineInserter( await this.editorWindow.getEditorCanvas() ); // This needed button is almost always NOT in the canvas iframe.
 		await this.addBlockFromInserter( blockName, this.editorInlineBlockInserterComponent );
 		const addedBlockId = await this.getIdOfAddedBlock( blockEditorSelector );
-		const editorCanvas = await this.getEditorCanvas();
+		const editorCanvas = await this.editorWindow.getEditorCanvas();
 		return editorCanvas.locator( `#${ addedBlockId }` );
 	}
 
@@ -255,7 +258,7 @@ export class FullSiteEditorPage extends EditorWindow {
 	 * @returns The ID of the recently added block.
 	 */
 	private async getIdOfAddedBlock( blockEditorSelector: string ): Promise< string > {
-		const editorCanvas = await this.getEditorCanvas();
+		const editorCanvas = await this.editorWindow.getEditorCanvas();
 		// The added block will always either be focused, or will be the parent of a focused block.
 		const addedBlockLocator = editorCanvas.locator(
 			`${ selectors.focusedBlock( blockEditorSelector ) },${ selectors.parentOfFocusedBlock(
@@ -287,7 +290,7 @@ export class FullSiteEditorPage extends EditorWindow {
 	 * @param {string|Locator} block A way to locate the block (Locator or selector).
 	 */
 	async focusBlock( block: string | Locator ): Promise< void > {
-		const editorCanvas = await this.getEditorCanvas();
+		const editorCanvas = await this.editorWindow.getEditorCanvas();
 		let originalBlockLocator: Locator;
 		let focusedBlockLocator: Locator;
 		if ( typeof block === 'string' ) {
@@ -365,7 +368,7 @@ export class FullSiteEditorPage extends EditorWindow {
 	async save(
 		{ checkPreSaveNotices }: { checkPreSaveNotices: boolean } = { checkPreSaveNotices: false }
 	): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		await this.clearExistingSaveConfirmationToast();
 		await this.editorToolbarComponent.saveSiteEditor();
 		if ( checkPreSaveNotices ) {
@@ -387,7 +390,7 @@ export class FullSiteEditorPage extends EditorWindow {
 	 * Open the navigation sidebar.
 	 */
 	async openNavSidebar(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const openButton = editorFrame.locator( 'button[aria-label="Open Navigation Sidebar"]' );
 
 		await openButton.click();
@@ -403,8 +406,8 @@ export class FullSiteEditorPage extends EditorWindow {
 				'There is no standardized way to close the site editor navigation sidebar on mobile. Navigate to a template or template part instead.'
 			);
 		}
-		const editorFrame = await this.getEditorFrame();
-		const editorCanvas = await this.getEditorCanvas();
+		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorCanvas = await this.editorWindow.getEditorCanvas();
 		const openButton = editorFrame.locator( 'button[aria-label="Open Navigation Sidebar"]' );
 
 		await Promise.race( [ openButton.waitFor(), editorCanvas.locator( 'body' ).click() ] );
@@ -463,7 +466,7 @@ export class FullSiteEditorPage extends EditorWindow {
 	 * Closes the site styles welcome guide.
 	 */
 	private async closeStylesWelcomeGuide(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.closeStylesWelcomeGuideButton );
 		await locator.click( { timeout: 5 * 1000 } );
 	}
@@ -549,7 +552,7 @@ export class FullSiteEditorPage extends EditorWindow {
 	 * Selects the "Try it out" option on the Limited Global Styles upgrade modal.
 	 */
 	async tryGlobalStyles(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.limitedGlobalStylesModalTryButton );
 		await locator.click();
 	}
@@ -618,7 +621,7 @@ export class FullSiteEditorPage extends EditorWindow {
 	 * @param {string} text The text we expect on the confirmation toast.
 	 */
 	async waitForConfirmationToast( text: string ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.confirmationToast( text ) );
 		await locator.waitFor();
 	}
@@ -627,7 +630,7 @@ export class FullSiteEditorPage extends EditorWindow {
 	 * Clears existing save confirmation toasts.
 	 */
 	private async clearExistingSaveConfirmationToast(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const toastLocator = editorFrame.locator( selectors.confirmationToast( 'Site updated.' ) );
 		if ( ( await toastLocator.count() ) > 0 ) {
 			await toastLocator.click();

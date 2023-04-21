@@ -14,14 +14,18 @@ const selectors = {
 /**
  * Represents the primary, sidebar block inserter in the editor.
  */
-export class EditorSidebarBlockInserterComponent extends EditorWindow {
+export class EditorSidebarBlockInserterComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
@@ -35,7 +39,7 @@ export class EditorSidebarBlockInserterComponent extends EditorWindow {
 			return;
 		}
 
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const blockInserterPanelLocator = editorFrame.locator( selectors.closeBlockInserterButton );
 		if ( ( await blockInserterPanelLocator.count() ) > 0 ) {
 			await blockInserterPanelLocator.click();
@@ -48,7 +52,7 @@ export class EditorSidebarBlockInserterComponent extends EditorWindow {
 	 * @param {string} text Text to enter into the search input.
 	 */
 	async searchBlockInserter( text: string ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.blockSearchInput );
 		await locator.fill( text );
 	}
@@ -67,7 +71,7 @@ export class EditorSidebarBlockInserterComponent extends EditorWindow {
 		name: string,
 		{ type = 'block' }: { type?: 'block' | 'pattern' } = {}
 	): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		let locator;
 
 		if ( type === 'pattern' ) {

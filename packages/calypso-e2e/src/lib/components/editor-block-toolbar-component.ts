@@ -29,14 +29,18 @@ export interface BlockToolbarButtonIdentifier {
 /**
  * Represents the toolbar menu that appears for a focused block.
  */
-export class EditorBlockToolbarComponent extends EditorWindow {
+export class EditorBlockToolbarComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
@@ -45,7 +49,7 @@ export class EditorBlockToolbarComponent extends EditorWindow {
 	 * @param {BlockToolbarButtonIdentifier} identifier Ways to identify the button.
 	 */
 	async clickPrimaryButton( identifier: BlockToolbarButtonIdentifier ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.button( identifier ) );
 		await locator.click();
 	}
@@ -54,7 +58,7 @@ export class EditorBlockToolbarComponent extends EditorWindow {
 	 * Click on the options button (three dots).
 	 */
 	async clickOptionsButton(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.button( { ariaLabel: 'Options' } ) );
 		await locator.click();
 	}
@@ -63,7 +67,7 @@ export class EditorBlockToolbarComponent extends EditorWindow {
 	 * Click the up arrow button to move the current block up.
 	 */
 	async moveUp(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.button( { ariaLabel: 'Move up' } ) );
 		await locator.click();
 	}
@@ -72,7 +76,7 @@ export class EditorBlockToolbarComponent extends EditorWindow {
 	 * Click the down arrow button to move the current block down.
 	 */
 	async moveDown(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.button( { ariaLabel: 'Move down' } ) );
 		await locator.click();
 	}

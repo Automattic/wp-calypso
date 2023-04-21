@@ -15,14 +15,18 @@ export interface TypographySettings {
 /**
  * Represents a typography settings component (used in blocks and site styles).
  */
-export class EditorTypographyComponent extends EditorWindow {
+export class EditorTypographyComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
@@ -54,7 +58,7 @@ export class EditorTypographyComponent extends EditorWindow {
 	 * @param {FontAppearance} fontAppearance Font appearance to select.
 	 */
 	private async setAppearance( fontAppearance: FontAppearance ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		// In the future, if we're in the block context, we'll have to add this field first.
 		const dropdownButtonLocator = editorFrame.getByRole( 'button', {
 			name: 'Appearance',

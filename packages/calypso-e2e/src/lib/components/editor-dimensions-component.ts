@@ -15,7 +15,10 @@ export interface DimensionsSettings {
 /**
  * Represents a dimenstions settings component (used in blocks and site styles).
  */
-export class EditorDimensionsComponent extends EditorWindow {
+export class EditorDimensionsComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	// Usually low-level components don't contain other components like this.
 	// In this case however, because the popover is always used whereever this component is,
 	// and tieing it together at a higher level is kind of messy, it makes sense to add it here.
@@ -27,7 +30,8 @@ export class EditorDimensionsComponent extends EditorWindow {
 	 * @param {Page} page Object representing the base page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page );
 	}
 
@@ -50,7 +54,7 @@ export class EditorDimensionsComponent extends EditorWindow {
 	 * Reset all of the dimension settings.
 	 */
 	async resetAll(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const optionsButtonLocator = editorFrame.locator( selectors.optionsButton );
 		await optionsButtonLocator.click();
 		await this.editorPopoverMenuComponent.clickMenuButton( 'Reset all' );
@@ -62,7 +66,7 @@ export class EditorDimensionsComponent extends EditorWindow {
 	 * @param {number} padding Padding dimension to select.
 	 */
 	private async setPadding( padding: number ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		await editorFrame.getByLabel( 'All sides padding' ).fill( padding.toString() );
 	}
 }

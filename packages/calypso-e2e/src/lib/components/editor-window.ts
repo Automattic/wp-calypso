@@ -16,7 +16,7 @@ export class EditorWindow {
 				const calypsoIframe = this.page.locator( 'iframe[src*="calypsoify"]' );
 				await calypsoIframe.waitFor();
 
-				return this.page.frame( { url: '/calypsoify/' } );
+				return this.page.frame( { url: /calypsoify/ } );
 			} )(),
 			( async () => {
 				const editorBody = this.page.locator( 'body.block-editor-page' );

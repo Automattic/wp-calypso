@@ -25,7 +25,10 @@ export type ColorLocation = 'Background' | 'Text' | 'Links';
 /**
  * Represents the site editor site styles sidebar/panel.
  */
-export class EditorSiteStylesComponent extends EditorWindow {
+export class EditorSiteStylesComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	private editorColorPickerComponent: EditorColorPickerComponent;
 	private editorTypographyComponent: EditorTypographyComponent;
 	private editorDimensionsComponent: EditorDimensionsComponent;
@@ -36,7 +39,8 @@ export class EditorSiteStylesComponent extends EditorWindow {
 	 * @param {Page} page Object representing the base page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 		this.editorColorPickerComponent = new EditorColorPickerComponent( page );
 		this.editorTypographyComponent = new EditorTypographyComponent( page );
 		this.editorDimensionsComponent = new EditorDimensionsComponent( page );
@@ -50,7 +54,7 @@ export class EditorSiteStylesComponent extends EditorWindow {
 	 * @returns true if the site styles sidebar/panel is open, false otherwise.
 	 */
 	async siteStylesIsOpen(): Promise< boolean > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( parentSelector );
 		return ( await locator.count() ) > 0;
 	}
@@ -60,7 +64,7 @@ export class EditorSiteStylesComponent extends EditorWindow {
 	 */
 	async closeSiteStyles(): Promise< void > {
 		if ( await this.siteStylesIsOpen() ) {
-			const editorFrame = await this.getEditorFrame();
+			const editorFrame = await this.editorWindow.getEditorFrame();
 			const locator = editorFrame.locator( selectors.closeSidebarButton );
 			await locator.click();
 		}
@@ -136,7 +140,7 @@ export class EditorSiteStylesComponent extends EditorWindow {
 	async setStyleVariation( styleVariationName: string ): Promise< void > {
 		await this.returnToTopMenu();
 		await this.clickMenuButton( 'Browse styles' );
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.styleVariation( styleVariationName ) );
 		await locator.click();
 	}
@@ -147,7 +151,7 @@ export class EditorSiteStylesComponent extends EditorWindow {
 	 * @param {string} buttonName Button name.
 	 */
 	async clickMenuButton( buttonName: string ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.menuButton( buttonName ) );
 		await locator.click();
 	}
@@ -156,7 +160,7 @@ export class EditorSiteStylesComponent extends EditorWindow {
 	 * Returns to the top-level menu in the site styles sidebar/panel.
 	 */
 	async returnToTopMenu(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const backButtonLocator = editorFrame.locator( selectors.backButton );
 		// The DOM node of the current active panel is directly replaced on re-render.
 		// This means that we can safely rely on "count()" as an indicator of if there's
@@ -170,7 +174,7 @@ export class EditorSiteStylesComponent extends EditorWindow {
 	 * Open the more actions menu in the site styles sidebar/panel.
 	 */
 	async openMoreActionsMenu(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.moreActionsMenuButton );
 		await locator.click();
 	}

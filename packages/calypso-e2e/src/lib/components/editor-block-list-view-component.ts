@@ -17,14 +17,18 @@ interface BlockListLocation {
  * Represents an instance of the WordPress.com Editor's sidebar list view.
  * The component is available only in the Desktop viewport.
  */
-export class EditorBlockListViewComponent extends EditorWindow {
+export class EditorBlockListViewComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
@@ -33,7 +37,7 @@ export class EditorBlockListViewComponent extends EditorWindow {
 	 * @param {string} blockName Name of the block type (e.g. "Heading").
 	 */
 	async clickFirstBlockOfType( blockName: string ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.blockLink( blockName ) ).first();
 		await locator.click();
 	}
@@ -42,7 +46,7 @@ export class EditorBlockListViewComponent extends EditorWindow {
 	 * Selects and highlights all blocks in the list view.
 	 */
 	async selectAllBlocks(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const firstBlockLocator = editorFrame.locator(
 			selectors.blockByLocation( { level: 1, position: 1 } )
 		);
@@ -67,7 +71,7 @@ export class EditorBlockListViewComponent extends EditorWindow {
 	 * @param {BlockListLocation} location Location of block in the block list tree.
 	 */
 	async openOptionsForBlock( location: BlockListLocation ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator(
 			`${ selectors.blockByLocation( location ) } >> ${ selectors.moreOptionsButton }`
 		);

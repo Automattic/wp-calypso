@@ -41,7 +41,9 @@ const selectors = {
 /**
  * Represents an instance of the WPCOM's Gutenberg editor page.
  */
-export class EditorPage extends EditorWindow {
+export class EditorPage {
+	private page: Page;
+	private editorWindow: EditorWindow;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
@@ -59,8 +61,9 @@ export class EditorPage extends EditorWindow {
 	 * @param {Page} page The underlying page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
 
+		this.editorWindow = new EditorWindow( page );
 		this.editorGutenbergComponent = new EditorGutenbergComponent( page );
 		this.editorToolbarComponent = new EditorToolbarComponent( page );
 		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page );
@@ -245,7 +248,7 @@ export class EditorPage extends EditorWindow {
 		openInlineInserter: OpenInlineInserter
 	): Promise< ElementHandle > {
 		// First, launch the inline inserter in the way expected by the script.
-		await openInlineInserter();
+		await openInlineInserter( await this.editorWindow.getEditorCanvas() );
 		await this.addBlockFromInserter( blockName, this.editorInlineBlockInserterComponent );
 
 		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
@@ -322,7 +325,7 @@ export class EditorPage extends EditorWindow {
 		patternName: string,
 		inserter: BlockInserter
 	): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 
 		await inserter.searchBlockInserter( patternName );
 		await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
@@ -572,7 +575,7 @@ export class EditorPage extends EditorWindow {
 	 * Unpublishes the post or page by switching to draft.
 	 */
 	async unpublish(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 
 		await this.editorToolbarComponent.switchToDraft();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
@@ -591,7 +594,7 @@ export class EditorPage extends EditorWindow {
 	 * @returns {URL} Published article's URL.
 	 */
 	async getPublishedURLFromToast(): Promise< URL > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const toastLocator = editorFrame.locator( selectors.toastViewPostLink );
 		const publishedURL = ( await toastLocator.getAttribute( 'href' ) ) as string;
 		return new URL( publishedURL );

@@ -1,6 +1,6 @@
-import { Locator } from 'playwright';
+import { Page, Frame } from 'playwright';
 
-export type OpenInlineInserter = ( editor?: () => Locator | undefined ) => Promise< void >;
+export type OpenInlineInserter = ( editorCanvas: Page | Frame ) => Promise< void >;
 export interface BlockInserter {
 	searchBlockInserter( blockName: string ): Promise< void >;
 	selectBlockInserterResult(

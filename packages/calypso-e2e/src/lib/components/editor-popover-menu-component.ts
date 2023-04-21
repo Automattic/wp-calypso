@@ -10,21 +10,25 @@ const selectors = {
 /**
  * Represents the popover menu that can be launched from multiple different places.
  */
-export class EditorPopoverMenuComponent extends EditorWindow {
+export class EditorPopoverMenuComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
 	 * Click menu button by name.
 	 */
 	async clickMenuButton( name: string ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.menuButton( name ) );
 		await locator.click();
 	}

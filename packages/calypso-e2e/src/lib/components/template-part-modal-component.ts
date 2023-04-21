@@ -13,14 +13,18 @@ const selectors = {
 /**
  * Represents the modal in the full site editor that lets you create or select template parts.
  */
-export class TemplatePartModalComponent extends EditorWindow {
+export class TemplatePartModalComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
@@ -29,7 +33,7 @@ export class TemplatePartModalComponent extends EditorWindow {
 	 * @param {string} name Name for the new template.
 	 */
 	async enterTemplateName( name: string ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.nameInput );
 		await locator.fill( name );
 	}
@@ -38,7 +42,7 @@ export class TemplatePartModalComponent extends EditorWindow {
 	 * Click the create button for a new template part.
 	 */
 	async clickCreate(): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.createButton );
 		await locator.click();
 	}
@@ -49,7 +53,7 @@ export class TemplatePartModalComponent extends EditorWindow {
 	 * @param {string} name Name of the existing template part.
 	 */
 	async selectExistingTemplatePart( name: string ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.existingTemplatePart( name ) );
 		await locator.click();
 	}

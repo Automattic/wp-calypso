@@ -2,15 +2,17 @@ import { Locator, Page } from 'playwright';
 import { EditorWindow } from '../components';
 
 const coverStylesArray = [ 'Default', 'Bottom Wave', 'Top Wave' ] as const;
-export type coverStyles = typeof coverStylesArray[ number ];
+export type coverStyles = ( typeof coverStylesArray )[ number ];
 
 /**
  * Represents the Cover block.
  */
-export class CoverBlock extends EditorWindow {
+export class CoverBlock {
 	static blockName = 'Cover';
 	static blockEditorSelector = '[aria-label="Block: Cover"]';
 	static coverStyles = coverStylesArray;
+	private page: Page;
+	private editorWindow: EditorWindow;
 	block: Locator;
 
 	/**
@@ -20,8 +22,9 @@ export class CoverBlock extends EditorWindow {
 	 * @param {Locator} block Handle referencing the block as inserted on the Gutenberg editor.
 	 */
 	constructor( page: Page, block: Locator ) {
-		super( page );
+		this.page = page;
 		this.block = block;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
@@ -38,7 +41,7 @@ export class CoverBlock extends EditorWindow {
 
 		// After uploading the image the focus is switched to the inner
 		// paragraph block (Cover title), so we need to switch it back outside.
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		await editorFrame
 			.locator( CoverBlock.blockEditorSelector )
 			.click( { position: { x: 1, y: 1 } } );
@@ -59,7 +62,7 @@ export class CoverBlock extends EditorWindow {
 	 * @param {'Settings'|'Styles'} name Supported tabs.
 	 */
 	async activateTab( name: 'Settings' | 'Styles' ) {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		await editorFrame.locator( `[aria-label="${ name }"]` ).click();
 	}
 
@@ -69,7 +72,7 @@ export class CoverBlock extends EditorWindow {
 	 * @param {coverStyles} style The title of one of the Cover style buttons
 	 */
 	async setCoverStyle( style: coverStyles ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		await editorFrame.locator( `button[aria-label="${ style }"]` ).click();
 
 		const blockId = await this.block.getAttribute( 'data-block' );

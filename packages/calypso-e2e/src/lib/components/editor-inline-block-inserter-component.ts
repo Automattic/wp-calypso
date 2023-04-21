@@ -9,14 +9,18 @@ const selectors = {
 /**
  * Represents the inline, popover block inserter in the editor.
  */
-export class EditorInlineBlockInserterComponent extends EditorWindow {
+export class EditorInlineBlockInserterComponent {
+	private page: Page;
+	private editorWindow: EditorWindow;
+
 	/**
 	 * Creates an instance of the component.
 	 *
 	 * @param {Page} page Object representing the base page.
 	 */
 	constructor( page: Page ) {
-		super( page );
+		this.page = page;
+		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**
@@ -25,7 +29,7 @@ export class EditorInlineBlockInserterComponent extends EditorWindow {
 	 * @param {string} text Text to enter into the search input.
 	 */
 	async searchBlockInserter( text: string ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		const locator = editorFrame.locator( selectors.searchInput );
 		await locator.fill( text );
 	}
@@ -37,7 +41,7 @@ export class EditorInlineBlockInserterComponent extends EditorWindow {
 	 * result will be chosen.
 	 */
 	async selectBlockInserterResult( name: string ): Promise< void > {
-		const editorFrame = await this.getEditorFrame();
+		const editorFrame = await this.editorWindow.getEditorFrame();
 		await editorFrame.getByRole( 'option', { name, exact: true } ).first().click();
 	}
 }

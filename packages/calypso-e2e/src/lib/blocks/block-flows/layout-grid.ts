@@ -86,8 +86,7 @@ export class LayoutGridBlockFlow implements BlockFlow {
 	): Promise< void > {
 		// The inline inserter can be opened in a lot of ways.
 		// We have to define our own function to do so, and make sure we're clicking the right button.
-		const openInlineInserter: OpenInlineInserter = async () => {
-			const editorCanvas = await context.editorPage.getEditorCanvas();
+		const openInlineInserter: OpenInlineInserter = async ( editorCanvas ) => {
 			const addBlockButtonLocator = editorCanvas.locator(
 				selectors.addBlockButton( columnDetails.columnNumber )
 			);
