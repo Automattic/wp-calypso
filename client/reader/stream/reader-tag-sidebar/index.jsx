@@ -1,12 +1,14 @@
 import { useTranslate } from 'i18n-calypso';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
 import { useRelatedMetaByTag } from 'calypso/data/reader/use-related-meta-by-tag';
+import { useTagStats } from 'calypso/data/reader/use-tag-stats';
 import ReaderListFollowingItem from 'calypso/reader/stream/reader-list-followed-sites/item';
 import '../style.scss';
 
 const ReaderTagSidebar = ( { tag } ) => {
 	const translate = useTranslate();
 	const relatedMetaByTag = useRelatedMetaByTag( tag );
+	const tagStats = useTagStats( tag );
 	if ( relatedMetaByTag === undefined ) {
 		return null;
 	}
