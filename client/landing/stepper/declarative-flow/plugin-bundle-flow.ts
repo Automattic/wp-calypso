@@ -71,7 +71,7 @@ const pluginBundleFlow: Flow = {
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStartingPoint(),
 			[]
 		);
-		const siteSlugParam = useSiteSlugParam() as string;
+		const siteSlugParam = useSiteSlugParam();
 		const site = useSite();
 		const currentUser = useSelector( getCurrentUser );
 
