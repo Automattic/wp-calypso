@@ -232,7 +232,7 @@ export class PlansFeaturesMain extends Component {
 		);
 	}
 
-	getPlanFeatures() {
+	renderPlanFeatures() {
 		const {
 			basePlansPath,
 			currentPurchaseIsInAppPurchase,
@@ -611,7 +611,7 @@ export class PlansFeaturesMain extends Component {
 
 		return shouldShowPlansFeatureComparison
 			? this.show2023OnboardingPricingGrid()
-			: this.getPlanFeatures();
+			: this.renderPlanFeatures();
 	}
 
 	render() {
