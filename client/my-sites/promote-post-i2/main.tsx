@@ -259,6 +259,7 @@ export default function PromotedPosts( { tab }: Props ) {
 			<DocumentHead title={ translate( 'Advertising - Redesign page!' ) } />
 
 			<div className="promote-post__top-bar">
+				{ /* TODO: Do not forget to remove "Redesign page" part! */ }
 				<FormattedHeader
 					brandFont
 					className="advertising__page-header"
