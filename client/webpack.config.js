@@ -239,6 +239,7 @@ const webpackConfig = {
 				cacheIdentifier,
 				cacheCompression: false,
 				exclude: /node_modules\//,
+				plugins: [ isDevelopment && require.resolve( 'react-refresh/babel' ) ].filter( Boolean ),
 			} ),
 			TranspileConfig.loader( {
 				workerCount,
