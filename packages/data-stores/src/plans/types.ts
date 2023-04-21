@@ -1,4 +1,4 @@
-import { PERIOD_LIST } from './constants';
+import { PERIOD_LIST, TERMS_LIST } from './constants';
 import * as selectors from './selectors';
 import type { plansProductSlugs, plansSlugs } from './constants';
 import type { SelectFromMap } from '../mapped-types';
@@ -48,6 +48,7 @@ export interface PlanProduct {
 	 * 2) to show how much a monthly plan would cost in a year (billed 12$/mo costs $144/yr)
 	 */
 	annualPrice: string;
+	term: ( typeof TERMS_LIST )[ number ] | null;
 }
 
 /**

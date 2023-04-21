@@ -9,6 +9,15 @@ import {
 	monthlySlugs,
 	annualSlugs,
 	FEATURE_IDS_THAT_REQUIRE_ANNUALLY_BILLED_PLAN,
+	PLAN_BIENNIAL_PERIOD,
+	PLAN_ANNUAL_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
+	PLAN_MONTHLY_PERIOD,
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
+	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
+	TERMS_LIST,
 } from './constants';
 import type {
 	PricedAPIPlan,
@@ -134,6 +143,22 @@ function normalizePlanProducts(
 			( plan ) => plan.productIds.indexOf( planProduct.product_id ) > -1
 		) as Plan;
 
+		let term: ( typeof TERMS_LIST )[ number ] | null = null;
+		switch ( planProduct.bill_period ) {
+			case PLAN_ANNUAL_PERIOD:
+				term = TERM_ANNUALLY;
+				break;
+			case PLAN_BIENNIAL_PERIOD:
+				term = TERM_BIENNIALLY;
+				break;
+			case PLAN_TRIENNIAL_PERIOD:
+				term = TERM_TRIENNIALLY;
+				break;
+			case PLAN_MONTHLY_PERIOD:
+				term = TERM_MONTHLY;
+				break;
+		}
+
 		plans.push( {
 			productId: planProduct.product_id,
 			// This means that free plan is considered "annually billed"
@@ -152,6 +177,7 @@ function normalizePlanProducts(
 				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD
 					? getAnnualPrice( planProduct )
 					: getFormattedPrice( planProduct ),
+			term,
 		} );
 		return plans;
 	}, [] as PlanProduct[] );
