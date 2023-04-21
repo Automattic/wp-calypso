@@ -5,25 +5,13 @@ import {
 	authenticate,
 	post,
 	redirect,
-	siteEditor,
 	exitPost,
 	redirectSiteEditor,
 	redirectToPermalinkIfLoggedOut,
 } from './controller';
 
 export default function () {
-	page(
-		'/site-editor/:site?',
-		redirectLoggedOut,
-		siteSelection,
-		redirectSiteEditor,
-		redirect,
-		authenticate,
-		siteEditor,
-		makeLayout,
-		clientRender
-	);
-
+	page( '/site-editor/:site?', redirectLoggedOut, siteSelection, redirectSiteEditor );
 	page( '/post', redirectLoggedOut, siteSelection, sites, makeLayout, clientRender );
 	page( '/post/new', '/post' ); // redirect from beep-beep-boop
 	page(

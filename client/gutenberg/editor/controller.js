@@ -305,6 +305,12 @@ export function redirectToPermalinkIfLoggedOut( context, next ) {
 	}
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 	const CONFIGURABLE_TYPES = [ 'jetpack-portfolio', 'jetpack-testimonial' ];
+
+	// The context.path in this case could be one of the following:
+	// - /page/{site}/{id}
+	// - /post/{site}/{id}
+	// - /edit/jetpack-portfolio/{site}/{id}
+	// - /edit/jetpack-testimonial/{site}/{id}
 	const explodedPath = context.path.split( '/' );
 	if (
 		context.path &&
