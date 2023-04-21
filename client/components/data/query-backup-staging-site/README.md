@@ -9,9 +9,9 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 ```jsx
 import { useSelector } from 'react-redux';
 import QueryBackupStagingSite from 'calypso/components/data/query-backup-staging-site';
-import isRequestingStagingSiteInfo from 'calypso/state/rewind/selectors/is-requesting-staging-site-info';
-import hasFetchedStagingSiteInfo from 'calypso/state/rewind/selectors/has-fetched-staging-site-info';
 import getBackupStagingSiteInfo from 'calypso/state/rewind/selectors/get-backup-staging-site-info';
+import hasFetchedStagingSiteInfo from 'calypso/state/rewind/selectors/has-fetched-staging-site-info';
+import isRequestingStagingSiteInfo from 'calypso/state/rewind/selectors/is-requesting-staging-site-info';
 
 export default function MyComponent( { siteId } ) {
 	const isRequesting = useSelector( ( state ) => isRequestingStagingSiteInfo( state, siteId ) );
