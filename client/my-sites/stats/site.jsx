@@ -312,6 +312,7 @@ class StatsSite extends Component {
 				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
+				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 			</div>
 		);
 	}

@@ -1,12 +1,9 @@
-import {
-	isBusinessPlan,
-	isPremiumPlan,
-	isWooExpressMediumPlan,
-} from '@automattic/calypso-products';
+import { isBusinessPlan } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isPopularPlan } from '../lib/is-popular-plan';
 
 const useHighlightLabel = ( planName: string ) => {
 	const translate = useTranslate();
@@ -18,7 +15,7 @@ const useHighlightLabel = ( planName: string ) => {
 		return translate( 'Your plan' );
 	} else if ( isBusinessPlan( planName ) ) {
 		return translate( 'Best for devs' );
-	} else if ( isPremiumPlan( planName ) || isWooExpressMediumPlan( planName ) ) {
+	} else if ( isPopularPlan( planName ) ) {
 		return translate( 'Popular' );
 	}
 

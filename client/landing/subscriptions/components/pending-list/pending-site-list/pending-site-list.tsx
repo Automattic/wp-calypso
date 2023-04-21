@@ -1,6 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import PendingSiteRow from './pending-site-row';
-import './styles.scss';
+import '../styles.scss';
 import type { PendingSiteSubscription } from '@automattic/data-stores/src/reader/types';
 
 type PendingSiteListProps = {
@@ -11,7 +11,7 @@ export default function PendingSiteList( { pendingSites }: PendingSiteListProps 
 	const translate = useTranslate();
 
 	return (
-		<ul className="subscription-manager__pending-site-list" role="table">
+		<ul className="subscription-manager__pending-list" role="table">
 			<li className="row header" role="row">
 				<span className="title-box" role="columnheader">
 					{ translate( 'Subscribed site' ) }

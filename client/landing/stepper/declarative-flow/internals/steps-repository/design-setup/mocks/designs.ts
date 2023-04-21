@@ -1,8 +1,5 @@
 export const generateMockedStarterDesigns = () => {
 	return {
-		generated: {
-			designs: [],
-		},
 		static: {
 			designs: [],
 		},

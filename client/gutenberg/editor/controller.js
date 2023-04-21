@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { makeLayout, render } from 'calypso/controller';
 import { addQueryArgs } from 'calypso/lib/route';
-import wpcom from 'calypso/lib/wp';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { getAdminMenu, getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
@@ -280,25 +279,15 @@ export const redirectSiteEditor = async ( context ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 
-	const { home_template } = await wpcom.req
-		.get( {
-			path: `/sites/${ siteId }/block-editor`,
-			apiNamespace: 'wpcom/v2',
-		} )
-		.catch( () => {} );
-
-	let queryArgs = {};
+	const queryArgs = context.query || {};
 	// Only add the origin if it's not wordpress.com.
 	if ( location.origin !== 'https://wordpress.com' ) {
 		queryArgs.calypso_origin = location.origin;
 	}
-	// Adds home_template.post_id and home_template.postType if we received them.
-	if ( home_template ) {
-		queryArgs = { ...queryArgs, ...home_template };
-	}
+
 	// We aren't using `getSiteEditorUrl` because it still thinks we should gutenframe the Site Editor.
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 	const siteEditorUrl = addQueryArgs( queryArgs, `${ siteAdminUrl }site-editor.php` );
-	// Calling replace to avoid adding an entry to the browser history.
+	// Calling replace to avoid adding an entry to the browser history upon redirect.
 	return location.replace( siteEditorUrl );
 };
