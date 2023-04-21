@@ -8,12 +8,12 @@ import titlecase from 'to-title-case';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import SectionHeader from 'calypso/components/section-header';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import DatePicker from 'calypso/my-sites/stats/stats-date-picker';
+import StatsPageHeader from 'calypso/my-sites/stats/stats-page-header';
 import StatsPeriodHeader from 'calypso/my-sites/stats/stats-period-header';
 import StatsPeriodNavigation from 'calypso/my-sites/stats/stats-period-navigation';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -66,11 +66,8 @@ class StoreStats extends Component {
 				) }
 
 				<div className="stats">
-					<FormattedHeader
-						brandFont
-						className="store-stats__section-header modernized-header"
-						headerText={ translate( 'Jetpack Stats' ) }
-						align="left"
+					<StatsPageHeader
+						page="store"
 						subHeaderText={ translate(
 							'Learn valuable insights about the purchases made on your store.'
 						) }

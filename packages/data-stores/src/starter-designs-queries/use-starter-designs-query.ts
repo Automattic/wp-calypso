@@ -8,6 +8,7 @@ import type {
 	DesignRecipe,
 	SoftwareSet,
 	StyleVariation,
+	PreviewData,
 } from '@automattic/design-picker/src/types';
 
 interface StarterDesignsQueryParams {
@@ -25,11 +26,11 @@ interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
 }
 
 interface StarterDesignsResponse {
-	generated: { designs: GeneratedDesign[] };
-	static: { designs: StaticDesign[] };
+	filters: { subject: Record< string, Category > };
+	static: { designs: StarterDesign[] };
 }
 
-interface StaticDesign {
+interface StarterDesign {
 	slug: string;
 	title: string;
 	description: string;
@@ -40,13 +41,7 @@ interface StaticDesign {
 	style_variations?: StyleVariation[];
 	software_sets?: SoftwareSet[];
 	is_virtual: boolean;
-}
-
-interface GeneratedDesign {
-	slug: string;
-	title: string;
-	recipe: DesignRecipe;
-	verticalizable: boolean;
+	preview_data: PreviewData | null;
 }
 
 export function useStarterDesignsQuery(
@@ -56,12 +51,10 @@ export function useStarterDesignsQuery(
 	return useQuery( [ 'starter-designs', queryParams ], () => fetchStarterDesigns( queryParams ), {
 		select: ( response: StarterDesignsResponse ) => {
 			const allDesigns = {
-				generated: {
-					designs: response.generated?.designs?.map( apiStarterDesignsGeneratedToDesign ),
+				filters: {
+					subject: response.filters?.subject || {},
 				},
-				static: {
-					designs: response.static?.designs?.map( apiStarterDesignsStaticToDesign ),
-				},
+				designs: response.static?.designs?.map( apiStarterDesignsToDesign ),
 			};
 
 			return select ? select( allDesigns ) : allDesigns;
@@ -82,7 +75,7 @@ function fetchStarterDesigns(
 	} );
 }
 
-function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
+function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 	const {
 		slug,
 		title,
@@ -93,6 +86,7 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		price,
 		style_variations,
 		software_sets,
+		preview_data,
 	} = design;
 	const is_premium =
 		( design.recipe.stylesheet && design.recipe.stylesheet.startsWith( 'premium/' ) ) || false;
@@ -115,26 +109,10 @@ function apiStarterDesignsStaticToDesign( design: StaticDesign ): Design {
 		design_type: is_premium ? 'premium' : 'standard',
 		style_variations,
 		is_virtual: design.is_virtual && !! design.recipe?.pattern_ids?.length,
+		...( preview_data && { preview_data } ),
 		// Deprecated; used for /start flow
 		features: [],
 		template: '',
 		theme: '',
-	};
-}
-
-function apiStarterDesignsGeneratedToDesign( design: GeneratedDesign ): Design {
-	const { slug, title, recipe, verticalizable } = design;
-
-	return {
-		slug,
-		title,
-		recipe,
-		verticalizable,
-		is_premium: false,
-		categories: [],
-		features: [],
-		template: '',
-		theme: '',
-		design_type: 'vertical',
 	};
 }

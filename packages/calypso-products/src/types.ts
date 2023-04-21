@@ -19,6 +19,11 @@ import type {
 	FEATURE_GROUP_THEMES_AND_CUSTOMIZATION,
 	FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS,
 	FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS,
+	FEATURE_GROUP_YOUR_STORE,
+	FEATURE_GROUP_PRODUCTS,
+	FEATURE_GROUP_PAYMENTS,
+	FEATURE_GROUP_MARKETING_EMAIL,
+	FEATURE_GROUP_SHIPPING,
 } from './constants';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactElement } from 'react';
@@ -59,7 +64,10 @@ export interface WPComPlan extends Plan {
 }
 
 export type IncompleteWPcomPlan = Partial< WPComPlan > &
-	Pick< WPComPlan, 'group' | 'type' | 'getTitle' | 'getDescription' >;
+	Pick<
+		WPComPlan,
+		'group' | 'type' | 'getTitle' | 'getDescription' | 'getPlanCancellationDescription'
+	>;
 
 // Jetpack
 export type JetpackProductSlug = ( typeof JETPACK_PRODUCTS_LIST )[ number ];
@@ -138,7 +146,12 @@ export type FeatureGroupSlug =
 	| typeof FEATURE_GROUP_SECURITY_AND_SAFETY
 	| typeof FEATURE_GROUP_THEMES_AND_CUSTOMIZATION
 	| typeof FEATURE_GROUP_SUPERIOR_COMMERCE_SOLUTIONS
-	| typeof FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS;
+	| typeof FEATURE_GROUP_MARKETING_GROWTH_AND_MONETIZATION_TOOLS
+	| typeof FEATURE_GROUP_YOUR_STORE
+	| typeof FEATURE_GROUP_PRODUCTS
+	| typeof FEATURE_GROUP_PAYMENTS
+	| typeof FEATURE_GROUP_MARKETING_EMAIL
+	| typeof FEATURE_GROUP_SHIPPING;
 
 export type FeatureGroup = {
 	slug: FeatureGroupSlug;
@@ -196,6 +209,7 @@ export type Plan = BillingTerm & {
 	getShortDescription?: () => TranslateResult;
 	getFeaturedDescription?: () => TranslateResult;
 	getLightboxDescription?: () => TranslateResult;
+	getPlanCancellationDescription?: () => TranslateResult;
 	getProductsIncluded?: () => ReadonlyArray< string >;
 	getWhatIsIncluded?: () => Array< TranslateResult >;
 	getBenefits?: () => Array< TranslateResult >;

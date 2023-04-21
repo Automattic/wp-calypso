@@ -116,3 +116,6 @@ yarn-json-output.json
 
 # Profile results:
 /profiles/
+
+# Storybook
+storybook-static

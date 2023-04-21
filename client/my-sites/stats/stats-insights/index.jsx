@@ -7,7 +7,6 @@ import { connect } from 'react-redux';
 import DomainTip from 'calypso/blocks/domain-tip';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
-import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -21,6 +20,7 @@ import PostingActivity from '../post-trends';
 import Comments from '../stats-comments';
 import Followers from '../stats-followers';
 import StatsModule from '../stats-module';
+import StatsPageHeader from '../stats-page-header';
 import Reach from '../stats-reach';
 import StatShares from '../stats-shares';
 import statsStrings from '../stats-strings';
@@ -49,12 +49,9 @@ const StatsInsights = ( props ) => {
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 			<PageViewTracker path="/stats/insights/:site" title="Stats > Insights" />
 			<div className="stats">
-				<FormattedHeader
-					brandFont
-					className="stats__section-header modernized-header"
-					headerText={ translate( 'Jetpack Stats' ) }
+				<StatsPageHeader
+					page="insights"
 					subHeaderText={ translate( "View your site's performance and learn from trends." ) }
-					align="left"
 				/>
 				<StatsNavigation selectedItem="insights" siteId={ siteId } slug={ siteSlug } />
 				<AnnualHighlightsSection siteId={ siteId } />

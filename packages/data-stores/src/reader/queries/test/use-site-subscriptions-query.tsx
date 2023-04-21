@@ -6,7 +6,9 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import '@testing-library/jest-dom/extend-expect';
 import { callApi, getSubkey } from '../../helpers';
-import useSiteSubscriptionsQuery from '../../queries/use-site-subscriptions-query';
+import useSiteSubscriptionsQuery, {
+	SiteSubscriptionsSortBy,
+} from '../../queries/use-site-subscriptions-query';
 
 jest.mock( '../../helpers', () => ( {
 	callApi: jest.fn(),
@@ -88,5 +90,71 @@ describe( 'useSiteSubscriptionsQuery hook', () => {
 		expect( callApi ).toHaveBeenCalledTimes( 1 );
 		expect( result.current.data.subscriptions.length ).toBe( 1 );
 		expect( result.current.data.totalCount ).toBe( 2 );
+	} );
+
+	it.each( [
+		{
+			sortTerm: SiteSubscriptionsSortBy.SiteName,
+			expectedResult: [
+				{ ID: '2', name: "Arnold's site" },
+				{ ID: '3', name: "Maciej's site" },
+				{ ID: '1', name: "Zorro's site" },
+			],
+		},
+		{
+			sortTerm: SiteSubscriptionsSortBy.DateSubscribed,
+			expectedResult: [
+				{ ID: '3', date_subscribed: '2023-04-18T17:00:00+00:00' },
+				{ ID: '2', date_subscribed: '2023-04-18T12:00:00+00:00' },
+				{ ID: '1', date_subscribed: '2022-01-18T00:00:00+00:00' },
+			],
+		},
+		{
+			sortTerm: SiteSubscriptionsSortBy.LastUpdated,
+			expectedResult: [
+				{ ID: '1', last_updated: '2023-04-18T19:00:00+00:00' },
+				{ ID: '3', last_updated: '2023-04-18T17:00:00+00:00' },
+				{ ID: '2', last_updated: '2023-04-18T12:00:00+00:00' },
+			],
+		},
+	] )( 'Applies sorting to the subscriptions returned', async ( { sortTerm, expectedResult } ) => {
+		( callApi as jest.Mock ).mockResolvedValue( {
+			subscriptions: [
+				{
+					ID: '1',
+					name: "Zorro's site",
+					URL: 'https://site2.example.com',
+					date_subscribed: '2022-01-18T00:00:00+00:00',
+					last_updated: '2023-04-18T19:00:00+00:00',
+				},
+				{
+					ID: '3',
+					name: "Maciej's site",
+					URL: 'https://site2.example.com',
+					date_subscribed: '2023-04-18T17:00:00+00:00',
+					last_updated: '2023-04-18T17:00:00+00:00',
+				},
+				{
+					ID: '2',
+					name: "Arnold's site",
+					URL: 'https://site1.example.com',
+					date_subscribed: '2023-04-18T12:00:00+00:00',
+					last_updated: '2023-04-18T12:00:00+00:00',
+				},
+			],
+			page: 1,
+			total_subscriptions: 3,
+		} );
+
+		const { result, waitFor } = renderHook( () => useSiteSubscriptionsQuery( { sortTerm } ), {
+			wrapper,
+		} );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+
+		expect( callApi ).toHaveBeenCalledTimes( 1 );
+		result.current.data.subscriptions.forEach( ( subscription, index ) => {
+			expect( subscription.ID ).toEqual( expectedResult[ index ].ID );
+		} );
 	} );
 } );

@@ -1,9 +1,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { useLocale } from '@automattic/i18n-utils';
+import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { WpcomTourKit, usePrefetchTourAssets } from '@automattic/tour-kit';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { useEffect, useMemo } from '@wordpress/element';
+import { getQueryArg } from '@wordpress/url';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import useSitePlan from '../../../dotcom-fse/lib/site-plan/use-site-plan';
 import { selectors as starterPageTemplatesSelectors } from '../../../starter-page-templates/store';
@@ -47,11 +49,15 @@ function LaunchWpcomWelcomeTour() {
 	const { siteIntent, siteIntentFetched } = useSiteIntent();
 	const localeSlug = useLocale();
 	const editorType = getEditorType();
+	const isStartWritingFlow = getQueryArg( window.location.search, START_WRITING_FLOW );
 
 	// Preload first card image (others preloaded after open state confirmed)
 	usePrefetchTourAssets( [ getTourSteps( localeSlug, false, false, null, siteIntent )[ 0 ] ] );
 
 	useEffect( () => {
+		if ( isStartWritingFlow ) {
+			return;
+		}
 		if ( ! show && ! isNewPageLayoutModalOpen ) {
 			return;
 		}
@@ -74,9 +80,10 @@ function LaunchWpcomWelcomeTour() {
 		siteIntent,
 		siteIntentFetched,
 		editorType,
+		isStartWritingFlow,
 	] );
 
-	if ( ! show || isNewPageLayoutModalOpen ) {
+	if ( ! show || isNewPageLayoutModalOpen || isStartWritingFlow ) {
 		return null;
 	}
 

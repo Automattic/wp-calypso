@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelector } from 'react-redux';
+import { updateLaunchpadSettings } from 'calypso/data/sites/use-launchpad';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
@@ -9,6 +10,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { setDesignOnSite } from 'calypso/lib/signup/step-actions';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const startWriting: Flow = {
@@ -28,16 +30,32 @@ const startWriting: Flow = {
 
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
-		function submit( providedDependencies: ProvidedDependencies = {} ) {
+		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
 			switch ( currentStep ) {
 				case 'site-creation-step':
 					return navigate( 'processing' );
 				case 'processing': {
 					if ( providedDependencies?.siteSlug ) {
+						await updateLaunchpadSettings( String( providedDependencies?.siteSlug ), {
+							checklist_statuses: { first_post_published: true },
+						} );
+
+						const defaultFlowThemeSlug = 'livro';
 						const siteOrigin = window.location.origin;
-						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?showLaunchpad=true&origin=${ siteOrigin }`
+
+						setDesignOnSite(
+							() => {
+								redirect(
+									`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }`
+								);
+							},
+							{
+								siteSlug: providedDependencies?.siteSlug,
+								selectedDesign: {
+									theme: defaultFlowThemeSlug,
+								},
+							}
 						);
 					}
 				}
@@ -66,7 +84,7 @@ const startWriting: Flow = {
 				message: `${ flowName } requires a logged in user`,
 			};
 		} else if ( currentUserSiteCount && currentUserSiteCount > 0 ) {
-			redirect( '/post?showLaunchpad=true' );
+			redirect( `/post?${ START_WRITING_FLOW }=true` );
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires no preexisting sites`,
