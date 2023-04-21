@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { Pattern } from '../types';
 

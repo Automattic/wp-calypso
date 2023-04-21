@@ -18,12 +18,12 @@ import {
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
-import { useQueryClient } from '@tanstack/react-query';
 import { Button, TextControl, CheckboxControl, Tip } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Icon, info } from '@wordpress/icons';
 import React, { useEffect, useRef, useState } from 'react';
+import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';

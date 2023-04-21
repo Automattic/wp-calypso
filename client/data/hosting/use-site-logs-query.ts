@@ -1,5 +1,5 @@
-import { UseQueryOptions, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { UseQueryOptions, useQuery, useQueryClient } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 
 interface SiteLogsAPIResponse {

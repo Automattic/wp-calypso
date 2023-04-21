@@ -3,10 +3,10 @@
  */
 import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
-import * as ReactQuery from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import nock from 'nock';
 import React from 'react';
+import * as ReactQuery from 'react-query';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { createReduxStore } from 'calypso/state';

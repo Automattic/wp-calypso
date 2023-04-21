@@ -1,5 +1,5 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { useMemo, useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useInfiniteQuery } from 'react-query';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { SiteSubscription } from '../types';
@@ -91,13 +91,11 @@ const useSiteSubscriptionsQuery = ( {
 			}
 		);
 
-	const nextPage = hasNextPage && ! isFetching && data ? data.pages.length + 1 : null;
-
 	useEffect( () => {
-		if ( nextPage ) {
+		if ( hasNextPage && ! isFetchingNextPage && ! isFetching ) {
 			fetchNextPage();
 		}
-	}, [ nextPage, fetchNextPage ] );
+	}, [ hasNextPage, isFetchingNextPage, isFetching, fetchNextPage ] );
 
 	const resultData = useMemo( () => {
 		// Flatten all the pages into a single array containing all subscriptions

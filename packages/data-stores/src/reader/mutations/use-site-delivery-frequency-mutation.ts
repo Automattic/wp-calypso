@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from 'react-query';
 import { callApi, applyCallbackToPages } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
 import type {

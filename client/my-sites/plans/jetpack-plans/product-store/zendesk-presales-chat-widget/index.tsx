@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
-import { useQuery } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import { getLocaleSlug } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import ZendeskChat from 'calypso/components/presales-zendesk-chat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -57,7 +57,7 @@ export const ZendeskPreSalesChat: React.VFC = () => {
 		//adding a safeguard to ensure if there's an unkown error with the widget it won't crash the whole app
 		try {
 			return useQuery< boolean, Error >(
-				[ 'presales-availability' ],
+				'presales-availability',
 				async () => {
 					const url = 'https://public-api.wordpress.com/wpcom/v2/presales/chat';
 					const queryObject = {

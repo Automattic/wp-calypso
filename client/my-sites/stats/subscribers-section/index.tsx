@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import UplotChart from '@automattic/components/src/chart-uplot';
-import { UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
+import { UseQueryResult } from 'react-query';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import StatsModulePlaceholder from '../stats-module/placeholder';

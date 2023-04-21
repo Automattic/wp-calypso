@@ -7,7 +7,7 @@ import {
 	UseInfiniteQueryResult,
 	QueryKey,
 	QueryFunction,
-} from '@tanstack/react-query';
+} from 'react-query';
 import { useSelector } from 'react-redux';
 import {
 	extractSearchInformation,
@@ -46,11 +46,7 @@ export const getWPORGPluginsQueryParams = (
 
 export const useWPORGPlugins = (
 	options: PluginQueryOptions,
-	{
-		enabled = true,
-		staleTime = BASE_STALE_TIME,
-		refetchOnMount = true,
-	}: UseQueryOptions< any > = {}
+	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 
@@ -69,11 +65,7 @@ const extractPagination = ( pages: Array< { plugins: object; info: object } > = 
 
 export const useWPORGInfinitePlugins = (
 	options: PluginQueryOptions,
-	{
-		enabled = true,
-		staleTime = BASE_STALE_TIME,
-		refetchOnMount = true,
-	}: UseQueryOptions< any > = {}
+	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
 ): UseInfiniteQueryResult => {
 	const [ search, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
