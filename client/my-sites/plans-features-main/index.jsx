@@ -348,7 +348,10 @@ export class PlansFeaturesMain extends Component {
 
 		const isBloggerAvailable = isBloggerPlan( selectedPlan ) || isBloggerPlan( sitePlanSlug );
 
+		// TODO:
 		// this should fall into the processing function for the visible plans
+		// however, the Enterprise plan isn't a real plan and lack of some required support
+		// from the utility functions right now.
 		const isEnterpriseAvailable = is2023PricingGridVisible && ! hideEnterprisePlan;
 
 		return [
