@@ -1,7 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { Onboard } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useSelector } from 'react-redux';
+import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
@@ -102,6 +102,7 @@ const pluginBundleFlow: Flow = {
 			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).getSite( site.ID ),
 			[ site ]
 		);
+		const dispatch = reduxDispatch();
 
 		// Since we're mimicking a subset of the site-setup-flow, we're safe to use the siteSetupProgress.
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
@@ -306,12 +307,6 @@ const pluginBundleFlow: Flow = {
 
 		return result;
 	},
-	// useSideEffect() {
-	// 	const dispatch = reduxDispatch();
-	// 	const siteSlugParam = useSiteSlugParam() as string;
-	// 	console.log( 'tuto benne', siteSlugParam );
-	// 	dispatch( requestSite( siteSlugParam ) );
-	// },
 };
 
 export default pluginBundleFlow;
