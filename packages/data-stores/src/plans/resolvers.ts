@@ -194,7 +194,7 @@ export function* getSupportedPlans( locale = 'en' ) {
 		apiVersion: '1.5',
 	} );
 
-	const { body: plansFeatures } = ( yield fetchAndParse(
+	const { body: plansDetails } = ( yield fetchAndParse(
 		`https://public-api.wordpress.com/wpcom/v2/plans/details?locale=${ encodeURIComponent(
 			locale
 		) }`,
@@ -204,9 +204,9 @@ export function* getSupportedPlans( locale = 'en' ) {
 		}
 	) ) as { body: DetailsAPIResponse };
 
-	const features = processFeatures( plansFeatures.features );
+	const features = processFeatures( plansDetails.features );
 
-	const periodAgnosticPlans: Plan[] = plansFeatures.plans.map( ( plan ) => {
+	const periodAgnosticPlans: Plan[] = plansDetails.plans.map( ( plan ) => {
 		const planSlug = plan.nonlocalized_short_name?.toLowerCase() as PlanSlug;
 
 		return {
@@ -232,5 +232,5 @@ export function* getSupportedPlans( locale = 'en' ) {
 	yield setPlans( periodAgnosticPlans, locale );
 	yield setPlanProducts( planProducts );
 	yield setFeatures( features, locale );
-	yield setFeaturesByType( plansFeatures.features_by_type, locale );
+	yield setFeaturesByType( plansDetails.features_by_type, locale );
 }
