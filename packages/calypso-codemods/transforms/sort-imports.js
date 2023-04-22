@@ -97,7 +97,9 @@ const addNewlineBeforeDocBlock = ( str ) => str.replace( /(import.*\n)(\/\*\*)/,
  * @returns {Array} the sorted set of import nodes
  */
 const sortImports = ( importNodes ) =>
-	importNodes.sort( ( nodeA, nodeB ) => nodeA.source.value.localeCompare( nodeB.source.value ) );
+	[ ...importNodes ].sort( ( nodeA, nodeB ) =>
+		nodeA.source.value.localeCompare( nodeB.source.value )
+	);
 
 module.exports = function ( file, api ) {
 	const j = api.jscodeshift;
@@ -112,7 +114,8 @@ module.exports = function ( file, api ) {
 		externalDependenciesSet.has( importNode.source.value.split( '/' )[ 0 ] );
 
 	// if there are no deps at all, then return early.
-	if ( ! declarations.nodes() || declarations.nodes().length === 0 ) {
+	const nodes = declarations.nodes();
+	if ( ! nodes || nodes.length === 0 ) {
 		return file.source;
 	}
 
