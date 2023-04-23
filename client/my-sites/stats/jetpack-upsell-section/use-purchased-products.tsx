@@ -7,6 +7,7 @@ import {
 	JETPACK_VIDEOPRESS_PRODUCTS,
 } from '@automattic/calypso-products';
 import { useEffect, useState } from 'react';
+import wpcom from 'calypso/lib/wp';
 
 //
 // WARNING: This hook will only work within Odyssey Stats!
@@ -16,13 +17,8 @@ import { useEffect, useState } from 'react';
 
 // Include data from stats-admin initialization for making resource requests.
 const fetchPurchases = ( resource: string, options = {} ) =>
-	// Prefix resource with api_root for the site.
-	fetch( window.configData?.api_root + resource, {
-		...options,
-		credentials: 'include',
-		// Attach WordPress nonce to request.
-		headers: { 'X-WP-Nonce': window.configData?.nonce },
-	} )
+	wpcom.req
+		.get( { path: resource, apiNamespace: 'jetpack/v4' }, options )
 		.then( ( res ) => res.json() )
 		.then( ( json ) => JSON.parse( json.data ) );
 
@@ -55,7 +51,7 @@ export default function usePurchasedProducts() {
 	const [ error, setError ] = useState();
 
 	useEffect( () => {
-		fetchPurchases( 'jetpack/v4/site/purchases' )
+		fetchPurchases( '/site/purchases' )
 			.then( ( purchases ) => {
 				setIsLoading( false );
 				setPurchasedProducts( formatResponse( purchases ) );
