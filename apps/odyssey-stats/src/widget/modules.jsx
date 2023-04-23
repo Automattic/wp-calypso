@@ -13,8 +13,11 @@ function ModuleCard( {
 	icon,
 	title,
 	value,
+	error,
 	activateProduct,
-	active,
+	isLoading = true,
+	isError = false,
+	canManageModule = false,
 	className = null,
 	info = null,
 } ) {
@@ -24,32 +27,37 @@ function ModuleCard( {
 		<div className={ classNames( 'stats-widget-module stats-widget-card', className ) }>
 			<div className="stats-widget-module__icon">{ icon }</div>
 			<div className="stats-widget-module__title">{ title }</div>
-			{ ( active || ! activateProduct ) && (
-				<div className="stats-widget-module__value">
-					<ShortenedNumber value={ value } />
-				</div>
-			) }
-			{ ! active && activateProduct && (
-				<div className="stats-widget-module__info">
-					{ value === 'not_active' && (
-						<button
-							disabled={ disabled }
-							onClick={ () => {
-								setDisabled( true );
-								activateProduct().catch( () => setDisabled( false ) );
-							} }
-						>
-							Activate
-						</button>
+			{ isLoading && <div className="stats-widget-module__value">-</div> }
+			{ ! isLoading && (
+				<>
+					{ ( ! isError || ! canManageModule ) && (
+						<div className="stats-widget-module__value">
+							<ShortenedNumber value={ value } />
+						</div>
 					) }
-					{ /* TODO: add button to install plugins. */ }
-					{ value !== 'not_active' && info && (
-						<a href={ info.link } target="__blank">
-							{ info.text }
-						</a>
+					{ isError && canManageModule && (
+						<div className="stats-widget-module__info">
+							{ error === 'not_active' && (
+								<button
+									disabled={ disabled }
+									onClick={ () => {
+										setDisabled( true );
+										activateProduct().catch( () => setDisabled( false ) );
+									} }
+								>
+									Activate
+								</button>
+							) }
+							{ /* TODO: add button to install plugins. */ }
+							{ error !== 'not_active' && info && (
+								<a href={ info.link } target="__blank">
+									{ info.text }
+								</a>
+							) }
+							{ error !== 'not_active' && ! info && <p>{ translate( 'An error occurred.' ) }</p> }
+						</div>
 					) }
-					{ value !== 'not_active' && ! info && <p>{ translate( 'An error occurred.' ) }</p> }
-				</div>
+				</>
 			) }
 		</div>
 	);
@@ -60,12 +68,14 @@ export default function Modules( { siteId } ) {
 
 	const {
 		data: akismetData,
+		isLoading: isAkismetLoading,
 		refetch: refetchAkismetData,
 		isError: isAkismetError,
 		error: akismetError,
 	} = useModuleDataQuery( 'akismet' );
 	const {
 		data: protectData,
+		isLoading: isProtectLoading,
 		refetch: refetchProtectData,
 		isError: isProtectError,
 		error: protectError,
@@ -99,10 +109,11 @@ export default function Modules( { siteId } ) {
 			<ModuleCard
 				icon={ protect }
 				title={ translate( 'Total blocked login attempts' ) }
-				// API return 404 error when module is not enabled.
-				value={ ! isProtectError ? protectData : protectError.message }
-				// Hide buttons etc for non-admins.
-				active={ ! canCurrentUser( siteId, 'manage_options' ) || ! isProtectError }
+				value={ protectData }
+				isError={ isProtectError }
+				error={ protectError?.message }
+				isLoading={ isProtectLoading }
+				canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
 				activateProduct={
 					canCurrentUser( siteId, 'manage_options' ) && activateModule( 'protect' )
 				}
@@ -110,9 +121,11 @@ export default function Modules( { siteId } ) {
 			<ModuleCard
 				icon={ akismet }
 				title={ translate( 'Total blocked spam comments' ) }
-				value={ ! isAkismetError ? akismetData : akismetError.message }
-				// Hide buttons etc for non-admins.
-				active={ ! canCurrentUser( siteId, 'manage_options' ) || ! isAkismetError }
+				value={ akismetData }
+				isError={ isAkismetError }
+				error={ akismetError?.message }
+				isLoading={ isAkismetLoading }
+				canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
 				activateProduct={
 					canCurrentUser( siteId, 'manage_options' ) && activateProduct( 'anti-spam' )
 				}
