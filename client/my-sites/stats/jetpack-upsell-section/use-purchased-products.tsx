@@ -15,13 +15,6 @@ import wpcom from 'calypso/lib/wp';
 // It also requires the existence of ${api_root}/jetpack/v4/site/purchases!
 //
 
-// Include data from stats-admin initialization for making resource requests.
-const fetchPurchases = ( resource: string, options = {} ) =>
-	wpcom.req
-		.get( { path: resource, apiNamespace: 'jetpack/v4' }, options )
-		.then( ( res ) => res.json() )
-		.then( ( json ) => JSON.parse( json.data ) );
-
 const KEY_SLUG_MAP = new Map( [
 	[ 'backup', [ ...JETPACK_BACKUP_PRODUCTS, ...JETPACK_SECURITY_PLANS ] as readonly string[] ],
 	[ 'boost', JETPACK_BOOST_PRODUCTS as readonly string[] ],
@@ -51,7 +44,9 @@ export default function usePurchasedProducts() {
 	const [ error, setError ] = useState();
 
 	useEffect( () => {
-		fetchPurchases( '/site/purchases' )
+		wpcom.req
+			.get( { path: '/site/purchases', apiNamespace: 'jetpack/v4' } )
+			.then( ( res ) => JSON.parse( res.data ) )
 			.then( ( purchases ) => {
 				setIsLoading( false );
 				setPurchasedProducts( formatResponse( purchases ) );
