@@ -11,8 +11,11 @@ function queryModuleData( module ) {
 			path: `/module/${ module }/data`,
 		} )
 		.catch( ( error ) => {
-			// Convert protect 404 error to normal not_active error.
-			throw new Error( error.code ?? error.message );
+			if ( error?.code === 'not_active' ) {
+				// Convert protect 404 error to normal not_active error.
+				throw new Error( error.code );
+			}
+			throw error;
 		} )
 		.then( ( response ) => {
 			// Proetect return false if the module is enabled but number of blocked attempts is 0.
