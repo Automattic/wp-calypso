@@ -58,11 +58,17 @@ function ModuleCard( {
 export default function Modules( { siteId } ) {
 	const translate = useTranslate();
 
-	const { data: akismetData, refetch: refetchAkismetData } = useModuleDataQuery( 'akismet' );
+	const {
+		data: akismetData,
+		refetch: refetchAkismetData,
+		isError: isAkismetError,
+		error: akismetError,
+	} = useModuleDataQuery( 'akismet' );
 	const {
 		data: protectData,
-		isError: isProtectError,
 		refetch: refetchProtectData,
+		isError: isProtectError,
+		error: protectError,
 	} = useModuleDataQuery( 'protect' );
 
 	const activateProduct = ( productSlug ) => () => {
@@ -94,7 +100,7 @@ export default function Modules( { siteId } ) {
 				icon={ protect }
 				title={ translate( 'Total blocked login attempts' ) }
 				// API return 404 error when module is not enabled.
-				value={ ! isProtectError ? protectData : 'not_active' }
+				value={ ! isProtectError ? protectData : protectError.message }
 				// Hide buttons etc for non-admins.
 				active={ ! canCurrentUser( siteId, 'manage_options' ) || ! isProtectError }
 				activateProduct={
@@ -104,9 +110,9 @@ export default function Modules( { siteId } ) {
 			<ModuleCard
 				icon={ akismet }
 				title={ translate( 'Total blocked spam comments' ) }
-				value={ akismetData }
+				value={ ! isAkismetError ? akismetData : akismetError.message }
 				// Hide buttons etc for non-admins.
-				active={ ! canCurrentUser( siteId, 'manage_options' ) || isFinite( akismetData ) }
+				active={ ! canCurrentUser( siteId, 'manage_options' ) || ! isAkismetError }
 				activateProduct={
 					canCurrentUser( siteId, 'manage_options' ) && activateProduct( 'anti-spam' )
 				}
