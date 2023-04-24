@@ -100,6 +100,25 @@ const JetpackFAQ: FC = () => {
 					</li>
 					<li>
 						<FoldableFAQ
+							id="scan-infected-sites"
+							question={ translate(
+								'Can I use Jetpack Scan to fix a site that is already infected?'
+							) }
+							onToggle={ onFaqToggle }
+							className="jetpack-faq__section"
+						>
+							{ translate(
+								'Jetpack Protect (Scan) detects and prevents attacks, but is not designed to fully clean up sites infected before it was active. If your site has malware, take immediate action to clean it up and remove the malicious code. {{br/}} To clean up your site, we suggest using a malware removal tool, or if possible restore from a backup taken before the infection. We recommend using Jetpack VaultPress Backup in conjunction with Jetpack Scan to secure your website.',
+								{
+									components: {
+										br: <br />,
+									},
+								}
+							) }
+						</FoldableFAQ>
+					</li>
+					<li>
+						<FoldableFAQ
 							id="backup-storage-limits"
 							question={ translate( 'How do backup storage limits work?' ) }
 							onToggle={ onFaqToggle }
