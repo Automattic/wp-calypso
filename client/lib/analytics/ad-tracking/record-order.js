@@ -1,4 +1,5 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
+import { isPlan } from '@automattic/calypso-products';
 import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { cartToGaPurchase } from '../utils/cart-to-ga-purchase';
@@ -291,12 +292,15 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 			const cartItemsArray = wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => {
 				return {
 					product_slug: product.product_slug ?? '',
+					id: product.product_id ?? '',
 					product_name: product.product_name ?? '',
 					bill_period: product.bill_period ?? 0,
 					is_sale_coupon_applied: product.is_sale_coupon_applied ?? false,
 					is_bundled: product.is_bundled ?? false,
 					is_domain_registration: product.is_domain_registration ?? false,
-					value: product.cost ?? 0,
+					is_plan: isPlan( product ) ?? false,
+					value: costToUSD( product.cost, product.currency ) ?? 0,
+					quantity: product.volume ?? 1,
 				};
 			} );
 			const params = [
@@ -305,6 +309,7 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 				'Purchase',
 				{
 					contents: cartItemsArray.length > 0 ? cartItemsArray : [],
+					content_type: 'product',
 					product_slug: wpcomJetpackCartInfo.wpcomProducts
 						.map( ( product ) => product.product_slug )
 						.join( ', ' ),
