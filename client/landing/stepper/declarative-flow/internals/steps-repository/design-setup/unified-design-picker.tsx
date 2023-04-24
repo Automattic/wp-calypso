@@ -127,7 +127,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
 		{
-			intent,
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
 			include_pattern_virtual_designs: true,
