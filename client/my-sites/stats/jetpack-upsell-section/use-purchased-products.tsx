@@ -11,7 +11,6 @@ import wpcom from 'calypso/lib/wp';
 
 //
 // WARNING: This hook will only work within Odyssey Stats!
-// It depends on api_root and nonce from window.configData!
 // It also requires the existence of ${api_root}/jetpack/v4/site/purchases!
 //
 
