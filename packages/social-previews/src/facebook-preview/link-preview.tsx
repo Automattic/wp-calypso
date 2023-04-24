@@ -16,8 +16,9 @@ const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 	user,
 	customText,
 	type,
+	imageMode,
 } ) => {
-	const [ mode, isLoadingImage, imgProps ] = useImage();
+	const [ mode, isLoadingImage, imgProps ] = useImage( { mode: imageMode } );
 	const isArticle = type === TYPE_ARTICLE;
 	const portraitMode = ( isArticle && ! image ) || mode === PORTRAIT_MODE;
 	const modeClass = `is-${ portraitMode ? 'portrait' : 'landscape' }`;

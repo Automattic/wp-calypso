@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import {
+	isAkismetFreeProduct,
 	isDomainTransfer,
 	isJetpackPlan,
 	isJetpackProduct,
@@ -56,14 +57,19 @@ function PurchaseMetaExpiration( {
 	const isAutorenewalEnabled = purchase?.isAutoRenewEnabled ?? false;
 	const isJetpackPurchaseUsingPrimaryCancellationFlow =
 		isJetpackPurchase && config.isEnabled( 'jetpack/cancel-through-main-flow' );
-	const hideAutoRenew =
-		purchase &&
-		JETPACK_LEGACY_PLANS.some( ( plan ) => plan === purchase.productSlug ) &&
-		! isRenewable( purchase );
 
-	if ( ! purchase || isDomainTransfer( purchase ) || purchase?.isInAppPurchase ) {
+	if (
+		! purchase ||
+		isDomainTransfer( purchase ) ||
+		purchase?.isInAppPurchase ||
+		isAkismetFreeProduct( purchase )
+	) {
 		return null;
 	}
+
+	const hideAutoRenew =
+		JETPACK_LEGACY_PLANS.some( ( plan ) => plan === purchase.productSlug ) &&
+		! isRenewable( purchase );
 
 	if ( isRenewable( purchase ) && ! isExpired( purchase ) ) {
 		const dateSpan = <span className="manage-purchase__detail-date-span" />;
