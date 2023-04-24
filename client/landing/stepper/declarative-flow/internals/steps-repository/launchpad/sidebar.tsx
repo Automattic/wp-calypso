@@ -58,9 +58,15 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		data: { site_intent: siteIntentOption },
 	} = useLaunchpad( siteSlug );
 
-	const {
-		data: { checklist: launchpadChecklist },
-	} = useLaunchpadChecklist( siteSlug, siteIntentOption );
+	const { data } = useLaunchpadChecklist( siteSlug, siteIntentOption );
+
+	// Typescript is returning the type "T | undefined" for useQuery,
+	// regardless of initialData or placeholderData. Because of this, we
+	// need to narrow the return type ourselves, which is why we destructure
+	// like we do below.
+	// https://github.com/TanStack/query/discussions/1331#discussioncomment-809549
+	const launchpadChecklistQueryData = data ?? { checklist: [] };
+	const { checklist: launchpadChecklist } = launchpadChecklistQueryData;
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
