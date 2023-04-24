@@ -6,7 +6,7 @@ const noop = () => {};
 
 class TagLink extends Component {
 	static propTypes = {
-		tag: PropTypes.string.isRequired,
+		tag: PropTypes.object.isRequired,
 		post: PropTypes.object,
 		onClick: PropTypes.func,
 	};
