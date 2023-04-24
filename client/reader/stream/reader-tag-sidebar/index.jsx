@@ -1,9 +1,12 @@
 import { useTranslate } from 'i18n-calypso';
+import { connect } from 'react-redux';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
 import { useRelatedMetaByTag } from 'calypso/data/reader/use-related-meta-by-tag';
 import { useTagStats } from 'calypso/data/reader/use-tag-stats';
 import formatNumberCompact from 'calypso/lib/format-number-compact';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import ReaderListFollowingItem from 'calypso/reader/stream/reader-list-followed-sites/item';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import '../style.scss';
 
 const ReaderTagSidebar = ( { tag } ) => {
@@ -14,8 +17,16 @@ const ReaderTagSidebar = ( { tag } ) => {
 		return null;
 	}
 
+	const handleTagSidebarClick = () => {
+		recordAction( 'clicked_reader_sidebar_tag' );
+		recordGaEvent( 'Clicked Reader Sidebar Tag' );
+		recordReaderTracksEvent( 'calypso_reader_sidebar_tag_clicked', {
+			tag: decodeURIComponent( tag ),
+		} );
+	};
+
 	const tagLinks = relatedMetaByTag.data?.related_tags?.map( ( relatedTag ) => (
-		<TagLink tag={ relatedTag } key={ relatedTag.slug } />
+		<TagLink tag={ relatedTag } key={ relatedTag.slug } onClick={ handleTagSidebarClick } />
 	) );
 	const relatedSitesLinks = relatedMetaByTag.data?.related_sites?.map( ( relatedSite ) => (
 		<ReaderListFollowingItem key={ relatedSite.feed_ID } site={ relatedSite } path="/" />
@@ -55,4 +66,4 @@ const ReaderTagSidebar = ( { tag } ) => {
 	);
 };
 
-export default ReaderTagSidebar;
+export default connect( null, { recordReaderTracksEvent } )( ReaderTagSidebar );
