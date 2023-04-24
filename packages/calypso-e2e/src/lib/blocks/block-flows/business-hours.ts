@@ -40,13 +40,12 @@ export class BusinessHoursFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
+		const editorFrame = await context.editorPage.getEditorFrame();
 		const day = this.configurationData.day;
-		const dayToggleLocator = context.editorLocator.locator( selectors.dayToggle( day ) );
+		const dayToggleLocator = editorFrame.locator( selectors.dayToggle( day ) );
 		await dayToggleLocator.click();
 
-		const dayMarkedAsOpenLocator = context.editorLocator.locator(
-			selectors.dayMarkedAsOpen( day )
-		);
+		const dayMarkedAsOpenLocator = editorFrame.locator( selectors.dayMarkedAsOpen( day ) );
 		await dayMarkedAsOpenLocator.waitFor();
 	}
 

@@ -36,17 +36,15 @@ export class PremiumContentBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const subscriberViewButtonLocator = context.editorLocator.locator(
-			selectors.subscriberViewButton
-		);
+		const editorFrame = await context.editorPage.getEditorFrame();
+
+		const subscriberViewButtonLocator = editorFrame.locator( selectors.subscriberViewButton );
 		await subscriberViewButtonLocator.click();
 
-		const subscriberHeaderLocator = context.editorLocator.locator( selectors.subscriberHeader );
+		const subscriberHeaderLocator = editorFrame.locator( selectors.subscriberHeader );
 		await subscriberHeaderLocator.fill( this.configurationData.subscriberTitle );
 
-		const subscriberParagraphLocator = context.editorLocator.locator(
-			selectors.subscriberParagraph
-		);
+		const subscriberParagraphLocator = editorFrame.locator( selectors.subscriberParagraph );
 		await subscriberParagraphLocator.fill( this.configurationData.subscriberText );
 	}
 

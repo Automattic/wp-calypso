@@ -46,7 +46,8 @@ export class LayoutGridBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution.
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const twoColumnButtonLocator = context.editorLocator.locator( selectors.twoColumnButton );
+		const editorFrame = await context.editorPage.getEditorFrame();
+		const twoColumnButtonLocator = editorFrame.locator( selectors.twoColumnButton );
 		await twoColumnButtonLocator.click();
 
 		/**
@@ -102,7 +103,8 @@ export class LayoutGridBlockFlow implements BlockFlow {
 			openInlineInserter
 		);
 
-		const addedParagraphLocator = context.editorLocator.locator(
+		const editorFrame = await context.editorPage.getEditorFrame();
+		const addedParagraphLocator = editorFrame.locator(
 			selectors.paragraphBlock( columnDetails.columnNumber )
 		);
 		await addedParagraphLocator.fill( columnDetails.textToAdd );
