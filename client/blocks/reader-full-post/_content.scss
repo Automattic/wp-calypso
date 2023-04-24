@@ -461,28 +461,31 @@
 	.jetpack-blogging-prompt__answers {
 		display: flex;
 
+		img {
+			border: 2px solid #fff;
+			border-radius: 50%;
+			height: 24px;
+			width: 24px;
+		}
+
 		.image-wrapper {
-			height: 24px !important;
-			width: 24px !important;
+			height: 24px;
+			width: 24px;
+		}
 
-			&:first-child {
-				margin-left: -2px;
-			}
-			&:not(:first-child) {
-				margin-left: -12px;
-			}
-
-			img {
-				border: 2px solid #fff !important;
-				border-radius: 50% !important;
-				height: 24px !important;
-				width: 24px !important;
-			}
+		.image-wrapper:first-child,
+		img:first-child {
+			margin-left: -2px;
+		}
+		.image-wrapper:not(:first-child),
+		img:not(:first-child) {
+			margin-left: -12px;
 		}
 	}
 
 	.jetpack-blogging-prompt__answers-link {
 		color: var(--studio-gray-80);
+		flex: 1;
 		font-family: sans-serif;
 		font-size: $font-body;
 		margin-left: 8px;
