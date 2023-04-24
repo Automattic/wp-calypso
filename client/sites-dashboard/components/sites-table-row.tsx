@@ -85,7 +85,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 
 	const isP2Site = site.options?.is_wpforteams_site;
-	const isStagingSite = site.is_wpcom_staging_site;
+	const isStagingSite = site?.is_wpcom_staging_site;
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {

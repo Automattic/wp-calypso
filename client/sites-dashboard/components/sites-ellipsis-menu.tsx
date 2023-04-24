@@ -263,7 +263,7 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
-	const isStagingSite = site.is_wpcom_staging_site;
+	const isStagingSite = site?.is_wpcom_staging_site;
 	const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 	const hasStagingSitesFeature = useSafeSiteHasFeature( site.ID, FEATURE_SITE_STAGING_SITES );
 

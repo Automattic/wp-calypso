@@ -78,7 +78,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	const { __ } = useI18n();
 
 	const isP2Site = site.options?.is_wpforteams_site;
-	const isStagingSite = site.is_wpcom_staging_site;
+	const isStagingSite = site?.is_wpcom_staging_site;
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
