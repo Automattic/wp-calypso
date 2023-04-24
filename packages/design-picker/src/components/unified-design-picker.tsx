@@ -28,14 +28,12 @@ const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name
 interface DesignPreviewImageProps {
 	design: Design;
 	locale: string;
-	verticalId?: string;
 	styleVariation?: StyleVariation;
 }
 
 const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	design,
 	locale,
-	verticalId,
 	styleVariation,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
@@ -44,7 +42,6 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		<MShotsImage
 			url={ getDesignPreviewUrl( design, {
 				language: locale,
-				vertical_id: design.verticalizable ? verticalId : undefined,
 				use_screenshot_overrides: true,
 				style_variation: styleVariation,
 			} ) }
@@ -138,7 +135,6 @@ interface DesignCardProps {
 	design: Design;
 	locale: string;
 	category?: string | null;
-	verticalId?: string;
 	currentPlanFeatures?: string[];
 	hasPurchasedTheme?: boolean;
 	isPremiumThemeAvailable?: boolean;
@@ -151,7 +147,6 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	design,
 	locale,
 	category,
-	verticalId,
 	currentPlanFeatures,
 	hasPurchasedTheme = false,
 	isPremiumThemeAvailable,
@@ -225,7 +220,6 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 				<DesignPreviewImage
 					design={ design }
 					locale={ locale }
-					verticalId={ verticalId }
 					styleVariation={ selectedStyleVariation }
 				/>
 			}
@@ -249,7 +243,6 @@ const wasThemePurchased = ( purchasedThemes: string[] | undefined, design: Desig
 
 interface DesignPickerProps {
 	locale: string;
-	verticalId?: string;
 	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
@@ -269,7 +262,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	designs,
 	categorization,
 	isPremiumThemeAvailable,
-	verticalId,
 	purchasedThemes,
 	currentPlanFeatures,
 	shouldLimitGlobalStyles,
@@ -311,7 +303,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 							category={ categorization?.selection }
 							design={ design }
 							locale={ locale }
-							verticalId={ verticalId }
 							currentPlanFeatures={ currentPlanFeatures }
 							hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 							isPremiumThemeAvailable={ isPremiumThemeAvailable }
@@ -328,7 +319,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 export interface UnifiedDesignPickerProps {
 	locale: string;
-	verticalId?: string;
 	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
@@ -348,7 +338,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	onPreview,
 	onChangeVariation,
 	onViewAllDesigns,
-	verticalId,
 	designs,
 	heading,
 	categorization,
@@ -384,7 +373,6 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					onChangeVariation={ onChangeVariation }
 					designs={ designs }
 					categorization={ categorization }
-					verticalId={ verticalId }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					purchasedThemes={ purchasedThemes }
 					currentPlanFeatures={ currentPlanFeatures }

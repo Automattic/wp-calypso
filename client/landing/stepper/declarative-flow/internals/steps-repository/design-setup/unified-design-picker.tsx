@@ -78,11 +78,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const siteSlugOrId = siteSlug ? siteSlug : siteId;
 	const siteTitle = site?.name;
 	const siteDescription = site?.description;
-	const siteVerticalId = useSelect(
-		( select ) =>
-			( site && ( select( SITE_STORE ) as SiteSelect ).getSiteVerticalId( site.ID ) ) || '',
-		[ site ]
-	);
 	const { shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
 
 	const { goToCheckout } = useCheckout();
@@ -132,7 +127,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 	const { data: allDesigns, isLoading: isLoadingDesigns } = useStarterDesignsQuery(
 		{
-			vertical_id: siteVerticalId,
 			intent,
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
@@ -149,10 +143,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	useEffect( () => {
 		if ( ! hasTrackedView.current && designs.length > 0 ) {
 			hasTrackedView.current = true;
-			recordTracksEvent( 'calypso_signup_unified_design_picker_view', {
-				vertical_id: siteVerticalId,
-				has_vertical_images: designs.some( ( design ) => design.verticalizable ),
-			} );
+			recordTracksEvent( 'calypso_signup_unified_design_picker_view' );
 		}
 	}, [ hasTrackedView, designs ] );
 
@@ -460,7 +451,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				}
 				return setDesignOnSite( siteSlugOrId, _selectedDesign, {
 					styleVariation: selectedStyleVariation,
-					verticalId: siteVerticalId,
 				} ).then( ( theme: ActiveTheme ) => {
 					return reduxDispatch( setActiveTheme( site?.ID || -1, theme ) );
 				} );
@@ -594,7 +584,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 			language: locale,
 			site_title: shouldCustomizeText ? siteTitle : undefined,
 			site_tagline: shouldCustomizeText ? siteDescription : undefined,
-			vertical_id: selectedDesign.verticalizable ? siteVerticalId : undefined,
 		} );
 
 		const actionButtons = (
@@ -704,7 +693,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const stepContent = (
 		<UnifiedDesignPicker
 			designs={ designs }
-			verticalId={ siteVerticalId }
 			locale={ locale }
 			onSelectBlankCanvas={ pickBlankCanvasDesign }
 			onPreview={ previewDesign }
