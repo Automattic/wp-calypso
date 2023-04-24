@@ -1,22 +1,22 @@
 import { Page } from 'playwright';
-import { EditorWindow } from './editor-window';
+import { EditorComponent } from './editor-component';
 
 /**
  * Represents the welcome tour that shows in a popover when the editor loads.
  */
 export class EditorWelcomeTourComponent {
 	private page: Page;
-	private editorWindow: EditorWindow;
+	private editor: EditorComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {EditorWindow} editorWindow The EditorWindow instance.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editorWindow: EditorWindow ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
-		this.editorWindow = editorWindow;
+		this.editor = editor;
 	}
 
 	/**
@@ -25,7 +25,7 @@ export class EditorWelcomeTourComponent {
 	 * @see {@link https://github.com/Automattic/wp-calypso/issues/57660}
 	 */
 	async forceToggleWelcomeTour( show = true ): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		await editorFrame.waitForFunction( async () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const welcomeGuide = ( window as any )?.wp?.data?.select( 'automattic/wpcom-welcome-guide' );

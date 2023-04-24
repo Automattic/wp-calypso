@@ -13,7 +13,7 @@ import {
 	PageTemplateModalComponent,
 	getTestAccountByFeature,
 	envToFeatureKey,
-	EditorWindow,
+	EditorComponent,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -60,8 +60,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	it( 'Select page template', async function () {
 		// @TODO Consider moving this to EditorPage.
-		const editorWindow = new EditorWindow( page );
-		const pageTemplateModalComponent = new PageTemplateModalComponent( page, editorWindow );
+		const editor = new EditorComponent( page );
+		const pageTemplateModalComponent = new PageTemplateModalComponent( page, editor );
 
 		await pageTemplateModalComponent.selectTemplateCategory( 'About' );
 		await pageTemplateModalComponent.selectTemplate( 'About me' );

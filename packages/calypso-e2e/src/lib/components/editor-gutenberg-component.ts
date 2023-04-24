@@ -1,5 +1,5 @@
 import { Page, ElementHandle } from 'playwright';
-import { EditorWindow } from './editor-window';
+import { EditorComponent } from './editor-component';
 
 const selectors = {
 	// Title
@@ -19,16 +19,16 @@ const selectors = {
  */
 export class EditorGutenbergComponent {
 	private page: Page;
-	private editorWindow: EditorWindow;
+	private editor: EditorComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
 	 */
-	constructor( page: Page, editorWindow: EditorWindow ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
-		this.editorWindow = editorWindow;
+		this.editor = editor;
 	}
 
 	/**
@@ -43,7 +43,7 @@ export class EditorGutenbergComponent {
 	 * permitted to be inserted within the parent Contact Form block.
 	 */
 	async resetSelectedBlock(): Promise< void > {
-		const editorCanvas = await this.editorWindow.getEditorCanvas();
+		const editorCanvas = await this.editor.getEditorCanvas();
 		const locator = editorCanvas.locator( selectors.title );
 		await locator.click();
 	}
@@ -56,7 +56,7 @@ export class EditorGutenbergComponent {
 	 * @param {string} title Text to be used as the title.
 	 */
 	async enterTitle( title: string ): Promise< void > {
-		const editorCanvas = await this.editorWindow.getEditorCanvas();
+		const editorCanvas = await this.editor.getEditorCanvas();
 		const sanitizedTitle = title.trim();
 		const locator = editorCanvas.locator( selectors.title );
 		await locator.fill( sanitizedTitle, { timeout: 20 * 1000 } );
@@ -68,7 +68,7 @@ export class EditorGutenbergComponent {
 	 * @returns {Promise<string>} String containing contents of the title.
 	 */
 	async getTitle(): Promise< string > {
-		const editorCanvas = await this.editorWindow.getEditorCanvas();
+		const editorCanvas = await this.editor.getEditorCanvas();
 		const locator = editorCanvas.locator( selectors.title );
 		return await locator.innerText();
 	}
@@ -85,7 +85,7 @@ export class EditorGutenbergComponent {
 	 * @param {string} text Text to be entered.
 	 */
 	async enterText( text: string ): Promise< void > {
-		const editorCanvas = await this.editorWindow.getEditorCanvas();
+		const editorCanvas = await this.editor.getEditorCanvas();
 		const lines = text.split( '\n' );
 		// Depending on what is focused in the editor, either one of the
 		// following elements can be clicked to initiate text entry.
@@ -115,7 +115,7 @@ export class EditorGutenbergComponent {
 	 * @returns {Promise<string>} Text for all paragraph blocks, joined with a newline.
 	 */
 	async getText(): Promise< string > {
-		const editorCanvas = await this.editorWindow.getEditorCanvas();
+		const editorCanvas = await this.editor.getEditorCanvas();
 		// Locate all non-empty Paragraph blocks.
 		const locator = editorCanvas.locator( selectors.paragraphBlock( { empty: false } ) );
 		const enteredText = await locator.allInnerTexts();
@@ -145,7 +145,7 @@ export class EditorGutenbergComponent {
 	 * @returns {Promise<ElementHandle>} ElementHandle of the selected block.
 	 */
 	async getSelectedBlockElementHandle( blockEditorSelector: string ): Promise< ElementHandle > {
-		const editorCanvas = await this.editorWindow.getEditorCanvas();
+		const editorCanvas = await this.editor.getEditorCanvas();
 		// Note the :is() selector. This is to support both the block API v1 and V2.
 		const locator = editorCanvas.locator(
 			`:is(${ blockEditorSelector }.is-selected, ${ blockEditorSelector }.has-child-selected)`
@@ -172,7 +172,7 @@ export class EditorGutenbergComponent {
 	 * False otherwise.
 	 */
 	async editorHasBlockWarning(): Promise< boolean > {
-		const editorCanvas = await this.editorWindow.getEditorCanvas();
+		const editorCanvas = await this.editor.getEditorCanvas();
 		const locator = editorCanvas.locator( selectors.blockWarning );
 		return !! ( await locator.count() );
 	}

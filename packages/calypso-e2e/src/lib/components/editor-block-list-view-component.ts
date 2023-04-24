@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { EditorWindow } from './editor-window';
+import { EditorComponent } from './editor-component';
 
 const selectors = {
 	blockLink: ( blockName: string ) => `.block-editor-list-view-leaf a:has-text("${ blockName }")`,
@@ -19,17 +19,17 @@ interface BlockListLocation {
  */
 export class EditorBlockListViewComponent {
 	private page: Page;
-	private editorWindow: EditorWindow;
+	private editor: EditorComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {EditorWindow} editorWindow The EditorWindow instance.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editorWindow: EditorWindow ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
-		this.editorWindow = editorWindow;
+		this.editor = editor;
 	}
 
 	/**
@@ -38,7 +38,7 @@ export class EditorBlockListViewComponent {
 	 * @param {string} blockName Name of the block type (e.g. "Heading").
 	 */
 	async clickFirstBlockOfType( blockName: string ): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const locator = editorFrame.locator( selectors.blockLink( blockName ) ).first();
 		await locator.click();
 	}
@@ -47,7 +47,7 @@ export class EditorBlockListViewComponent {
 	 * Selects and highlights all blocks in the list view.
 	 */
 	async selectAllBlocks(): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const firstBlockLocator = editorFrame.locator(
 			selectors.blockByLocation( { level: 1, position: 1 } )
 		);
@@ -72,7 +72,7 @@ export class EditorBlockListViewComponent {
 	 * @param {BlockListLocation} location Location of block in the block list tree.
 	 */
 	async openOptionsForBlock( location: BlockListLocation ): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const locator = editorFrame.locator(
 			`${ selectors.blockByLocation( location ) } >> ${ selectors.moreOptionsButton }`
 		);

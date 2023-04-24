@@ -16,7 +16,7 @@ import {
 	TemplatePartBlock,
 	OpenInlineInserter,
 	HeaderBlock,
-	EditorWindow,
+	EditorComponent,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 import type { TracksEventProperties } from '@automattic/calypso-e2e';
@@ -165,8 +165,8 @@ describe(
 			describe( 'From adding a page template', function () {
 				it( 'Add "Two column about me layout" page template', async function () {
 					// @TODO Consider moving this to EditorPage.
-					const editorWindow = new EditorWindow( page );
-					const pageTemplateModalComponent = new PageTemplateModalComponent( page, editorWindow );
+					const editor = new EditorComponent( page );
+					const pageTemplateModalComponent = new PageTemplateModalComponent( page, editor );
 					await pageTemplateModalComponent.selectTemplateCategory( 'About' );
 					await pageTemplateModalComponent.selectTemplate( 'Two column about me layout' );
 				} );

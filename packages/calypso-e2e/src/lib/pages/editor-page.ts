@@ -3,7 +3,7 @@ import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
 import {
-	EditorWindow,
+	EditorComponent,
 	EditorPublishPanelComponent,
 	EditorNavSidebarComponent,
 	EditorToolbarComponent,
@@ -43,7 +43,7 @@ const selectors = {
  */
 export class EditorPage {
 	private page: Page;
-	private editorWindow: EditorWindow;
+	private editor: EditorComponent;
 	private editorPublishPanelComponent: EditorPublishPanelComponent;
 	private editorNavSidebarComponent: EditorNavSidebarComponent;
 	private editorToolbarComponent: EditorToolbarComponent;
@@ -63,26 +63,23 @@ export class EditorPage {
 	constructor( page: Page ) {
 		this.page = page;
 
-		this.editorWindow = new EditorWindow( page );
+		this.editor = new EditorComponent( page );
 
-		this.editorGutenbergComponent = new EditorGutenbergComponent( page, this.editorWindow );
-		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editorWindow );
-		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent(
-			page,
-			this.editorWindow
-		);
-		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editorWindow );
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editorWindow );
-		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editorWindow );
-		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editorWindow );
-		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editorWindow );
+		this.editorGutenbergComponent = new EditorGutenbergComponent( page, this.editor );
+		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editor );
+		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page, this.editor );
+		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editor );
+		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editor );
+		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editor );
+		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editor );
+		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editor );
 		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
 			page,
-			this.editorWindow
+			this.editor
 		);
 		this.editorInlineBlockInserterComponent = new EditorInlineBlockInserterComponent(
 			page,
-			this.editorWindow
+			this.editor
 		);
 	}
 
@@ -119,12 +116,12 @@ export class EditorPage {
 
 	/** */
 	async getEditorFrame() {
-		return await this.editorWindow.getEditorFrame();
+		return await this.editor.getEditorFrame();
 	}
 
 	/** */
 	async getEditorCanvas() {
-		return await this.editorWindow.getEditorCanvas();
+		return await this.editor.getEditorCanvas();
 	}
 
 	/**
@@ -268,7 +265,7 @@ export class EditorPage {
 		openInlineInserter: OpenInlineInserter
 	): Promise< ElementHandle > {
 		// First, launch the inline inserter in the way expected by the script.
-		await openInlineInserter( await this.editorWindow.getEditorCanvas() );
+		await openInlineInserter( await this.editor.getEditorCanvas() );
 		await this.addBlockFromInserter( blockName, this.editorInlineBlockInserterComponent );
 
 		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
@@ -345,7 +342,7 @@ export class EditorPage {
 		patternName: string,
 		inserter: BlockInserter
 	): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 
 		await inserter.searchBlockInserter( patternName );
 		await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
@@ -595,7 +592,7 @@ export class EditorPage {
 	 * Unpublishes the post or page by switching to draft.
 	 */
 	async unpublish(): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 
 		await this.editorToolbarComponent.switchToDraft();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
@@ -614,7 +611,7 @@ export class EditorPage {
 	 * @returns {URL} Published article's URL.
 	 */
 	async getPublishedURLFromToast(): Promise< URL > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const toastLocator = editorFrame.locator( selectors.toastViewPostLink );
 		const publishedURL = ( await toastLocator.getAttribute( 'href' ) ) as string;
 		return new URL( publishedURL );

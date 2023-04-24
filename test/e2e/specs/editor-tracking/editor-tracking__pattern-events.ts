@@ -11,7 +11,7 @@ import {
 	PageTemplateModalComponent,
 	TestAccount,
 	EditorTracksEventManager,
-	EditorWindow,
+	EditorComponent,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -43,8 +43,8 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 
 		it( 'Select blank template from modal', async function () {
 			// @TODO Consider moving this to EditorPage.
-			const editorWindow = new EditorWindow( page );
-			const pageTemplateModalComponent = new PageTemplateModalComponent( page, editorWindow );
+			const editor = new EditorComponent( page );
+			const pageTemplateModalComponent = new PageTemplateModalComponent( page, editor );
 			await pageTemplateModalComponent.selectBlankPage();
 		} );
 

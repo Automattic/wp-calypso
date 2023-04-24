@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { EditorWindow } from './editor-window';
+import { EditorComponent } from './editor-component';
 
 const parentSelector = '[aria-label="Template parts list - Content"]';
 
@@ -14,17 +14,17 @@ const selectors = {
  */
 export class TemplatePartListComponent {
 	private page: Page;
-	private editorWindow: EditorWindow;
+	private editor: EditorComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {EditorWindow} editorWindow The EditorWindow instance.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editorWindow: EditorWindow ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
-		this.editorWindow = editorWindow;
+		this.editor = editor;
 	}
 
 	/**
@@ -33,7 +33,7 @@ export class TemplatePartListComponent {
 	 * @param {string} name The name of the template part to delete.
 	 */
 	async deleteTemplatePart( name: string ): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const actionsButtonLocator = editorFrame.locator( selectors.actionsButtonForPart( name ) );
 		await actionsButtonLocator.click();
 
@@ -47,7 +47,7 @@ export class TemplatePartListComponent {
 	 * @returns True if the template part list component is open and visible, false otherwise.
 	 */
 	async isOpen(): Promise< boolean > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const shellLocator = editorFrame.locator( parentSelector );
 		return ( await shellLocator.count() ) > 0;
 	}

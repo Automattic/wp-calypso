@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { EditorWindow } from './editor-window';
+import { EditorComponent } from './editor-component';
 
 const parentSelector = '.components-modal__frame';
 
@@ -15,17 +15,17 @@ const selectors = {
  */
 export class TemplatePartModalComponent {
 	private page: Page;
-	private editorWindow: EditorWindow;
+	private editor: EditorComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {EditorWindow} editorWindow The EditorWindow instance.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editorWindow: EditorWindow ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
-		this.editorWindow = editorWindow;
+		this.editor = editor;
 	}
 
 	/**
@@ -34,7 +34,7 @@ export class TemplatePartModalComponent {
 	 * @param {string} name Name for the new template.
 	 */
 	async enterTemplateName( name: string ): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const locator = editorFrame.locator( selectors.nameInput );
 		await locator.fill( name );
 	}
@@ -43,7 +43,7 @@ export class TemplatePartModalComponent {
 	 * Click the create button for a new template part.
 	 */
 	async clickCreate(): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const locator = editorFrame.locator( selectors.createButton );
 		await locator.click();
 	}
@@ -54,7 +54,7 @@ export class TemplatePartModalComponent {
 	 * @param {string} name Name of the existing template part.
 	 */
 	async selectExistingTemplatePart( name: string ): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const locator = editorFrame.locator( selectors.existingTemplatePart( name ) );
 		await locator.click();
 	}

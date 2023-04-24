@@ -10,7 +10,7 @@ import {
 	envToFeatureKey,
 	RestAPIClient,
 	EditorWelcomeTourComponent,
-	EditorWindow,
+	EditorComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser, Frame } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
@@ -293,8 +293,8 @@ describe( 'I18N: Editor', function () {
 				} );
 
 				// @TODO Consider moving this to EditorPage.
-				const editorWindow = new EditorWindow( page );
-				const editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, editorWindow );
+				const editor = new EditorComponent( page );
+				const editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, editor );
 
 				// We know these are all defined because of the filtering above. Non-null asserting is safe here.
 				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion

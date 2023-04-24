@@ -3,7 +3,7 @@ import { Page, Frame } from 'playwright';
 const EDITOR_TIMEOUT = 60 * 1000;
 
 /** */
-export class EditorWindow {
+export class EditorComponent {
 	public page: Page;
 
 	/** */

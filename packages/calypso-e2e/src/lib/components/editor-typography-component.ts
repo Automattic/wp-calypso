@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { EditorWindow } from './editor-window';
+import { EditorComponent } from './editor-component';
 
 type FontSize = 'Small' | 'Medium' | 'Large' | 'Extra Large'; // expand as needed.
 type FontAppearance = 'Default' | 'Thin' | 'Regular' | 'Medium'; // expand as needed.
@@ -17,17 +17,17 @@ export interface TypographySettings {
  */
 export class EditorTypographyComponent {
 	private page: Page;
-	private editorWindow: EditorWindow;
+	private editor: EditorComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {EditorWindow} editorWindow The EditorWindow instance.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editorWindow: EditorWindow ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
-		this.editorWindow = editorWindow;
+		this.editor = editor;
 	}
 
 	/**
@@ -59,7 +59,7 @@ export class EditorTypographyComponent {
 	 * @param {FontAppearance} fontAppearance Font appearance to select.
 	 */
 	private async setAppearance( fontAppearance: FontAppearance ): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		// In the future, if we're in the block context, we'll have to add this field first.
 		const dropdownButtonLocator = editorFrame.getByRole( 'button', {
 			name: 'Appearance',

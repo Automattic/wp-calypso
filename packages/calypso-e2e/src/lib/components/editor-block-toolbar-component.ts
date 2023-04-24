@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { EditorWindow } from './editor-window';
+import { EditorComponent } from './editor-component';
 
 const parentSelector = '[aria-label="Block tools"]';
 
@@ -31,17 +31,17 @@ export interface BlockToolbarButtonIdentifier {
  */
 export class EditorBlockToolbarComponent {
 	private page: Page;
-	private editorWindow: EditorWindow;
+	private editor: EditorComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {EditorWindow} editorWindow The EditorWindow instance.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editorWindow: EditorWindow ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
-		this.editorWindow = editorWindow;
+		this.editor = editor;
 	}
 
 	/**
@@ -50,7 +50,7 @@ export class EditorBlockToolbarComponent {
 	 * @param {BlockToolbarButtonIdentifier} identifier Ways to identify the button.
 	 */
 	async clickPrimaryButton( identifier: BlockToolbarButtonIdentifier ): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const locator = editorFrame.locator( selectors.button( identifier ) );
 		await locator.click();
 	}
@@ -59,7 +59,7 @@ export class EditorBlockToolbarComponent {
 	 * Click on the options button (three dots).
 	 */
 	async clickOptionsButton(): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const locator = editorFrame.locator( selectors.button( { ariaLabel: 'Options' } ) );
 		await locator.click();
 	}
@@ -68,7 +68,7 @@ export class EditorBlockToolbarComponent {
 	 * Click the up arrow button to move the current block up.
 	 */
 	async moveUp(): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const locator = editorFrame.locator( selectors.button( { ariaLabel: 'Move up' } ) );
 		await locator.click();
 	}
@@ -77,7 +77,7 @@ export class EditorBlockToolbarComponent {
 	 * Click the down arrow button to move the current block down.
 	 */
 	async moveDown(): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const locator = editorFrame.locator( selectors.button( { ariaLabel: 'Move down' } ) );
 		await locator.click();
 	}

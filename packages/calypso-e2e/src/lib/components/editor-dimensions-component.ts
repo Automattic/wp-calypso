@@ -1,6 +1,6 @@
 import { Page } from 'playwright';
+import { EditorComponent } from './editor-component';
 import { EditorPopoverMenuComponent } from './editor-popover-menu-component';
-import { EditorWindow } from './editor-window';
 
 const selectors = {
 	paddingInput: 'input[aria-label="Padding"]',
@@ -17,7 +17,7 @@ export interface DimensionsSettings {
  */
 export class EditorDimensionsComponent {
 	private page: Page;
-	private editorWindow: EditorWindow;
+	private editor: EditorComponent;
 
 	// Usually low-level components don't contain other components like this.
 	// In this case however, because the popover is always used whereever this component is,
@@ -28,12 +28,12 @@ export class EditorDimensionsComponent {
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {EditorWindow} editorWindow The EditorWindow instance.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editorWindow: EditorWindow ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
-		this.editorWindow = editorWindow;
-		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, editorWindow );
+		this.editor = editor;
+		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, editor );
 	}
 
 	/**
@@ -55,7 +55,7 @@ export class EditorDimensionsComponent {
 	 * Reset all of the dimension settings.
 	 */
 	async resetAll(): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		const optionsButtonLocator = editorFrame.locator( selectors.optionsButton );
 		await optionsButtonLocator.click();
 		await this.editorPopoverMenuComponent.clickMenuButton( 'Reset all' );
@@ -67,7 +67,7 @@ export class EditorDimensionsComponent {
 	 * @param {number} padding Padding dimension to select.
 	 */
 	private async setPadding( padding: number ): Promise< void > {
-		const editorFrame = await this.editorWindow.getEditorFrame();
+		const editorFrame = await this.editor.getEditorFrame();
 		await editorFrame.getByLabel( 'All sides padding' ).fill( padding.toString() );
 	}
 }
