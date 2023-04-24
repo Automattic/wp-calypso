@@ -1,5 +1,7 @@
 import { Page, Frame } from 'playwright';
 
+const EDITOR_TIMEOUT = 60 * 1000;
+
 /** */
 export class EditorWindow {
 	public page: Page;
@@ -12,22 +14,28 @@ export class EditorWindow {
 	/** */
 	async getEditorFrame(): Promise< Page | Frame > {
 		const editorFrame = await Promise.race( [
-			( async () => {
-				const calypsoIframe = this.page.locator( 'iframe[src*="calypsoify"]' );
-				await calypsoIframe.waitFor();
-
-				return this.page.frame( { url: /calypsoify/ } );
-			} )(),
-			( async () => {
+			new Promise< undefined >( ( resolve ) => {
+				setTimeout( resolve, EDITOR_TIMEOUT );
+			} ),
+			( async (): Promise< Page > => {
 				const editorBody = this.page.locator( 'body.block-editor-page' );
-				await editorBody.waitFor();
+				await editorBody.waitFor( { timeout: EDITOR_TIMEOUT } );
 
 				return this.page;
 			} )(),
+			new Promise< Frame >( ( resolve ) => {
+				const pollInterval = setInterval( () => {
+					const gutenframe = this.page.frame( { url: /calypsoify/ } );
+					if ( gutenframe ) {
+						clearInterval( pollInterval );
+						resolve( gutenframe );
+					}
+				}, 100 );
+			} ),
 		] );
 
 		if ( ! editorFrame ) {
-			throw new Error( 'Editor frame unavailable' );
+			throw new Error( 'Timed out waiting for the Editor' );
 		}
 
 		return editorFrame;
@@ -37,22 +45,28 @@ export class EditorWindow {
 	async getEditorCanvas(): Promise< Page | Frame > {
 		const editorFrame = await this.getEditorFrame();
 		const editorCanvas = await Promise.race( [
+			new Promise< undefined >( ( resolve ) => {
+				setTimeout( resolve, EDITOR_TIMEOUT );
+			} ),
 			( async () => {
-				const canvasIframe = editorFrame.locator( 'iframe[name="editor-canvas"]' );
-				await canvasIframe.waitFor();
-
-				return this.page.frame( 'editor-canvas' );
-			} )(),
-			( async () => {
-				const canvasWrapper = this.page.locator( '.editor-styles-wrapper' );
-				await canvasWrapper.waitFor();
+				const canvasWrapper = editorFrame.locator( '.editor-styles-wrapper' );
+				await canvasWrapper.waitFor( { timeout: EDITOR_TIMEOUT } );
 
 				return editorFrame;
 			} )(),
+			new Promise< Frame >( ( resolve ) => {
+				const pollInterval = setInterval( () => {
+					const canvasFrame = this.page.frame( 'editor-canvas' );
+					if ( canvasFrame ) {
+						clearInterval( pollInterval );
+						resolve( canvasFrame );
+					}
+				}, 100 );
+			} ),
 		] );
 
 		if ( ! editorCanvas ) {
-			throw new Error( 'Editor canvas unavailable' );
+			throw new Error( 'Timed out waiting for the Editor canvas' );
 		}
 
 		return editorCanvas;
