@@ -39,15 +39,13 @@ const selectors = {
 	openRemoveMenuButton: '.plugin-details-cta__manage-plugin-menu button[title="Toggle menu"]',
 	removeButton: '.popover__menu button:has-text("Remove")',
 
-	// Elegibility warnings
-	eligibilityWarning: '.eligibility-warnings__title',
-
 	// Category selector
 	selectedCategory: ( categoryTitle: string ) => `.categories__header:text("${ categoryTitle }")`,
 
 	// Plugin details view
 	pluginDetailsHeaderTitle: ( section: string ) =>
 		`.plugin-details-header__name:text("${ section }")`,
+	planUpgradeRequiredIcon: 'span.plugin-details-cta__upgrade-required-icon',
 
 	// Post install
 	installedPluginCard: '.thank-you__step',
@@ -287,29 +285,30 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Clicks on the Install Plugin button.
+	 * Clicks on the button to install the plugin.
+	 *
+	 * For sites without a supported plan, this method will click on the additional
+	 * modal that appears prompting the user to purchase a plan upgrade.
 	 */
 	async clickInstallPlugin(): Promise< void > {
-		const locator = this.page.locator( selectors.installButton );
-		await Promise.all( [ this.page.waitForResponse( /.*install\?.*/ ), locator.click() ] );
-	}
+		const needsPlanUpgrade = await this.page.locator( selectors.planUpgradeRequiredIcon ).count();
 
-	/**
-	 * Clicks on the `Purchase and Activate` button and get Elegibility warning.
-	 */
-	async clickPurchasePlugin(): Promise< void > {
-		await this.page.getByText( 'Purchase and activate' ).click();
-	}
-
-	/**
-	 * Validate Elegibility Warning and click on the `Upgrade and Activate` button.
-	 */
-	async validateAndContinueElebigilityWarning(): Promise< void > {
-		await this.page
-			.locator( selectors.eligibilityWarning )
-			.getByText( 'Upgrade your plan to install plugins' )
-			.waitFor();
-		await this.page.getByText( 'Upgrade and activate plugin' ).click();
+		if ( needsPlanUpgrade ) {
+			await Promise.all( [
+				this.page.waitForResponse( /eligibility/ ),
+				// Depending on whethe the plugin is free or requires a monthly subscription,
+				// the text shown on the install button is slightly different.
+				this.page.getByRole( 'button', { name: /(Purchase|Upgrade) and activate/ } ).click(),
+			] );
+			// Modal will appear to re-confirm to the user that an upgrade is necessary.
+			// Accept the confirmation.
+			await this.page.getByRole( 'button', { name: 'Upgrade and activate plugin' } ).click();
+		} else {
+			await Promise.all( [
+				this.page.waitForResponse( /.*install\?.*/ ),
+				this.page.getByRole( 'button', { name: 'Install and activate' } ).click(),
+			] );
+		}
 	}
 
 	/**
