@@ -70,6 +70,7 @@ export type SiteSubscription = {
 export type SiteSubscriptionDeliveryFrequency = 'instantly' | 'daily' | 'weekly';
 
 export type PostSubscription = {
+	id: string;
 	blog_id: string;
 	subscription_date: Date;
 	site_id: string;
@@ -82,4 +83,40 @@ export type PostSubscription = {
 	post_title: string;
 	post_excerpt: string;
 	post_url: string;
+};
+
+export type PendingSiteSubscription = {
+	id: string;
+	activation_key: string;
+	site_title: string;
+	site_icon: string;
+	site_url: string;
+	date_subscribed: Date;
+	organization_id: number;
+};
+
+export type PendingPostSubscription = {
+	id: string;
+	blog_id: string;
+	subscription_date: Date;
+	site_id: string;
+	site_title: string;
+	site_icon: string;
+	site_url: string;
+	domain: string;
+	organization_id: number;
+	post_id: number;
+	post_title: string;
+	post_excerpt: string;
+	post_url: string;
+};
+
+export type PendingSiteSubscriptionsResult = {
+	pendingSites: PendingSiteSubscription[];
+	totalCount: number;
+};
+
+export type PendingPostSubscriptionsResult = {
+	pendingPosts: PendingPostSubscription[];
+	totalCount: number;
 };

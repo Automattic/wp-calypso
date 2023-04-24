@@ -4,6 +4,7 @@ import {
 } from '@automattic/sites';
 import { Global, css } from '@emotion/react';
 import { removeQueryArgs } from '@wordpress/url';
+import AsyncLoad from 'calypso/components/async-load';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { SitesDashboard } from './components/sites-dashboard';
 import { MEDIA_QUERIES } from './utils';
@@ -66,6 +67,7 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 		<>
 			<Global styles={ globalStyles } />
 			<PageViewTracker path="/sites" title="Sites Management Page" delay={ 500 } />
+			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 			<SitesDashboard
 				queryParams={ {
 					page: context.query.page ? parseInt( context.query.page ) : undefined,

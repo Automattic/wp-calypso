@@ -68,6 +68,7 @@ import {
 	PLAN_WOOEXPRESS_SMALL,
 	PLAN_WOOEXPRESS_SMALL_MONTHLY,
 	PLAN_WOOEXPRESS_PLUS,
+	PLAN_WPCOM_PRO_2_YEARS,
 } from '../src/constants';
 import {
 	getPlan,
@@ -1025,6 +1026,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_PREMIUM_2_YEARS,
 			PLAN_BUSINESS_2_YEARS,
 			PLAN_ECOMMERCE_2_YEARS,
+			PLAN_WPCOM_PRO_2_YEARS,
 		] );
 		expect( findPlansKeys( { term: TERM_TRIENNIALLY } ) ).toEqual( [
 			PLAN_PERSONAL_3_YEARS,
@@ -1148,6 +1150,7 @@ describe( 'findPlansKeys', () => {
 			PLAN_WPCOM_FLEXIBLE,
 			PLAN_WPCOM_PRO,
 			PLAN_WPCOM_PRO_MONTHLY,
+			PLAN_WPCOM_PRO_2_YEARS,
 			PLAN_ECOMMERCE_TRIAL_MONTHLY,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK } ) ).toEqual( [

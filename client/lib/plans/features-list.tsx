@@ -59,6 +59,7 @@ import {
 	FEATURE_FREE_THEMES_SIGNUP,
 	FEATURE_FREE_WORDPRESS_THEMES,
 	FEATURE_GOOGLE_ANALYTICS,
+	FEATURE_GOOGLE_ANALYTICS_V3,
 	FEATURE_GOOGLE_MY_BUSINESS,
 	FEATURE_HOSTING,
 	FEATURE_INSTALL_PLUGINS,
@@ -238,6 +239,31 @@ import {
 	FEATURE_RECOMMEND_ADD_ONS,
 	FEATURE_ASSEMBLED_PRODUCTS_AND_KITS,
 	FEATURE_MIN_MAX_ORDER_QUANTITY,
+	FEATURE_WOOCOMMERCE_STORE,
+	FEATURE_WOOCOMMERCE_MOBILE_APP,
+	FEATURE_WORDPRESS_CMS,
+	FEATURE_WORDPRESS_MOBILE_APP,
+	FEATURE_FREE_SSL_CERTIFICATE,
+	FEATURE_LIST_UNLIMITED_PRODUCTS,
+	FEATURE_GIFT_CARDS,
+	FEATURE_PRODUCT_BUNDLES,
+	FEATURE_CUSTOM_PRODUCT_KITS,
+	FEATURE_LIST_PRODUCTS_BY_BRAND,
+	FEATURE_PRODUCT_RECOMMENDATIONS,
+	FEATURE_INTEGRATED_PAYMENTS,
+	FEATURE_INTERNATIONAL_PAYMENTS,
+	FEATURE_AUTOMATED_SALES_TAXES,
+	FEATURE_ACCEPT_LOCAL_PAYMENTS,
+	FEATURE_RECURRING_PAYMENTS,
+	FEATURE_PROMOTE_ON_TIKTOK,
+	FEATURE_SYNC_WITH_PINTEREST,
+	FEATURE_CONNECT_WITH_FACEBOOK,
+	FEATURE_ABANDONED_CART_RECOVERY,
+	FEATURE_ADVERTISE_ON_GOOGLE,
+	FEATURE_CUSTOM_ORDER_EMAILS,
+	FEATURE_LIVE_SHIPPING_RATES,
+	FEATURE_DISCOUNTED_SHIPPING,
+	FEATURE_PRINT_SHIPPING_LABELS,
 	isPersonalPlan,
 	isPremiumPlan,
 	isEcommercePlan,
@@ -2168,6 +2194,139 @@ export const FEATURES_LIST: FeatureList = {
 			i18n.translate( 'Keep an administrative eye on activity across your site.' ),
 	},
 	/* END: 2023 Pricing Grid Features */
+
+	/* START: Woo Express Features */
+	[ FEATURE_WOOCOMMERCE_STORE ]: {
+		getSlug: () => FEATURE_WOOCOMMERCE_STORE,
+		getTitle: () => i18n.translate( 'WooCommerce store' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WOOCOMMERCE_MOBILE_APP ]: {
+		getSlug: () => FEATURE_WOOCOMMERCE_MOBILE_APP,
+		getTitle: () => i18n.translate( 'WooCommerce mobile app' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WORDPRESS_CMS ]: {
+		getSlug: () => FEATURE_WORDPRESS_CMS,
+		getTitle: () => i18n.translate( 'WordPress CMS' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_WORDPRESS_MOBILE_APP ]: {
+		getSlug: () => FEATURE_WORDPRESS_MOBILE_APP,
+		getTitle: () => i18n.translate( 'WordPress mobile app' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_FREE_SSL_CERTIFICATE ]: {
+		getSlug: () => FEATURE_FREE_SSL_CERTIFICATE,
+		getTitle: () => i18n.translate( 'Free SSL certificate' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_GOOGLE_ANALYTICS_V3 ]: {
+		getSlug: () => FEATURE_GOOGLE_ANALYTICS_V3,
+		getTitle: () => i18n.translate( 'Google Analytics' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_LIST_UNLIMITED_PRODUCTS ]: {
+		getSlug: () => FEATURE_LIST_UNLIMITED_PRODUCTS,
+		getTitle: () => i18n.translate( 'List unlimited products' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_GIFT_CARDS ]: {
+		getSlug: () => FEATURE_GIFT_CARDS,
+		getTitle: () => i18n.translate( 'Gift cards' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_PRODUCT_BUNDLES ]: {
+		getSlug: () => FEATURE_PRODUCT_BUNDLES,
+		getTitle: () => i18n.translate( 'Product bundles' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_CUSTOM_PRODUCT_KITS ]: {
+		getSlug: () => FEATURE_CUSTOM_PRODUCT_KITS,
+		getTitle: () => i18n.translate( 'Custom product kits' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_LIST_PRODUCTS_BY_BRAND ]: {
+		getSlug: () => FEATURE_LIST_PRODUCTS_BY_BRAND,
+		getTitle: () => i18n.translate( 'List products by brand' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_PRODUCT_RECOMMENDATIONS ]: {
+		getSlug: () => FEATURE_PRODUCT_RECOMMENDATIONS,
+		getTitle: () => i18n.translate( 'Product recommendations' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_INTEGRATED_PAYMENTS ]: {
+		getSlug: () => FEATURE_INTEGRATED_PAYMENTS,
+		getTitle: () => i18n.translate( 'Integrated payments' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_INTERNATIONAL_PAYMENTS ]: {
+		getSlug: () => FEATURE_INTERNATIONAL_PAYMENTS,
+		getTitle: () => i18n.translate( 'International payments' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_AUTOMATED_SALES_TAXES ]: {
+		getSlug: () => FEATURE_AUTOMATED_SALES_TAXES,
+		getTitle: () => i18n.translate( 'Automated sales taxes' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_ACCEPT_LOCAL_PAYMENTS ]: {
+		getSlug: () => FEATURE_ACCEPT_LOCAL_PAYMENTS,
+		getTitle: () => i18n.translate( 'Accept local payments' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_RECURRING_PAYMENTS ]: {
+		getSlug: () => FEATURE_RECURRING_PAYMENTS,
+		getTitle: () => i18n.translate( 'Recurring payments' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_PROMOTE_ON_TIKTOK ]: {
+		getSlug: () => FEATURE_PROMOTE_ON_TIKTOK,
+		getTitle: () => i18n.translate( 'Promote on TikTok' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_SYNC_WITH_PINTEREST ]: {
+		getSlug: () => FEATURE_SYNC_WITH_PINTEREST,
+		getTitle: () => i18n.translate( 'Sync with Pinterest' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_CONNECT_WITH_FACEBOOK ]: {
+		getSlug: () => FEATURE_CONNECT_WITH_FACEBOOK,
+		getTitle: () => i18n.translate( 'Connect with Facebook' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_ABANDONED_CART_RECOVERY ]: {
+		getSlug: () => FEATURE_ABANDONED_CART_RECOVERY,
+		getTitle: () => i18n.translate( 'Abandoned cart recovery' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_ADVERTISE_ON_GOOGLE ]: {
+		getSlug: () => FEATURE_ADVERTISE_ON_GOOGLE,
+		getTitle: () => i18n.translate( 'Advertise on Google' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_CUSTOM_ORDER_EMAILS ]: {
+		getSlug: () => FEATURE_CUSTOM_ORDER_EMAILS,
+		getTitle: () => i18n.translate( 'Custom order emails' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_LIVE_SHIPPING_RATES ]: {
+		getSlug: () => FEATURE_LIVE_SHIPPING_RATES,
+		getTitle: () => i18n.translate( 'Live shipping rates' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_DISCOUNTED_SHIPPING ]: {
+		getSlug: () => FEATURE_DISCOUNTED_SHIPPING,
+		getTitle: () => i18n.translate( 'Discounted shipping' ),
+		getDescription: () => '',
+	},
+	[ FEATURE_PRINT_SHIPPING_LABELS ]: {
+		getSlug: () => FEATURE_PRINT_SHIPPING_LABELS,
+		getTitle: () => i18n.translate( 'Print shipping labels' ),
+		getDescription: () => '',
+	},
+	/* END: Woo Express Features */
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList?: Array< string > ) => {

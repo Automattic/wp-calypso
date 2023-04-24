@@ -4,16 +4,9 @@ import { MShotsImage } from '@automattic/onboarding';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInView } from 'calypso/lib/use-in-view'; // eslint-disable-line no-restricted-imports
-import {
-	SHOW_ALL_SLUG,
-	SHOW_GENERATED_DESIGNS_SLUG,
-	DEFAULT_VIEWPORT_WIDTH,
-	DEFAULT_VIEWPORT_HEIGHT,
-	MOBILE_VIEWPORT_WIDTH,
-} from '../constants';
+import { SHOW_ALL_SLUG } from '../constants';
 import {
 	getDesignPreviewUrl,
 	getMShotOptions,
@@ -24,7 +17,6 @@ import { UnifiedDesignPickerCategoryFilter } from './design-picker-category-filt
 import PatternAssemblerCta from './pattern-assembler-cta';
 import PremiumBadge from './premium-badge';
 import ThemeCard from './theme-card';
-import ThemePreview from './theme-preview';
 import WooCommerceBundledBadge from './woocommerce-bundled-badge';
 import type { Categorization } from '../hooks/use-categorization';
 import type { Design, StyleVariation } from '../types';
@@ -36,14 +28,12 @@ const makeOptionId = ( { slug }: Design ): string => `design-picker__option-name
 interface DesignPreviewImageProps {
 	design: Design;
 	locale: string;
-	verticalId?: string;
 	styleVariation?: StyleVariation;
 }
 
 const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 	design,
 	locale,
-	verticalId,
 	styleVariation,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
@@ -52,7 +42,6 @@ const DesignPreviewImage: React.FC< DesignPreviewImageProps > = ( {
 		<MShotsImage
 			url={ getDesignPreviewUrl( design, {
 				language: locale,
-				vertical_id: design.verticalizable ? verticalId : undefined,
 				use_screenshot_overrides: true,
 				style_variation: styleVariation,
 			} ) }
@@ -146,7 +135,6 @@ interface DesignCardProps {
 	design: Design;
 	locale: string;
 	category?: string | null;
-	verticalId?: string;
 	currentPlanFeatures?: string[];
 	hasPurchasedTheme?: boolean;
 	isPremiumThemeAvailable?: boolean;
@@ -159,7 +147,6 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	design,
 	locale,
 	category,
-	verticalId,
 	currentPlanFeatures,
 	hasPurchasedTheme = false,
 	isPremiumThemeAvailable,
@@ -233,7 +220,6 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 				<DesignPreviewImage
 					design={ design }
 					locale={ locale }
-					verticalId={ verticalId }
 					styleVariation={ selectedStyleVariation }
 				/>
 			}
@@ -250,85 +236,6 @@ const DesignCard: React.FC< DesignCardProps > = ( {
 	);
 };
 
-interface GeneratedDesignButtonContainerProps {
-	locale: string;
-	design: Design;
-	verticalId?: string;
-	isShowing: boolean;
-	onPreview: ( design: Design ) => void;
-}
-
-const GeneratedDesignButtonContainer: React.FC< GeneratedDesignButtonContainerProps > = ( {
-	locale,
-	design,
-	verticalId,
-	isShowing,
-	onPreview,
-} ) => {
-	const isMobile = useViewportMatch( 'small', '<' );
-	const previewUrl = getDesignPreviewUrl( design, {
-		language: locale,
-		vertical_id: verticalId,
-		viewport_width: isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH,
-		viewport_height: DEFAULT_VIEWPORT_HEIGHT,
-		use_screenshot_overrides: true,
-	} );
-
-	const trackingDivRef = useTrackDesignView( {
-		category: `__generated_vertical_${ verticalId }`,
-		design,
-		isPremiumThemeAvailable: false,
-	} );
-
-	return (
-		<div
-			className={ classnames( 'design-button-container', 'design-button-container--is-generated', {
-				'design-button-container--is-generated--is-showing': isShowing,
-			} ) }
-			ref={ trackingDivRef }
-		>
-			<div className="design-picker__design-option">
-				<button className="generated-design-thumbnail" onClick={ () => onPreview( design ) }>
-					<span className="generated-design-thumbnail__image design-picker__image-frame design-picker__image-frame-no-header">
-						<ThemePreview
-							url={ previewUrl }
-							viewportWidth={ isMobile ? MOBILE_VIEWPORT_WIDTH : DEFAULT_VIEWPORT_WIDTH }
-							isFitHeight
-						/>
-					</span>
-				</button>
-			</div>
-		</div>
-	);
-};
-
-interface GeneratedDesignPickerProps {
-	locale: string;
-	designs: Design[];
-	verticalId?: string;
-	onPreview: ( design: Design ) => void;
-}
-
-const GeneratedDesignPicker: React.FC< GeneratedDesignPickerProps > = ( {
-	locale,
-	designs,
-	verticalId,
-	onPreview,
-} ) => (
-	<div className="design-picker__grid">
-		{ designs.map( ( design ) => (
-			<GeneratedDesignButtonContainer
-				key={ `generated-design__${ design.slug }` }
-				design={ design }
-				locale={ locale }
-				verticalId={ verticalId }
-				isShowing
-				onPreview={ onPreview }
-			/>
-		) ) }
-	</div>
-);
-
 const wasThemePurchased = ( purchasedThemes: string[] | undefined, design: Design ) =>
 	purchasedThemes
 		? purchasedThemes.some( ( themeId ) => design?.recipe?.stylesheet?.endsWith( '/' + themeId ) )
@@ -336,12 +243,10 @@ const wasThemePurchased = ( purchasedThemes: string[] | undefined, design: Desig
 
 interface DesignPickerProps {
 	locale: string;
-	verticalId?: string;
 	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
-	staticDesigns: Design[];
-	generatedDesigns: Design[];
+	designs: Design[];
 	categorization?: Categorization;
 	isPremiumThemeAvailable?: boolean;
 	purchasedThemes?: string[];
@@ -354,23 +259,21 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 	onSelectBlankCanvas,
 	onPreview,
 	onChangeVariation,
-	staticDesigns,
-	generatedDesigns,
+	designs,
 	categorization,
 	isPremiumThemeAvailable,
-	verticalId,
 	purchasedThemes,
 	currentPlanFeatures,
 	shouldLimitGlobalStyles,
 } ) => {
-	const hasCategories = !! categorization?.categories.length;
-	const filteredStaticDesigns = useMemo( () => {
+	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
+	const filteredDesigns = useMemo( () => {
 		if ( categorization?.selection ) {
-			return filterDesignsByCategory( staticDesigns, categorization.selection );
+			return filterDesignsByCategory( designs, categorization.selection );
 		}
 
-		return staticDesigns;
-	}, [ staticDesigns, categorization?.selection ] );
+		return designs;
+	}, [ designs, categorization?.selection ] );
 
 	return (
 		<div>
@@ -382,7 +285,7 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 				/>
 			) }
 			<div className="design-picker__grid">
-				{ filteredStaticDesigns.map( ( design, index ) => {
+				{ filteredDesigns.map( ( design, index ) => {
 					if ( isBlankCanvasDesign( design ) ) {
 						return (
 							<PatternAssemblerCta
@@ -400,7 +303,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 							category={ categorization?.selection }
 							design={ design }
 							locale={ locale }
-							verticalId={ verticalId }
 							currentPlanFeatures={ currentPlanFeatures }
 							hasPurchasedTheme={ wasThemePurchased( purchasedThemes, design ) }
 							isPremiumThemeAvailable={ isPremiumThemeAvailable }
@@ -410,17 +312,6 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 						/>
 					);
 				} ) }
-				{ categorization?.selection === SHOW_GENERATED_DESIGNS_SLUG &&
-					generatedDesigns.map( ( design ) => (
-						<GeneratedDesignButtonContainer
-							key={ `generated-design__${ design.slug }` }
-							design={ design }
-							locale={ locale }
-							verticalId={ verticalId }
-							isShowing
-							onPreview={ onPreview }
-						/>
-					) ) }
 			</div>
 		</div>
 	);
@@ -428,13 +319,11 @@ const DesignPicker: React.FC< DesignPickerProps > = ( {
 
 export interface UnifiedDesignPickerProps {
 	locale: string;
-	verticalId?: string;
 	onSelectBlankCanvas: ( design: Design, shouldGoToAssemblerStep: boolean ) => void;
 	onPreview: ( design: Design, variation?: StyleVariation ) => void;
 	onChangeVariation: ( design: Design, variation?: StyleVariation ) => void;
 	onViewAllDesigns: () => void;
-	generatedDesigns: Design[];
-	staticDesigns: Design[];
+	designs: Design[];
 	categorization?: Categorization;
 	heading?: React.ReactNode;
 	isPremiumThemeAvailable?: boolean;
@@ -449,9 +338,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	onPreview,
 	onChangeVariation,
 	onViewAllDesigns,
-	verticalId,
-	staticDesigns,
-	generatedDesigns,
+	designs,
 	heading,
 	categorization,
 	isPremiumThemeAvailable,
@@ -459,10 +346,7 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 	currentPlanFeatures,
 	shouldLimitGlobalStyles,
 } ) => {
-	const translate = useTranslate();
-	const hasCategories = !! categorization?.categories.length;
-	const hasGeneratedDesigns = generatedDesigns.length > 0;
-	const isShowAll = ! categorization?.selection || categorization?.selection === SHOW_ALL_SLUG;
+	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
 	// Track as if user has scrolled to bottom of the design picker
 	const ref = useInView< HTMLDivElement >( onViewAllDesigns, {}, [ categorization?.selection ] );
@@ -487,40 +371,15 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 					onSelectBlankCanvas={ onSelectBlankCanvas }
 					onPreview={ onPreview }
 					onChangeVariation={ onChangeVariation }
-					staticDesigns={ staticDesigns }
-					generatedDesigns={ generatedDesigns }
+					designs={ designs }
 					categorization={ categorization }
-					verticalId={ verticalId }
 					isPremiumThemeAvailable={ isPremiumThemeAvailable }
 					purchasedThemes={ purchasedThemes }
 					currentPlanFeatures={ currentPlanFeatures }
 					shouldLimitGlobalStyles={ shouldLimitGlobalStyles }
 				/>
-				{ ( ! isShowAll || ! hasGeneratedDesigns ) && bottomAnchorContent }
+				{ bottomAnchorContent }
 			</div>
-			{ hasGeneratedDesigns && (
-				<div
-					className={ classnames( 'unified-design-picker__generated-designs', {
-						'unified-design-picker__generated-designs--is-showing': isShowAll,
-					} ) }
-				>
-					<div>
-						<h3 className="unified-design-picker__title">
-							{ translate( 'Custom designs for your site' ) }
-						</h3>
-						<p className="unified-design-picker__subtitle">
-							{ translate( 'Based on your input, these designs have been tailored for you.' ) }
-						</p>
-					</div>
-					<GeneratedDesignPicker
-						locale={ locale }
-						designs={ generatedDesigns }
-						verticalId={ verticalId }
-						onPreview={ onPreview }
-					/>
-					{ isShowAll && bottomAnchorContent }
-				</div>
-			) }
 		</div>
 	);
 };

@@ -10,7 +10,7 @@ export const getDesignPreviewUrl = (
 	design: Design,
 	options: DesignPreviewOptions = {}
 ): string => {
-	const { recipe, slug } = design;
+	const { recipe, slug, preview_data } = design;
 
 	//Anchor.fm themes get previews from their starter sites, ${slug}starter.wordpress.com
 	if ( [ 'hannah', 'riley', 'gilbert' ].indexOf( slug ) >= 0 ) {
@@ -44,13 +44,18 @@ export const getDesignPreviewUrl = (
 	// The preview url is sometimes used in a `background-image: url()` CSS rule and unescaped
 	// parentheses in the URL break it. `addQueryArgs` and `encodeURIComponent` don't escape
 	// parentheses so we've got to do it ourselves.
-	const siteTitle = options.site_title || design.title;
+	const siteTitle = options.site_title || preview_data?.site_title || design.title;
 	if ( siteTitle ) {
 		url += `&site_title=${ encodeParenthesesInText( siteTitle ) }`;
 	}
 
-	if ( options.site_tagline ) {
-		url += `&site_tagline=${ encodeParenthesesInText( options.site_tagline ) }`;
+	const siteTagline = options.site_tagline || preview_data?.site_tagline;
+	if ( siteTagline ) {
+		url += `&site_tagline=${ encodeParenthesesInText( siteTagline ) }`;
+	}
+
+	if ( preview_data?.site_logo_url ) {
+		url += `&site_logo_url=${ encodeParenthesesInText( preview_data?.site_logo_url ) }`;
 	}
 
 	return url;

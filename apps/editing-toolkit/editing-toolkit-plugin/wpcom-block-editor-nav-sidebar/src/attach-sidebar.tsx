@@ -1,7 +1,9 @@
+import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { useEffect, createPortal, useState } from '@wordpress/element';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
+import { getQueryArg } from '@wordpress/url';
 import WpcomBlockEditorNavSidebar from './components/nav-sidebar';
 import ToggleSidebarButton from './components/toggle-sidebar-button';
 
@@ -33,6 +35,8 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 				// eslint-disable-next-line react-hooks/exhaustive-deps
 			}, [] );
 
+			const isStartWritingFlow =
+				getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 			const [ clickGuardRoot ] = useState( () => document.createElement( 'div' ) );
 			useEffect( () => {
 				document.body.appendChild( clickGuardRoot );
@@ -52,6 +56,10 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 					),
 				[]
 			);
+
+			if ( isStartWritingFlow ) {
+				return <MainDashboardButton></MainDashboardButton>;
+			}
 
 			if ( isSiteEditor || ! isFullscreenActive ) {
 				return null;

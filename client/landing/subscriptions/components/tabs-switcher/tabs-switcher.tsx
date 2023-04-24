@@ -51,7 +51,7 @@ const TabsSwitcher = () => {
 							shouldEnableCommentsTab
 								? navigate( commentsPath )
 								: window.location.replace(
-										'https://wordpress.com/email-subscriptions/?option=comments'
+										`https://wordpress.com/email-subscriptions/?option=comments&locale=${ locale }`
 								  );
 						} }
 						count={ counts?.comments || undefined }
@@ -60,13 +60,13 @@ const TabsSwitcher = () => {
 						{ translate( 'Comments' ) }
 					</NavItem>
 
-					{ shouldEnablePendingTab && counts?.pending ? (
+					{ counts?.pending || pathname.includes( 'pending' ) ? (
 						<NavItem
 							onClick={ () => {
 								shouldEnablePendingTab
 									? navigate( pendingPath )
 									: window.location.replace(
-											'https://wordpress.com/email-subscriptions/?option=pending'
+											`https://wordpress.com/email-subscriptions/?option=pending&locale=${ locale }`
 									  );
 							} }
 							count={ counts?.pending || undefined }

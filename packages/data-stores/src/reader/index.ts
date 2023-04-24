@@ -4,15 +4,25 @@ import {
 	useSiteDeliveryFrequencyMutation,
 	useSiteUnfollowMutation,
 	useUserSettingsMutation,
+	usePendingSiteConfirmMutation,
+	usePendingSiteDeleteMutation,
+	usePendingPostConfirmMutation,
+	usePendingPostDeleteMutation,
 } from './mutations';
 import {
+	PostSubscriptionsSortBy,
+	SiteSubscriptionsSortBy,
 	useSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
 	useSubscriptionsCountQuery,
 	useUserSettingsQuery,
+	usePendingSiteSubscriptionsQuery,
+	usePendingPostSubscriptionsQuery,
 } from './queries';
 
 export const SubscriptionManager = {
+	PostSubscriptionsSortBy,
+	SiteSubscriptionsSortBy,
 	usePostUnfollowMutation,
 	useSiteDeliveryFrequencyMutation,
 	useSiteSubscriptionsQuery,
@@ -22,6 +32,12 @@ export const SubscriptionManager = {
 	useSubscriberEmailAddress,
 	useUserSettingsQuery,
 	useUserSettingsMutation,
+	usePendingSiteSubscriptionsQuery,
+	usePendingPostSubscriptionsQuery,
+	usePendingSiteConfirmMutation,
+	usePendingSiteDeleteMutation,
+	usePendingPostConfirmMutation,
+	usePendingPostDeleteMutation,
 };
 
 // Types

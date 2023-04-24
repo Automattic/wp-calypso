@@ -13,6 +13,7 @@ export function generateFlows( {
 	getDomainSignupFlowDestination = noop,
 	getEmailSignupFlowDestination = noop,
 	getChecklistThemeDestination = noop,
+	getWithThemeDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
@@ -90,7 +91,7 @@ export function generateFlows( {
 		{
 			name: 'with-theme',
 			steps: [ 'user', 'domains-theme-preselected', 'plans' ],
-			destination: getChecklistThemeDestination,
+			destination: getWithThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
 			lastModified: '2022-11-28',
 			showRecaptcha: true,

@@ -133,6 +133,16 @@ function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) 
 	return `/home/${ siteSlug }`;
 }
 
+function getWithThemeDestination( { siteSlug, themeParameter, styleVariation, themeType } ) {
+	if ( 'dot-org' === themeType ) {
+		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
+	}
+
+	const style = styleVariation ? `&style=${ styleVariation }` : '';
+
+	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }&hideBack=true`;
+}
+
 function getEditorDestination( dependencies ) {
 	return `/page/${ dependencies.siteSlug }/home`;
 }
@@ -182,6 +192,7 @@ const flows = generateFlows( {
 	getDomainSignupFlowDestination,
 	getEmailSignupFlowDestination,
 	getChecklistThemeDestination,
+	getWithThemeDestination,
 	getEditorDestination,
 	getDestinationFromIntent,
 	getDIFMSignupDestination,

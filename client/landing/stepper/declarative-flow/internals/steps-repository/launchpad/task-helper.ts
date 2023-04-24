@@ -218,7 +218,7 @@ export function getEnhancedChecklist(
 								const { launchSite } = dispatch( SITE_STORE );
 
 								setPendingAction( async () => {
-									setProgressTitle( __( 'Launching Website' ) );
+									setProgressTitle( __( 'Launching website' ) );
 									await launchSite( site.ID );
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
