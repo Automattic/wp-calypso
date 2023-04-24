@@ -45,6 +45,7 @@ const selectors = {
 	// Plugin details view
 	pluginDetailsHeaderTitle: ( section: string ) =>
 		`.plugin-details-header__name:text("${ section }")`,
+	planUpgradeRequiredIcon: 'span.plugin-details-cta__upgrade-required-icon',
 
 	// Post install
 	installedPluginCard: '.thank-you__step',
@@ -290,9 +291,7 @@ export class PluginsPage {
 	 * modal that appears prompting the user to purchase a plan upgrade.
 	 */
 	async clickInstallPlugin(): Promise< void > {
-		const needsPlanUpgrade = await this.page
-			.locator( 'span.plugin-details-cta__upgrade-required-icon' )
-			.count();
+		const needsPlanUpgrade = await this.page.locator( selectors.planUpgradeRequiredIcon ).count();
 
 		if ( needsPlanUpgrade ) {
 			await Promise.all( [
