@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
@@ -165,6 +166,7 @@ const Home = ( {
 					allDomains={ allDomains }
 				/>
 			) }
+			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</Main>
 	);
 };

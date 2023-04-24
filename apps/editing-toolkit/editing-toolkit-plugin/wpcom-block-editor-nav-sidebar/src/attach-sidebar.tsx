@@ -1,3 +1,4 @@
+import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import { useEffect, createPortal, useState } from '@wordpress/element';
@@ -34,7 +35,8 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 				// eslint-disable-next-line react-hooks/exhaustive-deps
 			}, [] );
 
-			const showLaunchpad = getQueryArg( window.location.search, 'showLaunchpad' );
+			const isStartWritingFlow =
+				getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 			const [ clickGuardRoot ] = useState( () => document.createElement( 'div' ) );
 			useEffect( () => {
 				document.body.appendChild( clickGuardRoot );
@@ -55,7 +57,7 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 				[]
 			);
 
-			if ( showLaunchpad ) {
+			if ( isStartWritingFlow ) {
 				return <MainDashboardButton></MainDashboardButton>;
 			}
 

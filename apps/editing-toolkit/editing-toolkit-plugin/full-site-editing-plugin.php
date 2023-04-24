@@ -387,6 +387,15 @@ function load_paragraph_block() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_paragraph_block' );
 
 /**
+ * Set the map block provider
+ */
+function load_maps_provider() {
+	require_once __DIR__ . '/maps-provider/index.php';
+}
+
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_maps_provider' );
+
+/**
  * Override org documentation links
  */
 function load_wpcom_documentation_links() {
