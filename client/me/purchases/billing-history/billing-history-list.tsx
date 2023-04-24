@@ -98,11 +98,13 @@ class BillingHistoryList extends Component<
 	serviceNameDescription = ( transaction: BillingTransactionItem ) => {
 		const plan = capitalPDangit( transaction.variation );
 		if ( transaction.domain ) {
+			const isSitelessHoldingSite =
+				/^siteless\.(jetpack|akismet)\.com/.test( transaction.domain ) ?? false;
 			const termLabel = getTransactionTermLabel( transaction, this.props.translate );
 			return (
 				<div>
 					<strong>{ plan }</strong>
-					<small>{ transaction.domain }</small>
+					{ ! isSitelessHoldingSite && <small>{ transaction.domain }</small> }
 					{ termLabel ? <small>{ termLabel }</small> : null }
 					{ transaction.licensed_quantity && (
 						<small>{ renderTransactionQuantitySummary( transaction, this.props.translate ) }</small>
