@@ -17,6 +17,7 @@ export { useSiteAnalysis } from './queries/use-site-analysis';
 export { useUserSites } from './queries/use-user-sites';
 export type { AnalysisReport } from './queries/use-site-analysis';
 export { useSiteIntent } from './queries/use-site-intent';
+export { useLaunchpadChecklist, fetchLaunchpadChecklist } from './queries/use-launchpad-checklist';
 export { useSupportAvailability } from './support-queries/use-support-availability';
 export { useSubmitTicketMutation } from './support-queries/use-submit-support-ticket';
 export { useSubmitForumsMutation } from './support-queries/use-submit-forums-topic';
