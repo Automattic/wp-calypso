@@ -6,7 +6,7 @@ import { useI18n } from '@wordpress/react-i18n';
 import { AnchorHTMLAttributes, memo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { displaySiteUrl, getDashboardUrl } from '../utils';
+import { displaySiteUrl, getDashboardUrl, isStagingSite } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
 import { SitesGridTile } from './sites-grid-tile';
@@ -78,7 +78,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	const { __ } = useI18n();
 
 	const isP2Site = site.options?.is_wpforteams_site;
-	const isStagingSite = site?.is_wpcom_staging_site;
+	const isWpcomStagingSite = isStagingSite( site );
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
 
@@ -123,7 +123,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 
 					<div className={ badges }>
 						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-						{ isStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
+						{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 						{ getSiteLaunchStatus( site ) !== 'public' && (
 							<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
 						) }
