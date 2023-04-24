@@ -10,6 +10,7 @@ import {
 	usePendingPostDeleteMutation,
 } from './mutations';
 import {
+	PostSubscriptionsSortBy,
 	SiteSubscriptionsSortBy,
 	useSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
@@ -20,6 +21,7 @@ import {
 } from './queries';
 
 export const SubscriptionManager = {
+	PostSubscriptionsSortBy,
 	SiteSubscriptionsSortBy,
 	usePostUnfollowMutation,
 	useSiteDeliveryFrequencyMutation,

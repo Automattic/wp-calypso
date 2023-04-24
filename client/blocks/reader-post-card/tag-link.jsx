@@ -1,7 +1,21 @@
+import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 
+const noop = () => {};
+
 class TagLink extends Component {
+	static propTypes = {
+		tag: PropTypes.string.isRequired,
+		post: PropTypes.object,
+		onClick: PropTypes.func,
+	};
+
+	static defaultProps = {
+		tag: '',
+		onClick: noop,
+	};
+
 	recordSingleTagClick = () => {
 		const { tag, post } = this.props;
 		recordAction( 'click_tag' );
@@ -11,6 +25,7 @@ class TagLink extends Component {
 				tag: tag.slug,
 			} );
 		}
+		this.props.onClick();
 	};
 
 	render() {

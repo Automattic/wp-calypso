@@ -35,7 +35,7 @@ export function init() {
 							gmtOffset={ config( 'gmt_offset' ) }
 							odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
 						/>
-						<Modules />
+						<Modules siteId={ currentSiteId } />
 						<div className="stats-widget-footer">
 							<a
 								href="https://jetpack.com/redirect/?source=jetpack-stats-widget-logo-link"

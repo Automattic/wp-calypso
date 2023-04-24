@@ -40,6 +40,7 @@ const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
 const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
+const DEFAULT_START_WRITING_THEME = 'pub/livro';
 
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
 	const { submit } = navigation;
@@ -70,6 +71,8 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		theme = DEFAULT_WP_SITE_THEME;
 	} else if ( isWooExpressFlow( flow ) ) {
 		theme = DEFAULT_WOOEXPRESS_FLOW;
+	} else if ( isStartWritingFlow( flow ) ) {
+		theme = DEFAULT_START_WRITING_THEME;
 	} else {
 		theme = isLinkInBioFlow( flow ) ? DEFAULT_LINK_IN_BIO_THEME : DEFAULT_NEWSLETTER_THEME;
 	}

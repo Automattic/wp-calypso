@@ -2,9 +2,12 @@ import { dispatch, select, subscribe } from '@wordpress/data';
 import domReady from '@wordpress/dom-ready';
 import { getQueryArg } from '@wordpress/url';
 
+const START_WRITING_FLOW = 'start-writing';
+
 export function redirectOnboardingUserAfterPublishingPost() {
-	const showLaunchpad = getQueryArg( window.location.search, 'showLaunchpad' );
-	if ( 'true' !== showLaunchpad ) {
+	const isStartWritingFlow = getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
+
+	if ( ! isStartWritingFlow ) {
 		return false;
 	}
 
@@ -22,8 +25,7 @@ export function redirectOnboardingUserAfterPublishingPost() {
 			unsubscribe();
 
 			dispatch( 'core/edit-post' ).closePublishSidebar();
-			window.location.href =
-				siteOrigin + '/setup/write/launchpad?siteSlug=' + siteSlug + '&showLaunchpad=true';
+			window.location.href = `${ siteOrigin }/setup/write/launchpad?siteSlug=${ siteSlug }&${ START_WRITING_FLOW }=true`;
 		}
 	} );
 }
