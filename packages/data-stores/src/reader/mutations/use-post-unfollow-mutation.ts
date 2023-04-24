@@ -102,15 +102,15 @@ const usePostUnfollowMutation = () => {
 				return { previousPostSubscriptions, previousSubscriptionsCount };
 			},
 			onError: ( error, variables, context ) => {
-				// if ( context?.previousPostSubscriptions ) {
-				// 	queryClient.setQueryData< PostSubscription[] >(
-				// 		postSubscriptionsCacheKey,
-				// 		context.previousPostSubscriptions
-				// 	);
-				// }
+				if ( context?.previousPostSubscriptions ) {
+					queryClient.setQueryData< SubscriptionManagerPostSubscriptionsPages >(
+						postSubscriptionsCacheKey,
+						context.previousPostSubscriptions
+					);
+				}
 				if ( context?.previousSubscriptionsCount ) {
 					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
-						[ 'read', 'subscriptions-count', isLoggedIn ],
+						subscriptionsCountCacheKey,
 						context.previousSubscriptionsCount
 					);
 				}
