@@ -35,10 +35,11 @@ for ( let i = 0; i < secrets.length; i++ ) {
 		decryptFlags = '-md md5 -d';
 	}
 
+	const cmdBase = `openssl aes-256-cbc ${ decryptFlags } -in ${ encrypted } -out ${ decrypted } -k "${ CALYPSO_SECRETS_ENCRYPTION_KEY }"`;
+	const cmd = path.basename( secrets[ i ] ) === 'win.p12' ? cmdBase + ' -nopad' : cmdBase;
+
 	try {
-		execSync(
-			`openssl aes-256-cbc ${ decryptFlags } -in ${ encrypted } -out ${ decrypted } -k "${ CALYPSO_SECRETS_ENCRYPTION_KEY }"`
-		);
+		execSync( cmd );
 	} catch ( e ) {
 		console.error( `Failed to decrypt ${ path.basename( encrypted ) }: `, e );
 		process.exit( 1 );
