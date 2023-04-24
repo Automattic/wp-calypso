@@ -192,11 +192,11 @@ const videopress: Flow = {
 					.then( () => {
 						setProgress( 1.0 );
 						const redirectTo = encodeURIComponent(
-							`/setup/videopress/launchpad?siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
+							`/setup/videopress/launchpad?siteSlug=${ newSite.site_slug }&siteId=${ newSite.blogid }`
 						);
 
 						window.location.replace(
-							`/checkout/${ newSite?.site_slug }?signup=1&redirect_to=${ redirectTo }`
+							`/checkout/${ newSite.site_slug }?signup=1&redirect_to=${ redirectTo }`
 						);
 					} );
 			} );
