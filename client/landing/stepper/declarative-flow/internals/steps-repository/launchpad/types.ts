@@ -10,6 +10,8 @@ export interface Task {
 	warning?: boolean;
 }
 
+export type LaunchpadChecklist = Task[];
+
 export interface LaunchpadFlowTaskList {
 	[ string: string ]: string[];
 }
