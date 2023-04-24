@@ -11,7 +11,7 @@ export const SITE_STORE = 'automattic/site' as const;
 import './help-center-article-content.scss';
 
 type Props = {
-	message: string;
+	message: string | undefined;
 	setLoadingState: CallableFunction;
 };
 
