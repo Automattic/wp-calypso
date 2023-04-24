@@ -9,6 +9,7 @@ $max-list-width: 1300px;
 	text-overflow: ellipsis;
 	overflow: hidden;
 }
+
 .subscription-manager__comment-list {
 	max-width: $max-list-width;
 	min-width: 300px;
@@ -22,6 +23,7 @@ $max-list-width: 1300px;
 			}
 		}
 	}
+
 	.row {
 		display: flex;
 		align-items: center;
