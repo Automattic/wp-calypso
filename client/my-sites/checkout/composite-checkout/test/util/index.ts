@@ -632,6 +632,177 @@ export function convertProductSlugToResponseProduct( productSlug: string ): Resp
 				bill_period: 'yearly',
 				currency: 'USD',
 			};
+		case 'ak_free_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2300,
+				product_name: 'Akismet Personal (Free non-commercial license)',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'ak_personal_monthly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2309,
+				product_name: 'Akismet Personal (Paid)',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'ak_personal_yearly':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2310,
+				product_name: 'Akismet Personal (Paid)',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'ak_plus_monthly_1':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2312,
+				product_name: 'Akismet Pro (10K requests/month)',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'ak_plus_yearly_1':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2311,
+				product_name: 'Akismet Pro (10K requests/month)',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'ak_plus_monthly_2':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2314,
+				product_name: 'Akismet Pro (20K requests/month)',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'ak_plus_yearly_2':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2313,
+				product_name: 'Akismet Pro (20K requests/month)',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'ak_plus_monthly_3':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2316,
+				product_name: 'Akismet Pro (30K requests/month)',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'ak_plus_yearly_3':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2315,
+				product_name: 'Akismet Pro (30K requests/month)',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'ak_plus_monthly_4':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2318,
+				product_name: 'Akismet Pro (40K requests/month)',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'ak_plus_yearly_4':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2317,
+				product_name: 'Akismet Pro (40K requests/month)',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'ak_ent_monthly_1':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2320,
+				product_name: 'Akismet Business',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'ak_ent_yearly_1':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2319,
+				product_name: 'Akismet Business',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'ak_ep350k_monthly_1':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2322,
+				product_name: 'Akismet Enterprise (350K requests/month)',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'ak_ep350k_yearly_1':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2321,
+				product_name: 'Akismet Enterprise (350K requests/month)',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'ak_ep2m_monthly_1':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2324,
+				product_name: 'Akismet Enterprise (2M requests/month)',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'ak_ep2m_yearly_1':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2323,
+				product_name: 'Akismet Enterprise (2M requests/month)',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
+		case 'ak_epgt2m_monthly_1':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2326,
+				product_name: 'Akismet Enterprise (2M+ requests/month)',
+				product_slug: productSlug,
+				bill_period: 'monthly',
+				currency: 'USD',
+			};
+		case 'ak_epgt2m_yearly_1':
+			return {
+				...getEmptyResponseCartProduct(),
+				product_id: 2325,
+				product_name: 'Akismet Enterprise (2M+ requests/month)',
+				product_slug: productSlug,
+				bill_period: 'yearly',
+				currency: 'USD',
+			};
 		default:
 			return getEmptyResponseCartProduct();
 	}

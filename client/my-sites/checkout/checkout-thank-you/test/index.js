@@ -171,7 +171,9 @@ describe( 'CheckoutThankYou', () => {
 		} );
 
 		test( 'Should be there for AT', () => {
-			render( <CheckoutThankYou { ...props } transferComplete={ true } /> );
+			render(
+				<CheckoutThankYou { ...props } transferComplete={ true } isWooCommerceInstalled={ true } />
+			);
 			expect( screen.queryByTestId( 'atomic-store-thank-you-card' ) ).toBeVisible();
 		} );
 

@@ -47,13 +47,6 @@ export function recordSelectedDesign( {
 			...getVirtualDesignProps( design ),
 			...optionalProps,
 		} );
-
-		if ( design.verticalizable ) {
-			recordTracksEvent(
-				'calypso_signup_select_verticalized_design',
-				getDesignEventProps( { flow, intent, design, styleVariation } )
-			);
-		}
 	}
 }
 

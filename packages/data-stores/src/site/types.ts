@@ -132,6 +132,12 @@ export interface SiteDetails {
 	was_ecommerce_trial?: boolean;
 	wpcom_url?: string;
 	user_interactions?: string[];
+
+	// Jetpack computed properties
+	canAutoupdateFiles?: boolean;
+	canUpdateFiles?: boolean;
+	isMainNetworkSite?: boolean;
+	isSecondaryNetworkSite?: boolean;
 }
 
 export interface SiteDetailsCapabilities {

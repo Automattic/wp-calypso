@@ -99,7 +99,7 @@ export function getEnhancedTasks(
 					break;
 				case 'setup_newsletter':
 					taskData = {
-						title: translate( 'Personalize Newsletter' ),
+						title: translate( 'Personalize newsletter' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign(
@@ -131,7 +131,7 @@ export function getEnhancedTasks(
 					break;
 				case 'plan_selected':
 					taskData = {
-						title: translate( 'Choose a Plan' ),
+						title: translate( 'Choose a plan' ),
 						subtitle: planWarningText,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -157,7 +157,7 @@ export function getEnhancedTasks(
 					break;
 				case 'subscribers_added':
 					taskData = {
-						title: translate( 'Add Subscribers' ),
+						title: translate( 'Add subscribers' ),
 						actionDispatch: () => {
 							if ( goToStep ) {
 								recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -267,7 +267,7 @@ export function getEnhancedTasks(
 								const { launchSite } = dispatch( SITE_STORE );
 
 								setPendingAction( async () => {
-									setProgressTitle( __( 'Launching Website' ) );
+									setProgressTitle( __( 'Launching website' ) );
 									await launchSite( site.ID );
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
@@ -349,7 +349,7 @@ export function getEnhancedTasks(
 				case 'verify_email':
 					taskData = {
 						completed: isEmailVerified,
-						title: translate( 'Confirm Email (Check Your Inbox)' ),
+						title: translate( 'Confirm email (check your inbox)' ),
 					};
 					break;
 			}
