@@ -44,7 +44,7 @@ export const isP2Site = ( site: SiteExcerptNetworkData ) => {
 	return site.options?.is_wpforteams_site;
 };
 
-export const isStagingSite = ( site: SiteExcerptNetworkData ) => {
+export const isStagingSite = ( site: SiteExcerptNetworkData | undefined ) => {
 	return site?.is_wpcom_staging_site;
 };
 
