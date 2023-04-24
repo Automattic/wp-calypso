@@ -470,7 +470,12 @@ class ThemeSheet extends Component {
 	}
 
 	renderWebPreview = () => {
-		const { locale, stylesheet, themeId } = this.props;
+		const { locale, stylesheet, styleVariations, themeId } = this.props;
+		const baseStyleVariation = styleVariations.find(
+			( style ) => style.slug === DEFAULT_VARIATION_SLUG
+		);
+		const baseStyleVariationInlineCss = baseStyleVariation?.inline_css || '';
+		const selectedStyleVariationInlineCss = this.getSelectedStyleVariation()?.inline_css || '';
 		const url = getDesignPreviewUrl(
 			{ slug: themeId, recipe: { stylesheet } },
 			{ language: locale }
@@ -481,7 +486,7 @@ class ThemeSheet extends Component {
 				<div className="theme__sheet-web-preview">
 					<ThemeWebPreview
 						url={ url }
-						inlineCss={ this.getSelectedStyleVariation()?.inline_css }
+						inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
 						isShowFrameBorder={ false }
 						isShowDeviceSwitcher={ false }
 					/>
