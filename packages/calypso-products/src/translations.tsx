@@ -956,7 +956,8 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 };
 
 export const getJetpackProductsFAQs = (
-	getHelpLink: ( context: unknown ) => JSX.Element
+	getHelpLink: ( context: unknown ) => JSX.Element,
+	getSupportLink: ( context: unknown ) => JSX.Element
 ): Record< string, Array< FAQ > > => {
 	const cancellationPolicyFAQ = {
 		id: 'cancellation-policy',
@@ -989,10 +990,11 @@ export const getJetpackProductsFAQs = (
 			id: 'scan-infected-sites',
 			question: translate( 'Can I use Jetpack Scan to fix a site that is already infected?' ),
 			answer: translate(
-				'Jetpack Protect (Scan) detects and prevents attacks, but is not designed to fully clean up sites infected before it was active. If your site has malware, take immediate action to clean it up and remove the malicious code. {{br/}} To clean up your site, we suggest using a malware removal tool, or if possible restore from a backup taken before the infection. We recommend using Jetpack VaultPress Backup in conjunction with Jetpack Scan to secure your website.',
+				'Jetpack Protect (Scan) detects and prevents attacks, but is not designed to fully clean up sites infected before it was active. If your site has malware, take immediate action to clean it up and remove the malicious code. {{br/}} To clean up your site, we suggest using a malware removal tool, or if possible restore from a backup taken before the infection. We recommend using Jetpack VaultPress Backup in conjunction with Jetpack Scan to secure your website. {{br/}} {{JetpackScanLearnMoreLink}}Learn more about cleaning your site{{/JetpackScanLearnMoreLink}}.',
 				{
 					components: {
 						br: <br />,
+						JetpackScanLearnMoreLink: getSupportLink( 'how-to-clean-your-hacked-wordpress-site' ),
 					},
 				}
 			),

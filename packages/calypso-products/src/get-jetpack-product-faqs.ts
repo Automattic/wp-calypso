@@ -4,8 +4,9 @@ import { getJetpackProductsFAQs } from './translations';
  */
 export function getJetpackProductFAQs(
 	product_slug: string,
-	getHelpLink: ( context: unknown ) => JSX.Element
+	getHelpLink: ( context: unknown ) => JSX.Element,
+	getSupportLink: ( context: unknown ) => JSX.Element
 ) {
-	const jetpackProductsFAQsInfo = getJetpackProductsFAQs( getHelpLink );
+	const jetpackProductsFAQsInfo = getJetpackProductsFAQs( getHelpLink, getSupportLink );
 	return jetpackProductsFAQsInfo[ product_slug ];
 }
