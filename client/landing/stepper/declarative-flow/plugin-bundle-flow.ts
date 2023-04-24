@@ -149,7 +149,7 @@ const pluginBundleFlow: Flow = {
 
 			let defaultExitDest = `/home/${ siteSlug }`;
 			if ( siteDetails?.options?.theme_slug ) {
-				if ( isEnabled( 'themes/display-thank-you-page' ) ) {
+				if ( isEnabled( 'themes/display-thank-you-page-for-woo' ) ) {
 					defaultExitDest = `/marketplace/thank-you/${ siteSlug }?themes=${ siteDetails?.options?.theme_slug }`;
 				} else {
 					defaultExitDest = `/theme/${ siteDetails?.options.theme_slug }/${ siteSlug }`;
