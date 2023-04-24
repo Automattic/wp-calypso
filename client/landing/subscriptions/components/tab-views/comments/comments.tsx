@@ -25,7 +25,7 @@ const isListControlsEnabled = config.isEnabled( 'subscription-management/comment
 
 const Comments = () => {
 	const translate = useTranslate();
-	const [ sortTerm, setSortTerm ] = useState( SortBy.RecentlyCommented );
+	const [ sortTerm, setSortTerm ] = useState( SortBy.RecentlySubscribed );
 	const { searchTerm, handleSearch } = useSearch();
 	const sortOptions = useSortOptions();
 
