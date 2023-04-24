@@ -55,7 +55,7 @@ describe( DataHelper.createSuiteTitle( 'Blocks: Media (Upload)' ), function () {
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 		await editorPage.visit( 'post' );
 		await editorPage.enterTitle( DataHelper.getRandomPhrase() );
 	} );

@@ -49,20 +49,13 @@ export function createPrivacyTests( { visibility }: { visibility: ArticlePrivacy
 
 			it( 'Start new page', async function () {
 				// @TODO Consider moving this to EditorPage.
-				editorPage = new EditorPage( page, { target: features.siteType } );
 				await editorPage.visit( 'page' );
-				await editorPage.waitUntilLoaded();
-
-				const editorWindowLocator = editorPage.getEditorWindowLocator();
-				const pageTemplateModalComponent = new PageTemplateModalComponent(
-					page,
-					editorWindowLocator
-				);
+				const pageTemplateModalComponent = new PageTemplateModalComponent( page );
 				await pageTemplateModalComponent.selectBlankPage();
 			} );
 
 			it( 'Enter page title', async function () {
-				editorPage = new EditorPage( page, { target: features.siteType } );
+				editorPage = new EditorPage( page );
 				await editorPage.enterTitle( `Privacy: ${ visibility } - ${ DataHelper.getTimestamp() }` );
 			} );
 

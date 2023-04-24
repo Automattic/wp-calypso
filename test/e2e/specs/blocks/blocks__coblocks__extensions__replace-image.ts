@@ -40,7 +40,7 @@ describe( 'CoBlocks: Extensions: Replace Image', function () {
 	beforeAll( async () => {
 		page = await browser.newPage();
 		imageFile = await MediaHelper.createTestFile( TEST_IMAGE_PATH );
-		editorPage = new EditorPage( page, { target: features.siteType } );
+		editorPage = new EditorPage( page );
 
 		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
@@ -62,9 +62,9 @@ describe( 'CoBlocks: Extensions: Replace Image', function () {
 	} );
 
 	it( `Replace uploaded image`, async () => {
-		const editorWindowLocator = editorPage.getEditorWindowLocator();
-		await editorWindowLocator.locator( 'button:text("Replace")' ).click();
-		await editorWindowLocator
+		const editorFrame = await editorPage.getEditorFrame();
+		await editorFrame.locator( 'button:text("Replace")' ).click();
+		await editorFrame
 			.locator( '.components-form-file-upload input[type="file"]' )
 			.setInputFiles( imageFile.fullpath );
 
