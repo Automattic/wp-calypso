@@ -41,17 +41,17 @@ function formatResponse( responseData?: Record< string, string >[] ) {
 export default function usePurchasedProducts() {
 	const [ purchasedProducts, setPurchasedProducts ] = useState( [] as string[] );
 	const [ isLoading, setIsLoading ] = useState( true );
-	const [ error, setError ] = useState();
+	const [ error, setError ] = useState< object >();
 
 	useEffect( () => {
 		wpcom.req
 			.get( { path: '/site/purchases', apiNamespace: 'jetpack/v4' } )
-			.then( ( res ) => JSON.parse( res.data ) )
-			.then( ( purchases ) => {
+			.then( ( res: { data: string } ) => JSON.parse( res.data ) )
+			.then( ( purchases: Record< string, string >[] ) => {
 				setIsLoading( false );
 				setPurchasedProducts( formatResponse( purchases ) );
 			} )
-			.catch( ( error ) => setError( error ) );
+			.catch( ( error: Error ) => setError( error ) );
 	}, [] );
 
 	return {
