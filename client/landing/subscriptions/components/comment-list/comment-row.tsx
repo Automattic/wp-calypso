@@ -11,6 +11,7 @@ type CommentRowProps = PostSubscription & {
 };
 
 const CommentRow = ( {
+	id,
 	post_id,
 	post_title,
 	post_excerpt,
@@ -57,7 +58,7 @@ const CommentRow = ( {
 				</span>
 				<span className="actions" role="cell">
 					<CommentSettings
-						onUnfollow={ () => unFollow( { post_id, blog_id } ) }
+						onUnfollow={ () => unFollow( { post_id, blog_id, id } ) }
 						unfollowing={ unfollowing }
 					/>
 				</span>
