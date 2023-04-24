@@ -41,7 +41,7 @@ function formatResponse( responseData?: Record< string, string >[] ) {
 export default function usePurchasedProducts() {
 	const [ purchasedProducts, setPurchasedProducts ] = useState( [] as string[] );
 	const [ isLoading, setIsLoading ] = useState( true );
-	const [ error, setError ] = useState< object >();
+	const [ error, setError ] = useState< Error | null >( null );
 
 	useEffect( () => {
 		wpcom.req
