@@ -4,7 +4,14 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { isFreeFlow, isBuildFlow, isWriteFlow, isNewsletterFlow } from '@automattic/onboarding';
+import {
+	isFreeFlow,
+	isBuildFlow,
+	isWriteFlow,
+	isNewsletterFlow,
+	isStartWritingFlow,
+	START_WRITING_FLOW,
+} from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -48,6 +55,8 @@ export function getEnhancedTasks(
 	const siteLaunchCompleted = checklistStatuses?.site_launched || false;
 
 	const firstPostPublishedCompleted = checklistStatuses?.first_post_published || false;
+
+	const planCompleted = checklistStatuses?.plan_selected;
 
 	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
 
@@ -148,7 +157,7 @@ export function getEnhancedTasks(
 									'calypso_launchpad_global_styles_gating_plan_selected_task_clicked'
 								);
 							}
-							const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
+							let plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
 								...( shouldDisplayWarning && {
 									plan: PLAN_PREMIUM,
 									feature: isVideoPressFlowWithUnsupportedPlan
@@ -156,10 +165,16 @@ export function getEnhancedTasks(
 										: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 								} ),
 							} );
+							if ( isStartWritingFlow( flow || null ) ) {
+								plansUrl = addQueryArgs( `/setup/${ START_WRITING_FLOW }/plans`, {
+									...{ siteSlug: siteSlug, 'start-writing': true },
+								} );
+							}
+
 							window.location.assign( plansUrl );
 						},
 						badgeText: isVideoPressFlowWithUnsupportedPlan ? null : translatedPlanName,
-						completed: task.completed && ! shouldDisplayWarning,
+						completed: ( planCompleted ?? task.completed ) && ! shouldDisplayWarning,
 						warning: shouldDisplayWarning,
 					};
 					break;

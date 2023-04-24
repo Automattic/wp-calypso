@@ -24,6 +24,7 @@ const startWriting: Flow = {
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
+			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
 				slug: 'launchpad',
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
@@ -41,7 +42,7 @@ const startWriting: Flow = {
 				case 'processing': {
 					if ( providedDependencies?.siteSlug ) {
 						await updateLaunchpadSettings( String( providedDependencies?.siteSlug ), {
-							checklist_statuses: { first_post_published: true },
+							checklist_statuses: { first_post_published: true, plan_selected: false },
 						} );
 
 						const siteOrigin = window.location.origin;
@@ -50,7 +51,10 @@ const startWriting: Flow = {
 							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }`
 						);
 					}
+					break;
 				}
+				case 'plans':
+					return navigate( 'launchpad' );
 			}
 		}
 		return { submit };
@@ -62,7 +66,9 @@ const startWriting: Flow = {
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const locale = useLocale();
 		const currentPath = window.location.pathname;
-		const isLaunchpad = currentPath.includes( 'setup/start-writing/launchpad' );
+		const isLaunchpad =
+			currentPath.includes( 'setup/start-writing/launchpad' ) ||
+			currentPath.includes( 'setup/start-writing/plans' );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
 		const logInUrl =
