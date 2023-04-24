@@ -49,36 +49,38 @@ const GlobalStylesModal = () => {
 			// set to false so that 1Password's autofill doesn't automatically close the modal
 			shouldCloseOnClickOutside={ false }
 		>
-			<div className="wpcom-global-styles-modal__text">
-				<h1 className="wpcom-global-styles-modal__heading">
-					{ __( 'A powerful new way to style your site', 'full-site-editing' ) }
-				</h1>
-				<p className="wpcom-global-styles-modal__description">
-					{ __(
-						"Change all of your site's fonts, colors and more. Available on the Premium plan.",
-						'full-site-editing'
-					) }
-				</p>
-				<div className="wpcom-global-styles-modal__actions">
-					<Button variant="secondary" onClick={ closeModal }>
-						{ __( 'Try it out', 'full-site-editing' ) }
-					</Button>
-					<Button
-						variant="primary"
-						href={ wpcomGlobalStyles.upgradeUrl }
-						target="_top"
-						onClick={ () =>
-							recordTracksEvent( 'calypso_global_styles_gating_modal_upgrade_click', {
-								context: 'site-editor',
-							} )
-						}
-					>
-						{ __( 'Upgrade plan', 'full-site-editing' ) }
-					</Button>
+			<div className="wpcom-global-styles-modal__content">
+				<div className="wpcom-global-styles-modal__text">
+					<h1 className="wpcom-global-styles-modal__heading">
+						{ __( 'A powerful new way to style your site', 'full-site-editing' ) }
+					</h1>
+					<p className="wpcom-global-styles-modal__description">
+						{ __(
+							"Change all of your site's fonts, colors and more. Available on the Premium plan.",
+							'full-site-editing'
+						) }
+					</p>
+					<div className="wpcom-global-styles-modal__actions">
+						<Button variant="secondary" onClick={ closeModal }>
+							{ __( 'Try it out', 'full-site-editing' ) }
+						</Button>
+						<Button
+							variant="primary"
+							href={ wpcomGlobalStyles.upgradeUrl }
+							target="_top"
+							onClick={ () =>
+								recordTracksEvent( 'calypso_global_styles_gating_modal_upgrade_click', {
+									context: 'site-editor',
+								} )
+							}
+						>
+							{ __( 'Upgrade plan', 'full-site-editing' ) }
+						</Button>
+					</div>
 				</div>
-			</div>
-			<div className="wpcom-global-styles-modal__image">
-				<img src={ image } alt="" />
+				<div className="wpcom-global-styles-modal__image">
+					<img src={ image } alt="" />
+				</div>
 			</div>
 		</Modal>
 	);
