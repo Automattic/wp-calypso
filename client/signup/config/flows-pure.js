@@ -327,7 +327,7 @@ export function generateFlows( {
 		},
 		{
 			name: 'site-selected',
-			steps: [ 'themes-site-selected', 'plans-site-selected' ],
+			steps: [ 'themes-site-selected', 'plans-site-selected-legacy' ],
 			destination: getSiteDestination,
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
 			optionalDependenciesInQuery: [ 'siteId' ],
