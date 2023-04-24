@@ -63,7 +63,7 @@ function ModuleCard( {
 	);
 }
 
-export default function Modules( { siteId } ) {
+function AkismetModule( { siteId } ) {
 	const translate = useTranslate();
 
 	const {
@@ -73,13 +73,6 @@ export default function Modules( { siteId } ) {
 		isError: isAkismetError,
 		error: akismetError,
 	} = useModuleDataQuery( 'akismet' );
-	const {
-		data: protectData,
-		isLoading: isProtectLoading,
-		refetch: refetchProtectData,
-		isError: isProtectError,
-		error: protectError,
-	} = useModuleDataQuery( 'protect' );
 
 	const activateProduct = ( productSlug ) => () => {
 		return wpcom.req
@@ -89,6 +82,36 @@ export default function Modules( { siteId } ) {
 			} )
 			.then( refetchAkismetData );
 	};
+	return (
+		<ModuleCard
+			icon={ akismet }
+			title={ translate( 'Total blocked spam comments' ) }
+			value={ akismetData }
+			isError={ isAkismetError }
+			error={ akismetError?.message }
+			isLoading={ isAkismetLoading }
+			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
+			activateProduct={
+				canCurrentUser( siteId, 'manage_options' ) && activateProduct( 'anti-spam' )
+			}
+			info={ {
+				link: 'https://akismet.com/?utm_source=jetpack&utm_medium=link&utm_campaign=Jetpack%20Dashboard%20Widget%20Footer%20Link',
+				text: translate( 'Anti-spam can help to keep your blog safe from spam!' ),
+			} }
+		/>
+	);
+}
+
+function ProtectModule( { siteId } ) {
+	const translate = useTranslate();
+
+	const {
+		data: protectData,
+		isLoading: isProtectLoading,
+		refetch: refetchProtectData,
+		isError: isProtectError,
+		error: protectError,
+	} = useModuleDataQuery( 'protect' );
 
 	const activateModule = ( module ) => () => {
 		return wpcom.req
@@ -105,35 +128,24 @@ export default function Modules( { siteId } ) {
 	};
 
 	return (
+		<ModuleCard
+			icon={ protect }
+			title={ translate( 'Total blocked login attempts' ) }
+			value={ protectData }
+			isError={ isProtectError }
+			error={ protectError?.message }
+			isLoading={ isProtectLoading }
+			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
+			activateProduct={ canCurrentUser( siteId, 'manage_options' ) && activateModule( 'protect' ) }
+		/>
+	);
+}
+
+export default function Modules( { siteId } ) {
+	return (
 		<div className="stats-widget-modules">
-			<ModuleCard
-				icon={ protect }
-				title={ translate( 'Total blocked login attempts' ) }
-				value={ protectData }
-				isError={ isProtectError }
-				error={ protectError?.message }
-				isLoading={ isProtectLoading }
-				canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
-				activateProduct={
-					canCurrentUser( siteId, 'manage_options' ) && activateModule( 'protect' )
-				}
-			/>
-			<ModuleCard
-				icon={ akismet }
-				title={ translate( 'Total blocked spam comments' ) }
-				value={ akismetData }
-				isError={ isAkismetError }
-				error={ akismetError?.message }
-				isLoading={ isAkismetLoading }
-				canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
-				activateProduct={
-					canCurrentUser( siteId, 'manage_options' ) && activateProduct( 'anti-spam' )
-				}
-				info={ {
-					link: 'https://akismet.com/?utm_source=jetpack&utm_medium=link&utm_campaign=Jetpack%20Dashboard%20Widget%20Footer%20Link',
-					text: translate( 'Anti-spam can help to keep your blog safe from spam!' ),
-				} }
-			/>
+			<ProtectModule siteId={ siteId } />
+			<AkismetModule siteId={ siteId } />
 		</div>
 	);
 }
