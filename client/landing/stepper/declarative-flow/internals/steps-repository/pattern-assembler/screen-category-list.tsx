@@ -1,5 +1,10 @@
 import { Button } from '@automattic/components';
-import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
+import {
+	__experimentalNavigatorBackButton as NavigatorBackButton,
+	__unstableComposite as Composite,
+	__unstableUseCompositeState as useCompositeState,
+	__unstableCompositeItem as CompositeItem,
+} from '@wordpress/components';
 import { Icon, chevronRight } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -41,6 +46,7 @@ const ScreenCategoryList = ( {
 	const translate = useTranslate();
 	const [ selectedCategory, setSelectedCategory ] = useState< string | null >( null );
 	const categoriesInOrder = useCategoriesOrder( categories );
+	const composite = useCompositeState( { orientation: 'vertical' } );
 
 	const handleFocusOutside = ( event: Event ) => {
 		// Click outside the sidebar or action bar to close Pattern List
@@ -89,7 +95,12 @@ const ScreenCategoryList = ( {
 						  )
 				}
 			/>
-			<div className="screen-container__body screen-container__body--align-sides screen-category-list__body">
+			<Composite
+				{ ...composite }
+				role="listbox"
+				className="screen-container__body screen-container__body--align-sides screen-category-list__body"
+				aria-label={ translate( 'Block pattern categories' ) }
+			>
 				{ categoriesInOrder.map( ( { name, label, description } ) => {
 					const isOpen = selectedCategory === name;
 					const hasPatterns = name && patternsMapByCategory[ name ]?.length;
@@ -101,12 +112,17 @@ const ScreenCategoryList = ( {
 					}
 
 					return (
-						<Button
+						<CompositeItem
 							key={ name }
+							role="option"
+							as="button"
+							{ ...composite }
 							className={ classNames( 'screen-category-list__category-button navigator-button', {
 								'screen-category-list__category-button--is-open': isOpen,
 							} ) }
-							title={ description }
+							aria-label={ label }
+							aria-describedby={ description }
+							aria-current={ isOpen }
 							onClick={ () => {
 								if ( isOpen ) {
 									setSelectedCategory( null );
@@ -124,10 +140,10 @@ const ScreenCategoryList = ( {
 								icon={ chevronRight }
 								size={ 24 }
 							/>
-						</Button>
+						</CompositeItem>
 					);
 				} ) }
-			</div>
+			</Composite>
 			<div className="screen-container__footer">
 				<NavigatorBackButton
 					as={ Button }

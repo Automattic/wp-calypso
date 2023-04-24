@@ -1,8 +1,9 @@
 /**
  * Global polyfills
  */
-import './load-config';
-import config from '@automattic/calypso-config';
+// `init-app-config` has to be the first import, because there could be packages reference it in their side effect.
+// eslint-disable-next-line import/order
+import './lib/init-app-config';
 import page from 'page';
 import '@automattic/calypso-polyfills';
 import { QueryClient } from 'react-query';
@@ -15,6 +16,7 @@ import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
+import config from './lib/config-api';
 import setLocale from './lib/set-locale';
 import { setupContextMiddleware } from './page-middleware/setup-context';
 import registerStatsPages from './routes';

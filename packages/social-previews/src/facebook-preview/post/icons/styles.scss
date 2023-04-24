@@ -1,0 +1,43 @@
+.facebook-preview__post-icon {
+	display: inline-block;
+
+	background-repeat: no-repeat;
+	background-size: 73px 18px;
+
+	filter: invert(40%);
+}
+
+.facebook-preview__post-icon-like {
+	width: 18px;
+	height: 18px;
+
+	background-position: 0 0;
+}
+
+.facebook-preview__post-icon-comment {
+	width: 18px;
+	height: 18px;
+
+	background-position: -18px 0;
+}
+
+.facebook-preview__post-icon-share {
+	width: 18px;
+	height: 18px;
+
+	background-position: -36px 0;
+}
+
+.facebook-preview__post-icon-info {
+	width: 7px;
+	height: 14px;
+
+	background-position: -54px 0;
+}
+
+.facebook-preview__post-icon-public {
+	width: 12px;
+	height: 12px;
+
+	background-position: -61px 0;
+}

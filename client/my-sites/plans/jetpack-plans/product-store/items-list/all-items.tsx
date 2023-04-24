@@ -111,9 +111,10 @@ export const AllItems: React.FC< AllItemsProps > = ( {
 					// except for Jetpack Social when it isn't owned or included in an active plan,
 					// in which case we open a modal.
 					const ctaHref =
-						isSocialProduct && ! ( isOwned || isIncludedInPlanOrSuperseded )
+						isSocialProduct && ! isIncludedInPlanOrSuperseded
 							? `#${ item.productSlug }`
 							: getCheckoutURL( item );
+
 					const onClickCta = isSocialProduct
 						? onClickMoreInfoFactory( item )
 						: getOnClickPurchase( item );

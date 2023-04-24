@@ -27,6 +27,7 @@ import {
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 	isThemePremium as getIsThemePremium,
 	isThemePurchased,
+	isWporgTheme as getIsWporgTheme,
 } from 'calypso/state/themes/selectors';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
 import ThemeMoreButton from './more-button';
@@ -302,6 +303,7 @@ export class Theme extends Component {
 			isSiteEligibleForBundledSoftware,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
+			isWporgTheme,
 			themeSubscriptionPrices,
 		} = this.props;
 
@@ -372,6 +374,15 @@ export class Theme extends Component {
 					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
 				}
 			);
+		} else if ( isWporgTheme ) {
+			return createInterpolateElement(
+				translate(
+					'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
+				),
+				{
+					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
+				}
+			);
 		}
 
 		return createInterpolateElement(
@@ -391,7 +402,15 @@ export class Theme extends Component {
 	};
 
 	getUpsellHeader = () => {
-		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, translate } = this.props;
+		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, isWporgTheme, translate } =
+			this.props;
+
+		if ( isWporgTheme ) {
+			return translate( 'Community theme', {
+				context: 'This theme is developed and supported by a community',
+				textOnly: true,
+			} );
+		}
 
 		if ( isExternallyManagedTheme ) {
 			return translate( 'Paid theme' );
@@ -424,7 +443,8 @@ export class Theme extends Component {
 	};
 
 	getPremiumThemeBadge = () => {
-		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, translate } = this.props;
+		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, isWporgTheme, translate } =
+			this.props;
 
 		const commonProps = {
 			className: 'theme__upsell-popover',
@@ -432,6 +452,20 @@ export class Theme extends Component {
 			tooltipContent: this.getUpsellPopoverContent(),
 			tooltipPosition: 'top',
 		};
+
+		if ( isWporgTheme ) {
+			return (
+				<PremiumBadge
+					{ ...commonProps }
+					className={ classNames( commonProps.className, 'badge--info' ) }
+					labelText={ translate( 'Community', {
+						context: 'This theme is developed and supported by a community',
+						textOnly: true,
+					} ) }
+					shouldHideIcon
+				/>
+			);
+		}
 
 		if ( isExternallyManagedTheme ) {
 			return (
@@ -468,12 +502,13 @@ export class Theme extends Component {
 	};
 
 	renderPricingBadge = () => {
-		const { active, isExternallyManagedTheme, isPremiumTheme, translate } = this.props;
+		const { active, isExternallyManagedTheme, isPremiumTheme, isWporgTheme, translate } =
+			this.props;
 		if ( active ) {
 			return null;
 		}
 
-		if ( isExternallyManagedTheme || isPremiumTheme ) {
+		if ( isExternallyManagedTheme || isPremiumTheme || isWporgTheme ) {
 			return this.renderUpsell();
 		}
 
@@ -528,6 +563,7 @@ export class Theme extends Component {
 				onClick={ this.setBookmark }
 				onImageClick={ this.onScreenshotClick }
 				onStyleVariationClick={ this.onStyleVariationClick }
+				onStyleVariationMoreClick={ this.onStyleVariationClick }
 			/>
 		);
 	}
@@ -552,6 +588,7 @@ export default connect(
 			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
 			isPremiumTheme: getIsThemePremium( state, theme.id ),
+			isWporgTheme: getIsWporgTheme( state, theme.id ),
 			hasPremiumThemesFeature:
 				hasPremiumThemesFeature?.() ||
 				siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),

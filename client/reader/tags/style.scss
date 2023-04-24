@@ -6,6 +6,19 @@
 }
 
 .layout.has-header-section.is-section-reader .layout__header-section-content {
+	box-sizing: border-box;
+	max-width: 1140px;
+	margin: 0 auto;
+
+	@include break-medium {
+		padding-left: 108px;
+		padding-right: 108px;
+	}
+	@include break-wide {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
 	h1 {
 		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
 		font-size: 60px; /* stylelint-disable-line declaration-property-unit-allowed-list */
@@ -20,15 +33,26 @@
 .has-no-sidebar .layout__content {
 	padding-left: 24px;
 	padding-right: 24px;
+	max-width: 1140px;
+	margin: 0 auto;
+
 	@include break-medium {
 		padding-left: 108px;
 		padding-right: 108px;
+	}
+	@include break-wide {
+		padding-left: 0;
+		padding-right: 0;
 	}
 }
 
 .tags h4 {
 	color: var(--studio-gray-50);
 	margin-bottom: 15px;
+}
+
+.trending-tags__container {
+	padding-bottom: 58px;
 }
 
 .trending-tags__row {
@@ -81,11 +105,13 @@
 	}
 }
 .alphabetic-tags__header {
-	padding-top: 72px;
+	background: var(--studio-white);
+	padding-top: 20px;
 	padding-bottom: 10px;
 	border-bottom: 1px solid var(--studio-gray-5);
 	margin-bottom: 26px;
 	padding-left: 10px;
+
 	@include break-small {
 		padding-left: 0;
 	}
@@ -146,6 +172,8 @@
 	.alphabetic-tags__letter-title {
 		font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		margin-bottom: 22px;
+		font-weight: 500;
+
 		&:focus-visible {
 			text-decoration: underline;
 		}
@@ -170,7 +198,12 @@
 			a {
 				color: var(--studio-gray-80);
 				font-weight: 400;
+				display: inline-block;
+				border-bottom: 1px solid transparent;
 
+				&:hover {
+					border-bottom: 1px solid var(--studio-gray-80);
+				}
 				&:focus {
 					outline: none;
 				}

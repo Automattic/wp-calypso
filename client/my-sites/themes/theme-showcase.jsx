@@ -1,7 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { FEATURE_INSTALL_THEMES } from '@automattic/calypso-products';
 import { localize, translate } from 'i18n-calypso';
-import { compact, omit, pickBy } from 'lodash';
+import { compact, pickBy } from 'lodash';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
@@ -37,13 +37,13 @@ import {
 	isUpsellCardDisplayed as isUpsellCardDisplayedSelector,
 } from 'calypso/state/themes/selectors';
 import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
+import EligibilityWarningModal from './atomic-transfer-dialog';
 import { addTracking, getSubjectsFromTermTable, trackClick, localizeThemesPath } from './helpers';
 import InstallThemeButton from './install-theme-button';
 import ThemePreview from './theme-preview';
 import ThemesHeader from './themes-header';
 import ThemesSelection from './themes-selection';
 import ThemesToolbarGroup from './themes-toolbar-group';
-
 import './theme-showcase.scss';
 
 const optionShape = PropTypes.shape( {
@@ -558,6 +558,7 @@ class ThemeShowcase extends Component {
 					<QueryProductsList />
 					<ThanksModal source="list" />
 					<AutoLoadingHomepageModal source="list" />
+					<EligibilityWarningModal />
 					<ThemePreview />
 				</div>
 			</div>
@@ -566,8 +567,6 @@ class ThemeShowcase extends Component {
 }
 
 const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
-	const allowedSubjects = omit( getThemeFilterTerms( state, 'subject' ) || {}, [ 'newsletter' ] );
-
 	return {
 		isLoggedIn: isUserLoggedIn( state ),
 		isAtomicSite: isAtomicSite( state, siteId ),
@@ -577,7 +576,7 @@ const mapStateToProps = ( state, { siteId, filter, tier, vertical } ) => {
 		siteSlug: getSiteSlug( state, siteId ),
 		description: getThemeShowcaseDescription( state, { filter, tier, vertical } ),
 		title: getThemeShowcaseTitle( state, { filter, tier, vertical } ),
-		subjects: allowedSubjects,
+		subjects: getThemeFilterTerms( state, 'subject' ) || {},
 		premiumThemesEnabled: arePremiumThemesEnabled( state, siteId ),
 		filterString: prependThemeFilterKeys( state, filter ),
 		filterToTermTable: getThemeFilterToTermTable( state ),

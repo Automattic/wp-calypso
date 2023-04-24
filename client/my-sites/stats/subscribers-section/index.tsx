@@ -1,8 +1,12 @@
+import config from '@automattic/calypso-config';
 import UplotChart from '@automattic/components/src/chart-uplot';
+import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { UseQueryResult } from 'react-query';
+import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import StatsModulePlaceholder from '../stats-module/placeholder';
+import StatsPeriodHeader from '../stats-period-header';
 import type uPlot from 'uplot';
 
 import './style.scss';
@@ -15,6 +19,8 @@ interface SubscribersData {
 
 interface SubscribersDataResult {
 	data: SubscribersData[];
+	unit: string;
+	date: string;
 }
 
 // New Subscriber Stats
@@ -29,8 +35,16 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 	return [ x, y ];
 }
 
-export default function SubscribersSection( { siteId }: { siteId: string } ) {
-	const period = 'month';
+export default function SubscribersSection( {
+	siteId,
+	slug,
+	period = 'month',
+}: {
+	siteId: string;
+	slug?: string;
+	period?: string;
+} ) {
+	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const quantity = 30;
 	const {
 		isLoading,
@@ -38,9 +52,10 @@ export default function SubscribersSection( { siteId }: { siteId: string } ) {
 		data,
 		// error,
 		status,
-	}: UseQueryResult< SubscribersDataResult > = useSubscribersQuery( siteId, period, quantity );
+	} = useSubscribersQuery( siteId, period, quantity ) as UseQueryResult< SubscribersDataResult >;
 	const [ errorMessage, setErrorMessage ] = useState( '' );
 	const legendRef = useRef< HTMLDivElement >( null );
+	const translate = useTranslate();
 
 	useEffect( () => {
 		if ( isError ) {
@@ -50,15 +65,40 @@ export default function SubscribersSection( { siteId }: { siteId: string } ) {
 
 	const chartData = transformData( data?.data || [] );
 
+	const subscribers = {
+		label: 'Subscribers',
+		path: `/stats/subscribers/`,
+	};
+
+	const slugPath = slug ? `/${ slug }` : '';
+	const pathTemplate = `${ subscribers.path }{{ interval }}${ slugPath }`;
+
 	return (
 		<div className="subscribers-section">
-			<div className="subscribers-section-heading">
-				<h1 className="highlight-cards-heading">Subscribers</h1>
-				<div className="subscribers-section-legend" ref={ legendRef }></div>
+			{ /* TODO: Remove highlight-cards class and use a highlight cards heading component instead. */ }
+			<div className="subscribers-section-heading highlight-cards">
+				<h1 className="highlight-cards-heading">
+					{ translate( 'Subscribers' ) }{ ' ' }
+					{ isOdysseyStats ? null : (
+						<small>
+							<a className="highlight-cards-heading-wrapper" href={ '/people/subscribers/' + slug }>
+								{ translate( 'View all subscribers' ) }
+							</a>
+						</small>
+					) }
+				</h1>
+				<div className="subscribers-section-duration-control-with-legend">
+					<StatsPeriodHeader>
+						<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
+					</StatsPeriodHeader>
+					<div className="subscribers-section-legend" ref={ legendRef }></div>
+				</div>
 			</div>
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }
 			{ ! isLoading && chartData.length === 0 && (
-				<p className="subscribers-section__no-data">No data availble for the specified period.</p>
+				<p className="subscribers-section__no-data">
+					{ translate( 'No data available for the specified period.' ) }
+				</p>
 			) }
 			{ errorMessage && <div>Error: { errorMessage }</div> }
 			{ ! isLoading && chartData.length !== 0 && (

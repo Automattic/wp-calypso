@@ -26,7 +26,7 @@
 		}
 	],
 	"oauth_client_id": 68663,
-	"zendesk_presales_chat_key": "d729d42c-b547-4750-a6f6-8b30534a5f12",
+	"zendesk_presales_chat_key": "7c42153f-f579-49ba-a33e-246b2d27fb93",
 	"features": {
 		"activity-log/v2": true,
 		"always_use_logout_url": true,
@@ -49,7 +49,6 @@
 		"jetpack/pricing-add-boost-social": true,
 		"jetpack/pricing-page": true,
 		"jetpack/pricing-page-annual-only": true,
-		"jetpack/pro-dashboard-expandable-block": true,
 		"jetpack/pro-dashboard-jetpack-boost": true,
 		"jetpack/search-product": true,
 		"jetpack/server-credentials-advanced-flow": true,

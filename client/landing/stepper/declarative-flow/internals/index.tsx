@@ -9,6 +9,13 @@ import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
+import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
+import {
+	getSignupCompleteFlowNameAndClear,
+	getSignupCompleteStepNameAndClear,
+} from 'calypso/signup/storageUtils';
+import { useSite } from '../../hooks/use-site';
+import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
 import kebabCase from '../../utils/kebabCase';
 import recordStepStart from './analytics/record-step-start';
@@ -43,6 +50,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
 	);
+
+	const site = useSite();
 	const ref = useQuery().get( 'ref' ) || '';
 
 	const stepProgress = useSelect(
@@ -54,6 +63,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		stepProgress ? stepProgress.progress : 0
 	);
 	const previousProgressValue = stepProgress ? previousProgress / stepProgress.count : 0;
+
+	// this pre-loads all the lazy steps down the flow.
+	useEffect( () => {
+		Promise.all( flowSteps.map( ( step ) => 'asyncComponent' in step && step.asyncComponent() ) );
+	}, stepPaths );
 
 	const isFlowStart = useCallback( () => {
 		if ( ! flow || ! stepProgress ) {
@@ -94,6 +108,8 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	flow.useSideEffect?.( currentStepRoute, _navigate );
 
+	useSyncRoute();
+
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
 	}, [ location ] );
@@ -107,14 +123,22 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
-		if ( currentStepRoute ) {
-			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
-
-			// Also record page view for data and analytics
-			const pathname = window.location.pathname || '';
-			const pageTitle = `Setup > ${ flow.name } > ${ currentStepRoute }`;
-			recordPageView( pathname, pageTitle );
+		if ( ! currentStepRoute ) {
+			return;
 		}
+
+		const signupCompleteFlowName = getSignupCompleteFlowNameAndClear();
+		const signupCompleteStepName = getSignupCompleteStepNameAndClear();
+		const isReEnteringStep =
+			signupCompleteFlowName === flow.name && signupCompleteStepName === currentStepRoute;
+		if ( ! isReEnteringStep ) {
+			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
+		}
+
+		// Also record page view for data and analytics
+		const pathname = window.location.pathname || '';
+		const pageTitle = `Setup > ${ flow.name } > ${ currentStepRoute }`;
+		recordPageView( pathname, pageTitle );
 
 		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// This causes the intent to become empty, and thus this event being fired again.
@@ -187,6 +211,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 					}
 				/>
 			</Routes>
+			<AsyncCheckoutModal siteId={ site?.ID } />
 		</Suspense>
 	);
 };

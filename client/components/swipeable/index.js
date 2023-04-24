@@ -63,6 +63,7 @@ export const Swipeable = ( {
 	onPageSelect,
 	pageClassName,
 	containerClassName,
+	isClickEnabled,
 	...otherProps
 } ) => {
 	const [ swipeableArea, setSwipeableArea ] = useState();
@@ -95,6 +96,11 @@ export const Swipeable = ( {
 
 	useLayoutEffect( () => {
 		if ( ! updateEnabled ) {
+			// This is a fix for a bug when you have >1 pages and it update the component to just one but the height is still
+			// Related to https://github.com/Automattic/dotcom-forge/issues/2033
+			if ( pagesStyle?.height ) {
+				setPagesStyle( { ...pagesStyle, height: undefined } );
+			}
 			return;
 		}
 		const targetHeight = pagesRef.current?.querySelector( '.is-current' )?.offsetHeight;
@@ -103,6 +109,15 @@ export const Swipeable = ( {
 			setPagesStyle( { ...pagesStyle, height: targetHeight } );
 		}
 	}, [ pagesRef, currentPage, pagesStyle, updateEnabled, containerWidth, childrenOrder ] );
+
+	const resetDragData = useCallback( () => {
+		delete pagesStyle.transform;
+		setPagesStyle( {
+			...pagesStyle,
+			transitionDuration: TRANSITION_DURATION,
+		} );
+		setDragData( null );
+	}, [ pagesStyle, setPagesStyle, setDragData ] );
 
 	const handleDragStart = useCallback(
 		( event ) => {
@@ -142,14 +157,20 @@ export const Swipeable = ( {
 			const verticalAbsoluteDelta = Math.abs( dragPosition.y - dragData.start.y );
 			const angle = ( Math.atan2( verticalAbsoluteDelta, absoluteDelta ) * 180 ) / Math.PI;
 
+			// Is click or tap?
+			if ( velocity === 0 && isClickEnabled ) {
+				if ( numPages !== currentPage + 1 ) {
+					onPageSelect( currentPage + 1 );
+				} else {
+					onPageSelect( 0 );
+				}
+				resetDragData();
+				return;
+			}
+
 			// Is vertical scroll detected?
 			if ( angle > VERTICAL_THRESHOLD_ANGLE ) {
-				delete pagesStyle.transform;
-				setPagesStyle( {
-					...pagesStyle,
-					transitionDuration: TRANSITION_DURATION,
-				} );
-				setDragData( null );
+				resetDragData();
 				return;
 			}
 
@@ -184,6 +205,7 @@ export const Swipeable = ( {
 			onPageSelect,
 			pagesStyle,
 			containerWidth,
+			isClickEnabled,
 		]
 	);
 

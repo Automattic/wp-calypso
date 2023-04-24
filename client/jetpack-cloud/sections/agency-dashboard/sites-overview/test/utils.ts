@@ -33,12 +33,12 @@ describe( 'utils', () => {
 				value: siteObj,
 				error: false,
 				type: 'site',
-				status: '',
+				status: 'active',
 			},
 			backup: {
 				type: 'backup',
 				value: translate( 'Failed' ),
-				status: 'failed',
+				status: 'critical',
 			},
 			monitor: {
 				error: false,
@@ -201,7 +201,7 @@ describe( 'utils', () => {
 				{
 					site: {
 						error: true,
-						status: '',
+						status: 'active',
 						type: 'site',
 						value: sites[ 0 ],
 					},

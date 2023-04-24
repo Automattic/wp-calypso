@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Card, Gridicon, Button } from '@automattic/components';
 import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -89,8 +88,6 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const shouldDisableLicenseSelection =
 		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
-	const isExpandableBlockEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
-
 	return (
 		<Card
 			className={ classNames( 'site-card__card', {
@@ -129,54 +126,43 @@ export default function SiteCard( { rows, columns }: Props ) {
 										) }
 										key={ index }
 									>
-										{ isExpandableBlockEnabled ? (
-											<>
-												<div className="site-card__expanded-content-header">
-													<span className="site-card__expanded-content-key">{ column.title }</span>
-													<span className="site-card__expanded-content-value">
-														<span className="site-card__expanded-content-status">
-															<SiteStatusContent rows={ rows } type={ row.type } />
-														</span>
-														<span className="site-card__expanded-column">
-															{ column.isExpandable && (
-																<Button
-																	borderless
-																	onClick={ () => handleSetExpandedColumn( column.key ) }
-																>
-																	<Icon
-																		icon={ expandedColumn === column.key ? chevronUp : chevronDown }
-																	/>
-																</Button>
-															) }
-														</span>
-													</span>
-												</div>
-												{ expandedColumn === column.key && (
-													<SiteExpandedContent
-														isSmallScreen
-														site={ rows.site.value }
-														columns={ [ column.key ] }
-														hasError={ site.error || ! isSiteConnected }
-													/>
-												) }
-											</>
-										) : (
-											<>
+										<>
+											<div className="site-card__expanded-content-header">
 												<span className="site-card__expanded-content-key">{ column.title }</span>
 												<span className="site-card__expanded-content-value">
-													<SiteStatusContent rows={ rows } type={ row.type } />
+													<span className="site-card__expanded-content-status">
+														<SiteStatusContent rows={ rows } type={ row.type } />
+													</span>
+													<span className="site-card__expanded-column">
+														{ column.isExpandable && (
+															<Button
+																borderless
+																onClick={ () => handleSetExpandedColumn( column.key ) }
+															>
+																<Icon
+																	icon={ expandedColumn === column.key ? chevronUp : chevronDown }
+																/>
+															</Button>
+														) }
+													</span>
 												</span>
-											</>
-										) }
+											</div>
+											{ expandedColumn === column.key && (
+												<SiteExpandedContent
+													isSmallScreen
+													site={ rows.site.value }
+													columns={ [ column.key ] }
+													hasError={ site.error || ! isSiteConnected }
+												/>
+											) }
+										</>
 									</div>
 								);
 							}
 						} ) }
-					{ isExpandableBlockEnabled && (
-						<div className="site-card__expanded-content-list site-card__content-list-no-error">
-							<SitePhpVersion phpVersion={ rows.site.value.php_version_num } />
-						</div>
-					) }
+					<div className="site-card__expanded-content-list site-card__content-list-no-error">
+						<SitePhpVersion phpVersion={ rows.site.value.php_version_num } />
+					</div>
 				</div>
 			) }
 		</Card>

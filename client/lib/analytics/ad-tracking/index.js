@@ -18,3 +18,4 @@ export {
 	trackCustomFacebookConversionEvent,
 	trackCustomAdWordsRemarketingEvent,
 } from './track-custom-events';
+export { initGTMContainer, loadGTMContainer } from './gtm-container';

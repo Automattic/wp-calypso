@@ -59,7 +59,7 @@ export default function PurchaseMeta( {
 	}
 
 	const showJetpackUserLicense = isJetpackProduct( purchase ) || isJetpackPlan( purchase );
-	const showAkismetApiKey = isAkismetTemporarySitePurchase( purchase );
+	const isAkismetPurchase = isAkismetTemporarySitePurchase( purchase );
 
 	const renewalPriceHeader =
 		getLocaleSlug().startsWith( 'en' ) || i18n.hasTranslation( 'Renewal Price' )
@@ -91,10 +91,11 @@ export default function PurchaseMeta( {
 					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					siteSlug={ siteSlug }
 					site={ site }
+					isAkismetPurchase={ isAkismetPurchase }
 				/>
 			</ul>
 			{ showJetpackUserLicense && <PurchaseJetpackUserLicense purchaseId={ purchaseId } /> }
-			{ showAkismetApiKey && <PurchaseAkismetApiKey /> }
+			{ isAkismetPurchase && <PurchaseAkismetApiKey /> }
 			<RenewErrorMessage purchase={ purchase } translate={ translate } site={ site } />
 		</>
 	);

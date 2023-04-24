@@ -36,15 +36,28 @@ class SiteOrDomain extends Component {
 		return isValidDomain && domain;
 	}
 
+	isLeanDomainSearch() {
+		const { signupDependencies } = this.props;
+		return 'leandomainsearch' === signupDependencies?.refParameter;
+	}
+
 	getChoices() {
 		const { translate, isReskinned, isLoggedIn, siteCount } = this.props;
+
+		const domainName = this.getDomainName();
+		let buyADomainTitle = translate( 'Just buy a domain' );
+
+		if ( this.isLeanDomainSearch() && domainName ) {
+			// translators: %s is a domain name
+			buyADomainTitle = translate( 'Just buy %s', { args: [ domainName ] } );
+		}
 
 		const choices = [];
 
 		if ( isReskinned ) {
 			choices.push( {
 				key: 'domain',
-				title: translate( 'Just buy a domain' ),
+				title: buyADomainTitle,
 				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
 				icon: globe,
 				value: 'domain',
@@ -105,7 +118,7 @@ class SiteOrDomain extends Component {
 			}
 			choices.push( {
 				type: 'domain',
-				label: translate( 'Just buy a domain' ),
+				label: buyADomainTitle,
 				image: <DomainImage />,
 				description: translate( 'Show a "coming soon" notice on your domain. Add a site later.' ),
 			} );
@@ -216,8 +229,9 @@ class SiteOrDomain extends Component {
 
 	render() {
 		const { translate, productsLoaded, isReskinned } = this.props;
+		const domainName = this.getDomainName();
 
-		if ( productsLoaded && ! this.getDomainName() ) {
+		if ( productsLoaded && ! domainName ) {
 			const headerText = translate( 'Unsupported domain.' );
 			const subHeaderText = translate(
 				'Please visit {{a}}wordpress.com/domains{{/a}} to search for a domain.',
@@ -240,6 +254,7 @@ class SiteOrDomain extends Component {
 		}
 
 		const additionalProps = {};
+		let headerText = this.props.headerText;
 
 		if ( isReskinned ) {
 			additionalProps.isHorizontalLayout = true;
@@ -247,14 +262,22 @@ class SiteOrDomain extends Component {
 			additionalProps.headerImageUrl = HeaderImage;
 		}
 
+		if ( this.isLeanDomainSearch() ) {
+			additionalProps.className = 'lean-domain-search';
+			if ( domainName ) {
+				// translators: %s is a domain name
+				headerText = translate( 'Choose how to use %s', { args: [ domainName ] } );
+			}
+		}
+
 		return (
 			<StepWrapper
 				flowName={ this.props.flowName }
 				stepName={ this.props.stepName }
 				positionInFlow={ this.props.positionInFlow }
-				headerText={ this.props.headerText }
+				headerText={ headerText }
 				subHeaderText={ this.props.subHeaderText }
-				fallbackHeaderText={ this.props.headerText }
+				fallbackHeaderText={ headerText }
 				fallbackSubHeaderText={ this.props.subHeaderText }
 				stepContent={ this.renderScreen() }
 				{ ...additionalProps }

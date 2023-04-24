@@ -11,6 +11,7 @@ import TumblrSharePreview from 'calypso/components/share/tumblr-share-preview';
 import TwitterSharePreview from 'calypso/components/share/twitter-share-preview';
 import VerticalMenu from 'calypso/components/vertical-menu';
 import { SocialItem } from 'calypso/components/vertical-menu/items';
+import { decodeEntities } from 'calypso/lib/formatting';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSitePost } from 'calypso/state/posts/selectors';
 import getSiteIconUrl from 'calypso/state/selectors/get-site-icon-url';
@@ -111,7 +112,13 @@ class SharingPreviewPane extends PureComponent {
 
 		switch ( selectedService ) {
 			case 'facebook':
-				return <FacebookSharePreview { ...previewProps } />;
+				return (
+					<FacebookSharePreview
+						{ ...previewProps }
+						articleExcerpt={ post.excerpt }
+						articleContent={ post.content }
+					/>
+				);
 			case 'tumblr':
 				return <TumblrSharePreview { ...previewProps } />;
 			case 'linkedin':
@@ -158,7 +165,7 @@ const mapStateToProps = ( state, ownProps ) => {
 	const { siteId, postId } = ownProps;
 	const site = getSite( state, siteId );
 	const post = getSitePost( state, siteId, postId );
-	const seoTitle = getSeoTitle( state, 'posts', { site, post } );
+	const seoTitle = decodeEntities( getSeoTitle( state, 'posts', { site, post } ) );
 	const currentUserId = getCurrentUserId( state );
 	const connections = getSiteUserConnections( state, siteId, currentUserId );
 	const siteSlug = getSiteSlug( state, siteId );

@@ -246,7 +246,7 @@ class WordAdsEarnings extends Component {
 		return (
 			<>
 				<div className="ads__table-header">
-					<h1 className="ads__table-header-title">{ header_text }</h1>
+					<h3 className="ads__table-header-title">{ header_text }</h3>
 					<button
 						className="ads__table-header-button"
 						aria-label={ translate( 'Show or hide panel information' ) }

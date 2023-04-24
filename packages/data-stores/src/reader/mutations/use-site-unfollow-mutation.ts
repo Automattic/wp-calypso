@@ -1,7 +1,11 @@
 import { useMutation, useQueryClient } from 'react-query';
-import { callApi } from '../helpers';
-import { useIsLoggedIn } from '../hooks';
-import { SiteSubscription, SubscriptionManagerSubscriptionsCount } from '../types';
+import { applyCallbackToPages, callApi } from '../helpers';
+import { useCacheKey, useIsLoggedIn } from '../hooks';
+import {
+	PagedQueryResult,
+	SiteSubscription,
+	SubscriptionManagerSubscriptionsCount,
+} from '../types';
 
 type SiteSubscriptionUnfollowParams = {
 	blog_id: number | string;
@@ -14,8 +18,11 @@ type SiteSubscriptionUnfollowResponse = {
 };
 
 const useSiteUnfollowMutation = () => {
-	const isLoggedIn = useIsLoggedIn();
+	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
+	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
+	const subscriptionsCountCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
+
 	return useMutation(
 		async ( params: SiteSubscriptionUnfollowParams ) => {
 			if ( ! params.blog_id ) {
@@ -42,36 +49,38 @@ const useSiteUnfollowMutation = () => {
 		},
 		{
 			onMutate: async ( params ) => {
-				await queryClient.cancelQueries( [ 'read', 'site-subscriptions', isLoggedIn ] );
-				await queryClient.cancelQueries( [ 'read', 'subscriptions-count', isLoggedIn ] );
+				await queryClient.cancelQueries( siteSubscriptionsCacheKey );
+				await queryClient.cancelQueries( subscriptionsCountCacheKey );
 
-				const previousSiteSubscriptions = queryClient.getQueryData< SiteSubscription[] >( [
-					'read',
-					'site-subscriptions',
-					isLoggedIn,
-				] );
-
+				const previousSiteSubscriptions =
+					queryClient.getQueryData< PagedQueryResult< SiteSubscription, 'subscriptions' > >(
+						siteSubscriptionsCacheKey
+					);
 				// remove blog from site subscriptions
 				if ( previousSiteSubscriptions ) {
-					queryClient.setQueryData< SiteSubscription[] >(
-						[ [ 'read', 'site-subscriptions', isLoggedIn ] ],
-						previousSiteSubscriptions.filter(
-							( siteSubscription ) => siteSubscription.blog_ID !== params.blog_id
-						)
-					);
+					const mutatedSiteSubscriptions = applyCallbackToPages<
+						'subscriptions',
+						SiteSubscription
+					>( previousSiteSubscriptions, ( page ) => {
+						return {
+							...page,
+							subscriptions: page.subscriptions.filter(
+								( siteSubscription ) => siteSubscription.blog_ID !== params.blog_id
+							),
+						};
+					} );
+					queryClient.setQueryData( siteSubscriptionsCacheKey, mutatedSiteSubscriptions );
 				}
 
 				const previousSubscriptionsCount =
-					queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >( [
-						'read',
-						'subscriptions-count',
-						isLoggedIn,
-					] );
+					queryClient.getQueryData< SubscriptionManagerSubscriptionsCount >(
+						subscriptionsCountCacheKey
+					);
 
 				// decrement the blog count
 				if ( previousSubscriptionsCount ) {
 					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
-						[ 'read', 'subscriptions-count', isLoggedIn ],
+						subscriptionsCountCacheKey,
 						{
 							...previousSubscriptionsCount,
 							blogs: previousSubscriptionsCount?.blogs
@@ -85,21 +94,19 @@ const useSiteUnfollowMutation = () => {
 			},
 			onError: ( error, variables, context ) => {
 				if ( context?.previousSiteSubscriptions ) {
-					queryClient.setQueryData< SiteSubscription[] >(
-						[ 'read', 'site-subscriptions', isLoggedIn ],
-						context.previousSiteSubscriptions
-					);
+					queryClient.setQueryData( siteSubscriptionsCacheKey, context.previousSiteSubscriptions );
 				}
 				if ( context?.previousSubscriptionsCount ) {
 					queryClient.setQueryData< SubscriptionManagerSubscriptionsCount >(
-						[ 'read', 'subscriptions-count', isLoggedIn ],
+						subscriptionsCountCacheKey,
 						context.previousSubscriptionsCount
 					);
 				}
 			},
 			onSettled: () => {
-				queryClient.invalidateQueries( [ 'read', 'site-subscriptions', isLoggedIn ] );
-				queryClient.invalidateQueries( [ 'read', 'subscriptions-count', isLoggedIn ] );
+				// pass in more minimal keys, everything to the right will be invalidated
+				queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
+				queryClient.invalidateQueries( [ 'read', 'subscriptions-count' ] );
 			},
 		}
 	);

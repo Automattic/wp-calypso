@@ -22,6 +22,7 @@ type Props = {
 	onClose?: ( action?: string ) => void;
 	shouldCloseOnEsc?: boolean;
 	showCloseIcon?: boolean;
+	shouldCloseOnOverlayClick?: boolean;
 };
 
 const Dialog = ( {
@@ -39,6 +40,7 @@ const Dialog = ( {
 	onClose,
 	shouldCloseOnEsc,
 	showCloseIcon = false,
+	shouldCloseOnOverlayClick = true,
 }: PropsWithChildren< Props > ) => {
 	const close = useCallback( () => onClose?.(), [ onClose ] );
 	const onButtonClick = useCallback(
@@ -73,6 +75,7 @@ const Dialog = ( {
 			htmlOpenClassName="ReactModal__Html--open"
 			role="dialog"
 			shouldCloseOnEsc={ shouldCloseOnEsc }
+			shouldCloseOnOverlayClick={ shouldCloseOnOverlayClick }
 		>
 			{ showCloseIcon && (
 				<button className="dialog__action-buttons-close" onClick={ () => onClose?.( this ) }>

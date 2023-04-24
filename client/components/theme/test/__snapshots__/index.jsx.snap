@@ -8,27 +8,35 @@ exports[`Theme rendering with default display buttonContents should match snapsh
   <div
     class="theme-card__content"
   >
-    <a
-      aria-label="Twenty Seventeen"
-      class="theme-card__image"
-      href="javascript:;"
+    <div
+      class="theme-card__image-container"
     >
-      <div
-        class="theme-card__image-label"
-      />
-      <img
-        class="theme__img"
-        src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
-        srcset="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
-      />
-    </a>
+      <a
+        aria-label="Twenty Seventeen"
+        class="theme-card__image"
+        href="#"
+      >
+        <div
+          class="theme-card__image-label"
+        >
+          Info
+        </div>
+        <img
+          class="theme__img"
+          src="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360"
+          srcset="https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?fit=479%2C360&zoom=2 2x"
+        />
+      </a>
+    </div>
     <div
       class="theme-card__info"
     >
       <h2
         class="theme-card__info-title"
       >
-        Twenty Seventeen
+        <span>
+          Twenty Seventeen
+        </span>
       </h2>
       <div
         class="theme-card__info-pricing"

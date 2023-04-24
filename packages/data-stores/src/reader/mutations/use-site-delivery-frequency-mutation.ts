@@ -1,7 +1,11 @@
 import { useMutation, useQueryClient } from 'react-query';
-import { callApi } from '../helpers';
-import { useIsLoggedIn } from '../hooks';
-import type { SiteSubscription, SiteSubscriptionDeliveryFrequency } from '../types';
+import { callApi, applyCallbackToPages } from '../helpers';
+import { useCacheKey, useIsLoggedIn } from '../hooks';
+import type {
+	PagedQueryResult,
+	SiteSubscription,
+	SiteSubscriptionDeliveryFrequency,
+} from '../types';
 
 type SiteSubscriptionDeliveryFrequencyParams = {
 	delivery_frequency: SiteSubscriptionDeliveryFrequency;
@@ -22,8 +26,11 @@ type SiteSubscriptionDeliveryFrequencyResponse = {
 };
 
 const useSiteDeliveryFrequencyMutation = () => {
-	const isLoggedIn = useIsLoggedIn();
+	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
+
+	const siteSubscriptionsCacheKey = useCacheKey( [ 'read', 'site-subscriptions' ] );
+
 	return useMutation(
 		async ( params: SiteSubscriptionDeliveryFrequencyParams ) => {
 			if ( ! params.blog_id || ! params.delivery_frequency ) {
@@ -53,44 +60,45 @@ const useSiteDeliveryFrequencyMutation = () => {
 		},
 		{
 			onMutate: async ( params ) => {
-				await queryClient.cancelQueries( [ 'read', 'site-subscriptions', isLoggedIn ] );
-				const previousSiteSubscriptions = queryClient.getQueryData< SiteSubscription[] >( [
-					'read',
-					'site-subscriptions',
-					isLoggedIn,
-				] );
+				await queryClient.cancelQueries( siteSubscriptionsCacheKey );
 
-				const mutatedSiteSubscriptions = previousSiteSubscriptions?.map( ( siteSubscription ) => {
-					if ( siteSubscription.blog_ID === params.blog_id ) {
-						return {
-							...siteSubscription,
-							delivery_methods: {
-								...siteSubscription.delivery_methods,
-								email: {
-									...siteSubscription.delivery_methods?.email,
-									post_delivery_frequency: params.delivery_frequency,
-								},
-							},
-						};
-					}
-					return siteSubscription;
-				} );
+				const previousSiteSubscriptions =
+					queryClient.getQueryData< PagedQueryResult< SiteSubscription, 'subscriptions' > >(
+						siteSubscriptionsCacheKey
+					);
 
-				queryClient.setQueryData(
-					[ 'read', 'site-subscriptions', isLoggedIn ],
-					mutatedSiteSubscriptions
+				const mutatedSiteSubscriptions = applyCallbackToPages< 'subscriptions', SiteSubscription >(
+					previousSiteSubscriptions,
+					( page ) => ( {
+						...page,
+						subscriptions: page.subscriptions.map( ( siteSubscription ) => {
+							if ( siteSubscription.blog_ID === params.blog_id ) {
+								return {
+									...siteSubscription,
+									delivery_methods: {
+										...siteSubscription.delivery_methods,
+										email: {
+											...siteSubscription.delivery_methods?.email,
+											post_delivery_frequency: params.delivery_frequency,
+										},
+									},
+								};
+							}
+							return siteSubscription;
+						} ),
+					} )
 				);
+
+				queryClient.setQueryData( siteSubscriptionsCacheKey, mutatedSiteSubscriptions );
 
 				return { previousSiteSubscriptions };
 			},
 			onError: ( err, params, context ) => {
-				queryClient.setQueryData(
-					[ 'read', 'site-subscriptions', isLoggedIn ],
-					context?.previousSiteSubscriptions
-				);
+				queryClient.setQueryData( siteSubscriptionsCacheKey, context?.previousSiteSubscriptions );
 			},
 			onSettled: () => {
-				queryClient.invalidateQueries( [ 'read', 'site-subscriptions', isLoggedIn ] );
+				// pass in a more minimal key, everything to the right will be invalidated
+				queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
 			},
 		}
 	);

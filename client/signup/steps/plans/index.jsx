@@ -157,6 +157,7 @@ export class PlansStep extends Component {
 					isReskinned={ isReskinned }
 					hidePremiumPlan={ this.props.hidePremiumPlan }
 					hidePersonalPlan={ this.props.hidePersonalPlan }
+					hideEnterprisePlan={ this.props.hideEnterprisePlan }
 				/>
 			</div>
 		);
