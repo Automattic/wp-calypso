@@ -437,7 +437,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		selectedDesign: Design,
 		options?: DesignOptions
 	) {
-		const { recipe } = selectedDesign;
+		const { recipe, verticalizable } = selectedDesign;
 
 		/*
 		 * Anchor themes are set up directly via Headstart on the server side
@@ -454,6 +454,10 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 
 		if ( options?.posts_source_site_id ) {
 			themeSetupOptions.posts_source_site_id = options.posts_source_site_id;
+		}
+
+		if ( verticalizable ) {
+			themeSetupOptions.vertical_id = options?.verticalId;
 		}
 
 		if ( recipe?.pattern_ids ) {
