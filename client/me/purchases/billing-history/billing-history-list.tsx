@@ -112,7 +112,9 @@ class BillingHistoryList extends Component<
 		}
 		return (
 			<strong>
-				{ transaction.product } { plan }
+				{ /* This fix prevents duplicated "Akismet" in the name for legact Akismet plans, just until the
+				Akismet legacy plans migration to WPCOM takes place. This fix can be undone after migration. */ }
+				{ transaction.product !== 'Akismet' && transaction.product } { plan }
 			</strong>
 		);
 	};
