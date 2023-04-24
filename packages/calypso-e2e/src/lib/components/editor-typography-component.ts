@@ -59,7 +59,7 @@ export class EditorTypographyComponent {
 	 * @param {FontAppearance} fontAppearance Font appearance to select.
 	 */
 	private async setAppearance( fontAppearance: FontAppearance ): Promise< void > {
-		const editorFrame = await this.editor.getEditorFrame();
+		const editorFrame = await this.editor.getParentFrame();
 		// In the future, if we're in the block context, we'll have to add this field first.
 		const dropdownButtonLocator = editorFrame.getByRole( 'button', {
 			name: 'Appearance',

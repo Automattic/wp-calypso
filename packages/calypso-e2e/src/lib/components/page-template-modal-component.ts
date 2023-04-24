@@ -27,7 +27,7 @@ export class PageTemplateModalComponent {
 	 * @param {TemplateCategory} category Name of the category to select.
 	 */
 	async selectTemplateCategory( category: TemplateCategory ): Promise< void > {
-		const editorFrame = await this.editor.getEditorFrame();
+		const editorFrame = await this.editor.getParentFrame();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
 			await editorFrame
 				.locator( '.page-pattern-modal__mobile-category-dropdown' )
@@ -43,7 +43,7 @@ export class PageTemplateModalComponent {
 	 * @param {string} label Label for the template (the string underneath the preview).
 	 */
 	async selectTemplate( label: string ): Promise< void > {
-		const editorFrame = await this.editor.getEditorFrame();
+		const editorFrame = await this.editor.getParentFrame();
 		await editorFrame.getByRole( 'option', { name: label, exact: true } ).click();
 	}
 
@@ -51,7 +51,7 @@ export class PageTemplateModalComponent {
 	 * Select a blank page as your template.
 	 */
 	async selectBlankPage(): Promise< void > {
-		const editorFrame = await this.editor.getEditorFrame();
+		const editorFrame = await this.editor.getParentFrame();
 		await editorFrame.getByRole( 'button', { name: 'Blank page' } ).click();
 	}
 }

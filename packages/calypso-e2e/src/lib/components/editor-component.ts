@@ -12,7 +12,7 @@ export class EditorComponent {
 	}
 
 	/** */
-	async getEditorFrame(): Promise< Page | Frame > {
+	async getParentFrame(): Promise< Page | Frame > {
 		const editorFrame = await Promise.race( [
 			new Promise< undefined >( ( resolve ) => {
 				setTimeout( resolve, EDITOR_TIMEOUT );
@@ -42,8 +42,8 @@ export class EditorComponent {
 	}
 
 	/** */
-	async getEditorCanvas(): Promise< Page | Frame > {
-		const editorFrame = await this.getEditorFrame();
+	async getCanvas(): Promise< Page | Frame > {
+		const editorFrame = await this.getParentFrame();
 		const editorCanvas = await Promise.race( [
 			new Promise< undefined >( ( resolve ) => {
 				setTimeout( resolve, EDITOR_TIMEOUT );

@@ -40,7 +40,7 @@ export class EditorSidebarBlockInserterComponent {
 			return;
 		}
 
-		const editorFrame = await this.editor.getEditorFrame();
+		const editorFrame = await this.editor.getParentFrame();
 		const blockInserterPanelLocator = editorFrame.locator( selectors.closeBlockInserterButton );
 		if ( ( await blockInserterPanelLocator.count() ) > 0 ) {
 			await blockInserterPanelLocator.click();
@@ -53,7 +53,7 @@ export class EditorSidebarBlockInserterComponent {
 	 * @param {string} text Text to enter into the search input.
 	 */
 	async searchBlockInserter( text: string ): Promise< void > {
-		const editorFrame = await this.editor.getEditorFrame();
+		const editorFrame = await this.editor.getParentFrame();
 		const locator = editorFrame.locator( selectors.blockSearchInput );
 		await locator.fill( text );
 	}
@@ -72,7 +72,7 @@ export class EditorSidebarBlockInserterComponent {
 		name: string,
 		{ type = 'block' }: { type?: 'block' | 'pattern' } = {}
 	): Promise< void > {
-		const editorFrame = await this.editor.getEditorFrame();
+		const editorFrame = await this.editor.getParentFrame();
 		let locator;
 
 		if ( type === 'pattern' ) {
