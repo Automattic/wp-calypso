@@ -56,10 +56,11 @@ export class EditorSettingsSidebarComponent {
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
+	 * @param {EditorWindow} editorWindow The EditorWindow instance.
 	 */
-	constructor( page: Page ) {
+	constructor( page: Page, editorWindow: EditorWindow ) {
 		this.page = page;
-		this.editorWindow = new EditorWindow( page );
+		this.editorWindow = editorWindow;
 	}
 
 	/**

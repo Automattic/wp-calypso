@@ -71,18 +71,31 @@ export class FullSiteEditorPage {
 		this.page = page;
 
 		this.editorWindow = new EditorWindow( page );
-		this.editorToolbarComponent = new EditorToolbarComponent( page );
-		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page );
-		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page );
-		this.editorSiteStylesComponent = new EditorSiteStylesComponent( page );
-		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page );
-		this.fullSiteEditorNavSidebarComponent = new FullSiteEditorNavSidebarComponent( page );
-		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent( page );
-		this.editorInlineBlockInserterComponent = new EditorInlineBlockInserterComponent( page );
-		this.fullSiteEditorSavePanelComponent = new FullSiteEditorSavePanelComponent( page );
-		this.templatePartModalComponent = new TemplatePartModalComponent( page );
-		this.templatePartListComponent = new TemplatePartListComponent( page );
-		this.cookieBannerComponent = new CookieBannerComponent( page );
+
+		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editorWindow );
+		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editorWindow );
+		this.editorPopoverMenuComponent = new EditorPopoverMenuComponent( page, this.editorWindow );
+		this.editorSiteStylesComponent = new EditorSiteStylesComponent( page, this.editorWindow );
+		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editorWindow );
+		this.fullSiteEditorNavSidebarComponent = new FullSiteEditorNavSidebarComponent(
+			page,
+			this.editorWindow
+		);
+		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
+			page,
+			this.editorWindow
+		);
+		this.editorInlineBlockInserterComponent = new EditorInlineBlockInserterComponent(
+			page,
+			this.editorWindow
+		);
+		this.fullSiteEditorSavePanelComponent = new FullSiteEditorSavePanelComponent(
+			page,
+			this.editorWindow
+		);
+		this.templatePartModalComponent = new TemplatePartModalComponent( page, this.editorWindow );
+		this.templatePartListComponent = new TemplatePartListComponent( page, this.editorWindow );
+		this.cookieBannerComponent = new CookieBannerComponent( page, this.editorWindow );
 	}
 
 	//#region Visit and Setup

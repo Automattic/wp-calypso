@@ -34,16 +34,17 @@ export class EditorSiteStylesComponent {
 	private editorDimensionsComponent: EditorDimensionsComponent;
 
 	/**
-	 * Creates an instance of the component.
+	 * Constructs an instance of the component.
 	 *
-	 * @param {Page} page Object representing the base page.
+	 * @param {Page} page The underlying page.
+	 * @param {EditorWindow} editorWindow The EditorWindow instance.
 	 */
-	constructor( page: Page ) {
+	constructor( page: Page, editorWindow: EditorWindow ) {
 		this.page = page;
-		this.editorWindow = new EditorWindow( page );
-		this.editorColorPickerComponent = new EditorColorPickerComponent( page );
-		this.editorTypographyComponent = new EditorTypographyComponent( page );
-		this.editorDimensionsComponent = new EditorDimensionsComponent( page );
+		this.editorWindow = editorWindow;
+		this.editorColorPickerComponent = new EditorColorPickerComponent( page, editorWindow );
+		this.editorTypographyComponent = new EditorTypographyComponent( page, editorWindow );
+		this.editorDimensionsComponent = new EditorDimensionsComponent( page, editorWindow );
 	}
 
 	/**

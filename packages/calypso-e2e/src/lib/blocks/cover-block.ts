@@ -19,12 +19,13 @@ export class CoverBlock {
 	 * Constructs an instance of this block.
 	 *
 	 * @param {Page} page The underlying page.
+	 * @param {EditorWindow} editorWindow The EditorWindow instance.
 	 * @param {Locator} block Handle referencing the block as inserted on the Gutenberg editor.
 	 */
-	constructor( page: Page, block: Locator ) {
+	constructor( page: Page, editorWindow: EditorWindow, block: Locator ) {
 		this.page = page;
+		this.editorWindow = editorWindow;
 		this.block = block;
-		this.editorWindow = new EditorWindow( page );
 	}
 
 	/**

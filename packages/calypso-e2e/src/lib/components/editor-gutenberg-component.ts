@@ -26,9 +26,9 @@ export class EditorGutenbergComponent {
 	 *
 	 * @param {Page} page The underlying page.
 	 */
-	constructor( page: Page ) {
+	constructor( page: Page, editorWindow: EditorWindow ) {
 		this.page = page;
-		this.editorWindow = new EditorWindow( page );
+		this.editorWindow = editorWindow;
 	}
 
 	/**

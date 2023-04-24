@@ -7,6 +7,7 @@ import {
 	PageTemplateModalComponent,
 	getTestAccountByFeature,
 	envToFeatureKey,
+	EditorWindow,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import type { ArticlePrivacyOptions } from '@automattic/calypso-e2e';
@@ -50,7 +51,9 @@ export function createPrivacyTests( { visibility }: { visibility: ArticlePrivacy
 			it( 'Start new page', async function () {
 				// @TODO Consider moving this to EditorPage.
 				await editorPage.visit( 'page' );
-				const pageTemplateModalComponent = new PageTemplateModalComponent( page );
+				const editorWindow = new EditorWindow( page );
+				const pageTemplateModalComponent = new PageTemplateModalComponent( page, editorWindow );
+
 				await pageTemplateModalComponent.selectBlankPage();
 			} );
 

@@ -64,16 +64,26 @@ export class EditorPage {
 		this.page = page;
 
 		this.editorWindow = new EditorWindow( page );
-		this.editorGutenbergComponent = new EditorGutenbergComponent( page );
-		this.editorToolbarComponent = new EditorToolbarComponent( page );
-		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent( page );
-		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page );
-		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page );
-		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page );
-		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page );
-		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page );
-		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent( page );
-		this.editorInlineBlockInserterComponent = new EditorInlineBlockInserterComponent( page );
+
+		this.editorGutenbergComponent = new EditorGutenbergComponent( page, this.editorWindow );
+		this.editorToolbarComponent = new EditorToolbarComponent( page, this.editorWindow );
+		this.editorSettingsSidebarComponent = new EditorSettingsSidebarComponent(
+			page,
+			this.editorWindow
+		);
+		this.editorPublishPanelComponent = new EditorPublishPanelComponent( page, this.editorWindow );
+		this.editorNavSidebarComponent = new EditorNavSidebarComponent( page, this.editorWindow );
+		this.editorBlockListViewComponent = new EditorBlockListViewComponent( page, this.editorWindow );
+		this.editorWelcomeTourComponent = new EditorWelcomeTourComponent( page, this.editorWindow );
+		this.editorBlockToolbarComponent = new EditorBlockToolbarComponent( page, this.editorWindow );
+		this.editorSidebarBlockInserterComponent = new EditorSidebarBlockInserterComponent(
+			page,
+			this.editorWindow
+		);
+		this.editorInlineBlockInserterComponent = new EditorInlineBlockInserterComponent(
+			page,
+			this.editorWindow
+		);
 	}
 
 	//#region Generic and Shell Methods
@@ -105,6 +115,16 @@ export class EditorPage {
 
 		// Dismiss the Welcome Tour.
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
+	}
+
+	/** */
+	async getEditorFrame() {
+		return await this.editorWindow.getEditorFrame();
+	}
+
+	/** */
+	async getEditorCanvas() {
+		return await this.editorWindow.getEditorCanvas();
 	}
 
 	/**
