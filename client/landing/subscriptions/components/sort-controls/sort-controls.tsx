@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, ChangeEvent, ReactElement } from 'react';
+import { ChangeEvent, ReactElement } from 'react';
 import './styles.scss';
 
 export type Option = {
@@ -19,11 +19,6 @@ const SortControls: < T extends string >( props: SortControlsProps< T > ) => Rea
 	onChange,
 } ) => {
 	const translate = useTranslate();
-	const [ selected, setSelected ] = useState( value );
-
-	useEffect( () => {
-		setSelected( value );
-	}, [ value ] );
 
 	const handleSelectChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
 		onChange( event?.target.value as typeof value );
@@ -37,7 +32,7 @@ const SortControls: < T extends string >( props: SortControlsProps< T > ) => Rea
 					id="subscription-manager-sort-controls__select"
 					className="subscription-manager-sort-controls__select"
 					onChange={ handleSelectChange }
-					value={ selected }
+					value={ value }
 				>
 					{ options.map( ( option ) => (
 						<option key={ `${ option.value }.${ option.label }` } value={ option.value }>
