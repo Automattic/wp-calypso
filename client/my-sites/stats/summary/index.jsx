@@ -142,18 +142,20 @@ class StatsSummary extends Component {
 							summary
 							listItemClassName={ listItemClassName }
 						/>
-						<UpsellNudge
-							title={ translate( 'Add Google Analytics' ) }
-							description={ translate(
-								'Upgrade to a Premium Plan for Google Analytics integration.'
-							) }
-							event="googleAnalytics-stats-countries"
-							feature={ FEATURE_GOOGLE_ANALYTICS }
-							plan={ PLAN_PREMIUM }
-							tracksImpressionName="calypso_upgrade_nudge_impression"
-							tracksClickName="calypso_upgrade_nudge_cta_click"
-							showIcon={ true }
-						/>
+						<div className="stats-module__footer-actions--summary-tall">
+							<UpsellNudge
+								title={ translate( 'Add Google Analytics' ) }
+								description={ translate(
+									'Upgrade to a Premium Plan for Google Analytics integration.'
+								) }
+								event="googleAnalytics-stats-countries"
+								feature={ FEATURE_GOOGLE_ANALYTICS }
+								plan={ PLAN_PREMIUM }
+								tracksImpressionName="calypso_upgrade_nudge_impression"
+								tracksClickName="calypso_upgrade_nudge_cta_click"
+								showIcon={ true }
+							/>
+						</div>
 					</>
 				);
 				break;

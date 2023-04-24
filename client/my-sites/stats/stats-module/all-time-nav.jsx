@@ -82,7 +82,7 @@ export const StatsModuleSummaryLinks = ( props ) => {
 					key={ 'navTabsDropdown-' + index }
 					path={ i.path }
 					selected={ i.value === selected.value }
-					onSelect={ () => {
+					onClick={ () => {
 						recordStats( i );
 					} }
 				>
