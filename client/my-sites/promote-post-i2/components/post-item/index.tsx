@@ -108,7 +108,6 @@ export default function PostItem( { post }: Props ) {
 			<td className="post-item__post-promote">
 				<Button
 					className="post-item__post-promote-button"
-					variant="link"
 					isBusy={ loading }
 					disabled={ loading }
 					onClick={ onClickPromote }

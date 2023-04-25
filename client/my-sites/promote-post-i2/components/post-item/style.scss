@@ -74,7 +74,12 @@ body {
 		}
 
 		&__post-promote-button {
+			color: var(--studio-simplenote-blue-50);
 			text-decoration: none;
+
+			&:hover:not(:disabled) {
+				color: var(--studio-simplenote-blue-50);
+			}
 		}
 	}
 
