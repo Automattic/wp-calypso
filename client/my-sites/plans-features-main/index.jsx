@@ -101,7 +101,7 @@ export class PlansFeaturesMain extends Component {
 		}
 	}
 
-	show2023OnboardingPricingGrid( plans, visiblePlans ) {
+	render2023OnboardingPricingGrid( plans, visiblePlans ) {
 		const {
 			basePlansPath,
 			customerType,
@@ -120,69 +120,47 @@ export class PlansFeaturesMain extends Component {
 			siteId,
 			plansWithScroll,
 			isReskinned,
-			isFAQCondensedExperiment,
 			isPlansInsideStepper,
-			is2023PricingGridVisible,
 			intervalType,
 			planTypeSelectorProps,
-			busyOnUpgradeClick,
 			hidePlansFeatureComparison,
 		} = this.props;
 
-		if ( is2023PricingGridVisible ) {
-			const asyncProps = {
-				basePlansPath,
-				domainName,
-				isInSignup,
-				isLandingPage,
-				isLaunchPage,
-				onUpgradeClick,
-				plans,
+		const asyncProps = {
+			basePlansPath,
+			domainName,
+			isInSignup,
+			isLandingPage,
+			isLaunchPage,
+			onUpgradeClick,
+			plans,
+			flowName,
+			redirectTo,
+			visiblePlans,
+			selectedFeature,
+			selectedPlan,
+			withDiscount,
+			discountEndDate,
+			withScroll: plansWithScroll,
+			popularPlanSpec: getPopularPlanSpec( {
 				flowName,
-				redirectTo,
-				visiblePlans,
-				selectedFeature,
-				selectedPlan,
-				withDiscount,
-				discountEndDate,
-				withScroll: plansWithScroll,
-				popularPlanSpec: getPopularPlanSpec( {
-					flowName,
-					customerType,
-					isJetpack,
-					availablePlans: visiblePlans,
-				} ),
-				siteId,
-				isReskinned,
-				isPlansInsideStepper,
-				intervalType,
-				hidePlansFeatureComparison,
-			};
-			const asyncPlanFeatures2023Grid = (
-				<AsyncLoad
-					require="calypso/my-sites/plan-features-2023-grid"
-					{ ...asyncProps }
-					planTypeSelectorProps={ planTypeSelectorProps }
-				/>
-			);
-
-			return (
-				<div
-					className={ classNames(
-						'plans-features-main__group',
-						'is-wpcom',
-						`is-customer-${ customerType }`,
-						'is-2023-pricing-grid',
-						{
-							'is-scrollable': plansWithScroll,
-						}
-					) }
-					data-e2e-plans="wpcom"
-				>
-					{ asyncPlanFeatures2023Grid }
-				</div>
-			);
-		}
+				customerType,
+				isJetpack,
+				availablePlans: visiblePlans,
+			} ),
+			siteId,
+			isReskinned,
+			isPlansInsideStepper,
+			intervalType,
+			hidePlansFeatureComparison,
+		};
+		const asyncPlanFeatures2023Grid = (
+			<AsyncLoad
+				require="calypso/my-sites/plan-features-2023-grid"
+				{ ...asyncProps }
+				planTypeSelectorProps={ planTypeSelectorProps }
+			/>
+		);
 
 		return (
 			<div
@@ -190,47 +168,24 @@ export class PlansFeaturesMain extends Component {
 					'plans-features-main__group',
 					'is-wpcom',
 					`is-customer-${ customerType }`,
+					'is-2023-pricing-grid',
 					{
 						'is-scrollable': plansWithScroll,
 					}
 				) }
 				data-e2e-plans="wpcom"
 			>
-				<PlanFeaturesComparison
-					basePlansPath={ basePlansPath }
-					domainName={ domainName }
-					isInSignup={ isInSignup }
-					isLandingPage={ isLandingPage }
-					isLaunchPage={ isLaunchPage }
-					onUpgradeClick={ onUpgradeClick }
-					plans={ plans }
-					flowName={ flowName }
-					redirectTo={ redirectTo }
-					visiblePlans={ visiblePlans }
-					selectedFeature={ selectedFeature }
-					selectedPlan={ selectedPlan }
-					withDiscount={ withDiscount }
-					discountEndDate={ discountEndDate }
-					withScroll={ plansWithScroll }
-					popularPlanSpec={ getPopularPlanSpec( {
-						flowName,
-						customerType,
-						isJetpack,
-						availablePlans: visiblePlans,
-					} ) }
-					siteId={ siteId }
-					isReskinned={ isReskinned }
-					isFAQCondensedExperiment={ isFAQCondensedExperiment }
-					isPlansInsideStepper={ isPlansInsideStepper }
-					busyOnUpgradeClick={ busyOnUpgradeClick }
-				/>
+				{ asyncPlanFeatures2023Grid }
 			</div>
 		);
 	}
 
-	renderPlanFeatures( plans, visiblePlans ) {
+	// TODO:
+	// These legacy components should also be loaded in async.
+	renderLegacyPricingGrid( plans, visiblePlans ) {
 		const {
 			basePlansPath,
+			busyOnUpgradeClick,
 			currentPurchaseIsInAppPurchase,
 			customerType,
 			disableBloggerPlanWithNonBlogDomain,
@@ -240,9 +195,12 @@ export class PlansFeaturesMain extends Component {
 			isLandingPage,
 			isLaunchPage,
 			isCurrentPlanRetired,
+			isFAQCondensedExperiment,
+			isReskinned,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
+			shouldShowPlansFeatureComparison,
 			withDiscount,
 			discountEndDate,
 			redirectTo,
@@ -272,6 +230,52 @@ export class PlansFeaturesMain extends Component {
 							'Please keep in mind that switching plans will be irreversible.'
 				  )
 				: null;
+
+		if ( shouldShowPlansFeatureComparison ) {
+			return (
+				<div
+					className={ classNames(
+						'plans-features-main__group',
+						'is-wpcom',
+						`is-customer-${ customerType }`,
+						{
+							'is-scrollable': plansWithScroll,
+						}
+					) }
+					data-e2e-plans="wpcom"
+				>
+					<PlanFeaturesComparison
+						basePlansPath={ basePlansPath }
+						domainName={ domainName }
+						isInSignup={ isInSignup }
+						isLandingPage={ isLandingPage }
+						isLaunchPage={ isLaunchPage }
+						onUpgradeClick={ onUpgradeClick }
+						plans={ plans }
+						flowName={ flowName }
+						redirectTo={ redirectTo }
+						visiblePlans={ visiblePlans }
+						selectedFeature={ selectedFeature }
+						selectedPlan={ selectedPlan }
+						withDiscount={ withDiscount }
+						discountEndDate={ discountEndDate }
+						withScroll={ plansWithScroll }
+						popularPlanSpec={ getPopularPlanSpec( {
+							flowName,
+							customerType,
+							isJetpack,
+							availablePlans: visiblePlans,
+						} ) }
+						siteId={ siteId }
+						isReskinned={ isReskinned }
+						isFAQCondensedExperiment={ isFAQCondensedExperiment }
+						isPlansInsideStepper={ isPlansInsideStepper }
+						busyOnUpgradeClick={ busyOnUpgradeClick }
+					/>
+				</div>
+			);
+		}
+
 		return (
 			<div
 				className={ classNames(
@@ -556,14 +560,9 @@ export class PlansFeaturesMain extends Component {
 	}
 
 	renderPlansGrid( plans, visiblePlans ) {
-		const { shouldShowPlansFeatureComparison, is2023PricingGridVisible } = this.props;
-
-		// TODO: need to figure out if we can deprecate `shouldShowPlansFeatureComparison`
-		if ( is2023PricingGridVisible || shouldShowPlansFeatureComparison ) {
-			return this.show2023OnboardingPricingGrid( plans, visiblePlans );
-		}
-
-		return this.renderPlanFeatures( plans, visiblePlans );
+		return this.props.is2023PricingGridVisible
+			? this.render2023OnboardingPricingGrid( plans, visiblePlans )
+			: this.renderLegacyPricingGrid( plans, visiblePlans );
 	}
 
 	render() {
