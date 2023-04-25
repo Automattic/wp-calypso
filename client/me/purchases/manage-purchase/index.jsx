@@ -346,7 +346,7 @@ class ManagePurchase extends Component {
 	renderRenewAnnuallyNavItem() {
 		const { translate, purchase, relatedMonthlyPlanPrice } = this.props;
 		const annualPrice = getRenewalPrice( purchase ) / 12;
-		const savings = Math.round(
+		const savings = Math.floor(
 			( 100 * ( relatedMonthlyPlanPrice - annualPrice ) ) / relatedMonthlyPlanPrice
 		);
 		return this.renderRenewalNavItem(
