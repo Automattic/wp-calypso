@@ -1,6 +1,6 @@
-import { getPlanDiscountedRawPrice } from './get-plan-discounted-raw-price';
-import { getSitePlanRawPrice } from './get-site-plan-raw-price';
-import isPlanAvailableForPurchase from './is-plan-available-for-purchase';
+import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
+import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors/get-site-plan-raw-price';
+import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import type { IAppState } from 'calypso/state/types';
 
 /**
@@ -8,19 +8,19 @@ import type { IAppState } from 'calypso/state/types';
  *
  * @param {*} state app state
  * @param {*} siteId the selected site id
- * @param {string[]}  consideredPlans Plans that are considered for the given calcuation
+ * @param {string[]}  plans Plans that are considered for the given calculation
  * @returns {number} The amount of credits available for the given plans
  */
-export function calculatePlanUpgradeCredits(
+export function usePlanUpgradeCredits(
 	state: IAppState,
 	siteId: number | undefined,
-	consideredPlans: string[]
+	plans: string[]
 ): number {
 	if ( ! siteId ) {
 		return 0;
 	}
 
-	const creditsPerPlan = consideredPlans.map( ( planName ) => {
+	const creditsPerPlan = plans.map( ( planName ) => {
 		const availableForPurchase = isPlanAvailableForPurchase( state, siteId, planName );
 		if ( ! availableForPurchase ) {
 			return 0;

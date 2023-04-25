@@ -1,54 +1,16 @@
-import { PLAN_ENTERPRISE_GRID_WPCOM } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getDiscountByName } from 'calypso/lib/discounts';
+import { usePlanUpgradeCreditsDisplay } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-display';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
-import {
-	getSitePlanSlug,
-	isCurrentUserCurrentPlanOwner,
-} from 'calypso/state/sites/plans/selectors';
-import { calculatePlanUpgradeCredits } from 'calypso/state/sites/plans/selectors/calculate-plan-upgrade-credits';
-import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
+import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 
-function usePlanUpgradeCreditsDisplay(
-	siteId: number,
-	visiblePlanNames: string[] = []
-): {
-	creditsValue: number;
-	isPlanUpgradeCreditEligible: boolean;
-} {
-	const isSiteOnPaidPlan = !! useSelector( ( state ) => isCurrentPlanPaid( state, siteId ) );
-	const currentSitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
-	const creditsValue = useSelector( ( state ) =>
-		calculatePlanUpgradeCredits( state, siteId, visiblePlanNames )
-	);
-	const isNotJetpackSiteOrIsAtomicSite = !! useSelector(
-		( state ) => ! isJetpackSite( state, siteId ) || isSiteAutomatedTransfer( state, siteId )
-	);
-
-	const isHigherPlanAvailable = function () {
-		const visiblePlansWithoutEnterprise = visiblePlanNames.filter(
-			( planName ) => planName !== PLAN_ENTERPRISE_GRID_WPCOM
-		);
-		const highestPlanName = visiblePlansWithoutEnterprise.pop();
-		return highestPlanName !== currentSitePlanSlug;
-	};
-
-	const isUpgradeEligibleSite =
-		isSiteOnPaidPlan && isNotJetpackSiteOrIsAtomicSite && isHigherPlanAvailable();
-
-	return {
-		creditsValue,
-		isPlanUpgradeCreditEligible: isUpgradeEligibleSite && creditsValue > 0,
-	};
-}
-
-export default function PlanNotices( {
+export default function PlanNotice( {
 	siteId,
 	isInSignup,
 	visiblePlanNames = [],
