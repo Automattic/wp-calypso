@@ -80,9 +80,10 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 
 	// DotOrg (if not also Dotcom) and Externay managed themes
 	// needs an atomic site to be installed.
+	type Theme = { id: string } | undefined;
 	const hasDotOrgThemes = dotOrgThemes.some(
-		( theme: any ) =>
-			!! theme && ! dotComThemes.find( ( dotComTheme: any ) => dotComTheme?.id === theme.id )
+		( theme: Theme ) =>
+			!! theme && ! dotComThemes.find( ( dotComTheme: Theme ) => dotComTheme?.id === theme.id )
 	);
 	const hasExternallyManagedThemes = useSelector( ( state ) =>
 		getHasExternallyManagedThemes( state, themeSlugs )
