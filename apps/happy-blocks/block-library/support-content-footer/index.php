@@ -39,24 +39,24 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 	</div>
 	<div class="support-content-resources alignwide" style="border-radius:0px; margin-bottom:0px">
 		<div class="support-content-resource">
-			<figure><img src="<?php echo esc_url( $image_dir . '/webinars.svg' ); ?>" alt=""/></figure>
 			<h4 class="support-content-resource__title has-recoleta-font-family">
-				<?php esc_html_e( 'Support Guides', 'happy-blocks' ); ?>
+				<?php esc_html_e( 'Upgrade now', 'happy-blocks' ); ?>
 			</h4>
 			<p>
-				<?php esc_html_e( 'Find the answer to the questions you know you have about WordPress.com.', 'happy-blocks' ); ?>
+			<?php esc_html_e( 'Unlock tools, expert help, and community for your brand\'s growth and success.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
 				<p>
-					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
-						<?php esc_html_e( 'Search Guides', 'happy-blocks' ); ?>
-						<figure><img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
+					<a href="https://www.youtube.com/wordpressdotcom">
+						<?php esc_html_e( 'Upgrade your plan', 'happy-blocks' ); ?>
+						<figure>
+							<img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/>
+						</figure>
 					</a>
 				</p>
 			</div>
 		</div>
 		<div class="support-content-resource">
-			<figure><img src="<?php echo esc_url( $image_dir . '/forums.svg' ); ?>" alt=""/></figure>
 			<h4 class="support-content-resource__title has-recoleta-font-family">
 				<?php esc_html_e( 'Forums', 'happy-blocks' ); ?>
 			</h4>
@@ -73,20 +73,17 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 			</div>
 		</div>
 		<div class="support-content-resource">
-			<figure><img src="<?php echo esc_url( $image_dir . '/youtube.svg' ); ?>" alt=""/></figure>
 			<h4 class="support-content-resource__title has-recoleta-font-family">
-				<?php esc_html_e( 'YouTube', 'happy-blocks' ); ?>
+				<?php esc_html_e( 'Support Guides', 'happy-blocks' ); ?>
 			</h4>
 			<p>
-				<?php esc_html_e( 'Dozens of educational videos to help get your site up and running.', 'happy-blocks' ); ?>
+				<?php esc_html_e( 'Find the answer to the questions you know you have about WordPress.com.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
 				<p>
-					<a href="https://www.youtube.com/wordpressdotcom">
+					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
 						<?php esc_html_e( 'Subscribe now', 'happy-blocks' ); ?>
-						<figure>
-							<img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/>
-						</figure>
+						<figure><img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
 					</a>
 				</p>
 			</div>
@@ -116,7 +113,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 		<div class="support-content-subscribe">
 			<p><?php esc_html_e( 'Sign up for educational resources updates:', 'happy-blocks' ); ?></p>
 			<form action="https://subscribe.wordpress.com" method="post" accept-charset="utf-8" data-blog="<?php echo get_current_blog_id(); ?>" data-post_access_level="everybody" id="subscribe-blog">
-				<input class="support-content-subscribe-email" required="required" type="email" name="email" placeholder="<?php esc_html_e( 'Enter your email address', 'happy-blocks' ); ?>"  id="subscribe-field">
+				<input class="support-content-subscribe-email" required="required" type="email" name="email" placeholder="<?php esc_html_e( 'Enter your best email', 'happy-blocks' ); ?>"  id="subscribe-field">
 				<input type="hidden" name="action" value="subscribe">
 				<input type="hidden" name="blog_id" value="<?php echo get_current_blog_id(); ?>">
 				<input type="hidden" name="sub-type" value="subscribe-block">

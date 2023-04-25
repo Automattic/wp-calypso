@@ -11,6 +11,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getActiveTheme, getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useIsPluginBundleEligible } from '../hooks/use-is-plugin-bundle-eligible';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
@@ -59,8 +60,6 @@ import {
 } from './internals/types';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const WRITE_INTENT_DEFAULT_THEME = 'livro';
-const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 const SiteGoal = Onboard.SiteGoal;
 
@@ -179,7 +178,7 @@ const siteSetupFlow: Flow = {
 		);
 		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags, setIntent } =
 			useDispatch( ONBOARD_STORE );
-		const { setThemeOnSite } = useDispatch( SITE_STORE );
+		const { setDesignOnSite } = useDispatch( SITE_STORE );
 		const dispatch = reduxDispatch();
 
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
@@ -215,13 +214,7 @@ const siteSetupFlow: Flow = {
 					const pendingActions = [];
 
 					if ( siteIntent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push(
-							setThemeOnSite(
-								siteSlug,
-								WRITE_INTENT_DEFAULT_THEME,
-								WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION
-							)
-						);
+						pendingActions.push( setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN ) );
 					}
 
 					// Update Launchpad option based on site intent
@@ -297,8 +290,12 @@ const siteSetupFlow: Flow = {
 
 					// End of Pattern Assembler flow
 					if ( isBlankCanvasDesign( selectedDesign ) ) {
-						window.sessionStorage.setItem( 'wpcom_signup_completed_flow', 'pattern_assembler' );
-						return exitFlow( `/site-editor/${ siteSlug }?canvas=edit` );
+						const params = new URLSearchParams( {
+							canvas: 'edit',
+							assembler: '1',
+						} );
+
+						return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
 					}
 
 					// If the user skips starting point, redirect them to the post editor

@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
 import TimeSince from 'calypso/components/time-since';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { displaySiteUrl, getDashboardUrl, MEDIA_QUERIES } from '../utils';
+import { displaySiteUrl, getDashboardUrl, isStagingSite, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
@@ -85,7 +85,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 
 	const isP2Site = site.options?.is_wpforteams_site;
-	const isStagingSite = site.is_wpcom_staging_site;
+	const isWpcomStagingSite = isStagingSite( site );
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
@@ -113,7 +113,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 								{ site.title }
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-							{ isStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
+							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 						</ListTileTitle>
 					}
 					subtitle={

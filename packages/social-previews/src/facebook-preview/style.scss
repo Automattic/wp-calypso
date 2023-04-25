@@ -17,6 +17,12 @@
 	box-shadow: $facebook-preview-card-box-shadow;
 
 	font-family: $facebook-preview-font-family;
+
+	:any-link {
+		color: $facebook-blue;
+
+		text-decoration: none;
+	}
 }
 
 .facebook-preview__custom-text {
@@ -31,12 +37,21 @@
 	word-break: break-word;
 }
 
+.facebook-preview__custom-text-post-url {
+	display: block;
+	margin-top: 0.5rem;
+}
+
 .facebook-preview__body {
 	display: flex;
 	flex-direction: column;
 
 	border-top: $facebook-preview-body-border;
 	border-bottom: $facebook-preview-body-border;
+
+	&.is-loading {
+		visibility: hidden;
+	}
 
 	&.is-portrait {
 		flex-direction: row;
@@ -86,6 +101,15 @@
 	line-height: 1.33;
 }
 
+.facebook-preview__image,
+.facebook-preview__custom-image {
+	img {
+		display: block;
+
+		object-fit: cover;
+	}
+}
+
 .facebook-preview__image {
 	&.is-empty {
 		width: 140px;
@@ -95,26 +119,43 @@
 	}
 
 	&.is-portrait {
-		> img {
+		img {
 			width: 278px;
 			height: 430px;
 		}
 	}
 
 	&.is-landscape {
-		> img {
-			// At the moment of writing, the post card on Facebook.com goes from 508 to 680px wide.
-			// In landscape mode, the image takes the full width of the card, and respect the 1.91
-			// aspect ratio at any width.
+		img {
+			// At the moment of writing, the post card on Facebook.com goes from 508 to 680px wide
+			// on desktop. In landscape mode, the image takes the full width of the card, and
+			// respect the 1.91 aspect ratio at any width.
 			width: 100%;
 			aspect-ratio: 1.91;
 		}
 	}
+}
 
-	> img {
-		display: block;
+.facebook-preview__custom-image {
+	display: flex;
+	justify-content: center;
 
-		object-fit: cover;
+	width: 100%;
+
+	background-color: $facebook-preview-image-background;
+
+	&.is-portrait {
+		img {
+			width: 500px;
+			height: 685px;
+		}
+	}
+
+	&.is-landscape {
+		img {
+			width: 100%;
+			aspect-ratio: 1.78;
+		}
 	}
 }
 

@@ -805,7 +805,9 @@ export class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
-				{ this.props.isUnlaunchedSite && ! isAtomicAndEditingToolkitDeactivated
+				{ this.props.isUnlaunchedSite &&
+				! isAtomicAndEditingToolkitDeactivated &&
+				! isWpcomStagingSite
 					? this.renderLaunchSite()
 					: this.privacySettings() }
 
@@ -960,7 +962,7 @@ const getFormSettings = ( settings ) => {
 };
 
 const SiteSettingsFormGeneralWithGlobalStylesNotice = ( props ) => {
-	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
+	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( props.site?.ID );
 
 	return (
 		<SiteSettingsFormGeneral

@@ -16,6 +16,7 @@ import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
@@ -252,9 +253,7 @@ export default function CheckoutMain( {
 
 	const getThankYouUrl = useCallback( () => {
 		const url = getThankYouUrlBase();
-		logStashEvent( 'thank you url generated', {
-			url,
-		} );
+		logStashEvent( 'thank you url generated', { url }, 'info' );
 		return url;
 	}, [ getThankYouUrlBase ] );
 
@@ -599,9 +598,7 @@ export default function CheckoutMain( {
 
 	const handlePaymentMethodChanged = useCallback(
 		( method: string ) => {
-			logStashEvent( 'payment_method_select', {
-				newMethodId: String( method ),
-			} );
+			logStashEvent( 'payment_method_select', { newMethodId: String( method ) }, 'info' );
 			// Need to convert to the slug format used in old checkout so events are comparable
 			const rawPaymentMethodSlug = String( method );
 			const legacyPaymentMethodSlug = translateCheckoutPaymentMethodToTracksPaymentMethod(
@@ -683,6 +680,7 @@ export default function CheckoutMain( {
 			<QueryJetpackSaleCoupon />
 			<QuerySitePlans siteId={ updatedSiteId } />
 			<QuerySitePurchases siteId={ updatedSiteId } />
+			{ isSiteless && <QueryUserPurchases /> }
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />

@@ -53,14 +53,20 @@ function getWebpackConfig( env = { block: '' }, argv ) {
 						from: path.resolve( blockPath, 'index.php' ),
 						to: path.resolve( blockPath, 'build', '[name][ext]' ),
 						transform( content ) {
-							return content.toString().replace( '/build/rtl', '/rtl' ).replace( '/build', '/' );
+							return content
+								.toString()
+								.replaceAll( '/build/rtl', '/rtl' )
+								.replaceAll( '/build', '' );
 						},
 					} ),
 					ifExists( {
 						from: path.resolve( blockPath, 'includes.php' ),
 						to: path.resolve( blockPath, 'build', '[name][ext]' ),
 						transform( content ) {
-							return content.toString().replace( '/build/rtl', '/rtl' ).replace( '/build', '/' );
+							return content
+								.toString()
+								.replaceAll( '/build/rtl', '/rtl' )
+								.replaceAll( '/build', '' );
 						},
 					} ),
 					ifExists( {

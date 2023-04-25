@@ -23,12 +23,11 @@
 	border-bottom: 5px solid var(--color-neutral-0);
 	box-shadow: none;
 	margin: 0;
-	padding: 12px 15px 20px;
+	padding: 20px 0;
 	position: relative;
 
 	@include breakpoint-deprecated( ">660px" ) {
 		border-bottom: 1px solid #e9e9ea;
-		padding: 12px 0 20px;
 	}
 
 	&.is-selected {
@@ -121,6 +120,15 @@
 
 	&.is-gallery .reader-post-card__post {
 		flex-direction: column;
+
+		.dot-pager__controls {
+			margin-bottom: 0;
+			margin-top: 16px;
+		}
+		.dot-pager {
+			display: flex;
+			flex-direction: column-reverse;
+		}
 	}
 
 	&.is-gallery,
@@ -399,7 +407,6 @@
 	display: flex;
 	flex-direction: row;
 	font-family: $sans;
-	margin-bottom: 11px;
 	margin-top: -2px;
 }
 
@@ -413,7 +420,7 @@
 	flex-direction: row;
 	margin-top: 4px;
 	margin-bottom: 8px;
-	gap: 5px;
+	gap: 8px;
 	flex-wrap: wrap;
 
 	&::after {
@@ -492,10 +499,6 @@
 @include breakpoint-deprecated( "<660px" ) {
 	.reader-post-card__post {
 		margin-left: 0;
-	}
-	.reader-post-card__tags {
-		margin-left: -52px;
-		width: calc(100% + 75px);
 	}
 }
 
@@ -646,34 +649,6 @@
 }
 
 // Gallery cards
-.reader-post-card__gallery {
-	display: flex;
-	margin: 0 0 17px;
-	padding: 0;
-	position: relative;
-}
-
-.reader-post-card__gallery-item {
-	cursor: pointer;
-	flex: 1;
-	height: auto;
-	list-style-type: none;
-	opacity: 1;
-	position: relative;
-	transition: opacity 1s ease-out;
-	width: auto;
-
-	&:last-child {
-		margin-right: 0;
-	}
-
-	&.hide {
-		display: block;
-		opacity: 0;
-		position: absolute;
-	}
-}
-
 .reader-post-card .reader-featured-video__video {
 	padding-bottom: 17px;
 }
@@ -682,27 +657,6 @@
 	border-radius: 4px;
 	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
 	height: 300px;
-}
-
-.reader-post-card__gallery-circles {
-	width: 100%;
-	justify-content: center;
-	display: flex;
-}
-
-.reader-post-card__gallery-circle {
-	border-radius: 50%;
-	width: 7px;
-	height: 7px;
-	background: var(--color-neutral-5);
-	border: 0;
-	position: relative;
-	float: left;
-	margin-right: 9px;
-
-	&.is-selected {
-		background: var(--color-neutral-100);
-	}
 }
 
 .reader-post-card__blocked-description {

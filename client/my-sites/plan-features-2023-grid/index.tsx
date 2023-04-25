@@ -20,6 +20,7 @@ import {
 	isWooExpressSmallPlan,
 	isWooExpressPlan,
 	PlanSlug,
+	isWooExpressPlusPlan,
 } from '@automattic/calypso-products';
 import formatCurrency from '@automattic/format-currency';
 import { isHostingFlow } from '@automattic/onboarding';
@@ -83,16 +84,16 @@ import {
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import useIsLargeCurrency from '../plans/hooks/use-is-large-currency';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
-import PlanFeatures2023GridActions from './actions';
-import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
+import PlanFeatures2023GridActions from './components/actions';
+import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe';
+import PlanFeatures2023GridFeatures from './components/features';
+import PlanFeatures2023GridHeaderPrice from './components/header-price';
+import { PlanFeaturesItem } from './components/item';
+import { PlanComparisonGrid } from './components/plan-comparison-grid';
+import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
-import PlanFeatures2023GridFeatures from './features';
-import PlanFeatures2023GridHeaderPrice from './header-price';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from './hooks/use-highlight-label';
-import { PlanFeaturesItem } from './item';
-import { PlanComparisonGrid } from './plan-comparison-grid';
-import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { IAppState } from 'calypso/state/types';
@@ -122,7 +123,6 @@ type PlanFeatures2023GridProps = {
 	siteId: number;
 	isLaunchPage: boolean;
 	isReskinned: boolean;
-	is2023OnboardingPricingGrid: boolean;
 	onUpgradeClick: ( cartItem: MinimalRequestCartProduct | null ) => void;
 	// either you specify the plans prop or isPlaceholder prop
 	plans: Array< string >;
@@ -495,12 +495,13 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, isLargeCurrency } = this.props;
+		const { isReskinned, isLargeCurrency, translate } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties ) => {
 				const { planName, rawPrice } = properties;
+				const isWooExpressPlus = isWooExpressPlusPlan( planName );
 				const classes = classNames( 'plan-features-2023-grid__table-item', 'is-bottom-aligned', {
 					'has-border-top': ! isReskinned,
 				} );
@@ -519,6 +520,11 @@ export class PlanFeatures2023Grid extends Component<
 								is2023OnboardingPricingGrid={ true }
 								isLargeCurrency={ isLargeCurrency }
 							/>
+						) }
+						{ isWooExpressPlus && (
+							<div className="plan-features-2023-grid__header-tagline">
+								{ translate( 'Speak to our team for a custom quote.' ) }
+							</div>
 						) }
 					</Container>
 				);
@@ -677,6 +683,7 @@ export class PlanFeatures2023Grid extends Component<
 							className={ getPlanClass( planName ) }
 							freePlan={ isFreePlan( planName ) }
 							isWpcomEnterpriseGridPlan={ isWpcomEnterpriseGridPlan( planName ) }
+							isWooExpressPlusPlan={ isWooExpressPlusPlan( planName ) }
 							isPlaceholder={ isPlaceholder ?? false }
 							isInSignup={ isInSignup }
 							isLaunchPage={ isLaunchPage }
@@ -750,8 +757,10 @@ export class PlanFeatures2023Grid extends Component<
 			.filter( ( { isVisible } ) => isVisible )
 			.map( ( properties: PlanProperties ) => {
 				const { planName, product_name_short } = properties;
+				const shouldRenderEnterpriseLogos =
+					isWpcomEnterpriseGridPlan( planName ) || isWooExpressPlusPlan( planName );
 				const shouldShowFeatureTitle =
-					! isWpComFreePlan( planName ) && ! isWpcomEnterpriseGridPlan( planName );
+					! isWpComFreePlan( planName ) && ! shouldRenderEnterpriseLogos;
 				const planShortName =
 					options?.previousProductNameShort || previousPlanShortNameFromProperties;
 				previousPlanShortNameFromProperties = product_name_short;
@@ -765,7 +774,7 @@ export class PlanFeatures2023Grid extends Component<
 					getPlanClass( planName )
 				);
 				const rowspanProp =
-					! options?.isMobile && isWpcomEnterpriseGridPlan( planName ) ? { rowSpan: '2' } : {};
+					! options?.isMobile && shouldRenderEnterpriseLogos ? { rowSpan: '2' } : {};
 				return (
 					<Container
 						key={ planName }
@@ -774,7 +783,7 @@ export class PlanFeatures2023Grid extends Component<
 						{ ...rowspanProp }
 					>
 						{ shouldShowFeatureTitle && <div className={ classes }>{ title }</div> }
-						{ isWpcomEnterpriseGridPlan( planName ) && this.renderEnterpriseClientLogos() }
+						{ shouldRenderEnterpriseLogos && this.renderEnterpriseClientLogos() }
 					</Container>
 				);
 			} );
@@ -783,7 +792,9 @@ export class PlanFeatures2023Grid extends Component<
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		const { domainName, translate } = this.props;
 		const planProperties = planPropertiesObj.filter(
-			( properties ) => ! isWpcomEnterpriseGridPlan( properties.planName )
+			( properties ) =>
+				! isWpcomEnterpriseGridPlan( properties.planName ) &&
+				! isWooExpressPlusPlan( properties.planName )
 		);
 
 		return planProperties
@@ -1128,7 +1139,6 @@ const ConnectedPlanFeatures2023Grid = connect(
 				( planConstantObj.get2023PricingGridSignupStorageOptions &&
 					planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
 				[];
-
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
 			const isCurrentPlan = isCurrentSitePlan( state, siteId, planProductId ) ?? false;
 			const isVisible = visiblePlans?.indexOf( plan ) !== -1;

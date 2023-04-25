@@ -1,17 +1,18 @@
 import { PatternRenderer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { useStyle } from '@automattic/global-styles';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import { Icon, layout } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState, CSSProperties } from 'react';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { NAVIGATOR_PATHS, STYLES_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternActionBar from './pattern-action-bar';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
+import type { MouseEvent } from 'react';
 import './pattern-large-preview.scss';
 
 interface Props {
@@ -24,6 +25,7 @@ interface Props {
 	onMoveDownSection: ( position: number ) => void;
 	onDeleteHeader: () => void;
 	onDeleteFooter: () => void;
+	recordTracksEvent: ( name: string, eventProperties?: any ) => void;
 }
 
 // The pattern renderer element has 1px min height before the pattern is loaded
@@ -39,8 +41,10 @@ const PatternLargePreview = ( {
 	onMoveDownSection,
 	onDeleteHeader,
 	onDeleteFooter,
+	recordTracksEvent,
 }: Props ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 	const navigator = useNavigator();
 	const hasSelectedPattern = header || sections.length || footer;
 	const shouldShowSelectPatternHint =
@@ -48,6 +52,7 @@ const PatternLargePreview = ( {
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
+	const [ device, setDevice ] = useState< string >( 'desktop' );
 	const [ blockGap ] = useStyle( 'spacing.blockGap' );
 	const [ backgroundColor ] = useStyle( 'color.background' );
 	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
@@ -57,6 +62,39 @@ const PatternLargePreview = ( {
 
 	const goToSelectHeaderPattern = () => {
 		navigator.goTo( NAVIGATOR_PATHS.HEADER );
+	};
+
+	const handleAddHeaderClick = ( event: MouseEvent ) => {
+		event.preventDefault();
+		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.LARGE_PREVIEW_ADD_HEADER_BUTTON_CLICK );
+		goToSelectHeaderPattern();
+	};
+
+	const getDescription = () => {
+		if ( ! shouldShowSelectPatternHint ) {
+			return translate( "It's time to get creative. Add your first pattern to get started." );
+		}
+
+		const options = {
+			components: {
+				link: (
+					// eslint-disable-next-line jsx-a11y/anchor-is-valid
+					<a href="#" target="_blank" rel="noopener noreferrer" onClick={ handleAddHeaderClick } />
+				),
+			},
+		};
+
+		return hasEnTranslation(
+			'You can view your color and font selections after you select a pattern. Get started by {{link}}adding a header pattern{{/link}}'
+		)
+			? translate(
+					'You can view your color and font selections after you select a pattern. Get started by {{link}}adding a header pattern{{/link}}',
+					options
+			  )
+			: translate(
+					'You can view your color and font selections after you select a pattern, get started by {{link}}adding a header pattern{{/link}}',
+					options
+			  );
 	};
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
@@ -86,6 +124,7 @@ const PatternLargePreview = ( {
 				) }
 			>
 				<PatternRenderer
+					key={ device }
 					patternId={ encodePatternId( pattern.ID ) }
 					viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
 					// Disable default max-height
@@ -160,7 +199,10 @@ const PatternLargePreview = ( {
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
 				// Wait for the animation to end in 200ms
-				window.setTimeout( updateViewportHeight, 205 );
+				window.setTimeout( () => {
+					setDevice( device );
+					updateViewportHeight();
+				}, 205 );
 			} }
 		>
 			{ hasSelectedPattern ? (
@@ -177,29 +219,7 @@ const PatternLargePreview = ( {
 				<div className="pattern-large-preview__placeholder">
 					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 72 } />
 					<h2>{ translate( 'Welcome to your blank canvas' ) }</h2>
-					<span>
-						{ shouldShowSelectPatternHint
-							? translate(
-									'You can view your color and font selections after you select a pattern, get started by {{link}}adding a header pattern{{/link}}',
-									{
-										components: {
-											link: (
-												// eslint-disable-next-line jsx-a11y/anchor-is-valid
-												<a
-													href="#"
-													target="_blank"
-													rel="noopener noreferrer"
-													onClick={ ( event ) => {
-														event.preventDefault();
-														goToSelectHeaderPattern();
-													} }
-												/>
-											),
-										},
-									}
-							  )
-							: translate( "It's time to get creative. Add your first pattern to get started." ) }
-					</span>
+					<span>{ getDescription() }</span>
 				</div>
 			) }
 		</DeviceSwitcher>

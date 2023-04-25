@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Icon, starFilled } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useContext, useState, forwardRef, Ref } from 'react';
@@ -33,15 +32,8 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 		setExpandedRow( expandedRow === blogId ? null : blogId );
 	};
 
-	const isExpandedBlockEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
-
 	return (
-		<table
-			ref={ ref }
-			className={ classNames( 'site-table__table', {
-				'site-table__table-v2': isExpandedBlockEnabled,
-			} ) }
-		>
+		<table ref={ ref } className="site-table__table">
 			<thead>
 				<tr>
 					{ isBulkManagementActive ? (
@@ -63,9 +55,9 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 									</SiteSort>
 								</th>
 							) ) }
-							<th colSpan={ isExpandedBlockEnabled ? 3 : 1 }>
+							<th colSpan={ 3 }>
 								<div className="plugin-common-table__bulk-actions">
-									<EditButton isLargeScreen sites={ items } />
+									<EditButton isLargeScreen sites={ items } isLoading={ isLoading } />
 								</div>
 							</th>
 						</>

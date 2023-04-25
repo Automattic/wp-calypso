@@ -1,9 +1,5 @@
 import { Page } from 'playwright';
-
-const selectors = {
-	button: ( text: string ) => `button:text("${ text }")`,
-	blockRenderer: '.block-renderer',
-};
+type LayoutType = 'Header' | 'Sections' | 'Footer';
 
 /**
  * Class encapsulating the Site Assembler flow
@@ -26,24 +22,24 @@ export class SiteAssemblerFlow {
 	 * @param {string} text User-visible text on the button.
 	 */
 	async clickButton( text: string ): Promise< void > {
-		await this.page.click( selectors.button( text ) );
+		await this.page.getByRole( 'button', { name: text } ).click();
 	}
 
 	/**
-	 * Select Header
+	 * Given a component type, clicks on the heading item to show available components.
+	 *
+	 * @param {LayoutType} type Type of the layout component.
 	 */
-	async selectHeader(): Promise< void > {
-		await this.page.getByText( 'Header' ).click();
-		const header = this.page.locator( selectors.blockRenderer ).nth( 0 );
-		await header.click();
+	async selectLayoutComponentType( type: LayoutType ): Promise< void > {
+		await this.page.getByRole( 'button', { name: type } ).click();
 	}
 
 	/**
-	 * Select Footer
+	 * Selects a layout component at matching index.
+	 *
+	 * @param {number} index Index of the item to choose. Defaults to 0.
 	 */
-	async selectFooter(): Promise< void > {
-		await this.page.getByText( 'Footer' ).click();
-		const footer = this.page.locator( selectors.blockRenderer ).nth( 0 );
-		await footer.click();
+	async selectLayoutComponent( index = 0 ): Promise< void > {
+		await this.page.locator( '.pattern-list-renderer__pattern-list-item' ).nth( index ).click();
 	}
 }

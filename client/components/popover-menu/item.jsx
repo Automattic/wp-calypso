@@ -17,7 +17,7 @@ export default class PopoverMenuItem extends Component {
 		onClick: PropTypes.func,
 		onMouseOver: PropTypes.func,
 		isExternalLink: PropTypes.bool,
-		itemComponent: PropTypes.oneOfType( [ PropTypes.func, PropTypes.string ] ),
+		itemComponent: PropTypes.elementType,
 	};
 
 	static defaultProps = {

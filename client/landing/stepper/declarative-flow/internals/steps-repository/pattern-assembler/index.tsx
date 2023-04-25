@@ -11,7 +11,6 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
 import { useState, useRef, useMemo } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
-import AsyncLoad from 'calypso/components/async-load';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
 import { createRecordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -34,11 +33,13 @@ import PatternAssemblerContainer from './pattern-assembler-container';
 import PatternLargePreview from './pattern-large-preview';
 import { useAllPatterns } from './patterns-data';
 import ScreenCategoryList from './screen-category-list';
+import ScreenColorPalettes from './screen-color-palettes';
+import ScreenFontPairings from './screen-font-pairings';
 import ScreenFooter from './screen-footer';
 import ScreenHeader from './screen-header';
 import ScreenMain from './screen-main';
 import ScreenSection from './screen-section';
-import { encodePatternId } from './utils';
+import { encodePatternId, getVariationTitle, getVariationType } from './utils';
 import withGlobalStylesProvider from './with-global-styles-provider';
 import type { Pattern } from './types';
 import type { StepProps } from '../../types';
@@ -111,8 +112,10 @@ const PatternAssembler = ( {
 				step: stepName,
 				intent,
 				stylesheet,
-				color_variation_title: colorVariation?.title,
-				font_variation_title: fontVariation?.title,
+				color_variation_title: getVariationTitle( colorVariation ),
+				color_variation_type: getVariationType( colorVariation ),
+				font_variation_title: getVariationTitle( fontVariation ),
+				font_variation_type: getVariationType( fontVariation ),
 			} ),
 		[ flow, stepName, intent, stylesheet, colorVariation, fontVariation ]
 	);
@@ -451,7 +454,8 @@ const PatternAssembler = ( {
 	const onScreenColorsSelect = ( variation: GlobalStylesObject | null ) => {
 		setColorVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_COLORS_PREVIEW_CLICK, {
-			title: variation?.title,
+			color_variation_title: getVariationTitle( variation ),
+			color_variation_type: getVariationType( variation ),
 		} );
 	};
 
@@ -466,7 +470,8 @@ const PatternAssembler = ( {
 	const onScreenFontsSelect = ( variation: GlobalStylesObject | null ) => {
 		setFontVariation( variation );
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_PREVIEW_CLICK, {
-			title: variation?.title,
+			font_variation_title: getVariationTitle( variation ),
+			font_variation_type: getVariationType( variation ),
 		} );
 	};
 
@@ -477,6 +482,10 @@ const PatternAssembler = ( {
 	const onScreenFontsDone = () => {
 		recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.SCREEN_FONTS_DONE_CLICK );
 	};
+
+	if ( ! site?.ID || ! selectedDesign ) {
+		return null;
+	}
 
 	const stepContent = (
 		<NavigatorProvider
@@ -549,9 +558,7 @@ const PatternAssembler = ( {
 
 				{ isEnabledColorAndFonts && (
 					<NavigatorScreen path={ NAVIGATOR_PATHS.COLOR_PALETTES }>
-						<AsyncLoad
-							require="./screen-color-palettes"
-							placeholder={ null }
+						<ScreenColorPalettes
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
 							selectedColorPaletteVariation={ colorVariation }
@@ -564,9 +571,7 @@ const PatternAssembler = ( {
 
 				{ isEnabledColorAndFonts && (
 					<NavigatorScreen path={ NAVIGATOR_PATHS.FONT_PAIRINGS }>
-						<AsyncLoad
-							require="./screen-font-pairings"
-							placeholder={ null }
+						<ScreenFontPairings
 							siteId={ site?.ID }
 							stylesheet={ stylesheet }
 							selectedFontPairingVariation={ fontVariation }
@@ -580,8 +585,6 @@ const PatternAssembler = ( {
 				<NavigatorListener
 					onLocationChange={ ( navigatorLocation ) => {
 						setNavigatorPath( navigatorLocation.path );
-						// Disable focus restoration from the Navigator Screen
-						wrapperRef.current?.focus();
 					} }
 				/>
 			</div>
@@ -595,14 +598,11 @@ const PatternAssembler = ( {
 				onMoveDownSection={ onMoveDownSection }
 				onDeleteHeader={ onDeleteHeader }
 				onDeleteFooter={ onDeleteFooter }
+				recordTracksEvent={ recordTracksEvent }
 			/>
 			<PremiumGlobalStylesUpgradeModal { ...globalStylesUpgradeModalProps } />
 		</NavigatorProvider>
 	);
-
-	if ( ! site?.ID || ! selectedDesign ) {
-		return null;
-	}
 
 	return (
 		<StepContainer

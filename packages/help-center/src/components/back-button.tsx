@@ -1,4 +1,4 @@
-import { Button } from '@automattic/components';
+import { Button } from '@wordpress/components';
 import { Icon, chevronLeft } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useNavigate } from 'react-router-dom';
@@ -18,11 +18,7 @@ export const BackButton: FC< Props > = ( { onClick, backToRoot = false } ) => {
 		}
 	}
 	return (
-		<Button
-			className="back-button__help-center"
-			borderless={ true }
-			onClick={ onClick || defaultOnClick }
-		>
+		<Button className="back-button__help-center" onClick={ onClick || defaultOnClick }>
 			<Icon icon={ chevronLeft } size={ 18 } />
 			{ __( 'Back', __i18n_text_domain__ ) }
 		</Button>

@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import { SubscriptionManager } from '@automattic/data-stores';
 import { memo, useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
 import { CommentSettings } from '../settings-popover';
@@ -10,13 +11,16 @@ type CommentRowProps = PostSubscription & {
 };
 
 const CommentRow = ( {
-	title,
-	excerpt,
-	url,
+	id,
+	post_id,
+	post_title,
+	post_excerpt,
+	post_url,
+	blog_id,
 	site_title,
 	site_icon,
 	site_url,
-	date_subscribed,
+	subscription_date,
 	forwardedRef,
 	style,
 }: CommentRowProps ) => {
@@ -27,16 +31,18 @@ const CommentRow = ( {
 		}
 		return <Gridicon className="icon" icon="globe" size={ 48 } />;
 	}, [ site_icon, site_title ] );
+	const { mutate: unsubscribe, isLoading: unsubscribing } =
+		SubscriptionManager.usePostUnsubscribeMutation();
 	return (
 		<div style={ style } ref={ forwardedRef } className="row-wrapper">
 			<div className="row" role="row">
 				<span className="post" role="cell">
 					<div className="title">
-						<a href={ url } target="_blank" rel="noreferrer noopener">
-							{ title }
+						<a href={ post_url } target="_blank" rel="noreferrer noopener">
+							{ post_title }
 						</a>
 					</div>
-					<div className="excerpt">{ excerpt }</div>
+					<div className="excerpt">{ post_excerpt }</div>
 				</span>
 				<a href={ site_url } rel="noreferrer noopener" className="title-box" target="_blank">
 					<span className="title-box" role="cell">
@@ -48,10 +54,13 @@ const CommentRow = ( {
 					</span>
 				</a>
 				<span className="date" role="cell">
-					<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
+					<TimeSince date={ subscription_date.toISOString?.() ?? subscription_date } />
 				</span>
 				<span className="actions" role="cell">
-					<CommentSettings onUnfollow={ () => undefined } unfollowing={ false } />
+					<CommentSettings
+						onUnsubscribe={ () => unsubscribe( { post_id, blog_id, id } ) }
+						unsubscribing={ unsubscribing }
+					/>
 				</span>
 			</div>
 		</div>

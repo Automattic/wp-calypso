@@ -11,6 +11,7 @@ const StatsCard = ( {
 	className,
 	title,
 	titleURL,
+	titleAriaLevel = 4,
 	footerAction,
 	isEmpty,
 	emptyMessage,
@@ -29,7 +30,13 @@ const StatsCard = ( {
 			{ title }
 		</a>
 	) : (
-		<div className={ `${ BASE_CLASS_NAME }-header__title` }>{ title }</div>
+		<div
+			className={ `${ BASE_CLASS_NAME }-header__title` }
+			role="heading"
+			aria-level={ titleAriaLevel }
+		>
+			{ title }
+		</div>
 	);
 
 	// On one line shows card title and value column header
@@ -82,7 +89,16 @@ const StatsCard = ( {
 				</div>
 			</div>
 			{ footerAction && (
-				<a className={ `${ BASE_CLASS_NAME }--footer` } href={ footerAction?.url }>
+				<a
+					className={ `${ BASE_CLASS_NAME }--footer` }
+					href={ footerAction?.url }
+					aria-label={
+						translate( 'View all %(title)s', {
+							args: { title: title.toLocaleLowerCase() },
+							comment: '"View all posts & pages", "View all referrers", etc.',
+						} ) as string
+					}
+				>
 					{ footerAction.label || translate( 'View all' ) }
 				</a>
 			) }

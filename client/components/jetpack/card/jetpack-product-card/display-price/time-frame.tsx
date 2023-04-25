@@ -10,6 +10,7 @@ interface TimeFrameProps {
 	billingTerm: Duration;
 	discountedPriceDuration?: number;
 	formattedOriginalPrice?: string;
+	isDiscounted?: boolean;
 }
 
 interface RegularTimeFrameProps {
@@ -153,12 +154,24 @@ const PartialDiscountTimeFrame: React.FC< PartialDiscountTimeFrameProps & A11yPr
 	return <span className="display-price__billing-time-frame">{ text }</span>;
 };
 
+const OneYearDiscountTimeFrame: React.FC< A11yProps > = ( { forScreenReader } ) => {
+	const translate = useTranslate();
+	const text = translate( 'per month for the first year, billed yearly' );
+
+	if ( forScreenReader ) {
+		return <>{ text }</>;
+	}
+
+	return <span className="display-price__billing-time-frame">{ text }</span>;
+};
+
 const TimeFrame: React.FC< TimeFrameProps & A11yProps > = ( {
 	expiryDate,
 	billingTerm,
 	discountedPriceDuration,
 	formattedOriginalPrice,
 	forScreenReader,
+	isDiscounted,
 } ) => {
 	const moment = useLocalizedMoment();
 	const productExpiryDate =
@@ -168,15 +181,20 @@ const TimeFrame: React.FC< TimeFrameProps & A11yProps > = ( {
 		return <ExpiringDateTimeFrame productExpiryDate={ productExpiryDate } />;
 	}
 
-	if ( discountedPriceDuration && formattedOriginalPrice ) {
-		return (
-			<PartialDiscountTimeFrame
-				billingTerm={ billingTerm }
-				discountedPriceDuration={ discountedPriceDuration }
-				forScreenReader={ forScreenReader }
-				formattedOriginalPrice={ formattedOriginalPrice }
-			/>
-		);
+	// `1 === discountedPriceDuration` condition taken from client/my-sites/plans/jetpack-plans/product-lightbox/payment-plan.tsx:56
+	if ( isDiscounted ) {
+		if ( 1 === discountedPriceDuration && formattedOriginalPrice ) {
+			return (
+				<PartialDiscountTimeFrame
+					billingTerm={ billingTerm }
+					discountedPriceDuration={ discountedPriceDuration }
+					forScreenReader={ forScreenReader }
+					formattedOriginalPrice={ formattedOriginalPrice }
+				/>
+			);
+		}
+
+		return <OneYearDiscountTimeFrame forScreenReader={ forScreenReader } />;
 	}
 
 	return <RegularTimeFrame billingTerm={ billingTerm } forScreenReader={ forScreenReader } />;

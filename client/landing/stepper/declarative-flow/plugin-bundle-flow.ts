@@ -4,6 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useDispatch as reduxDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { WRITE_INTENT_DEFAULT_DESIGN } from '../constants';
 import { useSite } from '../hooks/use-site';
 import { useSiteIdParam } from '../hooks/use-site-id-param';
 import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress';
@@ -25,8 +26,6 @@ import pluginBundleData from './plugin-bundle-data';
 import type { BundledPlugin } from './plugin-bundle-data';
 import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
-const WRITE_INTENT_DEFAULT_THEME = 'livro';
-const WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION = 'white';
 const SiteIntent = Onboard.SiteIntent;
 
 const pluginBundleFlow: Flow = {
@@ -98,7 +97,7 @@ const pluginBundleFlow: Flow = {
 		);
 		const { setPendingAction, setStepProgress, resetOnboardStoreWithSkipFlags } =
 			useDispatch( ONBOARD_STORE );
-		const { setIntentOnSite, setGoalsOnSite, setThemeOnSite } = useDispatch( SITE_STORE );
+		const { setIntentOnSite, setGoalsOnSite, setDesignOnSite } = useDispatch( SITE_STORE );
 		const siteDetails = useSelect(
 			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).getSite( site.ID ),
 			[ site ]
@@ -132,13 +131,7 @@ const pluginBundleFlow: Flow = {
 						setGoalsOnSite( siteSlug, goals ),
 					];
 					if ( intent === SiteIntent.Write && ! selectedDesign && ! isAtomic ) {
-						pendingActions.push(
-							setThemeOnSite(
-								siteSlug,
-								WRITE_INTENT_DEFAULT_THEME,
-								WRITE_INTENT_DEFAULT_THEME_STYLE_VARIATION
-							)
-						);
+						pendingActions.push( setDesignOnSite( siteSlug, WRITE_INTENT_DEFAULT_DESIGN ) );
 					}
 
 					Promise.all( pendingActions ).then( () => window.location.assign( to ) );
@@ -154,15 +147,20 @@ const pluginBundleFlow: Flow = {
 		function submit( providedDependencies: ProvidedDependencies = {}, ...params: string[] ) {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 
-			const defaultExitDest = siteDetails?.options?.theme_slug
-				? `/theme/${ siteDetails?.options.theme_slug }/${ siteSlug }`
-				: `/home/${ siteSlug }`;
-
+			let defaultExitDest = `/home/${ siteSlug }`;
+			if ( siteDetails?.options?.theme_slug ) {
+				if ( isEnabled( 'themes/display-thank-you-page-for-woo' ) ) {
+					defaultExitDest = `/marketplace/thank-you/${ siteSlug }?themes=${ siteDetails?.options?.theme_slug }`;
+				} else {
+					defaultExitDest = `/theme/${ siteDetails?.options.theme_slug }/${ siteSlug }`;
+				}
+			}
 			switch ( currentStep ) {
 				case 'checkForWoo':
 					// If WooCommerce is already installed, we should exit the flow.
 					if ( providedDependencies?.hasWooCommerce ) {
 						// If we have the theme for the site, redirect to the theme page. Otherwise redirect to /home.
+
 						return exitFlow( defaultExitDest );
 					}
 

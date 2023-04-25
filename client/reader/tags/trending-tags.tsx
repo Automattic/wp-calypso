@@ -46,7 +46,7 @@ export default function TrendingTags( { trendingTags }: TrendingTagsProps ) {
 	}
 
 	return (
-		<div>
+		<div className="trending-tags__container">
 			{ tagRows.map( ( tagRow: TagResult[], index ) => (
 				<div className="trending-tags__row" key={ 'tags-row-' + index }>
 					<TagRow
