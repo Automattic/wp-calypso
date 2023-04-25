@@ -321,6 +321,6 @@ export function redirectToPermalinkIfLoggedOut( context, next ) {
 	}
 	// Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
 	// else the endpoint will redirect the user to the login page.
-	window.location = `https://public-api.wordpress.com/wpcom/v2/sites/${ siteFragment }/redirect?path=${ context.path }`;
+	window.location = `https://public-api.wordpress.com/wpcom/v2/sites/${ siteFragment }/editor/redirect?path=${ context.path }`;
 	return;
 }
