@@ -1,5 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { useFlowProgress, CONNECT_DOMAIN_FLOW } from '@automattic/onboarding';
+import { CONNECT_DOMAIN_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -26,7 +26,7 @@ import type { UserSelect } from '@automattic/data-stores';
 const connectDomain: Flow = {
 	name: CONNECT_DOMAIN_FLOW,
 	get title() {
-		return translate( 'Connect Domain' );
+		return translate( 'Connect your domain' );
 	},
 	useAssertConditions: () => {
 		const { domain, provider } = useDomainParams();
@@ -88,10 +88,7 @@ const connectDomain: Flow = {
 	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const flowName = this.name;
-		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStepSlug, flowName } );
 		const { domain, provider } = useDomainParams();
-		setStepProgress( flowProgress );
 
 		// trigger guides on step movement, we don't care about failures or response
 		wpcom.req.post(
