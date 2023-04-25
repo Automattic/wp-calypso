@@ -2,8 +2,8 @@ import { PLAN_ENTERPRISE_GRID_WPCOM } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
-import { getPlanUpgradeCredits } from 'calypso/state/sites/plans/selectors/get-plan-upgrade-credits';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
+import { usePlanUpgradeCredits } from './use-plan-upgrade-credits';
 
 export function usePlanUpgradeCreditsDisplay(
 	siteId: number,
@@ -14,9 +14,7 @@ export function usePlanUpgradeCreditsDisplay(
 } {
 	const isSiteOnPaidPlan = !! useSelector( ( state ) => isCurrentPlanPaid( state, siteId ) );
 	const currentSitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
-	const creditsValue = useSelector( ( state ) =>
-		getPlanUpgradeCredits( state, siteId, visiblePlanNames )
-	);
+	const creditsValue = usePlanUpgradeCredits( siteId, visiblePlanNames );
 	const isJetPackNotAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 	);
