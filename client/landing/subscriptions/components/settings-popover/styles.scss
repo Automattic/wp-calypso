@@ -77,6 +77,15 @@
 		padding-bottom: 10px;
 		line-height: $font-body;
 	}
+
+	.settings-popover__email-me-new-comments-toggle {
+		font-size: $font-body-small;
+		margin-bottom: 0;
+
+		.is-checked .components-form-toggle__track {
+			background-color: $studio-black;
+		}
+	}
 }
 
 .settings-popover__container {
