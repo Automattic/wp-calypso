@@ -1,5 +1,7 @@
+import { Gridicon } from '@automattic/components';
+import { Button, Dropdown, MenuItemsChoice, NavigableMenu } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, ReactElement } from 'react';
+import { ReactElement, useMemo } from 'react';
 import './styles.scss';
 
 export type Option = {
@@ -19,29 +21,48 @@ const SortControls: < T extends string >( props: SortControlsProps< T > ) => Rea
 	onChange,
 } ) => {
 	const translate = useTranslate();
-
-	const handleSelectChange = ( event: ChangeEvent< HTMLSelectElement > ) => {
-		onChange( event?.target.value as typeof value );
-	};
+	const sortingLabel = useMemo(
+		() => options.find( ( option ) => option.value === value )?.label,
+		[ options, value ]
+	);
 
 	return (
-		<div className="subscription-manager-sort-controls">
-			<label htmlFor="subscription-manager-sort-controls__select">
-				{ translate( 'Sort by:' ) }
-				<select
-					id="subscription-manager-sort-controls__select"
-					className="subscription-manager-sort-controls__select"
-					onChange={ handleSelectChange }
-					value={ value }
+		<Dropdown
+			className="subscription-manager-sort-controls"
+			position="bottom left"
+			renderToggle={ ( { isOpen, onToggle } ) => (
+				<Button
+					className="subscription-manager-sort-controls__button"
+					icon={ <Gridicon icon={ isOpen ? 'chevron-up' : 'chevron-down' } /> }
+					iconSize={ 16 }
+					onClick={ onToggle }
+					aria-expanded={ isOpen }
+					onKeyDown={ ( event: React.KeyboardEvent ) => {
+						if ( ! isOpen && event.code === 'ArrowDown' ) {
+							event.preventDefault();
+							onToggle();
+						}
+					} }
 				>
-					{ options.map( ( option ) => (
-						<option key={ `${ option.value }.${ option.label }` } value={ option.value }>
-							{ option.label }
-						</option>
-					) ) }
-				</select>
-			</label>
-		</div>
+					{
+						// translators: %s is the current sorting mode.
+						translate( 'Sort: %(sortingLabel)s', { args: { sortingLabel } } )
+					}
+				</Button>
+			) }
+			renderContent={ ( { onClose } ) => (
+				<NavigableMenu cycle={ false }>
+					<MenuItemsChoice
+						value={ value }
+						onSelect={ ( selectedValue: string ) => {
+							onChange( selectedValue as typeof value );
+							onClose();
+						} }
+						choices={ options }
+					/>
+				</NavigableMenu>
+			) }
+		/>
 	);
 };
 
