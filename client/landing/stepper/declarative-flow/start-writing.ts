@@ -10,6 +10,7 @@ import {
 	Flow,
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const startWriting: Flow = {
@@ -34,6 +35,7 @@ const startWriting: Flow = {
 
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
+		const siteSlug = useSiteSlug();
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
 			switch ( currentStep ) {
@@ -54,6 +56,11 @@ const startWriting: Flow = {
 					break;
 				}
 				case 'plans':
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { plan_selected: true },
+						} );
+					}
 					return navigate( 'launchpad' );
 			}
 		}
