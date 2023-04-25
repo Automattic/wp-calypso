@@ -27,3 +27,15 @@
 	line-height: 1;
 	letter-spacing: -0.02em;
 }
+
+.stats-widget-module__info {
+	margin-top: 16px;
+	button {
+		@include emerald-button-style;
+	}
+
+	a {
+		font-size: $font-body-extra-small;
+		line-height: 0.5;
+	}
+}

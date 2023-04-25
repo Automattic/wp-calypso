@@ -1,6 +1,6 @@
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useMemo, useState } from 'react';
-import { SHOW_ALL_SLUG, SHOW_GENERATED_DESIGNS_SLUG } from '../constants';
+import { SHOW_ALL_SLUG } from '../constants';
 import { Category, Design } from '../types';
 import { gatherCategories } from '../utils';
 
@@ -12,14 +12,13 @@ export interface Categorization {
 
 interface UseCategorizationOptions {
 	defaultSelection: string | null;
-	showAllFilter: boolean;
-	generatedDesignsFilter?: string;
+	showAllFilter?: boolean;
 	sort?: ( a: Category, b: Category ) => number;
 }
 
 export function useCategorization(
 	designs: Design[],
-	{ defaultSelection, showAllFilter, generatedDesignsFilter, sort }: UseCategorizationOptions
+	{ defaultSelection, showAllFilter, sort }: UseCategorizationOptions
 ): Categorization {
 	const { __ } = useI18n();
 
@@ -27,13 +26,6 @@ export function useCategorization(
 		const result = gatherCategories( designs );
 		if ( sort ) {
 			result.sort( sort );
-		}
-
-		if ( generatedDesignsFilter ) {
-			result.unshift( {
-				name: generatedDesignsFilter,
-				slug: SHOW_GENERATED_DESIGNS_SLUG,
-			} );
 		}
 
 		if ( showAllFilter && designs.length ) {
@@ -44,18 +36,14 @@ export function useCategorization(
 		}
 
 		return result;
-	}, [ designs, showAllFilter, generatedDesignsFilter, sort, __ ] );
+	}, [ designs, showAllFilter, sort, __ ] );
 
 	const [ selection, onSelect ] = useState< string | null >(
 		chooseDefaultSelection( categories, defaultSelection )
 	);
 
 	useEffect( () => {
-		// When the category list changes check that the current selection
-		// still matches one of the given slugs, and if it doesn't reset
-		// the current selection.
-		const findResult = categories.find( ( { slug } ) => slug === selection );
-		if ( ! findResult ) {
+		if ( shouldSetToDefaultSelection( categories, selection ) ) {
 			onSelect( chooseDefaultSelection( categories, defaultSelection ) );
 		}
 	}, [ categories, defaultSelection, selection ] );
@@ -69,7 +57,7 @@ export function useCategorization(
 
 export function useCategorizationFromApi(
 	categoryMap: Record< string, Category >,
-	{ defaultSelection, showAllFilter, generatedDesignsFilter }: UseCategorizationOptions
+	{ defaultSelection }: UseCategorizationOptions
 ): Categorization {
 	const { __ } = useI18n();
 
@@ -82,14 +70,7 @@ export function useCategorizationFromApi(
 			slug,
 		} ) );
 
-		if ( generatedDesignsFilter && hasCategories ) {
-			result.unshift( {
-				name: generatedDesignsFilter,
-				slug: SHOW_GENERATED_DESIGNS_SLUG,
-			} );
-		}
-
-		if ( showAllFilter && hasCategories ) {
+		if ( hasCategories ) {
 			result.unshift( {
 				name: __( 'Show All', __i18n_text_domain__ ),
 				slug: SHOW_ALL_SLUG,
@@ -97,18 +78,14 @@ export function useCategorizationFromApi(
 		}
 
 		return result;
-	}, [ showAllFilter, generatedDesignsFilter, categoryMap, __ ] );
+	}, [ categoryMap, __ ] );
 
 	const [ selection, onSelect ] = useState< string | null >(
 		chooseDefaultSelection( categories, defaultSelection )
 	);
 
 	useEffect( () => {
-		// When the category list changes check that the current selection
-		// still matches one of the given slugs, and if it doesn't reset
-		// the current selection.
-		const findResult = categories.find( ( { slug } ) => slug === selection );
-		if ( ! findResult ) {
+		if ( shouldSetToDefaultSelection( categories, selection ) ) {
 			onSelect( chooseDefaultSelection( categories, defaultSelection ) );
 		}
 	}, [ categories, defaultSelection, selection ] );
@@ -118,6 +95,21 @@ export function useCategorizationFromApi(
 		selection,
 		onSelect,
 	};
+}
+
+/**
+ *	Check that the current selection still matches one of the category slugs,
+ *	and if it doesn't reset the current selection to the default selection.
+ *
+ *	@param categories the list of available categories
+ *	@param currentSelection the slug of the current selected category
+ *	@returns whether the current selection should be set to the default selection
+ */
+function shouldSetToDefaultSelection(
+	categories: Category[],
+	currentSelection: string | null
+): boolean {
+	return ! categories.find( ( { slug } ) => slug === currentSelection );
 }
 
 /**

@@ -43,10 +43,10 @@ function renderHeaderSection() {
 			<h1>
 				{
 					// translators: The title of the reader trending tags page
-					translate( 'Tags' )
+					translate( 'All the Tags' )
 				}
 			</h1>
-			<p>{ translate( 'Discover unique topics, follow your interests, or start writing.' ) }</p>
+			<p>{ translate( "For every one of your interests, there's a tag on WordPress.com." ) }</p>
 		</>
 	);
 }

@@ -31,6 +31,7 @@ import {
 	hasMarketplaceProduct,
 	isDIFMProduct,
 	isAkismetProduct,
+	isAkismetFreeProduct,
 	isJetpackBackupT1Slug,
 	AKISMET_UPGRADES_PRODUCTS_MAP,
 } from '@automattic/calypso-products';
@@ -250,11 +251,11 @@ class ManagePurchase extends Component {
 
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
-
 		if (
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
-			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) )
+			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) ||
+			isAkismetFreeProduct( purchase )
 		) {
 			return null;
 		}
@@ -323,7 +324,8 @@ class ManagePurchase extends Component {
 		if (
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
-			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) )
+			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) ||
+			isAkismetFreeProduct( purchase )
 		) {
 			return null;
 		}
@@ -459,7 +461,11 @@ class ManagePurchase extends Component {
 	renderEditPaymentMethodNavItem() {
 		const { purchase, translate, siteSlug, getChangePaymentMethodUrlFor } = this.props;
 
-		if ( isPartnerPurchase( purchase ) || ! this.props.site ) {
+		if ( isPartnerPurchase( purchase ) ) {
+			return null;
+		}
+
+		if ( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) {
 			return null;
 		}
 

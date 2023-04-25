@@ -37,7 +37,7 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 	useQueryThemes( 'wpcom', themeSlugs );
 	useQueryThemes( 'wporg', themeSlugs );
 
-	// Clear completed activated them request state to avoid displaying the Thanks modal
+	// Clear completed activated theme request state to avoid displaying the Thanks modal
 	useEffect( () => {
 		return () => {
 			dispatch( clearActivated( siteId || 0 ) );

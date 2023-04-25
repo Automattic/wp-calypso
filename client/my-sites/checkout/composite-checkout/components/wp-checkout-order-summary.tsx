@@ -13,6 +13,7 @@ import {
 	isWpComPremiumPlan,
 	isJetpackProduct,
 	isJetpackPlan,
+	isAkismetProduct,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import {
@@ -37,6 +38,7 @@ import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getFlowPlanFeatures from '../lib/get-flow-plan-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
@@ -313,18 +315,27 @@ function CheckoutSummaryFeaturesList( props: {
 	const hasDomainsInCart = responseCart.products.some(
 		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
 	);
+
+	// Check for domains
 	const domains = responseCart.products.filter(
 		( product ) => isDomainProduct( product ) || isDomainTransfer( product )
 	);
 
+	// Check for Wordpress plans
 	const plans = responseCart.products.filter( ( product ) => isPlan( product ) );
 	const hasPlanInCart = plans.length > 0;
 
+	// Check for Jetpack plans and products
 	const jetpackPlansAndProducts = responseCart.products.filter( ( product ) => {
 		return isJetpackProduct( product ) || isJetpackPlan( product );
 	} );
-
 	const hasJetpackProductOrPlan = jetpackPlansAndProducts.length > 0;
+
+	// Check for Akismet products
+	const akismetProducts = responseCart.products.filter( ( product ) =>
+		isAkismetProduct( product )
+	);
+	const hasAkismetProduct = akismetProducts.length > 0;
 
 	const hasSingleProduct = responseCart.products.length === 1;
 
@@ -341,6 +352,10 @@ function CheckoutSummaryFeaturesList( props: {
 
 			{ hasSingleProduct && hasJetpackProductOrPlan && (
 				<CheckoutSummaryJetpackProductFeatures product={ jetpackPlansAndProducts[ 0 ] } />
+			) }
+
+			{ hasSingleProduct && hasAkismetProduct && (
+				<CheckoutSummaryAkismetProductFeatures product={ akismetProducts[ 0 ] } />
 			) }
 
 			{ hasPlanInCart && (
@@ -427,6 +442,24 @@ function CheckoutSummaryFeaturesListDomainItem( { domain }: { domain: ResponseCa
 function CheckoutSummaryJetpackProductFeatures( { product }: { product: ResponseCartProduct } ) {
 	const translate = useTranslate();
 	const productFeatures = getJetpackProductFeatures( product, translate );
+
+	return (
+		<>
+			{ productFeatures.map( ( feature ) => {
+				return (
+					<CheckoutSummaryFeaturesListItem key={ feature }>
+						<WPCheckoutCheckIcon id={ feature.replace( /[^\w]/g, '_' ) } />
+						{ feature }
+					</CheckoutSummaryFeaturesListItem>
+				);
+			} ) }
+		</>
+	);
+}
+
+function CheckoutSummaryAkismetProductFeatures( { product }: { product: ResponseCartProduct } ) {
+	const translate = useTranslate();
+	const productFeatures = getAkismetProductFeatures( product, translate );
 
 	return (
 		<>

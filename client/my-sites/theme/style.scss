@@ -770,28 +770,30 @@ $theme-sheet-content-max-width: 1462px;
 	display: none;
 }
 
-.banner.theme__page-upsell-banner {
-	background-color: #f0f7fc;
-	border: 0;
-	border-radius: 4px;
-	box-shadow: none;
-	margin-bottom: 24px;
-	padding: 24px 30px;
-	width: 100%;
+.banner.card {
+	&.theme__page-upsell-banner {
+		background-color: #f0f7fc;
+		border: 0;
+		border-radius: 4px;
+		box-shadow: none;
+		margin-bottom: 24px;
+		padding: 24px 30px;
+		width: 100%;
 
-	.banner__icon-circle {
-		background-color: var(--studio-blue-50);
+		.banner__icon-circle {
+			background-color: var(--studio-blue-50);
+		}
 	}
-}
 
-.banner.theme__page-upsell-disabled {
-	pointer-events: none;
-	opacity: 0.5;
-}
+	&.theme__page-upsell-disabled {
+		pointer-events: none;
+		opacity: 0.5;
+	}
 
-.banner.theme__preview-upsell-banner {
-	@include banner-dark();
-	width: 100%;
-	margin: 0;
-	text-decoration: none;
+	&.theme__preview-upsell-banner {
+		@include banner-dark();
+		width: 100%;
+		margin: 0;
+		text-decoration: none;
+	}
 }

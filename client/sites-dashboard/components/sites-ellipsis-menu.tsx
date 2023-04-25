@@ -39,6 +39,7 @@ import {
 	isCustomDomain,
 	isNotAtomicJetpack,
 	isP2Site,
+	isStagingSite,
 } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -263,7 +264,7 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
-	const isStagingSite = site.is_wpcom_staging_site;
+	const isWpcomStagingSite = isStagingSite( site );
 	const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 	const hasStagingSitesFeature = useSafeSiteHasFeature( site.ID, FEATURE_SITE_STAGING_SITES );
 
@@ -283,7 +284,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'database_access',
 			},
 			{
-				condition: ! isStagingSite && isStagingSiteEnabled && hasStagingSitesFeature,
+				condition: ! isWpcomStagingSite && isStagingSiteEnabled && hasStagingSitesFeature,
 				label: __( 'Staging site' ),
 				href: `/hosting-config/${ siteSlug }#staging-site`,
 				sectionName: 'staging_site',
@@ -311,7 +312,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'logs',
 			},
 		].filter( ( { condition } ) => condition ?? true );
-	}, [ __, siteSlug, isStagingSite, isStagingSiteEnabled, hasStagingSitesFeature, isA12n ] );
+	}, [ __, siteSlug, isWpcomStagingSite, isStagingSiteEnabled, hasStagingSitesFeature, isA12n ] );
 }
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {

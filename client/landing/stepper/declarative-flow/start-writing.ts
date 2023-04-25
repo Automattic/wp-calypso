@@ -41,8 +41,9 @@ const startWriting: Flow = {
 						} );
 
 						const siteOrigin = window.location.origin;
+
 						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?showLaunchpad=true&origin=${ siteOrigin }`
+							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }`
 						);
 					}
 				}
@@ -71,7 +72,7 @@ const startWriting: Flow = {
 				message: `${ flowName } requires a logged in user`,
 			};
 		} else if ( currentUserSiteCount && currentUserSiteCount > 0 ) {
-			redirect( '/post?showLaunchpad=true' );
+			redirect( `/post?${ START_WRITING_FLOW }=true` );
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires no preexisting sites`,

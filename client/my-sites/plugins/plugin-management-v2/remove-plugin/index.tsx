@@ -1,14 +1,14 @@
 import { useSelector } from 'react-redux';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import PluginRemoveButton from '../../plugin-remove-button';
-import type { Plugin } from '../types';
+import type { PluginComponentProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import '../style.scss';
 
 interface Props {
 	site: SiteDetails;
-	plugin: Plugin;
+	plugin: PluginComponentProps;
 }
 
 export default function RemovePlugin( { site, plugin }: Props ) {
