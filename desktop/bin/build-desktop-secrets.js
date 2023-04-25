@@ -35,8 +35,7 @@ for ( let i = 0; i < secrets.length; i++ ) {
 		decryptFlags = '-md md5 -d';
 	}
 
-	const cmdBase = `openssl aes-256-cbc ${ decryptFlags } -in ${ encrypted } -out ${ decrypted } -k "${ CALYPSO_SECRETS_ENCRYPTION_KEY }"`;
-	const cmd = path.basename( secrets[ i ] ) === 'win.p12' ? cmdBase + ' -nopad' : cmdBase;
+	const cmd = `openssl aes-256-cbc ${ decryptFlags } -in ${ encrypted } -out ${ decrypted } -k "${ CALYPSO_SECRETS_ENCRYPTION_KEY }"`;
 
 	try {
 		execSync( cmd );
