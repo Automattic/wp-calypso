@@ -4,71 +4,90 @@ const EDITOR_TIMEOUT = 60 * 1000;
 
 /** */
 export class EditorComponent {
-	public page: Page;
+	private page: Page;
+	private parentFrame: Page | Frame | null;
+	private canvasFrame: Page | Frame | null;
 
 	/** */
 	constructor( page: Page ) {
 		this.page = page;
+		this.parentFrame = null;
+		this.canvasFrame = null;
 	}
 
 	/** */
 	async getParentFrame(): Promise< Page | Frame > {
-		const editorFrame = await Promise.race( [
-			new Promise< undefined >( ( resolve ) => {
-				setTimeout( resolve, EDITOR_TIMEOUT );
-			} ),
-			( async (): Promise< Page > => {
-				const editorBody = this.page.locator( 'body.block-editor-page' );
-				await editorBody.waitFor( { timeout: EDITOR_TIMEOUT } );
+		if ( this.parentFrame ) {
+			return this.parentFrame;
+		}
 
-				return this.page;
-			} )(),
-			new Promise< Frame >( ( resolve ) => {
-				const pollInterval = setInterval( () => {
-					const gutenframe = this.page.frame( { url: /calypsoify/ } );
-					if ( gutenframe ) {
-						clearInterval( pollInterval );
-						resolve( gutenframe );
-					}
-				}, 100 );
-			} ),
+		const parentFrame = await Promise.race( [
+			this.waitForParentFrame(),
+			this.waitForParentWrapper(),
 		] );
 
-		if ( ! editorFrame ) {
+		if ( ! parentFrame ) {
 			throw new Error( 'Timed out waiting for the Editor' );
 		}
 
-		return editorFrame;
+		this.parentFrame = parentFrame;
+
+		return parentFrame;
 	}
 
 	/** */
 	async getCanvas(): Promise< Page | Frame > {
-		const editorFrame = await this.getParentFrame();
-		const editorCanvas = await Promise.race( [
-			new Promise< undefined >( ( resolve ) => {
-				setTimeout( resolve, EDITOR_TIMEOUT );
-			} ),
-			( async () => {
-				const canvasWrapper = editorFrame.locator( '.editor-styles-wrapper' );
-				await canvasWrapper.waitFor( { timeout: EDITOR_TIMEOUT } );
+		if ( this.canvasFrame ) {
+			return this.canvasFrame;
+		}
 
-				return editorFrame;
-			} )(),
-			new Promise< Frame >( ( resolve ) => {
-				const pollInterval = setInterval( () => {
-					const canvasFrame = this.page.frame( 'editor-canvas' );
-					if ( canvasFrame ) {
-						clearInterval( pollInterval );
-						resolve( canvasFrame );
-					}
-				}, 100 );
-			} ),
+		const canvasFrame = await Promise.race( [
+			this.waitForCanvasFrame(),
+			this.waitForCanvasWrapper(),
 		] );
 
-		if ( ! editorCanvas ) {
+		if ( ! canvasFrame ) {
 			throw new Error( 'Timed out waiting for the Editor canvas' );
 		}
 
-		return editorCanvas;
+		this.canvasFrame = canvasFrame;
+
+		return canvasFrame;
+	}
+
+	/** */
+	private async waitForParentFrame() {
+		await this.page
+			.frameLocator( 'iframe[src*="calypsoify"]' )
+			.locator( 'body' )
+			.waitFor( { timeout: EDITOR_TIMEOUT } );
+		const parentFrame = this.page.frame( { url: /calypsoify/ } );
+
+		return parentFrame;
+	}
+
+	/** */
+	private async waitForParentWrapper() {
+		const editorBody = this.page.locator( 'body.block-editor-page' );
+		await editorBody.waitFor( { timeout: EDITOR_TIMEOUT } );
+
+		return this.page;
+	}
+
+	/** */
+	private async waitForCanvasFrame() {
+		await this.page.frameLocator( 'iframe[name="editor-canvas"]' ).locator( 'body' ).waitFor();
+		const canvasFrame = this.page.frame( 'editor-canvas' );
+
+		return canvasFrame;
+	}
+
+	/** */
+	private async waitForCanvasWrapper() {
+		const parentFrame = await this.getParentFrame();
+		const canvasWrapper = parentFrame.locator( '.editor-styles-wrapper' );
+		await canvasWrapper.waitFor();
+
+		return parentFrame;
 	}
 }
