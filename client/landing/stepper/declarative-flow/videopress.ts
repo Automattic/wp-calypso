@@ -212,6 +212,9 @@ const videopress: Flow = {
 			case 'chooseADomain':
 				stepValidateSiteTitle();
 				break;
+			case 'processing':
+				addVideoPressPendingAction();
+				break;
 		}
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -236,7 +239,6 @@ const videopress: Flow = {
 				}
 
 				case 'chooseADomain': {
-					addVideoPressPendingAction();
 					return navigate( 'processing' );
 				}
 
