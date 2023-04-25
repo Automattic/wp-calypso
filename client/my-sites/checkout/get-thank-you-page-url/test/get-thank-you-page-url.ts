@@ -1040,7 +1040,10 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/checkout/foo.bar/offer-plan-upgrade/business/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to business monthly upgrade nudge if jetpack is not in the cart, and premium monthly is in the cart', () => {
+	// NOTE: as part of the calypso_postpurchase_upsell_monthly_to_annual_plan experiment
+	// we're disabling the monthly premium to monthly business plan upsell
+	it( 'redirects to thank you page if jetpack is not in the cart, and premium monthly is in the cart', () => {
+		// it( 'redirects to business monthly upgrade nudge if jetpack is not in the cart, and premium monthly is in the cart', () => {
 		const cart = {
 			...getMockCart(),
 			products: [
@@ -1058,7 +1061,8 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: samplePurchaseId,
 		} );
 		expect( url ).toBe(
-			`/checkout/foo.bar/offer-plan-upgrade/business-monthly/${ samplePurchaseId }`
+			`/checkout/thank-you/foo.bar/${ samplePurchaseId }`
+			// `/checkout/foo.bar/offer-plan-upgrade/business-monthly/${ samplePurchaseId }`
 		);
 	} );
 
@@ -1616,7 +1620,10 @@ describe( 'getThankYouPageUrl', () => {
 			);
 		} );
 
-		it( 'offers discounted monthly business plan upgrade when monthly premium plan is purchased.', () => {
+		// NOTE: as part of the calypso_postpurchase_upsell_monthly_to_annual_plan experiment
+		// we're disabling the monthly premium to monthly business plan upsell
+		// it( 'offers discounted monthly business plan upgrade when monthly premium plan is purchased.', () => {
+		it( 'shows thank you page for monthly premium plan purchases', () => {
 			const cart = {
 				...getMockCart(),
 				products: [
@@ -1634,7 +1641,8 @@ describe( 'getThankYouPageUrl', () => {
 				cart,
 			} );
 			expect( url ).toBe(
-				`/checkout/foo.bar/offer-plan-upgrade/business-monthly/${ samplePurchaseId }`
+				`/checkout/thank-you/foo.bar/${ samplePurchaseId }`
+				// `/checkout/foo.bar/offer-plan-upgrade/business-monthly/${ samplePurchaseId }`
 			);
 		} );
 
