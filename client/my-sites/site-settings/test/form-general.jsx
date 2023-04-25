@@ -19,6 +19,7 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_JETPACK_FREE,
 } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -133,6 +134,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 		let testProps;
 		let atomicBusinessProps;
 		let atomicStagingProps;
+		let jetpackProps;
 		let simplePersonalProps;
 
 		beforeAll( () => {
@@ -172,6 +174,26 @@ describe( 'SiteSettingsFormGeneral', () => {
 				isP2HubSite: false,
 				isWPForTeamsSite: false,
 				isWpcomStagingSite: true,
+				updateFields: jest.fn( ( fields ) => {
+					testProps.fields = fields;
+				} ),
+			};
+			jetpackProps = {
+				...props,
+				siteId: 1234,
+				site: {
+					ID: 1234,
+					plan: { product_slug: PLAN_JETPACK_FREE },
+					domain: 'equivalent-lungfish.jurassic.ninja',
+				},
+				siteDomains: [],
+				siteIsAtomic: false,
+				siteIsJetpack: true,
+				siteIsP2Hub: false,
+				isAtomicAndEditingToolkitDeactivated: false,
+				isP2HubSite: false,
+				isWPForTeamsSite: false,
+				isWpcomStagingSite: false,
 				updateFields: jest.fn( ( fields ) => {
 					testProps.fields = fields;
 				} ),
@@ -306,6 +328,38 @@ describe( 'SiteSettingsFormGeneral', () => {
 				getByLabelText( 'Discourage search engines from indexing this site', { exact: false } )
 			).not.toBeChecked();
 			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
+		} );
+
+		test( 'Jetpack Site, Public -> click Discourage Search Engines', async () => {
+			testProps = {
+				...jetpackProps,
+				isComingSoon: false,
+				isUnlaunchedSite: false,
+				fields: {
+					wpcom_public_coming_soon: 0,
+					wpcom_coming_soon: 0,
+					blog_public: 1,
+				},
+			};
+			const { container, getByLabelText } = renderWithRedux(
+				<SiteSettingsFormGeneral { ...testProps } />
+			);
+			expect(
+				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
+			).toBe( 0 );
+			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 1 );
+
+			const discourageRadio = getByLabelText( 'Discourage search engines from indexing this site', {
+				exact: false,
+			} );
+			expect( discourageRadio ).not.toBeChecked();
+
+			await userEvent.click( discourageRadio );
+			expect( testProps.updateFields ).toBeCalledWith( {
+				blog_public: 0,
+				wpcom_coming_soon: 0,
+				wpcom_public_coming_soon: 0,
+			} );
 		} );
 
 		test( 'Atomic Site, Business Plan, Unlaunched', () => {
