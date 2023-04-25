@@ -7,11 +7,11 @@ import {
 	SubscriptionManagerSubscriptionsCount,
 } from '../types';
 
-type SiteSubscriptionUnsubscribeParams = {
+type UnsubscribeParams = {
 	blog_id: number | string;
 };
 
-type SiteSubscriptionUnsubscribeResponse = {
+type UnsubscribeResponse = {
 	success: boolean;
 	subscribed: boolean;
 	subscription: null;
@@ -24,7 +24,7 @@ const useSiteUnsubscribeMutation = () => {
 	const subscriptionsCountCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 
 	return useMutation(
-		async ( params: SiteSubscriptionUnsubscribeParams ) => {
+		async ( params: UnsubscribeParams ) => {
 			if ( ! params.blog_id ) {
 				throw new Error(
 					// reminder: translate this string when we add it to the UI
@@ -32,7 +32,7 @@ const useSiteUnsubscribeMutation = () => {
 				);
 			}
 
-			const response = await callApi< SiteSubscriptionUnsubscribeResponse >( {
+			const response = await callApi< UnsubscribeResponse >( {
 				path: `/read/site/${ params.blog_id }/post_email_subscriptions/delete`,
 				method: 'POST',
 				isLoggedIn,
