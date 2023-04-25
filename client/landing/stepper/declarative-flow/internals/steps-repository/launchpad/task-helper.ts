@@ -169,7 +169,7 @@ export function getEnhancedTasks(
 										: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 								} ),
 							} );
-							if ( isStartWritingFlow( flow || null ) ) {
+							if ( isStartWritingFlow( flow || null ) && site?.plan?.is_free ) {
 								plansUrl = addQueryArgs( `/setup/${ START_WRITING_FLOW }/plans`, {
 									...{ siteSlug: siteSlug, 'start-writing': true },
 								} );
