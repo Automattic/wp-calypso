@@ -58,9 +58,12 @@ const initialState = {
 	jetpack: {},
 };
 
-function renderWithRedux( ui ) {
+function renderWithRedux( ui, customInitialState = {} ) {
 	return renderWithProvider( ui, {
-		initialState,
+		initialState: {
+			...initialState,
+			...customInitialState,
+		},
 		reducers: {
 			editor: editorReducer,
 			media: mediaReducer,
@@ -124,7 +127,11 @@ describe( 'SiteSettingsFormGeneral', () => {
 		} );
 
 		test( 'No UpsellNudge for jetpack plans', () => {
-			renderWithRedux( <SiteSettingsFormGeneral { ...props } siteIsJetpack={ true } /> );
+			renderWithRedux( <SiteSettingsFormGeneral { ...props } siteIsJetpack={ true } />, {
+				ui: {
+					selectedSiteId: 1234,
+				},
+			} );
 			expect( screen.queryByTestId( 'upsell-nudge' ) ).not.toBeInTheDocument();
 		} );
 	} );
