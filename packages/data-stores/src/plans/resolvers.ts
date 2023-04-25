@@ -62,7 +62,7 @@ function calculateDiscounts( planProducts: PlanProduct[] ) {
 		if ( annualPlan && monthlyPlan ) {
 			const annualCostIfPaidMonthly = monthlyPlan.rawPrice * 12;
 			const annualCostIfPaidAnnually = annualPlan.rawPrice;
-			const discount = Math.round(
+			const discount = Math.floor(
 				100 * ( 1 - annualCostIfPaidAnnually / annualCostIfPaidMonthly )
 			);
 			annualPlan.annualDiscount = discount;

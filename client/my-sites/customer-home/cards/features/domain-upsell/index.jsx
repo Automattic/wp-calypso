@@ -19,6 +19,7 @@ import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/curren
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
+import isSiteChecklistComplete from 'calypso/state/selectors/is-site-checklist-complete';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
@@ -56,6 +57,10 @@ export default function DomainUpsell( { context } ) {
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 
+	const isSiteSetupComplete = useSelector( ( state ) =>
+		isSiteChecklistComplete( state, site?.ID )
+	);
+
 	const shouldNotShowUpselDismissed = ! hasPreferences || isDismissed;
 
 	const shouldNotShowProfileUpsell =
@@ -67,7 +72,8 @@ export default function DomainUpsell( { context } ) {
 			isP2Site( primarySite ) ||
 			isNotAtomicJetpack( primarySite ) );
 
-	const shouldNotShowMyHomeUpsell = ! isProfileUpsell && ( siteDomainsLength || ! isEmailVerified );
+	const shouldNotShowMyHomeUpsell =
+		! isProfileUpsell && ( siteDomainsLength || ! isEmailVerified || isSiteSetupComplete );
 
 	if (
 		shouldNotShowUpselDismissed ||

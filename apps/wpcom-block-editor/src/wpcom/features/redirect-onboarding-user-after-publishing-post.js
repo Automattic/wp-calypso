@@ -25,7 +25,7 @@ export function redirectOnboardingUserAfterPublishingPost() {
 			unsubscribe();
 
 			dispatch( 'core/edit-post' ).closePublishSidebar();
-			window.location.href = `${ siteOrigin }/setup/write/launchpad?siteSlug=${ siteSlug }&${ START_WRITING_FLOW }=true`;
+			window.location.href = `${ siteOrigin }/setup/start-writing/launchpad?siteSlug=${ siteSlug }&${ START_WRITING_FLOW }=true`;
 		}
 	} );
 }

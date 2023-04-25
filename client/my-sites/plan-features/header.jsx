@@ -242,7 +242,7 @@ export class PlanFeaturesHeader extends Component {
 		const rawPrice = relatedMonthlyPlan.raw_price;
 
 		const annualPricePerMonth = relatedYearlyPlan.raw_price / 12;
-		const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
+		const discountRate = Math.floor( 100 * ( ( rawPrice - annualPricePerMonth ) / rawPrice ) );
 
 		const isLoading = typeof rawPrice !== 'number';
 		const annualDiscountText = translate( `You're saving %(discountRate)s%% by paying annually`, {
@@ -276,7 +276,7 @@ export class PlanFeaturesHeader extends Component {
 
 		if ( ( isInSignup || isLoggedInMonthlyPricing ) && isMonthlyPlan && relatedYearlyPlan ) {
 			const annualPricePerMonth = relatedYearlyPlan.raw_price / 12;
-			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
+			const discountRate = Math.floor( 100 * ( ( rawPrice - annualPricePerMonth ) / rawPrice ) );
 			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
 		}
 
@@ -307,7 +307,7 @@ export class PlanFeaturesHeader extends Component {
 			return null;
 		}
 
-		const discountPercent = Math.round( ( 100 * ( rawPrice - discountPrice ) ) / rawPrice );
+		const discountPercent = Math.floor( ( 100 * ( rawPrice - discountPrice ) ) / rawPrice );
 		if ( discountPercent <= 0 ) {
 			return null;
 		}
@@ -326,7 +326,7 @@ export class PlanFeaturesHeader extends Component {
 
 		if ( isYearly && relatedMonthlyPlan && relatedYearlyPlan ) {
 			const annualPricePerMonth = relatedYearlyPlan.raw_price / 12;
-			const discountRate = Math.round(
+			const discountRate = Math.floor(
 				( 100 * ( relatedMonthlyPlan.raw_price - annualPricePerMonth ) ) /
 					relatedMonthlyPlan.raw_price
 			);
