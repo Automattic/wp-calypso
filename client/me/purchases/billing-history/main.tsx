@@ -70,7 +70,7 @@ function BillingHistory() {
 				) }
 				align="left"
 			/>
-			<QueryBillingTransactions />
+			<QueryBillingTransactions transactionType="past" />
 			<PurchasesNavigation section="billingHistory" />
 			<BillingHistoryContent siteId={ null } getReceiptUrlFor={ billingHistoryReceipt } />
 

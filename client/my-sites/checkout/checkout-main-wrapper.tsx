@@ -76,7 +76,7 @@ export default function CheckoutMainWrapper( {
 			logToLogstash( {
 				feature: 'calypso_client',
 				message: 'CheckoutMainWrapper saw productSlug to add',
-				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				severity: config( 'env_id' ) === 'production' ? 'info' : 'debug',
 				extra: {
 					productSlug: productAliasFromUrl,
 				},

@@ -12,7 +12,7 @@ import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import individualTransactions from './individual-transactions/reducer';
 import { billingTransactionsSchema } from './schema';
 import ui from './ui/reducer';
-import type { BillingTransactionsState } from './types';
+import type { BillingTransactionsState, BillingTransactionsStateItems } from './types';
 import type { AnyAction } from 'redux';
 
 /**
@@ -25,7 +25,14 @@ export const items = withSchemaValidation(
 		switch ( action.type ) {
 			case BILLING_TRANSACTIONS_RECEIVE: {
 				const { past, upcoming } = action;
-				return { past, upcoming };
+				const update: BillingTransactionsStateItems = {};
+				if ( past ) {
+					update.past = past;
+				}
+				if ( upcoming ) {
+					update.upcoming = upcoming;
+				}
+				return update;
 			}
 		}
 

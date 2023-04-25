@@ -25,7 +25,6 @@ export default async function freePurchaseProcessor(
 	transactionOptions: PaymentProcessorOptions
 ): Promise< PaymentProcessorResponse > {
 	const {
-		siteId,
 		responseCart,
 		includeDomainDetails,
 		includeGSuiteDetails,
@@ -52,7 +51,6 @@ export default async function freePurchaseProcessor(
 		{
 			name: '',
 			couponId: responseCart.coupon,
-			siteId: siteId ? String( siteId ) : '',
 			domainDetails: getDomainDetails( contactDetails, {
 				includeDomainDetails,
 				includeGSuiteDetails,
@@ -75,7 +73,7 @@ function prepareFreePurchaseTransaction(
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+			siteId: transactionOptions.siteId,
 			contactDetails: transactionData.domainDetails ?? null,
 			responseCart: doesPurchaseHaveFullCredits( transactionOptions.responseCart )
 				? transactionOptions.responseCart

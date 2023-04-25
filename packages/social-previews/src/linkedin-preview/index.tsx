@@ -75,7 +75,7 @@ export function LinkedInPreview( {
 					/>
 				) : null }
 				<article>
-					<img className="linkedin-preview__image" src={ image } alt="" />
+					{ image ? <img className="linkedin-preview__image" src={ image } alt="" /> : null }
 					{ url ? (
 						<div className="linkedin-preview__description">
 							<h2 className="linkedin-preview__description--title">{ title }</h2>

@@ -51,7 +51,7 @@ class Sites extends Component {
 
 		// Domains can be managed on Simple and Atomic sites.
 		if ( /^\/domains/.test( path ) ) {
-			if ( site.is_wpcom_staging_site ) {
+			if ( site?.is_wpcom_staging_site ) {
 				return false;
 			}
 			return ! site.jetpack || site.options.is_automated_transfer;
@@ -59,7 +59,7 @@ class Sites extends Component {
 
 		// If a site is Jetpack, plans are available only when it is upgradeable.
 		if ( /^\/plans/.test( path ) ) {
-			if ( site.is_wpcom_staging_site ) {
+			if ( site?.is_wpcom_staging_site ) {
 				return false;
 			}
 			return ! site.jetpack || site.capabilities.manage_options;
