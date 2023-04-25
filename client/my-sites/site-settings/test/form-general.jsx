@@ -212,7 +212,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 0 );
 		} );
 
-		test( 'Simple Site, Personal Plan, Private', () => {
+		test( 'Simple Site, Personal Plan, Private -> click Public -> click Discourage Search Engines', async () => {
 			testProps = {
 				...simplePersonalProps,
 				isComingSoon: false,
@@ -230,12 +230,30 @@ describe( 'SiteSettingsFormGeneral', () => {
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
 			).toBe( 0 );
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
+
+			const publicRadio = getByLabelText( 'Public' );
+			const discourageRadio = getByLabelText( 'Discourage search engines from indexing this site', {
+				exact: false,
+			} );
+
 			expect( getByLabelText( 'Coming Soon' ) ).not.toBeChecked();
-			expect( getByLabelText( 'Public' ) ).not.toBeChecked();
-			expect(
-				getByLabelText( 'Discourage search engines from indexing this site', { exact: false } )
-			).not.toBeChecked();
+			expect( publicRadio ).not.toBeChecked();
+			expect( discourageRadio ).not.toBeChecked();
 			expect( getByLabelText( 'Private' ) ).toBeChecked();
+
+			await userEvent.click( publicRadio );
+			expect( testProps.updateFields ).toBeCalledWith( {
+				blog_public: 1,
+				wpcom_coming_soon: 0,
+				wpcom_public_coming_soon: 0,
+			} );
+
+			await userEvent.click( discourageRadio );
+			expect( testProps.updateFields ).toBeCalledWith( {
+				blog_public: 0,
+				wpcom_coming_soon: 0,
+				wpcom_public_coming_soon: 0,
+			} );
 		} );
 
 		test( 'Simple Site, Personal Plan, Coming Soon', () => {
@@ -380,6 +398,39 @@ describe( 'SiteSettingsFormGeneral', () => {
 			).toBe( 0 );
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 3 );
 			expect( getByLabelText( 'Coming Soon' ) ).toBeChecked();
+		} );
+
+		test( 'Atomic Staging Site, Coming Soon -> click Public', async () => {
+			testProps = {
+				...atomicStagingProps,
+				isComingSoon: true,
+				isUnlaunchedSite: false,
+				fields: {
+					wpcom_public_coming_soon: 1,
+					wpcom_coming_soon: 0,
+					blog_public: 0,
+				},
+			};
+			const { container, getByLabelText } = renderWithRedux(
+				<SiteSettingsFormGeneral { ...testProps } />
+			);
+			expect(
+				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
+			).toBe( 0 );
+			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 3 );
+
+			const publicRadio = getByLabelText( 'Public' );
+
+			expect( getByLabelText( 'Coming Soon' ) ).toBeChecked();
+			expect( publicRadio ).not.toBeChecked();
+			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
+
+			await userEvent.click( publicRadio );
+			expect( testProps.updateFields ).toBeCalledWith( {
+				blog_public: 0,
+				wpcom_coming_soon: 0,
+				wpcom_public_coming_soon: 0,
+			} );
 		} );
 
 		test( 'Atomic Staging Site, Public', () => {
