@@ -230,6 +230,11 @@ describe( 'SiteSettingsFormGeneral', () => {
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
 			).toBe( 0 );
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
+			expect( getByLabelText( 'Coming Soon' ) ).not.toBeChecked();
+			expect( getByLabelText( 'Public' ) ).not.toBeChecked();
+			expect(
+				getByLabelText( 'Discourage search engines from indexing this site' )
+			).not.toBeChecked();
 			expect( getByLabelText( 'Private' ) ).toBeChecked();
 		} );
 
@@ -252,6 +257,11 @@ describe( 'SiteSettingsFormGeneral', () => {
 			).toBe( 0 );
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
 			expect( getByLabelText( 'Coming Soon' ) ).toBeChecked();
+			expect( getByLabelText( 'Public' ) ).not.toBeChecked();
+			expect(
+				getByLabelText( 'Discourage search engines from indexing this site' )
+			).not.toBeChecked();
+			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
 		} );
 
 		test( 'Simple Site, Personal Plan, Public', () => {
@@ -272,7 +282,12 @@ describe( 'SiteSettingsFormGeneral', () => {
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
 			).toBe( 0 );
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
+			expect( getByLabelText( 'Coming Soon' ) ).not.toBeChecked();
 			expect( getByLabelText( 'Public' ) ).toBeChecked();
+			expect(
+				getByLabelText( 'Discourage search engines from indexing this site' )
+			).not.toBeChecked();
+			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
 		} );
 
 		test( 'Atomic Site, Business Plan, Unlaunched', () => {
@@ -293,6 +308,30 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 0 );
 		} );
 
+		test( 'Atomic Site, Business Plan, Search Engines Discouraged', () => {
+			testProps = {
+				...atomicBusinessProps,
+				isComingSoon: false,
+				isUnlaunchedSite: false,
+				fields: {
+					wpcom_public_coming_soon: 0,
+					wpcom_coming_soon: 0,
+					blog_public: 0,
+				},
+			};
+			const { container, getByLabelText } = renderWithRedux(
+				<SiteSettingsFormGeneral { ...testProps } />
+			);
+			expect(
+				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
+			).toBe( 0 );
+			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
+			expect( getByLabelText( 'Coming Soon' ) ).not.toBeChecked();
+			expect( getByLabelText( 'Public' ) ).toBeChecked();
+			expect( getByLabelText( 'Discourage search engines from indexing this site' ) ).toBeChecked();
+			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
+		} );
+
 		test( 'Atomic Site, Business Plan, Public', () => {
 			testProps = {
 				...atomicBusinessProps,
@@ -311,7 +350,12 @@ describe( 'SiteSettingsFormGeneral', () => {
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
 			).toBe( 0 );
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
+			expect( getByLabelText( 'Coming Soon' ) ).not.toBeChecked();
 			expect( getByLabelText( 'Public' ) ).toBeChecked();
+			expect(
+				getByLabelText( 'Discourage search engines from indexing this site' )
+			).not.toBeChecked();
+			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
 		} );
 
 		test( 'Atomic Staging Site, Unlaunched', () => {
@@ -354,7 +398,32 @@ describe( 'SiteSettingsFormGeneral', () => {
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
 			).toBe( 0 );
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 3 );
+			expect( getByLabelText( 'Coming Soon' ) ).not.toBeChecked();
 			expect( getByLabelText( 'Public' ) ).toBeChecked();
+			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
+		} );
+
+		test( 'Atomic Staging Site, Search Engines Discouraged', () => {
+			testProps = {
+				...atomicStagingProps,
+				isComingSoon: false,
+				isUnlaunchedSite: false,
+				fields: {
+					wpcom_public_coming_soon: 0,
+					wpcom_coming_soon: 0,
+					blog_public: 0,
+				},
+			};
+			const { container, getByLabelText } = renderWithRedux(
+				<SiteSettingsFormGeneral { ...testProps } />
+			);
+			expect(
+				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
+			).toBe( 0 );
+			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 3 );
+			expect( getByLabelText( 'Coming Soon' ) ).not.toBeChecked();
+			expect( getByLabelText( 'Public' ) ).toBeChecked();
+			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
 		} );
 	} );
 

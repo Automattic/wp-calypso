@@ -474,8 +474,11 @@ export class SiteSettingsFormGeneral extends Component {
 								}
 								disabled={ isRequestingSettings }
 								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+								aria-labelledby="search-discouraged-label"
 							/>
-							<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
+							<span id="search-discouraged-label">
+								{ translate( 'Discourage search engines from indexing this site' ) }
+							</span>
 							<FormSettingExplanation>
 								{ translate(
 									'This option does not block access to your site — it is up to search engines to honor your request.'
