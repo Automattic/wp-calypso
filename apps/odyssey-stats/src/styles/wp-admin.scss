@@ -7,7 +7,7 @@
 }
 
 // Override notice styles
-#wpbody-content > .notice {
+#wpbody-content .notice {
 	display: block;
 	width: auto;
 	background: var(--studio-white);
