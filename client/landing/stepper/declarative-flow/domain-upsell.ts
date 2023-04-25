@@ -70,16 +70,16 @@ const domainUpsell: Flow = {
 						const planCartItem = getPlanCartItem();
 						const domainCartItem = getDomainCartItem();
 						if ( planCartItem ) {
-							await addPlanToCart( siteSlug as string, flowName as string, true, '', planCartItem );
+							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
 						}
 
 						if ( domainCartItem ) {
-							await addProductsToCart( siteSlug as string, flowName as string, [ domainCartItem ] );
+							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
 						}
 
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
-								( siteSlug as string ) ?? ''
+								siteSlug ?? ''
 							) }?redirect_to=${ encodedReturnUrl }`
 						);
 					}
