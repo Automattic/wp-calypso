@@ -1452,6 +1452,7 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
+    "@types/wordpress__components": ^23.0.1
     "@wordpress/components": ^22.1.0
     "@wordpress/i18n": ^4.22.0
     classnames: ^2.3.1
@@ -7510,6 +7511,22 @@ __metadata:
     downshift: ^6.0.15
     re-resizable: ^6.4.0
   checksum: 1032751b2a5e37642f64b1a97b79d150c6da21e1c7e40d2b8337133b59c10260310f04a3f5911f4bc8f4eb068f009a61bf18d92c476e899b3df11cef347e5b46
+  languageName: node
+  linkType: hard
+
+"@types/wordpress__components@npm:^23.0.1":
+  version: 23.0.1
+  resolution: "@types/wordpress__components@npm:23.0.1"
+  dependencies:
+    "@types/react": "*"
+    "@types/tinycolor2": "*"
+    "@types/wordpress__components": "*"
+    "@types/wordpress__notices": "*"
+    "@types/wordpress__rich-text": "*"
+    "@wordpress/element": ^5.0.0
+    downshift: ^6.0.15
+    re-resizable: ^6.4.0
+  checksum: 3adce6d6350f790fb1f310fb40a4981a95a7b3b0fb63bc292afacf557095ddd3f33eea13485514f164c4125f06db9b40c82ee8cd0375dcc22c12c18a5db55586
   languageName: node
   linkType: hard
 
