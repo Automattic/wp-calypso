@@ -83,6 +83,19 @@
 					}
 				}
 			}
+
+			.p2-label {
+				display: inline-block;
+				text-align: center;
+				width: 36px;
+				height: 20px;
+				background: #2a6aee;
+				color: $studio-green-0;
+				font-size: 12;
+				border-radius: 4px;
+				margin-left: 8px;
+				line-height: 20px;
+			}
 		}
 
 		.title-box,
