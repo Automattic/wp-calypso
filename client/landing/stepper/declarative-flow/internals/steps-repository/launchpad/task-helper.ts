@@ -177,7 +177,11 @@ export function getEnhancedTasks(
 
 							window.location.assign( plansUrl );
 						},
-						badgeText: isVideoPressFlowWithUnsupportedPlan ? null : translatedPlanName,
+						badgeText:
+							isVideoPressFlowWithUnsupportedPlan ||
+							( isStartWritingFlow( flow || null ) && ! planCompleted )
+								? null
+								: translatedPlanName,
 						completed: ( planCompleted ?? task.completed ) && ! shouldDisplayWarning,
 						warning: shouldDisplayWarning,
 					};

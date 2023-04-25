@@ -1,6 +1,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
+import { addQueryArgs } from '@wordpress/url';
 import { useSelector } from 'react-redux';
 import { OnboardSelect } from 'calypso/../packages/data-stores/src';
 import { addPlanToCart, addProductsToCart } from 'calypso/../packages/onboarding/src';
@@ -47,8 +48,6 @@ const startWriting: Flow = {
 			} ),
 			[]
 		);
-		const returnUrl = `/setup/${ flowName }/launchpad?siteSlug=${ siteSlug }`;
-		const encodedReturnUrl = encodeURIComponent( returnUrl );
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
@@ -89,12 +88,19 @@ const startWriting: Flow = {
 					return navigate( 'launchpad' );
 				case 'launchpad':
 					if ( getPlanCartItem() || getDomainCartItem() ) {
+						const returnUrl = addQueryArgs( `/home/${ siteSlug }`, {
+							celebrateLaunch: true,
+							launchpadComplete: true,
+						} );
+						const encodedReturnUrl = encodeURIComponent( returnUrl );
+
 						return window.location.assign(
 							`/checkout/${ encodeURIComponent(
 								( siteSlug as string ) ?? ''
 							) }?redirect_to=${ encodedReturnUrl }`
 						);
 					}
+					break;
 			}
 		}
 		return { submit };
