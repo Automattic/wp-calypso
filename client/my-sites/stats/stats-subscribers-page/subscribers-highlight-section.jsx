@@ -4,28 +4,24 @@ import { translate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import './subscribers-highlight-section.scss';
 
-function getSubscriberHighlights() {
+function useSubscriberHighlights() {
 	const highlights = [
 		{
-			id: 1,
 			heading: 'Total email subscribers',
 			count: 1410,
 			previousCount: 1080,
 		},
 		{
-			id: 2,
 			heading: 'Free email subscribers',
 			count: 1340,
 			previousCount: 1034,
 		},
 		{
-			id: 3,
 			heading: 'Paid email subscribers',
 			count: 70,
 			previousCount: 46,
 		},
 		{
-			id: 4,
 			heading: 'WordPress.com subscribers',
 			count: 322,
 			previousCount: 326,
@@ -66,13 +62,13 @@ function SubscriberHighlightsHeader() {
 }
 
 function SubscriberHighlightsListing() {
-	const highlights = getSubscriberHighlights();
+	const highlights = useSubscriberHighlights();
 
 	return (
 		<div className="highlight-cards-list">
 			{ highlights.map( ( highlight ) => (
 				<CountComparisonCard
-					key={ highlight.id }
+					key={ highlight.heading }
 					heading={ highlight.heading }
 					count={ highlight.count }
 					previousCount={ highlight.previousCount }
