@@ -2,7 +2,7 @@
 import { getPlan, PLAN_FREE, is2023PricingGridActivePage } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { DOMAIN_UPSELL_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { DOMAIN_UPSELL_FLOW, isLinkInBioFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -137,7 +137,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return __( 'Choose your flavor of WordPress' );
 		}
 
-		if ( flowName === NEWSLETTER_FLOW ) {
+		if ( isNewsletterFlow( flowName ) ) {
 			return __( `There's a plan for you.` );
 		}
 
@@ -155,7 +155,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			<Button onClick={ handleFreePlanButtonClick } className="is-borderless" />
 		);
 
-		if ( flowName === NEWSLETTER_FLOW ) {
+		if ( isNewsletterFlow( flowName ) ) {
 			return hideFreePlan
 				? __( 'Unlock a powerful bundle of features for your Newsletter.' )
 				: translate(
@@ -164,16 +164,27 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 				  );
 		}
 
+		if ( isLinkInBioFlow( flowName ) ) {
+			return hideFreePlan
+				? __( 'Unlock a powerful bundle of features for your Link in Bio.' )
+				: translate(
+						`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
+						{ components: { link: freePlanButton } }
+				  );
+		}
+
 		if ( flowName === DOMAIN_UPSELL_FLOW ) {
 			return;
 		}
 
-		return hideFreePlan
-			? __( 'Unlock a powerful bundle of features for your Link in Bio.' )
-			: translate(
-					`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
-					{ components: { link: freePlanButton } }
-			  );
+		if ( ! hideFreePlan ) {
+			return translate(
+				`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
+				{ components: { link: freePlanButton } }
+			);
+		}
+
+		return;
 	};
 	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 
