@@ -79,8 +79,8 @@ const startWriting: Flow = {
 				message: `${ flowName } requires a logged in user`,
 			};
 		} else if ( userAlreadyHasSites && ! isLaunchpad ) {
-		    // Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
-			// This prevents a bunch of sites being created accidentally
+			// Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
+			// This prevents a bunch of sites being created accidentally.
 			redirect( `/post?${ START_WRITING_FLOW }=true` );
 			result = {
 				state: AssertConditionState.CHECKING,
