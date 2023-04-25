@@ -11,9 +11,10 @@ import './style.scss';
 interface Props {
 	sites: Array< SiteData >;
 	isLargeScreen?: boolean;
+	isLoading: boolean;
 }
 
-export default function EditButton( { sites, isLargeScreen }: Props ) {
+export default function EditButton( { sites, isLargeScreen, isLoading }: Props ) {
 	const translate = useTranslate();
 
 	const { setIsBulkManagementActive, setSelectedSites } = useContext( SitesOverviewContext );
@@ -33,7 +34,12 @@ export default function EditButton( { sites, isLargeScreen }: Props ) {
 
 	return (
 		<ButtonGroup>
-			<Button className="dashboard-bulk-actions__edit-button" compact onClick={ handleEditAll }>
+			<Button
+				className="dashboard-bulk-actions__edit-button"
+				compact
+				onClick={ handleEditAll }
+				disabled={ isLoading }
+			>
 				{ translate( 'Edit All', { context: 'button label' } ) }
 			</Button>
 		</ButtonGroup>

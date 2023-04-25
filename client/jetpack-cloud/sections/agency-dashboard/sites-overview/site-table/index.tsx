@@ -57,7 +57,7 @@ const SiteTable = ( { isLoading, columns, items }: Props, ref: Ref< HTMLTableEle
 							) ) }
 							<th colSpan={ 3 }>
 								<div className="plugin-common-table__bulk-actions">
-									<EditButton isLargeScreen sites={ items } />
+									<EditButton isLargeScreen sites={ items } isLoading={ isLoading } />
 								</div>
 							</th>
 						</>
