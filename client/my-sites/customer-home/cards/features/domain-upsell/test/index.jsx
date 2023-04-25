@@ -71,6 +71,7 @@ jest.mock( '@automattic/domain-picker/src', () => {
 
 let pageLink = '';
 jest.mock( 'page', () => ( link ) => ( pageLink = link ) );
+jest.mock( 'calypso/state/checklist/actions' );
 
 const domainUpsellHeadingFreePlan = 'Own your online identity with a custom domain';
 const domainUpsellHeadingPaidPlan = 'Make your mark online with a memorable domain name';
