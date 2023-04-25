@@ -1,14 +1,16 @@
 import { Card } from '@automattic/components';
-import { ToggleControl } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback } from 'react';
+import { FunctionComponent, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import QueryBackupStagingSite from 'calypso/components/data/query-backup-staging-site';
 import getBackupStagingSiteInfo from 'calypso/state/rewind/selectors/get-backup-staging-site-info';
+import getBackupStagingUpdateRequestStatus from 'calypso/state/rewind/selectors/get-backup-staging-update-status';
 import hasFetchedStagingSiteInfo from 'calypso/state/rewind/selectors/has-fetched-staging-site-info';
+import isRequestingStagingSiteInfo from 'calypso/state/rewind/selectors/is-requesting-staging-site-info';
 import { requestUpdateBackupStagingFlag } from 'calypso/state/rewind/staging/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import StagingToggleControl from './staging-toggle-control';
 import './style.scss';
 
 const JetpackStagingSitesManagement: FunctionComponent = () => {
@@ -17,11 +19,25 @@ const JetpackStagingSitesManagement: FunctionComponent = () => {
 
 	const siteId = useSelector( getSelectedSiteId ) as number;
 
+	const isRequesting = useSelector( ( state ) => isRequestingStagingSiteInfo( state, siteId ) );
+	const updateRequestStatus = useSelector( ( state ) =>
+		getBackupStagingUpdateRequestStatus( state, siteId )
+	);
 	const hasFetched = useSelector( ( state ) => hasFetchedStagingSiteInfo( state, siteId ) );
 	const stagingInfo = useSelector( ( state ) => getBackupStagingSiteInfo( state, siteId ) );
 
 	const isStaging = stagingInfo?.staging ?? false;
-	const [ stagingToggle, setStagingToggle ] = useState( () => isStaging );
+	const [ stagingToggle, setStagingToggle ] = useState( false );
+
+	// Use constant for updateRequestStatus instead of just the string for comparison
+	const isLoading = isRequesting || updateRequestStatus === 'pending';
+
+	// Set the staging toggle once we have fetched the staging info
+	useEffect( () => {
+		if ( hasFetched && ! isLoading ) {
+			setStagingToggle( isStaging );
+		}
+	}, [ hasFetched, isLoading, isStaging ] );
 
 	const toggleStagingFlag = useCallback( () => {
 		setStagingToggle( ! stagingToggle );
@@ -64,7 +80,11 @@ const JetpackStagingSitesManagement: FunctionComponent = () => {
 						<Card className="setting-content">
 							<div className="setting-option">
 								<div className="setting-option__toggle">
-									<ToggleControl checked={ stagingToggle } onChange={ toggleStagingFlag } />
+									<StagingToggleControl
+										loading={ isLoading }
+										checked={ stagingToggle }
+										onChange={ toggleStagingFlag }
+									/>
 								</div>
 								<div className="setting-option__description">
 									{ translate(
