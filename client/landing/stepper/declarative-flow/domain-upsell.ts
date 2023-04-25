@@ -40,7 +40,7 @@ const domainUpsell: Flow = {
 		);
 		const { setHideFreePlan } = useDispatch( ONBOARD_STORE );
 
-		const returnUrl = `/setup/${ flowName }/launchpad?siteSlug=${ siteSlug }`;
+		const returnUrl = `/setup/${ flowName ?? 'free' }/launchpad?siteSlug=${ siteSlug }`;
 		const encodedReturnUrl = encodeURIComponent( returnUrl );
 
 		const exitFlow = ( location = '/sites' ) => {
@@ -69,11 +69,11 @@ const domainUpsell: Flow = {
 					if ( providedDependencies?.goToCheckout ) {
 						const planCartItem = getPlanCartItem();
 						const domainCartItem = getDomainCartItem();
-						if ( planCartItem ) {
+						if ( planCartItem && siteSlug && flowName ) {
 							await addPlanToCart( siteSlug, flowName, true, '', planCartItem );
 						}
 
-						if ( domainCartItem ) {
+						if ( domainCartItem && siteSlug && flowName ) {
 							await addProductsToCart( siteSlug, flowName, [ domainCartItem ] );
 						}
 
