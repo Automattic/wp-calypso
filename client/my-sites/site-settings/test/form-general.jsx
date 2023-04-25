@@ -332,7 +332,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
 			).toBe( 0 );
-			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
+			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 3 );
 			expect( getByLabelText( 'Coming Soon' ) ).toBeChecked();
 		} );
 
@@ -353,7 +353,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
 			).toBe( 0 );
-			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
+			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 3 );
 			expect( getByLabelText( 'Public' ) ).toBeChecked();
 		} );
 	} );
