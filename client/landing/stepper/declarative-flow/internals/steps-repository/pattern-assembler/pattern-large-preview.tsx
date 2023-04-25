@@ -2,7 +2,7 @@ import { PatternRenderer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { useStyle } from '@automattic/global-styles';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
+import { Popover, __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import { Icon, layout } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -14,6 +14,12 @@ import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import type { MouseEvent } from 'react';
 import './pattern-large-preview.scss';
+
+type BlockPopoverData = {
+	type: string;
+	position: number;
+	element: Element;
+};
 
 interface Props {
 	header: Pattern | null;
@@ -53,6 +59,7 @@ const PatternLargePreview = ( {
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
 	const [ device, setDevice ] = useState< string >( 'desktop' );
+	const [ blockPopoverData, setBlockPopoverData ] = useState< BlockPopoverData | null >( null );
 	const [ blockGap ] = useStyle( 'spacing.blockGap' );
 	const [ backgroundColor ] = useStyle( 'color.background' );
 	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
@@ -97,22 +104,39 @@ const PatternLargePreview = ( {
 			  );
 	};
 
+	const getActionBarProps = () => {
+		if ( ! blockPopoverData ) {
+			return {};
+		}
+
+		const { type, position } = blockPopoverData;
+		if ( type === 'header' ) {
+			return { onDelete: onDeleteHeader };
+		} else if ( type === 'footer' ) {
+			return { onDelete: onDeleteFooter };
+		}
+
+		return {
+			disableMoveUp: position === 0,
+			disableMoveDown: sections?.length === position + 1,
+			onDelete: () => onDeleteSection( position ),
+			onMoveUp: () => onMoveUpSection( position ),
+			onMoveDown: () => onMoveDownSection( position ),
+		};
+	};
+
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
 		const key = type === 'section' ? pattern.key : type;
-		const getActionBarProps = () => {
-			if ( type === 'header' ) {
-				return { onDelete: onDeleteHeader };
-			} else if ( type === 'footer' ) {
-				return { onDelete: onDeleteFooter };
-			}
+		const handleMouseEnter = ( event ) => {
+			setBlockPopoverData( {
+				type,
+				position,
+				element: event.currentTarget,
+			} );
+		};
 
-			return {
-				disableMoveUp: position === 0,
-				disableMoveDown: sections?.length === position + 1,
-				onDelete: () => onDeleteSection( position ),
-				onMoveUp: () => onMoveUpSection( position ),
-				onMoveDown: () => onMoveDownSection( position ),
-			};
+		const handleMouseLeave = () => {
+			// setBlockPopoverData( null );
 		};
 
 		return (
@@ -122,6 +146,8 @@ const PatternLargePreview = ( {
 					'pattern-large-preview__pattern',
 					`pattern-large-preview__pattern-${ type }`
 				) }
+				onMouseEnter={ handleMouseEnter }
+				onMouseLeave={ handleMouseLeave }
 			>
 				<PatternRenderer
 					key={ device }
@@ -129,12 +155,6 @@ const PatternLargePreview = ( {
 					viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
 					// Disable default max-height
 					maxHeight="none"
-				/>
-				<PatternActionBar
-					patternType={ type }
-					isRemoveButtonTextOnly
-					source="large_preview"
-					{ ...getActionBarProps() }
 				/>
 			</li>
 		);
@@ -205,23 +225,42 @@ const PatternLargePreview = ( {
 				}, 205 );
 			} }
 		>
-			{ hasSelectedPattern ? (
-				<ul
-					className="pattern-large-preview__patterns"
-					style={ patternLargePreviewStyle }
-					ref={ listRef }
-				>
-					{ header && renderPattern( 'header', header ) }
-					{ sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ) }
-					{ footer && renderPattern( 'footer', footer ) }
-				</ul>
-			) : (
-				<div className="pattern-large-preview__placeholder">
-					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 72 } />
-					<h2>{ translate( 'Welcome to your blank canvas' ) }</h2>
-					<span>{ getDescription() }</span>
-				</div>
-			) }
+			<>
+				{ hasSelectedPattern ? (
+					<ul
+						className="pattern-large-preview__patterns"
+						style={ patternLargePreviewStyle }
+						ref={ listRef }
+					>
+						{ header && renderPattern( 'header', header ) }
+						{ sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ) }
+						{ footer && renderPattern( 'footer', footer ) }
+					</ul>
+				) : (
+					<div className="pattern-large-preview__placeholder">
+						<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 72 } />
+						<h2>{ translate( 'Welcome to your blank canvas' ) }</h2>
+						<span>{ getDescription() }</span>
+					</div>
+				) }
+				{ blockPopoverData && (
+					<Popover
+						anchor={ blockPopoverData.element }
+						placement="top-start"
+						resize={ false }
+						flip={ false }
+						shift={ true }
+						variant="unstyled"
+					>
+						<PatternActionBar
+							patternType={ blockPopoverData.type }
+							isRemoveButtonTextOnly
+							source="large_preview"
+							{ ...getActionBarProps() }
+						/>
+					</Popover>
+				) }
+			</>
 		</DeviceSwitcher>
 	);
 };
