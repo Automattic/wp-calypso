@@ -9,8 +9,8 @@ jest.mock( 'calypso/my-sites/plan-features', () => ( { visiblePlans, popularPlan
 		<div data-testid="popular-plan-spec">{ JSON.stringify( popularPlanSpec ) }</div>
 	</div>
 ) );
-jest.mock( 'calypso/my-sites/plans-features-main/wpcom-faq', () => () => 'WpcomFAQ' );
-jest.mock( 'calypso/my-sites/plans-features-main/plan-type-selector', () => () => (
+jest.mock( 'calypso/my-sites/plans-features-main/components/wpcom-faq', () => () => 'WpcomFAQ' );
+jest.mock( 'calypso/my-sites/plans-features-main/components/plan-type-selector', () => () => (
 	<div>PlanTypeSelector</div>
 ) );
 
