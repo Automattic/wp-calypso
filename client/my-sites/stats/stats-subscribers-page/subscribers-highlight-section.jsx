@@ -1,28 +1,29 @@
 import { CountComparisonCard, Popover } from '@automattic/components';
 import { Icon, info } from '@wordpress/icons';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import './subscribers-highlight-section.scss';
 
 function useSubscriberHighlights() {
+	const translate = useTranslate();
 	const highlights = [
 		{
-			heading: 'Total email subscribers',
+			heading: translate( 'Total email subscribers' ),
 			count: 1410,
 			previousCount: 1080,
 		},
 		{
-			heading: 'Free email subscribers',
+			heading: translate( 'Free email subscribers' ),
 			count: 1340,
 			previousCount: 1034,
 		},
 		{
-			heading: 'Paid email subscribers',
+			heading: translate( 'Paid email subscribers' ),
 			count: 70,
 			previousCount: 46,
 		},
 		{
-			heading: 'WordPress.com subscribers',
+			heading: translate( 'WordPress.com subscribers' ),
 			count: 322,
 			previousCount: 326,
 		},
@@ -31,6 +32,7 @@ function useSubscriberHighlights() {
 }
 
 function SubscriberHighlightsHeader() {
+	const translate = useTranslate();
 	const [ isTooltipVisible, setTooltipVisible ] = useState( false );
 	const infoReferenceElement = useRef( null );
 	const localizedTitle = translate( 'All time stats', {
