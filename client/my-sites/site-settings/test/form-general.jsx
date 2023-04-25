@@ -233,7 +233,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( getByLabelText( 'Coming Soon' ) ).not.toBeChecked();
 			expect( getByLabelText( 'Public' ) ).not.toBeChecked();
 			expect(
-				getByLabelText( 'Discourage search engines from indexing this site' )
+				getByLabelText( 'Discourage search engines from indexing this site', { exact: false } )
 			).not.toBeChecked();
 			expect( getByLabelText( 'Private' ) ).toBeChecked();
 		} );
@@ -259,7 +259,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( getByLabelText( 'Coming Soon' ) ).toBeChecked();
 			expect( getByLabelText( 'Public' ) ).not.toBeChecked();
 			expect(
-				getByLabelText( 'Discourage search engines from indexing this site' )
+				getByLabelText( 'Discourage search engines from indexing this site', { exact: false } )
 			).not.toBeChecked();
 			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
 		} );
@@ -285,7 +285,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( getByLabelText( 'Coming Soon' ) ).not.toBeChecked();
 			expect( getByLabelText( 'Public' ) ).toBeChecked();
 			expect(
-				getByLabelText( 'Discourage search engines from indexing this site' )
+				getByLabelText( 'Discourage search engines from indexing this site', { exact: false } )
 			).not.toBeChecked();
 			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
 		} );
@@ -328,7 +328,9 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
 			expect( getByLabelText( 'Coming Soon' ) ).not.toBeChecked();
 			expect( getByLabelText( 'Public' ) ).toBeChecked();
-			expect( getByLabelText( 'Discourage search engines from indexing this site' ) ).toBeChecked();
+			expect(
+				getByLabelText( 'Discourage search engines from indexing this site', { exact: false } )
+			).toBeChecked();
 			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
 		} );
 
@@ -353,7 +355,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			expect( getByLabelText( 'Coming Soon' ) ).not.toBeChecked();
 			expect( getByLabelText( 'Public' ) ).toBeChecked();
 			expect(
-				getByLabelText( 'Discourage search engines from indexing this site' )
+				getByLabelText( 'Discourage search engines from indexing this site', { exact: false } )
 			).not.toBeChecked();
 			expect( getByLabelText( 'Private' ) ).not.toBeChecked();
 		} );
