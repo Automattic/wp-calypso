@@ -786,7 +786,9 @@ export class SiteSettingsFormGeneral extends Component {
 					</form>
 				</Card>
 
-				{ this.props.isUnlaunchedSite && ! isAtomicAndEditingToolkitDeactivated
+				{ this.props.isUnlaunchedSite &&
+				! isAtomicAndEditingToolkitDeactivated &&
+				! isWpcomStagingSite
 					? this.renderLaunchSite()
 					: this.privacySettings() }
 
