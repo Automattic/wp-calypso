@@ -1,6 +1,9 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
+import { OnboardSelect } from 'calypso/../packages/data-stores/src';
+import { addPlanToCart, addProductsToCart } from 'calypso/../packages/onboarding/src';
 import { updateLaunchpadSettings } from 'calypso/data/sites/use-launchpad';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
@@ -11,6 +14,7 @@ import {
 	ProvidedDependencies,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 const startWriting: Flow = {
@@ -36,6 +40,16 @@ const startWriting: Flow = {
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
 		const siteSlug = useSiteSlug();
+		const { getDomainCartItem, getPlanCartItem } = useSelect(
+			( select ) => ( {
+				getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
+				getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
+			} ),
+			[]
+		);
+		const returnUrl = `/setup/${ flowName }/launchpad?siteSlug=${ siteSlug }`;
+		const encodedReturnUrl = encodeURIComponent( returnUrl );
+
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
 			switch ( currentStep ) {
@@ -61,7 +75,26 @@ const startWriting: Flow = {
 							checklist_statuses: { plan_selected: true },
 						} );
 					}
+					if ( providedDependencies?.goToCheckout ) {
+						const planCartItem = getPlanCartItem();
+						const domainCartItem = getDomainCartItem();
+						if ( planCartItem ) {
+							await addPlanToCart( siteSlug as string, flowName as string, true, '', planCartItem );
+						}
+
+						if ( domainCartItem ) {
+							await addProductsToCart( siteSlug as string, flowName as string, [ domainCartItem ] );
+						}
+					}
 					return navigate( 'launchpad' );
+				case 'launchpad':
+					if ( getPlanCartItem() || getDomainCartItem() ) {
+						return window.location.assign(
+							`/checkout/${ encodeURIComponent(
+								( siteSlug as string ) ?? ''
+							) }?redirect_to=${ encodedReturnUrl }`
+						);
+					}
 			}
 		}
 		return { submit };

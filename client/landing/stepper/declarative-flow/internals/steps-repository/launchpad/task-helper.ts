@@ -42,10 +42,14 @@ export function getEnhancedTasks(
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow?: string | null,
 	isEmailVerified = false,
-	checklistStatuses: LaunchpadStatuses = {}
+	checklistStatuses: LaunchpadStatuses = {},
+	planCartProductSlug?: string | null
 ) {
 	const enhancedTaskList: Task[] = [];
-	const productSlug = site?.plan?.product_slug;
+
+	const productSlug =
+		( flow === START_WRITING_FLOW ? planCartProductSlug : null ) ?? site?.plan?.product_slug;
+
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
 	const linkInBioLinksEditCompleted = checklistStatuses?.links_edited || false;
