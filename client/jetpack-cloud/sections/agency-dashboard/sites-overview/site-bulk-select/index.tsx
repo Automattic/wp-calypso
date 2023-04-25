@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import BulkSelect from 'calypso/components/bulk-select';
 import DashboardBulkActions from '../../dashboard-bulk-actions';
 import { useJetpackAgencyDashboardRecordTrackEvent } from '../../hooks';
@@ -18,8 +18,7 @@ export default function SiteBulkSelect( { sites, isLoading, isLargeScreen }: Pro
 	const translate = useTranslate();
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, isLargeScreen );
 
-	const { selectedSites, setSelectedSites, setIsBulkManagementActive } =
-		useContext( SitesOverviewContext );
+	const { selectedSites, setSelectedSites } = useContext( SitesOverviewContext );
 
 	const selectedSiteIds = selectedSites.map( ( site ) => site.blog_id );
 
@@ -56,11 +55,6 @@ export default function SiteBulkSelect( { sites, isLoading, isLargeScreen }: Pro
 		! isChecked &&
 		selectedSites.length > 0 &&
 		sites.some( ( item ) => selectedSiteIds.includes( item.site.value.blog_id ) );
-
-	useEffect( () => {
-		// If the user navigates away from the page, we want to make sure that the bulk management is deactivated.
-		return () => setIsBulkManagementActive( false );
-	}, [ setIsBulkManagementActive ] );
 
 	return (
 		<div className="site-bulk-select">
