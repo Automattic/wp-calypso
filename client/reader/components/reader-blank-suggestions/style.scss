@@ -7,11 +7,12 @@
 
 	a,
 	a:visited {
-		color: var(--color-primary);
+		font-weight: bold;
+		color: var(--color-neutral-60);
 	}
 
 	a:hover {
-		color: var(--color-primary-light);
+		color: var(--color-neutral-60);
 	}
 
 	@include breakpoint-deprecated( "<660px" ) {
