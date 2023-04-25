@@ -34,7 +34,15 @@ import PluginsSearchResultPage from '../plugins-search-results-page';
 
 import './style.scss';
 
-const searchTerms = [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ];
+const searchTerms = [
+	'woocommerce',
+	'seo',
+	'reset',
+	'file manager',
+	'jetpack',
+	'ecommerce',
+	'form',
+];
 
 const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isLoggedIn } ) => {
 	const analyticsPageTitle = 'Plugin Browser' + category ? ` > ${ category }` : '';
