@@ -420,16 +420,6 @@ export function generateSteps( {
 			},
 		},
 
-		'select-domain': {
-			stepName: 'select-domain',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ], // note: siteId, siteSlug are not provided when used in add-domain flow
-			props: {
-				isAllDomains: true,
-				isDomainOnly: true,
-				forceHideFreeDomainExplainerAndStrikeoutUi: true,
-			},
-		},
-
 		'domains-store': {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
