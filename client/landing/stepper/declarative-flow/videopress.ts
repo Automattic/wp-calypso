@@ -18,6 +18,7 @@ import SiteOptions from './internals/steps-repository/site-options';
 import VideomakerSetup from './internals/steps-repository/videomaker-setup';
 import type { Flow, ProvidedDependencies } from './internals/types';
 import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const videopress: Flow = {
 	name: VIDEOPRESS_FLOW,
@@ -136,9 +137,13 @@ const videopress: Flow = {
 				setProgress( 0.5 );
 
 				const newSite = getNewSite();
-				setSelectedSite( newSite?.blogid );
-				setIntentOnSite( newSite?.site_slug as string, VIDEOPRESS_FLOW as string );
-				saveSiteSettings( newSite?.blogid as number, {
+				if ( ! newSite ) {
+					return;
+				}
+
+				setSelectedSite( newSite.blogid );
+				setIntentOnSite( newSite.site_slug, VIDEOPRESS_FLOW );
+				saveSiteSettings( newSite.blogid, {
 					launchpad_screen: 'full',
 					blogdescription: siteDescription,
 				} );
@@ -150,24 +155,29 @@ const videopress: Flow = {
 
 				const planProductObject = getPlanProduct( planObject?.periodAgnosticSlug, 'MONTHLY' );
 
-				const cartKey = await cartManagerClient.getCartKeyForSiteSlug(
-					newSite?.site_slug as string
-				);
+				const cartKey = newSite.site_slug
+					? await cartManagerClient.getCartKeyForSiteSlug( newSite.site_slug )
+					: null;
 
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				const productsToAdd: any[] = [
-					{
-						product_slug: planProductObject?.storeSlug,
-						extra: {
-							signup_flow: VIDEOPRESS_FLOW,
-						},
-					},
-				];
+				if ( ! cartKey ) {
+					return;
+				}
+
+				const productsToAdd: MinimalRequestCartProduct[] = planProductObject
+					? [
+							{
+								product_slug: planProductObject.storeSlug,
+								extra: {
+									signup_flow: VIDEOPRESS_FLOW,
+								},
+							},
+					  ]
+					: [];
 
 				if ( selectedDomain && selectedDomain.product_slug ) {
 					const registration = domainRegistration( {
 						domain: selectedDomain.domain_name,
-						productSlug: selectedDomain.product_slug as string,
+						productSlug: selectedDomain.product_slug,
 						extra: { privacy_available: selectedDomain.supports_privacy },
 					} );
 
@@ -182,11 +192,11 @@ const videopress: Flow = {
 					.then( () => {
 						setProgress( 1.0 );
 						const redirectTo = encodeURIComponent(
-							`/setup/videopress/launchpad?siteSlug=${ newSite?.site_slug }&siteId=${ newSite?.blogid }`
+							`/setup/videopress/launchpad?siteSlug=${ newSite.site_slug }&siteId=${ newSite.blogid }`
 						);
 
 						window.location.replace(
-							`/checkout/${ newSite?.site_slug }?signup=1&redirect_to=${ redirectTo }`
+							`/checkout/${ newSite.site_slug }?signup=1&redirect_to=${ redirectTo }`
 						);
 					} );
 			} );
@@ -223,8 +233,8 @@ const videopress: Flow = {
 
 				case 'options': {
 					const { siteTitle, tagline } = providedDependencies;
-					setSiteTitle( siteTitle as string );
-					setSiteDescription( tagline as string );
+					setSiteTitle( siteTitle );
+					setSiteDescription( tagline );
 					return navigate( 'chooseADomain' );
 				}
 

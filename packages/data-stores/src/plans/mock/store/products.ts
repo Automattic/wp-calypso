@@ -20,7 +20,7 @@ export const STORE_PRODUCT_PREMIUM_ANNUALLY: PlanProduct = {
 	pathSlug: 'premium',
 	price: '€8',
 	annualPrice: '€96',
-	annualDiscount: 43,
+	annualDiscount: 42,
 };
 export const STORE_PRODUCT_PREMIUM_MONTHLY: PlanProduct = {
 	productId: 1013,
@@ -30,5 +30,5 @@ export const STORE_PRODUCT_PREMIUM_MONTHLY: PlanProduct = {
 	rawPrice: 14,
 	price: '€14',
 	annualPrice: '€168',
-	annualDiscount: 43,
+	annualDiscount: 42,
 };

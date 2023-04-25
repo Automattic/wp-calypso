@@ -3,22 +3,22 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Separator from 'calypso/components/popover-menu/separator';
 import SettingsPopover from '../settings-popover';
 import DeliveryFrequencyInput from './delivery-frequency-input';
-import UnfollowSiteButton from './unfollow-site-button';
+import UnsubscribeSiteButton from './unsubscribe-site-button';
 import type { SiteSubscriptionDeliveryFrequency } from '@automattic/data-stores/src/reader/types';
 
 type SiteSettingsProps = {
 	deliveryFrequency: SiteSubscriptionDeliveryFrequency;
 	onDeliveryFrequencyChange: ( value: SiteSubscriptionDeliveryFrequency ) => void;
-	onUnfollow: () => void;
-	unfollowing: boolean;
+	onUnsubscribe: () => void;
+	unsubscribing: boolean;
 	updatingFrequency: boolean;
 };
 
 const SiteSettings = ( {
 	deliveryFrequency,
 	onDeliveryFrequencyChange,
-	onUnfollow,
-	unfollowing,
+	onUnsubscribe,
+	unsubscribing,
 	updatingFrequency,
 }: SiteSettingsProps ) => {
 	const translate = useTranslate();
@@ -34,7 +34,7 @@ const SiteSettings = ( {
 				/>
 			</PopoverMenuItem>
 			<Separator />
-			<UnfollowSiteButton unfollowing={ unfollowing } onUnfollow={ onUnfollow } />
+			<UnsubscribeSiteButton unsubscribing={ unsubscribing } onUnsubscribe={ onUnsubscribe } />
 		</SettingsPopover>
 	);
 };

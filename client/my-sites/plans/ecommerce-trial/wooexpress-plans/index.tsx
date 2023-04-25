@@ -54,7 +54,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		monthlyPlanPrice: getPlanRawPrice( state, mediumPlanMonthly.getProductId() ) || 0,
 	} ) );
 
-	const percentageSavings = Math.round(
+	const percentageSavings = Math.floor(
 		( 1 - mediumPlanPrices.annualPlanMonthlyPrice / mediumPlanPrices.monthlyPlanPrice ) * 100
 	);
 

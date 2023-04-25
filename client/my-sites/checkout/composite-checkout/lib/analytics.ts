@@ -29,12 +29,13 @@ export function logStashLoadErrorEvent(
 
 export function logStashEvent(
 	message: string,
-	dataForLog: Record< string, string > = {}
+	dataForLog: Record< string, string > = {},
+	severity: 'error' | 'warning' | 'info' = 'error'
 ): Promise< void > {
 	return logToLogstash( {
 		feature: 'calypso_client',
 		message,
-		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+		severity: config( 'env_id' ) === 'production' ? severity : 'debug',
 		extra: {
 			env: config( 'env_id' ),
 			...dataForLog,

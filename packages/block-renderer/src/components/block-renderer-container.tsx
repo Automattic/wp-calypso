@@ -22,7 +22,7 @@ interface BlockRendererContainerProps {
 	maxHeight?: 'none' | number;
 	minHeight?: number;
 	isMinHeight100vh?: boolean;
-	maxHeightFor100vh?: number;
+	minHeightFor100vh?: number;
 }
 
 interface ScaledBlockRendererContainerProps extends BlockRendererContainerProps {
@@ -39,7 +39,7 @@ const ScaledBlockRendererContainer = ( {
 	maxHeight = BLOCK_MAX_HEIGHT,
 	minHeight,
 	isMinHeight100vh,
-	maxHeightFor100vh,
+	minHeightFor100vh,
 }: ScaledBlockRendererContainerProps ) => {
 	const [ isLoaded, setIsLoaded ] = useState( false );
 	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
@@ -88,19 +88,22 @@ const ScaledBlockRendererContainer = ( {
 	}, [] );
 
 	const scale = containerWidth / viewportWidth;
+	const heightFor100vh = Math.max(
+		contentHeight || 0,
+		viewportHeight || 0,
+		minHeightFor100vh || 0
+	);
 
 	let scaledHeight = ( contentHeight as number ) * scale || minHeight;
-	if ( isMinHeight100vh && maxHeightFor100vh && ! viewportHeight ) {
-		scaledHeight = maxHeightFor100vh * scale;
+	if ( isMinHeight100vh ) {
+		// Handling container height of patterns with height 100vh
+		scaledHeight = heightFor100vh * scale;
 	}
 
 	let iframeHeight = contentHeight as number;
 	if ( isMinHeight100vh ) {
-		if ( viewportHeight ) {
-			iframeHeight = viewportHeight;
-		} else if ( maxHeightFor100vh ) {
-			iframeHeight = maxHeightFor100vh;
-		}
+		// Handling iframe height of patterns with height 100vh
+		iframeHeight = heightFor100vh;
 	}
 
 	return (

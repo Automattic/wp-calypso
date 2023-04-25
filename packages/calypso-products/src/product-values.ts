@@ -24,6 +24,7 @@ export { isAkismetFree } from './is-akismet-free';
 export { isAkismetPersonal } from './is-akismet-personal';
 export { isAkismetPro } from './is-akismet-pro';
 export { isAkismetProduct } from './is-akismet-product';
+export { isAkismetFreeProduct } from './is-akismet-free-product';
 export { isBiennially } from './is-biennially';
 export { isBlogger } from './is-blogger';
 export { isBundled } from './is-bundled';
