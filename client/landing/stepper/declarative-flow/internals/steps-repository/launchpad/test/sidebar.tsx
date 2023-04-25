@@ -9,6 +9,7 @@ import nock from 'nock';
 import React from 'react';
 import * as redux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
+import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
@@ -22,6 +23,33 @@ jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
 		shouldLimitGlobalStyles: false,
 		globalStylesInUse: false,
 	} ),
+} ) );
+
+jest.mock( 'calypso/data/sites/use-launchpad', () => ( {
+	useLaunchpad: jest.fn().mockReturnValue( {
+		data: { site_intent: 'build' },
+	} ),
+} ) );
+
+jest.mock( 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist', () => ( {
+	useLaunchpadChecklist: ( siteSlug, siteIntentOption ) => {
+		let checklist = [
+			{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
+			{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task' },
+		];
+
+		if ( siteIntentOption === 'free' ) {
+			checklist = [
+				{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
+				{ id: 'domain_upsell', completed: false, disabled: false, title: 'Choose a domain' },
+				{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
+			];
+		}
+
+		return {
+			data: { checklist },
+		};
+	},
 } ) );
 
 const siteName = 'testlinkinbio';
@@ -307,6 +335,13 @@ describe( 'Sidebar', () => {
 			it( 'displays the upgrade plan badge on the "Choose a domain" task for free flow', () => {
 				const freeFlowProps = { ...props, flow: 'free' };
 
+				// Change the useLaunchpad hook to return a free site.
+				( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
+					data: {
+						site_intent: 'free',
+					},
+				} );
+
 				const siteDetails = buildSiteDetails( {
 					options: {
 						...defaultSiteDetails.options,
@@ -319,6 +354,7 @@ describe( 'Sidebar', () => {
 
 				const domainUpsellTaskFreeFlow = screen.queryByText( 'Choose a domain' );
 				const domainUpsellTaskBadgeFreeFlow = screen.queryByText( 'Upgrade plan' );
+
 				expect( domainUpsellTaskFreeFlow ).toBeVisible();
 				expect( domainUpsellTaskBadgeFreeFlow ).toBeVisible();
 			} );
@@ -327,6 +363,14 @@ describe( 'Sidebar', () => {
 		describe( 'and the site is on a paid plan', () => {
 			it( 'does not display the upgrade plan badge on the "Choose a domain" task for free flow', () => {
 				const freeFlowProps = { ...props, flow: 'free' };
+
+				// Change the useLaunchpad hook to return a free site.
+				( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
+					data: {
+						site_intent: 'free',
+					},
+				} );
+
 				const siteDetails = buildSiteDetails( {
 					options: {
 						...defaultSiteDetails.options,
