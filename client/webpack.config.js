@@ -114,14 +114,16 @@ function filterEntrypoints( entrypoints ) {
 	return allowed;
 }
 
-function addHotMiddlewareIfDev( entry ) {
-	if ( isDevelopment ) {
-		return Object.entries( entry ).reduce( ( acc, [ key, value ] ) => {
-			acc[ key ] = [ 'webpack-hot-middleware/client', ...value ];
-			return acc;
-		}, {} );
+function addHotMiddlewareIfDev( entrypoints ) {
+	if ( ! isDevelopment ) {
+		return entrypoints;
 	}
-	return entry;
+	return Object.fromEntries(
+		Object.entries( entrypoints ).map( ( [ key, value ] ) => [
+			key,
+			[ 'webpack-hot-middleware/client', ...value ],
+		] )
+	);
 }
 
 /**
