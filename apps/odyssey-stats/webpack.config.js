@@ -60,7 +60,7 @@ module.exports = {
 	output: {
 		path: outputPath,
 		filename: '[name].min.js',
-		chunkFilename: '[name]-[contenthash].js',
+		chunkFilename: '[name]-[contenthash].js?minify=false',
 	},
 	optimization: {
 		minimize: ! isDevelopment,
