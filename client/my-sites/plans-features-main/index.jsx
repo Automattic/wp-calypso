@@ -384,7 +384,7 @@ export class PlansFeaturesMain extends Component {
 			return plan ? [ ...accum, plan ] : accum;
 		}, [] );
 
-		return this.props.showTreatmentPlansReorderTest ? plans.reverse() : plans;
+		return plans;
 	}
 
 	isPersonalCustomerTypePlanVisible() {
