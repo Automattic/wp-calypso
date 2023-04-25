@@ -3,36 +3,36 @@ import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
 import { PostSubscription, SubscriptionManagerSubscriptionsCount } from '../types';
 
-type PostSubscriptionUnfollowParams = {
+type UnsubscribeParams = {
 	id: number | string;
 	blog_id: number | string;
 	post_id: number | string;
 };
 
-type PostSubscriptionUnfollowResponse = {
+type UnsubscribeResponse = {
 	success: boolean;
 	subscribed: boolean;
 	subscription: null;
 };
 
-type SubscriptionManagerPostSubscriptions = {
+type PostSubscriptions = {
 	comment_subscriptions: PostSubscription[];
 	total_comment_subscriptions_count: number;
 };
 
-type SubscriptionManagerPostSubscriptionsPages = {
+type PostSubscriptionsPages = {
 	pageParams: [];
-	pages: SubscriptionManagerPostSubscriptions[];
+	pages: PostSubscriptions[];
 };
 
-const usePostUnfollowMutation = () => {
+const usePostUnsubscribeMutation = () => {
 	const { isLoggedIn } = useIsLoggedIn();
 	const queryClient = useQueryClient();
 	const postSubscriptionsCacheKey = useCacheKey( [ 'read', 'post-subscriptions' ] );
 	const subscriptionsCountCacheKey = useCacheKey( [ 'read', 'subscriptions-count' ] );
 
 	return useMutation(
-		async ( params: PostSubscriptionUnfollowParams ) => {
+		async ( params: UnsubscribeParams ) => {
 			if ( ! params.blog_id ) {
 				throw new Error(
 					// reminder: translate this string when we add it to the UI
@@ -40,7 +40,7 @@ const usePostUnfollowMutation = () => {
 				);
 			}
 
-			const response = await callApi< PostSubscriptionUnfollowResponse >( {
+			const response = await callApi< UnsubscribeResponse >( {
 				path: `/read/site/${ params.blog_id }/comment_email_subscriptions/delete?post_id=${ params.post_id }`,
 				method: 'POST',
 				isLoggedIn,
@@ -62,9 +62,7 @@ const usePostUnfollowMutation = () => {
 				await queryClient.cancelQueries( [ 'read', 'subscriptions-count', isLoggedIn ] );
 
 				const previousPostSubscriptions =
-					queryClient.getQueryData< SubscriptionManagerPostSubscriptionsPages >(
-						postSubscriptionsCacheKey
-					);
+					queryClient.getQueryData< PostSubscriptionsPages >( postSubscriptionsCacheKey );
 
 				// remove post from comment subscriptions
 				if ( previousPostSubscriptions ) {
@@ -75,7 +73,7 @@ const usePostUnfollowMutation = () => {
 						),
 					} ) );
 
-					queryClient.setQueryData< SubscriptionManagerPostSubscriptionsPages >(
+					queryClient.setQueryData< PostSubscriptionsPages >(
 						postSubscriptionsCacheKey,
 						previousPostSubscriptions
 					);
@@ -103,7 +101,7 @@ const usePostUnfollowMutation = () => {
 			},
 			onError: ( error, variables, context ) => {
 				if ( context?.previousPostSubscriptions ) {
-					queryClient.setQueryData< SubscriptionManagerPostSubscriptionsPages >(
+					queryClient.setQueryData< PostSubscriptionsPages >(
 						postSubscriptionsCacheKey,
 						context.previousPostSubscriptions
 					);
@@ -123,4 +121,4 @@ const usePostUnfollowMutation = () => {
 	);
 };
 
-export default usePostUnfollowMutation;
+export default usePostUnsubscribeMutation;
