@@ -439,7 +439,7 @@ export const HelpCenterContactForm = () => {
 				<HelpCenterGPT message={ message } setLoadingState={ setGPTFetching } />
 				<section className="contact-form-submit">
 					<Button
-						disabled={ gptFetching ? true : isCTADisabled() }
+						disabled={ gptFetching || isCTADisabled() }
 						onClick={ handleCTA }
 						primary
 						className="help-center-contact-form__site-picker-cta"
