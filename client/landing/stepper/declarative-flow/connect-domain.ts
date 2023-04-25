@@ -46,7 +46,9 @@ const connectDomain: Flow = {
 			};
 		}
 
-		const redirectTo = `/setup/${ flowName }/plans?domain=${ domain }&provider=${ provider }}`;
+		const redirectTo = encodeURIComponent(
+			`/setup/${ flowName }/plans?domain=${ domain }&provider=${ provider }}`
+		);
 		const logInUrl =
 			locale && locale !== 'en'
 				? `/start/account/user/${ locale }?variationName=${ flowName }&pageTitle=Connect%20your%20Domain&redirect_to=${ redirectTo }`
