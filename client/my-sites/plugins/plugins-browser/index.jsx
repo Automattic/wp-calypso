@@ -34,6 +34,8 @@ import PluginsSearchResultPage from '../plugins-search-results-page';
 
 import './style.scss';
 
+const searchTerms = [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ];
+
 const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isLoggedIn } ) => {
 	const analyticsPageTitle = 'Plugin Browser' + category ? ` > ${ category }` : '';
 	let analyticsPath = category ? `/plugins/browse/${ category }` : '/plugins';
@@ -169,7 +171,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 						) ) &&
 					__( 'Add new functionality and integrations to your site with thousands of plugins.' )
 				}
-				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
+				searchTerms={ searchTerms }
 				renderTitleInH1={ ! category }
 			/>
 
