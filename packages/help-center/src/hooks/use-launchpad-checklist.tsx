@@ -7,10 +7,10 @@ interface APIFetchOptions {
 	path: string;
 }
 
-interface LaunchpadTask {
-	id?: string;
-	completed?: boolean;
-	disabled?: boolean;
+interface Task {
+	id: string;
+	completed: boolean;
+	disabled: boolean;
 	title?: string;
 	subtitle?: string;
 	badgeText?: string;
@@ -20,7 +20,7 @@ interface LaunchpadTask {
 }
 
 interface LaunchpadTasks {
-	checklist: LaunchpadTask[];
+	checklist: Task[];
 }
 
 export const fetchLaunchpadChecklist = (
@@ -42,11 +42,19 @@ export const fetchLaunchpadChecklist = (
 };
 
 export const useLaunchpadChecklist = ( siteSlug: string | null, siteIntent: string ) => {
-	const key = [ 'launchpad_checklist', siteSlug ];
-	return useQuery( key, () => fetchLaunchpadChecklist( siteSlug, siteIntent ), {
+	const key = [ 'launchpad-checklist', siteSlug ];
+	const queryResult = useQuery( key, () => fetchLaunchpadChecklist( siteSlug, siteIntent ), {
 		retry: 3,
 		initialData: {
 			checklist: [],
 		},
 	} );
+
+	// Typescript is returning the type "T | undefined" for useQuery,
+	// regardless of initialData or placeholderData. Because of this, we
+	// need to narrow the return type ourselves, which is why we have
+	// the ternary we do below.
+	// https://github.com/TanStack/query/discussions/1331#discussioncomment-809549
+	const data = queryResult.isSuccess ? queryResult.data : { checklist: [] };
+	return { ...queryResult, data };
 };
