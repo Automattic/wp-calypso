@@ -160,6 +160,7 @@ export interface ReaderResponse {
 
 export interface NewCommentResponse {
 	ID: number;
+	raw_content: string;
 }
 
 export interface CommentLikeResponse {

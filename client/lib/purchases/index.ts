@@ -866,6 +866,10 @@ export function purchaseType( purchase: Purchase ) {
 		} );
 	}
 
+	if ( purchase.productType === 'marketplace_plugin' || purchase.productType === 'saas_plugin' ) {
+		return i18n.translate( 'Plugin' );
+	}
+
 	if ( purchase.meta ) {
 		return purchase.meta;
 	}

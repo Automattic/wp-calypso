@@ -33,6 +33,7 @@ export function convertResponseCartToRequestCart( {
 	products,
 	coupon,
 	tax,
+	blog_id,
 }: TempResponseCart ): RequestCart {
 	let requestCartTax = null;
 	if (
@@ -57,6 +58,7 @@ export function convertResponseCartToRequestCart( {
 		};
 	}
 	return {
+		blog_id,
 		products: products.map( convertResponseCartProductToRequestCartProduct ),
 		coupon,
 		temporary: false,

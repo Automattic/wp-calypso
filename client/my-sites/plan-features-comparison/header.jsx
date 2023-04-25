@@ -68,7 +68,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 		} = this.props;
 
 		if ( isMonthlyPlan && annualPricePerMonth < rawPrice ) {
-			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
+			const discountRate = Math.floor( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
 			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
 		}
 
@@ -100,7 +100,7 @@ export class PlanFeaturesComparisonHeader extends Component {
 		if ( ! isMonthlyPlan ) {
 			const isLoading = typeof rawPriceForMonthlyPlan !== 'number';
 
-			const discountRate = Math.round(
+			const discountRate = Math.floor(
 				( 100 * ( rawPriceForMonthlyPlan - annualPricePerMonth ) ) / rawPriceForMonthlyPlan
 			);
 

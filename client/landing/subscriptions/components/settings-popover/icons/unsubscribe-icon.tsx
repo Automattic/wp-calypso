@@ -1,8 +1,8 @@
-type UnfollowIconProps = {
+type UnsubscribeIconProps = {
 	className?: string;
 };
 
-const UnfollowIcon = ( { className }: UnfollowIconProps ) => (
+const UnsubscribeIcon = ( { className }: UnsubscribeIconProps ) => (
 	<svg
 		className={ className }
 		width="20"
@@ -18,4 +18,4 @@ const UnfollowIcon = ( { className }: UnfollowIconProps ) => (
 	</svg>
 );
 
-export default UnfollowIcon;
+export default UnsubscribeIcon;

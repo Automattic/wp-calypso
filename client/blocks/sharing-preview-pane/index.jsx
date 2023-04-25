@@ -117,6 +117,10 @@ class SharingPreviewPane extends PureComponent {
 						{ ...previewProps }
 						articleExcerpt={ post.excerpt }
 						articleContent={ post.content }
+						customImage={
+							post.metadata?.find( ( meta ) => meta.key === '_wpas_options' )?.value
+								?.attached_media?.[ 0 ]?.url
+						}
 					/>
 				);
 			case 'tumblr':

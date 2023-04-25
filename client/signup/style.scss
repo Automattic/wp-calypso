@@ -161,8 +161,7 @@ body.is-section-signup {
 
 // Notice the :not(.dops) selector. I've added this to try and
 // avoid stepping on the toes of our oauth users, like Crowdsignal.
-body.is-section-signup .layout:not(.dops),
-body.is-section-signup .layout.gravatar {
+body.is-section-signup .layout:not(.dops) {
 	// Update the logo that appears when loading Calypso
 	// to match the homepage, using primary-dark with opacity.
 	.wpcom-site__logo {
@@ -221,8 +220,7 @@ body.is-section-signup .layout.gravatar {
 }
 
 // Signup headings
-body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-header,
-body.is-section-signup .layout.gravatar .formatted-header {
+body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-header {
 	margin: 0 0 16px;
 
 	.formatted-header__title {
@@ -906,5 +904,11 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		@include breakpoint-deprecated( "<660px" ) {
 			bottom: 74px;
 		}
+	}
+}
+
+body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow).is-gravatar {
+	.formatted-header__title {
+		font-size: 1.75rem;
 	}
 }

@@ -1,5 +1,6 @@
 import {
 	applyTestFiltersToPlansList,
+	Feature,
 	FeatureGroup,
 	getPlanClass,
 	isWpcomEnterpriseGridPlan,
@@ -257,6 +258,29 @@ const StorageButton = styled.div`
 	` ) }
 `;
 
+const FeatureFootnotes = styled.div`
+	ol {
+		margin: 2em 0 0 1em;
+	}
+
+	ol li {
+		font-size: 11px;
+		padding-left: 1em;
+	}
+`;
+
+const FeatureFootnote = styled.span`
+	position: relative;
+	font-size: 50%;
+	font-weight: 600;
+
+	sup {
+		position: absolute;
+		top: -10px;
+		left: 0;
+	}
+`;
+
 type PlanComparisonGridProps = {
 	planProperties?: Array< PlanProperties >;
 	intervalType: string;
@@ -290,6 +314,11 @@ type RestructuredFeatures = {
 	featureMap: Record< string, Set< string > >;
 	conditionalFeatureMap: Record< string, Set< string > >;
 	planStorageOptionsMap: Record< string, string >;
+};
+
+type RestructuredFootnotes = {
+	footnoteList: string[];
+	footnotesByFeature: Record< Feature, number >;
 };
 
 const PlanComparisonGridHeaderCell: React.FunctionComponent<
@@ -541,6 +570,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	allJetpackFeatures: Set< string >;
 	visiblePlansProperties: PlanProperties[];
 	restructuredFeatures: RestructuredFeatures;
+	restructuredFootnotes: RestructuredFootnotes;
 	isStorageFeature: boolean;
 } > = ( {
 	feature,
@@ -548,12 +578,15 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	allJetpackFeatures,
 	visiblePlansProperties,
 	restructuredFeatures,
+	restructuredFootnotes,
 	isStorageFeature,
 } ) => {
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
 		'is-storage-feature': isStorageFeature,
 	} );
+	const featureSlug = feature?.getSlug() || '';
+	const footnote = restructuredFootnotes?.footnotesByFeature?.[ featureSlug ];
 
 	return (
 		<Row isHiddenInMobile={ isHiddenInMobile } className={ rowClasses }>
@@ -568,6 +601,11 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 							<>
 								<Plans2023Tooltip text={ feature.getDescription?.() }>
 									{ feature.getTitle() }
+									{ footnote && (
+										<FeatureFootnote>
+											<sup>{ footnote }</sup>
+										</FeatureFootnote>
+									) }
 								</Plans2023Tooltip>
 								{ allJetpackFeatures.has( feature.getSlug() ) ? (
 									<JetpackIconContainer>
@@ -668,6 +706,39 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 		displayedPlansProperties,
 		isInSignup,
 	] );
+
+	const restructuredFootnotes = useMemo( () => {
+		// This is the main list of all footnotes. It is displayed at the bottom of the comparison grid.
+		const footnoteList: string[] = [];
+		// This is a map of features to the index of the footnote in the main list of footnotes.
+		const footnotesByFeature: Record< Feature, number > = {};
+
+		Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
+			const footnotes = featureGroup?.getFootnotes?.();
+
+			if ( ! footnotes ) {
+				return;
+			}
+
+			Object.keys( footnotes ).map( ( footnote ) => {
+				const footnoteFeatures = footnotes[ footnote ];
+
+				// First we add the footnote to the main list of footnotes.
+				footnoteList.push( footnote );
+
+				// Then we add each feature that has this footnote to the map of footnotes by feature.
+				const currentFootnoteIndex = footnoteList.length;
+				footnoteFeatures.map( ( feature ) => {
+					footnotesByFeature[ feature ] = currentFootnoteIndex;
+				} );
+			} );
+		} );
+
+		return {
+			footnoteList,
+			footnotesByFeature,
+		};
+	}, [ featureGroupMap ] );
 
 	const restructuredFeatures = useMemo( () => {
 		let previousPlan = null;
@@ -816,6 +887,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									allJetpackFeatures={ allJetpackFeatures }
 									visiblePlansProperties={ visiblePlansProperties }
 									restructuredFeatures={ restructuredFeatures }
+									restructuredFootnotes={ restructuredFootnotes }
 									isStorageFeature={ false }
 								/>
 							) ) }
@@ -826,6 +898,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									allJetpackFeatures={ allJetpackFeatures }
 									visiblePlansProperties={ visiblePlansProperties }
 									restructuredFeatures={ restructuredFeatures }
+									restructuredFootnotes={ restructuredFootnotes }
 									isStorageFeature={ true }
 								/>
 							) : null }
@@ -847,6 +920,18 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					onUpgradeClick={ onUpgradeClick }
 				/>
 			</Grid>
+
+			<div className="plan-comparison-grid__footer">
+				{ restructuredFootnotes?.footnoteList && (
+					<FeatureFootnotes>
+						<ol>
+							{ restructuredFootnotes?.footnoteList?.map( ( footnote, index ) => {
+								return <li key={ `${ footnote }-${ index }` }>{ footnote }</li>;
+							} ) }
+						</ol>
+					</FeatureFootnotes>
+				) }
+			</div>
 		</div>
 	);
 };

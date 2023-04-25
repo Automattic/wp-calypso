@@ -253,9 +253,7 @@ export default function CheckoutMain( {
 
 	const getThankYouUrl = useCallback( () => {
 		const url = getThankYouUrlBase();
-		logStashEvent( 'thank you url generated', {
-			url,
-		} );
+		logStashEvent( 'thank you url generated', { url }, 'info' );
 		return url;
 	}, [ getThankYouUrlBase ] );
 
@@ -600,9 +598,7 @@ export default function CheckoutMain( {
 
 	const handlePaymentMethodChanged = useCallback(
 		( method: string ) => {
-			logStashEvent( 'payment_method_select', {
-				newMethodId: String( method ),
-			} );
+			logStashEvent( 'payment_method_select', { newMethodId: String( method ) }, 'info' );
 			// Need to convert to the slug format used in old checkout so events are comparable
 			const rawPaymentMethodSlug = String( method );
 			const legacyPaymentMethodSlug = translateCheckoutPaymentMethodToTracksPaymentMethod(
