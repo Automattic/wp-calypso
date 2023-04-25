@@ -9,8 +9,6 @@ import {
 	getPlans,
 	isWooExpressPlan,
 } from '@automattic/calypso-products';
-import { useIsEnglishLocale } from '@automattic/i18n-utils';
-import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo } from 'react';
@@ -48,7 +46,6 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		yearlyControlProps,
 	} = props;
 	const translate = useTranslate();
-	const isEnglishLocale = useIsEnglishLocale();
 
 	const mediumPlanAnnual = getPlans()[ PLAN_WOOEXPRESS_MEDIUM ];
 	const mediumPlanMonthly = getPlans()[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ];
@@ -74,28 +71,15 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 				...yearlyControlProps,
 				content: (
 					<span>
-						{ isEnglishLocale ||
-						hasTranslation( 'Pay Annually {{span}}(Save %(percentageSavings)s%%){{/span}}' )
-							? translate( 'Pay Annually {{span}}(Save %(percentageSavings)s%%){{/span}}', {
-									args: { percentageSavings },
-									components: { span: <span className="wooexpress-plans__interval-savings" /> },
-							  } )
-							: translate( 'Pay Annually (Save %(percentageSavings)s%%)', {
-									args: { percentageSavings },
-							  } ) }
+						{ translate( 'Pay Annually (Save %(percentageSavings)s%%)', {
+							args: { percentageSavings },
+						} ) }
 					</span>
 				),
 				selected: interval === 'yearly',
 			},
 		];
-	}, [
-		interval,
-		translate,
-		monthlyControlProps,
-		percentageSavings,
-		yearlyControlProps,
-		isEnglishLocale,
-	] );
+	}, [ interval, translate, monthlyControlProps, percentageSavings, yearlyControlProps ] );
 
 	const smallPlan = interval === 'yearly' ? PLAN_WOOEXPRESS_SMALL : PLAN_WOOEXPRESS_SMALL_MONTHLY;
 	const mediumPlan =
