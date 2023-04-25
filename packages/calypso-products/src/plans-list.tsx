@@ -2541,7 +2541,11 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 	[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ]: {
 		...getPlanWooExpressMediumDetails(),
 		...getMonthlyTimeframe(),
+<<<<<<< HEAD
 		type: TYPE_WOOEXPRESS_MEDIUM,
+=======
+		getBillingTimeFrame: () => translate( 'per month' ),
+>>>>>>> 020ca94788 (Fix the message and add the promotion to the annual plan)
 		availableFor: ( plan ) =>
 			[ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY, PLAN_WOOEXPRESS_SMALL_MONTHLY ].includes( plan ),
 		getProductId: () => 1053,
@@ -2571,6 +2575,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 		...getPlanWooExpressSmallDetails(),
 		...getMonthlyTimeframe(),
 		type: TYPE_WOOEXPRESS_SMALL,
+		getBillingTimeFrame: () => translate( 'per month' ),
 		availableFor: ( plan ) => [ PLAN_FREE, PLAN_ECOMMERCE_TRIAL_MONTHLY ].includes( plan ),
 		getProductId: () => 1054,
 		getStoreSlug: () => PLAN_WOOEXPRESS_SMALL_MONTHLY,

@@ -6,6 +6,14 @@ import {
 	PlanSlug,
 	getPlanSlugForTermVariant,
 	TERM_ANNUALLY,
+	isWooExpressPlan,
+	getPlans,
+	isWooExpressMediumPlan,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	isWooExpressSmallPlan,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOOEXPRESS_SMALL,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { useIsEnglishLocale } from '@automattic/i18n-utils';
@@ -15,6 +23,7 @@ import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
+import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 
 interface Props {
 	planName: string;
@@ -168,11 +177,58 @@ function usePerMonthDescription( {
 	return null;
 }
 
+function useWooExpressMonthlyPromotion( props: Props ) {
+	const translate = useTranslate();
+	const { planName, billingTimeframe, isMonthlyPlan } = props;
+	let monthlyPlanSlug = '';
+	let yearlyPlanSlug = '';
+	if ( isWooExpressMediumPlan( planName ) ) {
+		monthlyPlanSlug = PLAN_WOOEXPRESS_MEDIUM_MONTHLY;
+		yearlyPlanSlug = PLAN_WOOEXPRESS_MEDIUM;
+	} else if ( isWooExpressSmallPlan( planName ) ) {
+		monthlyPlanSlug = PLAN_WOOEXPRESS_SMALL_MONTHLY;
+		yearlyPlanSlug = PLAN_WOOEXPRESS_SMALL;
+	}
+	const mediumPlanAnnual = getPlans()[ yearlyPlanSlug ];
+	const mediumPlanMonthly = getPlans()[ monthlyPlanSlug ];
+	const mediumPlanPrices = useSelector( ( state ) => ( {
+		annualPlanMonthlyPrice: getPlanRawPrice( state, mediumPlanAnnual.getProductId(), true ) || 0,
+		monthlyPlanPrice: getPlanRawPrice( state, mediumPlanMonthly.getProductId() ) || 0,
+	} ) );
+
+	if ( ! isWooExpressPlan( planName ) || ! isMonthlyPlan ) {
+		return null;
+	}
+
+	const percentageSavings = Math.round(
+		( 1 - mediumPlanPrices.annualPlanMonthlyPrice / mediumPlanPrices.monthlyPlanPrice ) * 100
+	);
+	const discountDescription = percentageSavings
+		? translate( `Save %(percentageSavings)s%% by paying annually`, {
+				args: {
+					percentageSavings,
+				},
+				comment: 'Translators: percentageSavings is the percentage saved by paying annually',
+		  } )
+		: null;
+	return (
+		<div>
+			<div>{ billingTimeframe }</div>
+			<div className="plan-features-2023-grid__discount-promotion">{ discountDescription }</div>
+		</div>
+	);
+}
+
 const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props ) => {
 	const { planName, billingTimeframe } = props;
 	const translate = useTranslate();
 	const perMonthDescription = usePerMonthDescription( props ) || billingTimeframe;
 	const price = formatCurrency( 25000, 'USD' );
+	const wooExpressMonthlyPromotion = useWooExpressMonthlyPromotion( props );
+
+	if ( wooExpressMonthlyPromotion ) {
+		return wooExpressMonthlyPromotion;
+	}
 
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
 		return (
