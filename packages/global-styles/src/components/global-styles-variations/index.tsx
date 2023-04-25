@@ -39,10 +39,13 @@ const GlobalStylesVariation = ( {
 	const [ isFocused, setIsFocused ] = useState( false );
 	const { base } = useContext( GlobalStylesContext );
 	const context = useMemo( () => {
+		const { inline_css: globalStylesVariationInlineCss = '' } = globalStylesVariation;
+		const baseInlineCss = base.inline_css || '';
 		return {
 			user: globalStylesVariation,
 			base,
 			merged: mergeBaseAndUserConfigs( base, globalStylesVariation ),
+			inline_css: baseInlineCss + globalStylesVariationInlineCss,
 		};
 	}, [ globalStylesVariation, base ] );
 
@@ -77,7 +80,7 @@ const GlobalStylesVariation = ( {
 				<GlobalStylesContext.Provider value={ context }>
 					<GlobalStylesVariationPreview
 						title={ globalStylesVariation.title }
-						inlineCss={ globalStylesVariation.inline_css }
+						inlineCss={ context.inline_css }
 						isFocused={ isFocused || showOnlyHoverView }
 						onFocusOut={ () => setIsFocused( false ) }
 					/>
