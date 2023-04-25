@@ -71,7 +71,7 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 						{ isMobile ? (
 							<FoldableCard
 								hideSummary
-								header={ translate( "FAQ's" ) }
+								header={ translate( 'FAQs' ) }
 								clickableHeader={ true }
 								smooth
 								contentExpandedStyle={ contentStlye }
@@ -82,7 +82,7 @@ const ProductDetails: React.FC< ProductDetailsProps > = ( { product } ) => {
 							</FoldableCard>
 						) : (
 							<>
-								<p>{ translate( "FAQ's" ) }</p>
+								<p>{ translate( 'FAQs' ) }</p>
 								<FAQList items={ product.faqs } />
 							</>
 						) }

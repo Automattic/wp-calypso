@@ -26,7 +26,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 			...setTranslation(
 				[ PRODUCT_JETPACK_BACKUP_T1_YEARLY, PRODUCT_JETPACK_BACKUP_T1_MONTHLY ],
 				translate(
-					'Real-time backups as you edit. 10GB of cloud storage. {{span}}30-day{{/span}} activity log archive. Unlimited one-click restores.',
+					'Real-time backups as you edit. 10GB of cloud storage. {{span}}30-day{{/span}} activity log archive*. Unlimited one-click restores.',
 					{
 						components: {
 							span: <span />,
