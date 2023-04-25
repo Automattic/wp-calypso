@@ -364,19 +364,19 @@ jobs:
                   rm -rf desktop/release/win-ia32-unpacked
                   rm desktop/release/builder-debug.yml || true
                 shell: bash.exe
-      - when:
-          condition: << pipeline.git.tag >>
-          steps:
-            - run:
-                name: Import Codesigning Certificate
-                command: |
-                  # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
-                  # Ref: https://travis-ci.community/t/codesigning-on-windows/
-                  #
-                  # Fix: Import .p12 into the local certificate store. Sign Tool will use
-                  # package.json's `certificateSubjectName` to find the imported cert.
-                  $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
-                  Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
+      # - when:
+          # condition: << pipeline.git.tag >>
+          # steps:
+      - run:
+          name: Import Codesigning Certificate
+          command: |
+            # Workaround for Sign Tool "private key filter" bug in Circle's Windows image.
+            # Ref: https://travis-ci.community/t/codesigning-on-windows/
+            #
+            # Fix: Import .p12 into the local certificate store. Sign Tool will use
+            # package.json's `certificateSubjectName` to find the imported cert.
+            $env:CSC_LINK='C:\Users\circleci\wp-calypso\desktop\resource\certificates\win.p12'
+            Import-PfxCertificate -FilePath $env:CSC_LINK -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $env:WIN_CSC_KEY_PASSWORD -AsPlainText -Force)
       - run:
           name: Build NSIS
           command: |
