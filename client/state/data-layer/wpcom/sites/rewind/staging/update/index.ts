@@ -8,6 +8,7 @@ import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { requestBackupStagingSiteInfo } from 'calypso/state/rewind/staging/actions';
 import { UpdateStagingFlagRequestActionType } from 'calypso/state/rewind/staging/types';
 
 const updateStagingFlag = ( action: UpdateStagingFlagRequestActionType ) =>
@@ -30,6 +31,9 @@ const updateStagingFlagSuccess = ( { siteId }: UpdateStagingFlagRequestActionTyp
 		duration: 5000,
 		isPersistent: true,
 	} ),
+	// @TODO: Maybe we could dispatch an action to update the staging flag in the state here
+	// instead of dispatching the site staging info action
+	requestBackupStagingSiteInfo( siteId ),
 ];
 
 const updateStagingFlagError = (
