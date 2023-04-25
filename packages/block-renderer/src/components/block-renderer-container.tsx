@@ -88,7 +88,7 @@ const ScaledBlockRendererContainer = ( {
 	}, [] );
 
 	const scale = containerWidth / viewportWidth;
-	const maxHeightFor100vh = Math.max(
+	const heightFor100vh = Math.max(
 		contentHeight || 0,
 		viewportHeight || 0,
 		minHeightFor100vh || 0
@@ -97,13 +97,13 @@ const ScaledBlockRendererContainer = ( {
 	let scaledHeight = ( contentHeight as number ) * scale || minHeight;
 	if ( isMinHeight100vh ) {
 		// Handling container height of patterns with height 100vh
-		scaledHeight = maxHeightFor100vh * scale;
+		scaledHeight = heightFor100vh * scale;
 	}
 
 	let iframeHeight = contentHeight as number;
 	if ( isMinHeight100vh ) {
 		// Handling iframe height of patterns with height 100vh
-		iframeHeight = maxHeightFor100vh;
+		iframeHeight = heightFor100vh;
 	}
 
 	return (
