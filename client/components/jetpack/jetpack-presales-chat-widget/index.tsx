@@ -13,6 +13,12 @@ type PresalesChatResponse = {
 	is_available: boolean;
 };
 
+export type KeyType = 'jpAgency' | 'jpGeneral';
+
+export interface ZendeskJetpackChatProps {
+	keyType: KeyType;
+}
+
 //the API is rate limited if we hit the limit we'll back off and retry
 async function fetchWithRetry(
 	url: string,
@@ -38,10 +44,16 @@ async function fetchWithRetry(
 	}
 }
 
-export const ZendeskJetpackChat: React.VFC = () => {
+export const ZendeskJetpackChat: React.VFC< { keyType: KeyType } > = ( { keyType } ) => {
 	const [ error, setError ] = useState( false );
 	const { data: isStaffed } = usePresalesAvailabilityQuery();
-	const zendeskChatKey = config( 'zendesk_presales_chat_key' ) as keyof ConfigData;
+	const zendeskChatKey = useMemo( () => {
+		return config(
+			keyType === 'jpAgency'
+				? 'zendesk_presales_chat_key_jp_agency_dashboard'
+				: 'zendesk_presales_chat_key'
+		) as keyof ConfigData;
+	}, [ keyType ] );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const shouldShowZendeskPresalesChat = useMemo( () => {
 		const isEnglishLocale = ( config( 'english_locales' ) as string[] ).includes(
