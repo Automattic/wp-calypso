@@ -53,6 +53,8 @@
 
 .search-stream .search-stream__input-card.card {
 	margin-bottom: 0;
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 6px;
 }
 
 .search-stream__input-card.card {
