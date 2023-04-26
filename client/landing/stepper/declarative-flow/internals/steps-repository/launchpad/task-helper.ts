@@ -22,7 +22,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
+import { LaunchpadChecklist, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
