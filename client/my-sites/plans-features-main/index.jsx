@@ -623,7 +623,7 @@ export class PlansFeaturesMain extends Component {
 			hidePlanTypeSelector,
 			is2023PricingGridVisible,
 			planTypeSelectorProps,
-			datastorePlansLoaded,
+			datastorePlansLoaded = true,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
