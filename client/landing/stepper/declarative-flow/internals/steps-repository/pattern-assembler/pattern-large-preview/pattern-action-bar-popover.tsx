@@ -1,6 +1,6 @@
 import { getScrollContainer } from '@wordpress/dom';
 import { useEffect, useRef, useCallback } from 'react';
-import './style.scss';
+import './pattern-action-bar-popover.scss';
 
 interface Props {
 	referenceElement: Element | null;

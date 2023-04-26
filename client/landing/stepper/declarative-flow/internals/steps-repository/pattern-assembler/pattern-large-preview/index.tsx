@@ -6,14 +6,14 @@ import { Icon, layout } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState } from 'react';
-import { NAVIGATOR_PATHS, STYLES_PATHS } from './constants';
-import { PATTERN_ASSEMBLER_EVENTS } from './events';
-import PatternActionBar from './pattern-action-bar';
+import { NAVIGATOR_PATHS, STYLES_PATHS } from '../constants';
+import { PATTERN_ASSEMBLER_EVENTS } from '../events';
+import PatternActionBar from '../pattern-action-bar';
 import PatternActionBarPopover from './pattern-action-bar-popover';
-import { encodePatternId } from './utils';
-import type { Pattern } from './types';
+import { encodePatternId } from '../utils';
+import type { Pattern } from '../types';
 import type { MouseEvent } from 'react';
-import './pattern-large-preview.scss';
+import './style.scss';
 
 type BlockPopoverData = {
 	type: string;
