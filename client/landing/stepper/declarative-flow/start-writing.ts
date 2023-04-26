@@ -88,7 +88,7 @@ const startWriting: Flow = {
 						}
 						return window.location.replace( returnUrl );
 					}
-					break;
+					return navigate( 'launchpad' );
 				}
 				case 'plans':
 					if ( siteSlug ) {
