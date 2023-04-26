@@ -317,9 +317,9 @@ describe( 'getPluginsWithUpdates', () => {
 		expect( plugins ).toHaveLength( 0 );
 	} );
 
-	test( 'Should get a plugin list of length 1 when we can update files on the site', () => {
+	test( 'Should get a plugin list with the Jetpack site with "type: plugin" on it', () => {
 		const plugins = getPluginsWithUpdates( state, [ siteOneId, siteTwoId ] );
-		expect( plugins ).toHaveLength( 1 );
+		expect( plugins ).toEqual( [ { ...jetpackWithSites, type: 'plugin' } ] );
 	} );
 } );
 
