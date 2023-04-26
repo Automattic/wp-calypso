@@ -474,6 +474,7 @@ export interface LaunchPadCheckListTasksStatuses {
 	site_edited?: boolean;
 	video_uploaded?: boolean;
 	publish_first_course?: boolean;
+	domain_upsell_deferred?: boolean;
 }
 
 export interface ThemeSetupOptions {
