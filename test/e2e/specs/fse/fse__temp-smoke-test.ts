@@ -27,7 +27,6 @@ declare const browser: Browser;
 describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	let page: Page;
 	let fullSiteEditorPage: FullSiteEditorPage;
-	let testAccount: TestAccount;
 
 	const features = envToFeatureKey( envVariables );
 	const accountName = getTestAccountByFeature( { ...features, variant: 'siteEditor' } );
@@ -35,7 +34,7 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	beforeAll( async () => {
 		page = await browser.newPage();
 
-		testAccount = new TestAccount( accountName );
+		const testAccount = new TestAccount( accountName );
 		await testAccount.authenticate( page );
 	} );
 
@@ -52,7 +51,6 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 	it( 'Open the Page template', async function () {
 		fullSiteEditorPage = new FullSiteEditorPage( page );
 
-		await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 		await fullSiteEditorPage.prepareForInteraction();
 
 		await fullSiteEditorPage.ensureNavigationTopLevel();

@@ -31,13 +31,18 @@ const BlazePressStrings = () => {
 	translate( 'You can pause spending at any time.' );
 	translate( 'Saved cards' );
 	translate( 'Add new card' );
+	translate( '(ending %(lastFour)s)' );
+	translate( 'Expires on %(month)s/%(year)s' );
 	translate( 'What will be the Goal?' );
 	translate( 'Expand your target audience by adjusting audience setting' );
 	translate( 'Budget' );
 	translate( 'Daily budget' );
+	translate( 'Min amount is $%(minBudget)s' );
+	translate( 'Max amount is $%(maxBudget)s' );
 	translate( 'Between' );
 	translate( 'Days' );
-	translate( 'Max' );
+	translate( 'Min %(minDays)d day' );
+	translate( 'Max %(maxDays)d days' );
 	translate( 'Start date' );
 	translate( 'Creating your Ad' );
 	translate( 'Oops!' );
@@ -53,7 +58,7 @@ const BlazePressStrings = () => {
 		'Cannot create subscription. Please {{supportLink}}contact support{{/supportLink}} or try again later.'
 	);
 	translate(
-		'There was an error with the address. Please, verify that all the required data is valid'
+		'There was an error with the address. Please verify that all the required data is valid'
 	);
 	translate(
 		'There was an error with the address. The province, state or region should be filled'

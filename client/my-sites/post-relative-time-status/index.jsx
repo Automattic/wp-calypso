@@ -13,11 +13,13 @@ class PostRelativeTime extends PureComponent {
 		link: PropTypes.string,
 		target: PropTypes.string,
 		gridiconSize: PropTypes.number,
+		showGridIcon: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		link: null,
 		target: null,
+		showGridIcon: true,
 	};
 
 	/**
@@ -83,7 +85,9 @@ class PostRelativeTime extends PureComponent {
 			<span className="post-relative-time-status__time">
 				{ time && (
 					<>
-						<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
+						{ this.props.showGridIcon && (
+							<Gridicon icon="time" size={ this.props.gridiconSize || 18 } />
+						) }
 						<time className="post-relative-time-status__time-text" dateTime={ time }>
 							{ this.getDisplayedTimeForLabel() }
 						</time>

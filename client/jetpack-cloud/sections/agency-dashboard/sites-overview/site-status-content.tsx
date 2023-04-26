@@ -28,6 +28,7 @@ interface Props {
 	type: AllowedTypes;
 	isLargeScreen?: boolean;
 	isFavorite?: boolean;
+	siteError: boolean;
 }
 
 export default function SiteStatusContent( {
@@ -35,14 +36,14 @@ export default function SiteStatusContent( {
 	type,
 	isLargeScreen = false,
 	isFavorite = false,
+	siteError,
 }: Props ) {
 	const dispatch = useDispatch();
 
 	const {
 		link,
 		isExternalLink,
-		row: { value, status, error },
-		siteError,
+		row: { value, status },
 		tooltipId,
 		siteDown,
 		eventName,
@@ -66,6 +67,9 @@ export default function SiteStatusContent( {
 	// when the row is not monitor and monitor status is down
 	// since monitor is clickable when site is down.
 	const disabledStatus = siteError || ( type !== 'monitor' && siteDown );
+
+	// Disable selection and toggle when there is a site error or site is down
+	const hasAnyError = !! ( siteError || siteDown );
 
 	const statusContentRef = useRef< HTMLSpanElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
@@ -125,7 +129,7 @@ export default function SiteStatusContent( {
 			isHighSeverityError = true;
 		}
 		let errorContent;
-		if ( error ) {
+		if ( siteError ) {
 			errorContent = (
 				<span className="sites-overview__status-critical">
 					<Gridicon size={ 24 } icon="notice-outline" />
@@ -150,7 +154,7 @@ export default function SiteStatusContent( {
 					<SiteSelectCheckbox
 						isLargeScreen={ isLargeScreen }
 						item={ rows }
-						siteError={ siteError }
+						siteError={ hasAnyError }
 					/>
 				) : (
 					<SiteSetFavorite
@@ -197,7 +201,7 @@ export default function SiteStatusContent( {
 					status={ status }
 					tooltip={ tooltip }
 					tooltipId={ tooltipId }
-					siteError={ siteError }
+					siteError={ hasAnyError }
 					isLargeScreen={ isLargeScreen }
 				/>
 			);

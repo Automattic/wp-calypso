@@ -24,7 +24,10 @@ function ModuleCard( {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( false );
 	return (
-		<div className={ classNames( 'stats-widget-module stats-widget-card', className ) }>
+		<div
+			className={ classNames( 'stats-widget-module stats-widget-card', className ) }
+			aria-label={ title }
+		>
 			<div className="stats-widget-module__icon">{ icon }</div>
 			<div className="stats-widget-module__title">{ title }</div>
 			{ isLoading && <div className="stats-widget-module__value">-</div> }
