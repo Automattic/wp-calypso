@@ -84,16 +84,16 @@ import {
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import useIsLargeCurrency from '../plans/hooks/use-is-large-currency';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
-import PlanFeatures2023GridActions from './actions';
-import PlanFeatures2023GridBillingTimeframe from './billing-timeframe';
+import PlanFeatures2023GridActions from './components/actions';
+import PlanFeatures2023GridBillingTimeframe from './components/billing-timeframe';
+import PlanFeatures2023GridFeatures from './components/features';
+import PlanFeatures2023GridHeaderPrice from './components/header-price';
+import { PlanFeaturesItem } from './components/item';
+import { PlanComparisonGrid } from './components/plan-comparison-grid';
+import { Plans2023Tooltip } from './components/plans-2023-tooltip';
 import PopularBadge from './components/popular-badge';
-import PlanFeatures2023GridFeatures from './features';
-import PlanFeatures2023GridHeaderPrice from './header-price';
 import useHighlightAdjacencyMatrix from './hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from './hooks/use-highlight-label';
-import { PlanFeaturesItem } from './item';
-import { PlanComparisonGrid } from './plan-comparison-grid';
-import { Plans2023Tooltip } from './plans-2023-tooltip';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
 import type { IAppState } from 'calypso/state/types';
@@ -136,6 +136,7 @@ type PlanFeatures2023GridProps = {
 	withDiscount: boolean;
 	discountEndDate: Date;
 	hidePlansFeatureComparison: boolean;
+	hideUnavailableFeatures: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -790,7 +791,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { domainName, translate } = this.props;
+		const { domainName, translate, hideUnavailableFeatures } = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) =>
 				! isWpcomEnterpriseGridPlan( properties.planName ) &&
@@ -811,6 +812,7 @@ export class PlanFeatures2023Grid extends Component<
 							features={ features }
 							planName={ planName }
 							domainName={ domainName }
+							hideUnavailableFeatures={ hideUnavailableFeatures }
 						/>
 						{ jpFeatures.length !== 0 && (
 							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
@@ -827,6 +829,7 @@ export class PlanFeatures2023Grid extends Component<
 							features={ jpFeatures }
 							planName={ planName }
 							domainName={ domainName }
+							hideUnavailableFeatures={ hideUnavailableFeatures }
 						/>
 					</Container>
 				);

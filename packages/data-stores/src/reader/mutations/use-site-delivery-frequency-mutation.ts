@@ -70,6 +70,7 @@ const useSiteDeliveryFrequencyMutation = () => {
 				const mutatedSiteSubscriptions = applyCallbackToPages< 'subscriptions', SiteSubscription >(
 					previousSiteSubscriptions,
 					( page ) => ( {
+						...page,
 						subscriptions: page.subscriptions.map( ( siteSubscription ) => {
 							if ( siteSubscription.blog_ID === params.blog_id ) {
 								return {

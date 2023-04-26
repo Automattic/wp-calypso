@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { AppPromoFullWidth } from '@automattic/components';
+import { AppPromoCard } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useMemo, useState } from 'react';
@@ -138,7 +138,7 @@ export default function PromoCards( { isOdysseyStats, slug, pageSlug } ) {
 							href={ `/plugins/wordpress-seo-premium/${ slug }` }
 						/>
 					) }
-					<AppPromoFullWidth
+					<AppPromoCard
 						className="stats__promo-card-apps"
 						clickHandler={ promoCardDidReceiveClick }
 					/>

@@ -24,7 +24,6 @@ import {
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PaymentMethodSelector from '../payment-method-selector';
 import getPaymentMethodIdFromPayment from '../payment-method-selector/get-payment-method-id-from-payment';
 import useCreateAssignablePaymentMethods from './use-create-assignable-payment-methods';
@@ -46,28 +45,26 @@ function ChangePaymentMethod( {
 	const hasLoadedUserPurchases = useSelector( hasLoadedUserPurchasesFromServer );
 	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
 	const payment = useSelector( ( state ) => getByPurchaseId( state, purchaseId )?.payment );
-	const selectedSite = useSelector( getSelectedSite );
 	const { isLoading: isLoadingStoredCards } = useStoredPaymentMethods( { type: 'card' } );
 
 	const { isStripeLoading } = useStripe();
 
 	const isDataLoading =
 		! hasLoadedSites || ! hasLoadedUserPurchases || isLoadingStoredCards || isStripeLoading;
-	const isDataValid = purchase && selectedSite;
 
 	useEffect( () => {
-		if ( ! isDataLoading && ! isDataValid ) {
+		if ( ! isDataLoading && ! purchase ) {
 			// Redirect if invalid data
 			page( purchaseListUrl );
 		}
-	}, [ isDataLoading, isDataValid, purchaseListUrl ] );
+	}, [ isDataLoading, purchase, purchaseListUrl ] );
 
 	const currentPaymentMethodId = getPaymentMethodIdFromPayment( payment );
 	const changePaymentMethodTitle = getChangePaymentMethodTitleCopy( currentPaymentMethodId );
 	const paymentMethods = useCreateAssignablePaymentMethods( currentPaymentMethodId );
 	const reduxDispatch = useDispatch();
 
-	if ( isDataLoading || ! isDataValid ) {
+	if ( isDataLoading || ! purchase ) {
 		return (
 			<Fragment>
 				<QueryUserPurchases />

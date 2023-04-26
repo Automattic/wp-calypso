@@ -24,6 +24,10 @@ const startWriting: Flow = {
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
+			{
+				slug: 'launchpad',
+				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
+			},
 		];
 	},
 
@@ -41,8 +45,9 @@ const startWriting: Flow = {
 						} );
 
 						const siteOrigin = window.location.origin;
+
 						return redirect(
-							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?showLaunchpad=true&origin=${ siteOrigin }`
+							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }`
 						);
 					}
 				}
@@ -56,6 +61,9 @@ const startWriting: Flow = {
 		const isLoggedIn = useSelector( isUserLoggedIn );
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const locale = useLocale();
+		const currentPath = window.location.pathname;
+		const isLaunchpad = currentPath.includes( 'setup/start-writing/launchpad' );
+		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
 		const logInUrl =
 			locale && locale !== 'en'
@@ -70,8 +78,10 @@ const startWriting: Flow = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,
 			};
-		} else if ( currentUserSiteCount && currentUserSiteCount > 0 ) {
-			redirect( '/post?showLaunchpad=true' );
+		} else if ( userAlreadyHasSites && ! isLaunchpad ) {
+			// Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
+			// This prevents a bunch of sites being created accidentally.
+			redirect( `/post?${ START_WRITING_FLOW }=true` );
 			result = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires no preexisting sites`,

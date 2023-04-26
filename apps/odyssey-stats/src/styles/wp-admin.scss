@@ -7,7 +7,7 @@
 }
 
 // Override notice styles
-#wpbody-content > .notice {
+#wpbody-content .notice {
 	display: block;
 	width: auto;
 	background: var(--studio-white);
@@ -63,9 +63,7 @@
 	& .inner-notice-container.has-odyssey-stats-bg-color {
 		background-color: var(--jetpack-white-off);
 	}
-	#wpcontent {
-		padding-left: 1px;
-	}
+
 	// Offset margin of menu items set in Calypso.
 	ul.wp-submenu,
 	ul.wp-submenu-wrap {

@@ -69,6 +69,7 @@ export interface Site {
 	onSelect?: () => void;
 	jetpack_boost_scores: BoostData;
 	php_version_num: number;
+	is_connected: boolean;
 }
 export interface SiteNode {
 	value: Site;
@@ -131,11 +132,9 @@ export interface RowMetaData {
 	row: {
 		value: Site | SiteStats | BoostData | ReactChild;
 		status: AllowedStatusTypes;
-		error?: boolean;
 	};
 	link: string;
 	isExternalLink: boolean;
-	siteError: boolean;
 	tooltip: ReactChild | undefined;
 	tooltipId: string;
 	siteDown?: boolean;

@@ -54,8 +54,15 @@ export default function SitesOverview() {
 
 	const [ highlightTab, setHighlightTab ] = useState( false );
 
-	const { search, currentPage, filter, sort, selectedSites, setSelectedSites } =
-		useContext( SitesOverviewContext );
+	const {
+		search,
+		currentPage,
+		filter,
+		sort,
+		selectedSites,
+		setSelectedSites,
+		setIsBulkManagementActive,
+	} = useContext( SitesOverviewContext );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
@@ -125,6 +132,7 @@ export default function SitesOverview() {
 					selected: isFavorite ? filter.showOnlyFavorites : ! filter.showOnlyFavorites,
 					path: `${ basePath }${ isFavorite ? '/favorites' : '' }${ search ? '?s=' + search : '' }`,
 					onClick: () => {
+						setIsBulkManagementActive( false );
 						dispatch(
 							recordTracksEvent( 'calypso_jetpack_agency_dashboard_tab_click', {
 								nav_item: navItem.key,
@@ -142,6 +150,7 @@ export default function SitesOverview() {
 			isMobile,
 			search,
 			translate,
+			setIsBulkManagementActive,
 		]
 	);
 

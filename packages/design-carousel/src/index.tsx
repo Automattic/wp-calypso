@@ -22,12 +22,10 @@ export default function DesignCarousel( { onPick, selectedDesignSlugs }: DesignC
 	const locale = useLocale();
 
 	const { data: allDesigns } = useStarterDesignsQuery( {
-		vertical_id: '',
-		intent: 'sell',
 		_locale: locale,
 	} );
 
-	let selectedDesigns = allDesigns?.static.designs;
+	let selectedDesigns = allDesigns?.designs;
 
 	if ( selectedDesigns && selectedDesignSlugs ) {
 		// If we have a restricted set of designs, filter out all unwanted designs

@@ -24,9 +24,9 @@ const QUERY_VALUES = {
 };
 
 export default function JetpackUpsellSection() {
-	// NOTE: This will only work within Odyssey Stats.
 	const siteSlug = useSelector( ( state ) => getSelectedSiteSlug( state ) );
 
+	// NOTE: This will only work within Odyssey Stats.
 	const { purchasedProducts, error, isLoading } = usePurchasedProducts();
 
 	// Exit early if we don't have and can't get the site purchase data.

@@ -2,7 +2,7 @@ import type { ResponseCart, ResponseCartProduct } from './types';
 
 export function getEmptyResponseCart(): ResponseCart {
 	return {
-		blog_id: '',
+		blog_id: 0,
 		cart_generated_at_timestamp: 0,
 		cart_key: 'no-site',
 		products: [],

@@ -303,7 +303,7 @@ function useMaxDiscount( plans: string[] ): number {
 			const discountPrice = getDiscountedRawPrice( state, yearlyPlan.product_id );
 			const yearlyPlanCost = discountPrice || rawPrice || 0;
 
-			return Math.round(
+			return Math.floor(
 				( ( monthlyPlanAnnualCost - yearlyPlanCost ) / ( monthlyPlanAnnualCost || 1 ) ) * 100
 			);
 		} );
