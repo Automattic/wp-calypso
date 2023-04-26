@@ -21,8 +21,10 @@ export default function EditButton( { sites, isLargeScreen, isLoading }: Props )
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, isLargeScreen );
 
 	const handleToggleSelect = () => {
-		// Filter sites with site error as they are not selectable.
-		const filteredSite = sites.filter( ( site ) => ! site.site.error );
+		// Filter sites with site error or monitor error as they are not selectable.
+		const filteredSite = sites.filter(
+			( site ) => site.site.value.is_connected && ! site.monitor.error
+		);
 		setSelectedSites( filteredSite.map( ( item ) => item.site.value ) );
 	};
 
