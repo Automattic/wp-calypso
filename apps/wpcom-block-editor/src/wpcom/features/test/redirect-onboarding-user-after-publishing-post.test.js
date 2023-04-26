@@ -95,7 +95,7 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 		expect( mockUnSubscribe ).toBeCalledTimes( 1 );
 		expect( mockClosePublishSidebar ).toBeCalledTimes( 1 );
 		expect( global.window.location.href ).toBe(
-			'https://calypso.localhost:3000/setup/write/launchpad?siteSlug=wordpress.com&start-writing=true'
+			'https://calypso.localhost:3000/setup/start-writing/launchpad?siteSlug=wordpress.com&start-writing=true'
 		);
 	} );
 } );

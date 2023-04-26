@@ -38,7 +38,7 @@ async function fetchWithRetry(
 	}
 }
 
-export const ZendeskPreSalesChat: React.VFC = () => {
+export const ZendeskJetpackChat: React.VFC = () => {
 	const [ error, setError ] = useState( false );
 	const { data: isStaffed } = usePresalesAvailabilityQuery();
 	const zendeskChatKey = config( 'zendesk_presales_chat_key' ) as keyof ConfigData;

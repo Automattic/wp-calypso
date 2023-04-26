@@ -39,7 +39,7 @@ import {
 } from 'calypso/lib/analytics/signup';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import * as oauthToken from 'calypso/lib/oauth-token';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
@@ -236,7 +236,7 @@ class Signup extends Component {
 			this.updateShouldShowLoadingScreen( progress );
 		}
 
-		if ( isReskinnedFlow( flowName ) ) {
+		if ( isReskinnedFlow( flowName ) || this.props.isGravatar ) {
 			document.body.classList.add( 'is-white-signup' );
 			debug( 'In componentWillReceiveProps, addded is-white-signup class' );
 		} else {
@@ -357,7 +357,7 @@ class Signup extends Component {
 		const flowName = this.props.flowName;
 		// p2v1 also has a user step at the end but the flow is otherwise broken.
 		// reader also has a user step at the end, but this change doesn't fix that flow.
-		const eligbleFlows = [ 'domain', 'add-domain' ];
+		const eligbleFlows = [ 'domain' ];
 		if ( ! eligbleFlows.includes( flowName ) || ! this.props.progress ) {
 			return;
 		}
@@ -816,7 +816,10 @@ class Signup extends Component {
 			};
 		}
 
-		const stepClassName = this.props.stepName === 'user-hosting' ? 'user' : this.props.stepName;
+		const stepClassName =
+			this.props.stepName === 'user-hosting' || this.props.isGravatar
+				? 'user'
+				: this.props.stepName;
 
 		return (
 			<div className="signup__step" key={ stepKey }>
@@ -892,13 +895,14 @@ class Signup extends Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const isReskinned = isReskinnedFlow( this.props.flowName );
+		const isReskinned = isReskinnedFlow( this.props.flowName ) || this.props.isGravatar;
+		const showPageHeader = ! isP2Flow( this.props.flowName ) && ! this.props.isGravatar;
 
 		return (
 			<>
 				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 					<DocumentHead title={ this.props.pageTitle } />
-					{ ! isP2Flow( this.props.flowName ) && (
+					{ showPageHeader && (
 						<SignupHeader
 							progressBar={ {
 								flowName: this.props.flowName,
@@ -942,6 +946,7 @@ export default connect(
 		// See: https://github.com/Automattic/wp-calypso/pull/57386
 		const siteId = getSelectedSiteId( state ) || getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
+		const oauth2Client = getCurrentOAuth2Client( state );
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
@@ -961,7 +966,8 @@ export default connect(
 			siteId,
 			siteType: getSiteType( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client,
+			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 		};
 	},
 	{

@@ -49,6 +49,7 @@ describe( '<SiteTable>', () => {
 		is_connection_healthy: true,
 		awaiting_plugin_updates: [],
 		is_favorite: false,
+		is_connected: true,
 	};
 	const items: Array< SiteData > = [
 		{

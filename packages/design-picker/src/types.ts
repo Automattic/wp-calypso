@@ -63,6 +63,7 @@ export interface DesignRecipe {
 	footer_pattern_ids?: number[] | string[];
 	color_variation_title?: string;
 	font_variation_title?: string;
+	slug?: string;
 }
 
 export interface SoftwareSet {

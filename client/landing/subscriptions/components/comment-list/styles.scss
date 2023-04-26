@@ -16,6 +16,12 @@ $max-list-width: 1300px;
 
 	.row-wrapper {
 		border-bottom: 1px solid var(--color-border-subtle);
+
+		&.header {
+			@media (max-width: $break-small) {
+				display: none;
+			}
+		}
 	}
 
 	.row {

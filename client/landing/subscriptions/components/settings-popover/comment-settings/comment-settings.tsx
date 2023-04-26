@@ -1,14 +1,14 @@
 import SettingsPopover from '../settings-popover';
-import UnfollowCommentsButton from './unfollow-comments-button';
+import UnsubscribeCommentsButton from './unsubscribe-comments-button';
 
 type CommentSettingsProps = {
-	onUnfollow: () => void;
-	unfollowing: boolean;
+	onUnsubscribe: () => void;
+	unsubscribing: boolean;
 };
 
-const CommentSettings = ( { onUnfollow, unfollowing }: CommentSettingsProps ) => (
+const CommentSettings = ( { onUnsubscribe, unsubscribing }: CommentSettingsProps ) => (
 	<SettingsPopover>
-		<UnfollowCommentsButton unfollowing={ unfollowing } onUnfollow={ onUnfollow } />
+		<UnsubscribeCommentsButton unsubscribing={ unsubscribing } onUnsubscribe={ onUnsubscribe } />
 	</SettingsPopover>
 );
 
