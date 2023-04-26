@@ -9,10 +9,8 @@ import { formatCurrency } from '@automattic/format-currency';
 import { useSelect } from '@wordpress/data';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { useSelector } from 'react-redux';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { PLANS_STORE } from 'calypso/my-sites/plans-features-main/store';
-import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import type { PlansSelect } from '@automattic/data-stores';
 
 interface Props {
@@ -23,7 +21,6 @@ interface Props {
 
 function usePerMonthDescription( { isMonthlyPlan, planName }: Omit< Props, 'billingTimeframe' > ) {
 	const translate = useTranslate();
-	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const planPrices = usePlanPrices( {
 		planSlug: planName as PlanSlug,
 		returnMonthly: isMonthlyPlan,
@@ -66,8 +63,8 @@ function usePerMonthDescription( { isMonthlyPlan, planName }: Omit< Props, 'bill
 		const maybeDiscountedPrice =
 			planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
 		const fullTermPriceText =
-			currencyCode && maybeDiscountedPrice
-				? formatCurrency( maybeDiscountedPrice, currencyCode, { stripZeros: true } )
+			plan.currencyCode && maybeDiscountedPrice
+				? formatCurrency( maybeDiscountedPrice, plan.currencyCode, { stripZeros: true } )
 				: null;
 
 		if ( Plans.TERM_ANNUALLY === plan?.billingTerm ) {
