@@ -6,11 +6,11 @@ type DomainItem = {
 	product_slug?: string;
 };
 
-export const getIntervalType = ( path: string ): string => {
-	const pathHasIntervalType = path.includes( 'intervalType=' );
+export const getIntervalType = ( path?: string ): string => {
+	const pathHasIntervalType = path?.includes( 'intervalType=' );
 
 	if ( pathHasIntervalType ) {
-		const urlPartsFromPath = getUrlParts( path );
+		const urlPartsFromPath = getUrlParts( path || '' );
 		return urlPartsFromPath.searchParams.get( 'intervalType' ) || 'yearly';
 	}
 
