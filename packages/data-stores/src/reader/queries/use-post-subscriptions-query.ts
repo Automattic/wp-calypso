@@ -26,7 +26,7 @@ const sortByPostName = ( a: PostSubscription, b: PostSubscription ) =>
 	a.post_title.localeCompare( b.post_title );
 
 const sortByRecentlySubscribed = ( a: PostSubscription, b: PostSubscription ) =>
-	b.subscription_date.getTime() - a.subscription_date.getTime();
+	b.date_subscribed.getTime() - a.date_subscribed.getTime();
 
 const getSortFunction = ( sortTerm: PostSubscriptionsSortBy ) => {
 	switch ( sortTerm ) {
@@ -83,7 +83,7 @@ const usePostSubscriptionsQuery = ( {
 		// Transform the dates into Date objects
 		const transformedData = flattenedData?.map( ( comment_subscription ) => ( {
 			...comment_subscription,
-			subscription_date: new Date( comment_subscription.subscription_date ),
+			date_subscribed: new Date( comment_subscription.date_subscribed ),
 		} ) );
 
 		const searchTermLowerCase = searchTerm.toLowerCase();
