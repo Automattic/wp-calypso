@@ -1,1 +1,1 @@
-export { default as UnfollowIcon } from './unfollow-icon';
+export { default as UnsubscribeIcon } from './unsubscribe-icon';

@@ -23,6 +23,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/billing-history/',
 		post_id: 40792,
 	},
+	blaze_credits: {
+		link: 'https://wordpress.com/support/blaze-credits/',
+		post_id: 240330,
+	},
 	cancel_purchase: {
 		link: 'https://wordpress.com/support/manage-purchases/#cancel-a-purchase',
 		post_id: 111349,

@@ -1,4 +1,4 @@
-import { LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW } from '@automattic/onboarding';
+import { LINK_IN_BIO_FLOW, LINK_IN_BIO_TLD_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
 import { LaunchpadFlowTaskList, Task } from './types';
 
 export const DOMAIN_UPSELL = 'domain_upsell';
@@ -136,4 +136,11 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	],
 	write: [ 'setup_write', 'design_selected', 'first_post_published', 'site_launched' ],
 	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
+	[ START_WRITING_FLOW ]: [
+		'first_post_published',
+		'setup_free',
+		DOMAIN_UPSELL,
+		'plan_selected',
+		'site_launched',
+	],
 };

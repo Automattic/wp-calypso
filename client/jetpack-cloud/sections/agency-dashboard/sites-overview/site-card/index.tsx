@@ -36,9 +36,9 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const blogId = rows.site.value.blog_id;
 	const isConnectionHealthy = rows.site.value?.is_connection_healthy;
 
-	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
+	useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
 
-	const isSiteConnected = data ? data.connected : true;
+	const isSiteConnected = rows.site.value.is_connected;
 
 	const handleSetExpandedColumn = ( column: AllowedTypes ) => {
 		recordEvent( 'expandable_block_column_toggled', {
@@ -74,7 +74,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 	const headerItem = rows[ 'site' ];
 
 	const site = rows.site;
-	const siteError = site.error || rows.monitor.error || ! isSiteConnected;
+	const siteError = rows.monitor.error || ! isSiteConnected;
 	const siteUrl = site.value.url;
 	const isFavorite = rows.isFavorite;
 
@@ -105,14 +105,19 @@ export default function SiteCard( { rows, columns }: Props ) {
 					tabIndex={ 0 }
 				>
 					{ toggleContent }
-					<SiteStatusContent rows={ rows } type={ headerItem.type } isFavorite={ isFavorite } />
+					<SiteStatusContent
+						rows={ rows }
+						type={ headerItem.type }
+						isFavorite={ isFavorite }
+						siteError={ ! isSiteConnected }
+					/>
 				</span>
 				<SiteActions site={ site } siteError={ siteError } />
 			</div>
 
 			{ isExpanded && (
 				<div className="site-card__expanded-content">
-					{ ( site.error || ! isSiteConnected ) && <SiteErrorContent siteUrl={ siteUrl } /> }
+					{ ! isSiteConnected && <SiteErrorContent siteUrl={ siteUrl } /> }
 					{ columns
 						.filter( ( column ) => column.key !== 'site' )
 						.map( ( column, index ) => {
@@ -122,7 +127,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 									<div
 										className={ classNames(
 											'site-card__expanded-content-list',
-											! site.error && 'site-card__content-list-no-error'
+											isSiteConnected && 'site-card__content-list-no-error'
 										) }
 										key={ index }
 									>
@@ -131,7 +136,11 @@ export default function SiteCard( { rows, columns }: Props ) {
 												<span className="site-card__expanded-content-key">{ column.title }</span>
 												<span className="site-card__expanded-content-value">
 													<span className="site-card__expanded-content-status">
-														<SiteStatusContent rows={ rows } type={ row.type } />
+														<SiteStatusContent
+															rows={ rows }
+															type={ row.type }
+															siteError={ ! isSiteConnected }
+														/>
 													</span>
 													<span className="site-card__expanded-column">
 														{ column.isExpandable && (
@@ -152,7 +161,7 @@ export default function SiteCard( { rows, columns }: Props ) {
 													isSmallScreen
 													site={ rows.site.value }
 													columns={ [ column.key ] }
-													hasError={ site.error || ! isSiteConnected }
+													hasError={ siteError }
 												/>
 											) }
 										</>

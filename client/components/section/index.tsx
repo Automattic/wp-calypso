@@ -39,14 +39,24 @@ export const SectionHeader = styled.div< SectionHeaderProps >`
 	font-weight: 400;
 	letter-spacing: -0.4px;
 	line-height: 1.2;
-	text-align: left;
+	html[dir='ltr'] & {
+		text-align: left;
+	}
+	html[dir='rtl'] & {
+		text-align: right;
+	}
 	font-size: var( --scss-font-title-large );
 `;
 
 const SectionSubHeader = styled.div< SectionHeaderProps >`
 	color: var( --${ ( props ) => ( props.dark ? 'color-text-inverted' : 'color-text' ) } );
 	font-weight: 400;
-	text-align: left;
+	html[dir='ltr'] & {
+		text-align: left;
+	}
+	html[dir='rtl'] & {
+		text-align: right;
+	}
 	font-size: var( --scss-font-body-small );
 `;
 

@@ -8,7 +8,7 @@ $max-list-width: 1300px;
 	max-width: $max-list-width;
 
 	.row {
-		border-bottom: 1px solid var(--color-border-subtle);
+		border-block-end: 1px solid rgb(238, 238, 238);
 		display: flex;
 		align-items: center;
 		flex-direction: row;
@@ -22,6 +22,10 @@ $max-list-width: 1300px;
 		&.header {
 			padding-bottom: $font-code;
 			padding-top: 0;
+
+			@media (max-width: $break-small) {
+				display: none;
+			}
 		}
 
 		.title-box {
@@ -36,6 +40,10 @@ $max-list-width: 1300px;
 				height: 40px;
 				flex: none;
 				border-radius: 50%;
+
+				@media (max-width: $break-small) {
+					display: none;
+				}
 			}
 
 			.title-column {
@@ -43,6 +51,10 @@ $max-list-width: 1300px;
 				flex-direction: column;
 				min-width: 0;
 				padding-left: 12px;
+
+				@media (max-width: $break-small) {
+					padding-left: 0;
+				}
 
 				.name {
 					font-weight: 600;

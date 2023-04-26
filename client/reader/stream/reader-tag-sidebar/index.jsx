@@ -1,5 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import TagLink from 'calypso/blocks/reader-post-card/tag-link';
 import { useRelatedMetaByTag } from 'calypso/data/reader/use-related-meta-by-tag';
 import { useTagStats } from 'calypso/data/reader/use-tag-stats';
@@ -13,6 +13,7 @@ const ReaderTagSidebar = ( { tag } ) => {
 	const translate = useTranslate();
 	const relatedMetaByTag = useRelatedMetaByTag( tag );
 	const tagStats = useTagStats( tag );
+	const dispatch = useDispatch();
 	if ( relatedMetaByTag === undefined ) {
 		return null;
 	}
@@ -20,9 +21,11 @@ const ReaderTagSidebar = ( { tag } ) => {
 	const handleTagSidebarClick = () => {
 		recordAction( 'clicked_reader_sidebar_tag' );
 		recordGaEvent( 'Clicked Reader Sidebar Tag' );
-		recordReaderTracksEvent( 'calypso_reader_sidebar_tag_clicked', {
-			tag: decodeURIComponent( tag ),
-		} );
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_sidebar_tag_clicked', {
+				tag: decodeURIComponent( tag ),
+			} )
+		);
 	};
 
 	const tagLinks = relatedMetaByTag.data?.related_tags?.map( ( relatedTag ) => (
@@ -66,4 +69,4 @@ const ReaderTagSidebar = ( { tag } ) => {
 	);
 };
 
-export default connect( null, { recordReaderTracksEvent } )( ReaderTagSidebar );
+export default ReaderTagSidebar;

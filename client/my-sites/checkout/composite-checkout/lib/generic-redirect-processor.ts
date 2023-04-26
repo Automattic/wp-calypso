@@ -25,7 +25,6 @@ export default async function genericRedirectProcessor(
 	const {
 		getThankYouUrl,
 		siteSlug,
-		siteId,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		reduxDispatch,
@@ -65,7 +64,6 @@ export default async function genericRedirectProcessor(
 			country: contactDetails?.countryCode?.value ?? '',
 			postalCode: getPostalCode( contactDetails ),
 			subdivisionCode: contactDetails?.state?.value,
-			siteId: siteId ? String( siteId ) : '',
 			domainDetails: getDomainDetails( contactDetails, {
 				includeDomainDetails,
 				includeGSuiteDetails,

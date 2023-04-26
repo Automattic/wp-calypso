@@ -2,8 +2,8 @@
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button, Modal } from '@wordpress/components';
-import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect } from '@wordpress/element';
+import { subscribe, useDispatch, useSelect } from '@wordpress/data';
+import { useEffect, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import React from 'react';
 import image from './image.svg';
@@ -11,10 +11,37 @@ import image from './image.svg';
 import './modal.scss';
 
 const GlobalStylesModal = () => {
+	const [ viewCanvasPath, setViewCanvasPath ] = useState();
+
+	// Since Gutenberg doesn't provide a stable selector to get the current path of
+	// the view canvas, we need to infer it from the URL.
+	useEffect( () => {
+		const unsubscribe = subscribe( () => {
+			// Subscriber callbacks run before the URL actually changes, so we need
+			// to delay the execution.
+			setTimeout( () => {
+				const params = new URLSearchParams( window.location.search );
+
+				const canvasMode = params.get( 'canvas' ) ?? 'view';
+				setViewCanvasPath( canvasMode === 'view' ? params.get( 'path' ) : undefined );
+			}, 0 );
+		}, 'core/edit-site' );
+
+		return () => unsubscribe();
+	}, [] );
+
 	const isVisible = useSelect(
-		( select ) => select( 'automattic/wpcom-global-styles' ).isModalVisible(),
-		[]
+		( select ) => {
+			const currentSidebar =
+				select( 'core/interface' ).getActiveComplementaryArea( 'core/edit-site' );
+			return select( 'automattic/wpcom-global-styles' ).isModalVisible(
+				currentSidebar,
+				viewCanvasPath
+			);
+		},
+		[ viewCanvasPath ]
 	);
+
 	const { dismissModal } = useDispatch( 'automattic/wpcom-global-styles' );
 	const { set: setPreference } = useDispatch( 'core/preferences' );
 

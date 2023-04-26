@@ -234,7 +234,7 @@ export default withCurrentRoute(
 			isReskinLoginRoute || ( isPartnerSignup && ! isPartnerSignupStart ) || isGravatar;
 		const noMasterbarForRoute =
 			isJetpackLogin ||
-			( isWhiteLogin && ! isPartnerSignup & ! isGravatar ) ||
+			( isWhiteLogin && ! isPartnerSignup && ! isGravatar ) ||
 			isJetpackWooDnaFlow ||
 			isP2Login;
 		const isPopup = '1' === currentQuery?.is_popup;

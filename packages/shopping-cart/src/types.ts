@@ -190,7 +190,7 @@ export interface CartSyncManager {
 }
 
 export interface RequestCart {
-	blog_id?: number | string;
+	blog_id: number;
 	cart_key?: CartKey;
 	products: RequestCartProduct[];
 	tax: RequestCartTaxData;
@@ -223,7 +223,7 @@ export type MinimalRequestCartProduct = Partial< RequestCartProduct > &
 	Pick< RequestCartProduct, 'product_slug' >;
 
 export interface ResponseCart< P = ResponseCartProduct > {
-	blog_id: number | string;
+	blog_id: number;
 	cart_key: CartKey;
 	products: P[];
 
