@@ -42,12 +42,13 @@ const TagsColumn = ( props: TagsColProps ) => (
 
 const TagsRow = ( props: TagsRowProps ) => (
 	<div className="alphabetic-tags__row">
-		{ props.tags.map( ( tag: Tag | undefined, index ) => (
-			<div className="alphabetic-tags__col" key={ 'alphabetic-tags-col-' + index }>
-				{ tag && <TagsColumn slug={ tag.slug } title={ tag.title } /> }
-				{ ! tag && <TagsColumn slug="" title="" /> }
-			</div>
-		) ) }
+		{ props.tags.map( ( tag: Tag | undefined, index ) =>
+			tag ? (
+				<div className="alphabetic-tags__col" key={ 'alphabetic-tags-col-' + index }>
+					<TagsColumn slug={ tag.slug } title={ tag.title } />
+				</div>
+			) : null
+		) }
 	</div>
 );
 
