@@ -60,7 +60,7 @@ export function getEnhancedTasks(
 
 	const firstPostPublishedCompleted = checklistStatuses?.first_post_published || false;
 
-	const planCompleted = checklistStatuses?.plan_selected;
+	const planCompleted = checklistStatuses?.plan_selected || ! isStartWritingFlow( flow || null );
 
 	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
 
@@ -299,6 +299,31 @@ export function getEnhancedTasks(
 
 								setPendingAction( async () => {
 									setProgressTitle( __( 'Launching website' ) );
+									await launchSite( site.ID );
+
+									// Waits for half a second so that the loading screen doesn't flash away too quickly
+									await new Promise( ( res ) => setTimeout( res, 500 ) );
+									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
+									return { goToHome: true, siteSlug };
+								} );
+
+								submit?.();
+							}
+						},
+					};
+					break;
+				case 'blog_launched':
+					taskData = {
+						title: translate( 'Launch your blog' ),
+						completed: siteLaunchCompleted,
+						isLaunchTask: true,
+						actionDispatch: () => {
+							if ( site?.ID ) {
+								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
+								const { launchSite } = dispatch( SITE_STORE );
+
+								setPendingAction( async () => {
+									setProgressTitle( __( 'Launching blog' ) );
 									await launchSite( site.ID );
 
 									// Waits for half a second so that the loading screen doesn't flash away too quickly

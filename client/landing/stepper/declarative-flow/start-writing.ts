@@ -4,7 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelector } from 'react-redux';
 import { OnboardSelect } from 'calypso/../packages/data-stores/src';
-import { addPlanToCart, addProductsToCart } from 'calypso/../packages/onboarding/src';
+import { addPlanToCart } from 'calypso/../packages/onboarding/src';
 import { updateLaunchpadSettings } from 'calypso/data/sites/use-launchpad';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
@@ -51,13 +51,18 @@ const startWriting: Flow = {
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
+			const returnUrl = addQueryArgs( `/home/${ siteSlug }`, {
+				celebrateLaunch: true,
+				launchpadComplete: true,
+			} );
+
 			switch ( currentStep ) {
 				case 'site-creation-step':
 					return navigate( 'processing' );
 				case 'processing': {
 					if ( providedDependencies?.siteSlug ) {
 						await updateLaunchpadSettings( String( providedDependencies?.siteSlug ), {
-							checklist_statuses: { first_post_published: true, plan_selected: false },
+							checklist_statuses: { first_post_published: true },
 						} );
 
 						const siteOrigin = window.location.origin;
@@ -76,22 +81,13 @@ const startWriting: Flow = {
 					}
 					if ( providedDependencies?.goToCheckout ) {
 						const planCartItem = getPlanCartItem();
-						const domainCartItem = getDomainCartItem();
 						if ( planCartItem ) {
 							await addPlanToCart( siteSlug as string, flowName as string, true, '', planCartItem );
-						}
-
-						if ( domainCartItem ) {
-							await addProductsToCart( siteSlug as string, flowName as string, [ domainCartItem ] );
 						}
 					}
 					return navigate( 'launchpad' );
 				case 'launchpad':
 					if ( getPlanCartItem() || getDomainCartItem() ) {
-						const returnUrl = addQueryArgs( `/home/${ siteSlug }`, {
-							celebrateLaunch: true,
-							launchpadComplete: true,
-						} );
 						const encodedReturnUrl = encodeURIComponent( returnUrl );
 
 						return window.location.assign(
@@ -100,7 +96,7 @@ const startWriting: Flow = {
 							) }?redirect_to=${ encodedReturnUrl }`
 						);
 					}
-					break;
+					return window.location.assign( returnUrl );
 			}
 		}
 		return { submit };
