@@ -1,3 +1,4 @@
 export const NOTIFICATIONS_EXCEPTIONS = {
-	email: [ 'achievement', 'scheduled_publicize', 'store_order', 'blogging_prompt' ],
+	timeline: [ 'draft_post_prompt' ],
+	email: [ 'achievement', 'scheduled_publicize', 'store_order' ],
 };

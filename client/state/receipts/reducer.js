@@ -10,10 +10,10 @@ import { combineReducers } from 'calypso/state/utils';
 /**
  * Returns a new state with the given attributes for the given receipt ID.
  *
- * @param {object} state current state
+ * @param {Object} state current state
  * @param {number} receiptId identifier of the site
- * @param {object} attributes list of attributes and their values
- * @returns {object} the new state
+ * @param {Object} attributes list of attributes and their values
+ * @returns {Object} the new state
  */
 function updateReceiptState( state, receiptId, attributes ) {
 	return Object.assign( {}, state, {

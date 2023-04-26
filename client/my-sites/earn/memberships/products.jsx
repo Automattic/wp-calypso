@@ -9,10 +9,12 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Badge from 'calypso/components/badge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import HeaderCake from 'calypso/components/header-cake';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SectionHeader from 'calypso/components/section-header';
 import { bumpStat } from 'calypso/state/analytics/actions';
@@ -25,15 +27,17 @@ import {
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
 import RecurringPaymentsPlanAddEditModal from './add-edit-plan-modal';
+import { ADD_NEW_PAYMENT_PLAN_HASH, ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 import RecurringPaymentsPlanDeleteModal from './delete-plan-modal';
 import MembershipsSection from './';
 import './style.scss';
 
+const showAddEditDialog =
+	window.location.hash === ADD_NEW_PAYMENT_PLAN_HASH ||
+	window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
 class MembershipsProductsSection extends Component {
 	state = {
-		showAddEditDialog:
-			window.location.hash === '#add-new-payment-plan' ||
-			window.location.hash === '#add-newsletter-payment-plan',
+		showAddEditDialog,
 		showDeleteDialog: false,
 		product: null,
 	};
@@ -72,12 +76,11 @@ class MembershipsProductsSection extends Component {
 	};
 
 	closeDialog = () => this.setState( { showAddEditDialog: false, showDeleteDialog: false } );
-
 	render() {
 		// This will take the hash into account only when ading a new product
 		const subscribe_as_site_subscriber = this.state.product
 			? this.state.product?.subscribe_as_site_subscriber
-			: window.location.hash === '#add-newsletter-payment-plan';
+			: window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH;
 
 		return (
 			<div>
@@ -87,7 +90,7 @@ class MembershipsProductsSection extends Component {
 					{ this.props.translate( 'Payment plans' ) }
 				</HeaderCake>
 
-				{ ! this.props.hasStripeFeature && (
+				{ this.props.hasLoaded && ! this.props.hasStripeFeature && (
 					// Purposefully isn't a dismissible nudge as without this nudge, the page would appear to be
 					// broken as it only does listing and deleting of plans and it wouldn't be clear how to change that.
 					<UpsellNudge
@@ -104,29 +107,36 @@ class MembershipsProductsSection extends Component {
 					/>
 				) }
 
-				{ ! this.props.connectedAccountId && (
+				{ this.props.hasLoaded && ! this.props.connectedAccountId && (
 					<MembershipsSection section={ this.props.section } query={ this.props.query } />
 				) }
-				{ this.props.hasStripeFeature && this.props.connectedAccountId && (
+				{ this.props.hasLoaded && this.props.hasStripeFeature && this.props.connectedAccountId && (
 					<SectionHeader>
 						<Button primary compact onClick={ () => this.openAddEditDialog( null ) }>
 							{ this.props.translate( 'Add a new payment plan' ) }
 						</Button>
 					</SectionHeader>
 				) }
-				{ this.props.products.map( ( product ) => (
-					<CompactCard className="memberships__products-product-card" key={ product.ID }>
-						<div className="memberships__products-product-details">
-							<div className="memberships__products-product-price">
-								{ formatCurrency( product.price, product.currency ) }
+				{ this.props.hasLoaded &&
+					this.props.products.map( ( product ) => (
+						<CompactCard className="memberships__products-product-card" key={ product.ID }>
+							<div className="memberships__products-product-details">
+								<div className="memberships__products-product-price">
+									{ formatCurrency( product.price, product.currency ) }
+								</div>
+								<div className="memberships__products-product-title">{ product.title }</div>
+								{ product?.subscribe_as_site_subscriber && (
+									<div className="memberships__products-product-badge">
+										<Badge type="info">{ this.props.translate( 'Newsletter' ) }</Badge>
+									</div>
+								) }
 							</div>
-							<div className="memberships__products-product-title">{ product.title }</div>
-						</div>
 
-						{ this.renderEllipsisMenu( product.ID ) }
-					</CompactCard>
-				) ) }
-				{ this.state.showAddEditDialog &&
+							{ this.renderEllipsisMenu( product.ID ) }
+						</CompactCard>
+					) ) }
+				{ this.props.hasLoaded &&
+					this.state.showAddEditDialog &&
 					this.props.hasStripeFeature &&
 					this.props.connectedAccountId && (
 						<RecurringPaymentsPlanAddEditModal
@@ -136,11 +146,16 @@ class MembershipsProductsSection extends Component {
 							} ) }
 						/>
 					) }
-				{ this.state.showDeleteDialog && (
+				{ this.props.hasLoaded && this.state.showDeleteDialog && (
 					<RecurringPaymentsPlanDeleteModal
 						closeDialog={ this.closeDialog }
 						product={ this.state.product }
 					/>
+				) }
+				{ ! this.props.hasLoaded && (
+					<div className="memberships__loading">
+						<LoadingEllipsis />
+					</div>
 				) }
 			</div>
 		);
@@ -150,10 +165,15 @@ class MembershipsProductsSection extends Component {
 export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
+
 		const siteId = getSelectedSiteId( state );
+		const features = state.sites.features?.[ siteId ];
+		const hasLoaded = features && features.hasLoadedFromServer;
+
 		return {
 			site,
 			siteId,
+			hasLoaded,
 			siteSlug: getSelectedSiteSlug( state ),
 			products: getProductsForSiteId( state, siteId ),
 			connectedAccountId: getConnectedAccountIdForSiteId( state, siteId ),

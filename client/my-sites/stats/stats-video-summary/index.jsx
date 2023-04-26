@@ -63,11 +63,12 @@ class StatsVideoSummary extends Component {
 					activeKey="period"
 					dataKey="value"
 					labelKey="period"
-					labelClass="video"
+					chartType="video"
 					sectionClass="is-video"
 					selected={ selectedBar }
 					onClick={ this.selectBar }
 					tabLabel={ tabLabel }
+					type="video"
 				/>
 			</div>
 		);

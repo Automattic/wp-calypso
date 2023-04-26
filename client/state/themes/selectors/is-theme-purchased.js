@@ -8,7 +8,7 @@ import 'calypso/state/themes/init';
  *
  * Use this selector alongside with the <QuerySitePurchases /> component.
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {number}  siteId  Site ID
  * @returns {boolean}         True if the theme has been purchased for the site

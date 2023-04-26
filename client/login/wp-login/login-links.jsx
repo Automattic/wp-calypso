@@ -1,6 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon } from '@automattic/components';
+import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -38,6 +39,7 @@ export class LoginLinks extends Component {
 		twoFactorAuthType: PropTypes.string,
 		usernameOrEmail: PropTypes.string,
 		isPartnerSignup: PropTypes.bool,
+		isGravatar: PropTypes.bool,
 	};
 
 	constructor( props ) {
@@ -314,6 +316,7 @@ export class LoginLinks extends Component {
 		const {
 			currentRoute,
 			isP2Login,
+			isGravatar,
 			locale,
 			oauth2Client,
 			pathname,
@@ -321,6 +324,10 @@ export class LoginLinks extends Component {
 			translate,
 			usernameOrEmail,
 		} = this.props;
+
+		if ( isGravatar ) {
+			return null;
+		}
 
 		// use '?signup_url' if explicitly passed as URL query param
 		const signupUrl = this.props.signupUrl
@@ -357,7 +364,12 @@ export class LoginLinks extends Component {
 
 	render() {
 		return (
-			<div className="wp-login__links">
+			<div
+				className={ classnames( 'wp-login__links', {
+					'has-2fa-links': this.props.twoFactorAuthType,
+					'is-gravatar-links': this.props.isGravatar,
+				} ) }
+			>
 				{ this.renderSignUpLink() }
 				{ this.renderLostPhoneLink() }
 				{ this.renderHelpLink() }

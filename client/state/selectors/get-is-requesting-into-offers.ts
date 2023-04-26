@@ -5,7 +5,7 @@ import type { AppState } from 'calypso/types';
 /**
  * Returns true if a request for intro offers is in-progress, false otherwise.
  *
- * @param  {object}   state     Global state tree
+ * @param  {Object}   state     Global state tree
  * @param  {number?}  siteId    The ID of the site we're querying
  * @returns {string}            true if request is in-progress, false otherwise
  */

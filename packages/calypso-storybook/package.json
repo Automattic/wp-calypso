@@ -21,7 +21,8 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"devDependencies": {
 		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"@automattic/calypso-typescript-config": "workspace:^"
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"@storybook/addon-viewport": "^6.4.19"
 	},
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",

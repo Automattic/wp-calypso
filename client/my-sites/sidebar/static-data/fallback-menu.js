@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { translate } from 'i18n-calypso';
 /* eslint-disable jsdoc/require-param */
 /**
@@ -38,6 +39,7 @@ export default function buildFallbackResponse( {
 	shouldShowAdControl = false,
 	shouldShowAMP = false,
 	shouldShowAddOns = false,
+	showSiteLogs = false,
 } = {} ) {
 	let inbox = [];
 	if ( shouldShowInbox ) {
@@ -509,6 +511,17 @@ export default function buildFallbackResponse( {
 					type: 'submenu-item',
 					url: `/export/${ siteDomain }`,
 				},
+				...( config.isEnabled( 'woa-logging' ) && showSiteLogs
+					? [
+							{
+								parent: 'tools.php',
+								slug: 'tools-site-logs',
+								title: translate( 'Site Logs' ),
+								type: 'submenu-item',
+								url: `/site-logs/${ siteDomain }`,
+							},
+					  ]
+					: [] ),
 			],
 		},
 		{
@@ -530,7 +543,9 @@ export default function buildFallbackResponse( {
 					slug: 'options-reading-php',
 					title: translate( 'Reading' ),
 					type: 'submenu-item',
-					url: `https://${ siteDomain }/wp-admin/options-reading.php`,
+					url: config.isEnabled( 'settings/modernize-reading-settings' )
+						? `/settings/reading/${ siteDomain }`
+						: `https://${ siteDomain }/wp-admin/options-reading.php`,
 				},
 				{
 					parent: 'options-general.php',

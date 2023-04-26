@@ -5,11 +5,11 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import BlazePressWidget from 'calypso/components/blazepress-widget';
 import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
+import PostActionCounts from 'calypso/my-sites/post-type-list/post-action-counts';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
 
 export type Post = {
@@ -36,7 +36,7 @@ export default function PostItem( { post }: Props ) {
 	const [ loading ] = useState( false );
 	const dispatch = useDispatch();
 	const keyValue = 'post-' + post.ID;
-	const { isModalOpen, value, openModal } = useRouteModal( 'blazepress-widget', keyValue );
+	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
 
 	const onClickPromote = async () => {
 		openModal();
@@ -65,12 +65,13 @@ export default function PostItem( { post }: Props ) {
 						) }
 					</span>
 					<span className="post-item__post-type">{ getPostType( post.type ) }</span>
-					<span className="post-item__post-type">
+					<span className="post-item__link">
 						<a href={ post.URL } className="post-item__title-view">
 							{ __( 'View' ) }{ ' ' }
 							<Gridicon icon="external" size={ 12 } className="post-item__external-icon" />
 						</a>
 					</span>
+					<PostActionCounts globalId={ post.global_ID } />
 				</div>
 			</div>
 
@@ -81,12 +82,6 @@ export default function PostItem( { post }: Props ) {
 			) }
 
 			<div className="post-item__promote-link">
-				<BlazePressWidget
-					isVisible={ isModalOpen && value === keyValue }
-					siteId={ post.site_ID }
-					postId={ post.ID }
-					keyValue={ keyValue }
-				/>
 				<Button
 					isPrimary={ true }
 					isBusy={ loading }

@@ -22,9 +22,9 @@ import { domainWhoisSchema } from './schema';
  * Returns the updated requests state after an action has been dispatched. The
  * state maps domain to whether a request is in progress.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const isRequestingContactDetailsCache = ( state = false, action ) => {
 	switch ( action.type ) {
@@ -54,9 +54,9 @@ export const isRequestingWhois = keyedReducer( 'domain', ( state = false, action
  * Returns the save request status after an action has been dispatched. The
  * state maps domain to the request status
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const isSaving = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -112,9 +112,9 @@ function mergeDomainRegistrantContactDetails( domainState, registrantContactDeta
  * Returns the updated items state after an action has been dispatched. The
  * state maps domain to the domain's whoisData object.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( domainWhoisSchema, ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -177,8 +177,8 @@ export default combineReducers( {
  *   weird.map( v => v );
  *   // [1, 2, 3] (no foo for you!)
  *
- * @param  {object} data   Potential contact details
- * @returns {object}        Sanitized contact details
+ * @param  {Object} data   Potential contact details
+ * @returns {Object}        Sanitized contact details
  */
 function sanitizeExtra( data ) {
 	const path = data._contactDetailsCache ? [ '_contactDetailsCache', 'extra' ] : 'extra';

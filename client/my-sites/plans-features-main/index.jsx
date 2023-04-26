@@ -19,13 +19,16 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
+	TYPE_ENTERPRISE_GRID_WPCOM,
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
 	PLAN_FREE,
+	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
@@ -37,6 +40,7 @@ import { get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySites from 'calypso/components/data/query-sites';
@@ -62,8 +66,8 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import PlanTypeSelector from './plan-type-selector';
 import PlanFAQ from './plansStepFaq';
+import TermExperimentPlanTypeSelector from './term-experiment-plan-type-selector';
 import WpcomFAQ from './wpcom-faq';
 
 import './style.scss';
@@ -98,7 +102,7 @@ export class PlansFeaturesMain extends Component {
 		}
 	}
 
-	showFeatureComparison() {
+	show2023OnboardingPricingGrid() {
 		const {
 			basePlansPath,
 			customerType,
@@ -119,10 +123,70 @@ export class PlansFeaturesMain extends Component {
 			isReskinned,
 			isFAQCondensedExperiment,
 			isPlansInsideStepper,
+			is2023PricingGridVisible,
+			intervalType,
+			planTypeSelectorProps,
+			busyOnUpgradeClick,
+			hidePlansFeatureComparison,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
 		const visiblePlans = this.getVisiblePlansForPlanFeatures( plans );
+
+		if ( is2023PricingGridVisible ) {
+			const asyncProps = {
+				basePlansPath,
+				domainName,
+				isInSignup,
+				isLandingPage,
+				isLaunchPage,
+				onUpgradeClick,
+				plans,
+				flowName,
+				redirectTo,
+				visiblePlans,
+				selectedFeature,
+				selectedPlan,
+				withDiscount,
+				discountEndDate,
+				withScroll: plansWithScroll,
+				popularPlanSpec: getPopularPlanSpec( {
+					flowName,
+					customerType,
+					isJetpack,
+					availablePlans: visiblePlans,
+				} ),
+				siteId,
+				isReskinned,
+				isPlansInsideStepper,
+				intervalType,
+				hidePlansFeatureComparison,
+			};
+			const asyncPlanFeatures2023Grid = (
+				<AsyncLoad
+					require="calypso/my-sites/plan-features-2023-grid"
+					{ ...asyncProps }
+					planTypeSelectorProps={ planTypeSelectorProps }
+				/>
+			);
+
+			return (
+				<div
+					className={ classNames(
+						'plans-features-main__group',
+						'is-wpcom',
+						`is-customer-${ customerType }`,
+						'is-2023-pricing-grid',
+						{
+							'is-scrollable': plansWithScroll,
+						}
+					) }
+					data-e2e-plans="wpcom"
+				>
+					{ asyncPlanFeatures2023Grid }
+				</div>
+			);
+		}
 
 		return (
 			<div
@@ -162,6 +226,7 @@ export class PlansFeaturesMain extends Component {
 					isReskinned={ isReskinned }
 					isFAQCondensedExperiment={ isFAQCondensedExperiment }
 					isPlansInsideStepper={ isPlansInsideStepper }
+					busyOnUpgradeClick={ busyOnUpgradeClick }
 				/>
 			</div>
 		);
@@ -189,7 +254,7 @@ export class PlansFeaturesMain extends Component {
 			plansWithScroll,
 			isInVerticalScrollingPlansExperiment,
 			redirectToAddDomainFlow,
-			domainAndPlanPackage,
+			hidePlanTypeSelector,
 			translate,
 			locale,
 			flowName,
@@ -240,7 +305,7 @@ export class PlansFeaturesMain extends Component {
 				{ this.renderSecondaryFormattedHeader() }
 				<PlanFeatures
 					redirectToAddDomainFlow={ redirectToAddDomainFlow }
-					domainAndPlanPackage={ domainAndPlanPackage }
+					hidePlanTypeSelector={ hidePlanTypeSelector }
 					basePlansPath={ basePlansPath }
 					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
 					domainName={ domainName }
@@ -278,6 +343,7 @@ export class PlansFeaturesMain extends Component {
 			monthly: TERM_MONTHLY,
 			yearly: TERM_ANNUALLY,
 			'2yearly': TERM_BIENNIALLY,
+			'3yearly': TERM_TRIENNIALLY,
 		};
 
 		return plans[ intervalType ] || defaultValue || TERM_ANNUALLY;
@@ -290,9 +356,12 @@ export class PlansFeaturesMain extends Component {
 			hideFreePlan,
 			hidePersonalPlan,
 			hidePremiumPlan,
+			hideEcommercePlan,
+			hideEnterprisePlan,
 			sitePlanSlug,
 			showTreatmentPlansReorderTest,
 			flowName,
+			is2023PricingGridVisible,
 		} = this.props;
 
 		const hideBloggerPlan = ! isBloggerPlan( selectedPlan ) && ! isBloggerPlan( sitePlanSlug );
@@ -303,16 +372,27 @@ export class PlansFeaturesMain extends Component {
 		if ( plansFromProps.length ) {
 			plans = plansFromProps;
 		} else {
+			const isBloggerPlanVisible = hideBloggerPlan === true ? false : true;
+			const isEnterprisePlanVisible = is2023PricingGridVisible && ! hideEnterprisePlan;
 			plans = [
 				findPlansKeys( { group: GROUP_WPCOM, type: TYPE_FREE } )[ 0 ],
-				hideBloggerPlan
-					? null
-					: findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_BLOGGER } )?.[ 0 ],
+				isBloggerPlanVisible &&
+					findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_BLOGGER } )?.[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_PERSONAL } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_PREMIUM } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_BUSINESS } )[ 0 ],
 				findPlansKeys( { group: GROUP_WPCOM, term, type: TYPE_ECOMMERCE } )[ 0 ],
-			].filter( ( el ) => el !== null );
+				isEnterprisePlanVisible &&
+					findPlansKeys( { group: GROUP_WPCOM, type: TYPE_ENTERPRISE_GRID_WPCOM } )[ 0 ],
+			].filter( ( el ) => el );
+		}
+
+		if ( is2023PricingGridVisible ) {
+			/*
+			 * We need to pass all the plans in order to show the correct features in the plan comparison table.
+			 * Pleas use the getVisiblePlansForPlanFeatures selector to filter out the plans that should not be visible.
+			 */
+			return plans;
 		}
 
 		if ( hideFreePlan ) {
@@ -325,6 +405,10 @@ export class PlansFeaturesMain extends Component {
 
 		if ( hidePremiumPlan ) {
 			plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+		}
+
+		if ( hideEcommercePlan ) {
+			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
 		}
 
 		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
@@ -340,7 +424,6 @@ export class PlansFeaturesMain extends Component {
 		if ( showTreatmentPlansReorderTest ) {
 			return plans.reverse();
 		}
-
 		return plans;
 	}
 
@@ -373,12 +456,17 @@ export class PlansFeaturesMain extends Component {
 			isAllPaidPlansShown,
 			isInMarketplace,
 			sitePlanSlug,
+			is2023PricingGridVisible,
+			hideFreePlan,
+			hidePersonalPlan,
+			hidePremiumPlan,
+			hideEcommercePlan,
 		} = this.props;
 
 		const isPlanOneOfType = ( plan, types ) =>
 			types.filter( ( type ) => planMatches( plan, { type } ) ).length > 0;
 
-		const plans = this.isDisplayingPlansNeededForFeature()
+		let plans = this.isDisplayingPlansNeededForFeature()
 			? availablePlans.filter( ( plan ) => {
 					if ( isEcommercePlan( selectedPlan ) ) {
 						return isEcommercePlan( plan );
@@ -391,6 +479,37 @@ export class PlansFeaturesMain extends Component {
 					}
 			  } )
 			: availablePlans;
+
+		if ( is2023PricingGridVisible ) {
+			plans = plans.filter( ( plan ) =>
+				isPlanOneOfType( plan, [
+					TYPE_FREE,
+					TYPE_PERSONAL,
+					TYPE_PREMIUM,
+					TYPE_BUSINESS,
+					TYPE_ECOMMERCE,
+					TYPE_ENTERPRISE_GRID_WPCOM,
+				] )
+			);
+
+			if ( hideFreePlan ) {
+				plans = plans.filter( ( planSlug ) => ! isFreePlan( planSlug ) );
+			}
+
+			if ( hidePersonalPlan ) {
+				plans = plans.filter( ( planSlug ) => ! isPersonalPlan( planSlug ) );
+			}
+
+			if ( hidePremiumPlan ) {
+				plans = plans.filter( ( planSlug ) => ! isPremiumPlan( planSlug ) );
+			}
+
+			if ( hideEcommercePlan ) {
+				plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
+			}
+
+			return plans;
+		}
 
 		if ( plansWithScroll ) {
 			return plans.filter( ( plan ) =>
@@ -483,12 +602,25 @@ export class PlansFeaturesMain extends Component {
 		return props.planTypeSelector;
 	}
 
+	renderPlansGrid() {
+		const { shouldShowPlansFeatureComparison, is2023PricingGridVisible } = this.props;
+
+		if ( is2023PricingGridVisible ) {
+			return this.show2023OnboardingPricingGrid();
+		}
+
+		return shouldShowPlansFeatureComparison
+			? this.show2023OnboardingPricingGrid()
+			: this.getPlanFeatures();
+	}
+
 	render() {
 		const {
 			siteId,
 			redirectToAddDomainFlow,
-			domainAndPlanPackage,
-			shouldShowPlansFeatureComparison,
+			hidePlanTypeSelector,
+			is2023PricingGridVisible,
+			planTypeSelectorProps,
 		} = this.props;
 
 		const plans = this.getPlansForPlanFeatures();
@@ -501,25 +633,30 @@ export class PlansFeaturesMain extends Component {
 
 		// In the "purchase a plan and free domain" flow we do not want to show
 		// monthly plans because monthly plans do not come with a free domain.
-		if ( redirectToAddDomainFlow !== undefined || domainAndPlanPackage ) {
+		if ( redirectToAddDomainFlow !== undefined || hidePlanTypeSelector ) {
 			hidePlanSelector = true;
 		}
 
 		return (
-			<div className="plans-features-main">
+			<div
+				className={ classNames( 'plans-features-main', {
+					'is-pricing-grid-2023-plans-features-main ': is2023PricingGridVisible,
+				} ) }
+			>
 				<QueryPlans />
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
 				{ ! hidePlanSelector && (
-					<PlanTypeSelector
-						{ ...this.props }
+					<TermExperimentPlanTypeSelector
+						isEligible={ is2023PricingGridVisible }
 						kind={ kindOfPlanTypeSelector }
 						plans={ visiblePlans }
+						planTypeSelectorProps={ planTypeSelectorProps }
 					/>
 				) }
-				{ shouldShowPlansFeatureComparison ? this.showFeatureComparison() : this.getPlanFeatures() }
+				{ this.renderPlansGrid() }
 				{ this.mayRenderFAQ() }
 			</div>
 		);
@@ -540,18 +677,20 @@ export class PlansFeaturesMain extends Component {
 
 PlansFeaturesMain.propTypes = {
 	redirectToAddDomainFlow: PropTypes.bool,
-	domainAndPlanPackage: PropTypes.string,
+	hidePlanTypeSelector: PropTypes.bool,
 	basePlansPath: PropTypes.string,
 	hideFreePlan: PropTypes.bool,
 	hidePersonalPlan: PropTypes.bool,
 	hidePremiumPlan: PropTypes.bool,
+	hideEcommercePlan: PropTypes.bool,
+	hideEnterprisePlan: PropTypes.bool,
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
-	intervalType: PropTypes.string,
+	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly', '2yearly', '3yearly' ] ),
 	isChatAvailable: PropTypes.bool,
 	isInSignup: PropTypes.bool,
 	isLandingPage: PropTypes.bool,
-
+	isStepperUpgradeFlow: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	redirectTo: PropTypes.string,
 	selectedFeature: PropTypes.string,
@@ -565,6 +704,7 @@ PlansFeaturesMain.propTypes = {
 	isReskinned: PropTypes.bool,
 	isPlansInsideStepper: PropTypes.bool,
 	planTypeSelector: PropTypes.string,
+	busyOnUpgradeClick: PropTypes.bool,
 };
 
 PlansFeaturesMain.defaultProps = {
@@ -572,6 +712,7 @@ PlansFeaturesMain.defaultProps = {
 	hideFreePlan: false,
 	hidePersonalPlan: false,
 	hidePremiumPlan: false,
+	hideEnterprisePlan: false,
 	intervalType: 'yearly',
 	isChatAvailable: false,
 	showFAQ: true,
@@ -581,6 +722,8 @@ PlansFeaturesMain.defaultProps = {
 	isReskinned: false,
 	planTypeSelector: 'interval',
 	isPlansInsideStepper: false,
+	busyOnUpgradeClick: false,
+	isStepperUpgradeFlow: false,
 };
 
 export default connect(
@@ -592,6 +735,7 @@ export default connect(
 		const sitePlanSlug = sitePlan?.product_slug;
 		const eligibleForWpcomMonthlyPlans = isEligibleForWpComMonthlyPlan( state, siteId );
 		const titanMonthlyRenewalCost = getProductDisplayCost( state, TITAN_MAIL_MONTHLY_SLUG );
+		const siteSlug = getSiteSlug( state, get( props.site, [ 'ID' ] ) );
 
 		let customerType = chooseDefaultCustomerType( {
 			currentCustomerType: props.customerType,
@@ -607,6 +751,19 @@ export default connect(
 		) {
 			customerType = 'business';
 		}
+		const is2023PricingGridVisible =
+			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window );
+		const planTypeSelectorProps = {
+			basePlansPath: props.basePlansPath,
+			isStepperUpgradeFlow: props.isStepperUpgradeFlow,
+			isInSignup: props.isInSignup,
+			eligibleForWpcomMonthlyPlans: eligibleForWpcomMonthlyPlans,
+			isPlansInsideStepper: props.isPlansInsideStepper,
+			intervalType: props.intervalType,
+			customerType: customerType,
+			hidePersonalPlan: props.hidePersonalPlan,
+			siteSlug,
+		};
 
 		return {
 			isCurrentPlanRetired: isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug ),
@@ -618,10 +775,13 @@ export default connect(
 			isMultisite: isJetpackSiteMultiSite( state, siteId ),
 			previousRoute: getPreviousRoute( state ),
 			siteId,
-			siteSlug: getSiteSlug( state, get( props.site, [ 'ID' ] ) ),
+			siteSlug,
 			sitePlanSlug,
 			eligibleForWpcomMonthlyPlans,
 			titanMonthlyRenewalCost,
+			is2023PricingGridVisible,
+			showFAQ: !! props.showFAQ && ! is2023PricingGridVisible,
+			planTypeSelectorProps,
 		};
 	},
 	{

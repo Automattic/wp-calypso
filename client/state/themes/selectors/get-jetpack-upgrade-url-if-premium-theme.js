@@ -9,7 +9,7 @@ import 'calypso/state/themes/init';
 /**
  * Returns the URL for purchasing a Jetpack Professional plan if the theme is a premium theme and site doesn't have access to them.
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme to check whether it's premium.¡
  * @param  {number}  siteId  Site ID for which to purchase the plan
  * @returns {?string}         Plan purchase URL

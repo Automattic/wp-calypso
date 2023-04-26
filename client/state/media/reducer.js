@@ -37,9 +37,9 @@ const isMediaError = ( action ) =>
  * dispatched. The state reflects a mapping of site ID, media ID pairing to
  * an array of errors that occurred for that corresponding media item.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const errors = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -175,9 +175,9 @@ export const queries = ( state = {}, action ) => {
  * dispatched. The state reflects a mapping of site ID pairing to an array
  * that contains IDs of media items.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}       Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}       Updated state
  */
 export const selectedItems = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -278,9 +278,9 @@ export const selectedItems = ( state = {}, action ) => {
  * using the transient ID to reference an already saved item to get back
  * the saved item rather than the trasient item.
  *
- * @param {object} state The previous state.
- * @param {object} action The action.
- * @returns {object} The next state.
+ * @param {Object} state The previous state.
+ * @param {Object} action The action.
+ * @returns {Object} The next state.
  */
 export const transientItems = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -389,9 +389,9 @@ export const transientItems = ( state = {}, action ) => {
  * dispatched. The state reflects a mapping of site ID, media ID pairing to a
  * boolean reflecting whether a request for the media item is in progress.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const fetching = ( state = {}, action ) => {
 	switch ( action.type ) {

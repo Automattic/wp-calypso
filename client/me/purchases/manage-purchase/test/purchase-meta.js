@@ -2,15 +2,15 @@
  * @jest-environment jsdom
  */
 
-/* eslint-disable jest/no-conditional-expect */
-/* eslint-disable jest/valid-title */
-
 import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import PurchaseMeta from '../purchase-meta';
 
 describe( 'PurchaseMeta', () => {
+	const queryClient = new QueryClient();
+
 	it( 'does render "Free with Plan"', () => {
 		const store = createReduxStore(
 			{
@@ -35,14 +35,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( screen.getByText( /Free with Plan/ ) ).toBeInTheDocument();
 	} );
@@ -54,6 +56,7 @@ describe( 'PurchaseMeta', () => {
 					data: [
 						{
 							ID: 1,
+							bill_period_days: 365,
 							bill_period_label: 'per year',
 						},
 					],
@@ -71,14 +74,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( screen.getByText( /\/ year\b/ ) ).toBeInTheDocument();
 	} );
@@ -90,6 +95,7 @@ describe( 'PurchaseMeta', () => {
 					data: [
 						{
 							ID: 1,
+							bill_period_days: 365,
 							bill_period_label: 'par année',
 						},
 					],
@@ -107,14 +113,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( screen.getByText( /\/ year\b/ ) ).toBeInTheDocument();
 	} );
@@ -127,6 +135,7 @@ describe( 'PurchaseMeta', () => {
 						{
 							ID: 1,
 							bill_period_label: 'per month',
+							bill_period_days: 31,
 						},
 					],
 				},
@@ -143,14 +152,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( screen.getByText( /\/ month\b/ ) ).toBeInTheDocument();
 	} );
@@ -163,6 +174,7 @@ describe( 'PurchaseMeta', () => {
 						{
 							ID: 1,
 							bill_period_label: 'per week',
+							bill_period_days: 7,
 						},
 					],
 				},
@@ -179,14 +191,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( screen.getByText( /\/ week\b/ ) ).toBeInTheDocument();
 	} );
@@ -199,6 +213,7 @@ describe( 'PurchaseMeta', () => {
 						{
 							ID: 1,
 							bill_period_label: 'per day',
+							bill_period_days: 1,
 						},
 					],
 				},
@@ -215,14 +230,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 		expect( screen.getByText( /\/ day\b/ ) ).toBeInTheDocument();
 	} );
@@ -235,6 +252,7 @@ describe( 'PurchaseMeta', () => {
 						{
 							ID: 1,
 							product_slug: 'business-bundle-2y',
+							bill_period_days: 730,
 						},
 					],
 				},
@@ -251,17 +269,59 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 
 		expect( screen.getByText( /\/ two years\b/ ) ).toBeInTheDocument();
+	} );
+
+	it( 'does render "three years" in the price column when it is a triennial purchase', () => {
+		const store = createReduxStore(
+			{
+				purchases: {
+					data: [
+						{
+							ID: 1,
+							product_slug: 'business-bundle-3y',
+							bill_period_days: 1095,
+						},
+					],
+				},
+				sites: {
+					requestingAll: false,
+				},
+				currentUser: {
+					id: 1,
+					user: {
+						primary_blog: 'example',
+					},
+				},
+			},
+			( state ) => state
+		);
+		render(
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
+		);
+
+		expect( screen.getByText( /\/ three years\b/ ) ).toBeInTheDocument();
 	} );
 
 	it( 'does render "Never Expires" in the Renews on column when it is a DIFM purchase', () => {
@@ -289,14 +349,16 @@ describe( 'PurchaseMeta', () => {
 			( state ) => state
 		);
 		render(
-			<ReduxProvider store={ store }>
-				<PurchaseMeta
-					hasLoadedPurchasesFromServer={ true }
-					purchaseId={ 1 }
-					siteSlug="test"
-					isDataLoading={ false }
-				/>
-			</ReduxProvider>
+			<QueryClientProvider client={ queryClient }>
+				<ReduxProvider store={ store }>
+					<PurchaseMeta
+						hasLoadedPurchasesFromServer={ true }
+						purchaseId={ 1 }
+						siteSlug="test"
+						isDataLoading={ false }
+					/>
+				</ReduxProvider>
+			</QueryClientProvider>
 		);
 
 		expect( screen.getByText( /Never Expires/ ) ).toBeInTheDocument();

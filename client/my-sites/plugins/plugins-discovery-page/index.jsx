@@ -1,7 +1,10 @@
+import { useSelector } from 'react-redux';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import CollectionListView from '../plugins-browser/collection-list-view';
 import SingleListView, { SHORT_LIST_LENGTH } from '../plugins-browser/single-list-view';
 import usePlugins from '../use-plugins';
+import InPageCTASection from './in-page-cta-section';
 import './style.scss';
 import UpgradeNudge from './upgrade-nudge';
 
@@ -81,12 +84,15 @@ const PluginsDiscoveryPage = ( props ) => {
 		category: 'featured',
 	} );
 
+	const isLoggedIn = useSelector( isUserLoggedIn );
+
 	return (
 		<>
 			<UpgradeNudge { ...props } paidPlugins={ true } />
 			<PaidPluginsSection { ...props } />
 			<CollectionListView category="monetization" { ...props } />
 			<UpgradeNudge { ...props } />
+			{ ! isLoggedIn && <InPageCTASection /> }
 			<FeaturedPluginsSection
 				{ ...props }
 				pluginsByCategoryFeatured={ pluginsByCategoryFeatured }

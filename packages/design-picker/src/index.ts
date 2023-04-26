@@ -3,8 +3,11 @@ export { default as FeaturedPicksButtons } from './components/featured-picks-but
 export { default as PremiumBadge } from './components/premium-badge';
 export { default as BadgeContainer } from './components/badge-container';
 export { default as StyleVariationBadges } from './components/style-variation-badges';
+export { default as ThemeCard } from './components/theme-card';
 export { default as ThemePreview } from './components/theme-preview';
 export { default as UnifiedDesignPicker } from './components/unified-design-picker';
+export { default as WooCommerceBundledBadge } from './components/woocommerce-bundled-badge';
+export { default as PatternAssemblerCta } from './components/pattern-assembler-cta';
 export {
 	availableDesignsConfig,
 	getAvailableDesigns,
@@ -21,6 +24,7 @@ export {
 	DEFAULT_VIEWPORT_HEIGHT,
 	MOBILE_VIEWPORT_WIDTH,
 	STICKY_OFFSET_TOP,
+	BLANK_CANVAS_DESIGN,
 } from './constants';
 export type {
 	FontPair,
@@ -32,5 +36,5 @@ export type {
 	StyleVariationPreviewColorPalette,
 	StyleVariationStylesColor,
 } from './types';
-export { useCategorization } from './hooks/use-categorization';
+export { useCategorization, useCategorizationFromApi } from './hooks/use-categorization';
 export { useThemeDesignsQuery } from './hooks/use-theme-designs-query';

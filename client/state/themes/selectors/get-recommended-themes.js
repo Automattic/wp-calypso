@@ -7,7 +7,7 @@ const emptyList = [];
 /**
  * Gets the list of recommended themes.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {string} filter A filter string for a theme query
  * @returns {Array} the list of recommended themes
  */

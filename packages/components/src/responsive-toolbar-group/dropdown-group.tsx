@@ -173,7 +173,9 @@ export default function DropdownGroup( {
 	);
 
 	useEffect( () => {
-		if ( ! containerRef.current ) return;
+		if ( ! containerRef.current ) {
+			return;
+		}
 
 		const observers: IntersectionObserver[] = [];
 

@@ -56,9 +56,13 @@ const windows = {
 function setDimensions( config ) {
 	const full = screen.getPrimaryDisplay();
 
-	if ( config.width === 'full' ) config.width = full.bounds.width;
+	if ( config.width === 'full' ) {
+		config.width = full.bounds.width;
+	}
 
-	if ( config.height === 'full' ) config.height = full.bounds.height;
+	if ( config.height === 'full' ) {
+		config.height = full.bounds.height;
+	}
 
 	return config;
 }

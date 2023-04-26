@@ -1,5 +1,7 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { getGaGtag } from '../utils/get-ga-gtag';
 import {
@@ -120,7 +122,11 @@ function initLoadedTrackingScripts() {
 
 	// init Twitter
 	if ( mayWeTrackByTracker( 'twitter' ) ) {
-		window.twq( 'init', TRACKING_IDS.twitterPixelId );
+		if ( isJetpackCloud() || isJetpackCheckout() ) {
+			window.twq( 'config', TRACKING_IDS.jetpackTwitterPixelId );
+		} else {
+			window.twq( 'init', TRACKING_IDS.twitterPixelId );
+		}
 	}
 
 	// init Quora

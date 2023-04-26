@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-e2e",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "Tools for e2e tests.",
 	"main": "dist/esm/src/index.js",
 	"types": "dist/types/src/index.d.ts",
@@ -23,7 +23,7 @@
 		"jest-docblock": "^27",
 		"mailosaur": "^8.4.0",
 		"nock": "^12.0.3",
-		"playwright": "^1.28",
+		"playwright": "^1.32",
 		"totp-generator": "^0.0.12"
 	},
 	"devDependencies": {
@@ -32,9 +32,9 @@
 		"@automattic/languages": "workspace:^",
 		"@jest/globals": "^27.3.1",
 		"@types/jest": "^27.4.0",
-		"@types/node": "^16.11.26",
+		"@types/node": "^18.11.18",
 		"@types/node-fetch": "^2.6.1",
-		"@wordpress/i18n": "^4.9.0",
+		"@wordpress/i18n": "^4.22.0",
 		"asana-phrase": "^0.0.8",
 		"node-fetch": "^2.6.7",
 		"typescript": "^4.7.4"
@@ -43,6 +43,6 @@
 		"clean": "yarn build --clean && rm -rf dist",
 		"build": "tsc --build ./tsconfig.json",
 		"encrypt-secrets": "openssl enc -md sha1 -aes-256-cbc -pass env:E2E_SECRETS_KEY -out ./src/secrets/encrypted.enc -in ./src/secrets/decrypted-secrets.json",
-		"decrypt-secrets": "openssl enc -md sha1 -aes-256-cbc -d -pass env:E2E_SECRETS_KEY -in ./src/secrets/encrypted.enc -out ./src/secrets/decrypted-secrets.json"
+		"decrypt-secrets": "rm -f ./src/secrets/decrypted-secrets.json; openssl enc -md sha1 -aes-256-cbc -d -pass env:E2E_SECRETS_KEY -in ./src/secrets/encrypted.enc -out ./src/secrets/decrypted-secrets.json"
 	}
 }

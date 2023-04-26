@@ -20,7 +20,7 @@ const DesktopListeners = {
 	/**
 	 * Bootstraps network connection status change handler.
 	 *
-	 * @param {object} reduxStore The redux store.
+	 * @param {Object} reduxStore The redux store.
 	 */
 	init: function ( reduxStore ) {
 		debug( 'Registering IPC listeners' );

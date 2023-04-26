@@ -161,8 +161,7 @@ body.is-section-signup {
 
 // Notice the :not(.dops) selector. I've added this to try and
 // avoid stepping on the toes of our oauth users, like Crowdsignal.
-body.is-section-signup .layout:not(.dops),
-body.is-section-signup .layout.gravatar {
+body.is-section-signup .layout:not(.dops) {
 	// Update the logo that appears when loading Calypso
 	// to match the homepage, using primary-dark with opacity.
 	.wpcom-site__logo {
@@ -221,8 +220,7 @@ body.is-section-signup .layout.gravatar {
 }
 
 // Signup headings
-body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-header,
-body.is-section-signup .layout.gravatar .formatted-header {
+body.is-section-signup .layout:not(.dops):not(.is-wccom-oauth-flow) .formatted-header {
 	margin: 0 0 16px;
 
 	.formatted-header__title {
@@ -451,12 +449,22 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
-	.step-wrapper:not(.is-horizontal-layout) {
+	.signup:not(.is-onboarding-2023-pricing-grid) .step-wrapper:not(.is-horizontal-layout) {
 		.step-wrapper__header {
 			margin: 24px 20px;
 
 			@include break-large {
 				margin: 48px 0 40px;
+			}
+		}
+	}
+
+	.signup.is-onboarding-2023-pricing-grid .step-wrapper:not(.is-horizontal-layout) {
+		.step-wrapper__header {
+			margin: 24px 20px 38px;
+
+			@media ( min-width: 880px ) {
+				margin: 24px 20px;
 			}
 		}
 	}
@@ -566,6 +574,11 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			font-weight: 500;
 			letter-spacing: 0.32px;
 			line-height: 17px;
+
+			&.newsletter-signup-form,
+			&.link-in-bio-signup-form {
+				background-color: var(--color-primary);
+			}
 		}
 
 		.signup-form__social-buttons {
@@ -792,7 +805,8 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 		}
 	}
 
-	.signup__step .plans.plans-step {
+	/* TODO: Remove the following when the 2023 pricig grid is live to all users */
+	.signup:not(.is-onboarding-2023-pricing-grid) .signup__step .plans.plans-step {
 		.formatted-header {
 			.formatted-header__title {
 				font-size: 2.25rem;
@@ -809,6 +823,23 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 			.formatted-header__subtitle button.is-borderless {
 				font-weight: 500;
 				color: var(--studio-gray-90);
+			}
+		}
+	}
+
+	.signup.is-onboarding-2023-pricing-grid .signup__step .plans.plans-step {
+		.formatted-header {
+			.formatted-header__title {
+				font-size: 2.25rem;
+				/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+				line-height: 2.5rem;
+				font-weight: 400;
+
+				@media ( min-width: 880px ) {
+					font-size: 2.75rem;
+					/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+					line-height: 3rem;
+				}
 			}
 		}
 	}
@@ -862,11 +893,22 @@ body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-fl
 	button.is-borderless {
 		box-shadow: none;
 		border: 0;
+
+		&:focus {
+			border-color: var(--color-primary);
+			box-shadow: 0 0 0 2px var(--color-primary-light);
+		}
 	}
 
 	.inline-help {
 		@include breakpoint-deprecated( "<660px" ) {
 			bottom: 74px;
 		}
+	}
+}
+
+body.is-section-signup.is-white-signup .layout:not(.dops):not(.is-wccom-oauth-flow).is-gravatar {
+	.formatted-header__title {
+		font-size: 1.75rem;
 	}
 }

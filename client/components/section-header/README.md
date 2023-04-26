@@ -34,8 +34,7 @@ This is the base component and acts as a wrapper for a section's (a list of card
 ### Props
 
 - `className` - _optional_ (string|object) Classes to be added to the rendered component.
-- `label` - _optional_ (string) The text to be displayed in the header.
-- `popoverText` - _optional_ (string) If entered, a support popover will appear to the right with this text.
+- `label` - _optional_ (string|ReactChild) The text to be displayed in the header.
 
 ## General guidelines
 

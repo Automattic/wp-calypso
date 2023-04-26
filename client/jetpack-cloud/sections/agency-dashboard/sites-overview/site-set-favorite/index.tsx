@@ -25,14 +25,14 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 
-	const { filter, search, currentPage } = useContext( SitesOverviewContext );
+	const { filter, search, currentPage, sort } = useContext( SitesOverviewContext );
 	const { showOnlyFavorites } = filter;
-	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter ];
+	const queryKey = [ 'jetpack-agency-dashboard-sites', search, currentPage, filter, sort ];
 	const siblingQueryKey = [
 		'jetpack-agency-dashboard-sites',
 		search,
 		currentPage,
-		{ ...filter, showOnlyFavorites: ! showOnlyFavorites },
+		{ ...filter, ...sort, showOnlyFavorites: ! showOnlyFavorites },
 	];
 	const successNoticeId = 'success-notice';
 
@@ -149,6 +149,7 @@ export default function SiteSetFavorite( { isFavorite, siteId, siteUrl }: Props 
 			onClick={ handleFavoriteChange }
 			className={ classNames(
 				'site-set-favorite__favorite-icon',
+				'disable-card-expand',
 				isFavorite && 'site-set-favorite__favorite-icon-active'
 			) }
 			aria-label={ translate( 'Toggle favorite site' ) }

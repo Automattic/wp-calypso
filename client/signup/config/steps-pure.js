@@ -8,6 +8,10 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_STARTER,
 	TYPE_FREE,
@@ -28,7 +32,6 @@ export function generateSteps( {
 	createWpForTeamsSite = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
-	createVideoPressSite = noop,
 	setDesignOnSite = noop,
 	setThemeOnSite = noop,
 	setOptionsOnSite = noop,
@@ -42,7 +45,7 @@ export function generateSteps( {
 	isSiteTypeFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 	isNewOrExistingSiteFulfilled = noop,
-	setDIFMLiteDesign = noop,
+	createSiteAndAddDIFMToCart = noop,
 	excludeStepIfEmailVerified = noop,
 	excludeStepIfProfileComplete = noop,
 	submitWebsiteContent = noop,
@@ -104,54 +107,25 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 		},
 
-		'domains-link-in-bio': {
-			stepName: 'domains-link-in-bio',
-			apiRequestFunction: createSiteWithCart,
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-				'isManageSiteFlow',
-			],
-			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
-			props: {
-				isDomainOnly: false,
-				includeWordPressDotCom: true,
-				// the .link tld comes with the w.link subdomain from our partnership.
-				// see pau2Xa-4tC-p2#comment-12869 for more details
-				otherManagedSubdomains: [ 'link' ],
-			},
-			delayApiRequestUntilComplete: true,
-		},
-
-		'domains-link-in-bio-tld': {
-			stepName: 'domains-link-in-bio-tld',
-			apiRequestFunction: createSiteWithCart,
-			dependencies: [ 'tld' ],
-			providesDependencies: [
-				'siteId',
-				'siteSlug',
-				'domainItem',
-				'themeItem',
-				'shouldHideFreePlan',
-				'isManageSiteFlow',
-			],
-			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
-			props: {
-				isDomainOnly: false,
-				includeWordPressDotCom: false,
-				// the .link tld comes with the w.link subdomain from our partnership.
-				// see pau2Xa-4tC-p2#comment-12869 for more details
-				otherManagedSubdomains: [ 'link' ],
-				otherManagedSubdomainsCountOverride: 2,
-			},
-			delayApiRequestUntilComplete: true,
-		},
-
 		'plans-site-selected': {
 			stepName: 'plans-site-selected',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			props: {
+				hideFreePlan: true,
+				hideEnterprisePlan: true,
+			},
+		},
+
+		// TODO
+		// The new pricing grid and the legacy one act differently
+		// when a paid domain is picked, and the new pricing grid is currently
+		// having different behavior on different flow on the paid domain +
+		// Free plan case. We can deprecate this once that specific behavior
+		// is settled and that we decide to migrate `site-selected` as a reskinned flow.
+		'plans-site-selected-legacy': {
+			stepName: 'plans-site-selected-legacy',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
@@ -177,6 +151,24 @@ export function generateSteps( {
 			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+
+		'user-hosting': {
+			stepName: 'user-hosting',
+			apiRequestFunction: createAccount,
+			providesToken: true,
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'plans_reorder_abtest_variation',
+				'redirect',
+			],
+			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+				isPasswordless: true,
 			},
 		},
 
@@ -252,31 +244,30 @@ export function generateSteps( {
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
-		'plans-newsletter': {
+		'plans-hosting': {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
-			optionalDependencies: [ 'emailItem' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo', 'comingSoon' ],
-			fulfilledStepCallback: isPlanFulfilled,
-			props: {
-				themeSlugWithRepo: 'pub/lettre',
-				launchSite: true,
-			},
-		},
-
-		'plans-link-in-bio': {
-			stepName: 'plans',
-			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug' ],
-			optionalDependencies: [ 'emailItem' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 			props: {
-				themeSlugWithRepo: 'pub/lynx',
+				hideFreePlan: true,
+				hidePremiumPlan: true,
+				hidePersonalPlan: true,
+				hideEnterprisePlan: true,
+				shouldHideNavButtons: true,
 			},
 		},
 
+		'plans-pm': {
+			stepName: 'plans-pm',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
 		'plans-new': {
 			stepName: 'plans',
 			providesDependencies: [ 'cartItem' ],
@@ -441,16 +432,6 @@ export function generateSteps( {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
 			props: {
-				isDomainOnly: true,
-				forceHideFreeDomainExplainerAndStrikeoutUi: true,
-			},
-		},
-
-		'select-domain': {
-			stepName: 'select-domain',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ], // note: siteId, siteSlug are not provided when used in add-domain flow
-			props: {
-				isAllDomains: true,
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 			},
@@ -744,6 +725,51 @@ export function generateSteps( {
 			},
 		},
 
+		'plans-personal-2y': {
+			stepName: 'plans-personal-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PERSONAL_2_YEARS,
+			},
+		},
+
+		'plans-premium-2y': {
+			stepName: 'plans-premium-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PREMIUM_2_YEARS,
+			},
+		},
+
+		'plans-business-2y': {
+			stepName: 'plans-business-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_BUSINESS_2_YEARS,
+			},
+		},
+
+		'plans-ecommerce-2y': {
+			stepName: 'plans-ecommerce-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			defaultDependencies: {
+				cartItem: PLAN_ECOMMERCE_2_YEARS,
+				themeSlugWithRepo: 'pub/twentytwentytwo',
+			},
+		},
+
 		intent: {
 			stepName: 'intent',
 			dependencies: [ 'siteSlug' ],
@@ -805,7 +831,7 @@ export function generateSteps( {
 
 		'difm-design-setup-site': {
 			stepName: 'difm-design-setup-site',
-			apiRequestFunction: setDIFMLiteDesign,
+			apiRequestFunction: createSiteAndAddDIFMToCart,
 			delayApiRequestUntilComplete: true,
 			providesDependencies: [
 				'selectedDesign',
@@ -830,7 +856,18 @@ export function generateSteps( {
 		},
 		'difm-options': {
 			stepName: 'site-options',
-			providesDependencies: [ 'siteTitle', 'tagline', 'newOrExistingSiteChoice' ],
+			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
+			optionalDependencies: [ 'newOrExistingSiteChoice' ],
+			defaultDependencies: {
+				newOrExistingSiteChoice: 'existing-site',
+			},
+			props: {
+				hideSkip: true,
+			},
+		},
+		'difm-store-options': {
+			stepName: 'site-options',
+			providesDependencies: [ 'siteTitle', 'tagline', 'searchTerms', 'newOrExistingSiteChoice' ],
 			optionalDependencies: [ 'newOrExistingSiteChoice' ],
 			defaultDependencies: {
 				newOrExistingSiteChoice: 'existing-site',
@@ -877,12 +914,6 @@ export function generateSteps( {
 		transfer: {
 			stepName: 'transfer',
 			dependencies: [ 'siteSlug', 'siteConfirmed' ],
-		},
-
-		'videopress-site': {
-			stepName: 'videopress-site',
-			apiRequestFunction: createVideoPressSite,
-			providesDependencies: [ 'siteSlug', 'themeSlugWithRepo' ],
 		},
 	};
 }

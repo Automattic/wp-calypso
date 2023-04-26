@@ -1,3 +1,5 @@
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { mayWeInitTracker, mayWeTrackByTracker } from '../tracker-buckets';
 import {
 	ADROLL_PAGEVIEW_PIXEL_URL_1,
@@ -48,7 +50,9 @@ if ( typeof window !== 'undefined' ) {
 
 	// Linkedin
 	if ( mayWeInitTracker( 'linkedin' ) ) {
-		setupLinkedinGlobal();
+		setupLinkedinInsight(
+			isJetpackCloud() || isJetpackCheckout() ? TRACKING_IDS.jetpackLinkedinId : null
+		);
 	}
 
 	// Quora
@@ -75,9 +79,15 @@ if ( typeof window !== 'undefined' ) {
 /**
  * Initializes Linkedin tracking.
  */
-function setupLinkedinGlobal() {
-	if ( ! window._linkedin_data_partner_id ) {
-		window._linkedin_data_partner_id = TRACKING_IDS.linkedInPartnerId;
+function setupLinkedinInsight( partnerId ) {
+	window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+	window._linkedin_data_partner_ids.push( partnerId );
+
+	if ( ! window.lintrk ) {
+		window.lintrk = function ( a, b ) {
+			window.lintrk.q.push( [ a, b ] );
+		};
+		window.lintrk.q = [];
 	}
 }
 

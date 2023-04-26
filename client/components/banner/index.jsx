@@ -34,6 +34,7 @@ export class Banner extends Component {
 	static propTypes = {
 		callToAction: PropTypes.string,
 		className: PropTypes.string,
+		compactButton: PropTypes.bool,
 		description: PropTypes.node,
 		forceHref: PropTypes.bool,
 		disableCircle: PropTypes.bool,
@@ -50,7 +51,11 @@ export class Banner extends Component {
 		jetpack: PropTypes.bool,
 		isAtomic: PropTypes.bool,
 		compact: PropTypes.bool,
-		list: PropTypes.arrayOf( PropTypes.string ),
+		list: PropTypes.oneOfType( [
+			PropTypes.arrayOf( PropTypes.string ),
+			PropTypes.arrayOf( PropTypes.object ),
+		] ),
+		renderListItem: PropTypes.func,
 		onClick: PropTypes.func,
 		onDismiss: PropTypes.func,
 		plan: PropTypes.string,
@@ -77,6 +82,7 @@ export class Banner extends Component {
 		disableHref: false,
 		dismissTemporary: false,
 		compact: false,
+		compactButton: true,
 		horizontal: false,
 		jetpack: false,
 		isAtomic: false,
@@ -183,8 +189,10 @@ export class Banner extends Component {
 			feature,
 			compact,
 			list,
+			renderListItem,
 			price,
 			primaryButton,
+			compactButton,
 			title,
 			target,
 			tracksImpressionName,
@@ -213,8 +221,12 @@ export class Banner extends Component {
 						<ul className="banner__list">
 							{ list.map( ( item, key ) => (
 								<li key={ key }>
-									<Gridicon icon="checkmark" size={ 18 } />
-									{ item }
+									{ renderListItem?.( item ) ?? (
+										<>
+											<Gridicon icon="checkmark" size={ 18 } />
+											{ item }
+										</>
+									) }
 								</li>
 							) ) }
 						</ul>
@@ -231,12 +243,12 @@ export class Banner extends Component {
 						) }
 						{ callToAction &&
 							( forceHref ? (
-								<Button compact primary={ primaryButton } target={ target }>
+								<Button compact={ compactButton } primary={ primaryButton } target={ target }>
 									{ preventWidows( callToAction ) }
 								</Button>
 							) : (
 								<Button
-									compact
+									compact={ compactButton }
 									href={ this.getHref() }
 									onClick={ this.handleClick }
 									primary={ primaryButton }

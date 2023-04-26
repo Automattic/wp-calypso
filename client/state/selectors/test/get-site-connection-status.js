@@ -5,11 +5,9 @@ describe( 'getSiteConnectionStatus()', () => {
 
 	test( 'should return connection status for a known site', () => {
 		const state = {
-			sites: {
-				connection: {
-					items: {
-						[ siteId ]: true,
-					},
+			siteConnection: {
+				items: {
+					[ siteId ]: true,
 				},
 			},
 		};
@@ -19,11 +17,9 @@ describe( 'getSiteConnectionStatus()', () => {
 
 	test( 'should return null for an unknown site', () => {
 		const state = {
-			sites: {
-				connection: {
-					items: {
-						77203074: true,
-					},
+			siteConnection: {
+				items: {
+					77203074: true,
 				},
 			},
 		};

@@ -212,7 +212,7 @@ export class ImportingPane extends PureComponent {
 	render() {
 		const {
 			importerStatus,
-			site: { ID: siteId, name: siteName, single_user_site: hasSingleAuthor },
+			site: { ID: siteId, name: siteName },
 			sourceType,
 			site,
 		} = this.props;
@@ -250,7 +250,6 @@ export class ImportingPane extends PureComponent {
 				{ this.isProcessing() && <p>{ this.getHeadingTextProcessing() }</p> }
 				{ this.isMapping() && (
 					<AuthorMappingPane
-						hasSingleAuthor={ hasSingleAuthor }
 						onMap={ this.handleOnMap }
 						onStartImport={ () => this.props.startImporting( this.props.importerStatus ) }
 						siteId={ siteId }

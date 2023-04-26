@@ -74,7 +74,7 @@ class SitePost {
 	/**
 	 * Get post
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -89,7 +89,7 @@ class SitePost {
 	/**
 	 * Get post by slug
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -100,8 +100,8 @@ class SitePost {
 	/**
 	 * Add post
 	 *
-	 * @param {object} [query] - query object parameter
-	 * @param {object} body - body object parameter
+	 * @param {Object} [query] - query object parameter
+	 * @param {Object} body - body object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -145,8 +145,8 @@ class SitePost {
 	/**
 	 * Edit post
 	 *
-	 * @param {object} [query] - query object parameter
-	 * @param {object} body - body object parameter
+	 * @param {Object} [query] - query object parameter
+	 * @param {Object} body - body object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -157,7 +157,7 @@ class SitePost {
 	/**
 	 * Delete post
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -169,7 +169,7 @@ class SitePost {
 	/**
 	 * Del post, alias of Delete
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -180,7 +180,7 @@ class SitePost {
 	/**
 	 * Restore post
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -191,7 +191,7 @@ class SitePost {
 	/**
 	 * Search within a site for related posts
 	 *
-	 * @param {object} body - body object parameter
+	 * @param {Object} body - body object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */
@@ -212,7 +212,7 @@ class SitePost {
 	/**
 	 * Return recent comments
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} fn - callback function
 	 * @returns {Function} request handler
 	 */

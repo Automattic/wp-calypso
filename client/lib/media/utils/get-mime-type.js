@@ -10,8 +10,8 @@ import { getFileExtension } from 'calypso/lib/media/utils/get-file-extension';
  * getMimeType( { URL: 'https://wordpress.com/example.gif' } );
  * getMimeType( { mime_type: 'image/gif' } );
  * // All examples return 'image/gif'
- * @param  {(string|window.File|object)} media Media object or string
- * @returns {string}                     Mime type of the media, if known
+ * @param  {(string | window.File | Object)} media Media object or string
+ * @returns {string|undefined}                     Mime type of the media, if known
  */
 export function getMimeType( media ) {
 	if ( ! media ) {

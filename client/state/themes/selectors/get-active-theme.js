@@ -11,7 +11,7 @@ import 'calypso/state/themes/init';
  * the checkout-thank-you component always redirects to the theme showcase for the current site.
  * One possible fix would be to get rid of that redirect (related: https://github.com/Automattic/wp-calypso/issues/8262).
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Site ID
  * @returns {?string}         Theme ID
  */

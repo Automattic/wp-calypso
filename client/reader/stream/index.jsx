@@ -3,6 +3,7 @@ import { localize } from 'i18n-calypso';
 import { findLast, times } from 'lodash';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
+import * as React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
 import InfiniteList from 'calypso/components/infinite-list';
@@ -17,14 +18,13 @@ import withDimensions from 'calypso/lib/with-dimensions';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { shouldShowLikes } from 'calypso/reader/like-helper';
 import { keysAreEqual, keyToString } from 'calypso/reader/post-key';
+import ReaderTagSidebar from 'calypso/reader/stream/reader-tag-sidebar';
 import UpdateNotice from 'calypso/reader/update-notice';
 import { showSelectedPost, getStreamType } from 'calypso/reader/utils';
 import XPostHelper from 'calypso/reader/xpost-helper';
 import { PER_FETCH, INITIAL_FETCH } from 'calypso/state/data-layer/wpcom/read/streams';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-import { viewStream } from 'calypso/state/reader-ui/actions';
-import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
@@ -40,6 +40,9 @@ import {
 	getTransformedStreamItems,
 	shouldRequestRecs,
 } from 'calypso/state/reader/streams/selectors';
+import { viewStream } from 'calypso/state/reader-ui/actions';
+import { resetCardExpansions } from 'calypso/state/reader-ui/card-expansions/actions';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import EmptyContent from './empty';
 import PostLifecycle from './post-lifecycle';
@@ -63,7 +66,6 @@ const excludesSidebar = [
 	'custom_recs_posts_with_images',
 	'list',
 	'p2',
-	'tag',
 ];
 
 class ReaderStream extends Component {
@@ -125,6 +127,7 @@ class ReaderStream extends Component {
 
 		if ( ! keysAreEqual( selectedPostKey, this.props.selectedPostKey ) ) {
 			this.scrollToSelectedPost( true );
+			this.focusSelectedPost( this.props.selectedPostKey );
 		}
 
 		if ( this.props.shouldRequestRecs ) {
@@ -134,6 +137,21 @@ class ReaderStream extends Component {
 			} );
 		}
 	}
+
+	focusSelectedPost = ( selectedPostKey ) => {
+		const postRefKey = this.getPostRef( selectedPostKey );
+		const ref = this.listRef.current && this.listRef.current.refs[ postRefKey ];
+		const node = ReactDom.findDOMNode( ref );
+
+		// if the post is found, focus the first anchor tag within it.
+		if ( node ) {
+			const firstLink = node.querySelector( 'a' );
+
+			if ( firstLink ) {
+				firstLink.focus();
+			}
+		}
+	};
 
 	_popstate = () => {
 		if ( this.props.selectedPostKey && window.history.scrollRestoration !== 'manual' ) {
@@ -172,6 +190,12 @@ class ReaderStream extends Component {
 		window.addEventListener( 'popstate', this._popstate );
 		if ( 'scrollRestoration' in window.history ) {
 			window.history.scrollRestoration = 'manual';
+		}
+
+		if ( this.props.selectedPostKey ) {
+			setTimeout( () => {
+				this.focusSelectedPost( this.props.selectedPostKey );
+			}, 100 );
 		}
 
 		document.addEventListener( 'keydown', this.handleKeydown, true );
@@ -230,7 +254,10 @@ class ReaderStream extends Component {
 	};
 
 	handleOpenSelectionNewTab = () => {
-		window.open( this.props.selectedPostKey.url, '_blank', 'noreferrer,noopener' );
+		const { selectedPostKey } = this.props;
+		if ( selectedPostKey ) {
+			window.open( selectedPostKey.url, '_blank', 'noreferrer,noopener' );
+		}
 	};
 
 	handleOpenSelection = () => {
@@ -394,7 +421,7 @@ class ReaderStream extends Component {
 	};
 
 	renderPost = ( postKey, index ) => {
-		const { selectedPostKey, streamKey } = this.props;
+		const { selectedPostKey, streamKey, primarySiteId } = this.props;
 		const isSelected = !! ( selectedPostKey && keysAreEqual( selectedPostKey, postKey ) );
 
 		const itemKey = this.getPostRef( postKey );
@@ -425,6 +452,7 @@ class ReaderStream extends Component {
 					recsStreamKey={ this.props.recsStreamKey }
 					index={ index }
 					compact={ this.props.useCompactCards }
+					siteId={ primarySiteId }
 				/>
 				{ index === 0 && <PerformanceTrackerStop /> }
 			</Fragment>
@@ -432,7 +460,7 @@ class ReaderStream extends Component {
 	};
 
 	render() {
-		const { translate, forcePlaceholders, lastPage, streamKey } = this.props;
+		const { translate, forcePlaceholders, lastPage, streamKey, tag } = this.props;
 		const wideDisplay = this.props.width > WIDE_DISPLAY_CUTOFF;
 		let { items, isRequesting } = this.props;
 		const hasNoPosts = items.length === 0 && ! isRequesting;
@@ -446,6 +474,7 @@ class ReaderStream extends Component {
 		}
 
 		const path = window.location.pathname;
+		const isTagPage = path.startsWith( '/tag/' );
 		const streamType = getStreamType( streamKey );
 
 		let baseClassnames = classnames( 'following', this.props.className );
@@ -473,7 +502,14 @@ class ReaderStream extends Component {
 					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
 				/>
 			);
-			const sidebarContent = <ReaderListFollowedSites path={ path } />;
+
+			const sidebarContent = isTagPage ? (
+				<ReaderTagSidebar tag={ tag } />
+			) : (
+				<ReaderListFollowedSites path={ path } />
+			);
+
+			const tabTitle = isTagPage ? translate( 'Related' ) : translate( 'Sites' );
 
 			if ( excludesSidebar.includes( streamType ) ) {
 				body = bodyContent;
@@ -503,7 +539,7 @@ class ReaderStream extends Component {
 										selected={ this.state.selectedTab === 'sites' }
 										onClick={ this.handleSitesSelected }
 									>
-										{ translate( 'Sites' ) }
+										{ tabTitle }
 									</NavItem>
 								</NavTabs>
 							</SectionNav>
@@ -541,6 +577,7 @@ export default connect(
 	( state, { streamKey, recsStreamKey } ) => {
 		const stream = getStream( state, streamKey );
 		const selectedPost = getPostByKey( state, stream.selected );
+		const streamKeySuffix = streamKey?.substring( streamKey?.indexOf( ':' ) + 1 );
 
 		return {
 			blockedSites: getBlockedSites( state ),
@@ -558,6 +595,8 @@ export default connect(
 			shouldRequestRecs: shouldRequestRecs( state, streamKey, recsStreamKey ),
 			likedPost: selectedPost && isLikedPost( state, selectedPost.site_ID, selectedPost.ID ),
 			organizations: getReaderOrganizations( state ),
+			primarySiteId: getPrimarySiteId( state ),
+			tag: streamKeySuffix,
 		};
 	},
 	{

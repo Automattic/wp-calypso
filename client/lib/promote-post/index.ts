@@ -1,9 +1,13 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
+import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSiteOption } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 declare global {
 	interface Window {
@@ -21,8 +25,14 @@ declare global {
 				onLoaded?: () => void;
 				onClose?: () => void;
 				translateFn?: ( value: string, options?: any ) => string;
+				locale?: string;
 				showDialog?: boolean;
 				setShowCancelButton?: ( show: boolean ) => void;
+				setShowTopBar?: ( show: boolean ) => void;
+				uploadImageLabel?: string;
+				showGetStartedMessage?: boolean;
+				onGetStartedMessageClose?: ( dontShowAgain: boolean ) => void;
+				source?: string;
 			} ) => void;
 			strings: any;
 		};
@@ -48,9 +58,12 @@ export async function showDSP(
 	siteId: number | string,
 	postId: number | string,
 	onClose: () => void,
+	source: string,
 	translateFn: ( value: string, options?: any ) => string,
 	domNodeOrId?: HTMLElement | string | null,
-	setShowCancelButton?: ( show: boolean ) => void
+	setShowCancelButton?: ( show: boolean ) => void,
+	setShowTopBar?: ( show: boolean ) => void,
+	locale?: string
 ) {
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
@@ -68,8 +81,13 @@ export async function showDSP(
 				onLoaded: () => resolve( true ),
 				onClose: onClose,
 				translateFn: translateFn,
+				locale,
 				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
 				setShowCancelButton: setShowCancelButton,
+				setShowTopBar: setShowTopBar,
+				uploadImageLabel: isWpMobileApp() ? __( 'Tap to add image' ) : undefined,
+				showGetStartedMessage: ! isWpMobileApp(), // Don't show the GetStartedMessage in the mobile app.
+				source: source,
 			} );
 		} else {
 			reject( false );
@@ -116,23 +134,39 @@ export enum PromoteWidgetStatus {
 	DISABLED = 'disabled',
 }
 
+export enum BlazeCreditStatus {
+	ENABLED = 'enabled',
+	DISABLED = 'disabled',
+}
+
 /**
  * Hook to verify if we should enable the promote widget.
  *
  * @returns bool
  */
 export const usePromoteWidget = (): PromoteWidgetStatus => {
-	const value = useSelector( ( state ) => {
+	const selectedSite = useSelector( getSelectedSite );
+
+	const value = useSelector( ( state ) => getSiteOption( state, selectedSite?.ID, 'can_blaze' ) );
+
+	switch ( value ) {
+		case false:
+			return PromoteWidgetStatus.DISABLED;
+		case true:
+			return PromoteWidgetStatus.ENABLED;
+		default:
+			return PromoteWidgetStatus.FETCHING;
+	}
+};
+
+/**
+ * Hook to verify if we should enable blaze credits
+ *
+ * @returns bool
+ */
+export const useBlazeCredits = (): BlazeCreditStatus => {
+	return useSelector( ( state ) => {
 		const userData = getCurrentUser( state );
-		if ( userData ) {
-			const originalSetting = userData[ 'has_promote_widget' ];
-			if ( originalSetting !== undefined ) {
-				return originalSetting === true
-					? PromoteWidgetStatus.ENABLED
-					: PromoteWidgetStatus.DISABLED;
-			}
-		}
-		return PromoteWidgetStatus.FETCHING;
+		return userData?.blaze_credits_enabled ? BlazeCreditStatus.ENABLED : BlazeCreditStatus.DISABLED;
 	} );
-	return value;
 };

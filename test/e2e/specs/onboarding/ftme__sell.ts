@@ -160,7 +160,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 	} );
 
 	describe( 'Sell', function () {
-		const themeName = 'Dorna';
+		const themeName = 'Winkel';
 		let startSiteFlow: StartSiteFlow;
 
 		beforeAll( async function () {
@@ -183,7 +183,8 @@ describe( DataHelper.createSuiteTitle( 'FTME: Sell' ), function () {
 
 		it( 'Land in Home dashboard', async function () {
 			await page.waitForURL(
-				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` )
+				DataHelper.getCalypsoURL( `/home/${ newSiteDetails.blog_details.site_slug }` ),
+				{ timeout: 20 * 1000 }
 			);
 		} );
 

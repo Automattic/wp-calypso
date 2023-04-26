@@ -701,8 +701,9 @@
 }
 
 // Adding some CSS to cover the --color-primary
-// background color in the signup flow for Akismet.
-.layout.dops.akismet {
+// background color in the signup flow for Akismet/IntenseDebate.
+.layout.dops.akismet,
+.layout.dops.intensedebate {
 	background: var(--color-neutral-0);
 	min-height: 100%;
 
@@ -711,4 +712,9 @@
 	.signup-processing__content {
 		color: var(--color-text);
 	}
+}
+
+.layout.dops.intensedebate .masterbar__oauth-client-logo img {
+	max-height: 30px;
+	margin-left: 10px;
 }

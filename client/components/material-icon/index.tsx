@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import * as React from 'react';
 import { Assign } from 'utility-types';
 
-interface Props {
+export interface Props {
 	icon: string;
 	style?: string;
 	size?: number;

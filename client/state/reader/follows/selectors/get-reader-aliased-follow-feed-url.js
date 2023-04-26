@@ -11,7 +11,7 @@ export const commonExtensions = [ 'rss', 'rss.xml', 'feed', 'feed/atom', 'atom.x
  * then return the feed_URL for the aliased feed.  This is specifically useful for cases where
  * example.com --> example.com/rss when users follow directly by url
  *
- * @param {object} state - The Redux state tree
+ * @param {Object} state - The Redux state tree
  * @param {string} feedUrl - the url for which we are searching for a potential alias
  * @returns {string} either the original feedUrl or an aliased one.
  */

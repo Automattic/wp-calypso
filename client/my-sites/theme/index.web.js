@@ -29,8 +29,9 @@ function addNavigationIfLoggedIn( context, next ) {
 
 function setTitleAndSelectSiteIfLoggedIn( context, next ) {
 	const theme = getTheme( context.store.getState(), 'wpcom', context.params.slug );
-	if ( theme ) {
-		const themeName = theme.name;
+	const themeOrg = getTheme( context.store.getState(), 'wporg', context.params.slug );
+	if ( theme || themeOrg ) {
+		const themeName = theme?.name ?? themeOrg.name;
 
 		context.getSiteSelectionHeaderText = () =>
 			translate( 'Select a site to view {{strong}}%(themeName)s{{/strong}}', {

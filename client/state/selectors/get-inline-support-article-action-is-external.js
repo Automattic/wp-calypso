@@ -1,7 +1,7 @@
 import 'calypso/state/inline-support-article/init';
 
 /**
- * @param {object} state Global app state
- * @returns {object} ...
+ * @param {Object} state Global app state
+ * @returns {Object} ...
  */
 export default ( state ) => ! state?.inlineSupportArticle?.actionUrl;

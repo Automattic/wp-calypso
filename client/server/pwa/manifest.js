@@ -56,7 +56,7 @@ const getJetpackCloudOptions = ( environmentUrlSuffix ) => ( {
  * TODO:
  * - l10n
  *
- * @returns {object} An express app that returns /manifest.json
+ * @returns {Object} An express app that returns /manifest.json
  */
 const buildManifest = ( { branchName } ) => {
 	// These options exist to make sure that manifest-linked URLs load correctly even if

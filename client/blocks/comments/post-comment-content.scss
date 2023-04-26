@@ -4,6 +4,7 @@
 // Post comments line-clamping
 .comments__comment-content-wrapper {
 	position: relative;
+	@include clear-fix;
 
 	&.is-single-line,
 	&.is-single-line .comments__comment-content {

@@ -2,6 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .license-product-card {
+	display: flex;
+	justify-content: stretch;
 	width: 100%;
 
 	&.disabled {
@@ -22,6 +24,7 @@
 }
 
 .license-product-card__inner {
+	flex-grow: 1;
 	margin: 0.5rem 0;
 	padding: 1.5rem;
 	border: 1px solid var(--studio-gray-10);
@@ -41,20 +44,70 @@
 	box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
 }
 
+@mixin license-product-card-block__details {
+	flex-wrap: wrap;
+	align-items: flex-start;
+}
+
+@mixin license-product-card-line__details {
+	align-items: center;
+	flex-wrap: nowrap;
+}
+
 .license-product-card__details {
 	display: flex;
-	flex-wrap: wrap;
-	justify-content: stretch;
-	align-items: center;
+	justify-content: space-between;
+
+	@include license-product-card-block__details;
+
+	@include break-mobile {
+		@include license-product-card-line__details;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		@include license-product-card-block__details;
+	}
+
+	@include break-medium {
+		@include license-product-card-line__details;
+	}
+
+	@include break-xlarge {
+		@include license-product-card-block__details;
+	}
+}
+
+@mixin license-product-card-block__title {
+	flex: 0 1  calc(100% - 34px);
+}
+
+@mixin license-product-card-line__title {
+	flex: 1 1 0;
 }
 
 .license-product-card__title {
-	flex: 1 0 auto;
-	white-space: nowrap;
 	font-size: 1.5rem;
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	line-height: 1.5rem;
 	color: var(--studio-gray-80);
+
+	@include license-product-card-block__title;
+
+	@include break-mobile {
+		@include license-product-card-line__title;
+	}
+
+	@include breakpoint-deprecated( ">660px" ) {
+		@include license-product-card-block__title;
+	}
+
+	@include break-medium {
+		@include license-product-card-line__title;
+	}
+
+	@include break-xlarge {
+		@include license-product-card-block__title;
+	}
 }
 
 @mixin license-product-card-block__select-button {

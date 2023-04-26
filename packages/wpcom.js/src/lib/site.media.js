@@ -60,7 +60,7 @@ function buildFormData( files ) {
  * @param {string} id - media id
  * @param {string} sid site id
  * @param {WPCOM} wpcom - wpcom instance
- * @returns {null} null
+ * @returns {Media|undefined}
  */
 export default function Media( id, sid, wpcom ) {
 	if ( ! ( this instanceof Media ) ) {
@@ -79,7 +79,7 @@ export default function Media( id, sid, wpcom ) {
 /**
  * Get media
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -92,8 +92,8 @@ Media.prototype.get = function ( query = {}, fn ) {
 /**
  * Update media
  *
- * @param {object} [query] - query object parameter
- * @param {object} body - body object parameter
+ * @param {Object} [query] - query object parameter
+ * @param {Object} body - body object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -105,8 +105,8 @@ Media.prototype.update = function ( query, body, fn ) {
 /**
  * Edit media
  *
- * @param {object} [query] - query object parameter
- * @param {object} body - body object parameter
+ * @param {Object} [query] - query object parameter
+ * @param {Object} body - body object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -136,8 +136,8 @@ Media.prototype.edit = function ( query, body, fn ) {
 /**
  * Add media file
  *
- * @param {object} [query] - query object parameter
- * @param {string|object|Array} files - files to add
+ * @param {Object} [query] - query object parameter
+ * @param {string | Object | Array} files - files to add
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -184,7 +184,7 @@ Media.prototype.filterFilesUploadableOnVideoPress = function ( files ) {
 /**
  * Checks whether a media file can use VideoPress for upload.
  *
- * @param {object} file A file object
+ * @param {Object} file A file object
  * @returns {boolean}
  */
 Media.prototype.fileCanBeUploadedOnVideoPress = function ( file ) {
@@ -194,8 +194,8 @@ Media.prototype.fileCanBeUploadedOnVideoPress = function ( file ) {
 /**
  * Add media files from URL
  *
- * @param {object} [query] - query object parameter
- * @param {string|Array|object} media - files to add
+ * @param {Object} [query] - query object parameter
+ * @param {string | Array | Object} media - files to add
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */
@@ -251,7 +251,7 @@ Media.prototype.addUrls = function ( query, media, fn ) {
 /**
  * Delete media
  *
- * @param {object} [query] - query object parameter
+ * @param {Object} [query] - query object parameter
  * @param {Function} fn - callback function
  * @returns {Function} request handler
  */

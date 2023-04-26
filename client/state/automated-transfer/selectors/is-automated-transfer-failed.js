@@ -16,7 +16,7 @@ export const isFailed = ( status ) =>
 /**
  * Indicates whether or not an automated transfer is failed for a given site
  *
- * @param {object} state app state
+ * @param {Object} state app state
  * @param {number} siteId site of interest
  * @returns {?boolean} whether or not transfer is failed, or null if not known
  */

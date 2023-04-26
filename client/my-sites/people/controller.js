@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -11,8 +12,11 @@ import PeopleList from './main';
 import PeopleAddSubscribers from './people-add-subscribers';
 import PeopleInviteDetails from './people-invite-details';
 import PeopleInvites from './people-invites';
-import Subscribers from './subscribers';
-import TeamMembers from './team-members';
+import PeopleInvitesPending from './people-invites-pending';
+import SubscriberDetails from './subscriber-details';
+import SubscribersTeam from './subscribers-team';
+import TeamInvite from './team-invite';
+import ViewerDetails from './viewer-details';
 
 export default {
 	redirectToTeam,
@@ -47,12 +51,24 @@ export default {
 		renderPeopleInviteDetails( context, next );
 	},
 
+	peoplePendingInvites( context, next ) {
+		renderPendingInvites( context, next );
+	},
+
 	teamMembers( context, next ) {
 		renderTeamMembers( context, next );
 	},
 
+	viewerTeamMember( context, next ) {
+		renderViewerTeamMember( context, next );
+	},
+
 	subscribers( context, next ) {
 		renderSubscribers( context, next );
+	},
+
+	subscriberDetails( context, next ) {
+		renderSubscribersDetails( context, next );
 	},
 
 	peopleAddSubscribers( context, next ) {
@@ -79,7 +95,12 @@ function renderPeopleList( context, next ) {
 	context.primary = (
 		<>
 			<PeopleListTitle />
-			<PeopleList filter={ context.params.filter } search={ context.query.s } />
+			{ ! isEnabled( 'user-management-revamp' ) && (
+				<PeopleList filter={ context.params.filter } search={ context.query.s } />
+			) }
+			{ isEnabled( 'user-management-revamp' ) && (
+				<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
+			) }
 		</>
 	);
 	next();
@@ -98,7 +119,8 @@ function renderInvitePeople( context, next ) {
 	context.primary = (
 		<>
 			<InvitePeopleTitle />
-			<InvitePeople key={ site.ID } site={ site } />
+			{ ! isEnabled( 'user-management-revamp' ) && <InvitePeople key={ site.ID } site={ site } /> }
+			{ isEnabled( 'user-management-revamp' ) && <TeamInvite key={ site.ID } site={ site } /> }
 		</>
 	);
 	next();
@@ -120,6 +142,25 @@ function renderPeopleInvites( context, next ) {
 	next();
 }
 
+function renderPendingInvites( context, next ) {
+	const state = context.store.getState();
+	const site = getSelectedSite( state );
+
+	const PeopleInvitesTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'Pending Invites', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<PeopleInvitesTitle />
+			<PeopleInvitesPending site={ site } />
+		</>
+	);
+	next();
+}
+
 function renderTeamMembers( context, next ) {
 	const TeamMembersTitle = () => {
 		const translate = useTranslate();
@@ -130,7 +171,7 @@ function renderTeamMembers( context, next ) {
 	context.primary = (
 		<>
 			<TeamMembersTitle />
-			<TeamMembers filter={ context.params.filter } search={ context.query.s } />
+			<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
 		</>
 	);
 	next();
@@ -146,7 +187,26 @@ function renderSubscribers( context, next ) {
 	context.primary = (
 		<>
 			<SubscribersTitle />
-			<Subscribers filter={ context.params.filter } search={ context.query.s } />
+			<SubscribersTeam filter={ context.params.filter } search={ context.query.s } />
+		</>
+	);
+	next();
+}
+
+function renderSubscribersDetails( context, next ) {
+	const SubscriberDetailsTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'User Details', { textOnly: true } ) } />;
+	};
+
+	// typeId is in the format "{type}-{id}
+	const [ type, id ] = context.params.typeId.split( '-' );
+
+	context.primary = (
+		<>
+			<SubscriberDetailsTitle />
+			<SubscriberDetails subscriberId={ id } subscriberType={ type } />
 		</>
 	);
 	next();
@@ -172,7 +232,7 @@ function renderPeopleInviteDetails( context, next ) {
 	const PeopleInviteDetailsTitle = () => {
 		const translate = useTranslate();
 
-		return <DocumentHead title={ translate( 'Invite Details', { textOnly: true } ) } />;
+		return <DocumentHead title={ translate( 'User Details', { textOnly: true } ) } />;
 	};
 
 	context.primary = (
@@ -197,5 +257,22 @@ function renderSingleTeamMember( context, next ) {
 			<EditTeamMember userLogin={ context.params.user_login } />
 		</>
 	);
+	next();
+}
+
+function renderViewerTeamMember( context, next ) {
+	const SingleTeamMemberTitle = () => {
+		const translate = useTranslate();
+
+		return <DocumentHead title={ translate( 'View Team Member', { textOnly: true } ) } />;
+	};
+
+	context.primary = (
+		<>
+			<SingleTeamMemberTitle />
+			<ViewerDetails userId={ context.params.user_id } />
+		</>
+	);
+
 	next();
 }

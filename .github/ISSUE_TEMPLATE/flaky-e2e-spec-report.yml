@@ -1,7 +1,7 @@
 name: Flaky E2E Spec Report
 description: Report an intermittently failing E2E test.
 title: "Flaky E2E: "
-labels: "Flaky e2e"
+labels: "[Type] Flaky E2E"
 body:
   - type: markdown
     attributes:

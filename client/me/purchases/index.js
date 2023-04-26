@@ -110,19 +110,25 @@ export default ( router ) => {
 		clientRender
 	);
 
+	/**
+	 * The siteSelection middleware has been removed from this route.
+	 * No selected site!
+	 */
 	router(
 		paths.addPaymentMethod( ':site', ':purchaseId' ),
 		sidebar,
-		siteSelection,
 		controller.changePaymentMethod,
 		makeLayout,
 		clientRender
 	);
 
+	/**
+	 * The siteSelection middleware has been removed from this route.
+	 * No selected site!
+	 */
 	router(
 		paths.changePaymentMethod( ':site', ':purchaseId', ':cardId' ),
 		sidebar,
-		siteSelection,
 		controller.changePaymentMethod,
 		makeLayout,
 		clientRender

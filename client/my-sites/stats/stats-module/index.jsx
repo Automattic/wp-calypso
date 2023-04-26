@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from '@automattic/calypso-products';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
@@ -42,6 +43,10 @@ class StatsModule extends Component {
 		statType: PropTypes.string,
 		showSummaryLink: PropTypes.bool,
 		translate: PropTypes.func,
+		metricLabel: PropTypes.string,
+		mainItemLabel: PropTypes.string,
+		additionalColumns: PropTypes.object,
+		listItemClassName: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -109,6 +114,10 @@ class StatsModule extends Component {
 			'statsSearchTerms',
 			'statsClicks',
 			'statsReferrers',
+			// statsEmailsOpen and statsEmailsClick are not used. statsEmailsSummary and statsEmailsSummaryByOpens are used at the moment,
+			// besides this, email page uses separate summary component: <StatsEmailSummary />
+			'statsEmailsOpen',
+			'statsEmailsClick',
 		];
 		return summary && includes( summarizedTypes, statType );
 	}
@@ -127,7 +136,11 @@ class StatsModule extends Component {
 			period,
 			translate,
 			useShortLabel,
-			showNewModules,
+			hideNewModule, // remove when cleaning 'stats/horizontal-bars-everywhere' FF
+			metricLabel,
+			additionalColumns,
+			mainItemLabel,
+			listItemClassName,
 		} = this.props;
 
 		const noData = data && this.state.loaded && ! data.length;
@@ -149,13 +162,22 @@ class StatsModule extends Component {
 		);
 
 		const summaryLink = this.getHref();
-		const displaySummaryLink = data && data.length >= 10;
+		const displaySummaryLink = data && ! this.props.hideSummaryLink;
 		const isAllTime = this.isAllTimeList();
 		const headerClass = classNames( 'stats-module__header', {
 			'is-refreshing': requesting && ! isLoading,
 		} );
+		const footerClass = classNames( 'stats-module__footer-actions', {
+			'stats-module__footer-actions--summary': summary,
+		} );
 
-		const shouldShowNewModule = showNewModules && ! summary;
+		const isHorizontalBarComponentEnabledEverywhere = config.isEnabled(
+			'stats/horizontal-bars-everywhere'
+		);
+
+		// always hide for `hideNewModule` but show on the summary page with FF enabled
+		const shouldShowNewModule =
+			! hideNewModule && ( ! summary || isHorizontalBarComponentEnabledEverywhere );
 
 		return (
 			<>
@@ -163,27 +185,50 @@ class StatsModule extends Component {
 					<QuerySiteStats statType={ statType } siteId={ siteId } query={ query } />
 				) }
 				{ shouldShowNewModule && (
-					<StatsListCard
-						moduleType={ path }
-						data={ data }
-						useShortLabel={ useShortLabel }
-						title={ this.getModuleLabel() }
-						emptyMessage={ moduleStrings.empty }
-						showMore={
-							this.props.showSummaryLink && displaySummaryLink
-								? {
-										url: this.getHref(),
-										label: this.props.translate( 'View all', {
-											context: 'Stats: Button label to expand a panel',
-										} ),
-								  }
-								: undefined
-						}
-						titleURL={ this.getHref() }
-						error={ hasError && <ErrorPanel /> }
-						loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
-						heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
-					/>
+					<>
+						<StatsListCard
+							moduleType={ path }
+							data={ data }
+							useShortLabel={ useShortLabel }
+							title={ this.props.moduleStrings?.title }
+							emptyMessage={ moduleStrings.empty }
+							metricLabel={ metricLabel }
+							showMore={
+								displaySummaryLink && ! summary
+									? {
+											url: this.getHref(),
+											label:
+												data.length >= 10
+													? this.props.translate( 'View all', {
+															context: 'Stats: Button link to show more detailed stats information',
+													  } )
+													: this.props.translate( 'View details', {
+															context: 'Stats: Button label to see the detailed content of a panel',
+													  } ),
+									  }
+									: undefined
+							}
+							error={ hasError && <ErrorPanel /> }
+							loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+							heroElement={ path === 'countryviews' && <Geochart query={ query } /> }
+							additionalColumns={ additionalColumns }
+							splitHeader={ !! additionalColumns }
+							mainItemLabel={ mainItemLabel }
+							showLeftIcon={ path === 'authors' }
+							listItemClassName={ listItemClassName }
+						/>
+						{ isAllTime && (
+							<div className={ footerClass }>
+								<DownloadCsv
+									statType={ statType }
+									query={ query }
+									path={ path }
+									borderless
+									period={ period }
+								/>
+							</div>
+						) }
+					</>
 				) }
 
 				{ ! shouldShowNewModule && (
@@ -220,9 +265,10 @@ class StatsModule extends Component {
 								<StatsModulePlaceholder isLoading={ isLoading } />
 								<StatsList moduleName={ path } data={ data } useShortLabel={ useShortLabel } />
 							</div>
-							{ this.props.showSummaryLink && displaySummaryLink && (
+							{ this.props.showSummaryLink && data?.length >= 10 && (
 								<StatsModuleExpand href={ summaryLink } />
 							) }
+							{ /* TODO: Move this to the summary page when modernising it */ }
 							{ summary && 'countryviews' === path && (
 								<UpsellNudge
 									title={ translate( 'Add Google Analytics' ) }

@@ -30,6 +30,7 @@ import {
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMainWrapper from './checkout-main-wrapper';
 import CheckoutThankYouComponent from './checkout-thank-you';
+import AkismetCheckoutThankYou from './checkout-thank-you/akismet-checkout-thank-you';
 import GiftThankYou from './checkout-thank-you/gift/gift-thank-you';
 import JetpackCheckoutThankYou from './checkout-thank-you/jetpack-checkout-thank-you';
 import CheckoutPending from './checkout-thank-you/pending';
@@ -44,9 +45,17 @@ import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './u
 const debug = debugFactory( 'calypso:checkout-controller' );
 
 export function checkoutJetpackSiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'jetpack' } );
+}
+
+export function checkoutAkismetSiteless( context, next ) {
+	sitelessCheckout( context, next, { sitelessCheckoutType: 'akismet' } );
+}
+
+function sitelessCheckout( context, next, extraProps ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
-	const { productSlug: product } = context.params;
+	const { productSlug: product, purchaseId } = context.params;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
@@ -64,6 +73,7 @@ export function checkoutJetpackSiteless( context, next ) {
 			<CheckoutSitelessDocumentTitle />
 
 			<CheckoutMainWrapper
+				purchaseId={ purchaseId }
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
 				couponCode={ couponCode }
@@ -71,8 +81,8 @@ export function checkoutJetpackSiteless( context, next ) {
 				redirectTo={ context.query.redirect_to }
 				isLoggedOutCart={ isLoggedOut }
 				isNoSiteCart={ true }
-				isJetpackCheckout={ true }
 				isUserComingFromLoginForm={ isUserComingFromLoginForm }
+				{ ...extraProps }
 			/>
 		</>
 	);
@@ -94,6 +104,10 @@ export function checkout( context, next ) {
 	const jetpackPurchaseToken = context.query.purchasetoken;
 	const jetpackPurchaseNonce = context.query.purchaseNonce;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
+	// TODO: The only thing that we really need to check for here is whether or not the user is logged out.
+	// A siteless Jetpack purchase (logged in or out) will be handled by checkoutJetpackSiteless
+	// Additionally, the isJetpackCheckout variable would be more aptly named isJetpackSitelessCheckout
+	// isContextJetpackSitelessCheckout is really checking for whether this is a logged-out purchase, but this is uncelar at first
 	const isJetpackCheckout = isContextJetpackSitelessCheckout( context );
 	const jetpackSiteSlug = context.params.siteSlug;
 
@@ -178,7 +192,10 @@ export function checkout( context, next ) {
 				redirectTo={ context.query.redirect_to }
 				isLoggedOutCart={ isLoggedOutCart }
 				isNoSiteCart={ isNoSiteCart }
-				isJetpackCheckout={ isJetpackCheckout }
+				// TODO: in theory, isJetpackCheckout should always be false here if it is indicating whether this is a siteless Jetpack purchase
+				// However, in this case, it's indicating that this checkout is a logged-out site purchase for Jetpack.
+				// This is creating some mixed use cases for the sitelessCheckoutType prop
+				sitelessCheckoutType={ isJetpackCheckout ? 'jetpack' : undefined }
 				isGiftPurchase={ isGiftPurchase }
 				jetpackSiteSlug={ jetpackSiteSlug }
 				jetpackPurchaseToken={ jetpackPurchaseToken || jetpackPurchaseNonce }
@@ -310,6 +327,7 @@ export function upsellNudge( context, next ) {
 		switch ( upgradeItem ) {
 			case 'business':
 			case 'business-2-years':
+			case 'business-3-years':
 			case 'business-monthly':
 				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
 				break;
@@ -462,6 +480,12 @@ export function jetpackCheckoutThankYou( context, next ) {
 			isUserlessCheckoutFlow={ isUserlessCheckoutFlow }
 		/>
 	);
+
+	next();
+}
+
+export function akismetCheckoutThankYou( context, next ) {
+	context.primary = <AkismetCheckoutThankYou productSlug={ context.params.productSlug } />;
 
 	next();
 }

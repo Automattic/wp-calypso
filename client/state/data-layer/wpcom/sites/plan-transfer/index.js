@@ -14,8 +14,8 @@ const noticeOptions = ( siteId ) => ( {
 /**
  * Dispatches a request to transfer a site's plan to another user.
  *
- * @param   {object} action Redux action
- * @returns {object} Dispatched http action
+ * @param   {Object} action Redux action
+ * @returns {Object} Dispatched http action
  */
 export const requestPlanOwnershipTransfer = ( action ) =>
 	http(
@@ -33,9 +33,9 @@ export const requestPlanOwnershipTransfer = ( action ) =>
 /**
  * Dispatches a success notice when the request succeeded.
  *
- * @param   {object} action Redux action
+ * @param   {Object} action Redux action
  * @param   {number} action.siteId
- * @returns {object} Success notice action
+ * @returns {Object} Success notice action
  */
 export const handleTransferSuccess = ( { siteId } ) => [
 	successNotice(
@@ -48,11 +48,11 @@ export const handleTransferSuccess = ( { siteId } ) => [
 /**
  * Dispatches an error notice when the request failed.
  *
- * @param   {object} action Redux action
+ * @param   {Object} action Redux action
  * @param   {number} action.siteId
- * @param   {object} error  Error object
+ * @param   {Object} error  Error object
  * @param   {string} error.message
- * @returns {object} Error notice action
+ * @returns {Object} Error notice action
  */
 export const handleTransferError = ( { siteId }, { message } ) =>
 	errorNotice( message, noticeOptions( siteId ) );

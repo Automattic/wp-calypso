@@ -19,6 +19,7 @@ import { stringify } from 'qs';
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
+import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
 import { shouldSeeCookieBanner, parseTrackingPrefs } from 'calypso/lib/analytics/utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
@@ -253,7 +254,7 @@ const setupDefaultContext = ( entrypoint, sectionName ) => ( req, res, next ) =>
 };
 
 function setUpLocalLanguageRevisions( req ) {
-	performanceMark( req.context, 'setUpLocalLanguageRevisions', true );
+	performanceMark( req.context, 'setup_local_lang_revs', true );
 	const rootPath = path.join( __dirname, '..', '..', '..' );
 	const langRevisionsPath = path.join( rootPath, 'public', 'languages', 'lang-revisions.json' );
 
@@ -261,12 +262,14 @@ function setUpLocalLanguageRevisions( req ) {
 	const langPromise = fs.promises
 		.readFile( langRevisionsPath, 'utf8' )
 		.then( ( languageRevisions ) => {
-			performanceMark( req.context, 'parse language file', true );
+			performanceMark( req.context, 'parse_lang_file', true );
 			req.context.languageRevisions = JSON.parse( languageRevisions );
+			performanceMark( req.context, 'done_parse_lang_file', true );
 
 			return languageRevisions;
 		} )
 		.catch( ( error ) => {
+			performanceMark( req.context, 'err_parse_lang_file', true );
 			console.error( 'Failed to read the language revision files.', error );
 
 			throw error;
@@ -276,7 +279,7 @@ function setUpLocalLanguageRevisions( req ) {
 }
 
 function setUpLoggedOutRoute( req, res, next ) {
-	performanceMark( req.context, 'setUpLoggedOutRoute', true );
+	performanceMark( req.context, 'setup_logged_out_route', true );
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
 	} );
@@ -287,15 +290,26 @@ function setUpLoggedOutRoute( req, res, next ) {
 		setupRequests.push( setUpLocalLanguageRevisions( req ) );
 	}
 
+	if ( req.cookies?.subkey ) {
+		req.context.user = {
+			...( req.context.user ?? {} ),
+			subscriptionManagementSubkey: req.cookies.subkey,
+		};
+	}
+
 	Promise.all( setupRequests )
 		.then( () => {
-			performanceMark( req.context, 'done with loggedOut setup requests', true );
+			performanceMark( req.context, 'finish_logged_out_setup', true );
 			next();
 		} )
-		.catch( ( error ) => next( error ) );
+		.catch( ( error ) => {
+			performanceMark( req.context, 'err_logged_out_setup' );
+			next( error );
+		} );
 }
 
 function setUpLoggedInRoute( req, res, next ) {
+	performanceMark( req.context, 'setup_logged_in_route' );
 	let redirectUrl;
 	let start;
 
@@ -308,6 +322,7 @@ function setUpLoggedInRoute( req, res, next ) {
 	if ( req.context.useTranslationChunks ) {
 		setupRequests.push( setUpLocalLanguageRevisions( req ) );
 	} else {
+		performanceMark( req.context, 'download_lang_revs', true );
 		const LANG_REVISION_FILE_URL = 'https://widgets.wp.com/languages/calypso/lang-revisions.json';
 		const langPromise = superagent
 			.get( LANG_REVISION_FILE_URL )
@@ -315,10 +330,12 @@ function setUpLoggedInRoute( req, res, next ) {
 				const languageRevisions = filterLanguageRevisions( response.body );
 
 				req.context.languageRevisions = languageRevisions;
+				performanceMark( req.context, 'finish_download_lang_revs', true );
 
 				return languageRevisions;
 			} )
 			.catch( ( error ) => {
+				performanceMark( req.context, 'err_download_lang_revs', true );
 				console.error( 'Failed to fetch the language revision files.', error );
 
 				throw error;
@@ -328,6 +345,7 @@ function setUpLoggedInRoute( req, res, next ) {
 	}
 
 	if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
+		performanceMark( req.context, 'user_bootstrap', true );
 		const protocol = req.get( 'X-Forwarded-Proto' ) === 'https' ? 'https' : 'http';
 
 		redirectUrl = login( {
@@ -346,6 +364,7 @@ function setUpLoggedInRoute( req, res, next ) {
 
 		const userPromise = getBootstrappedUser( req )
 			.then( ( data ) => {
+				performanceMark( req.context, 'finish_fetch_user_bootstrap', true );
 				const end = new Date().getTime() - start;
 
 				debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
@@ -393,6 +412,7 @@ function setUpLoggedInRoute( req, res, next ) {
 						return;
 					}
 				}
+				performanceMark( req.context, 'finish_user_bootstrap', true );
 			} )
 			.catch( ( error ) => {
 				if ( error.error === 'authorization_required' ) {
@@ -404,6 +424,7 @@ function setUpLoggedInRoute( req, res, next ) {
 					} );
 					res.redirect( redirectUrl );
 				} else {
+					performanceMark( req.context, 'err_user_bootstrap', true );
 					let errorMessage;
 
 					if ( error.error ) {
@@ -422,16 +443,22 @@ function setUpLoggedInRoute( req, res, next ) {
 	}
 
 	Promise.all( setupRequests )
-		.then( () => next() )
-		.catch( ( error ) => next( error ) );
+		.then( () => {
+			performanceMark( req.context, 'finish_logged_in_setup' );
+			next();
+		} )
+		.catch( ( error ) => {
+			performanceMark( req.context, 'err_logged_in_setup' );
+			next( error );
+		} );
 }
 
 /**
  * Sets up a Content Security Policy header
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP
- * @param {object} req Express request object
- * @param {object} res Express response object
+ * @param {Object} req Express request object
+ * @param {Object} res Express response object
  * @param {Function} next a callback to call when done
  */
 function setUpCSP( req, res, next ) {
@@ -801,6 +828,21 @@ function wpcomPages( app ) {
 				res.send( renderJsx( 'support-user' ) );
 			} );
 	} );
+
+	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
+		if ( req.context.isLoggedIn ) {
+			// We want to show the old subscriptions management portal to the logged-in users, until new one in reader is developped for them
+			return res.redirect( 'https://wordpress.com/email-subscriptions?option=settings' );
+		}
+
+		if ( req.cookies.subkey ) {
+			// If the user is logged out, and has a subkey cookie, they are authorized to view the page
+			return next();
+		}
+
+		// Otherwise, show them email subscriptions external landing page
+		res.redirect( 'https://wordpress.com/email-subscriptions' );
+	} );
 }
 
 export default function pages() {
@@ -877,6 +919,10 @@ export default function pages() {
 	loginRouter( serverRouter( app, setUpRoute, null ) );
 
 	handleSectionPath( STEPPER_SECTION_DEFINITION, '/setup', 'entry-stepper' );
+
+	if ( config.isEnabled( 'subscription-management' ) ) {
+		handleSectionPath( SUBSCRIPTIONS_SECTION_DEFINITION, '/subscriptions', 'entry-subscriptions' );
+	}
 
 	// Redirect legacy `/new` routes to the corresponding `/start`
 	app.get( [ '/new', '/new/*' ], ( req, res ) => {

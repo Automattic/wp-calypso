@@ -1,18 +1,24 @@
 import {
 	Card,
-	PercentCalculator as percentCalculator,
+	ComponentSwapper,
+	formattedNumber,
+	percentCalculator,
 	ShortenedNumber,
 } from '@automattic/components';
+import { eye } from '@automattic/components/src/icons';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import DotPager from 'calypso/components/dot-pager';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
+import PostCardsGroup from './post-cards-group';
 
 import './style.scss';
 
@@ -32,20 +38,23 @@ type MostPopularData = {
 	hourPercent: number;
 };
 
-const FORMATTER = new Intl.NumberFormat();
-function formatNumber( number: number | null ) {
-	return Number.isFinite( number ) ? FORMATTER.format( number as number ) : '-';
-}
-
-export default function AllTimeHighlightsSection( { siteId }: { siteId: number } ) {
+export default function AllTimeHighlightsSection( {
+	siteId,
+	siteSlug,
+}: {
+	siteId: number;
+	siteSlug: string;
+} ) {
 	const translate = useTranslate();
+
+	const insightsQuery = {};
 
 	const isStatsRequesting = useSelector( ( state ) =>
 		isRequestingSiteStatsForQuery( state, siteId, 'stats', {} )
 	);
 
 	const isInsightsRequesting = useSelector( ( state ) =>
-		isRequestingSiteStatsForQuery( state, siteId, 'statsInsights', {} )
+		isRequestingSiteStatsForQuery( state, siteId, 'statsInsights', insightsQuery )
 	);
 
 	const { comments, posts, views, visitors, viewsBestDay, viewsBestDayTotal } = useSelector(
@@ -53,30 +62,17 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 	) as AllTimeData;
 
 	const { day, percent, hour, hourPercent } = useSelector(
-		( state ) => getSiteStatsNormalizedData( state, siteId, 'statsInsights', {} ) || {}
+		( state ) => getSiteStatsNormalizedData( state, siteId, 'statsInsights', insightsQuery ) || {}
 	) as MostPopularData;
+
+	const userLocale = useSelector( getCurrentUserLocale );
 
 	const isStatsLoading = isStatsRequesting && ! views;
 	const isInsightsLoading = isInsightsRequesting && ! percent;
 
 	const infoItems = useMemo( () => {
 		return [
-			{
-				id: 'views',
-				//TODO: replace with an icon when available.
-				icon: (
-					<svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path
-							fillRule="evenodd"
-							clipRule="evenodd"
-							d="m4 13 .67.336.003-.005a2.42 2.42 0 0 1 .094-.17c.071-.122.18-.302.329-.52.298-.435.749-1.017 1.359-1.598C7.673 9.883 9.498 8.75 12 8.75s4.326 1.132 5.545 2.293c.61.581 1.061 1.163 1.36 1.599a8.29 8.29 0 0 1 .422.689l.002.005L20 13l.67-.336v-.003l-.003-.005-.008-.015-.028-.052a9.752 9.752 0 0 0-.489-.794 11.6 11.6 0 0 0-1.562-1.838C17.174 8.617 14.998 7.25 12 7.25S6.827 8.618 5.42 9.957c-.702.669-1.22 1.337-1.563 1.839a9.77 9.77 0 0 0-.516.845l-.008.015-.002.005-.001.002v.001L4 13Zm8 3a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
-							fill="#00101C"
-						/>
-					</svg>
-				),
-				title: translate( 'Views' ),
-				count: views,
-			},
+			{ id: 'views', icon: eye, title: translate( 'Views' ), count: views },
 			{ id: 'visitors', icon: people, title: translate( 'Visitors' ), count: visitors },
 			{ id: 'posts', icon: postContent, title: translate( 'Posts' ), count: posts },
 			{ id: 'likes', icon: starEmpty, title: translate( 'Likes' ), count: 13092212, hidden: true },
@@ -118,11 +114,12 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 
 		if ( viewsBestDay && ! isStatsLoading ) {
 			const theDay = new Date( viewsBestDay );
-			bestViewsEverMonthDay = theDay.toLocaleDateString( undefined, {
+
+			bestViewsEverMonthDay = theDay.toLocaleDateString( userLocale, {
 				month: 'long',
 				day: 'numeric',
 			} );
-			bestViewsEverYear = theDay.toLocaleDateString( undefined, {
+			bestViewsEverYear = theDay.toLocaleDateString( userLocale, {
 				year: 'numeric',
 			} );
 		}
@@ -133,7 +130,7 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 
 		return {
 			id: 'bestViewsEver',
-			heading: translate( 'Best views ever' ),
+			heading: translate( 'Most popular day' ),
 			items: [
 				{
 					id: 'day',
@@ -152,117 +149,137 @@ export default function AllTimeHighlightsSection( { siteId }: { siteId: number }
 				},
 			],
 		};
-	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal ] );
+	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal, userLocale ] );
+
+	const mobileCards = (
+		<div className="highlight-cards-mobile">
+			<h3 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h3>
+			<DotPager>
+				<Card className="highlight-card">
+					<h4 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h4>
+					<div className="highlight-card-info-item-list">
+						{ infoItems
+							.filter( ( i ) => ! i.hidden )
+							.map( ( info ) => {
+								return (
+									<div key={ info.id } className="highlight-card-info-item">
+										<Icon icon={ info.icon } />
+
+										<span className="highlight-card-info-item-title">{ info.title }</span>
+
+										<span
+											className="highlight-card-info-item-count"
+											title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
+										>
+											{ formattedNumber( info.count ) }
+										</span>
+									</div>
+								);
+							} ) }
+					</div>
+				</Card>
+
+				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
+					return (
+						<Card key={ card.id } className="highlight-card">
+							<h4 className="highlight-card-heading">{ card.heading }</h4>
+							<div className="highlight-card-detail-item-list">
+								{ card.items.map( ( item ) => {
+									return (
+										<div key={ item.id } className="highlight-card-detail-item">
+											<div className="highlight-card-detail-item-header">{ item.header }</div>
+
+											<div className="highlight-card-detail-item-content">{ item.content }</div>
+
+											<div className="highlight-card-detail-item-footer">{ item.footer }</div>
+										</div>
+									);
+								} ) }
+							</div>
+						</Card>
+					);
+				} ) }
+			</DotPager>
+
+			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
+		</div>
+	);
+
+	const highlightCards = (
+		<div className="highlight-cards">
+			<h3 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h3>
+
+			<div className="highlight-cards-list">
+				<Card className="highlight-card">
+					<h4 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h4>
+					<div className="highlight-card-info-item-list">
+						{ infoItems
+							.filter( ( i ) => ! i.hidden )
+							.map( ( info ) => {
+								return (
+									<div key={ info.id } className="highlight-card-info-item">
+										<Icon icon={ info.icon } />
+
+										<span className="highlight-card-info-item-title">{ info.title }</span>
+
+										<span
+											className="highlight-card-info-item-count"
+											title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
+										>
+											{ formattedNumber( info.count ) }
+										</span>
+									</div>
+								);
+							} ) }
+					</div>
+				</Card>
+
+				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
+					return (
+						<Card key={ card.id } className="highlight-card">
+							<h4 className="highlight-card-heading">{ card.heading }</h4>
+							<div className="highlight-card-detail-item-list">
+								{ card.items.map( ( item ) => {
+									return (
+										<div key={ item.id } className="highlight-card-detail-item">
+											<div className="highlight-card-detail-item-header">{ item.header }</div>
+
+											<div className="highlight-card-detail-item-content">{ item.content }</div>
+
+											<div className="highlight-card-detail-item-footer">{ item.footer }</div>
+										</div>
+									);
+								} ) }
+							</div>
+						</Card>
+					);
+				} ) }
+			</div>
+
+			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
+		</div>
+	);
 
 	return (
 		<div className="stats__all-time-highlights-section">
 			{ siteId && (
 				<>
+					<QueryPosts
+						siteId={ siteId }
+						postId={ null }
+						query={ { status: 'publish', number: 1 } }
+					/>
 					<QuerySiteStats siteId={ siteId } statType="stats" query={ {} } />
-					<QuerySiteStats siteId={ siteId } statType="statsInsights" />
+					<QuerySiteStats siteId={ siteId } statType="statsInsights" query={ insightsQuery } />
 				</>
 			) }
 
-			<div className="stats__all-time-highlights-mobile">
-				<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
-				<DotPager>
-					<Card className="highlight-card">
-						<div className="highlight-card-heading">{ translate( 'All-time stats' ) }</div>
-						<div className="highlight-card-info-item-list">
-							{ infoItems
-								.filter( ( i ) => ! i.hidden )
-								.map( ( info ) => {
-									return (
-										<div key={ info.id } className="highlight-card-info-item">
-											<Icon icon={ info.icon } />
-
-											<span className="highlight-card-info-item-title">{ info.title }</span>
-
-											<span
-												className="highlight-card-info-item-count"
-												title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
-											>
-												{ formatNumber( info.count ) }
-											</span>
-										</div>
-									);
-								} ) }
-						</div>
-					</Card>
-
-					{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
-						return (
-							<Card key={ card.id } className="highlight-card">
-								<div className="highlight-card-heading">{ card.heading }</div>
-								<div className="highlight-card-detail-item-list">
-									{ card.items.map( ( item ) => {
-										return (
-											<div key={ item.id } className="highlight-card-detail-item">
-												<div className="highlight-card-detail-item-header">{ item.header }</div>
-
-												<div className="highlight-card-detail-item-content">{ item.content }</div>
-
-												<div className="highlight-card-detail-item-footer">{ item.footer }</div>
-											</div>
-										);
-									} ) }
-								</div>
-							</Card>
-						);
-					} ) }
-				</DotPager>
-			</div>
-
-			<div className="highlight-cards">
-				<h1 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h1>
-
-				<div className="highlight-cards-list">
-					<Card className="highlight-card">
-						<div className="highlight-card-heading">{ translate( 'All-time stats' ) }</div>
-						<div className="highlight-card-info-item-list">
-							{ infoItems
-								.filter( ( i ) => ! i.hidden )
-								.map( ( info ) => {
-									return (
-										<div key={ info.id } className="highlight-card-info-item">
-											<Icon icon={ info.icon } />
-
-											<span className="highlight-card-info-item-title">{ info.title }</span>
-
-											<span
-												className="highlight-card-info-item-count"
-												title={ Number.isFinite( info.count ) ? String( info.count ) : undefined }
-											>
-												{ formatNumber( info.count ) }
-											</span>
-										</div>
-									);
-								} ) }
-						</div>
-					</Card>
-
-					{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
-						return (
-							<Card key={ card.id } className="highlight-card">
-								<div className="highlight-card-heading">{ card.heading }</div>
-								<div className="highlight-card-detail-item-list">
-									{ card.items.map( ( item ) => {
-										return (
-											<div key={ item.id } className="highlight-card-detail-item">
-												<div className="highlight-card-detail-item-header">{ item.header }</div>
-
-												<div className="highlight-card-detail-item-content">{ item.content }</div>
-
-												<div className="highlight-card-detail-item-footer">{ item.footer }</div>
-											</div>
-										);
-									} ) }
-								</div>
-							</Card>
-						);
-					} ) }
-				</div>
-			</div>
+			<ComponentSwapper
+				className="all-time-highlights-section__highlight-cards-swapper"
+				breakpoint="<660px"
+				breakpointActiveComponent={ mobileCards }
+				breakpointInactiveComponent={ highlightCards }
+			/>
 		</div>
 	);
 }

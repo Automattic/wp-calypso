@@ -4,9 +4,9 @@ const defaultPreset = require( './presets' ).default;
 /**
  * Merge options object with existing babel-i18n plugin options.
  *
- * @param   {object} preset  Config object from extendBaseOptions.
- * @param   {object} options Additional options object.
- * @returns {object} Config object with merged options.
+ * @param   {Object} preset  Config object from extendBaseOptions.
+ * @param   {Object} options Additional options object.
+ * @returns {Object} Config object with merged options.
  */
 const mergeOptions = ( preset, options = {} ) => {
 	const plugins = preset.plugins;

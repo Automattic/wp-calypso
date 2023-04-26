@@ -26,11 +26,17 @@ export class BulkSelect extends Component {
 	};
 
 	hasAllElementsSelected = () => {
-		return this.props.selectedElements && this.props.selectedElements === this.props.totalElements;
+		return (
+			this.props.isChecked ??
+			( this.props.selectedElements && this.props.selectedElements === this.props.totalElements )
+		);
 	};
 
 	hasSomeElementsSelected = () => {
-		return this.props.selectedElements && this.props.selectedElements < this.props.totalElements;
+		return (
+			this.props.isHalfChecked ??
+			( this.props.selectedElements && this.props.selectedElements < this.props.totalElements )
+		);
 	};
 
 	handleToggleAll = () => {
@@ -39,11 +45,10 @@ export class BulkSelect extends Component {
 	};
 
 	render() {
-		const { translate, ariaLabel = translate( 'Select All' ) } = this.props;
+		const { translate, ariaLabel = translate( 'Select All' ), disabled = false } = this.props;
 		const isChecked = this.hasAllElementsSelected();
 		const inputClasses = classNames( 'bulk-select__box', {
-			// We need to add this CSS class to be able to test if the input if checked,
-			// since Enzyme still doesn't support :checked pseudoselector.
+			// TODO: We might be able to remove this class in favor of the :checked pseudoselector.
 			'is-checked': isChecked,
 		} );
 
@@ -55,6 +60,7 @@ export class BulkSelect extends Component {
 						checked={ isChecked }
 						onChange={ this.handleToggleAll }
 						aria-label={ ariaLabel }
+						disabled={ disabled }
 					/>
 					<Count count={ this.props.selectedElements } />
 					{ this.getStateIcon() }

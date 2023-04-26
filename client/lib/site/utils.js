@@ -9,7 +9,7 @@ export function userCan( capability, site ) {
 /**
  * site's timezone getter
  *
- * @param   {object} site - site object
+ * @param   {Object} site - site object
  * @returns {string} timezone
  */
 export function timezone( site ) {
@@ -19,7 +19,7 @@ export function timezone( site ) {
 /**
  * site's gmt_offset getter
  *
- * @param   {object} site - site object
+ * @param   {Object} site - site object
  * @returns {string} gmt_offset
  */
 export function gmtOffset( site ) {
@@ -94,7 +94,7 @@ export function isMainNetworkSite( site ) {
 /**
  * Checks whether a site has a custom mapped URL.
  *
- * @param   {object}   site Site object
+ * @param   {Object}   site Site object
  * @returns {?boolean}      Whether site has custom domain
  */
 export function hasCustomDomain( site ) {
@@ -112,7 +112,7 @@ export function isModuleActive( site, moduleId ) {
 /**
  * Returns the WordPress.com URL of a site (simple or Atomic)
  *
- * @param {object} site Site object
+ * @param {Object} site Site object
  * @returns {?string} WordPress.com URL
  */
 export function getUnmappedUrl( site ) {

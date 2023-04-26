@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { HelpCenter } from '@automattic/data-stores';
-import { HelpIcon, PromotionalPopover } from '@automattic/help-center';
+import { HelpIcon } from '@automattic/help-center';
 import {
 	useDispatch as useDataStoreDispatch,
 	useSelect as useDateStoreSelect,
@@ -42,7 +42,6 @@ const MasterbarHelpCenter = ( { tooltip } ) => {
 				tooltip={ tooltip }
 				icon={ <HelpIcon ref={ helpIconRef } /> }
 			/>
-			<PromotionalPopover iconElement={ helpIconRef.current } />
 		</>
 	);
 };

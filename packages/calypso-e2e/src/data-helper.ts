@@ -1,3 +1,4 @@
+import { webcrypto } from 'node:crypto';
 import phrase from 'asana-phrase';
 import envVariables from './env-variables';
 import { SecretsManager } from './secrets';
@@ -30,7 +31,7 @@ export function getNewTestUser( {
 	usernamePrefix?: string;
 } = {} ): NewTestUserDetails {
 	const username = getUsername( { prefix: usernamePrefix } );
-	const password = SecretsManager.secrets.passwordForNewTestSignUps;
+	const password = generateRandomPassword();
 
 	const email = getTestEmailAddress( {
 		inboxId: SecretsManager.secrets.mailosaur[ mailosaurInbox ],
@@ -174,23 +175,24 @@ export function getAccountSiteURL(
 	{ protocol = true }: { protocol?: boolean } = {}
 ): string {
 	const testAccount = SecretsManager.secrets.testAccounts[ accountType ];
+	const url = testAccount.primarySite || testAccount.testSites?.primary.url;
 	if ( ! testAccount ) {
 		throw new Error(
 			`Secrets file did not contain credentials for requested user ${ accountType }. Update typings or the secrets file.`
 		);
 	}
 
-	if ( ! testAccount.primarySite ) {
+	if ( ! url ) {
 		throw new ReferenceError(
 			`Secrets entry for ${ accountType } has no primary site URL defined.`
 		);
 	}
 
 	if ( protocol ) {
-		return new URL( `https://${ testAccount.primarySite }` ).toString();
+		return new URL( `https://${ url }` ).toString();
 	}
 
-	return testAccount.primarySite.toString();
+	return url.toString();
 }
 
 /**
@@ -355,4 +357,31 @@ export function getMag16Locales(): string[] {
  */
 export function getViewports(): string[] {
 	return [ 'mobile', 'desktop' ];
+}
+
+interface PasswordOptions {
+	length?: number;
+	characterAllowList?: string;
+}
+/**
+ * Generates a random password with enough cryptographic security for our testing purposes here.
+ *
+ * By default, it is 24 characters long and uses lowercase, uppercase, and numbers.
+ *
+ * @param {PasswordOptions} options Options to control password generation.
+ */
+export function generateRandomPassword( options?: PasswordOptions ) {
+	const length = options?.length || 24;
+	const characterAllowList =
+		options?.characterAllowList || '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+
+	const secureRandomNumbers = webcrypto.getRandomValues( new Uint8Array( length ) );
+
+	const password: string[] = [];
+
+	for ( const randomNumber of secureRandomNumbers ) {
+		password.push( characterAllowList[ randomNumber % characterAllowList.length ] );
+	}
+
+	return password.join( '' );
 }

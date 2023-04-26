@@ -11,7 +11,7 @@ import { getSiteOptions } from 'calypso/state/sites/selectors';
  * However, the transfer process might not start immediately because of the transfer eligibility
  * reasons. That's where this selector comes handy.
  *
- * @param   {object}  state  App state.
+ * @param   {Object}  state  App state.
  * @param   {number}  siteId Site of interest.
  * @returns {boolean}        Whether there might be a transfer process happening on the backend.
  */

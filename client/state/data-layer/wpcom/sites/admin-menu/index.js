@@ -1,10 +1,11 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { addQueryArgs } from 'calypso/lib/url';
 import { ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
 import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 
 export const requestFetchAdminMenu = ( action ) =>
 	http(
@@ -40,7 +41,7 @@ const sanitizeUrl = ( url, wpAdminUrl ) => {
 	return '';
 };
 
-const sanitizeMenuItem = ( menuItem, wpAdminUrl ) => {
+const sanitizeMenuItem = ( menuItem, siteSlug, wpAdminUrl ) => {
 	if ( ! menuItem ) {
 		return menuItem;
 	}
@@ -48,8 +49,13 @@ const sanitizeMenuItem = ( menuItem, wpAdminUrl ) => {
 	let sanitizedChildren;
 	if ( Array.isArray( menuItem.children ) ) {
 		sanitizedChildren = menuItem.children.map( ( subMenuItem ) =>
-			sanitizeMenuItem( subMenuItem, wpAdminUrl )
+			sanitizeMenuItem( subMenuItem, siteSlug, wpAdminUrl )
 		);
+	}
+
+	// Enable the import page if the feature option is on.
+	if ( menuItem.slug === 'import-php' && isEnabled( 'importer/unified' ) ) {
+		menuItem.url = `/import/${ siteSlug }`;
 	}
 
 	return {
@@ -67,11 +73,14 @@ export const handleSuccess =
 		}
 
 		// Sanitize menu data.
-		const wpAdminUrl = getSiteAdminUrl( getState(), siteId );
+		const state = getState();
+		const wpAdminUrl = getSiteAdminUrl( state, siteId );
+		const siteSlug = getSiteSlug( state, siteId );
+
 		return dispatch(
 			receiveAdminMenu(
 				siteId,
-				menuData.map( ( menuItem ) => sanitizeMenuItem( menuItem, wpAdminUrl ) )
+				menuData.map( ( menuItem ) => sanitizeMenuItem( menuItem, siteSlug, wpAdminUrl ) )
 			)
 		);
 	};

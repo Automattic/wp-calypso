@@ -1,3 +1,6 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
 .is-group-reader .async-load {
 	margin: 30px auto;
 	width: 50%;
@@ -11,8 +14,9 @@
 .is-reader-page .recommended-for-you.main,
 .is-reader-page .following.main,
 .is-reader-page .tag-stream__main.main {
-	@include breakpoint-deprecated( ">660px" ) {
-		margin: 30px auto;
+	margin: 30px auto;
+	@include breakpoint-deprecated( "<660px" ) {
+		margin: 30px;
 	}
 }
 
@@ -323,7 +327,6 @@
 -------------------------------------------------------------- */
 
 .tiled-gallery.type-circle .tiled-gallery-item img {
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 	border-radius: 50%;
 }
 .tiled-gallery.type-circle .tiled-gallery-caption {
@@ -333,7 +336,6 @@
 
 .is-group-reader .main .empty-content:not(.conversations__empty-content),
 .is-reader-page .main .empty-content:not(.conversations__empty-content) {
-
 	padding-top: 0;
 
 	.empty-content__title {
@@ -359,4 +361,69 @@
 
 .is-reader-page .search-stream__single-column-results .empty-content {
 	margin-top: 0;
+}
+
+.layout.has-header-section.is-section-reader {
+
+	.layout__header-section {
+		color: var(--studio-white);
+		background-color: #021827;
+		background-image: url(calypso/assets/images/reader/tags-bg.png);
+		background-repeat: none;
+		background-size: cover;
+	}
+
+	.layout__header-section-content {
+		padding: 24px 24px 36px;
+		@include break-medium {
+			padding: 24px 108px 36px;
+		}
+	}
+
+	.masterbar {
+		border-bottom: none;
+		background: transparent;
+		color: var(--studio-white);
+	}
+
+	// logged in master bar
+	header.masterbar {
+		padding: 16px 16px;
+		height: 78px;
+		position: relative;
+	}
+
+	// logged out master bar
+	.masterbar-menu .masterbar {
+		height: 78px;
+		.x-nav-link__logo svg path {
+			fill: var(--studio-white);
+		}
+		.x-nav {
+			padding-top: 10px;
+			padding-left: 16px;
+			padding-right: 16px;
+			.x-nav-item {
+				color: var(--studio-white);
+				&:hover {
+					color: var(--studio-white);
+				}
+				.cta-btn-nav {
+					margin-top: 9px;
+				}
+				.x-nav-link-chevron {
+					opacity: 1;
+					&::after,
+					&::before {
+						color: var(--studio-white);
+					}
+				}
+			}
+
+			.x-nav-link__primary {
+				border: 2px solid var(--studio-white);
+				background: transparent !important;
+			}
+		}
+	}
 }

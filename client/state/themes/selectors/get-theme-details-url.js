@@ -5,7 +5,7 @@ import 'calypso/state/themes/init';
 /**
  * Returns the URL for a given theme's details sheet.
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {?number} siteId  Site ID to optionally use as context
  * @returns {?string}         Theme details sheet URL

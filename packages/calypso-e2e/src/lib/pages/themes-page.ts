@@ -5,8 +5,8 @@ const selectors = {
 	currentTheme: ( name: string ) => `.current-theme:has-text("${ name }")`,
 
 	// Main themes listing
-	items: '.card.theme',
-	excludeActiveTheme: ':not(.is-active)',
+	items: '.card.theme-card',
+	excludeActiveTheme: ':not(.theme-card--is-active)',
 
 	// Transitions
 	spinner: '.themes__content > .spinner',
@@ -61,7 +61,7 @@ export class ThemesPage {
 		const searchInput = await this.page.waitForSelector( selectors.searchInput );
 		await searchInput.fill( keyword );
 		await Promise.all( [ this.page.waitForNavigation(), searchInput.press( 'Enter' ) ] );
-		await this.page.waitForSelector( selectors.placeholder, { state: 'hidden' } );
+		await this.page.waitForSelector( selectors.placeholder, { state: 'detached' } );
 	}
 
 	/**

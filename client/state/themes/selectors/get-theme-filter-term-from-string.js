@@ -5,7 +5,7 @@ import 'calypso/state/themes/init';
 /**
  * return term from a taxonomy:term string
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {string} filter taxonomy:term string
  * @returns {string} The term part, or full string if term is ambiguous
  */

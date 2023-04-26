@@ -1,0 +1,39 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.stats-summary-view {
+	.highlight-cards-heading {
+		@media ( min-width: 661px ) and ( max-width: 1380px ) {
+			margin-left: 32px;
+			margin-right: 32px;
+		}
+	}
+
+	tbody tr:nth-child(odd),
+	.is-fixed-row-header tbody > tr:nth-child(odd) > th {
+		background-color: var(--studio-gray-0);
+	}
+}
+
+.stats-summary__positioned {
+	@media ( min-width: ($break-medium + 1px) ) and ( max-width: 1380px ) {
+		padding: 0 32px;
+	}
+
+	@media ( max-width: $break-medium ) {
+		.stats-card {
+			border-top: 0;
+		}
+	}
+
+	.stats__summary--narrow-mobile {
+		@media ( max-width: $break-medium ) {
+			padding-left: 32px;
+			padding-right: 32px;
+		}
+
+		@media ( max-width: ($break-small + 1px) ) {
+			padding-left: 16px;
+			padding-right: 16px;
+		}
+	}
+}

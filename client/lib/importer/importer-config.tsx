@@ -28,12 +28,16 @@ interface ImporterConfigMap {
 
 interface ImporterConfigArgs {
 	siteTitle?: string;
+	isAtomic?: boolean;
+	isJetpack?: boolean;
 }
 
-function getConfig( args: ImporterConfigArgs = { siteTitle: '' } ): {
+function getConfig(
+	args: ImporterConfigArgs = { siteTitle: '', isAtomic: false, isJetpack: false }
+): {
 	[ key: string ]: ImporterConfig;
 } {
-	const importerConfig: ImporterConfigMap = {};
+	let importerConfig: ImporterConfigMap = {};
 
 	importerConfig.wordpress = {
 		engine: 'wordpress',
@@ -254,6 +258,17 @@ function getConfig( args: ImporterConfigArgs = { siteTitle: '' } ): {
 		} ),
 		weight: 0,
 	};
+
+	// For Jetpack sites, we don't support migration as destination,
+	// so we remove the override here.
+	if ( config.isEnabled( 'importer/unified' ) && args.isJetpack && ! args.isAtomic ) {
+		delete importerConfig.wordpress.overrideDestination;
+	}
+
+	// Filter out all importers except the WordPress ones for Atomic sites.
+	if ( ! config.isEnabled( 'importer/unified' ) && args.isAtomic ) {
+		importerConfig = { wordpress: importerConfig.wordpress };
+	}
 
 	return importerConfig;
 }

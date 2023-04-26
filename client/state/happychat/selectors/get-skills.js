@@ -8,7 +8,7 @@ import getGroups from 'calypso/state/happychat/selectors/get-groups';
 /**
  * Returns an object of happychat skills array ( product - before known as groups and language )
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {string} siteId Id of the selected site used to determine the product (wpcom, jetpack)
  * @returns {string} Current user geo location
  */

@@ -8,8 +8,8 @@ import ProductCard from '../product-card';
 import ProductGridSection from '../product-grid/section';
 import slugToSelectorProduct from '../slug-to-selector-product';
 import { getItemSlugByDuration } from './utils';
-import type { Duration, PurchaseCallback, PurchaseURLCallback, SelectorProduct } from '../types';
 import type { PlanRecommendation } from './types';
+import type { Duration, PurchaseCallback, PurchaseURLCallback, SelectorProduct } from '../types';
 import './style.scss';
 import type { ReactNode, FC } from 'react';
 

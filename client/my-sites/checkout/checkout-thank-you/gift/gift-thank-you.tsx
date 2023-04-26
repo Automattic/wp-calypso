@@ -31,6 +31,7 @@ export default function GiftThankYou( { site }: { site: number | string } ) {
 	const siteRequest = useSiteQuery( site );
 	const siteName = siteRequest.data?.name;
 	const siteUrl = siteRequest.data?.URL;
+	const siteUrlGifter = siteUrl + '#gift-thank-you';
 	const isLoading = siteRequest.isLoading;
 	const [ copyLabel, setCopyLabel ] = useState( translate( 'Copy Site URL' ) );
 
@@ -46,7 +47,7 @@ export default function GiftThankYou( { site }: { site: number | string } ) {
 						'Go back to the site you just supported to continue enjoying their content.'
 					),
 					stepCta: (
-						<Button href={ siteUrl } primary>
+						<Button href={ siteUrlGifter } primary>
 							{ translate( 'Visit site' ) }
 						</Button>
 					),

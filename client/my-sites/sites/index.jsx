@@ -1,14 +1,18 @@
-import { Card } from '@automattic/components';
+import { Card, Button } from '@automattic/components';
+import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import VisitSite from 'calypso/blocks/visit-site';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import SiteSelector from 'calypso/components/site-selector';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { getJetpackActivePlugins, isJetpackSitePred } from 'calypso/state/sites/selectors';
+import getSites from 'calypso/state/selectors/get-sites';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import { hasJetpackActivePlugins, isJetpackSitePred } from 'calypso/state/sites/selectors';
 
 /**
  * In order to decide whether to show the site in site selector,
@@ -40,18 +44,24 @@ class Sites extends Component {
 	filterSites = ( site ) => {
 		// Filter out the sites on WPCOM that don't have full Jetpack plugin installed
 		// Such sites should work fine on Jetpack Cloud
-		if ( getJetpackActivePlugins( site ) && ! isJetpackSiteOrJetpackCloud( site ) ) {
+		if ( hasJetpackActivePlugins( site ) && ! isJetpackSiteOrJetpackCloud( site ) ) {
 			return false;
 		}
 		const path = this.props.siteBasePath;
 
 		// Domains can be managed on Simple and Atomic sites.
 		if ( /^\/domains/.test( path ) ) {
+			if ( site?.is_wpcom_staging_site ) {
+				return false;
+			}
 			return ! site.jetpack || site.options.is_automated_transfer;
 		}
 
 		// If a site is Jetpack, plans are available only when it is upgradeable.
 		if ( /^\/plans/.test( path ) ) {
+			if ( site?.is_wpcom_staging_site ) {
+				return false;
+			}
 			return ! site.jetpack || site.capabilities.manage_options;
 		}
 
@@ -135,6 +145,9 @@ class Sites extends Component {
 			case 'jetpack-search':
 				path = 'Jetpack Search';
 				break;
+			case 'site-logs':
+				path = translate( 'Site Logs' );
+				break;
 		}
 
 		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {
@@ -146,23 +159,53 @@ class Sites extends Component {
 	}
 
 	render() {
-		const { clearPageTitle, fromSite, siteBasePath } = this.props;
+		const { clearPageTitle, fromSite, siteBasePath, sites, translate, hasFetchedSites } =
+			this.props;
+		const filteredSites = sites.filter( this.filterSites );
+
+		// Show empty content only on Jetpack Cloud
+		const showEmptyContent = isJetpackCloud() && hasFetchedSites && ! filteredSites.length;
 
 		return (
 			<>
 				{ clearPageTitle && <DocumentHead title="" /> }
-				<Main className="sites">
-					<div className="sites__select-header">
-						<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
-						{ fromSite && <VisitSite siteSlug={ fromSite } /> }
-					</div>
-					<Card className="sites__select-wrapper">
-						<SiteSelector filter={ this.filterSites } siteBasePath={ siteBasePath } groups />
-					</Card>
+				<Main className={ classNames( 'sites', { 'sites__main-empty': showEmptyContent } ) }>
+					{ showEmptyContent ? (
+						<div className="sites__empty-state">
+							<h1 className="card-heading-36">{ translate( 'Add a site' ) }</h1>
+							<p>
+								{ translate(
+									'It looks like you don’t have any connected Jetpack sites to manage.'
+								) }
+							</p>
+							<Button
+								primary
+								target="_blank"
+								href="https://jetpack.com/support/jetpack-agency-licensing-portal-instructions/add-sites-agency-portal-dashboard/"
+							>
+								{ translate( 'Learn how to add a site' ) }
+							</Button>
+						</div>
+					) : (
+						<>
+							<div className="sites__select-header">
+								<h2 className="sites__select-heading">{ this.getHeaderText() }</h2>
+								{ fromSite && <VisitSite siteSlug={ fromSite } /> }
+							</div>
+							<Card className="sites__select-wrapper">
+								<SiteSelector filter={ this.filterSites } siteBasePath={ siteBasePath } groups />
+							</Card>
+						</>
+					) }
 				</Main>
 			</>
 		);
 	}
 }
 
-export default localize( Sites );
+export default connect( ( state ) => {
+	return {
+		hasFetchedSites: hasLoadedSites( state ),
+		sites: getSites( state, false ),
+	};
+} )( localize( Sites ) );

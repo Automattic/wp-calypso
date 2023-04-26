@@ -7,7 +7,7 @@ import isJetpackSite from './is-jetpack-site';
  * Determines if a Jetpack site is a secondary network site.
  * Returns null if the site is not known or is not a Jetpack site.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {number} siteId Site ID
  * @returns {?boolean} true if the site is a secondary network site
  */

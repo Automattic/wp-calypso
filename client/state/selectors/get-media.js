@@ -5,7 +5,7 @@ import 'calypso/state/media/init';
  *
  * @param {any} state the global state
  * @param {string} siteId the site ID
- * @param {object} query  Query object
+ * @param {Object} query  Query object
  * @returns {?Array}         Media
  */
 export default function getMedia( state, siteId, query ) {

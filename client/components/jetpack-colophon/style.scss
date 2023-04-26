@@ -1,13 +1,9 @@
 .jetpack-colophon {
 	margin-top: 40px;
 	text-align: center;
-	color: var(--color-neutral-40);
 
 	.jetpack-logo {
 		display: inline-block;
-		fill: currentColor;
-	}
-	.jetpack-logo__icon-circle {
 		fill: currentColor;
 	}
 	@include breakpoint-deprecated( "<660px" ) {
@@ -24,5 +20,12 @@
 		vertical-align: inherit;
 		margin-top: -5px;
 		margin-left: 4px;
+	}
+}
+
+.jetpack-colophon__grayscale {
+	color: var(--color-neutral-40);
+	.jetpack-logo__icon-circle {
+		fill: currentColor;
 	}
 }

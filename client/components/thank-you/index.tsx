@@ -28,6 +28,12 @@ const ThankYouSectionTitle = styled.h1`
 
 const ThankYouSectionContainer = styled.div`
 	margin-bottom: 35px;
+	&:not( :first-child ) {
+		border-top: 1px solid var( --studio-gray-5 );
+	}
+	&:last-child {
+		border-top: none;
+	}
 `;
 
 const ThankYouBody = styled.div`
@@ -88,21 +94,25 @@ const ThankYouNotice = ( props: ThankYouNoticeProps ) => {
 };
 
 const ThankYouNextStep = ( props: ThankYouNextStepProps ) => {
-	const { stepCta, stepDescription, stepKey, stepTitle } = props;
+	const { stepIcon, stepCta, stepDescription, stepSection, stepKey, stepTitle } = props;
 
 	return (
 		<div className="thank-you__step" key={ stepKey }>
-			<div>
-				<h3>{ stepTitle }</h3>
-				<p>{ stepDescription }</p>
-			</div>
-			<div className="thank-you__step-cta">{ stepCta }</div>
+			{ stepIcon && <div className="thank-you__step-icon">{ stepIcon }</div> }
+			{ ( stepTitle || stepDescription ) && (
+				<div>
+					<h3>{ stepTitle }</h3>
+					<p>{ stepDescription }</p>
+				</div>
+			) }
+			{ stepSection && <div className="thank-you__step-section">{ stepSection }</div> }
+			{ stepCta && <div className="thank-you__step-cta">{ stepCta }</div> }
 		</div>
 	);
 };
 
 const ThankYouSection = ( props: ThankYouSectionProps ) => {
-	const { nextSteps, sectionTitle } = props;
+	const { nextSteps, sectionTitle, nextStepsClassName } = props;
 
 	const nextStepComponents = nextSteps.map( ( nextStepProps, index ) => (
 		<ThankYouNextStep key={ index } { ...nextStepProps } />
@@ -110,11 +120,13 @@ const ThankYouSection = ( props: ThankYouSectionProps ) => {
 
 	return (
 		<ThankYouSectionContainer>
-			<ThankYouSectionTitle className="thank-you__body-header wp-brand-font">
-				{ sectionTitle }
-			</ThankYouSectionTitle>
+			{ sectionTitle && (
+				<ThankYouSectionTitle className="thank-you__body-header wp-brand-font">
+					{ sectionTitle }
+				</ThankYouSectionTitle>
+			) }
 
-			<ThankYouNextSteps>{ nextStepComponents }</ThankYouNextSteps>
+			<ThankYouNextSteps className={ nextStepsClassName }>{ nextStepComponents }</ThankYouNextSteps>
 		</ThankYouSectionContainer>
 	);
 };
@@ -159,7 +171,7 @@ export const ThankYou = ( props: ThankYouProps ) => {
 		showSupportSection = true,
 		thankYouTitle,
 		thankYouSubtitle,
-		thankYouImage,
+		thankYouImage = null,
 		thankYouNotice,
 		thankYouHeaderBody = null,
 	} = props;
@@ -181,8 +193,8 @@ export const ThankYou = ( props: ThankYouProps ) => {
 		background-color: ${ headerBackgroundColor };
 		min-height: 352px;
 		img {
-			width: ${ thankYouImage.width ? null : 'auto' };
-			height: ${ thankYouImage.height ? null : '200px' };
+			width: ${ thankYouImage?.width ? null : 'auto' };
+			height: ${ thankYouImage?.height ? null : '200px' };
 			margin-bottom: 14px;
 		}
 	`;
@@ -210,7 +222,7 @@ export const ThankYou = ( props: ThankYouProps ) => {
 	return (
 		<ThankYouContainer className={ classNames( 'thank-you__container', containerClassName ) }>
 			<ThankYouHeader className={ classNames( 'thank-you__container-header', headerClassName ) }>
-				<img { ...{ ...thankYouImage, alt: String( thankYouImage.alt ) } } />
+				{ thankYouImage && <img { ...{ ...thankYouImage, alt: String( thankYouImage.alt ) } } /> }
 				{ thankYouTitle && (
 					<ThankYouTitleContainer>
 						<h1 className="thank-you__header-title wp-brand-font">{ thankYouTitle }</h1>

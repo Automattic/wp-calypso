@@ -5,7 +5,7 @@ import 'calypso/state/themes/init';
 /**
  * Returns the URL for a theme's demo.
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {string}  themeId Theme ID
  * @param  {string}  siteId  Site ID
  * @returns {?string}         Theme forum URL

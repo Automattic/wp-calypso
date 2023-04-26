@@ -70,6 +70,11 @@ class MasterbarItemNotifications extends Component {
 			event.preventDefault && event.preventDefault();
 			event.stopPropagation && event.stopPropagation();
 		}
+		// Get URL and if it matches "/read/notifications", don't open the panel
+		// As it will cause duplicate notification panels to show
+		if ( window.location.pathname === '/read/notifications' ) {
+			return;
+		}
 
 		this.props.toggleNotificationsPanel();
 	};
@@ -105,7 +110,8 @@ class MasterbarItemNotifications extends Component {
 
 	render() {
 		const classes = classNames( this.props.className, 'masterbar-notifications', {
-			'is-active': this.props.isNotificationsOpen,
+			'is-active':
+				this.props.isNotificationsOpen || window.location.pathname === '/read/notifications',
 			'has-unread': this.state.newNote,
 			'is-initial-load': this.state.animationState === -1,
 		} );

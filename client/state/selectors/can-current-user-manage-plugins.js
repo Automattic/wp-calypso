@@ -5,7 +5,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 /**
  * Returns true if user can manage plugins for at least one site and returns false otherwise
  *
- * @param {object} state  Global state tree
+ * @param {Object} state  Global state tree
  * @returns {boolean} Whether the user can manage plugins or not
  */
 export default createSelector(

@@ -11,7 +11,7 @@ import moment from 'moment-timezone';
  * @see http://momentjs.com/docs/#/manipulating/utc-offset/
  * @see http://momentjs.com/timezone/docs/#/using-timezones/parsing-in-zone/
  * @param {string} timezoneString A timezone string.
- * @returns {object} The timezone-adjusted Moment.js object of the current date and time.
+ * @returns {Object} The timezone-adjusted Moment.js object of the current date and time.
  */
 export function getLocalizedDate( timezoneString ) {
 	return startsWith( timezoneString, 'UTC' )
@@ -28,7 +28,7 @@ export function getLocalizedDate( timezoneString ) {
  *
  * @see http://php.net/manual/en/function.date.php#refsect1-function.date-parameters
  * @see http://momentjs.com/docs/#/displaying/format/
- * @type {object}
+ * @type {Object}
  */
 const phpToMomentMapping = {
 	d: 'DD',
@@ -82,7 +82,7 @@ const phpToMomentMapping = {
 /**
  * Convert a PHP datetime format string into a Moment.js one.
  *
- * @param {object} momentDate A Moment.js object of the current date and time.
+ * @param {Object} momentDate A Moment.js object of the current date and time.
  * @param {string} formatString A PHP datetime format string
  * @returns {string} A Moment.js datetime format string
  */

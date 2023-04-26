@@ -115,6 +115,7 @@ rm -rf "$TARGET"
 mkdir -p $TARGET/blocks
 mkdir -p $TARGET/components
 mkdir -p $TARGET/shared
+mkdir -p $TARGET/types
 
 # copy files and directories
 cp $CODE/includes/class-newspack-blocks-api.php $TARGET/
@@ -124,6 +125,13 @@ cp -R $CODE/src/blocks/carousel $TARGET/blocks/
 cp -R $CODE/src/shared $TARGET/
 cp -R $CODE/src/components $TARGET/
 cp -R $CODE/amp $TARGET/
+
+# Get Typescript working by copying the main type defs over.
+cp $CODE/src/types/index.d.ts $TARGET/types/
+# Function types need to be capitalized in our system. We only match " function"
+# beginning with a space to avoid matching it as a substring. (Not perfect, but
+# imperfections will be caught by CI with failing tsc, etc.)
+sed "${sedi[@]}" -e "s| function| Function|g" "$TARGET/types/index.d.ts"
 
 echo "Fixing the text domains…"
 echo -n "eslint --fix: "

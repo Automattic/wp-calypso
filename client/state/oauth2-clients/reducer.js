@@ -26,7 +26,13 @@ export const initialClientsData = {
 		id: 1854,
 		name: 'gravatar',
 		title: 'Gravatar',
-		icon: 'https://gravatar.com/images/grav-logo-2x.png',
+		icon: 'https://gravatar.com/images/grav-logo-blue.svg',
+	},
+	2665: {
+		id: 2665,
+		name: 'intensedebate',
+		title: 'IntenseDebate',
+		icon: 'https://intensedebate.com/images/svg/intensedebate-logo.svg',
 	},
 	50019: {
 		id: 50019,

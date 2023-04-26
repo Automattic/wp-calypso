@@ -1,0 +1,17 @@
+.masterbar-cart-count {
+	height: 18px;
+	font-size: 0.75rem;
+	color: #fff;
+	padding: 0 5px;
+	vertical-align: top;
+	text-align: center;
+	min-width: 0.5rem;
+	border-radius: 50%;
+	background-color: #c9356e;
+	top: 5px;
+	position: relative;
+
+	&.masterbar-cart-count__hidden {
+		visibility: hidden;
+	}
+}

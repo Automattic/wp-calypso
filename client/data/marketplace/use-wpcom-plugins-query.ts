@@ -1,4 +1,11 @@
-import { useQuery, UseQueryResult, UseQueryOptions, QueryKey, QueryFunction } from 'react-query';
+import {
+	useQuery,
+	UseQueryResult,
+	UseQueryOptions,
+	QueryKey,
+	QueryFunction,
+	useQueries,
+} from 'react-query';
 import {
 	extractSearchInformation,
 	normalizePluginsList,
@@ -7,13 +14,13 @@ import {
 import wpcom from 'calypso/lib/wp';
 import { BASE_STALE_TIME } from 'calypso/state/initial-state';
 
-type Type = 'all' | 'featured';
+type Type = 'all' | 'featured' | 'launched';
 
-const plugisApiBase = '/marketplace/products';
+const pluginsApiBase = '/marketplace/products';
 const featuredPluginsApiBase = '/plugins/featured';
 const pluginsApiNamespace = 'wpcom/v2';
 
-const WPCOM_PLUGINS_CACHE_VERSION = 1;
+const WPCOM_PLUGINS_CACHE_VERSION = 2;
 const getCacheKey = ( key: string ): QueryKey => [
 	WPCOM_PLUGINS_CACHE_VERSION.toString(),
 	'wpcom-plugins',
@@ -25,7 +32,7 @@ const fetchWPCOMPlugins = ( type: Type, searchTerm?: string, tag?: string ) => {
 
 	return wpcom.req.get(
 		{
-			path: plugisApiBase,
+			path: pluginsApiBase,
 			apiNamespace: pluginsApiNamespace,
 		},
 		{
@@ -59,7 +66,7 @@ export const getWPCOMPluginsQueryParams = (
  * @param {{enabled: boolean, staleTime: number, refetchOnMount: boolean}} {} Optional options to pass to the underlying query engine
  * @returns {{ data, error, isLoading: boolean ...}} Returns various parameters piped from `useQuery`
  */
-export const useWPCOMPlugins = (
+export const useWPCOMPluginsList = (
 	type: Type,
 	searchTerm?: string,
 	tag?: string,
@@ -72,12 +79,11 @@ export const useWPCOMPlugins = (
 	} );
 };
 
-const fetchWPCOMPlugin = ( slug: string ) => {
-	return wpcom.req.get( {
-		path: `${ plugisApiBase }/${ slug }`,
+const fetchWPCOMPlugin = ( slug: string ) =>
+	wpcom.req.get( {
+		path: `${ pluginsApiBase }/${ slug }`,
 		apiNamespace: pluginsApiNamespace,
 	} );
-};
 
 export const getWPCOMPluginQueryParams = ( slug: string ): [ QueryKey, QueryFunction ] => {
 	const cacheKey = getCacheKey( slug + '-normalized' );
@@ -107,8 +113,21 @@ export const useWPCOMPlugin = (
 	} );
 };
 
+export const useWPCOMPlugins = ( slugs: Array< string > ): Array< UseQueryResult< any > > => {
+	return useQueries(
+		slugs.map( ( slug ) => {
+			const [ cacheKey, fetchFn ] = getWPCOMPluginQueryParams( slug );
+
+			return {
+				queryKey: cacheKey,
+				queryFn: fetchFn,
+			};
+		} )
+	);
+};
+
 export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< any[] > ] => {
-	const cacheKey = 'plugins-featured-list-normalized';
+	const cacheKey = [ 'plugins-featured-list-normalized' ];
 	const fetchFn = () =>
 		wpcom.req
 			.get( {

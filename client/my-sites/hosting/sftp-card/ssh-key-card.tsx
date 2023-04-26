@@ -13,6 +13,7 @@ interface SshKeyCardProps {
 	deleteText: string;
 	siteId: number;
 	sshKey: AtomicKey;
+	disabled?: boolean;
 }
 
 const noticeOptions = {
@@ -33,10 +34,10 @@ const SSHKeyCardRoot = styled( SSHKeyCard.Root )( {
 
 const sshKeyDetachFailureNoticeId = 'ssh-key-detach-failure';
 
-function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
+function SshKeyCard( { deleteText, siteId, sshKey, disabled = false }: SshKeyCardProps ) {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
-	const { detachSshKey, isLoading } = useDetachSshKeyMutation(
+	const { detachSshKey, isLoading: isDetaching } = useDetachSshKeyMutation(
 		{ siteId },
 		{
 			onMutate: () => {
@@ -88,8 +89,8 @@ function SshKeyCard( { deleteText, siteId, sshKey }: SshKeyCardProps ) {
 			</SSHKeyCard.Details>
 			<SSHKeyCard.Button
 				onClick={ () => detachSshKey( { user_login, name } ) }
-				busy={ isLoading }
-				disabled={ isLoading }
+				busy={ isDetaching }
+				disabled={ isDetaching || disabled }
 			>
 				{ deleteText }
 			</SSHKeyCard.Button>

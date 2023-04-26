@@ -14,9 +14,9 @@ import {
 } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 import { markCredentialsAsValid } from 'calypso/state/jetpack/credentials/actions';
 import { successNotice, errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import getJetpackCredentialsUpdateProgress from 'calypso/state/selectors/get-jetpack-credentials-update-progress';
@@ -85,11 +85,12 @@ export const success = ( action, { rewind_state } ) =>
 		{
 			type: JETPACK_CREDENTIALS_STORE,
 			credentials: {
-				main: action.credentials,
+				[ action.credentials.role ]: action.credentials,
 			},
 			siteId: action.siteId,
 		},
-		action.shouldUseNotices &&
+		action.credentials.role === 'main' &&
+			action.shouldUseNotices &&
 			successNotice( i18n.translate( 'Your site is now connected.' ), {
 				duration: 4000,
 				...getMaybeNoticeId( action ),

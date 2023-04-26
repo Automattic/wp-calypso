@@ -25,7 +25,7 @@ export interface Theme {
 	cost: ThemeCost;
 	date_launched: string;
 	date_updated: string;
-	demo_uri: string;
+	demo_uri?: string;
 	description: string;
 	descriptionLong: string;
 	download: string;
@@ -37,6 +37,7 @@ export interface Theme {
 	name: string;
 	next: string;
 	popularity_rank: string;
+	product_details?: MarketplaceThemeProductDetails[];
 	preview_url: string;
 	screenshot: string;
 	screenshots: string[];
@@ -46,11 +47,17 @@ export interface Theme {
 	taxonomies?: {
 		theme_feature?: ThemeFeature[];
 		theme_software_set?: ThemeSoftwareSet[];
+		theme_subject?: ThemeSubject[];
 	};
 	template: string;
 	theme_uri: string;
 	trending_rank: number;
 	version: string;
+}
+
+interface MarketplaceThemeProductDetails {
+	product_id: number;
+	product_slug: string;
 }
 
 interface ThemeCost {
@@ -66,6 +73,12 @@ interface ThemeFeature {
 }
 
 interface ThemeSoftwareSet {
+	name: string;
+	slug: string;
+	term_id: string;
+}
+
+interface ThemeSubject {
 	name: string;
 	slug: string;
 	term_id: string;

@@ -10,8 +10,8 @@ import 'calypso/state/checklist/init';
  * Action creator function: SITE_CHECKLIST_RECEIVE
  *
  * @param {string} siteId for the checklist
- * @param {object} checklist the new checklist state
- * @returns {object} action object
+ * @param {Object} checklist the new checklist state
+ * @returns {Object} action object
  */
 export function receiveSiteChecklist( siteId, checklist ) {
 	return {
@@ -26,7 +26,7 @@ export function receiveSiteChecklist( siteId, checklist ) {
  *
  * @param {string} siteId for the checklist
  * @param {boolean} isSiteEligibleForFSE whether or not the site is eligible for Legacy Full Site Editing
- * @returns {object} action object
+ * @returns {Object} action object
  */
 export const requestSiteChecklist = ( siteId, isSiteEligibleForFSE = false ) => ( {
 	type: SITE_CHECKLIST_REQUEST,
@@ -44,7 +44,7 @@ export const requestSiteChecklist = ( siteId, isSiteEligibleForFSE = false ) => 
  *
  * @param {string} siteId for the checklist
  * @param {string} taskId for the task
- * @returns {object} action object
+ * @returns {Object} action object
  */
 export const requestSiteChecklistTaskUpdate = ( siteId, taskId ) => ( {
 	type: SITE_CHECKLIST_TASK_UPDATE,

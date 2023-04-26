@@ -1,5 +1,7 @@
 ## next
 
+- Update social-logos to ^2.5.2 (#72876)
+
 ## 2.0.1
 
 - Add missing dependencies: `@automattic/typography` and `wpcom-proxy-request`

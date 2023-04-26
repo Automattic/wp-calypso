@@ -8,6 +8,10 @@ jest.mock( 'i18n-calypso', () => ( {
 jest.mock( '@automattic/components', () => ( {
 	Popover: () => <div />,
 } ) );
+jest.mock( 'calypso/state/ui/selectors', () => ( {
+	...jest.requireActual( 'calypso/state/ui/selectors' ),
+	getSelectedSiteId: jest.fn( () => null ),
+} ) );
 
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';

@@ -3,13 +3,14 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import page from 'page';
-import { ComponentPropsWithoutRef } from 'react';
+import { ComponentPropsWithoutRef, useEffect, useRef } from 'react';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { MEDIA_QUERIES } from '../utils';
 import { SitesDisplayModeSwitcher } from './sites-display-mode-switcher';
 import { SitesSearch } from './sites-search';
 import { SitesSearchIcon } from './sites-search-icon';
 import { SitesSortingDropdown } from './sites-sorting-dropdown';
+import type { ImperativeHandle as SearchImperativeHandle } from '@automattic/search';
 
 export interface SitesDashboardQueryParams {
 	page?: number;
@@ -118,6 +119,11 @@ export const SitesContentControls = ( {
 	hasSitesSortingPreferenceLoaded,
 }: SitesContentControlsProps ) => {
 	const { __ } = useI18n();
+	const searchRef = useRef< SearchImperativeHandle >( null );
+
+	useSearchShortcut( () => {
+		searchRef.current?.focus();
+	} );
 
 	return (
 		<FilterBar>
@@ -128,6 +134,7 @@ export const SitesContentControls = ( {
 				placeholder={ __( 'Search by name or domain…' ) }
 				disableAutocorrect={ true }
 				defaultValue={ initialSearch }
+				ref={ searchRef }
 			/>
 			<DisplayControls>
 				<ControlsSelectDropdown
@@ -183,3 +190,30 @@ export const SitesContentControls = ( {
 		</FilterBar>
 	);
 };
+
+function useSearchShortcut( callback: () => void ) {
+	const callbackRef = useRef( callback );
+	callbackRef.current = callback;
+
+	useEffect( () => {
+		const handleKeyDown = ( event: KeyboardEvent ) => {
+			// Don't trigger the shortcut if the user is typing in an input field.
+			if (
+				document.activeElement?.tagName === 'INPUT' ||
+				document.activeElement?.tagName === 'TEXTAREA' ||
+				( document.activeElement as HTMLElement | null )?.isContentEditable
+			) {
+				return;
+			}
+
+			if ( event.key === '/' && callbackRef.current ) {
+				event.preventDefault();
+				callbackRef.current();
+			}
+		};
+		window.addEventListener( 'keydown', handleKeyDown );
+		return () => {
+			window.removeEventListener( 'keydown', handleKeyDown );
+		};
+	} );
+}

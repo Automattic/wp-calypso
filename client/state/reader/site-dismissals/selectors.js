@@ -6,7 +6,7 @@ import 'calypso/state/reader/init';
 /**
  * Returns a list of site IDs dismissed by the user
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @returns {Array}        Dimissed site IDs
  */
 export const getDismissedSites = createSelector(

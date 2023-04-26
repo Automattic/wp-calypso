@@ -5,9 +5,9 @@ import 'calypso/state/jetpack-sync/init';
 /**
  * Returns a sync status object by site ID.
  *
- * @param  {object} state    Global state tree
+ * @param  {Object} state    Global state tree
  * @param  {number} siteId   Site ID
- * @returns {object}          Sync status object
+ * @returns {Object}          Sync status object
  */
 function getSyncStatus( state, siteId ) {
 	return get( state, [ 'jetpackSync', 'syncStatus', siteId ] );
@@ -16,9 +16,9 @@ function getSyncStatus( state, siteId ) {
 /**
  * Returns a full sync request object by site ID.
  *
- * @param  {object} state    Global state tree
+ * @param  {Object} state    Global state tree
  * @param  {number} siteId   Site ID
- * @returns {object}          Full sync request object
+ * @returns {Object}          Full sync request object
  */
 function getFullSyncRequest( state, siteId ) {
 	return get( state, [ 'jetpackSync', 'fullSyncRequest', siteId ] );
@@ -27,7 +27,7 @@ function getFullSyncRequest( state, siteId ) {
 /**
  * Returns a boolean for whether a full sync is pending start.
  *
- * @param  {object} state    Global state tree
+ * @param  {Object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @returns {boolean}         Whether a sync is pending start for site
  */
@@ -62,7 +62,7 @@ function isPendingSyncStart( state, siteId ) {
 /**
  * Sites on Jetpack 8.2 may be using an immediate full sync.
  *
- * @param  {object} state    Global state tree
+ * @param  {Object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @returns {boolean}        Whether a site is using immediate full sync
  */
@@ -74,7 +74,7 @@ function isImmediateFullSync( state, siteId ) {
 /**
  * Returns a rounded up percentage the amount of sync completed for sites using immediate full sync.
  *
- * @param  {object} state    Global state tree
+ * @param  {Object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @returns {number}         The percentage of sync completed, expressed as an integer
  */
@@ -105,7 +105,7 @@ function getImmediateSyncProgressPercentage( state, siteId ) {
 /**
  * Returns a boolean for whether a site is in the process of a full sync.
  *
- * @param  {object} state    Global state tree
+ * @param  {Object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @returns {boolean}         Whether a sync is in the process of syncing
  */
@@ -124,7 +124,7 @@ function isFullSyncing( state, siteId ) {
 /**
  * Returns a rounded up percentage the amount of sync completed for sites using legacy full sync.
  *
- * @param  {object} state    Global state tree
+ * @param  {Object} state    Global state tree
  * @param  {number} siteId   Site ID
  * @returns {number}          The percentage of sync completed, expressed as an integer
  */

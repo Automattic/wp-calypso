@@ -36,15 +36,15 @@ export default function RestorePlanSoftwareCard() {
 
 	return (
 		<Card className="restore-plan-software-card">
-			<MaterialIcon icon="apps" />
-			<CardHeading>{ translate( 'Restore Plugins and Themes' ) }</CardHeading>
+			<MaterialIcon icon="apps" size={ 32 } />
+			<CardHeading>{ translate( 'Restore plugins and themes' ) }</CardHeading>
 			<p>
 				{ translate(
 					'If your website is missing plugins and themes that come with your plan, you may restore them here.'
 				) }
 			</p>
 			<Button primary onClick={ requestRestore }>
-				{ translate( "Restore Plugins and Themes for My Website's Plan" ) }
+				{ translate( "Restore plugins and themes for my website's plan" ) }
 			</Button>
 		</Card>
 	);

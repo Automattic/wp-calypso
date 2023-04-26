@@ -6,9 +6,9 @@ import { isSupportedFileTypeInPremium } from 'calypso/lib/media/utils/is-support
 /**
  * Validates a media item for a site, and returns validation errors (if any).
  *
- * @param  {object}      site Site object
- * @param  {object}      item Media item
- * @returns {Array|null}      Validation errors, or null if no site.
+ * @param  {Object}      site Site object
+ * @param  {Object}      item Media item
+ * @returns {Array|undefined} Validation errors, or undefined if no site.
  */
 export function validateMediaItem( site, item ) {
 	const itemErrors = [];

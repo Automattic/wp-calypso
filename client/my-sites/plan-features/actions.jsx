@@ -3,6 +3,7 @@ import {
 	PLAN_P2_FREE,
 	getPlanClass,
 	planLevelsMatch,
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import classNames from 'classnames';
@@ -15,15 +16,6 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const noop = () => {};
-const PlanFeaturesActions = ( props ) => {
-	return (
-		<div className="plan-features__actions">
-			<div className="plan-features__actions-buttons">
-				<PlanFeaturesActionsButton { ...props } />
-			</div>
-		</div>
-	);
-};
 
 const PlanFeaturesActionsButton = ( {
 	availableForPurchase = true,
@@ -83,7 +75,8 @@ const PlanFeaturesActionsButton = ( {
 	if (
 		( availableForPurchase || isPlaceholder ) &&
 		isMonthly( currentSitePlanSlug ) &&
-		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug )
+		getPlanClass( planType ) === getPlanClass( currentSitePlanSlug ) &&
+		currentSitePlanSlug !== PLAN_ECOMMERCE_TRIAL_MONTHLY
 	) {
 		return (
 			<Button className={ classes } onClick={ handleUpgradeButtonClick } disabled={ isPlaceholder }>
@@ -166,6 +159,16 @@ const PlanFeaturesActionsButton = ( {
 	}
 
 	return null;
+};
+
+const PlanFeaturesActions = ( props ) => {
+	return (
+		<div className="plan-features__actions">
+			<div className="plan-features__actions-buttons">
+				<PlanFeaturesActionsButton { ...props } />
+			</div>
+		</div>
+	);
 };
 
 PlanFeaturesActions.propTypes = {

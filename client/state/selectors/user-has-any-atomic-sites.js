@@ -5,7 +5,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 /**
  * Whether the user currently has any Atomic sites
  *
- * @param {object} state  Global state tree
+ * @param {Object} state  Global state tree
  * @returns {boolean}
  */
 export default createSelector(

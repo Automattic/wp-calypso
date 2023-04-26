@@ -27,6 +27,10 @@ const PluginsBrowserList = ( {
 	search,
 	noHeader = false,
 } ) => {
+	const extendedVariant = extended
+		? PluginsBrowserElementVariant.Extended
+		: PluginsBrowserElementVariant.Compact;
+
 	const renderPluginsViewList = () => {
 		const pluginsViewsList = plugins.map( ( plugin, n ) => {
 			// Needs a beter fix but something is leaking empty objects into this list.
@@ -42,9 +46,7 @@ const PluginsBrowserList = ( {
 					currentSites={ currentSites }
 					listName={ listName }
 					listType={ listType }
-					variant={
-						extended ? PluginsBrowserElementVariant.Extended : PluginsBrowserElementVariant.Compact
-					}
+					variant={ extendedVariant }
 					search={ search }
 				/>
 			);
@@ -59,7 +61,11 @@ const PluginsBrowserList = ( {
 
 	const renderPlaceholdersViews = () => {
 		return times( size || DEFAULT_PLACEHOLDER_NUMBER, ( i ) => (
-			<PluginBrowserItem isPlaceholder key={ 'placeholder-plugin-' + i } />
+			<PluginBrowserItem
+				isPlaceholder
+				key={ 'placeholder-plugin-' + i }
+				variant={ extendedVariant }
+			/>
 		) );
 	};
 

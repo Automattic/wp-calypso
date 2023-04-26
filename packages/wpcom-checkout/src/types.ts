@@ -313,6 +313,7 @@ export type WpcomStoreState = {
 	recaptchaClientId: number;
 	transactionResult?: WPCOMTransactionEndpointResponse | undefined;
 	contactDetails: ManagedContactDetails;
+	vatDetails: VatDetails;
 };
 
 export interface FailedPurchase {
@@ -321,6 +322,13 @@ export interface FailedPurchase {
 	product_slug: string;
 	product_cost: string | number;
 	product_name: string;
+}
+
+export interface VatDetails {
+	country?: string | null;
+	id?: string | null;
+	name?: string | null;
+	address?: string | null;
 }
 
 /*
@@ -334,6 +342,10 @@ export type ManagedContactDetailsUpdaters = {
 	updatePostalCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateEmail: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
 	updateCountryCode: ( arg0: ManagedContactDetails, arg1: string ) => ManagedContactDetails;
+	updateTaxFields: (
+		arg0: ManagedContactDetails,
+		arg1: ManagedContactDetails
+	) => ManagedContactDetails;
 	updateDomainContactFields: (
 		arg0: ManagedContactDetails,
 		arg1: DomainContactDetails
@@ -484,8 +496,22 @@ export type RawDomainContactValidationResponse =
 			messages_simple: string[];
 	  };
 
-export interface CountryListItem {
+export interface CountryListItemBase {
 	code: string;
 	name: string;
-	has_postal_codes: boolean;
+	has_postal_codes?: boolean;
+	tax_needs_city?: boolean;
+	tax_needs_subdivision?: boolean;
+	tax_needs_organization?: boolean;
+	tax_needs_address?: boolean;
 }
+export interface CountryListItemWithoutVat extends CountryListItemBase {
+	vat_supported: false;
+}
+export interface CountryListItemWithVat extends CountryListItemBase {
+	vat_supported: true;
+	tax_country_codes: string[];
+}
+export type CountryListItem = CountryListItemWithVat | CountryListItemWithoutVat;
+
+export type SitelessCheckoutType = 'jetpack' | 'akismet' | undefined;

@@ -48,8 +48,9 @@ const ReaderListFollowingItem = ( props ) => {
 				href={ streamLink }
 				onClick={ () => handleSidebarClick( site ) }
 			>
-				<Favicon site={ site } className="reader-sidebar-site_siteicon" size={ 32 } />
-
+				<span className="reader-sidebar-site_siteicon">
+					<Favicon site={ site } size={ 32 } />
+				</span>
 				<span className="reader-sidebar-site_sitename">
 					<span className="reader-sidebar-site_nameurl">
 						{ site.name || formatUrlForDisplay( site.URL ) }

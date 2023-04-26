@@ -49,6 +49,7 @@ as that has a lot of dependencies that aren't ready for server-side rendering.
   router in the future.
 
 ## Logged-in Requests
+
 Currently, if a request is logged-in, SSR middleware chains are skipped.
 Even if you define an index.node.js, those middleware handlers will not be used
 if the request is logged-in. This improves server-side performance in scenarios
@@ -61,6 +62,7 @@ page. Since caching data is crucial for performance, it isn't usually feasible t
 SSR logged-in requests.
 
 ## Network Requests
+
 It's common for SSR layouts to include network-fetched data. For example, the themes
 SSR page includes themes fetched on the backend. If your SSR section includes
 network requsets, it is **crucial** for those requsets to be cached and optimized

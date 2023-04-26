@@ -34,6 +34,7 @@ import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-act
 import isHappychatOpen from 'calypso/state/happychat/selectors/is-happychat-open';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { isSupportSession } from 'calypso/state/support/selectors';
@@ -141,6 +142,7 @@ class Layout extends Component {
 		primary: PropTypes.element,
 		secondary: PropTypes.element,
 		focus: PropTypes.object,
+		headerSection: PropTypes.element,
 		// connected props
 		masterbarIsHidden: PropTypes.bool,
 		isSupportSession: PropTypes.bool,
@@ -249,6 +251,7 @@ class Layout extends Component {
 			'is-support-session': this.props.isSupportSession,
 			'has-no-sidebar': this.props.sidebarIsHidden,
 			'has-docked-chat': this.props.chatIsOpen && this.props.chatIsDocked,
+			'has-header-section': this.props.headerSection,
 			'has-no-masterbar': this.props.masterbarIsHidden,
 			'is-jetpack-login': this.props.isJetpackLogin,
 			'is-jetpack-site': this.props.isJetpack,
@@ -308,7 +311,14 @@ class Layout extends Component {
 				{ config.isEnabled( 'layout/guided-tours' ) && (
 					<AsyncLoad require="calypso/layout/guided-tours" placeholder={ null } />
 				) }
-				{ this.renderMasterbar( loadHelpCenter ) }
+				<div className="layout__header-section">
+					{ this.renderMasterbar( loadHelpCenter ) }
+					{ this.props.headerSection && (
+						<div className="layout__header-section-content logged-in">
+							{ this.props.headerSection }
+						</div>
+					) }
+				</div>
 				<LayoutLoader />
 				{ isJetpackCloud() && (
 					<AsyncLoad require="calypso/jetpack-cloud/style" placeholder={ null } />
@@ -381,10 +391,12 @@ export default withCurrentRoute(
 		const siteId = getSelectedSiteId( state );
 		const sectionJitmPath = getMessagePathForJITM( currentRoute );
 		const isJetpackLogin = currentRoute.startsWith( '/log-in/jetpack' );
+		const isDomainAndPlanPackageFlow = !! getCurrentQueryArguments( state )?.domainAndPlanPackage;
 		const isJetpack =
 			( isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId ) ) ||
 			currentRoute.startsWith( '/checkout/jetpack' );
-		const noMasterbarForRoute = isJetpackLogin || currentRoute === '/me/account/closed';
+		const noMasterbarForRoute =
+			isJetpackLogin || currentRoute === '/me/account/closed' || isDomainAndPlanPackageFlow;
 		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
 		const masterbarIsHidden =
 			! masterbarIsVisible( state ) ||
@@ -409,7 +421,7 @@ export default withCurrentRoute(
 			'plugins',
 			'comments',
 		].includes( sectionName );
-		const sidebarIsHidden = ! secondary || isWcMobileApp();
+		const sidebarIsHidden = ! secondary || isWcMobileApp() || isDomainAndPlanPackageFlow;
 		const chatIsDocked = ! [ 'reader', 'theme' ].includes( sectionName ) && ! sidebarIsHidden;
 
 		const userAllowedToHelpCenter =

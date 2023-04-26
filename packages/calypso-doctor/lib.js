@@ -3,7 +3,9 @@ const os = require( 'os' );
 const path = require( 'path' );
 
 const getShellRc = () => {
-	if ( ! process.env.SHELL ) return null;
+	if ( ! process.env.SHELL ) {
+		return null;
+	}
 
 	if ( process.env.SHELL.match( /zsh/ ) ) {
 		return path.join( process.env.HOME, '.zshrc' );

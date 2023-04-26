@@ -43,6 +43,37 @@ export default function LicenseBundleCardDescription( { product }: Props ) {
 				translate( 'Akismet Anti-spam*' )
 			);
 			break;
+		case 'jetpack-anti-spam':
+			textDescription = translate( 'Automatically clear spam from your comments and forms.' );
+			break;
+		case 'jetpack-backup-t1':
+			textDescription = translate( 'Real-time cloud backups with one-click restores.' );
+			break;
+		case 'jetpack-backup-t2':
+			textDescription = translate( 'Real-time cloud backups with one-click restores.' );
+			break;
+		case 'jetpack-boost':
+			textDescription = translate(
+				'Essential tools to speed up your site - no developer required.'
+			);
+			break;
+		case 'jetpack-scan':
+			textDescription = translate( 'Automatic malware scanning with one-click fixes.' );
+			break;
+		case 'jetpack-videopress':
+			textDescription = translate(
+				'High-quality, ad-free video built specifically for WordPress.'
+			);
+			break;
+		case 'jetpack-social-basic':
+			textDescription = translate( 'Write once, post everywhere.' );
+			break;
+		case 'jetpack-social-advanced':
+			textDescription = translate( 'Write once, post everywhere.' );
+			break;
+		case 'jetpack-search':
+			textDescription = translate( 'Help your site visitors find answers instantly.' );
+			break;
 	}
 
 	return (

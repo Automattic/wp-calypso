@@ -1,9 +1,9 @@
 import { get } from 'lodash';
 
 /**
- * @param {object} ancestor potential ancestor comment
- * @param {object} child potential child comment
- * @param {object} commentsTree commentsTree for a post, see associated getPostCommentsTree selector
+ * @param {Object} ancestor potential ancestor comment
+ * @param {Object} child potential child comment
+ * @param {Object} commentsTree commentsTree for a post, see associated getPostCommentsTree selector
  * @returns {boolean} return true if parent is an ancestor of child
  */
 export const isAncestor = ( ancestor, child, commentsTree ) => {

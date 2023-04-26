@@ -12,9 +12,9 @@ import { itemsSchema } from './schema';
  * Returns the updated requesting state after an action has been dispatched.
  * Requesting state tracks whether a user suggestions request is in progress for a site.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @returns {Object}        Updated state
  */
 export const requesting = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -40,9 +40,9 @@ export const requesting = ( state = {}, action ) => {
  * state tracks an array of user suggestions available for a site. Receiving
  * user suggestions for a site will replace the existing set.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action object
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action object
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

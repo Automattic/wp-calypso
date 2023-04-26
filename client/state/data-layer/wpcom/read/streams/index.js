@@ -107,7 +107,12 @@ const streamApis = {
 	conversations: {
 		path: () => '/read/conversations',
 		dateProperty: 'last_comment_date_gmt',
+		query: ( extras ) => getQueryString( { ...extras, comments_per_post: 20 } ),
 		pollQuery: () => getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ] ),
+	},
+	notifications: {
+		path: () => '/read/notifications',
+		dateProperty: 'date',
 	},
 	featured: {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/featured`,
@@ -124,7 +129,7 @@ const streamApis = {
 	'conversations-a8c': {
 		path: () => '/read/conversations',
 		dateProperty: 'last_comment_date_gmt',
-		query: ( extras ) => getQueryString( { ...extras, index: 'a8c' } ),
+		query: ( extras ) => getQueryString( { ...extras, index: 'a8c', comments_per_post: 20 } ),
 		pollQuery: () =>
 			getQueryStringForPoll( [ 'last_comment_date_gmt', 'comments' ], { index: 'a8c' } ),
 	},
@@ -166,8 +171,8 @@ const streamApis = {
 /**
  * Request a page for the given stream
  *
- * @param  {object}   action   Action being handled
- * @returns {object} http action for data-layer to dispatch
+ * @param  {Object}   action   Action being handled
+ * @returns {Object | undefined} http action for data-layer to dispatch
  */
 export function requestPage( action ) {
 	const {

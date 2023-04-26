@@ -1,7 +1,6 @@
-import { useTranslate } from 'i18n-calypso';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import AccordionFormSection from './accordion-form-section';
-import {
+import type {
 	AccordionSectionProps,
 	SectionGeneratorReturnType,
 	ValidationErrors,
@@ -16,33 +15,28 @@ interface AccordionFormProps< T > {
 	currentIndex: number;
 	updateCurrentIndex: ( index: number ) => void;
 	onSubmit: ( formValues: T ) => void;
-	formValuesInitialState: T;
+	formValues: T;
 	updateFormValues?: ( formValues: T ) => void;
+	saveFormValues: () => Promise< void >;
 	onErrorUpdates?: ( errors: ValidationErrors ) => void;
 	blockNavigation?: boolean;
+	isSaving: boolean;
+	hasUnsavedChanges: boolean;
 }
 
 export default function AccordionForm< T >( {
 	currentIndex,
 	updateCurrentIndex,
 	updateFormValues,
-	formValuesInitialState,
-	sectionGenerator,
+	formValues,
+	saveFormValues,
 	onSubmit,
 	generatedSections,
 	onErrorUpdates,
 	blockNavigation,
+	isSaving,
+	hasUnsavedChanges,
 }: AccordionFormProps< T > ) {
-	const translate = useTranslate();
-	// Initialize local state with the values from the redux store
-	const [ formValues, setFormValues ] = useState< T >( formValuesInitialState );
-	const onChangeField = ( { target: { name, value } }: ChangeEvent< HTMLInputElement > ) => {
-		setFormValues( {
-			...formValues,
-			[ name ]: value,
-		} );
-	};
-
 	const [ formErrors, setFormErrors ] = useState< ValidationErrors >( {} );
 
 	const isSectionAtIndexTouchedInitialState: Record< string, boolean > = {};
@@ -54,14 +48,7 @@ export default function AccordionForm< T >( {
 		Record< string, boolean >
 	>( isSectionAtIndexTouchedInitialState );
 
-	const sections = sectionGenerator
-		? sectionGenerator()( {
-				translate,
-				formValues,
-				formErrors,
-				onChangeField,
-		  } )
-		: generatedSections ?? [];
+	const sections = generatedSections ?? [];
 
 	const runValidatorAndSetFormErrors = ( validator: ValidatorFunction< T > ) => {
 		const validationResult = validator( formValues );
@@ -97,9 +84,13 @@ export default function AccordionForm< T >( {
 		updateCurrentIndex( currentIndex );
 		updateFormValues && updateFormValues( formValues );
 		setIsSectionAtIndexTouched( { ...isSectionAtIndexTouched, [ `${ currentIndex }` ]: true } );
+		// save values, but do not block UI.
+		if ( hasUnsavedChanges ) {
+			saveFormValues();
+		}
 	};
 
-	const onNext = ( validator?: ValidatorFunction< T > ) => {
+	const onNext = async ( validator?: ValidatorFunction< T > ) => {
 		updateFormValues && updateFormValues( formValues );
 
 		if ( validator ) {
@@ -107,6 +98,10 @@ export default function AccordionForm< T >( {
 			if ( ! validationResult.result ) {
 				return;
 			}
+		}
+
+		if ( hasUnsavedChanges ) {
+			await saveFormValues();
 		}
 
 		if ( currentIndex < sections.length - 1 ) {
@@ -133,8 +128,11 @@ export default function AccordionForm< T >( {
 					isTouched={ isSectionAtIndexTouched[ `${ index }` ] }
 					onNext={ () => onNext( section.validate ) }
 					onOpen={ () => onOpen( index ) }
+					onSave={ saveFormValues }
 					blockNavigation={ blockNavigation }
 					showSubmit={ index === sections.length - 1 }
+					isSaving={ isSaving }
+					hasUnsavedChanges={ hasUnsavedChanges }
 				/>
 			) ) }
 		</>

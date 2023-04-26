@@ -1,11 +1,22 @@
-import { NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
+import { FEATURE_VIDEO_UPLOADS, planHasFeature } from '@automattic/calypso-products';
+import { DEVICE_TYPES } from '@automattic/components';
+import {
+	FREE_FLOW,
+	NEWSLETTER_FLOW,
+	BUILD_FLOW,
+	WRITE_FLOW,
+	isNewsletterFlow,
+	START_WRITING_FLOW,
+} from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
-import { DEVICE_TYPE } from 'calypso/../packages/design-picker/src/constants';
-import { Device } from 'calypso/../packages/design-picker/src/types';
 import WebPreview from 'calypso/components/web-preview/component';
-import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSitePreviewShareCode } from 'calypso/landing/stepper/hooks/use-site-preview-share-code';
+import { isVideoPressFlow } from 'calypso/signup/utils';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import PreviewToolbar from '../design-setup/preview-toolbar';
+import type { Device } from '@automattic/components';
 
 const LaunchpadSitePreview = ( {
 	siteSlug,
@@ -15,32 +26,74 @@ const LaunchpadSitePreview = ( {
 	flow: string | null;
 } ) => {
 	const translate = useTranslate();
-	const color = useQuery().get( 'color' );
-	const previewUrl = siteSlug ? 'https://' + siteSlug : null;
-	const devicesToShow: Device[] = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.PHONE ];
-	let defaultDevice = flow === NEWSLETTER_FLOW ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
-	const isVideoPressFlow = VIDEOPRESS_FLOW === flow;
+	const site = useSite();
+	const { globalStylesInUse } = usePremiumGlobalStyles( site?.ID );
+	const isInVideoPressFlow = isVideoPressFlow( flow );
+	const enableEditOverlay = ! isNewsletterFlow( flow );
 
-	if ( isVideoPressFlow ) {
+	let previewUrl = siteSlug ? 'https://' + siteSlug : null;
+	const devicesToShow: Device[] = [ DEVICE_TYPES.COMPUTER, DEVICE_TYPES.PHONE ];
+	let defaultDevice = getSitePreviewDefaultDevice( flow );
+	let loadingMessage = translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
+		components: { strong: <strong /> },
+	} );
+
+	if ( isInVideoPressFlow ) {
 		const windowWidth = window.innerWidth;
-		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPE.COMPUTER : DEVICE_TYPE.PHONE;
+		defaultDevice = windowWidth >= 1000 ? DEVICE_TYPES.COMPUTER : DEVICE_TYPES.PHONE;
+		const productSlug = site?.plan?.product_slug;
+		const isVideoPressFlowWithUnsupportedPlan = ! planHasFeature(
+			productSlug as string,
+			FEATURE_VIDEO_UPLOADS
+		);
+
+		if ( isVideoPressFlowWithUnsupportedPlan ) {
+			previewUrl = null;
+			loadingMessage = translate(
+				'{{strong}}Site preview not available.{{/strong}} Plan upgrade is required.',
+				{
+					components: { strong: <strong /> },
+				}
+			);
+		}
 	}
 
+	const { shareCode, isPreviewLinksLoading, isCreatingSitePreviewLinks } =
+		useSitePreviewShareCode();
+
 	function formatPreviewUrl() {
-		if ( ! previewUrl ) {
+		if ( ! previewUrl || isPreviewLinksLoading || isCreatingSitePreviewLinks ) {
 			return null;
 		}
 
 		return addQueryArgs( previewUrl, {
+			...( shareCode && { share: shareCode } ),
 			iframe: true,
 			theme_preview: true,
 			// hide the "Create your website with WordPress.com" banner
 			hide_banners: true,
 			// hide cookies popup
 			preview: true,
-			do_preview_no_interactions: ! isVideoPressFlow,
-			...( color && { preview_accent_color: color } ),
+			do_preview_no_interactions: ! isInVideoPressFlow,
+			...( globalStylesInUse && { 'preview-global-styles': true } ),
 		} );
+	}
+
+	function getSitePreviewDefaultDevice( flow: string | null ) {
+		switch ( flow ) {
+			case NEWSLETTER_FLOW:
+				return DEVICE_TYPES.COMPUTER;
+			case FREE_FLOW:
+				return DEVICE_TYPES.COMPUTER;
+			case BUILD_FLOW:
+				return DEVICE_TYPES.COMPUTER;
+			case WRITE_FLOW:
+				return DEVICE_TYPES.COMPUTER;
+			case START_WRITING_FLOW:
+				return DEVICE_TYPES.COMPUTER;
+			default:
+				return DEVICE_TYPES.PHONE;
+		}
 	}
 
 	return (
@@ -58,13 +111,12 @@ const LaunchpadSitePreview = ( {
 				showClose={ false }
 				showEdit={ false }
 				showExternal={ false }
-				loadingMessage={ translate( '{{strong}}One moment, please…{{/strong}} loading your site.', {
-					components: { strong: <strong /> },
-				} ) }
+				loadingMessage={ loadingMessage }
 				translate={ translate }
 				defaultViewportDevice={ defaultDevice }
 				devicesToShow={ devicesToShow }
 				showSiteAddressBar={ false }
+				enableEditOverlay={ enableEditOverlay }
 			/>
 		</div>
 	);

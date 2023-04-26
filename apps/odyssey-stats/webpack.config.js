@@ -17,6 +17,7 @@ const autoprefixerPlugin = require( 'autoprefixer' );
 const webpack = require( 'webpack' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../../build-tools/babel/babel-loader-cache-identifier' );
+const GenerateChunksMapPlugin = require( '../../build-tools/webpack/generate-chunks-map-plugin' );
 
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -28,14 +29,38 @@ const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
 
+const excludedPackages = [
+	/^calypso\/components\/inline-support-link$/,
+	/^calypso\/components\/web-preview.*$/,
+	/^calypso\/blocks\/upsell-nudge.*$/,
+	/^calypso\/my-sites\/stats\/mini-carousel.*$/,
+	/^calypso\/blocks\/jetpack-backup-creds-banner.*$/,
+	/^calypso\/components\/data\/query-keyring-connections$/,
+	/^calypso\/components\/data\/query-jetpack-modules$/,
+	/^calypso\/components\/data\/query-site-keyrings$/,
+];
+
+const excludedPackagePlugins = excludedPackages.map(
+	// Note: apparently the word "package" is a reserved keyword here for some reason
+	( pkg ) =>
+		new webpack.NormalModuleReplacementPlugin(
+			pkg,
+			path.resolve( __dirname, 'src/components/nothing' )
+		)
+);
+
 module.exports = {
 	bail: ! isDevelopment,
-	entry: path.join( __dirname, 'src', 'app' ),
+	entry: {
+		build: path.join( __dirname, 'src', 'app' ),
+		'widget-loader': path.join( __dirname, 'src', 'widget-loader' ),
+	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: false,
 	output: {
 		path: outputPath,
-		filename: 'build.min.js',
+		filename: '[name].min.js',
+		chunkFilename: '[name]-[contenthash].js?minify=false',
 	},
 	optimization: {
 		minimize: ! isDevelopment,
@@ -102,7 +127,8 @@ module.exports = {
 			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 		} ),
 		...SassConfig.plugins( {
-			filename: 'build.min.css',
+			filename: '[name].min.css',
+			chunkFilename: '[contenthash].css',
 			minify: ! isDevelopment,
 		} ),
 		new DependencyExtractionWebpackPlugin( {
@@ -110,12 +136,40 @@ module.exports = {
 			useDefaults: false,
 			requestToHandle: defaultRequestToHandle,
 			requestToExternal: ( request ) => {
-				if ( request !== 'react' && request !== 'react-dom' ) {
+				if (
+					! [
+						'lodash',
+						'lodash-es',
+						'react',
+						'react-dom',
+						'@wordpress/api-fetch',
+						'@wordpress/components',
+						'@wordpress/compose',
+						'@wordpress/element',
+						'@wordpress/html-entities',
+						'@wordpress/i18n',
+						'@wordpress/is-shallow-equal',
+						'@wordpress/polyfill',
+						'@wordpress/primitives',
+						'@wordpress/url',
+						'@wordpress/warning',
+						'moment',
+						'../moment',
+					].includes( request )
+				) {
 					return;
+				}
+				// moment locales requires moment.js main file, so we need to handle it as an external as well.
+				if ( request === '../moment' ) {
+					request = 'moment';
 				}
 				return defaultRequestToExternal( request );
 			},
 		} ),
+		! isDevelopment &&
+			new GenerateChunksMapPlugin( {
+				output: path.resolve( outBasePath, 'dist/chunks-map.json' ),
+			} ),
 		/*
 		 * ExPlat: Don't import the server logger when we are in the browser
 		 */
@@ -125,12 +179,26 @@ module.exports = {
 		),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		new ExtensiveLodashReplacementPlugin(),
-		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
+		new InlineConstantExportsPlugin( /\/client\/state\/action-types.[tj]s$/ ),
+		new InlineConstantExportsPlugin( /\/client\/state\/themes\/action-types.[tj]s$/ ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		// Repalce the `packages/components/src/gridicon/index.tsx` with a replacement that does not enqueue the SVG sprite.
 		// The sprite is loaded separately in Jetpack.
 		new webpack.NormalModuleReplacementPlugin( /^\.\.\/gridicon$/, '../gridicon/no-asset' ),
 		new webpack.NormalModuleReplacementPlugin( /^\.\/gridicon$/, './gridicon/no-asset' ),
+		new webpack.NormalModuleReplacementPlugin(
+			/^@automattic\/calypso-config$/,
+			path.resolve( __dirname, 'src/lib/config-api' )
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/jetpack-colophon$/,
+			'calypso/components/jetpack/jetpack-footer'
+		),
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/components\/formatted-header$/,
+			'calypso/components/jetpack/jetpack-header'
+		),
+		...excludedPackagePlugins,
 		shouldEmitStats &&
 			new BundleAnalyzerPlugin( {
 				analyzerMode: 'server',

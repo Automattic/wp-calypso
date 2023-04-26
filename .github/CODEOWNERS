@@ -162,3 +162,4 @@
 /client/my-sites/plans-features-main @Automattic/martech-autobots
 /client/my-sites/plan-price @Automattic/martech-autobots
 /packages/calypso-products/src/plans-list.tsx @Automattic/martech-autobots
+/client/my-sites/plan-features-2023-grid @Automattic/martech-decepticons

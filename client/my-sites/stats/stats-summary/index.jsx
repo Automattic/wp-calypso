@@ -1,4 +1,6 @@
 import { Card } from '@automattic/components';
+import { eye } from '@automattic/components/src/icons';
+import { Icon, video } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { isEqual, find, flowRight } from 'lodash';
@@ -7,6 +9,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import ElementChart from 'calypso/components/chart';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import StatsEmptyState from '../stats-empty-state';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
@@ -16,11 +19,12 @@ class StatsSummaryChart extends Component {
 		data: PropTypes.array,
 		dataKey: PropTypes.string.isRequired,
 		isLoading: PropTypes.bool,
-		labelClass: PropTypes.string.isRequired,
+		chartType: PropTypes.string.isRequired,
 		labelKey: PropTypes.string.isRequired,
 		sectionClass: PropTypes.string.isRequired,
 		selected: PropTypes.object,
 		tabLabel: PropTypes.string.isRequired,
+		type: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -33,8 +37,29 @@ class StatsSummaryChart extends Component {
 		this.props.onClick( selectedBar );
 	};
 
+	iconByChartType( chartType ) {
+		let icon = null;
+
+		switch ( chartType ) {
+			case 'video':
+				icon = <Icon className="gridicon" icon={ video } />;
+				break;
+			case 'views':
+				icon = <Icon className="gridicon" icon={ eye } />;
+				break;
+			default:
+		}
+
+		return icon;
+	}
+
+	renderEmptyState() {
+		return <StatsEmptyState />;
+	}
+
 	buildChartData() {
-		const { data, labelClass, numberFormat, sectionClass, selected, tabLabel } = this.props;
+		const { data, chartType, numberFormat, sectionClass, selected, tabLabel } = this.props;
+
 		return data.map( ( record ) => {
 			const className = classNames( {
 				'is-selected': isEqual( selected, record ),
@@ -50,7 +75,7 @@ class StatsSummaryChart extends Component {
 					label: tabLabel,
 					className: sectionClass,
 					value: numberFormat( record.value ),
-					icon: labelClass,
+					icon: this.iconByChartType( chartType ),
 				},
 			];
 
@@ -66,23 +91,35 @@ class StatsSummaryChart extends Component {
 	}
 
 	render() {
-		const { dataKey, isLoading, labelClass, labelKey, numberFormat, selected, tabLabel } =
+		const { dataKey, isLoading, chartType, labelKey, numberFormat, selected, tabLabel, type } =
 			this.props;
 		const label = selected ? ': ' + selected[ labelKey ] : '';
 		const tabOptions = {
 			attr: labelKey,
 			value: selected ? numberFormat( selected[ dataKey ] ) : null,
 			selected: true,
-			gridicon: labelClass,
+			icon: this.iconByChartType( chartType ),
 			label: tabLabel + label,
 		};
 
-		return (
+		// The StatsPostSummary has been modernized to fresh styling.
+		const isModernized = 'post' === type;
+
+		return isModernized ? (
+			<div className={ classNames( 'is-summary-chart', { 'is-loading': isLoading } ) }>
+				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
+				<ElementChart data={ this.buildChartData() } barClick={ this.barClick }>
+					{ this.renderEmptyState() }
+				</ElementChart>
+			</div>
+		) : (
 			<Card
 				className={ classNames( 'stats-module', 'is-summary-chart', { 'is-loading': isLoading } ) }
 			>
 				<StatsModulePlaceholder className="is-chart" isLoading={ isLoading } />
-				<ElementChart data={ this.buildChartData() } barClick={ this.barClick } />
+				<ElementChart data={ this.buildChartData() } barClick={ this.barClick }>
+					{ this.renderEmptyState() }
+				</ElementChart>
 				<StatsTabs>
 					<StatsTab { ...tabOptions } />
 				</StatsTabs>

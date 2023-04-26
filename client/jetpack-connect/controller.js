@@ -22,7 +22,7 @@ import {
 } from '@automattic/calypso-products';
 import { getLocaleFromPath, removeLocaleFromPath } from '@automattic/i18n-utils';
 import Debug from 'debug';
-import { get, some } from 'lodash';
+import { get, some, startsWith } from 'lodash';
 import page from 'page';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { navigate } from 'calypso/lib/navigate';
@@ -387,12 +387,22 @@ export function signupForm( context, next ) {
 	);
 
 	const isLoggedIn = isUserLoggedIn( context.store.getState() );
+	const { query } = context;
+	const from = query.from;
+	if ( from && startsWith( from, 'wpcom-migration' ) ) {
+		const signupUrl = config( 'signup_url' );
+		const urlQueryArgs = {
+			redirect_to: context.path,
+			from,
+		};
+		return page( addQueryArgs( urlQueryArgs, `${ signupUrl }/account` ) );
+	}
+
 	if ( retrieveMobileRedirect() && ! isLoggedIn ) {
 		// Force login for mobile app flow. App will intercept this request and prompt native login.
 		return window.location.replace( login( { redirectTo: context.path } ) );
 	}
 
-	const { query } = context;
 	const transformedQuery = parseAuthorizationQuery( query );
 
 	if ( transformedQuery ) {

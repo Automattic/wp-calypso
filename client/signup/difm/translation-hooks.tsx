@@ -1,4 +1,5 @@
 import { useTranslate } from 'i18n-calypso';
+import { useMemo } from 'react';
 import {
 	HOME_PAGE,
 	BLOG_PAGE,
@@ -12,6 +13,7 @@ import {
 	TESTIMONIALS_PAGE,
 	PRICING_PAGE,
 	TEAM_PAGE,
+	SHOP_PAGE,
 } from 'calypso/signup/difm/constants';
 import type { PageId } from 'calypso/signup/difm/constants';
 import type { TranslateResult } from 'i18n-calypso';
@@ -23,38 +25,45 @@ import type { TranslateResult } from 'i18n-calypso';
  */
 export function useTranslatedPageTitles() {
 	const translate = useTranslate();
-	const pages: Record< PageId, TranslateResult > = {
-		[ HOME_PAGE ]: translate( 'Home' ),
-		[ BLOG_PAGE ]: translate( 'Blog' ),
-		[ CONTACT_PAGE ]: translate( 'Contact' ),
-		[ ABOUT_PAGE ]: translate( 'About' ),
-		[ PHOTO_GALLERY_PAGE ]: translate( 'Photo Gallery' ),
-		[ VIDEO_GALLERY_PAGE ]: translate( 'Video Gallery' ),
-		[ PORTFOLIO_PAGE ]: translate( 'Portfolio' ),
-		[ FAQ_PAGE ]: translate( 'FAQ' ),
-		[ SERVICES_PAGE ]: translate( 'Services' ),
-		[ TESTIMONIALS_PAGE ]: translate( 'Testimonials' ),
-		[ PRICING_PAGE ]: translate( 'Pricing' ),
-		[ TEAM_PAGE ]: translate( 'Team' ),
-	};
-	return pages;
+	return useMemo( () => {
+		const pages: Record< PageId, TranslateResult > = {
+			[ HOME_PAGE ]: translate( 'Home' ),
+			[ BLOG_PAGE ]: translate( 'Blog' ),
+			[ CONTACT_PAGE ]: translate( 'Contact' ),
+			[ ABOUT_PAGE ]: translate( 'About' ),
+			[ PHOTO_GALLERY_PAGE ]: translate( 'Photo Gallery' ),
+			[ VIDEO_GALLERY_PAGE ]: translate( 'Video Gallery' ),
+			[ PORTFOLIO_PAGE ]: translate( 'Portfolio' ),
+			[ FAQ_PAGE ]: translate( 'FAQ' ),
+			[ SERVICES_PAGE ]: translate( 'Services' ),
+			[ TESTIMONIALS_PAGE ]: translate( 'Testimonials' ),
+			[ PRICING_PAGE ]: translate( 'Pricing' ),
+			[ TEAM_PAGE ]: translate( 'Team' ),
+			[ SHOP_PAGE ]: translate( 'Shop' ),
+		};
+		return pages;
+	}, [ translate ] );
 }
 
 // Requesting Contexts
 export const BBE_ONBOARDING_PAGE_PICKER_STEP = 'BBE_ONBOARDING_PAGE_PICKER_STEP';
+export const BBE_STORE_ONBOARDING_PAGE_PICKER_STEP = 'BBE_STORE_ONBOARDING_PAGE_PICKER_STEP';
 export const BBE_WEBSITE_CONTENT_FILLING_STEP = 'BBE_WEBSITE_CONTENT_FILLING_STEP';
-type TranslationContext =
+export const BBE_STORE_WEBSITE_CONTENT_FILLING_STEP = 'BBE_STORE_WEBSITE_CONTENT_FILLING_STEP';
+export type BBETranslationContext =
 	| typeof BBE_ONBOARDING_PAGE_PICKER_STEP
-	| typeof BBE_WEBSITE_CONTENT_FILLING_STEP;
+	| typeof BBE_STORE_ONBOARDING_PAGE_PICKER_STEP
+	| typeof BBE_WEBSITE_CONTENT_FILLING_STEP
+	| typeof BBE_STORE_WEBSITE_CONTENT_FILLING_STEP;
 
 export function useTranslatedPageDescriptions(
 	pageId: PageId,
-	context?: TranslationContext
+	context?: BBETranslationContext
 ): TranslateResult {
 	const translate = useTranslate();
 	const defaultDescriptions: Record< PageId, TranslateResult > = {
 		[ HOME_PAGE ]: translate(
-			'An overview of you, your writing, or your business. What phrases would someone search on Google to find you? What can visitors expect on this site?'
+			'An introduction of your business, writing, or yourself. What can visitors expect to find on your site?'
 		),
 		[ ABOUT_PAGE ]: translate(
 			'Provide background information about you or the business. Why did you start this website? What is your personal story?'
@@ -90,9 +99,12 @@ export function useTranslatedPageDescriptions(
 		[ TEAM_PAGE ]: translate(
 			'Showcase a mini profile of each member of your business, with an image, name, and role description.'
 		),
+		[ SHOP_PAGE ]: translate(
+			'Your shop page will display all the products you have for sale. We will set up the shop page and explain how you can add products to your new site.'
+		),
 	};
 
-	const contextualDescriptions: Record< TranslationContext, typeof defaultDescriptions > = {
+	const contextualDescriptions: Record< BBETranslationContext, typeof defaultDescriptions > = {
 		[ BBE_ONBOARDING_PAGE_PICKER_STEP ]: {
 			...defaultDescriptions,
 		},
@@ -103,6 +115,21 @@ export function useTranslatedPageDescriptions(
 			),
 			[ CONTACT_PAGE ]: translate(
 				'This page will include a contact form. Optionally provide text to appear above the form to let visitors know other ways they can reach you.'
+			),
+			[ SHOP_PAGE ]: translate(
+				'Add a short description to explain what type of products will appear on your site. We will set up the page so this description appears above your products; you can add the products later with the editor.'
+			),
+		},
+		[ BBE_STORE_ONBOARDING_PAGE_PICKER_STEP ]: {
+			...defaultDescriptions,
+			[ HOME_PAGE ]: translate(
+				'An introduction of your business, shop, or yourself. What can visitors expect to find on your site?'
+			),
+		},
+		[ BBE_STORE_WEBSITE_CONTENT_FILLING_STEP ]: {
+			...defaultDescriptions,
+			[ HOME_PAGE ]: translate(
+				'An introduction of your business, shop, or yourself. What can visitors expect to find on your site?'
 			),
 		},
 	};

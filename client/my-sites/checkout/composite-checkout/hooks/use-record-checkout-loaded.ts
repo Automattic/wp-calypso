@@ -3,14 +3,13 @@ import { useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { hasRenewalItem } from 'calypso/lib/cart-values/cart-items';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import type { StoredCard } from '../types/stored-cards';
 import type { ResponseCart } from '@automattic/shopping-cart';
+import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-record-checkout-loaded' );
 
 export default function useRecordCheckoutLoaded( {
 	isLoading,
-	isApplePayAvailable,
 	responseCart,
 	storedCards,
 	productAliasFromUrl,
@@ -18,9 +17,8 @@ export default function useRecordCheckoutLoaded( {
 	isGiftPurchase,
 }: {
 	isLoading: boolean;
-	isApplePayAvailable: boolean;
 	responseCart: ResponseCart;
-	storedCards: StoredCard[];
+	storedCards: StoredPaymentMethod[];
 	productAliasFromUrl: string | undefined | null;
 	checkoutFlow: string;
 	isGiftPurchase?: boolean;
@@ -34,7 +32,6 @@ export default function useRecordCheckoutLoaded( {
 				saved_cards: storedCards.length,
 				is_renewal: hasRenewalItem( responseCart ),
 				is_gift_purchase: isGiftPurchase,
-				apple_pay_available: isApplePayAvailable,
 				product_slug: productAliasFromUrl,
 				is_composite: true,
 				checkout_flow: checkoutFlow,

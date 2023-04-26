@@ -192,7 +192,8 @@
 	}
 
 	.form-button.daily-backup-status__download-button,
-	.form-button.daily-backup-status__restore-button {
+	.form-button.daily-backup-status__restore-button,
+	.form-button.daily-backup-status__clone-button {
 		display: inline-block;
 		width: initial;
 		margin: 0;
@@ -214,4 +215,8 @@
 	@include breakpoint-deprecated( ">660px" ) {
 		box-shadow: 0 0 0 1px #dcdcde;
 	}
+}
+
+.daily-backup-status:empty {
+	display: none;
 }

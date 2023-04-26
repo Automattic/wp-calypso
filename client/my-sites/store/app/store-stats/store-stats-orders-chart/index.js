@@ -1,3 +1,4 @@
+import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -27,7 +28,7 @@ class StoreStatsOrdersChart extends Component {
 	};
 
 	renderTabs = ( { chartData, selectedIndex, selectedTabIndex, selectedDate, unit, tabClick } ) => {
-		const { deltas, moment } = this.props;
+		const { deltas, moment, translate } = this.props;
 		return (
 			<Tabs data={ chartData }>
 				{ tabs.map( ( tab, tabIndex ) => {
@@ -58,11 +59,18 @@ class StoreStatsOrdersChart extends Component {
 								{ formatValue( value, tab.type, itemChartData.data.currency ) }
 							</span>
 							<Delta
-								value={ `${ deltaValue }%` }
+								value={
+									// translators: %(percentage)s is a percentage number, %(date)s is a date, month, or year in short format.
+									translate( '%(percentage)s%% since %(date)s', {
+										args: {
+											percentage: deltaValue,
+											date: moment( delta.reference_period, periodFormat ).format(
+												UNITS[ unit ].shortFormat
+											),
+										},
+									} )
+								}
 								className={ `${ delta.favorable } ${ delta.direction }` }
-								suffix={ `since ${ moment( delta.reference_period, periodFormat ).format(
-									UNITS[ unit ].shortFormat
-								) }` }
 								iconSize={ 24 }
 							/>
 						</Tab>
@@ -96,4 +104,4 @@ export default connect( ( state, { query, siteId } ) => {
 		deltas: statsData.deltas,
 		isRequesting: isRequestingSiteStatsForQuery( state, siteId, 'statsOrders', query ),
 	};
-} )( withLocalizedMoment( StoreStatsOrdersChart ) );
+} )( localize( withLocalizedMoment( StoreStatsOrdersChart ) ) );

@@ -12,7 +12,7 @@
 	--videopress-color-white: #fff;
 
 	--videopress-color-link: #ffe61c;
-	--videopress-color-link-dark: #004cbf;
+	--videopress-color-link-dark: #ffc700;
 
 	--videopress-color-border-light: #e7e9ea;
 	--videopress-color-border: #d8dbdd;
@@ -42,6 +42,14 @@
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
+
+	--color-text: var(--videopress-color-text);
+	--color-accent: var(--videopress-color-link);
+	--color-text-inverted: var(--videopress-color-background-dark);
+	--color-text-subtle: var(--videopress-color-text-dark);
+	--color-link: var(--videopress-color-link);
+	--color-link-dark: var(--videopress-color-link-dark);
+	--color-accent-60: var(--videopress-color-link-dark);
 }
 
 .videopress-step-wrapper__top {
@@ -324,6 +332,14 @@
 	&:hover {
 		color: #070707 !important;
 	}
+
+	&.is-busy {
+		background-image: linear-gradient(-45deg, var(--videopress-color-link) 28%, var(--videopress-color-link-dark) 28%, var(--videopress-color-link-dark) 72%, var(--videopress-color-link) 72%);
+	}
+}
+
+.videopress-step-wrapper__header {
+	padding: 0 20px;
 }
 
 .videopress-step-wrapper__subheader-text {

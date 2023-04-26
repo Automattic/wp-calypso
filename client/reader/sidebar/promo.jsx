@@ -9,15 +9,15 @@ import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
-export const ReaderSidebarPromo = ( { currentUserLocale, shouldRenderAppPromo } ) => {
+export const ReaderSidebarPromo = ( { currentUserLocale, shouldRenderAppPromoSidebar } ) => {
 	return (
 		<Fragment>
 			<QueryUserSettings />
 
-			{ shouldRenderAppPromo && (
+			{ shouldRenderAppPromoSidebar && (
 				<div className="sidebar__app-promo">
 					<AsyncLoad
-						require="calypso/blocks/app-promo"
+						require="calypso/blocks/app-promo-sidebar"
 						placeholder={ null }
 						location="reader"
 						locale={ currentUserLocale }
@@ -28,12 +28,12 @@ export const ReaderSidebarPromo = ( { currentUserLocale, shouldRenderAppPromo } 
 	);
 };
 
-export const shouldRenderAppPromo = ( options = {} ) => {
+export const shouldRenderAppPromoSidebar = ( options = {} ) => {
 	// Until the user settings have loaded we'll indicate the user is is a
 	// desktop app user because until the user settings have loaded
 	// userSettings.getSetting( 'is_desktop_app_user' ) will return false which
 	// makes the app think the user isn't a desktop app user for a few seconds
-	// resulting in the AppPromo potentially flashing in then out as soon as
+	// resulting in the AppPromoSidebar potentially flashing in then out as soon as
 	// the user settings does properly indicate that the user is one.
 	const haveUserSettingsLoaded = options.isDesktopAppUser === null;
 	const {
@@ -60,6 +60,6 @@ export default connect( ( state ) => {
 		currentUserLocale: getCurrentUserLocale( state ),
 		isDesktopAppUser: getUserSetting( state, 'is_desktop_app_user' ),
 	};
-	newProps.shouldRenderAppPromo = shouldRenderAppPromo( newProps );
+	newProps.shouldRenderAppPromoSidebar = shouldRenderAppPromoSidebar( newProps );
 	return newProps;
 } )( localize( ReaderSidebarPromo ) );

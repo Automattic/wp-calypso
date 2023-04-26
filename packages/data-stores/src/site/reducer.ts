@@ -1,5 +1,6 @@
 import { combineReducers } from '@wordpress/data';
 import {
+	CurrentTheme,
 	NewSiteBlogDetails,
 	NewSiteErrorResponse,
 	SiteDetails,
@@ -161,6 +162,16 @@ export const sitesSettings: Reducer< { [ key: number ]: SiteSettings }, Action >
 				...action.settings,
 			},
 		};
+	}
+	return state;
+};
+
+export const siteTheme: Reducer< { [ key: number ]: CurrentTheme }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'RECEIVE_SITE_THEME' ) {
+		return { ...state, [ action.siteId ]: action.theme };
 	}
 	return state;
 };
@@ -421,6 +432,7 @@ const reducer = combineReducers( {
 	launchStatus,
 	sitesDomains,
 	sitesSettings,
+	siteTheme,
 	sitesGlobalStyles,
 	siteSetupErrors,
 	atomicTransferStatus,

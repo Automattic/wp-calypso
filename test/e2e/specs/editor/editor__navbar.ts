@@ -43,6 +43,15 @@ describe( DataHelper.createSuiteTitle( `Editor: Navbar` ), function () {
 	} );
 
 	it( 'Return to Calypso dashboard', async function () {
-		await editorPage.exitEditor();
+		const WPAdminBarLocator = page.locator( '#wpadminbar' );
+		const isMobileClassicView =
+			envVariables.VIEWPORT_NAME === 'mobile' && ( await WPAdminBarLocator.isVisible() );
+
+		// The classic WP Admin Bar on mobile viewport doesn't have the
+		// "return" button, so let's not fail this test if it's the case.
+		// See https://github.com/Automattic/wp-calypso/pull/70982
+		if ( ! isMobileClassicView ) {
+			await editorPage.exitEditor();
+		}
 	} );
 } );

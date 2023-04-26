@@ -17,6 +17,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import GoogleMyBusinessLocation from 'calypso/my-sites/google-my-business/location';
 import GoogleMyBusinessStatsChart from 'calypso/my-sites/google-my-business/stats/chart';
+import StatsPageHeader from 'calypso/my-sites/stats/stats-page-header';
 import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
 import getGoogleMyBusinessConnectedLocation from 'calypso/state/selectors/get-google-my-business-connected-location';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -193,62 +194,86 @@ class GoogleMyBusinessStats extends Component {
 		const { isLocationVerified, locationData, siteId, siteSlug, translate } = this.props;
 
 		return (
-			<Main wideLayout>
+			<Main fullWidthLayout>
 				<PageViewTracker
 					path="/google-my-business/stats/:site"
 					title="Google My Business > Stats"
 				/>
 
-				<DocumentHead title={ translate( 'Stats' ) } />
-
-				<StatsNavigation selectedItem="googleMyBusiness" siteId={ siteId } slug={ siteSlug } />
+				<DocumentHead title={ translate( 'Jetpack Stats' ) } />
 
 				<QuerySiteKeyrings siteId={ siteId } />
 				<QueryKeyringConnections forceRefresh />
 				<QueryKeyringServices />
 
-				{ ! locationData && (
-					<Notice
-						status="is-error"
-						showDismiss={ false }
-						text={ translate( 'There is an error with your Google My Business account.' ) }
-					>
-						<NoticeAction href={ CALYPSO_CONTACT }>{ translate( 'Contact Support' ) }</NoticeAction>
-					</Notice>
-				) }
-
-				{ !! locationData && ! isLocationVerified && (
-					<Notice
-						status="is-error"
-						text={ translate(
-							'Your location has not been verified. ' +
-								'Statistics are not available until you have {{a}}verified your location{{/a}} with Google.',
+				<div className="stats">
+					<StatsPageHeader
+						page="googleMyBusiness"
+						subHeaderText={ translate(
+							'Integrate your business with Google and get stats on your locations. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 							{
 								components: {
-									a: (
+									learnMoreLink: (
 										<a
-											href="https://support.google.com/business/answer/7107242"
+											href="https://wordpress.com/support/google-my-business-integration/#checking-the-impact-of-your-google-my-business-connection"
 											target="_blank"
-											rel="noopener noreferrer"
+											rel="noreferrer noopener"
 										/>
 									),
 								},
 							}
 						) }
 					/>
-				) }
 
-				<GoogleMyBusinessLocation location={ locationData }>
-					<Button
-						href="https://business.google.com/"
-						onClick={ this.trackUpdateListingClick }
-						target="_blank"
-					>
-						{ translate( 'Update Listing' ) } <Gridicon icon="external" />
-					</Button>
-				</GoogleMyBusinessLocation>
+					<StatsNavigation selectedItem="googleMyBusiness" siteId={ siteId } slug={ siteSlug } />
 
-				{ this.renderStats() }
+					{ ! locationData && (
+						<Notice
+							status="is-error"
+							showDismiss={ false }
+							text={ translate( 'There is an error with your Google My Business account.' ) }
+						>
+							<NoticeAction href={ CALYPSO_CONTACT }>
+								{ translate( 'Contact Support' ) }
+							</NoticeAction>
+						</Notice>
+					) }
+
+					{ !! locationData && ! isLocationVerified && (
+						<Notice
+							status="is-error"
+							text={ translate(
+								'Your location has not been verified. ' +
+									'Statistics are not available until you have {{a}}verified your location{{/a}} with Google.',
+								{
+									components: {
+										a: (
+											<a
+												href="https://support.google.com/business/answer/7107242"
+												target="_blank"
+												rel="noopener noreferrer"
+											/>
+										),
+									},
+								}
+							) }
+						/>
+					) }
+
+					<div className="stats__gmb-location-wrapper">
+						<GoogleMyBusinessLocation location={ locationData }>
+							<Button
+								href="https://business.google.com/"
+								onClick={ this.trackUpdateListingClick }
+								target="_blank"
+							>
+								{ translate( 'Update Listing' ) } <Gridicon icon="external" />
+							</Button>
+						</GoogleMyBusinessLocation>
+					</div>
+
+					{ this.renderStats() }
+				</div>
 			</Main>
 		);
 	}

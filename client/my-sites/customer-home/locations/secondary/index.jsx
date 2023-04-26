@@ -1,11 +1,11 @@
 import { createElement } from 'react';
+import BloggingPrompt from 'calypso/components/blogging-prompt-card';
 import {
 	FEATURE_STATS,
 	SECTION_LEARN_GROW,
 	FEATURE_SUPPORT,
 	SECTION_BLOGGING_PROMPT,
 } from 'calypso/my-sites/customer-home/cards/constants';
-import BloggingPrompt from 'calypso/my-sites/customer-home/cards/features/blogging-prompt';
 import HelpSearch from 'calypso/my-sites/customer-home/cards/features/help-search';
 import Stats from 'calypso/my-sites/customer-home/cards/features/stats';
 import LearnGrow from './learn-grow';
@@ -17,7 +17,7 @@ const cardComponents = {
 	[ FEATURE_SUPPORT ]: HelpSearch,
 };
 
-const Secondary = ( { cards } ) => {
+const Secondary = ( { cards, siteId } ) => {
 	if ( ! cards || ! cards.length ) {
 		return null;
 	}
@@ -25,10 +25,13 @@ const Secondary = ( { cards } ) => {
 	return (
 		<>
 			{ cards.map(
-				( card ) =>
+				( card, index ) =>
 					cardComponents[ card ] &&
 					createElement( cardComponents[ card ], {
-						key: card,
+						key: card + index,
+						...( card === SECTION_BLOGGING_PROMPT
+							? { siteId: siteId, showMenu: true, viewContext: 'home' }
+							: {} ),
 					} )
 			) }
 		</>

@@ -6,7 +6,7 @@ import 'calypso/state/post-types/init';
  * Returns true if a network request is in-progress for the specified site ID,
  * post type pair, or false otherwise.
  *
- * @param  {object}  state    Global state tree
+ * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  postType Post type
  * @returns {boolean}          Whether request is in-progress
@@ -19,7 +19,7 @@ export function isRequestingPostTypeTaxonomies( state, siteId, postType ) {
  * Returns taxonomies for the given post type on a site, or null if the
  * taxonomies are not known.
  *
- * @param  {object}  state    Global state tree
+ * @param  {Object}  state    Global state tree
  * @param  {number}  siteId   Site ID
  * @param  {string}  postType Post type
  * @returns {Array?}           Post type taxonomies
@@ -32,11 +32,11 @@ export function getPostTypeTaxonomies( state, siteId, postType ) {
  * Returns the given taxonomy for the given post type on a site, or null if the
  * taxonomies are not known.
  *
- * @param  {object}  state        Global state tree
+ * @param  {Object}  state        Global state tree
  * @param  {number}  siteId       Site ID
  * @param  {string}  postType     Post type
  * @param  {string}  taxonomyName Taxonomy name
- * @returns {object?}              Post type taxonomy
+ * @returns {Object?}              Post type taxonomy
  */
 export function getPostTypeTaxonomy( state, siteId, postType, taxonomyName ) {
 	const taxonomies = getPostTypeTaxonomies( state, siteId, postType );

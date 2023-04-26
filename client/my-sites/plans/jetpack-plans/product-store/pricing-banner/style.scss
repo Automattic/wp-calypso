@@ -2,8 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .jetpack-product-store__pricing-banner {
-	height: 112px;
-	margin-bottom: 40px;
+	height: 76px;
+	margin-bottom: 0;
 
 	@include break-large {
 		height: 32px;
@@ -11,7 +11,7 @@
 }
 
 .jetpack-product-store__pricing-banner .intro-pricing-banner:not(.is-sticky) .intro-pricing-banner__content {
-	height: 112px;
+	height: 76px;
 	gap: 12px;
 
 	@include break-large {

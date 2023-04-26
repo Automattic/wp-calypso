@@ -1,7 +1,7 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { StateSelect, Input } from 'calypso/my-sites/domains/components/form';
-import { getStateLabelText, getPostCodeLabelText, STATE_SELECT_TEXT } from './utils.js';
+import { getStateLabelText, getPostCodeLabelText, STATE_SELECT_TEXT } from './utils';
 
 const noop = () => {};
 

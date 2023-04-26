@@ -6,7 +6,7 @@ import getPublicizeConnection from 'calypso/state/selectors/get-publicize-connec
  * passed as a parameter.
  * Thus, it returns richest array adding and crossing information for each action.
  *
- * @param  {object} state - Global state tree
+ * @param  {Object} state - Global state tree
  * @param  {Array} postShareActions - share actions of a post
  * @returns {Array} richest post actions array
  */

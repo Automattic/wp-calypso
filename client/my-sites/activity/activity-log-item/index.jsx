@@ -287,7 +287,7 @@ class ActivityLogItem extends Component {
 	/**
 	 * Displays a button for users to get help. Tracks button click.
 	 *
-	 * @returns {object} Get help button.
+	 * @returns {Object} Get help button.
 	 */
 	renderHelpAction = () => (
 		<HappychatButton
@@ -305,7 +305,7 @@ class ActivityLogItem extends Component {
 	/**
 	 * Displays a button to take users to enter credentials.
 	 *
-	 * @returns {object} Get button to fix credentials.
+	 * @returns {Object} Get button to fix credentials.
 	 */
 	renderFixCredsAction = () => {
 		if ( this.props.rewindIsActive ) {

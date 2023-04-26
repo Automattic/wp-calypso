@@ -7,6 +7,7 @@ import {
 	isGravatarOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
+	isIntenseDebateOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 
 export function getSocialServiceFromClientId( clientId ) {
@@ -49,6 +50,15 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 	const redirectTo = get( currentQuery, 'redirect_to', '' );
 	const signupFlow = get( currentQuery, 'signup_flow' );
 	const wccomFrom = get( currentQuery, 'wccom-from' );
+	const isFromMigrationPlugin = includes( redirectTo, 'wpcom-migration' );
+
+	/**
+	 *  Include redirects to public.api/connect/?action=verify&service={some service}
+	 *  If the signup is from the Highlander Comments flow, the signup page will be in a popup modal
+	 *  We need to redirect back to public.api/connect/ to do an external login and close modal
+	 *  Ref: PCYsg-Hfw-p2
+	 */
+	const isFromPublicAPIConnectFlow = includes( redirectTo, 'public.api/connect/?action=verify' );
 
 	if (
 		// Match locales like `/log-in/jetpack/es`
@@ -74,7 +84,11 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		signupUrl += '/' + signupFlow;
 	}
 
-	if ( isAkismetOAuth2Client( oauth2Client ) || isGravatarOAuth2Client( oauth2Client ) ) {
+	if (
+		isAkismetOAuth2Client( oauth2Client ) ||
+		isGravatarOAuth2Client( oauth2Client ) ||
+		isIntenseDebateOAuth2Client( oauth2Client )
+	) {
 		const oauth2Flow = 'wpcc';
 		const oauth2Params = new URLSearchParams( {
 			oauth2_client_id: oauth2Client.id,
@@ -111,7 +125,11 @@ export function getSignupUrl( currentQuery, currentRoute, oauth2Client, locale, 
 		signupUrl = `${ signupUrl }/wpcc?${ oauth2Params.toString() }`;
 	}
 
-	if ( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) ) {
+	if (
+		isFromMigrationPlugin ||
+		isFromPublicAPIConnectFlow ||
+		( includes( redirectTo, 'action=jetpack-sso' ) && includes( redirectTo, 'sso_nonce=' ) )
+	) {
 		const params = new URLSearchParams( {
 			redirect_to: redirectTo,
 		} );

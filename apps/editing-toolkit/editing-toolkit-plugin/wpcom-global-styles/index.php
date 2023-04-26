@@ -12,31 +12,89 @@
  * @return bool Whether Global Styles are limited.
  */
 function wpcom_should_limit_global_styles( $blog_id = 0 ) {
+	/**
+	 * Filter to force a limited Global Styles scenario. Useful for unit testing.
+	 *
+	 * @param bool $force_limit_global_styles Whether Global Styles are forced to be limited.
+	 */
+	$force_limit_global_styles = apply_filters( 'wpcom_force_limit_global_styles', false );
+	if ( $force_limit_global_styles ) {
+		return true;
+	}
+
 	if ( ! $blog_id ) {
-		$blog_id = get_current_blog_id();
+		if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+			$blog_id = get_current_blog_id();
+		} elseif ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+			/*
+			 * Atomic sites have the WP.com blog ID stored as a Jetpack option. This code deliberately
+			 * doesn't use `Jetpack_Options::get_option` so it works even when Jetpack has not been loaded.
+			 */
+			$jetpack_options = get_option( 'jetpack_options' );
+			if ( is_array( $jetpack_options ) && isset( $jetpack_options['id'] ) ) {
+				$blog_id = (int) $jetpack_options['id'];
+			} else {
+				$blog_id = get_current_blog_id();
+			}
+		} else {
+			return false;
+		}
 	}
 
-	// Do not limit Global Styles on Atomic sites for now, because blog stickers are not exposed
-	// to these sites and the project is still in a development stage that requires sites to have
-	// a certain blog sticker before restricting the feature. This is a temporary check that will
-	// be removed as part of the public launch.
-	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
+	// Do not limit Global Styles on theme demo sites.
+	if ( wpcom_global_styles_has_blog_sticker( 'theme-demo-site', $blog_id ) ) {
 		return false;
 	}
 
-	// Do not limit Global Styles on sites created before we made it a paid feature. This cutoff
-	// blog ID needs to be updated as part of the public launch.
-	if ( $blog_id < 210494207 ) {
-		return false;
-	}
-
+	// Do not limit Global Styles if the site paid for it.
 	if ( wpcom_site_has_feature( WPCOM_Features::GLOBAL_STYLES, $blog_id ) ) {
 		return false;
 	}
 
-	// During the development stage, we only limit Global Styles on sites that have opted in. This
-	// is a temporary check that will be removed as part of the public launch.
-	return has_blog_sticker( 'wpcom-limit-global-styles', $blog_id );
+	// Do not limit Global Styles on sites created before we made it a paid feature (2022-12-15),
+	// that had already used Global Styles.
+	if ( wpcom_premium_global_styles_is_site_exempt( $blog_id ) ) {
+		return false;
+	}
+
+	return true;
+}
+
+/**
+ * Get the WPCOM blog id of the current site for tracking purposes.
+ */
+function wpcom_global_styles_get_wpcom_current_blog_id() {
+	if ( defined( 'IS_WPCOM' ) && IS_WPCOM ) {
+		return get_current_blog_id();
+	} elseif ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) {
+		/*
+		 * Atomic sites have the WP.com blog ID stored as a Jetpack option. This code deliberately
+		 * doesn't use `Jetpack_Options::get_option` so it works even when Jetpack has not been loaded.
+		 */
+		$jetpack_options = get_option( 'jetpack_options' );
+		if ( is_array( $jetpack_options ) && isset( $jetpack_options['id'] ) ) {
+			return (int) $jetpack_options['id'];
+		}
+	}
+
+	return null;
+}
+
+/**
+ * Wrapper to test a blog sticker on both Simple and Atomic sites at once.
+ *
+ * @param string $blog_sticker The blog sticker.
+ * @param int    $blog_id The WPCOM blog ID.
+ * @return bool Whether the site has the blog sticker.
+ */
+function wpcom_global_styles_has_blog_sticker( $blog_sticker, $blog_id ) {
+	if ( function_exists( 'has_blog_sticker' ) && has_blog_sticker( $blog_sticker, $blog_id ) ) {
+		return true;
+	}
+	if ( function_exists( 'wpcomsh_is_site_sticker_active' ) && wpcomsh_is_site_sticker_active( $blog_sticker ) ) {
+		return true;
+	}
+	return false;
 }
 
 /**
@@ -93,8 +151,9 @@ function wpcom_global_styles_enqueue_block_editor_assets() {
 		'wpcom-global-styles-editor',
 		'wpcomGlobalStyles',
 		array(
-			'assetsUrl'  => plugins_url( 'dist/', __FILE__ ),
-			'upgradeUrl' => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=advanced-design-customization",
+			'assetsUrl'   => plugins_url( 'dist/', __FILE__ ),
+			'upgradeUrl'  => "$calypso_domain/plans/$site_slug?plan=value_bundle&feature=advanced-design-customization",
+			'wpcomBlogId' => wpcom_global_styles_get_wpcom_current_blog_id(),
 		)
 	);
 	wp_enqueue_style(
@@ -112,7 +171,11 @@ add_action( 'enqueue_block_editor_assets', 'wpcom_global_styles_enqueue_block_ed
  * @return void
  */
 function wpcom_global_styles_enqueue_assets() {
-	if ( ! wpcom_should_limit_global_styles() ) {
+	if (
+		! wpcom_global_styles_current_user_can_edit_wp_global_styles() ||
+		! wpcom_should_limit_global_styles() ||
+		! wpcom_global_styles_in_use()
+	) {
 		return;
 	}
 
@@ -197,7 +260,7 @@ function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 	// Invoke the correct function based on the underlying infrastructure.
 	if ( function_exists( 'wpcomsh_record_tracks_event' ) ) {
 		wpcomsh_record_tracks_event( $event_name, $event_props );
-	} else {
+	} elseif ( function_exists( 'require_lib' ) && function_exists( 'tracks_record_event' ) ) {
 		require_lib( 'tracks/client' );
 		tracks_record_event( get_current_user_id(), $event_name, $event_props );
 	}
@@ -206,6 +269,44 @@ function wpcom_track_global_styles( $blog_id, $post, $updated ) {
 	do_action( 'global_styles_log', $event_name );
 }
 add_action( 'save_post_wp_global_styles', 'wpcom_track_global_styles', 10, 3 );
+
+/**
+ * Check if a `wp_global_styles` post contains custom Global Styles.
+ *
+ * @param array $wp_global_styles_post The `wp_global_styles` post.
+ * @return bool Whether the post contains custom Global Styles.
+ */
+function wpcom_global_styles_in_use_by_wp_global_styles_post( array $wp_global_styles_post = array() ) {
+	if ( ! isset( $wp_global_styles_post['post_content'] ) ) {
+		return false;
+	}
+
+	$global_style_keys    = array_keys( json_decode( $wp_global_styles_post['post_content'], true ) ?? array() );
+	$global_styles_in_use = count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) > 0;
+	return $global_styles_in_use;
+}
+
+/**
+ * Checks if the current user can edit the `wp_global_styles` post type.
+ *
+ * @param int $blog_id Blog ID.
+ * @return bool Whether the current user can edit the `wp_global_styles` post type.
+ */
+function wpcom_global_styles_current_user_can_edit_wp_global_styles( $blog_id = 0 ) {
+	// Non-Simple sites on a lower plan are temporary edge cases.
+	// We skip this check to prevent fatals on non-multisite installations.
+	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
+		return true;
+	}
+
+	if ( ! $blog_id ) {
+		$blog_id = get_current_blog_id();
+	}
+	switch_to_blog( $blog_id );
+	$wp_global_styles_cpt = get_post_type_object( 'wp_global_styles' );
+	restore_current_blog();
+	return current_user_can( $wp_global_styles_cpt->cap->publish_posts );
+}
 
 /**
  * Checks if the current blog has custom styles in use.
@@ -223,14 +324,7 @@ function wpcom_global_styles_in_use() {
 
 	$user_cpt = WP_Theme_JSON_Resolver::get_user_data_from_wp_global_styles( wp_get_theme() );
 
-	if ( ! isset( $user_cpt['post_content'] ) ) {
-		do_action( 'global_styles_log', 'global_styles_not_in_use' );
-		return false;
-	}
-
-	$global_style_keys = array_keys( json_decode( $user_cpt['post_content'], true ) ?? array() );
-
-	$global_styles_in_use = count( array_diff( $global_style_keys, array( 'version', 'isGlobalStylesUserThemeJSON' ) ) ) > 0;
+	$global_styles_in_use = wpcom_global_styles_in_use_by_wp_global_styles_post( $user_cpt );
 
 	if ( $global_styles_in_use ) {
 		do_action( 'global_styles_log', 'global_styles_in_use' );
@@ -239,6 +333,70 @@ function wpcom_global_styles_in_use() {
 	}
 
 	return $global_styles_in_use;
+}
+
+/**
+ * Checks whether the site is exempt from Premium Global Styles because
+ * it was created before the Premium Global Styles launch date (2022-12-15)
+ * and had already customized its Global Styles.
+ *
+ * We use blog stickers and other strategies to only perform the intensive check
+ * when strictly needed.
+ *
+ * @param  int $blog_id Blog ID.
+ * @return bool Whether the site is exempt from Premium Global Styles.
+ */
+function wpcom_premium_global_styles_is_site_exempt( $blog_id = 0 ) {
+	// Sites created after we made GS a paid feature (2022-12-15) are never exempt.
+	if ( $blog_id >= 213403000 ) {
+		return false;
+	}
+
+	// If the exemption check has already been performed, just return if the site is exempt.
+	if ( wpcom_global_styles_has_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', $blog_id ) ) {
+		return wpcom_global_styles_has_blog_sticker( 'wpcom-premium-global-styles-exempt', $blog_id );
+	}
+
+	// Non-Simple sites on a lower plan are temporary edge cases.
+	// We exempt them to prevent unexpected temporary changes in their styles.
+	if ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM ) {
+		return true;
+	}
+
+	// If the current user cannot modify the `wp_global_styles` CPT, the exemption check is not needed;
+	// other conditions will determine whether they can use GS.
+	if ( ! wpcom_global_styles_current_user_can_edit_wp_global_styles( $blog_id ) ) {
+		return false;
+	}
+
+	switch_to_blog( $blog_id );
+
+	$note = 'See https://wp.me/p7DVsv-fY6#comment-44778';
+
+	add_blog_sticker( 'wpcom-premium-global-styles-exemption-checked', $note, null, $blog_id );
+
+	$global_styles_used = false;
+
+	$wp_global_styles_posts = get_posts(
+		array(
+			'post_type'   => 'wp_global_styles',
+			'numberposts' => 100,
+		)
+	);
+	foreach ( $wp_global_styles_posts as $wp_global_styles_post ) {
+		if ( wpcom_global_styles_in_use_by_wp_global_styles_post( $wp_global_styles_post->to_array() ) ) {
+			$global_styles_used = true;
+			break;
+		}
+	}
+
+	if ( $global_styles_used ) {
+		add_blog_sticker( 'wpcom-premium-global-styles-exempt', $note, null, $blog_id );
+	}
+
+	restore_current_blog();
+
+	return $global_styles_used;
 }
 
 /**
@@ -273,6 +431,27 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 
 	ob_start(); ?>
 		<div class="launch-bar-global-styles-button">
+			<?php if ( defined( 'IS_ATOMIC' ) && IS_ATOMIC ) : // Workaround for the shadow DOM used on Atomic sites. ?>
+				<style id="wpcom-launch-bar-global-styles-button-style">
+					<?php include __DIR__ . '/dist/wpcom-global-styles-view.css'; ?>
+					.hidden { display: none; }
+				</style>
+				<script id="wpcom-launch-bar-global-styles-button-script">
+					<?php
+					include __DIR__ . '/dist/wpcom-global-styles-view.min.js';
+					$asset_file   = plugin_dir_path( __FILE__ ) . 'dist/wpcom-global-styles-view.asset.php';
+					$asset        = file_exists( $asset_file ) ? require $asset_file : null;
+					$dependencies = $asset['dependencies'] ?? array();
+					foreach ( $dependencies as $dep ) {
+						$dep_script = wp_scripts()->registered[ $dep ];
+						if ( ! $dep_script ) {
+							continue;
+						}
+						include ABSPATH . $dep_script->src;
+					}
+					?>
+				</script>
+			<?php endif; ?>
 			<div class="launch-bar-global-styles-popover hidden">
 				<div>
 					<?php echo esc_html__( 'Your site contains customized styles that will only be visible once you upgrade to a Premium plan.', 'full-site-editing' ); ?>

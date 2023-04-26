@@ -7,6 +7,7 @@ import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { requestActiveTheme } from 'calypso/state/themes/actions';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 const SetThemeStep: Step = function SetThemeStep( { navigation } ) {
 	const { submit } = navigation;
@@ -16,7 +17,10 @@ const SetThemeStep: Step = function SetThemeStep( { navigation } ) {
 
 	const siteId = useSite()?.ID;
 	const siteSlug = useSiteSlugParam() || '';
-	const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const selectedDesign = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		[]
+	);
 	const themeParam = useThemeParam();
 
 	useEffect( () => {

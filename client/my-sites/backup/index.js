@@ -6,6 +6,7 @@ import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
 import {
 	backupDownload,
 	backupRestore,
+	backupClone,
 	backups,
 	showJetpackIsDisconnected,
 	showNotAuthorizedForNonAdmins,
@@ -14,10 +15,15 @@ import {
 	showUnavailableForMultisites,
 } from 'calypso/my-sites/backup/controller';
 import WPCOMUpsellPage from 'calypso/my-sites/backup/wpcom-backup-upsell';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import {
+	navigation,
+	siteSelection,
+	sites,
+	stagingSiteNotSupportedRedirect,
+} from 'calypso/my-sites/controller';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { backupMainPath, backupRestorePath, backupDownloadPath } from './paths';
+import { backupMainPath, backupRestorePath, backupDownloadPath, backupClonePath } from './paths';
 
 const notFoundIfNotEnabled = ( context, next ) => {
 	const state = context.store.getState();
@@ -36,6 +42,7 @@ export default function () {
 	page(
 		backupDownloadPath( ':site', ':rewindId' ),
 		siteSelection,
+		stagingSiteNotSupportedRedirect,
 		navigation,
 		backupDownload,
 		wrapInSiteOffsetProvider,
@@ -53,8 +60,27 @@ export default function () {
 	page(
 		backupRestorePath( ':site', ':rewindId' ),
 		siteSelection,
+		stagingSiteNotSupportedRedirect,
 		navigation,
 		backupRestore,
+		wrapInSiteOffsetProvider,
+		wpcomAtomicTransfer( WPCOMUpsellPage ),
+		showUnavailableForVaultPressSites,
+		showJetpackIsDisconnected,
+		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
+		notFoundIfNotEnabled,
+		makeLayout,
+		clientRender
+	);
+
+	/* handles /backup/:site/clone, see `backupClonePath` */
+	page(
+		backupClonePath( ':site' ),
+		siteSelection,
+		stagingSiteNotSupportedRedirect,
+		navigation,
+		backupClone,
 		wrapInSiteOffsetProvider,
 		wpcomAtomicTransfer( WPCOMUpsellPage ),
 		showUnavailableForVaultPressSites,
@@ -70,6 +96,7 @@ export default function () {
 	page(
 		backupMainPath( ':site' ),
 		siteSelection,
+		stagingSiteNotSupportedRedirect,
 		navigation,
 		backups,
 		wrapInSiteOffsetProvider,

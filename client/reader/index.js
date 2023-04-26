@@ -1,7 +1,12 @@
 import config from '@automattic/calypso-config';
 import page from 'page';
 import { addMiddleware } from 'redux-dynamic-middlewares';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
+import {
+	makeLayout,
+	redirectLoggedOut,
+	redirectLoggedOutToSignup,
+	render as clientRender,
+} from 'calypso/controller';
 import {
 	blogListing,
 	feedDiscovery,
@@ -15,6 +20,7 @@ import {
 	sidebar,
 	updateLastRoute,
 	blogDiscoveryByFeedId,
+	sitesSubscriptionManager,
 } from './controller';
 
 import './style.scss';
@@ -40,7 +46,7 @@ export default async function () {
 	if ( config.isEnabled( 'reader' ) ) {
 		page(
 			'/read',
-			redirectLoggedOut,
+			redirectLoggedOutToSignup,
 			updateLastRoute,
 			sidebar,
 			following,
@@ -62,7 +68,7 @@ export default async function () {
 		page(
 			'/read/feeds/:feed_id',
 			blogDiscoveryByFeedId,
-			redirectLoggedOut,
+			redirectLoggedOutToSignup,
 			updateLastRoute,
 			prettyRedirects,
 			sidebar,
@@ -77,7 +83,7 @@ export default async function () {
 		page( '/read/blogs/:blog_id/posts', incompleteUrlRedirects );
 		page(
 			'/read/blogs/:blog_id',
-			redirectLoggedOut,
+			redirectLoggedOutToSignup,
 			updateLastRoute,
 			prettyRedirects,
 			sidebar,
@@ -113,6 +119,17 @@ export default async function () {
 		updateLastRoute,
 		sidebar,
 		readFollowingP2,
+		makeLayout,
+		clientRender
+	);
+
+	// Sites subscription management
+	page(
+		'/read/subscriptions',
+		redirectLoggedOut,
+		updateLastRoute,
+		sidebar,
+		sitesSubscriptionManager,
 		makeLayout,
 		clientRender
 	);

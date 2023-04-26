@@ -10,3 +10,45 @@
 		align-items: center;
 	}
 }
+
+body.is-section-domains.is-domain-plan-package-flow {
+	background: var(--color-body-background);
+
+	.domains__header {
+		display: block;
+
+		h1 {
+			font-family: $brand-serif;
+			font-size: $font-headline-small;
+		}
+
+		p {
+			font-size: $font-body;
+			color: var(--color-text-subtle);
+			text-align: center;
+			padding: 0 10px;
+		}
+
+		.domains__header-decide-later {
+			color: var(--studio-gray-90);
+			font-weight: 500;
+			padding-left: 5px;
+			text-decoration: underline;
+		}
+	}
+
+	@include break-small {
+		.domains__header {
+			h1 {
+				font-size: $font-headline-medium;
+			}
+			p {
+				padding: 0 80px;
+			}
+		}
+	}
+
+	.main.is-wide-layout {
+		max-width: $break-medium;
+	}
+}

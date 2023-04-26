@@ -43,6 +43,10 @@ jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
 	usePremiumGlobalStyles: () => ( { shouldLimitGlobalStyles: false } ),
 } ) );
 
+jest.mock( 'calypso/lib/explat', () => ( {
+	useExperiment: () => [ false, null ],
+} ) );
+
 /**
  * Mock wpcom-proxy-request so that we could use wpcom-xhr-request to call the endpoint
  * and get the response from nock
@@ -99,6 +103,14 @@ describe( 'UnifiedDesignPickerStep', () => {
 			.get( /\/wpcom\/v2\/starter-designs\/\w+/ )
 			.query( true )
 			.reply( 200, generateMockedStarterDesignDetails );
+
+		const mockIntersectionObserver = jest.fn();
+		mockIntersectionObserver.mockReturnValue( {
+			observe: () => null,
+			unobserve: () => null,
+			disconnect: () => null,
+		} );
+		window.IntersectionObserver = mockIntersectionObserver;
 	} );
 
 	afterAll( () => {

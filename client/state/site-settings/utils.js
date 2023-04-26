@@ -1,8 +1,8 @@
 /**
  * Normalize API Settings
  *
- * @param {object} settings Raw API settings
- * @returns {object}          Normalized settings
+ * @param {Object} settings Raw API settings
+ * @returns {Object}          Normalized settings
  */
 
 export function normalizeSettings( settings ) {

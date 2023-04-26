@@ -23,14 +23,18 @@ const main = async () => {
 		} else {
 			console.log( `* ${ chalk.red( '✗' ) } ${ group } > ${ title }` );
 		}
-		if ( evaluationMessage ) console.log( `    ${ evaluationMessage }` );
+		if ( evaluationMessage ) {
+			console.log( `    ${ evaluationMessage }` );
+		}
 	} );
 
 	console.log( '' );
 	console.log( chalk.yellow( 'Fixes' ) );
 	if ( results.some( ( r ) => r.fixMessage ) ) {
 		results.forEach( ( { fixMessage } ) => {
-			if ( fixMessage ) console.log( `> ${ fixMessage }` );
+			if ( fixMessage ) {
+				console.log( `> ${ fixMessage }` );
+			}
 		} );
 	} else {
 		console.log( `Nothing to fix, your system is ${ chalk.greenBright( 'ready' ) }!` );

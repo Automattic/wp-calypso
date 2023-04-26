@@ -9,8 +9,8 @@ import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-resto
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
-import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { areJetpackCredentialsInvalid } from 'calypso/state/jetpack/credentials/selectors';
+import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';

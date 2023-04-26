@@ -1,4 +1,3 @@
-/* eslint-disable wpcalypso/jsx-gridicon-size */
 import { Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -18,16 +17,11 @@ export default function PreinstalledPremiumPluginBrowserItemPricing( { plugin } 
 	} = usePreinstalledPremiumPlugin( plugin.slug );
 	const translate = useTranslate();
 
-	const checkmarkColorClass =
-		! selectedSiteId || isPreinstalledPremiumPluginActive
-			? 'checkmark--active'
-			: 'checkmark--inactive';
-
 	if ( ! selectedSiteId && sitesWithPreinstalledPremiumPlugin > 0 ) {
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
 				<div className="plugins-browser-item__installed ">
-					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
+					<Gridicon icon="checkmark" className="checkmark" size={ 12 } />
 					{ translate( 'Installed on %d site', 'Installed on %d sites', {
 						args: [ sitesWithPreinstalledPremiumPlugin ],
 						count: sitesWithPreinstalledPremiumPlugin,
@@ -41,7 +35,7 @@ export default function PreinstalledPremiumPluginBrowserItemPricing( { plugin } 
 		return (
 			<div className="plugins-browser-item__installed-and-active-container">
 				<div className="plugins-browser-item__installed ">
-					<Gridicon icon="checkmark" className={ checkmarkColorClass } size={ 14 } />
+					<Gridicon icon="checkmark" className="checkmark" size={ 12 } />
 					{ translate( 'Installed' ) }
 				</div>
 				<div className="plugins-browser-item__active">

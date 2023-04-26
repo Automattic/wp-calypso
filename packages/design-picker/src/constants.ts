@@ -5,7 +5,6 @@ export const FONT_TITLES: Partial< Record< Font, string > > = {
 };
 
 export const SHOW_ALL_SLUG = 'CLIENT_ONLY_SHOW_ALL_SLUG';
-export const SHOW_GENERATED_DESIGNS_SLUG = 'CLIENT_ONLY_SHOW_GENERATED_DESIGNS_SLUG';
 
 /**
  * Pairings of fontFamilies
@@ -66,12 +65,13 @@ export const MOBILE_VIEWPORT_WIDTH = 599;
 export const STICKY_OFFSET_TOP = 109;
 
 /**
- * Theme preview
+ * Hard-coded design
  */
-export const DEVICE_TYPE = {
-	COMPUTER: 'computer',
-	TABLET: 'tablet',
-	PHONE: 'phone',
+export const BLANK_CANVAS_DESIGN = {
+	slug: 'blank-canvas-3',
+	title: 'Blank Canvas',
+	recipe: {
+		stylesheet: 'pub/blank-canvas-3',
+	},
+	design_type: 'assembler',
 };
-
-export const DEVICES_SUPPORTED = [ DEVICE_TYPE.COMPUTER, DEVICE_TYPE.TABLET, DEVICE_TYPE.PHONE ];

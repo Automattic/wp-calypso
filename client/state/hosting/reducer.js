@@ -8,6 +8,8 @@ import {
 	HOSTING_SSH_ACCESS_SET,
 	HOSTING_STATIC_FILE_404_SET,
 	HOSTING_CLEAR_CACHE_REQUEST,
+	HOSTING_SFTP_USERS_REQUEST,
+	HOSTING_SSH_ACCESS_REQUEST,
 } from 'calypso/state/action-types';
 import {
 	combineReducers,
@@ -29,6 +31,17 @@ export const sftpUsers = ( state = {}, { type, users } ) => {
 				...updatedUser,
 			};
 		} );
+	}
+
+	return state;
+};
+
+export const isLoadingSftpUsers = ( state = false, { type } ) => {
+	switch ( type ) {
+		case HOSTING_SFTP_USERS_REQUEST:
+			return true;
+		case HOSTING_SFTP_USERS_SET:
+			return false;
 	}
 
 	return state;
@@ -72,6 +85,17 @@ const sshAccess = ( state = null, { type, status } ) => {
 	return state;
 };
 
+const isLoadingSshAccess = ( state = false, { type } ) => {
+	switch ( type ) {
+		case HOSTING_SSH_ACCESS_REQUEST:
+			return true;
+		case HOSTING_SSH_ACCESS_SET:
+			return false;
+	}
+
+	return state;
+};
+
 const staticFile404 = ( state = null, { type, setting } ) => {
 	switch ( type ) {
 		case HOSTING_STATIC_FILE_404_SET:
@@ -98,7 +122,9 @@ const atomicHostingReducer = combineReducers( {
 	isFetchingGeoAffinity,
 	phpVersion,
 	sftpUsers,
+	isLoadingSftpUsers,
 	sshAccess,
+	isLoadingSshAccess,
 	staticFile404,
 	lastCacheClearTimestamp,
 } );

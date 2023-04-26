@@ -12,7 +12,9 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportTab
+import jetbrains.buildServer.configs.kotlin.v2019_2.Triggers
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
+import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
 object WPComTests : Project({
 	id("WPComTests")
@@ -49,11 +51,17 @@ object WPComTests : Project({
 	// Editor Tracking Edge
 	buildType(editorTrackingBuildType("desktop", "c752ca9a-e77d-11ec-8fea-0242ac120002", atomic=false, edge=true));
 
-	buildType(coblocksPlaywrightBuildType("desktop", "08f88b93-993e-4de8-8d80-4a94981d9af4"));
-	buildType(coblocksPlaywrightBuildType("mobile", "cbcd44d5-4d31-4adc-b1b5-97f1225c6a7c"));
+	// Jetpack for Connected Non-WPCOM Sites
+	buildType(jetpackPlaywrightBuildType("desktop", "68fe6336-5869-4244-b236-cca23ba03487", jetpackTarget="remote-site"));
+	buildType(jetpackPlaywrightBuildType("mobile", "a80b5c10-1fef-4c7f-9e2c-5c5c30d637c8", jetpackTarget="remote-site"));
 
-	buildType(jetpackPlaywrightBuildType("desktop", "68fe6336-5869-4244-b236-cca23ba03487"));
-	buildType(jetpackPlaywrightBuildType("mobile", "a80b5c10-1fef-4c7f-9e2c-5c5c30d637c8"));
+	// Jetpack for WPCOM Sites Running Staging
+	buildType(jetpackPlaywrightBuildType("desktop", "3007d7a1-5642-4dbf-9935-d93f3cdb4dcc", jetpackTarget="wpcom-staging"));
+	buildType(jetpackPlaywrightBuildType("mobile", "ccfe7d2c-8f04-406b-8b83-3db6c8475661", jetpackTarget="wpcom-staging"));
+
+	// Jetpack for WPCOM Sites Running Prod
+	buildType(jetpackPlaywrightBuildType("desktop", "de6df2e1-3bad-46a4-9764-9c7e0974d4ff", jetpackTarget="wpcom-production"));
+	buildType(jetpackPlaywrightBuildType("mobile", "79479054-e30e-4177-937f-4197c4846a0f", jetpackTarget="wpcom-production"));
 
 	buildType(I18NTests);
 	buildType(P2E2ETests)
@@ -92,7 +100,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 				// Overrides the inherited max workers settings and sets it to not run any tests in parallel.
 				// The reason for this is an inconsistent issue breaking the login in AT test sites when
 				// more than one test runs in parallel. Remove or set it to 16 after the issue is solved.
-				param("E2E_WORKERS", "1")
+				param("JEST_E2E_WORKERS", "1")
 			}
 			if (edge) {
 				param("env.GUTENBERG_EDGE", "true")
@@ -175,89 +183,71 @@ fun editorTrackingBuildType( targetDevice: String, buildUuid: String, atomic: Bo
 	)
 }
 
-fun coblocksPlaywrightBuildType( targetDevice: String, buildUuid: String ): E2EBuildType {
-    return E2EBuildType (
-		buildId = "WPComTests_coblocks_Playwright_$targetDevice",
-		buildUuid = buildUuid,
-		buildName = "CoBlocks E2E Tests ($targetDevice)",
-		buildDescription = "Runs CoBlocks E2E tests as $targetDevice",
-		testGroup = "coblocks",
-		buildParams = {
-			text(
-				name = "env.CALYPSO_BASE_URL",
-				value = "https://wordpress.com",
-				label = "Test URL",
-				description = "URL to test against",
-				allowEmpty = false
-			)
-			checkbox(
-				name = "env.COBLOCKS_EDGE",
-				value = "false",
-				label = "Use coblocks-edge",
-				description = "Use a blog with coblocks-edge sticker",
-				checked = "true",
-				unchecked = "false"
-			)
-			param("env.AUTHENTICATE_ACCOUNTS", "gutenbergSimpleSiteEdgeUser,gutenbergSimpleSiteUser,coBlocksSimpleSiteEdgeUser")
-			param("env.VIEWPORT_NAME", "$targetDevice")
-		},
-		buildFeatures = {
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#gutenberg-e2e"
-					messageFormat = verboseMessageFormat {
-						addBranch = true
-						addStatusText = true
-						maximumNumberOfChanges = 10
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailed = true
-				buildFinishedSuccessfully = true
-			}
-		},
-	)
-}
+fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String, jetpackTarget: String = "wpcom-production" ): E2EBuildType {
+	val idSafeJetpackTarget = jetpackTarget.replace( "-", "_" );
+	val targetJestGroup = if (jetpackTarget == "remote-site") "jetpack-remote-site" else "jetpack-wpcom-integration";
 
-fun jetpackPlaywrightBuildType( targetDevice: String, buildUuid: String): E2EBuildType {
-	return E2EBuildType (
-		buildId = "WPComTests_jetpack_Playwright_$targetDevice",
-		buildUuid = buildUuid,
-		buildName = "Jetpack E2E Tests ($targetDevice)",
-		buildDescription = "Runs Jetpack E2E tests as $targetDevice",
-		testGroup = "jetpack",
-		buildParams = {
-			text(
-				name = "env.CALYPSO_BASE_URL",
-				value = "https://wordpress.com",
-				label = "Test URL",
-				description = "URL to test against",
-				allowEmpty = false
-			)
-			param("env.VIEWPORT_NAME", "$targetDevice")
-			checkbox(
-				name = "env.TEST_ON_JETPACK",
-				value = "true",
-				label = "Test on Jetpack",
-				description = "Use a Jetpack blog to test against",
-				checked = "true",
-				unchecked = "false"
-			)
-		},
-		buildFeatures = {},
-		buildTriggers = {
-		schedule {
-			schedulingPolicy = daily {
-				hour = 5
+	val triggers: Triggers.() -> Unit = {
+		if (jetpackTarget == "wpcom-staging") {
+			vcs {
+				// Trigger only when the "trunk" branch is modified, i.e. back-end merges
+				branchFilter = """
+					+:trunk
+				""".trimIndent()
+
+				// Trigger only when changes are made to the Jetpack staging directories in our WPCOM connection
+				triggerRules = """
+					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/staging/**
+					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_PLUGIN_PATH%/staging/**
+				""".trimIndent()
 			}
-			branchFilter = """
-				+:trunk
-			""".trimIndent()
-			triggerBuild = always()
-			withPendingChangesOnly = false
+		} else if (jetpackTarget == "wpcom-production") {
+			vcs {
+				// Trigger only when the "trunk" branch is modified, i.e. back-end merges
+				branchFilter = """
+					+:trunk
+				""".trimIndent()
+
+				// Trigger only when changes are made to the Jetpack prod directories in our WPCOM connection
+				triggerRules = """
+					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH%/production/**
+					+:root=%WPCOM_VCS_ROOT_ID%:%WPCOM_JETPACK_PLUGIN_PATH%/production/**
+				""".trimIndent()
+			}
+		} else {
+			// For remote-site tests, we are just running daily for now. They aren't related to Jetpack releases on DotCom.
+			schedule {
+				schedulingPolicy = daily {
+					hour = 5
+				}
+				branchFilter = """
+					+:trunk
+				""".trimIndent()
+				triggerBuild = always()
+				withPendingChangesOnly = false
+			}
 		}
 	}
+
+	return E2EBuildType (
+		buildId = "WPComTests_jetpack_Playwright_${idSafeJetpackTarget}_$targetDevice",
+		buildUuid = buildUuid,
+		buildName = "Jetpack E2E Tests [${jetpackTarget}] ($targetDevice)",
+		buildDescription = "Runs Jetpack E2E tests as $targetDevice against Jetpack install $jetpackTarget",
+		testGroup = targetJestGroup,
+		buildParams = {
+			text(
+				name = "env.CALYPSO_BASE_URL",
+				value = "https://wordpress.com",
+				label = "Test URL",
+				description = "URL to test against",
+				allowEmpty = false
+			)
+			param("env.VIEWPORT_NAME", "$targetDevice")
+			param("env.JETPACK_TARGET", jetpackTarget)
+		},
+		buildFeatures = {},
+		buildTriggers = triggers
 	)
 }
 
@@ -288,7 +278,7 @@ private object I18NTests : E2EBuildType(
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
-				sendTo = "#i18n-bots"
+				sendTo = "#i18n-devs"
 				messageFormat = simpleMessageFormat()
 			}
 			branchFilter = "trunk"

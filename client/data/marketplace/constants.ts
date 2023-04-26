@@ -44,4 +44,18 @@ export const RETURNABLE_FIELDS = [
 
 	// Images
 	'plugin.icons',
+
+	// Marketplace product fields
+	'plugin.store_product_monthly_id',
+	'plugin.store_product_yearly_id',
+
+	// Marketplace premium slug
+	'plugin.premium_slug',
+
+	// Marketplace plugin slug for Calypso url
+	'plugin.product_slug',
+
+	// Marketplace software slug
+	'plugin.software_slug',
+	'plugin.org_slug',
 ] as const;

@@ -51,7 +51,7 @@ export const middleware = ( handlersFor ) => ( store ) => ( next ) => {
 	 * Middleware handler
 	 *
 	 * @function
-	 * @param {object} action Redux action
+	 * @param {Object} action Redux action
 	 * @returns {undefined} please do not use
 	 */
 	return ( action ) => {

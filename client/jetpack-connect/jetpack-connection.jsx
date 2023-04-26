@@ -233,7 +233,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 				return IS_DOT_COM;
 			}
 
-			if ( this.isError( 'site_blacklisted' ) ) {
+			if ( this.isError( 'connection_disabled' ) ) {
 				return SITE_BLOCKED;
 			}
 

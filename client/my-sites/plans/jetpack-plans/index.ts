@@ -1,10 +1,11 @@
-import config from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import page from 'page';
 import { makeLayout, render as clientRender } from 'calypso/controller/index.web';
 import {
 	jetpackBoostWelcome,
 	jetpackFreeWelcome,
 	jetpackSocialWelcome,
+	offerJetpackComplete,
 	productSelect,
 } from './controller';
 
@@ -16,6 +17,18 @@ export default function ( rootUrl: string, ...rest: PageJS.Callback[] ): void {
 	if ( addBoostAndSocialRoutes ) {
 		page( `${ rootUrl }/jetpack-boost/welcome`, jetpackBoostWelcome, makeLayout, clientRender );
 		page( `${ rootUrl }/jetpack-social/welcome`, jetpackSocialWelcome, makeLayout, clientRender );
+	}
+
+	// We provide access to the page only when Feature Flag is enabled
+	if ( isEnabled( 'jetpack/offer-complete-after-activation' ) ) {
+		// Offer jetpack complete after Jetpack plugin activation
+		page(
+			`${ rootUrl }/complete/:site?/:lang?`,
+			...rest,
+			offerJetpackComplete,
+			makeLayout,
+			clientRender
+		);
 	}
 
 	page(

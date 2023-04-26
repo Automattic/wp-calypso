@@ -42,6 +42,11 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 			await Promise.all( [ page.waitForNavigation(), page.click( 'text=Get started' ) ] );
 		} );
 
+		it( 'Navigate VideoMaker Setup', async function () {
+			await page.waitForURL( /.*videomakerSetup.*/ );
+			await page.click( 'button.videomaker-setup__dark-button' );
+		} );
+
 		it( 'Enter account details', async function () {
 			await page.waitForURL( /.*videopress-account.*/ );
 			const userSignupPage = new UserSignupPage( page );
@@ -63,11 +68,6 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 			await page.click( 'button.site-options__submit-button' );
 		} );
 
-		it( 'Navigate VideoMaker Setup', async function () {
-			await page.waitForURL( /.*videomakerSetup.*/ );
-			await page.click( 'button.videomaker-setup__dark-button' );
-		} );
-
 		it( 'Navigate choose a domain', async function () {
 			await page.waitForSelector( '#choose-a-domain-header' );
 		} );
@@ -78,11 +78,6 @@ describe( DataHelper.createSuiteTitle( 'VideoPress Tailored Onboarding' ), () =>
 
 		it( 'Skip selecting a domain', async function () {
 			await Promise.all( [ page.waitForNavigation(), page.click( 'text=Decide later' ) ] );
-		} );
-
-		it( 'Navigate to choose a plan', async function () {
-			await page.waitForURL( /.*chooseAPlan.*/ );
-			await page.click( 'button.plan-item__select-button' );
 		} );
 
 		it( 'Land in checkout cart', async function () {

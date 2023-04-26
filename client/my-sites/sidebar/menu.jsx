@@ -79,7 +79,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 				{ ...props }
 			>
 				{ children.map( ( item ) => {
-					if ( ! shouldShowAdvertisingOption && item.title === 'Advertising' ) {
+					if ( ! shouldShowAdvertisingOption && item?.url?.includes( '/advertising/' ) ) {
 						return;
 					}
 					const isSelected = selectedMenuItem?.url === item.url;

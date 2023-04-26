@@ -4,6 +4,7 @@
 import { screen } from '@testing-library/react';
 import deepFreeze from 'deep-freeze';
 import loginReducer from 'calypso/state/login/reducer';
+import siteConnectionReducer from 'calypso/state/site-connection/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { JetpackSignup } from '../signup.js';
@@ -16,6 +17,7 @@ const render = ( el, options ) =>
 	renderWithProvider( el, {
 		reducers: {
 			login: loginReducer,
+			siteConnection: siteConnectionReducer,
 			ui: uiReducer,
 		},
 		...options,

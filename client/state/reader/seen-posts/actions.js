@@ -19,7 +19,7 @@ import 'calypso/state/data-layer/wpcom/seen-posts/seen/blog/delete/index';
 /**
  * Request mark as seen for given seenIds
  *
- * @param {object} payload method
+ * @param {Object} payload method
  * @param payload.feedId identifier of the feed
  * @param payload.feedUrl url of the feed
  * @param payload.feedItemIds list of feed item ids
@@ -38,7 +38,7 @@ export const requestMarkAsSeen = ( { feedId, feedUrl, feedItemIds, globalIds } )
 /**
  * Receive mark as seen for successful requests
  *
- * @param {object} payload method
+ * @param {Object} payload method
  * @param payload.feedId identifier of the feed
  * @param payload.feedUrl url of the feed
  * @param payload.globalIds list of Calypso Reader specific global ids
@@ -54,7 +54,7 @@ export const receiveMarkAsSeen = ( { feedId, feedUrl, globalIds } ) => ( {
 /**
  * Request mark as unseen for given seenIds
  *
- * @param {object} payload method
+ * @param {Object} payload method
  * @param payload.feedId identifier of the feed
  * @param payload.feedUrl url of the feed
  * @param payload.feedItemIds list of feed item ids
@@ -73,7 +73,7 @@ export const requestMarkAsUnseen = ( { feedId, feedUrl, feedItemIds, globalIds }
 /**
  * Receive mark as unseen for successful requests
  *
- * @param {object} payload method
+ * @param {Object} payload method
  * @param payload.feedId identifier of the feed
  * @param payload.feedUrl url of the feed
  * @param payload.globalIds list of Calypso Reader specific global ids
@@ -89,7 +89,7 @@ export const receiveMarkAsUnseen = ( { feedId, feedUrl, globalIds } ) => ( {
 /**
  * Request mark all as seen
  *
- * @param {object} payload method
+ * @param {Object} payload method
  * @param payload.identifier given Reader section
  * @param payload.feedIds list of feed identifiers
  * @param payload.feedUrls list of feed urls
@@ -116,7 +116,7 @@ export const receiveMarkAllAsSeen = ( { feedIds, feedUrls, globalIds } ) => ( {
 /**
  * Request mark as seen for given blog and post id
  *
- * @param {object} payload method
+ * @param {Object} payload method
  * @param payload.blogId identifier of the blog
  * @param payload.postIds list of blog post ids
  * @param payload.feedId identifier of the feed
@@ -137,7 +137,7 @@ export const requestMarkAsSeenBlog = ( { blogId, postIds, feedId, feedUrl, globa
 /**
  * Request mark as unseen for given blog and post ids
  *
- * @param {object} payload method
+ * @param {Object} payload method
  * @param payload.blogId identifier of the blog
  * @param payload.feedId identifier of the feed
  * @param payload.feedUrl url of the feed

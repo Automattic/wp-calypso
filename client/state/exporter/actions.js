@@ -22,8 +22,8 @@ import 'calypso/state/exporter/init';
 /**
  * Sets the post type to export.
  *
- * @param  {object} postType   The name of the post type to use - 'posts', 'pages', 'feedback', or null for all
- * @returns {object}            Action object
+ * @param  {Object} postType   The name of the post type to use - 'posts', 'pages', 'feedback', or null for all
+ * @returns {Object}            Action object
  */
 export function setPostType( postType ) {
 	return {

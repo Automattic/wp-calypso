@@ -1,4 +1,9 @@
-import { PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY } from '@automattic/calypso-products';
+import {
+	PLAN_ECOMMERCE,
+	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_ECOMMERCE_2_YEARS,
+	PLAN_ECOMMERCE_3_YEARS,
+} from '@automattic/calypso-products';
 import { useLocale } from '@automattic/i18n-utils';
 import { useFlowProgress, ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -12,60 +17,82 @@ import {
 } from 'calypso/signup/storageUtils';
 import { useSite } from '../hooks/use-site';
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
-import { USER_STORE, ONBOARD_STORE } from '../stores';
+import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import CheckPlan from './internals/steps-repository/check-plan';
 import DesignCarousel from './internals/steps-repository/design-carousel';
 import DomainsStep from './internals/steps-repository/domains';
-import Intro from './internals/steps-repository/intro';
 import ProcessingStep from './internals/steps-repository/processing-step';
-import SetThemeStep from './internals/steps-repository/set-theme-step';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
-import StoreAddress from './internals/steps-repository/store-address';
 import StoreProfiler from './internals/steps-repository/store-profiler';
 import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
-import type { Flow, ProvidedDependencies } from './internals/types';
-import type { SiteDetailsPlan } from '@automattic/data-stores';
+import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
+import { AssertConditionState } from './internals/types';
+import type { Flow, ProvidedDependencies, AssertConditionResult } from './internals/types';
+import type {
+	OnboardSelect,
+	SiteDetailsPlan,
+	SiteSelect,
+	UserSelect,
+} from '@automattic/data-stores';
+
+function getPlanFromRecurType( recurType: string ) {
+	switch ( recurType ) {
+		case ecommerceFlowRecurTypes.YEARLY:
+			return PLAN_ECOMMERCE;
+		case ecommerceFlowRecurTypes.MONTHLY:
+			return PLAN_ECOMMERCE_MONTHLY;
+		case ecommerceFlowRecurTypes[ '2Y' ]:
+			return PLAN_ECOMMERCE_2_YEARS;
+		case ecommerceFlowRecurTypes[ '3Y' ]:
+			return PLAN_ECOMMERCE_3_YEARS;
+		default:
+			return PLAN_ECOMMERCE_MONTHLY;
+	}
+}
 
 const ecommerceFlow: Flow = {
 	name: ECOMMERCE_FLOW,
 	useSteps() {
+		const recurType = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			[]
+		);
+
 		useEffect( () => {
-			recordTracksEvent( 'calypso_signup_start', { flow: this.name } );
+			recordTracksEvent( 'calypso_signup_start', { flow: this.name, recur: recurType } );
 			recordFullStoryEvent( 'calypso_signup_start_ecommerce', { flow: this.name } );
 		}, [] );
 
 		return [
-			{ slug: 'intro', component: Intro },
 			{ slug: 'storeProfiler', component: StoreProfiler },
-			{ slug: 'storeAddress', component: StoreAddress },
 			{ slug: 'domains', component: DomainsStep },
 			{ slug: 'designCarousel', component: DesignCarousel },
 			{ slug: 'siteCreationStep', component: SiteCreationStep },
 			{ slug: 'processing', component: ProcessingStep },
+			{ slug: 'waitForPluginInstall', component: WaitForPluginInstall },
 			{ slug: 'waitForAtomic', component: WaitForAtomic },
-			{ slug: 'setThemeStep', component: SetThemeStep },
 			{ slug: 'checkPlan', component: CheckPlan },
 		];
 	},
 
-	useStepNavigation( _currentStepName, navigate ) {
-		const flowName = this.name;
-		const { setStepProgress, setPlanCartItem, resetOnboardStore } = useDispatch( ONBOARD_STORE );
-		const flowProgress = useFlowProgress( { stepName: _currentStepName, flowName } );
-		setStepProgress( flowProgress );
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
-		const { selectedDesign, recurType } = useSelect( ( select ) => ( {
-			selectedDesign: select( ONBOARD_STORE ).getSelectedDesign(),
-			recurType: select( ONBOARD_STORE ).getEcommerceFlowRecurType(),
-		} ) );
-		const selectedPlan =
-			recurType === ecommerceFlowRecurTypes.YEARLY ? PLAN_ECOMMERCE : PLAN_ECOMMERCE_MONTHLY;
+	useAssertConditions(): AssertConditionResult {
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
+		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
-		const locale = useLocale();
-		const siteSlugParam = useSiteSlugParam();
-		const site = useSite();
 		const flags = new URLSearchParams( window.location.search ).get( 'flags' );
+		const flowName = this.name;
+		const locale = useLocale();
+
+		const { recurType } = useSelect(
+			( select ) => ( {
+				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			} ),
+			[]
+		);
 
 		const getStartUrl = () => {
 			let hasFlowParams = false;
@@ -91,10 +118,41 @@ const ecommerceFlow: Flow = {
 			return url + ( flags ? `&flags=${ flags }` : '' );
 		};
 
+		if ( ! userIsLoggedIn ) {
+			const logInUrl = getStartUrl();
+			window.location.assign( logInUrl );
+			result = {
+				state: AssertConditionState.FAILURE,
+				message: 'store-setup requires a logged in user',
+			};
+		}
+
+		return result;
+	},
+
+	useStepNavigation( _currentStepName, navigate ) {
+		const flowName = this.name;
+		const { setStepProgress, setPlanCartItem, setPluginsToVerify } = useDispatch( ONBOARD_STORE );
+		setPluginsToVerify( [ 'woocommerce' ] );
+		const flowProgress = useFlowProgress( { stepName: _currentStepName, flowName } );
+		setStepProgress( flowProgress );
+		const { selectedDesign, recurType } = useSelect(
+			( select ) => ( {
+				selectedDesign: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+				recurType: ( select( ONBOARD_STORE ) as OnboardSelect ).getEcommerceFlowRecurType(),
+			} ),
+			[]
+		);
+		const selectedPlan = getPlanFromRecurType( recurType );
+
+		const siteSlugParam = useSiteSlugParam();
+		const site = useSite();
+		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
+
 		function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, _currentStepName );
-			const logInUrl = getStartUrl();
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
+			const siteId = getSiteIdBySlug( siteSlug );
 
 			switch ( _currentStepName ) {
 				case 'domains':
@@ -103,20 +161,22 @@ const ecommerceFlow: Flow = {
 						from_section: 'default',
 					} );
 
-					setPlanCartItem( { product_slug: selectedPlan } );
+					setPlanCartItem( {
+						product_slug: selectedPlan,
+						extra: { headstart_theme: selectedDesign?.recipe?.stylesheet },
+					} );
 					return navigate( 'siteCreationStep' );
 
 				case 'siteCreationStep':
 					return navigate( 'processing' );
 
 				case 'processing':
-					// Coming from setThemeStep
-					if ( providedDependencies?.selectedDesign ) {
-						return navigate( 'storeAddress' );
+					if ( providedDependencies?.finishedWaitingForAtomic ) {
+						return navigate( 'waitForPluginInstall', { siteId, siteSlug } );
 					}
 
-					if ( providedDependencies?.finishedWaitingForAtomic ) {
-						return navigate( 'setThemeStep' );
+					if ( providedDependencies?.pluginsInstalled ) {
+						return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
 					}
 
 					if ( providedDependencies?.siteSlug ) {
@@ -142,34 +202,27 @@ const ecommerceFlow: Flow = {
 					}
 					return navigate( `checkPlan?siteSlug=${ siteSlug }` );
 
-				case 'intro':
-					resetOnboardStore();
-					if ( userIsLoggedIn ) {
-						return navigate( 'storeProfiler' );
-					}
-					return window.location.assign( logInUrl );
-
 				case 'storeProfiler':
 					return navigate( 'designCarousel' );
-
-				case 'storeAddress':
-					return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
 
 				case 'designCarousel':
 					return navigate( 'domains' );
 
-				case 'setThemeStep':
+				case 'waitForAtomic':
 					return navigate( 'processing' );
 
-				case 'waitForAtomic':
+				case 'waitForPluginInstall':
 					return navigate( 'processing' );
 
 				case 'checkPlan':
 					// eCommerce Plan
 					if (
-						[ PLAN_ECOMMERCE, PLAN_ECOMMERCE_MONTHLY ].includes(
-							( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug
-						)
+						[
+							PLAN_ECOMMERCE,
+							PLAN_ECOMMERCE_MONTHLY,
+							PLAN_ECOMMERCE_2_YEARS,
+							PLAN_ECOMMERCE_3_YEARS,
+						].includes( ( providedDependencies?.currentPlan as SiteDetailsPlan )?.product_slug )
 					) {
 						return navigate( 'waitForAtomic' );
 					}
@@ -185,22 +238,18 @@ const ecommerceFlow: Flow = {
 				case 'designCarousel':
 					return navigate( 'storeProfiler' );
 				default:
-					return navigate( 'intro' );
+					return navigate( 'storeProfiler' );
 			}
 		};
 
 		const goNext = () => {
 			switch ( _currentStepName ) {
-				case 'intro':
-					return navigate( 'storeProfiler' );
 				case 'storeProfiler':
 					return navigate( 'designCarousel' );
-				case 'storeAddress':
-					return window.location.assign( `${ site?.URL }/wp-admin/admin.php?page=wc-admin` );
 				case 'designCarousel':
 					return navigate( 'domains' );
 				default:
-					return navigate( 'intro' );
+					return navigate( 'storeProfiler' );
 			}
 		};
 

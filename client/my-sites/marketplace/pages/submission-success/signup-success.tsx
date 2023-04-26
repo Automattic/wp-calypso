@@ -53,7 +53,7 @@ const SignupSuccess = () => {
 						</h1>
 						<p>
 							{ translate(
-								'Great! You’re already a vendor! Here is what you can do next while we’re still working on building your Product Dashboard.'
+								'Great, you’re already a vendor! Here is what you can do next while we’re still working on building your Product Dashboard.'
 							) }
 						</p>
 					</div>

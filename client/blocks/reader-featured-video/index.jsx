@@ -27,6 +27,7 @@ class ReaderFeaturedVideo extends Component {
 		className: PropTypes.string,
 		href: PropTypes.string,
 		isExpanded: PropTypes.bool,
+		isTagPost: PropTypes.bool,
 		expandCard: PropTypes.func,
 	};
 
@@ -97,6 +98,7 @@ class ReaderFeaturedVideo extends Component {
 			className,
 			href,
 			isExpanded,
+			isTagPost,
 		} = this.props;
 
 		const classNames = classnames( className, 'reader-featured-video' );
@@ -110,6 +112,7 @@ class ReaderFeaturedVideo extends Component {
 					className={ classNames }
 					href={ href }
 					fetched={ true }
+					isTagPost={ isTagPost }
 				>
 					{ allowPlaying && (
 						<img

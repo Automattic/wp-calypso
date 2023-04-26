@@ -1,10 +1,12 @@
+import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { AnchorHTMLAttributes, memo } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { displaySiteUrl, getDashboardUrl } from '../utils';
+import { displaySiteUrl, getDashboardUrl, isStagingSite } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import { SitesGridActionRenew } from './sites-grid-action-renew';
 import { SitesGridTile } from './sites-grid-tile';
@@ -14,6 +16,7 @@ import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
 import { SiteUrl, Truncated } from './sites-site-url';
+import SitesStagingBadge from './sites-staging-badge';
 import { ThumbnailLink } from './thumbnail-link';
 
 const SIZES_ATTR = [
@@ -51,6 +54,10 @@ const SitesGridItemSecondary = styled.div( {
 	justifyContent: 'space-between',
 } );
 
+const EllipsisMenuContainer = styled.div( {
+	width: '24px',
+} );
+
 const ellipsis = css( {
 	'.button.ellipsis-menu__toggle': {
 		padding: 0,
@@ -71,7 +78,11 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 	const { __ } = useI18n();
 
 	const isP2Site = site.options?.is_wpforteams_site;
+	const isWpcomStagingSite = isStagingSite( site );
 	const translatedStatus = useSiteLaunchStatusLabel( site );
+	const isECommerceTrialSite = site.plan?.product_slug === PLAN_ECOMMERCE_TRIAL_MONTHLY;
+
+	const { ref, inView } = useInView( { triggerOnce: true } );
 
 	const siteDashboardUrlProps: AnchorHTMLAttributes< HTMLAnchorElement > = {
 		href: getDashboardUrl( site.slug ),
@@ -85,19 +96,23 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 
 	return (
 		<SitesGridTile
+			ref={ ref }
 			leading={
 				<>
 					<ThumbnailLink { ...siteDashboardUrlProps }>
 						<SiteItemThumbnail
 							displayMode="tile"
 							className={ siteThumbnail }
+							showPlaceholder={ ! inView }
 							site={ site }
 							width={ THUMBNAIL_DIMENSION.width }
 							height={ THUMBNAIL_DIMENSION.height }
 							sizesAttr={ SIZES_ATTR }
 						/>
 					</ThumbnailLink>
-					{ site.plan?.expired && <SitesGridActionRenew site={ site } /> }
+					{ site.plan?.expired && (
+						<SitesGridActionRenew site={ site } hideRenewLink={ isECommerceTrialSite } />
+					) }
 				</>
 			}
 			primary={
@@ -108,10 +123,13 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 
 					<div className={ badges }>
 						{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
+						{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 						{ getSiteLaunchStatus( site ) !== 'public' && (
 							<SitesLaunchStatusBadge>{ translatedStatus }</SitesLaunchStatusBadge>
 						) }
-						<SitesEllipsisMenu className={ ellipsis } site={ site } />
+						<EllipsisMenuContainer>
+							{ inView && <SitesEllipsisMenu className={ ellipsis } site={ site } /> }
+						</EllipsisMenuContainer>
 					</div>
 				</>
 			}

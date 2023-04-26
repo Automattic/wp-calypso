@@ -1,6 +1,7 @@
 import {
 	tryToGuessPostalCodeFormat,
 	getCountryPostalCodeSupport,
+	getCountryTaxRequirements,
 } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
@@ -293,29 +294,35 @@ export class ManagedContactDetailsFormFields extends Component {
 			: false;
 
 	renderContactDetailsFields() {
-		const { translate, hasCountryStates } = this.props;
+		const { translate, hasCountryStates, countriesList } = this.props;
 		const form = getFormFromContactDetails(
 			this.props.contactDetails,
 			this.props.contactDetailsErrors
 		);
 		const countryCode = form.countryCode?.value ?? '';
 		const arePostalCodesSupported = this.getCountryPostalCodeSupport( countryCode );
-		const isOrganizationFieldRequired = [
-			'CCO',
-			'GOV',
-			'EDU',
-			'ASS',
-			'HOP',
-			'PRT',
-			'TDM',
-			'TRD',
-			'PLT',
-			'LAM',
-			'TRS',
-			'INB',
-			'OMK',
-			'MAJ',
-		].includes( form.extra?.value?.ca?.legalType );
+		const taxRequirements =
+			countriesList.length && countryCode
+				? getCountryTaxRequirements( countriesList, countryCode )
+				: {};
+		const isOrganizationFieldRequired =
+			taxRequirements.organization ||
+			[
+				'CCO',
+				'GOV',
+				'EDU',
+				'ASS',
+				'HOP',
+				'PRT',
+				'TDM',
+				'TRD',
+				'PLT',
+				'LAM',
+				'TRS',
+				'INB',
+				'OMK',
+				'MAJ',
+			].includes( form.extra?.value?.ca?.legalType );
 
 		return (
 			<div className="contact-details-form-fields__contact-details">

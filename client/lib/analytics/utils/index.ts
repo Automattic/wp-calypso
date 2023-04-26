@@ -13,6 +13,7 @@ export { default as shouldReportOmitSiteMainProduct } from './should-report-omit
 export { default as saveCouponQueryArgument } from './save-coupon-query-argument';
 export { default as refreshCountryCodeCookieGdpr } from './refresh-country-code-cookie-gdpr';
 export { default as shouldSeeCookieBanner } from './should-see-cookie-banner';
+export { mayWeTrackUserGpcInCcpaRegion, isGpcFlagSetOptOut } from './is-gpc-flag-set';
 export {
 	default as getTrackingPrefs,
 	parseTrackingPrefs,
@@ -21,3 +22,4 @@ export {
 } from './get-tracking-prefs';
 export type { TrackingPrefs } from './get-tracking-prefs';
 export { default as setTrackingPrefs } from './set-tracking-prefs';
+export { default as useDoNotSell } from './use-do-not-sell';

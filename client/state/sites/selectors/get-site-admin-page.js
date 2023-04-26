@@ -3,7 +3,7 @@ import getSiteOption from './get-site-option';
 /**
  * Returns a site's wp-admin plugin page depending on which plugin is active.
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {?number}  siteId Site ID
  * @returns {string}        Jetpack or standalone plugin page name
  */

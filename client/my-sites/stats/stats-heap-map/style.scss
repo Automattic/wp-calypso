@@ -1,0 +1,53 @@
+@import "@automattic/typography/styles/variables";
+
+.stats-heat-map__legend {
+	margin-top: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.stats-heat-map__legend-label {
+	font-weight: 400;
+	font-size: $font-body-small;
+	line-height: 18px;
+	color: var(--studio-black);
+	text-align: center;
+}
+
+.stats-heat-map__legend-item-list {
+	display: flex;
+	list-style-type: none;
+	border-radius: 4px;
+	overflow: hidden;
+	margin: 0 16px;
+}
+
+.stats-heat-map__legend-item {
+	width: 25px;
+	height: 25px;
+
+	&.level-0 {
+		background-color: var(--color-neutral-0);
+	}
+
+	&.level-1 {
+		background-color: var(--color-primary-5);
+	}
+
+	&.level-2 {
+		background-color: var(--color-primary-10);
+	}
+
+	&.level-3 {
+		background-color: var(--color-primary-light);
+	}
+
+	&.level-4 {
+		background-color: var(--color-primary);
+	}
+
+	&.level-5 {
+		background-color: var(--color-primary-dark);
+	}
+}

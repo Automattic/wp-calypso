@@ -1,3 +1,11 @@
 {
-	"extends": "@automattic/calypso-typescript-config/js-package.json"
+	"extends": "@automattic/calypso-typescript-config/js-package.json",
+	"compilerOptions": {
+		"declarationDir": "dist/types",
+		"rootDir": "src",
+		"types": [ "jest" ],
+		"noEmit": false,
+		"emitDeclarationOnly": true
+	},
+	"include": [ "src" ]
 }

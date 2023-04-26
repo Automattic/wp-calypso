@@ -14,6 +14,7 @@ import {
 	PLUGINS_REQUEST,
 	PLUGINS_REQUEST_SUCCESS,
 	PLUGINS_REQUEST_FAILURE,
+	PLUGINS_ALL_RECEIVE,
 	PLUGINS_ALL_REQUEST,
 	PLUGINS_ALL_REQUEST_SUCCESS,
 	PLUGINS_ALL_REQUEST_FAILURE,
@@ -53,7 +54,7 @@ import 'calypso/state/plugins/init';
 /**
  * Return a SitePlugin instance used to handle the plugin
  *
- * @param {object} siteId - site ID
+ * @param {Object} siteId - site ID
  * @param {string} pluginId - plugin identifier
  * @returns {any} SitePlugin instance
  */
@@ -67,9 +68,9 @@ const getPluginHandler = ( siteId, pluginId ) => {
  * Useful to record events and bump stats by following a certain naming pattern.
  *
  * @param {string} eventType The type of event
- * @param {object} plugin    The plugin object
+ * @param {Object} plugin    The plugin object
  * @param {number} siteId    ID of the site
- * @param {object} error     Error object
+ * @param {Object} error     Error object
  * @returns {Function}       Action thunk
  */
 const recordEvent = ( eventType, plugin, siteId, error ) => {
@@ -102,8 +103,8 @@ const recordEvent = ( eventType, plugin, siteId, error ) => {
  * Used to show the plugin status before the plugin is filtered based on the status.
  * The idea here is to filter the plugins also when statusRecentlyChanged is true.
  *
- * @param {object} defaultAction The default action params
- * @param {object} data   The API response
+ * @param {Object} defaultAction The default action params
+ * @param {Object} data   The API response
  * @returns {Function}    The dispatch actions
  */
 export const handleDispatchSuccessCallback = ( defaultAction, data ) => ( dispatch ) => {
@@ -566,6 +567,13 @@ export function receiveSitePlugins( siteId, plugins ) {
 	};
 }
 
+export function receiveAllSitesPlugins( allSitesPlugins ) {
+	return {
+		type: PLUGINS_ALL_RECEIVE,
+		allSitesPlugins,
+	};
+}
+
 export function fetchSitePlugins( siteId ) {
 	return ( dispatch ) => {
 		const defaultAction = {
@@ -607,11 +615,11 @@ export function fetchAllPlugins() {
 		const receivePluginsDispatchSuccess = ( { sites } ) => {
 			dispatch( { type: PLUGINS_ALL_REQUEST_SUCCESS } );
 
+			dispatch( receiveAllSitesPlugins( sites ) );
+
 			Object.entries( sites ).forEach( ( [ siteId, plugins ] ) => {
 				// Cast the enumerable string-keyed property to a number.
 				siteId = Number( siteId );
-
-				dispatch( receiveSitePlugins( siteId, plugins ) );
 
 				plugins.forEach( ( plugin ) => {
 					if ( plugin.update && plugin.autoupdate ) {

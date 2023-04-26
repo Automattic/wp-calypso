@@ -58,7 +58,9 @@ Example:
 
 ```jsx
 function MyComponent( { isLoading } ) {
-	if ( isLoading ) return <Loading />;
+	if ( isLoading ) {
+		return <Loading />;
+	}
 
 	return (
 		<>

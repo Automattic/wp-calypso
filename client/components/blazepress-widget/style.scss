@@ -7,6 +7,7 @@ $headerHeight: 72px;
 	display: flex;
 	flex-direction: column;
 	z-index: 1001;
+	height: 100vh;
 
 	.blazepress-widget__header-bar {
 		align-items: center;
@@ -14,6 +15,14 @@ $headerHeight: 72px;
 		justify-content: space-between;
 		min-height: $headerHeight;
 		padding: 0 rem(24px);
+		position: fixed;
+		width: calc(100% - 3rem);
+		background: var(--theme-text-color);
+		z-index: 1000;
+
+		@include break-large {
+			border-bottom: 1px solid var(--studio-gray-20);
+		}
 
 		h2 {
 			@include onboarding-font-recoleta;
@@ -24,7 +33,7 @@ $headerHeight: 72px;
 			padding-top: 3px; // helps align with the logo
 		}
 
-		.wordpress-logo {
+		.blaze-logo {
 			width: 1.5rem;
 			height: 1.5rem;
 			fill: var(--color-text);
@@ -37,12 +46,14 @@ $headerHeight: 72px;
 			font-style: normal;
 			font-weight: 500;
 			font-size: $font-body-small;
+			padding-top: 5px;
 		}
 	}
 	.blazepress-widget__content {
 		display: flex;
 		flex-direction: column;
 		height: calc(100% - #{$headerHeight});
+		margin-top: 72px;
 	}
 	.blazepress-widget__content.loading {
 		justify-content: center;
@@ -56,8 +67,31 @@ $headerHeight: 72px;
 			height: 100%;
 		}
 	}
+
+	&.hidden-header {
+		.blazepress-widget__header-bar {
+			display: none;
+		}
+		.blazepress-widget__content {
+			height: 100%;
+			margin-top: 0;
+		}
+	}
 }
 
 .blazepress-widget.dialog__backdrop {
 	background-color: rgba(var(--color-neutral-100-rgb), 0.6);
+}
+
+.is-mobile-app-view {
+	.blazepress-widget__header-bar {
+		display: none;
+	}
+	.blazepress-widget__content {
+		height: 100%;
+		margin-top: 0;
+	}
+	.blazepress-widget .wpcom__loading-ellipsis {
+		margin-top: 50%;
+	}
 }

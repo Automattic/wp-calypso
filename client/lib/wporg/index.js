@@ -97,7 +97,7 @@ export function fetchPluginsList( options ) {
  * Otherwise, will return a promise.
  *
  * @param {string}     themeId  The theme identifier.
- * @returns {Promise.<object>}  A promise that returns a `theme` object
+ * @returns {Promise.<Object>}  A promise that returns a `theme` object
  */
 export function fetchThemeInformation( themeId ) {
 	const query = {
@@ -114,11 +114,11 @@ export function fetchThemeInformation( themeId ) {
 /**
  * Get information about a given theme from the WordPress.org API.
  *
- * @param  {object}        options         Theme query
+ * @param  {Object}        options         Theme query
  * @param  {string}        options.search  Search string
  * @param  {number}        options.number  How many themes to return per page
  * @param  {number}        options.page    Which page of matching themes to return
- * @returns {Promise.<object>}             A promise that returns an object containing a `themes` array and an `info` object
+ * @returns {Promise.<Object>}             A promise that returns an object containing a `themes` array and an `info` object
  */
 export function fetchThemesList( options = {} ) {
 	const { search, page, number } = options;
@@ -140,7 +140,7 @@ export function fetchThemesList( options = {} ) {
  * See: https://codex.wordpress.org/WordPress.org_API
  *
  * @param  {string}        wpVersion       The WordPress.org version, like "5.8.1".
- * @returns {Promise.<object>}             A promise that returns an object containing a `translations` array.
+ * @returns {Promise.<Object>}             A promise that returns an object containing a `translations` array.
  */
 export function fetchTranslationsList( wpVersion ) {
 	const query = { version: wpVersion };

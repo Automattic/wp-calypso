@@ -86,9 +86,9 @@ const EVENTS_MAPPING_NON_CAPTURE = EVENTS_MAPPING.filter( ( { capture } ) => ! c
  * the desired target element. Accounts for event
  * bubbling.
  *
- * @param  {object}          event          the DOM Event
+ * @param  {Object}          event          the DOM Event
  * @param  {string|Function} targetSelector the CSS selector for the target element
- * @returns {object}                        the target Element if found
+ * @returns {Object}                        the target Element if found
  */
 const getMatchingEventTarget = ( event, targetSelector ) => {
 	if ( typeof targetSelector === 'function' ) {
@@ -106,7 +106,7 @@ const getMatchingEventTarget = ( event, targetSelector ) => {
  * and for each match fires an appropriate handler function.
  *
  * @param  {boolean} capture Value of capture flag of the event listener.
- * @param  {object}  event   DOM event for the click event.
+ * @param  {Object}  event   DOM event for the click event.
  * @returns {void}
  */
 export default ( capture, event ) => {

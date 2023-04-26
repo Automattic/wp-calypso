@@ -3,6 +3,7 @@ import { AnyAction } from 'redux';
 import {
 	AgencyDashboardFilterOption,
 	PurchasedProductsInfo,
+	DashboardSortInterface,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import './init';
@@ -11,6 +12,7 @@ import {
 	JETPACK_AGENCY_DASHBOARD_SELECT_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE,
 	JETPACK_AGENCY_DASHBOARD_RESET_SITE,
+	JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE,
 } from './action-types';
 
 const filterStateToQuery = ( filterOptions: AgencyDashboardFilterOption[] ) => {
@@ -20,18 +22,47 @@ const filterStateToQuery = ( filterOptions: AgencyDashboardFilterOption[] ) => {
 	return { issue_types: filterOptions.join( ',' ) };
 };
 
-function navigateToFilter( filterOptions: AgencyDashboardFilterOption[] ) {
+export const updateDashboardURLQueryArgs = ( {
+	filter,
+	sort,
+	search,
+}: {
+	filter?: AgencyDashboardFilterOption[];
+	sort?: DashboardSortInterface;
+	search?: string;
+} ) => {
 	const params = new URLSearchParams( window.location.search );
-	const search = params.get( 's' ) ? `?s=${ params.get( 's' ) }` : '';
-	page( addQueryArgs( filterStateToQuery( filterOptions ), window.location.pathname + search ) );
-}
 
-export const setFilter = ( filterOptions: AgencyDashboardFilterOption[] ) => () => {
-	navigateToFilter( filterOptions );
+	const searchQuery = search !== undefined ? search : params.get( 's' );
+	const filterOptions = filter
+		? filter
+		: ( params.getAll( 'issue_types' ) as AgencyDashboardFilterOption[] );
+	const sortField = sort ? sort.field : params.get( 'sort_field' );
+	const sortDirection = sort ? sort.direction : params.get( 'sort_direction' );
+
+	page(
+		addQueryArgs(
+			{
+				...( searchQuery && { s: searchQuery } ),
+				...filterStateToQuery( filterOptions ),
+				...( sortField && { sort_field: sortField } ),
+				...( sortDirection && { sort_direction: sortDirection } ),
+			},
+			window.location.pathname
+		)
+	);
 };
 
-export const updateFilter = ( filterOptions: AgencyDashboardFilterOption[] ) => () => {
-	navigateToFilter( filterOptions );
+export const setFilter = ( filter: AgencyDashboardFilterOption[] ) => () => {
+	updateDashboardURLQueryArgs( { filter } );
+};
+
+export const updateFilter = ( filter: AgencyDashboardFilterOption[] ) => () => {
+	updateDashboardURLQueryArgs( { filter } );
+};
+
+export const updateSort = ( sort: DashboardSortInterface ) => () => {
+	updateDashboardURLQueryArgs( { sort } );
 };
 
 export function setPurchasedLicense( productsInfo?: PurchasedProductsInfo ): AnyAction {
@@ -48,4 +79,12 @@ export function unselectLicense( siteId: number, license: string ): AnyAction {
 
 export function resetSite(): AnyAction {
 	return { type: JETPACK_AGENCY_DASHBOARD_RESET_SITE };
+}
+
+export function setSiteMonitorStatus( siteId: number, status: 'loading' | 'completed' ): AnyAction {
+	return {
+		type: JETPACK_AGENCY_DASHBOARD_SITE_MONITOR_STATUS_CHANGE,
+		siteId,
+		status,
+	};
 }

@@ -1,3 +1,8 @@
+/**
+ * @group gutenberg
+ * @group jetpack-wpcom-integration
+ */
+
 import {
 	DataHelper,
 	envVariables,
@@ -9,13 +14,10 @@ import {
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
-import { Browser, Page, Frame } from 'playwright';
+import { Browser, Page } from 'playwright';
 
 declare const browser: Browser;
 
-const pageTemplateCategory = 'About';
-const pageTemplateLable = 'About layout with intro and contact';
-const expectedTemplateText = 'Our Mission';
 const customUrlSlug = `about-${ DataHelper.getTimestamp() }-${ DataHelper.getRandomInteger(
 	0,
 	100
@@ -36,7 +38,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 
 	let page: Page;
 	let editorPage: EditorPage;
-	let editorIframe: Frame;
 	let pagesPage: PagesPage;
 	let publishedUrl: URL;
 
@@ -57,18 +58,21 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Select page template', async function () {
-		editorPage = new EditorPage( page, { target: features.siteType } );
 		// @TODO Consider moving this to EditorPage.
+		editorPage = new EditorPage( page, { target: features.siteType } );
 		await editorPage.waitUntilLoaded();
-		const editorIframe = await editorPage.getEditorHandle();
-		const pageTemplateModalComponent = new PageTemplateModalComponent( editorIframe, page );
-		await pageTemplateModalComponent.selectTemplateCatagory( pageTemplateCategory );
-		await pageTemplateModalComponent.selectTemplate( pageTemplateLable );
+
+		const editorWindowLocator = editorPage.getEditorWindowLocator();
+		const pageTemplateModalComponent = new PageTemplateModalComponent( page, editorWindowLocator );
+
+		await pageTemplateModalComponent.selectTemplateCategory( 'About' );
+		await pageTemplateModalComponent.selectTemplate( 'About me' );
 	} );
 
 	it( 'Template content loads into editor', async function () {
 		// @TODO Consider moving this to EditorPage.
-		await editorIframe.waitForSelector( `text=${ expectedTemplateText }` );
+		const editorWindowLocator = editorPage.getEditorWindowLocator();
+		await editorWindowLocator.locator( `h1:text-is("About Me")` ).waitFor();
 	} );
 
 	it( 'Open setting sidebar', async function () {
@@ -95,6 +99,6 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	it( 'Published page contains template content', async function () {
 		// Not a typo, it's the POM page class for a WordPress page. :)
 		const publishedPagePage = new PublishedPostPage( page );
-		await publishedPagePage.validateTextInPost( expectedTemplateText );
+		await publishedPagePage.validateTextInPost( 'About Me' );
 	} );
 } );

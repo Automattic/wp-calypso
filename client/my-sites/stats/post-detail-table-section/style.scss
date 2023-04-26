@@ -1,0 +1,132 @@
+@import "calypso/my-sites/stats/modernized-stats-table-styles.scss";
+
+$common-border-radius: 4px;
+
+.stats__post-detail-table-section {
+	.stats__table-wrapper {
+		.card {
+			box-shadow: none;
+			margin-bottom: 0;
+		}
+
+		.module-header {
+			display: none;
+		}
+
+		.is-detail-weeks {
+			tr:first-child {
+				td {
+					&:first-child {
+						border-top-left-radius: $common-border-radius;
+					}
+
+					&:nth-child(2) {
+						border-top-left-radius: 0;
+					}
+
+					&:nth-last-child(2) {
+						border-top-right-radius: 0;
+					}
+
+					&:nth-last-child(3) {
+						border-top-right-radius: $common-border-radius;
+					}
+				}
+			}
+
+			tr:last-child {
+				td {
+					&:first-child {
+						border-bottom-left-radius: $common-border-radius;
+					}
+
+					&:nth-child(2) {
+						border-bottom-left-radius: 0;
+					}
+
+					&:nth-last-child(2) {
+						border-bottom-right-radius: 0;
+					}
+
+					&:nth-last-child(3) {
+						border-bottom-right-radius: $common-border-radius;
+					}
+				}
+			}
+
+			th:nth-last-child(2) {
+				text-align: right;
+				width: 100px;
+			}
+
+			td:nth-last-child(2) {
+				background-color: var(--studio-white);
+				font-weight: 600;
+				text-align: right;
+				vertical-align: top;
+			}
+		}
+	}
+
+	table {
+		th,
+		td {
+			cursor: auto;
+		}
+
+		th {
+			&.spacer {
+				color: var(--studio-white);
+			}
+
+			padding-bottom: 24px;
+		}
+
+		td {
+			background-color: var(--color-primary-5);
+
+			&.stats-detail__row-label,
+			&.has-no-data,
+			&:last-child {
+				background-color: var(--studio-white);
+			}
+
+			&.highest-count {
+				background-color: var(--color-primary-10);
+			}
+
+			&.stats-detail__row-label {
+				text-align: left;
+			}
+
+			&:last-child {
+				font-weight: 600;
+				text-align: right;
+			}
+
+			.stats-detail-weeks__date {
+				color: var(--color-neutral-50);
+			}
+
+			.stats-detail-weeks__value {
+				display: block;
+
+				svg {
+					margin: 0 2px -3px -4px;
+				}
+
+				&.is-same {
+					color: var(--color-neutral-30);
+				}
+
+				&.is-rising {
+					color: var(--color-success);
+				}
+
+				&.is-falling {
+					color: var(--color-error);
+				}
+			}
+		}
+	}
+}

@@ -1,12 +1,10 @@
 import { useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
 import CheckoutTermsItem from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms-item';
-import type { ManagedContactDetails } from '@automattic/wpcom-checkout';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 
 export const InternationalFeeNotice = () => {
-	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
-		select( 'wpcom-checkout' ).getContactInfo()
-	);
+	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 
 	if ( contactInfo.countryCode?.value !== 'US' ) {
 		const internationalFeeAgreement = translate(

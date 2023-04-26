@@ -11,8 +11,8 @@ const exported = {
 	/**
 	 * Examines the post metadata, and returns metadata related to cross posts.
 	 *
-	 * @param {object} post - post object
-	 * @returns {object} - urls of site and post url
+	 * @param {Object} post - post object
+	 * @returns {Object} - urls of site and post url
 	 */
 	getXPostMetadata( post ) {
 		if ( ! isXPost( post ) ) {

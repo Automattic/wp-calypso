@@ -16,8 +16,8 @@
 }
 
 .jetpack-product-store__all-items {
-	margin-top: 4em;
-	margin-bottom: 48px;
+	margin-top: 48px;
+	margin-bottom: 0;
 
 
 	/*
@@ -40,8 +40,8 @@
 	font-weight: 700;
 
 	@include break-medium {
-		margin-top: rem(72px);
-		margin-bottom: rem(60px);
+		margin-top: rem(48px);
+		margin-bottom: rem(48px);
 		font-size: $font-title-medium;
 		line-height: rem(29px);
 		font-weight: 600;

@@ -8,7 +8,7 @@ const debug = debugFactory( 'calypso:i18n-utils:glotpress' );
  *
  * @param {string} glotPressUrl API url
  * @param {string} postFormData post data url param string
- * @returns {object} request object
+ * @returns {Object} request object
  */
 export async function postRequest( glotPressUrl, postFormData ) {
 	const response = await window.fetch( glotPressUrl, {
@@ -37,7 +37,7 @@ export function encodeOriginalKey( { original, context } ) {
  * @param {[string]} originalKeys Array of original keys to record
  * @param {string} recordId fallback recordId to pass to the backend
  * @param {Function} post see postRequest()
- * @returns {object} request object
+ * @returns {Object} request object
  */
 export function recordOriginals( originalKeys, recordId, post = postRequest ) {
 	const glotPressUrl = `${ GP_BASE_URL }/api/translations/-record-originals`;

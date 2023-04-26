@@ -133,14 +133,14 @@ export class Connection {
 	/**
 	 * Given a Redux action, emits a SocketIO event.
 	 *
-	 * @param  {object} action A Redux action with props
-	 *                    {
+	 * @param  {Object} action A Redux action with props
+	 *                  	{
 	 *                  		event: SocketIO event name,
-	 *                  	  payload: contents to be sent,
-	 *                  	  error: message to be shown should the event fails to be sent,
+	 *                  		payload: contents to be sent,
+	 *                  		error: message to be shown should the event fails to be sent,
 	 *                  	}
-	 * @returns { Promise } Fulfilled (returns nothing)
-	 *                     or rejected (returns an error message)
+	 * @returns {Promise|undefined} Fulfilled (returns nothing) or rejected
+	 *                              (returns an error message)
 	 */
 	send( action: Action ) {
 		if ( ! this.openSocket ) {
@@ -167,15 +167,15 @@ export class Connection {
 	 * - request was succesful: would dispatch action.callback
 	 * - request was unsucessful: would dispatch receiveError
 	 *
-	 * @param  {object} action A Redux action with props
+	 * @param  {Object} action A Redux action with props
 	 *                  	{
 	 *                  		event: SocketIO event name,
 	 *                  		payload: contents to be sent,
 	 *                  		callback: a Redux action creator
 	 *                  	}
 	 * @param  {number} timeout How long (in milliseconds) has the server to respond
-	 * @returns { Promise } Fulfilled (returns the transcript response)
-	 *                     or rejected (returns an error message)
+	 * @returns {Promise|undefined} Fulfilled (returns the transcript response)
+	 *                              or rejected (returns an error message)
 	 */
 	request( action: Action, timeout: number ) {
 		if ( ! this.openSocket ) {

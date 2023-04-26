@@ -28,7 +28,7 @@ export function trigrams( str ) {
  *     { "_BEGIN_mi": 1, "mis": 1, "iss": 2, "ssi": 2, "sis": 1, "sip": 1, "ipp": 1, "ppi": 1, "pi_END_": 1 }
  *
  * @param {string} gramList A list of trigrams, like [ "_BEGIN_He", "Hel", "ell", "llo", "lo_END_" ]
- * @returns {object} A lookup table of trigram frequency.
+ * @returns {Object} A lookup table of trigram frequency.
  */
 export function gramsToLookup( gramList ) {
 	const lookup = {};
@@ -50,7 +50,7 @@ export function gramsToLookup( gramList ) {
  * Example:
  * lookupToMagnitude( gramsToLookup( trigrams( 'hi' ) ) ) = 1.414215... (sqrt of 2)
  *
- * @param {object} lookup A lookup table of trigram frequency.
+ * @param {Object} lookup A lookup table of trigram frequency.
  * @returns {number} Magnitude of the vector
  */
 export function lookupToMagnitude( lookup ) {
@@ -75,7 +75,7 @@ const stringToLookupCache = new LRU( {
  * it caches all calculations it does to find them again quickly.
  *
  * @param {string} str A string to convert to a lookup table of trigram frequency.
- * @returns {object} lookup A lookup table of trigram frequency.
+ * @returns {Object} lookup A lookup table of trigram frequency.
  */
 function stringToLookup( str ) {
 	const cacheAnswer = stringToLookupCache.get( str );
@@ -91,8 +91,8 @@ function stringToLookup( str ) {
 /**
  * Finds the dot product of two lookup tables of trigram frequency.
  *
- * @param {object} lookup1 Lookup table of trigram frequency.
- * @param {object} lookup2 Lookup table of trigram frequency.
+ * @param {Object} lookup1 Lookup table of trigram frequency.
+ * @param {Object} lookup2 Lookup table of trigram frequency.
  * @returns {number} Dot product.
  */
 function dotProduct( lookup1, lookup2 ) {

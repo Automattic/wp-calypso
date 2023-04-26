@@ -262,6 +262,7 @@ const sections = [
 		module: 'calypso/my-sites/checkout',
 		group: 'sites',
 		enableLoggedOut: true,
+		trackLoadPerformance: true,
 	},
 	{
 		name: 'plans',
@@ -335,9 +336,19 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/tags', '/tag' ],
+		paths: [ '/tags' ],
+		module: 'calypso/reader/tags',
+		group: 'reader',
+		trackLoadPerformance: true,
+		enableLoggedOut: true,
+		isomorphic: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
+		enableLoggedOut: true,
 		trackLoadPerformance: true,
 	},
 	{
@@ -366,6 +377,19 @@ const sections = [
 		module: 'calypso/reader/conversations',
 		group: 'reader',
 		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/read/notifications' ],
+		module: 'calypso/reader/notifications',
+		group: 'reader',
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/read/subscriptions' ],
+		module: 'calypso/reader/subscriptions',
+		group: 'reader',
 	},
 	{
 		name: 'help',
@@ -497,12 +521,21 @@ const sections = [
 		module: 'calypso/jetpack-cloud/sections/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
+		isomorphic: true,
 		links: [
 			{
 				rel: 'stylesheet',
 				href: 'https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
 			},
 		],
+	},
+	{
+		name: 'jetpack-cloud-features-comparison',
+		paths: [ '/features/comparison', '/[^\\/]+/features/comparison' ],
+		module: 'calypso/jetpack-cloud/sections/comparison',
+		group: 'jetpack-cloud',
+		enableLoggedOut: true,
+		isomorphic: true,
 	},
 	{
 		name: 'jetpack-search',
@@ -520,6 +553,12 @@ const sections = [
 		name: 'jetpack-cloud-agency-signup',
 		paths: [ '/agency/signup' ],
 		module: 'calypso/jetpack-cloud/sections/agency-signup',
+		group: 'jetpack-cloud',
+	},
+	{
+		name: 'jetpack-cloud-golden-token',
+		paths: [ '/golden-token' ],
+		module: 'calypso/jetpack-cloud/sections/golden-token',
 		group: 'jetpack-cloud',
 	},
 	{
@@ -550,6 +589,12 @@ const sections = [
 		name: 'promote-post',
 		paths: [ '/advertising', '/advertising/[^\\/]+(/[^\\/])?' ],
 		module: 'calypso/my-sites/promote-post',
+		group: 'sites',
+	},
+	{
+		name: 'site-logs',
+		paths: [ '/site-logs' ],
+		module: 'calypso/my-sites/site-logs',
 		group: 'sites',
 	},
 ];

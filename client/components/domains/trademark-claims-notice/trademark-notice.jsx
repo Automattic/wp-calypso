@@ -33,16 +33,21 @@ class TrademarkNotice extends Component {
 	};
 
 	renderNoticeActions = () => {
-		const { buttonsEnabled, onAccept, onReject, translate } = this.props;
+		const { buttonsEnabled, onAccept, onReject, translate, isLoading } = this.props;
 
 		return (
 			<div className="trademark-claims-notice__layout">
 				<div className="trademark-claims-notice__actions-background">
 					<CompactCard className="trademark-claims-notice__actions">
-						<Button borderless onClick={ onReject } disabled={ ! buttonsEnabled }>
+						<Button
+							busy={ isLoading }
+							borderless
+							onClick={ onReject }
+							disabled={ ! buttonsEnabled }
+						>
 							{ translate( 'Choose Another Domain' ) }
 						</Button>
-						<Button primary onClick={ onAccept } disabled={ ! buttonsEnabled }>
+						<Button busy={ isLoading } primary onClick={ onAccept } disabled={ ! buttonsEnabled }>
 							{ translate( 'Acknowledge Trademark' ) }
 						</Button>
 					</CompactCard>

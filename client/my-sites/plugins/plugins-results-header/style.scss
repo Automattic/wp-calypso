@@ -4,9 +4,10 @@
 	align-items: center;
 	justify-content: space-between;
 	flex-wrap: wrap;
+	column-gap: 12px;
 
 	.plugins-results-header__titles {
-		margin-bottom: 4px; // +20 from elements = 24 gap
+		margin-bottom: 6px; // +18 from elements = 24 gap
 
 		.plugins-results-header__title {
 			@extend .wp-brand-font;
@@ -25,7 +26,7 @@
 		align-items: center;
 		justify-content: space-between;
 		margin-top: auto;
-		margin-bottom: 4px; // +20 from elements = 24 gap
+		margin-bottom: 6px; // +20 from elements = 26 gap
 
 		.plugins-results-header__action {
 			font-size: $font-body-small;

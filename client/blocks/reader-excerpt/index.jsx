@@ -1,6 +1,9 @@
-import { trim } from 'lodash';
+import classNames from 'classnames';
+import { trim, escapeRegExp } from 'lodash';
 import PropTypes from 'prop-types';
 import AutoDirection from 'calypso/components/auto-direction';
+import { domForHtml } from 'calypso/lib/post-normalizer/utils';
+
 import './style.scss';
 
 // Excerpt is set to use webkit-line-clamp to limit number of lines of text to show inside container
@@ -37,9 +40,49 @@ const convertExcerptNewlinesToBreaks = ( excerpt ) => {
 	return excerpt;
 };
 
+/**
+ * Removes double spaces and also &nbsp; characters which may be present in the excerpt.
+ *
+ * @param {string} str the string to normalize
+ * @returns a string with single space characters.
+ */
+const normalizeWhitespace = ( str ) => {
+	return str.replace( /\s+/g, ' ' );
+};
+
+/**
+ * Gets the writing prompt text which was inserted as a pullquote at the begining of the post's content.
+ *
+ * @param {Object} post the post object
+ * @returns writing prompt text
+ */
+const getDailyPromptText = ( post ) => {
+	const dom = domForHtml( post.content );
+	const promptQuote = dom.querySelector( '.wp-block-pullquote:first-child' );
+
+	if ( promptQuote && promptQuote.innerText ) {
+		// Remove double spaces which are not normalized by `HTMLElement.innerText`
+		return normalizeWhitespace( promptQuote.innerText );
+	}
+	return null;
+};
+
 const chooseExcerpt = ( post ) => {
 	// Need to figure out if custom excerpt is different to better_excerpt
 	if ( post.excerpt.length > 0 ) {
+		// If the post is a dailyprompt, attempt to replace the prompt text with a pullquote.
+		if ( post.tags && post.tags.hasOwnProperty( 'dailyprompt' ) ) {
+			const promptText = getDailyPromptText( post );
+			if ( promptText ) {
+				// Remove the prompt text from start of the excerpt
+				const excerpt = normalizeWhitespace( post.excerpt ).replace(
+					new RegExp( '^' + escapeRegExp( promptText ) ),
+					''
+				);
+				// And insert a blockquote with the prompt text
+				return `<blockquote class="wp-block-pullquote"> ${ promptText } </blockquote> ${ excerpt }`;
+			}
+		}
 		if ( post.short_excerpt === undefined ) {
 			// If there is no short_excerpt, then there is no better_excerpt
 			return post.excerpt;
@@ -51,6 +94,7 @@ const chooseExcerpt = ( post ) => {
 		const custom_excerpt_chars = trim(
 			post.excerpt.substring( 0, short_excerpt.length ).replace( /\W/g, '' )
 		);
+
 		if ( short_excerpt_chars !== custom_excerpt_chars ) {
 			// In this case, the post excerpt is different to the short excerpt (which is a shortened version of the better_excerpt)
 			// This is an indication of a custom excerpt which we should default to when display excerpts in the reader
@@ -74,10 +118,14 @@ const chooseExcerpt = ( post ) => {
 };
 
 const ReaderExcerpt = ( { post } ) => {
+	const isDailyPrompt = !! getDailyPromptText( post );
+
 	return (
 		<AutoDirection>
 			<div
-				className="reader-excerpt__content reader-excerpt"
+				className={ classNames( 'reader-excerpt__content reader-excerpt', {
+					'reader-excerpt__daily-prompt': isDailyPrompt,
+				} ) }
 				dangerouslySetInnerHTML={ { __html: chooseExcerpt( post ) } } // eslint-disable-line react/no-danger
 			/>
 		</AutoDirection>

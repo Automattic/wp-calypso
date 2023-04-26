@@ -43,8 +43,9 @@ export class ReaderListOrganizationsListItem extends Component {
 					href={ `/read/feeds/${ site.feed_ID }` }
 					onClick={ this.handleSidebarClick }
 				>
-					<Favicon site={ site } className="reader-sidebar-site_siteicon" size={ 32 } />
-
+					<span className="reader-sidebar-site_siteicon">
+						<Favicon site={ site } size={ 32 } />
+					</span>
 					<span className="reader-sidebar-site_sitename">
 						<span className="reader-sidebar-site_nameurl">{ site.name }</span>
 						<span className="reader-sidebar-site_updated">

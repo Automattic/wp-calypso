@@ -7,3 +7,7 @@ export type DomainForm = {
 	searchResults?: DomainSuggestion[] | null;
 	hideInitialQuery?: boolean;
 };
+
+export interface ProfilerData {
+	[ key: string ]: string | number | boolean | string[] | number[];
+}

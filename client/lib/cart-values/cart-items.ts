@@ -32,6 +32,7 @@ import {
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isStarter,
+	isTriennially,
 	isTitanMail,
 	isUnlimitedSpace,
 	isUnlimitedThemes,
@@ -40,6 +41,7 @@ import {
 	isWpComFreePlan,
 	TITAN_MAIL_MONTHLY_SLUG,
 	TITAN_MAIL_YEARLY_SLUG,
+	isAkismetProduct,
 } from '@automattic/calypso-products';
 import { isWpComProductRenewal as isRenewal } from '@automattic/wpcom-checkout';
 import { getTld } from 'calypso/lib/domains';
@@ -123,16 +125,16 @@ export function hasStarterPlan( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isStarter );
 }
 
-export function hasDomainCredit( cart: ResponseCart ): boolean {
-	return cart.has_bundle_credit || hasPlan( cart );
-}
-
 export function hasMonthlyCartItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isMonthlyProduct );
 }
 
 export function hasBiennialCartItem( cart: ObjectWithProducts ): boolean {
 	return getAllCartItems( cart ).some( isBiennially );
+}
+
+export function hasTriennialCartItem( cart: ObjectWithProducts ): boolean {
+	return getAllCartItems( cart ).some( isTriennially );
 }
 
 /**
@@ -493,6 +495,15 @@ export function jetpackProductItem( slug: string ): MinimalRequestCartProduct {
 }
 
 /**
+ * Creates a new shopping cart item for an Akismet product.
+ */
+export function akismetProductItem( slug: string ): MinimalRequestCartProduct {
+	return {
+		product_slug: slug,
+	};
+}
+
+/**
  * Creates a new shopping cart item for a renewable product.
  */
 export function renewableProductItem( slug: string ): MinimalRequestCartProduct {
@@ -535,6 +546,10 @@ function createRenewalCartItemFromProduct(
 
 	if ( isJetpackProduct( product ) ) {
 		return jetpackProductItem( slug );
+	}
+
+	if ( isAkismetProduct( product ) ) {
+		return akismetProductItem( slug );
 	}
 
 	if ( isUnlimitedThemes( product ) ) {

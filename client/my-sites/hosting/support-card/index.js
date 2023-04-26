@@ -32,7 +32,7 @@ export default function SupportCard() {
 					'If you need help or have any questions, our Happiness Engineers are here when you need them.'
 				) }
 			</p>
-			<Button onClick={ () => dispatch( trackNavigateToContactSupport ) } href="/help/contact">
+			<Button onClick={ () => dispatch( trackNavigateToContactSupport() ) } href="/help/contact">
 				{ translate( 'Contact us' ) }
 			</Button>
 		</Card>

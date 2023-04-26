@@ -50,7 +50,7 @@
 		width: 8px;
 		height: 8px;
 		margin-right: 8px;
-		border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		border-radius: 50%;
 		background-color: var(--studio-green-50);
 	}
 
@@ -333,8 +333,8 @@
 }
 
 .domain-row__action-cell {
-	height: 20px;
-	margin-left: 20px;
+	margin-left: 10px;
+	height: 42px;
 
 	.ellipsis-menu {
 		float: right;
@@ -348,6 +348,10 @@
 	@include break-mobile {
 		flex: 6 6 0;
 		margin: 0;
+
+		.button.is-borderless {
+			padding: 0 15px 10px 15px;
+		}
 	}
 }
 

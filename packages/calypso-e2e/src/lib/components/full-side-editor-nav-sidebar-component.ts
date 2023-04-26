@@ -1,9 +1,10 @@
 import { Page, Locator } from 'playwright';
 
-const panel = '.edit-site-navigation-panel';
 const selectors = {
-	exitLink: `${ panel } a.edit-site-navigation-panel__back-to-dashboard`,
-	templatePartsLink: `${ panel } a:has-text("Template Parts")`,
+	exitButton: `a[aria-label="Go back to the Dashboard"]`,
+	templatePartsItem: 'button[id="/wp_template_part"]',
+	manageAllTemplatePartsItem: 'button:text("Manage all template parts")',
+	navigationScreenTitle: '.edit-site-sidebar-navigation-screen__title',
 };
 
 /**
@@ -26,15 +27,57 @@ export class FullSiteEditorNavSidebarComponent {
 	 * Clicks the Dashboard menu link to exit the editor.
 	 */
 	async exit(): Promise< void > {
-		const exitLinkLocator = this.editor.locator( selectors.exitLink );
-		await exitLinkLocator.click();
+		const exitButtonLocator = this.editor
+			.getByRole( 'region', { name: 'Navigation sidebar' } )
+			.locator( selectors.exitButton );
+		await exitButtonLocator.click();
 	}
 
 	/**
 	 * Clicks sidebar link to open the template parts list.
 	 */
-	async navigateToTemplateParts(): Promise< void > {
-		const locator = this.editor.locator( selectors.templatePartsLink );
-		await locator.click();
+	async navigateToTemplatePartsManager(): Promise< void > {
+		await this.editor.locator( selectors.templatePartsItem ).click();
+		await this.editor.locator( selectors.manageAllTemplatePartsItem ).click();
+	}
+
+	/**
+	 * Ensures that the nav sidebar is at the top level ("Design")
+	 */
+	async ensureNavigationTopLevel(): Promise< void > {
+		const waitForNavigationTopLevel = async () => {
+			await this.editor
+				.getByRole( 'region', { name: 'Navigation sidebar' } )
+				.locator( selectors.exitButton )
+				.waitFor();
+		};
+
+		const headerLocator = this.editor.locator( selectors.navigationScreenTitle );
+		await headerLocator.waitFor();
+		const headerText = await headerLocator.innerText();
+		if ( headerText === 'Design' ) {
+			return;
+		}
+
+		if (
+			headerText === 'Navigation' ||
+			headerText === 'Templates' ||
+			headerText === 'Template parts'
+		) {
+			await this.clickNavButtonByExactText( 'Back' );
+			await waitForNavigationTopLevel();
+			return;
+		}
+
+		await this.clickNavButtonByExactText( 'Back' );
+		await this.clickNavButtonByExactText( 'Back' );
+		await waitForNavigationTopLevel();
+	}
+
+	/**
+	 * Clicks on a button with the exact name.
+	 */
+	async clickNavButtonByExactText( text: string ): Promise< void > {
+		await this.editor.getByRole( 'button', { name: text, exact: true } ).click();
 	}
 }

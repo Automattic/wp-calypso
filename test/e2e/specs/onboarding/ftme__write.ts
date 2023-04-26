@@ -107,7 +107,7 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 		} );
 
 		it( 'Editor loads', async function () {
-			editorPage = new EditorPage( page, { target: 'simple' } );
+			editorPage = new EditorPage( page, { target: 'simple', blockTheme: true } );
 			await editorPage.waitUntilLoaded();
 
 			const urlRegex = `/post/${ newSiteDetails.blog_details.site_slug }`;
@@ -126,6 +126,16 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 			const locator = editorPage.getLocator( ':text("Your first post is published!")' );
 			await locator.waitFor();
 			await page.keyboard.press( 'Escape' );
+		} );
+
+		it( 'Dismiss Launchpad modal if shown', async function () {
+			const selector = '.launchpad__save-modal-buttons button';
+			const locator = editorPage.getLocator( selector );
+			try {
+				await locator.click( { timeout: 2000 } );
+			} catch {
+				// 	// noop;
+			}
 		} );
 
 		it( 'Exit editor', async function () {

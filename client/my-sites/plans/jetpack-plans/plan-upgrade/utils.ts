@@ -4,8 +4,8 @@ import {
 	TERM_MONTHLY,
 } from '@automattic/calypso-products';
 import { COMPARE_PLANS_QUERY_PARAM } from './constants';
-import type { Duration } from '../types';
 import type { PlanRecommendation } from './types';
+import type { Duration } from '../types';
 import type {
 	JetpackLegacyPlanSlug,
 	JetpackPurchasableItemSlug,

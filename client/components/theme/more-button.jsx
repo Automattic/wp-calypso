@@ -38,10 +38,11 @@ class ThemeMoreButton extends Component {
 		}
 	};
 
-	popoverAction( action, label ) {
+	popoverAction( action, label, key ) {
 		return () => {
-			action( this.props.themeId );
+			action( this.props.themeId, 'more button' );
 			this.props.onMoreButtonClick( this.props.themeId, this.props.index, 'popup_' + label );
+			this.props.onMoreButtonItemClick?.( this.props.themeId, this.props.index, key );
 		};
 	}
 
@@ -78,7 +79,7 @@ class ThemeMoreButton extends Component {
 								return (
 									<PopoverMenuItem
 										key={ `${ option.label }-geturl` }
-										action={ this.popoverAction( option.action, option.label ) }
+										action={ this.popoverAction( option.action, option.label, option.key ) }
 										href={ url }
 										target={ isOutsideCalypso( url ) ? '_blank' : null }
 									>
@@ -90,7 +91,7 @@ class ThemeMoreButton extends Component {
 								return (
 									<PopoverMenuItem
 										key={ `${ option.label }-action` }
-										action={ this.popoverAction( option.action, option.label ) }
+										action={ this.popoverAction( option.action, option.label, option.key ) }
 									>
 										{ option.label }
 									</PopoverMenuItem>
@@ -115,6 +116,7 @@ ThemeMoreButton.propTypes = {
 	// More elaborate onClick action, used for tracking.
 	// Made to not interfere with DOM onClick
 	onMoreButtonClick: PropTypes.func,
+	onMoreButtonItemClick: PropTypes.func,
 	// Options to populate the popover menu with
 	options: PropTypes.objectOf(
 		PropTypes.shape( {

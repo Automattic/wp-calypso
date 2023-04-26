@@ -12,6 +12,7 @@ import './style.scss';
 export const ItemPrice: React.FC< ItemPriceProps > = ( {
 	isIncludedInPlan,
 	isOwned,
+	isExpired,
 	item,
 	siteId,
 	isMultiSiteIncompatible,
@@ -30,9 +31,10 @@ export const ItemPrice: React.FC< ItemPriceProps > = ( {
 			<ItemPriceMessage message={ translate( 'Not available for multisite WordPress installs' ) } />
 		);
 	} else if ( isOwned ) {
-		return <ItemPriceMessage message={ translate( 'Active on your site' ) } />;
+		const message = isExpired ? translate( 'Expired' ) : translate( 'Active on your site' );
+		return <ItemPriceMessage active error={ isExpired } message={ message } />;
 	} else if ( isIncludedInPlan ) {
-		return <ItemPriceMessage message={ translate( 'Part of the current plan' ) } />;
+		return <ItemPriceMessage active message={ translate( 'Part of the current plan' ) } />;
 	}
 
 	return (

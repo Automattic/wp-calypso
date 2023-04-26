@@ -25,11 +25,16 @@ export const getThreatSignatureComponents = ( threat: Threat ): SignatureCompone
 // This should be temporary since this data should be coming from the api
 // and not something that we should change to accommodate the results.
 export const getThreatMessage = ( threat: Threat ): string | TranslateResult => {
-	const { filename, extension = { slug: 'unknown', version: 'n/a' } } = threat;
+	const { filename, extension = { slug: 'unknown', version: 'n/a' }, version } = threat;
 	const basename = filename ? filename.replace( /.*\//, '' ) : '';
 
 	switch ( getThreatType( threat ) ) {
 		case 'core':
+			return translate( 'The installed version of WordPress (%s) has a known vulnerability.', {
+				args: [ version ],
+			} );
+
+		case 'core_file':
 			return translate( 'Compromised WordPress core file: %s', {
 				args: [ basename ],
 			} );
@@ -81,7 +86,7 @@ export function getThreatType( threat: Threat ): ThreatType {
 	// We can't use `hasOwnProperty` here to test these conditions because
 	// the object might contains those keys with an undefined value
 	if ( threat.diff !== undefined ) {
-		return 'core';
+		return 'core_file';
 	}
 
 	if ( threat.context !== undefined ) {
@@ -102,12 +107,17 @@ export function getThreatType( threat: Threat ): ThreatType {
 		return 'database';
 	}
 
+	if ( 'Vulnerable.WP.Core' === threat.signature ) {
+		return 'core';
+	}
+
 	return 'none';
 }
 
 export const getThreatVulnerability = ( threat: Threat ): string | TranslateResult => {
 	switch ( getThreatType( threat ) ) {
 		case 'core':
+		case 'core_file':
 			return translate( 'Vulnerability found in WordPress' );
 
 		case 'file':

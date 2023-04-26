@@ -1,6 +1,6 @@
 # Animated Icon
 
-`<AnimatedIcon />` is a component that enables the rendering of an Adobe After Effects animation. 
+`<AnimatedIcon />` is a component that enables the rendering of an Adobe After Effects animation.
 
 The component imports the [Lottie library](https://airbnb.io/lottie/#/), which parses Adobe After Effects animations that have been exported as json with Bodymovin.
 

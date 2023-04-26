@@ -15,8 +15,8 @@ import {
 /**
  * Dispatches a request to fetch all available WordPress.com plans
  *
- * @param {object} action Redux action
- * @returns {object} original action
+ * @param {Object} action Redux action
+ * @returns {Object} original action
  */
 export const requestPlans = ( action ) =>
 	http(
@@ -31,9 +31,9 @@ export const requestPlans = ( action ) =>
 /**
  * Dispatches returned WordPress.com plan data
  *
- * @param {object} action Redux action
+ * @param {Object} action Redux action
  * @param {Array} plans raw data from plans API
- * @returns {Array<object>} Redux actions
+ * @returns {Array<Object>} Redux actions
  */
 export const receivePlans = ( action, plans ) => [
 	plansRequestSuccessAction(),
@@ -43,9 +43,9 @@ export const receivePlans = ( action, plans ) => [
 /**
  * Dispatches returned error from plans request
  *
- * @param {object} action Redux action
- * @param {object} rawError raw error from HTTP request
- * @returns {object} Redux action
+ * @param {Object} action Redux action
+ * @param {Object} rawError raw error from HTTP request
+ * @returns {Object} Redux action
  */
 export const receiveError = ( action, rawError ) =>
 	plansRequestFailureAction( rawError instanceof Error ? rawError.message : rawError );

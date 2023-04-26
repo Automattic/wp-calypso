@@ -38,8 +38,13 @@ export default function CountrySelectMenu( {
 			<FormCountrySelect
 				id={ countrySelectorId }
 				countriesList={ [
-					{ code: '', name: translate( 'Select Country' ), has_postal_codes: false },
-					{ code: '', name: '', has_postal_codes: false },
+					{
+						code: '',
+						name: translate( 'Select Country' ),
+						has_postal_codes: false,
+						vat_supported: false,
+					},
+					{ code: '', name: '', has_postal_codes: false, vat_supported: false },
 					...countriesList,
 				] }
 				onChange={ onChange }

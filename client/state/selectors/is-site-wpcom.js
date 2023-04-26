@@ -6,7 +6,7 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 /**
  * Return true if the questioned site is a WPCOM site ( Atomic or Simple ).
  *
- * @param {object} state the global state tree
+ * @param {Object} state the global state tree
  * @param {number} siteId the questioned site ID.
  * @returns {boolean} Whether the site is a WPCOM site ( Atomic or Simple ).
  */

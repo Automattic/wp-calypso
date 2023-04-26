@@ -15,9 +15,11 @@ import {
 	isWpComPlan,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	TYPE_PRO,
 	isDIFMProduct,
 	isJetpackSearchFree,
+	isAkismetProduct,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
@@ -263,11 +265,11 @@ export function getSubscriptionEndDate( purchase: Purchase ): string {
 /**
  * Adds a purchase renewal to the cart and redirects to checkout.
  *
- * @param {object} purchase - the purchase to be renewed
+ * @param {Object} purchase - the purchase to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
- * @param {object} [options] - optional information
+ * @param {Object} [options] - optional information
  * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
- * @param {object} [options.tracksProps] - where was the renew button clicked from
+ * @param {Object} [options.tracksProps] - where was the renew button clicked from
  */
 export function handleRenewNowClick(
 	purchase: Purchase,
@@ -291,10 +293,11 @@ export function handleRenewNowClick(
 				throw new Error( 'Could not find product slug for renewal.' );
 			}
 			const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
+			const serviceSlug = isAkismetProduct( { product_slug: productSlugs[ 0 ] } ) ? 'akismet/' : '';
 
-			let renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
-				siteSlug || ''
-			}`;
+			let renewalUrl = `/checkout/${ serviceSlug }${ productSlugs[ 0 ] }/renew/${
+				purchaseIds[ 0 ]
+			}/${ siteSlug || '' }`;
 			if ( options.redirectTo ) {
 				renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
 			}
@@ -312,9 +315,9 @@ export function handleRenewNowClick(
  *
  * @param {Array} purchases - the purchases to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
- * @param {object} [options] - optional information
+ * @param {Object} [options] - optional information
  * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
- * @param {object} [options.tracksProps] - where was the renew button clicked from
+ * @param {Object} [options.tracksProps] - where was the renew button clicked from
  */
 export function handleRenewMultiplePurchasesClick(
 	purchases: Purchase[],
@@ -419,6 +422,29 @@ export function isCancelable( purchase: Purchase ) {
 	return purchase.canDisableAutoRenew;
 }
 
+/**
+ * Similar to isCancelable, but doesn't rely on the purchase's cancelability
+ * Checks if auto-renew is enabled for purchase, returns true if auto-renew is ON
+ * Returns false if purchase is included in plan, purchases included with a plan can't be cancelled
+ * Returns false if purchase is expired
+ */
+
+export function canAutoRenewBeTurnedOff( purchase: Purchase ) {
+	if ( isIncludedWithPlan( purchase ) ) {
+		return false;
+	}
+
+	if ( isExpired( purchase ) ) {
+		return false;
+	}
+
+	if ( hasAmountAvailableToRefund( purchase ) ) {
+		return true;
+	}
+
+	return purchase.isAutoRenewEnabled;
+}
+
 export function isExpired( purchase: Purchase ) {
 	return 'expired' === purchase.expiryStatus;
 }
@@ -457,7 +483,7 @@ function isPendingTransfer( purchase: Purchase ) {
  * This function takes into account WordPress.com and Jetpack plans as well as
  * Jetpack products.
  *
- * @param {object} purchase - the purchase with which we are concerned
+ * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean}  True if the provided purchase is monthly, or false if not
  */
 export function isMonthlyPurchase( purchase: Purchase ): boolean {
@@ -483,7 +509,7 @@ export function isMonthlyPurchase( purchase: Purchase ): boolean {
  * "soon" are not displayed with error styling to a user who just purchased a
  * monthly subscription (which by definition will expire relatively soon).
  *
- * @param {object} purchase - the purchase with which we are concerned
+ * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean}  True if the provided purchase is a recent monthy purchase, or false if not
  */
 export function isRecentMonthlyPurchase( purchase: Purchase ): boolean {
@@ -500,7 +526,7 @@ export function isRecentMonthlyPurchase( purchase: Purchase ): boolean {
  * want to manually renew (regardless of whether they are also scheduled to
  * auto-renew).
  *
- * @param {object} purchase - the purchase with which we are concerned
+ * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean}  True if the provided purchase needs to renew soon, or false if not
  */
 export function needsToRenewSoon( purchase: Purchase ): boolean {
@@ -524,7 +550,7 @@ export function needsToRenewSoon( purchase: Purchase ): boolean {
  * subscriptions (i.e., one billing period) and within three months of
  * expiration for everything else.
  *
- * @param {object} purchase - the purchase with which we are concerned
+ * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean}  True if the provided purchase is close to expiration, or false if not
  */
 export function isCloseToExpiration( purchase: Purchase ): boolean {
@@ -552,7 +578,7 @@ export function isCloseToExpiration( purchase: Purchase ): boolean {
  * to display or highlight general help text about the refund policy to users
  * who are likely to be eligible for one.
  *
- * @param {object} purchase - the purchase with which we are concerned
+ * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean} Whether in refund period.
  */
 export function maybeWithinRefundPeriod( purchase: Purchase ): boolean {
@@ -579,7 +605,7 @@ export function maybeWithinRefundPeriod( purchase: Purchase ): boolean {
  * Checks if a purchase have a bound payment method that we can recharge.
  * This ties to the auto-renewal. At the moment, the only eligble methods are credit cards and Paypal.
  *
- * @param {object} purchase - the purchase with which we are concerned
+ * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean} if the purchase can be recharged by us through the bound payment method.
  */
 export function isRechargeable( purchase: Purchase ): boolean {
@@ -604,7 +630,7 @@ export function isRefundable( purchase: Purchase ): boolean {
  * Checks if a purchase is refundable, and that the amount available to
  * refund is greater than zero.
  *
- * @param {object} purchase - the purchase with which we are concerned
+ * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean} if the purchase is refundable with an amount greater than zero
  * @see isRefundable
  */
@@ -615,7 +641,7 @@ export function hasAmountAvailableToRefund( purchase: Purchase ): boolean {
 /**
  * Checks whether the specified purchase can be removed from a user account.
  *
- * @param {object} purchase - the purchase with which we are concerned
+ * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean} true if the purchase can be removed, false otherwise
  */
 export function isRemovable( purchase: Purchase ): boolean {
@@ -654,7 +680,7 @@ export function isPartnerPurchase( purchase: Purchase ): boolean {
  * Returns the purchase cancelable flag, as opposed to the super weird isCancelable function which
  * manually checks all kinds of stuff
  *
- * @param {object} purchase - the purchase with which we are concerned
+ * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean} true if the purchase has cancelable flag, false otherwise
  */
 export function isPurchaseCancelable( purchase: Purchase ): boolean {
@@ -666,7 +692,7 @@ export function isPurchaseCancelable( purchase: Purchase ): boolean {
  * business logic like "have we captured an auth?", "are we within 90 days of expiry?",
  * "is this part of a bundle?", etc.
  *
- * @param {object} purchase - the purchase with which we are concerned
+ * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean} true if the purchase is renewable per business logic, false otherwise
  */
 export function isRenewable( purchase: Purchase ): boolean {
@@ -719,7 +745,7 @@ export function shouldAddPaymentSourceInsteadOfRenewingNow( purchase: Purchase )
  * action (eg, a button press by user). Some purchases (eg, .fr domains)
  * are only renewable via auto-renew.
  *
- * @param {object} purchase - the purchase with which we are concerned
+ * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean} true if the purchase is capable of explicit renew
  */
 export function canExplicitRenew( purchase: Purchase ): boolean {
@@ -729,7 +755,7 @@ export function canExplicitRenew( purchase: Purchase ): boolean {
 /**
  * Checks whether the purchase can have auto-renewal turned back on
  *
- * @param {object} purchase - the purchase with which we are concerned
+ * @param {Object} purchase - the purchase with which we are concerned
  * @returns {boolean} true if the purchase can have auto renewal re-enabled
  */
 export function canReenableAutoRenewal( purchase: Purchase ): boolean {
@@ -784,7 +810,7 @@ export function subscribedWithinPastWeek( purchase: Purchase ) {
 /**
  * Returns the payment logo to display based on the payment method
  *
- * @param {object} purchase - the purchase with which we are concerned
+ * @param {Object} purchase - the purchase with which we are concerned
  * @returns {string|null} the payment logo type, or null if no payment type is set.
  */
 export function paymentLogoType( purchase: Purchase ): string | null | undefined {
@@ -840,6 +866,10 @@ export function purchaseType( purchase: Purchase ) {
 		} );
 	}
 
+	if ( purchase.productType === 'marketplace_plugin' || purchase.productType === 'saas_plugin' ) {
+		return i18n.translate( 'Plugin' );
+	}
+
 	if ( purchase.meta ) {
 		return purchase.meta;
 	}
@@ -849,6 +879,10 @@ export function purchaseType( purchase: Purchase ) {
 
 export function getRenewalPrice( purchase: Purchase ) {
 	return purchase.saleAmount || purchase.amount;
+}
+
+export function getRenewalPriceInSmallestUnit( purchase: Purchase ) {
+	return purchase.saleAmountInteger || purchase.priceInteger;
 }
 
 export function showCreditCardExpiringWarning( purchase: Purchase ) {
@@ -875,7 +909,7 @@ export function shouldRenderMonthlyRenewalOption( purchase: Purchase ) {
 
 	const plan = getPlan( purchase.productSlug );
 
-	if ( ! [ TERM_ANNUALLY, TERM_BIENNIALLY ].includes( plan?.term ?? '' ) ) {
+	if ( ! [ TERM_ANNUALLY, TERM_BIENNIALLY, TERM_TRIENNIALLY ].includes( plan?.term ?? '' ) ) {
 		return false;
 	}
 
@@ -910,8 +944,8 @@ const formatPurchasePrice = ( price: number, currency: string ) =>
  * Returns meaningful DIFM purchase details related to tiered difm prices if available
  * Returns null if this is not a DIFM purchase or the proper related price tier information is not available.
  *
- * @param {object} purchase - the purchase with which we are concerned
- * @returns {object | null} difm price tier based purchase information breakdown
+ * @param {Object} purchase - the purchase with which we are concerned
+ * @returns {Object | null} difm price tier based purchase information breakdown
  */
 export const getDIFMTieredPurchaseDetails = (
 	purchase: Purchase

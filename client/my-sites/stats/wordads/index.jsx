@@ -1,20 +1,21 @@
 import config from '@automattic/calypso-config';
+import { eye } from '@automattic/components/src/icons';
 import { Icon, chartBar, trendingUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize, translate, numberFormat } from 'i18n-calypso';
 import { find } from 'lodash';
 import moment from 'moment';
 import page from 'page';
-import { parse as parseQs, stringify as stringifyQs } from 'qs';
+import { stringify as stringifyQs } from 'qs';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -26,21 +27,17 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import PromoCards from '../promo-cards';
 import DatePicker from '../stats-date-picker';
+import StatsPageHeader from '../stats-page-header';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import WordAdsChartTabs from '../wordads-chart-tabs';
 import WordAdsEarnings from './earnings';
+import HighlightsSection from './highlights-section';
 
 import './style.scss';
 import 'calypso/my-sites/earn/ads/style.scss';
-
-function updateQueryString( query = {} ) {
-	return {
-		...parseQs( window.location.search.substring( 1 ) ),
-		...query,
-	};
-}
 
 const formatCurrency = ( value ) => {
 	return '$' + numberFormat( value, 2 );
@@ -50,22 +47,7 @@ const CHARTS = [
 	{
 		attr: 'impressions',
 		legendOptions: [ 'impressions' ],
-		icon: (
-			<svg
-				className="gridicon"
-				width="24"
-				height="24"
-				fill="none"
-				xmlns="http://www.w3.org/2000/svg"
-			>
-				<path
-					fillRule="evenodd"
-					clipRule="evenodd"
-					d="m4 13 .67.336.003-.005a2.42 2.42 0 0 1 .094-.17c.071-.122.18-.302.329-.52.298-.435.749-1.017 1.359-1.598C7.673 9.883 9.498 8.75 12 8.75s4.326 1.132 5.545 2.293c.61.581 1.061 1.163 1.36 1.599a8.29 8.29 0 0 1 .422.689l.002.005L20 13l.67-.336v-.003l-.003-.005-.008-.015-.028-.052a9.752 9.752 0 0 0-.489-.794 11.6 11.6 0 0 0-1.562-1.838C17.174 8.617 14.998 7.25 12 7.25S6.827 8.618 5.42 9.957c-.702.669-1.22 1.337-1.563 1.839a9.77 9.77 0 0 0-.516.845l-.008.015-.002.005-.001.002v.001L4 13Zm8 3a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
-					fill="#00101C"
-				/>
-			</svg>
-		),
+		icon: <Icon className="gridicon" icon={ eye } />,
 		label: translate( 'Ads Served' ),
 	},
 	{
@@ -81,6 +63,24 @@ const CHARTS = [
 		format: formatCurrency,
 	},
 ];
+
+/**
+ * Define chart properties with translatable string getters
+ * so that they can be translated on the fly. Without this,
+ * you'd have to reload the page in certain instances
+ * to see the translated strings.
+ */
+Object.defineProperty( CHARTS[ 0 ], 'label', {
+	get: () => translate( 'Ads Served' ),
+} );
+
+Object.defineProperty( CHARTS[ 1 ], 'label', {
+	get: () => translate( 'Average CPM' ),
+} );
+
+Object.defineProperty( CHARTS[ 2 ], 'label', {
+	get: () => translate( 'Revenue' ),
+} );
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 
@@ -116,8 +116,9 @@ class WordAds extends Component {
 
 	barClick = ( bar ) => {
 		this.props.recordGoogleEvent( 'WordAds Stats', 'Clicked Chart Bar' );
-		const updatedQs = stringifyQs( updateQueryString( { startDate: bar.data.period } ) );
-		page.redirect( `${ window.location.pathname }?${ updatedQs }` );
+		const updatedQs = stringifyQs( { ...this.props.context.query, startDate: bar.data.period } );
+
+		page.redirect( `${ this.props.context.pathname }?${ updatedQs }` );
 	};
 
 	onChangeLegend = ( activeLegend ) => this.setState( { activeLegend } );
@@ -126,8 +127,8 @@ class WordAds extends Component {
 		if ( ! tab.loading && tab.attr !== this.state.chartTab ) {
 			this.props.recordGoogleEvent( 'WordAds Stats', 'Clicked ' + titlecase( tab.attr ) + ' Tab' );
 			// switch the tab by navigating to route with updated query string
-			const updatedQs = stringifyQs( updateQueryString( { tab: tab.attr } ) );
-			page.show( `${ window.location.pathname }?${ updatedQs }` );
+			const updatedQs = stringifyQs( { ...this.props.context.query, tab: tab.attr } );
+			page.show( `${ this.props.context.pathname }?${ updatedQs }` );
 		}
 	};
 
@@ -138,7 +139,8 @@ class WordAds extends Component {
 	};
 
 	render() {
-		const { canAccessAds, canUpgradeToUseWordAds, date, site, siteId, slug } = this.props;
+		const { canAccessAds, canUpgradeToUseWordAds, date, isOdysseyStats, site, siteId, slug } =
+			this.props;
 
 		const { period, endOf } = this.props.period;
 
@@ -152,27 +154,17 @@ class WordAds extends Component {
 			date: endOf.format( 'YYYY-MM-DD' ),
 		};
 
-		// For period option links
-		const wordads = {
-			label: 'Ads',
-			path: '/stats/ads',
-		};
-
+		const wordads = navItems.wordads;
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ wordads.path }/{{ interval }}${ slugPath }`;
 
-		// New feature gate
-		const isNewMainChart = config.isEnabled( 'stats/new-main-chart' );
 		const statsWrapperClass = classNames( 'wordads stats-content', {
 			'is-period-year': period === 'year',
-		} );
-		const mainWrapperClass = classNames( {
-			'stats--new-wrapper': isNewMainChart,
 		} );
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<Main className={ mainWrapperClass } fullWidthLayout>
+			<Main fullWidthLayout>
 				<DocumentHead title={ translate( 'WordAds Stats' ) } />
 				<PageViewTracker
 					path={ `/stats/ads/${ period }/:site` }
@@ -180,12 +172,9 @@ class WordAds extends Component {
 				/>
 
 				<div className="stats">
-					<FormattedHeader
-						brandFont
-						className="stats__section-header"
-						headerText={ translate( 'Jetpack Stats' ) }
+					<StatsPageHeader
+						page="wordads"
 						subHeaderText={ translate( 'See how ads are performing on your site.' ) }
-						align="left"
 					/>
 
 					{ ! canAccessAds && (
@@ -209,6 +198,8 @@ class WordAds extends Component {
 								siteId={ siteId }
 								slug={ slug }
 							/>
+
+							<HighlightsSection siteId={ siteId } />
 
 							<div id="my-stats-content" className={ statsWrapperClass }>
 								<>
@@ -255,6 +246,8 @@ class WordAds extends Component {
 								</div>
 							</div>
 
+							<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="ads" slug={ slug } />
+
 							<JetpackColophon />
 						</Fragment>
 					) }
@@ -269,7 +262,9 @@ export default connect(
 	( state ) => {
 		const site = getSelectedSite( state );
 		const siteId = getSelectedSiteId( state );
+		const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 		return {
+			isOdysseyStats,
 			site,
 			siteId,
 			slug: getSelectedSiteSlug( state ),

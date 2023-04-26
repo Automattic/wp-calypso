@@ -15,6 +15,7 @@ import {
 	StripeFieldWrapper,
 	StripeErrorMessage,
 } from './form-layout-components';
+import type { WpcomCreditCardSelectors } from './store';
 import type { StripeFieldChangeInput } from './types';
 import type { StripeElementStyle } from '@stripe/stripe-js';
 
@@ -36,8 +37,9 @@ export default function CreditCardCvvField( {
 	const translate = useTranslate();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const { cardCvc: cardCvcError } = useSelect( ( select ) =>
-		select( 'wpcom-credit-card' ).getCardDataErrors()
+	const { cardCvc: cardCvcError } = useSelect(
+		( select ) => ( select( 'wpcom-credit-card' ) as WpcomCreditCardSelectors ).getCardDataErrors(),
+		[]
 	);
 	const errorMessages = getErrorMessagesForField( 'cvv' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;

@@ -2,12 +2,9 @@ import { FormStatus, useFormStatus, useIsStepActive } from '@automattic/composit
 import styled from '@emotion/styled';
 import { useSelect } from '@wordpress/data';
 import useCachedDomainContactDetails from '../hooks/use-cached-domain-contact-details';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import ContactDetailsContainer from './contact-details-container';
-import type {
-	CountryListItem,
-	ContactDetailsType,
-	ManagedContactDetails,
-} from '@automattic/wpcom-checkout';
+import type { CountryListItem, ContactDetailsType } from '@automattic/wpcom-checkout';
 
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;
@@ -30,20 +27,20 @@ export default function WPContactForm( {
 	shouldShowContactDetailsValidationErrors,
 	contactDetailsType,
 	isLoggedOutCart,
+	setShouldShowContactDetailsValidationErrors,
 }: {
 	countriesList: CountryListItem[];
 	shouldShowContactDetailsValidationErrors: boolean;
 	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
 	isLoggedOutCart: boolean;
+	setShouldShowContactDetailsValidationErrors: ( allowed: boolean ) => void;
 } ) {
-	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
-		select( 'wpcom-checkout' ).getContactInfo()
-	);
+	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
 
-	useCachedDomainContactDetails( countriesList );
+	useCachedDomainContactDetails( setShouldShowContactDetailsValidationErrors, countriesList );
 
 	return (
 		<BillingFormFields>

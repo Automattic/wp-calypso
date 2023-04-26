@@ -3,10 +3,11 @@ import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
 import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
-import { FeatureId } from '../wpcom-features/types';
 import { SiteGoal, STORE_KEY } from './constants';
+import { ProfilerData } from './types';
 import type { State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
+import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -82,6 +83,7 @@ export function* createVideoPressSite( {
 			selected_features: selectedFeatures,
 			wpcom_public_coming_soon: 1,
 			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
+			is_videopress_initial_purchase: true,
 		},
 	};
 
@@ -90,6 +92,47 @@ export function* createVideoPressSite( {
 		'createSite',
 		params
 	);
+
+	return success;
+}
+
+export function* createSenseiSite( {
+	username = '',
+	languageSlug = '',
+	visibility = Visibility.PublicNotIndexed,
+} ) {
+	const { domain, selectedDesign, selectedFonts, siteTitle, selectedFeatures }: State =
+		yield select( STORE_KEY, 'getState' );
+
+	const siteUrl = domain?.domain_name || siteTitle || username;
+	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
+	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
+
+	const success: boolean | undefined = yield dispatch( SITE_STORE, 'createSite', {
+		blog_name: siteUrl?.split( '.wordpress' )[ 0 ],
+		blog_title: blogTitle,
+		public: visibility,
+		options: {
+			site_information: {
+				title: blogTitle,
+			},
+			lang_id: lang_id,
+			site_creation_flow: 'sensei',
+			enable_fse: true,
+			theme: 'pub/course',
+			timezone_string: guessTimezone(),
+			...( selectedDesign?.template && { template: selectedDesign.template } ),
+			...( selectedFonts && {
+				font_base: selectedFonts.base,
+				font_headings: selectedFonts.headings,
+			} ),
+			use_patterns: true,
+			site_intent: 'sensei',
+			selected_features: selectedFeatures,
+			wpcom_public_coming_soon: 1,
+			...( selectedDesign && { is_blank_canvas: isBlankCanvasDesign( selectedDesign ) } ),
+		},
+	} );
 
 	return success;
 }
@@ -223,6 +266,11 @@ export const setPlanProductId = ( planProductId: number | undefined ) => ( {
 export const setPlanCartItem = ( planCartItem: MinimalRequestCartProduct | null ) => ( {
 	type: 'SET_PLAN_CART_ITEM' as const,
 	planCartItem,
+} );
+
+export const setProductCartItems = ( productCartItems: MinimalRequestCartProduct[] | null ) => ( {
+	type: 'SET_PRODUCT_CART_ITEMS' as const,
+	productCartItems,
 } );
 
 export const setRandomizedDesigns = ( randomizedDesigns: { featured: Design[] } ) => ( {
@@ -407,6 +455,21 @@ export const setHideFreePlan = ( hideFreePlan: boolean ) => ( {
 	hideFreePlan,
 } );
 
+export const setIsMigrateFromWp = ( isMigrateFromWp: boolean ) => ( {
+	type: 'SET_IS_MIGRATE_FROM_WP' as const,
+	isMigrateFromWp,
+} );
+
+export const setPluginsToVerify = ( pluginSlugs: string[] ) => ( {
+	type: 'SET_PLUGIN_SLUGS_TO_VERIFY' as const,
+	pluginSlugs,
+} );
+
+export const setProfilerData = ( profilerData: ProfilerData ) => ( {
+	type: 'SET_PROFILER_DATA' as const,
+	profilerData,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -423,6 +486,8 @@ export type OnboardAction = ReturnType<
 	| typeof setIsRedirecting
 	| typeof setLastLocation
 	| typeof setPlanProductId
+	| typeof setPluginsToVerify
+	| typeof setProfilerData
 	| typeof setRandomizedDesigns
 	| typeof setSelectedDesign
 	| typeof setSelectedStyleVariation
@@ -457,5 +522,7 @@ export type OnboardAction = ReturnType<
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
 	| typeof setHideFreePlan
+	| typeof setProductCartItems
 	| typeof setPlanCartItem
+	| typeof setIsMigrateFromWp
 >;

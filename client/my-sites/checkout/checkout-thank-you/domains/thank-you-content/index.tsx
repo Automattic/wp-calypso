@@ -105,3 +105,40 @@ export function buildDomainStepForProfessionalEmail(
 		stepCta: <StepCTA siteName={ selectedSiteSlug } email={ email } primary={ primary } />,
 	};
 }
+
+/**
+ * Redirect the user back to Launchpad after purchasing a domain
+ */
+export function buildDomainStepForLaunchpadNextSteps(
+	siteIntent: string | undefined,
+	launchpadScreen: string,
+	selectedSiteSlug: string,
+	domainType: DomainThankYouType,
+	primary: boolean
+): ThankYouNextStepProps | null {
+	if ( launchpadScreen !== 'full' || ! siteIntent || ! selectedSiteSlug ) {
+		return null;
+	}
+
+	return {
+		stepKey: `domain_${ domainType }_whats_next_launchpad_next_steps`,
+		stepDescription: translate(
+			'You are a few steps away from bringing your site to life. Check out the next steps that will help you to launch your site.'
+		),
+		stepCta: (
+			<FullWidthButton
+				onClick={ () =>
+					window.location.replace(
+						`/setup/${ siteIntent }/launchpad?siteSlug=${ selectedSiteSlug }`
+					)
+				}
+				className={ `domain-${ domainType }__thank-you-button domain-thank-you__button` }
+				primary={ primary }
+				busy={ false }
+				disabled={ false }
+			>
+				{ translate( 'Next Steps' ) }
+			</FullWidthButton>
+		),
+	};
+}

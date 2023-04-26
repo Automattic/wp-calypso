@@ -1,4 +1,8 @@
-import { JetpackTag, JETPACK_RELATED_PRODUCTS_MAP } from '@automattic/calypso-products';
+import {
+	isJetpackPlanSlug,
+	JetpackTag,
+	JETPACK_RELATED_PRODUCTS_MAP,
+} from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { useTranslate } from 'i18n-calypso';
@@ -67,14 +71,21 @@ const ProductLightbox: React.FC< Props > = ( {
 		[ onChangeProduct, dispatch, siteId ]
 	);
 
-	const { getCheckoutURL, getIsMultisiteCompatible, isMultisite, getOnClickPurchase } =
-		useStoreItemInfoContext();
+	const {
+		getCheckoutURL,
+		getIsMultisiteCompatible,
+		isMultisite,
+		getOnClickPurchase,
+		getLightBoxCtaLabel,
+		getIsProductInCart,
+		getIsOwned,
+	} = useStoreItemInfoContext();
 
 	const onCheckoutClick = useCallback( () => {
 		getOnClickPurchase( product )();
 		// Tracking when checkout is clicked
 		dispatch(
-			recordTracksEvent( 'calyspo_product_lightbox_checkout_click', {
+			recordTracksEvent( 'calypso_product_lightbox_checkout_click', {
 				site_id: siteId,
 				product_slug: product.productSlug,
 			} )
@@ -107,6 +118,11 @@ const ProductLightbox: React.FC< Props > = ( {
 	const isLargeScreen = useBreakpoint( '>782px' );
 
 	const showPricingBreakdown = includedProductSlugs?.length;
+
+	const isProductInCart =
+		! isJetpackPlanSlug( product.productSlug ) && getIsProductInCart( product );
+
+	const isOwned = getIsOwned( product );
 
 	return (
 		<Modal
@@ -164,29 +180,33 @@ const ProductLightbox: React.FC< Props > = ( {
 					<div className="product-lightbox__variants">
 						<div className="product-lightbox__variants-content">
 							{ shouldShowOptions && (
-								<div className="product-lightbox__variants-options">
-									<MultipleChoiceQuestion
-										question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
-										answers={ variantOptions }
-										selectedAnswerId={ product?.productSlug }
-										onAnswerChange={ onChangeOption }
-										shouldShuffleAnswers={ false }
-									/>
+								<div>
+									<div className="product-lightbox__variants-options">
+										<MultipleChoiceQuestion
+											question={ PRODUCT_OPTIONS_HEADER[ product?.productSlug ] }
+											answers={ variantOptions }
+											selectedAnswerId={ product?.productSlug }
+											onAnswerChange={ onChangeOption }
+											shouldShuffleAnswers={ false }
+										/>
+									</div>
 								</div>
 							) }
-							<PaymentPlan
-								isMultiSiteIncompatible={ isMultiSiteIncompatible }
-								siteId={ siteId }
-								product={ product }
-							/>
+							{ ! isOwned && (
+								<PaymentPlan
+									isMultiSiteIncompatible={ isMultiSiteIncompatible }
+									siteId={ siteId }
+									product={ product }
+								/>
+							) }
 							<Button
-								primary
+								primary={ ! isProductInCart }
 								onClick={ onCheckoutClick }
 								className="jetpack-product-card__button product-lightbox__checkout-button"
 								href={ isMultiSiteIncompatible ? '#' : getCheckoutURL( product ) }
 								disabled={ isMultiSiteIncompatible }
 							>
-								{ translate( 'Proceed to checkout' ) }
+								{ getLightBoxCtaLabel( product ) }
 							</Button>
 						</div>
 					</div>

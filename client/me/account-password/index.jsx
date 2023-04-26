@@ -1,4 +1,5 @@
 import { FormInputValidation } from '@automattic/components';
+import { generatePassword } from '@automattic/generate-password';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { debounce, flowRight as compose, isEmpty } from 'lodash';
@@ -10,7 +11,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { generatePassword } from 'calypso/lib/generate-password';
 import { protectForm } from 'calypso/lib/protect-form';
 import wp from 'calypso/lib/wp';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';

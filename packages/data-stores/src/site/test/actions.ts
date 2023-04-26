@@ -40,6 +40,22 @@ describe( 'Site Actions', () => {
 			expect( setBundledPluginSlug( siteSlug, pluginSlug ) ).toEqual( expected );
 		} );
 	} );
+	describe( 'Site Theme Actions', () => {
+		it( 'should return a RECEIVE_SITE_THEME Action', () => {
+			const siteId = 12345;
+			const theme = {
+				id: 'tazza',
+			};
+			const { receiveSiteTheme } = createActions( mockedClientCredentials );
+			const expected = {
+				type: 'RECEIVE_SITE_THEME',
+				siteId,
+				theme,
+			};
+
+			expect( receiveSiteTheme( siteId, theme ) ).toEqual( expected );
+		} );
+	} );
 	describe( 'LAUNCH_SITE Actions', () => {
 		it( 'should return a LAUNCH_SITE_START Action', () => {
 			const { launchSiteStart } = createActions( mockedClientCredentials );
@@ -405,6 +421,7 @@ describe( 'Site Actions', () => {
 			recipe: mockedRecipe,
 		};
 		const mockedStyleVariation = {
+			title: 'Default',
 			slug: 'default',
 			settings: {
 				color: {
@@ -438,7 +455,7 @@ describe( 'Site Actions', () => {
 			},
 		} );
 
-		it( 'should send style_variation_slug to themes/mine API if the design has style variation', () => {
+		it( 'should call global styles API to set the styles if the design has style variation', () => {
 			const { setDesignOnSite } = createActions( mockedClientCredentials );
 			const generator = setDesignOnSite( siteSlug, mockedDesign, {
 				styleVariation: mockedStyleVariation,
@@ -448,7 +465,6 @@ describe( 'Site Actions', () => {
 			expect( generator.next().value ).toEqual(
 				createMockedThemeSwitchApiRequest( {
 					theme: 'zoologist',
-					style_variation_slug: 'default',
 					dont_change_homepage: true,
 				} )
 			);

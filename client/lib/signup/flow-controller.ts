@@ -449,7 +449,14 @@ export default class SignupFlowController {
 		if ( typeof this._flow.destination === 'function' ) {
 			const goesThroughCheckout = this._getNeedsToGoThroughCheckout();
 			const localeSlug = getCurrentLocaleSlug( this._reduxStore.getState() );
-			return this._flow.destination( dependencies, localeSlug, goesThroughCheckout );
+			return this._flow.destination(
+				{
+					flowName: this._flowName,
+					...dependencies,
+				},
+				localeSlug,
+				goesThroughCheckout
+			);
 		}
 
 		return this._flow.destination;

@@ -12,7 +12,7 @@ import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import Notice from 'calypso/components/notice';
 import { useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
-import { useWPCOMPlugins } from 'calypso/data/marketplace/use-wpcom-plugins-query';
+import { useWPCOMPluginsList } from 'calypso/data/marketplace/use-wpcom-plugins-query';
 import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
 import { PluginsBrowserListVariant } from 'calypso/my-sites/plugins/plugins-browser-list/types';
 import {
@@ -52,7 +52,7 @@ export default function MarketplaceTest() {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const isAtomicSite = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ?? 0 ) );
 	const pluginDetails = useSelector( ( state ) => getPlugins( state, [ selectedSiteId ] ) );
-	const { data = [], isFetching } = useWPCOMPlugins( 'all' );
+	const { data = [], isFetching } = useWPCOMPluginsList( 'all' );
 
 	const {
 		data: dataSearch = [],
@@ -91,14 +91,14 @@ export default function MarketplaceTest() {
 			name: 'Pay & Install Woocommerce Subscription',
 			path: `/checkout/${ selectedSiteSlug }/woocommerce_subscriptions_monthly${
 				shouldUpgrade ? ',business' : '' // or business-monthly if user has selected monthly pricing
-			}?redirect_to=/marketplace/thank-you/woocommerce-subscriptions/${ selectedSiteSlug }#step2`,
+			}`,
 		},
 		{
 			name: 'Pay & Install Yoast Premium',
-			path: `/checkout/${ selectedSiteSlug }/business,wordpress_seo_premium_monthly?redirect_to=/marketplace/thank-you/wordpress-seo-premium-monthly/${ selectedSiteSlug }#step2`,
+			path: `/checkout/${ selectedSiteSlug }/business,wordpress_seo_premium_monthly#step2`,
 		},
 		{ name: 'Install Page', path: `/marketplace/test/install/${ selectedSiteSlug }?` },
-		{ name: 'Thank You Page', path: '/marketplace/thank-you/woocommerce' },
+		{ name: 'Thank You Page', path: '/marketplace/thank-you?plugins=woocommerce' },
 		{ name: 'Domains Page', path: '/marketplace/domain' },
 	];
 

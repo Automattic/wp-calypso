@@ -48,13 +48,8 @@ describe( DataHelper.createSuiteTitle( 'Authentication: Magic Link' ), function 
 		await page.goto( new URL( magicLinkURL ).toString() );
 	} );
 
-	it( 'Click the "Continue to WordPress.com" button', async () => {
-		// Page object for this screen is not implemented, and because it's a
-		// single-purpose screen, there really is no need to.
-		await Promise.all( [
-			page.waitForNavigation( { url: /\/home\// } ),
-			page.click( 'text=Continue to WordPress.com' ),
-		] );
+	it( 'Redirected to Home dashboard', async function () {
+		await page.waitForURL( /home/ );
 	} );
 
 	afterAll( async () => {

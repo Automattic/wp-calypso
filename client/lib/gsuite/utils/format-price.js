@@ -17,7 +17,7 @@ function applyPrecision( cost, precision ) {
  *
  * @param {number} cost - cost
  * @param {string} currencyCode - currency code to format with
- * @param {object} options - options containing precision
+ * @param {Object} options - options containing precision
  * @returns {string} - Returns a formatted price
  */
 export function formatPrice( cost, currencyCode, options = {} ) {
@@ -25,5 +25,5 @@ export function formatPrice( cost, currencyCode, options = {} ) {
 		cost = applyPrecision( cost, options.precision );
 	}
 
-	return formatCurrency( cost, currencyCode, cost % 1 > 0 ? {} : { precision: 0 } );
+	return formatCurrency( cost, currencyCode, { stripZeros: true } );
 }

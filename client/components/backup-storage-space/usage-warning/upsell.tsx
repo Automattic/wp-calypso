@@ -6,9 +6,9 @@ import PlanPrice from 'calypso/my-sites/plan-price';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
 import { SelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import { StorageUsageLevelName } from 'calypso/state/rewind/storage/types';
 import ActionButton from './action-button';
 import useUpsellInfo from './use-upsell-slug';
-import type { StorageUsageLevelName } from '../storage-usage-levels';
 import './style.scss';
 
 type UpsellProps = {
@@ -16,6 +16,8 @@ type UpsellProps = {
 	bytesUsed: number;
 	usageLevel: StorageUsageLevelName;
 	siteId: number;
+	daysOfBackupsSaved: number;
+	minDaysOfBackupsAllowed: number;
 };
 
 type UpsellPriceProps = {
@@ -24,7 +26,7 @@ type UpsellPriceProps = {
 	isPriceFetching: boolean | null;
 	currencyCode: string | null;
 };
-const UpsellPrice: React.FC< UpsellPriceProps > = ( {
+export const UpsellPrice: React.FC< UpsellPriceProps > = ( {
 	upsellSlug,
 	originalPrice,
 	isPriceFetching,
@@ -48,6 +50,8 @@ const UsageWarningUpsell: React.FC< UpsellProps > = ( {
 	bytesUsed,
 	usageLevel,
 	siteId,
+	daysOfBackupsSaved,
+	minDaysOfBackupsAllowed,
 } ) => {
 	const dispatch = useDispatch();
 	const { upsellSlug, ...priceInfo } = useUpsellInfo( siteId );
@@ -71,7 +75,12 @@ const UsageWarningUpsell: React.FC< UpsellProps > = ( {
 	}, [ dispatch, usageLevel, bytesUsed ] );
 
 	const price = <UpsellPrice { ...priceInfo } upsellSlug={ upsellSlug } />;
-	const storageUpgradeUrl = buildCheckoutURL( siteSlug, upsellSlug.productSlug, {} );
+	const storageUpgradeUrl = buildCheckoutURL( siteSlug, upsellSlug.productSlug, {
+		// When attempting to purchase a 2nd identical storage add-on product, this
+		// 'source' flag tells the shopping cart to force "purchase" another storage add-on
+		// as opposed to renew the existing one.
+		source: 'backup-storage-purchase-not-renewal',
+	} );
 
 	return (
 		<ActionButton
@@ -82,6 +91,8 @@ const UsageWarningUpsell: React.FC< UpsellProps > = ( {
 			onClick={ onClick }
 			price={ price }
 			storage={ upsellSlug.storage }
+			daysOfBackupsSaved={ daysOfBackupsSaved }
+			minDaysOfBackupsAllowed={ minDaysOfBackupsAllowed }
 		/>
 	);
 };

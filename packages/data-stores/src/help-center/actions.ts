@@ -1,48 +1,10 @@
+import { InitialEntry } from '@remix-run/router';
 import { apiFetch } from '@wordpress/data-controls';
 import { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { GeneratorReturnType } from '../mapped-types';
 import { SiteDetails } from '../site';
 import { wpcomRequest } from '../wpcom-request-controls';
-import { HAS_SEEN_PREF_KEY } from './constants';
-import type { Location, APIFetchOptions, HelpCenterSite } from './types';
-
-export const setRouterState = ( history: Location[], index: number ) =>
-	( {
-		type: 'HELP_CENTER_SET_ROUTER_STATE',
-		history,
-		index,
-	} as const );
-
-export const receiveHasSeenPromotionalPopover = ( value: boolean | undefined ) =>
-	( {
-		type: 'HELP_CENTER_SET_SEEN_PROMOTIONAL_POPOVER',
-		value,
-	} as const );
-
-export function* setHasSeenPromotionalPopover( value: boolean ) {
-	let response: { [ HAS_SEEN_PREF_KEY ]: boolean };
-	if ( canAccessWpcomApis() ) {
-		response = yield wpcomRequest( {
-			path: `me/preferences`,
-			apiNamespace: 'wpcom/v2/',
-			apiVersion: '2',
-			method: 'POST',
-			body: {
-				calypso_preferences: {
-					[ HAS_SEEN_PREF_KEY ]: value,
-				},
-			},
-		} );
-	} else {
-		response = yield apiFetch( {
-			global: true,
-			path: '/help-center/has-seen-promotion',
-			method: 'POST',
-		} as APIFetchOptions );
-	}
-
-	return receiveHasSeenPromotionalPopover( response[ HAS_SEEN_PREF_KEY ] );
-}
+import type { APIFetchOptions, HelpCenterSite } from './types';
 
 export const receiveHasSeenWhatsNewModal = ( value: boolean | undefined ) =>
 	( {
@@ -74,13 +36,6 @@ export function* setHasSeenWhatsNewModal( value: boolean ) {
 
 	return receiveHasSeenWhatsNewModal( response.has_seen_whats_new_modal );
 }
-
-export const resetRouterState = () =>
-	( {
-		type: 'HELP_CENTER_SET_ROUTER_STATE',
-		history: undefined,
-		index: undefined,
-	} as const );
 
 export const setSite = ( site: HelpCenterSite | undefined ) =>
 	( {
@@ -124,6 +79,12 @@ export const setMessage = ( message: string ) =>
 		message,
 	} as const );
 
+export const setChatTag = ( chatTag: string ) =>
+	( {
+		type: 'HELP_CENTER_SET_CHAT_TAG',
+		chatTag,
+	} as const );
+
 export const setIframe = ( iframe: null | HTMLIFrameElement ) =>
 	( {
 		type: 'HELP_CENTER_SET_IFRAME',
@@ -147,8 +108,14 @@ export const setUserDeclaredSite = ( site: SiteDetails | undefined ) =>
 		site,
 	} as const );
 
+export const setInitialRoute = ( route: InitialEntry ) =>
+	( {
+		type: 'HELP_CENTER_SET_INITIAL_ROUTE',
+		route,
+	} as const );
+
 export const startHelpCenterChat = function* ( site: HelpCenterSite, message: string ) {
-	yield setRouterState( [ { pathname: '/inline-chat' } ], 0 );
+	yield setInitialRoute( '/inline-chat' );
 	yield setSite( site );
 	yield setMessage( message );
 	yield setShowHelpCenter( true );
@@ -163,21 +130,16 @@ export type HelpCenterAction =
 	| ReturnType<
 			| typeof setSite
 			| typeof setSubject
-			| typeof setRouterState
-			| typeof resetRouterState
 			| typeof resetStore
-			| typeof receiveHasSeenPromotionalPopover
 			| typeof receiveHasSeenWhatsNewModal
 			| typeof setMessage
+			| typeof setChatTag
 			| typeof setUserDeclaredSite
 			| typeof setUserDeclaredSiteUrl
 			| typeof resetIframe
 			| typeof setIframe
 			| typeof setUnreadCount
 			| typeof setIsMinimized
+			| typeof setInitialRoute
 	  >
-	| GeneratorReturnType<
-			| typeof setHasSeenPromotionalPopover
-			| typeof setShowHelpCenter
-			| typeof setHasSeenWhatsNewModal
-	  >;
+	| GeneratorReturnType< typeof setShowHelpCenter | typeof setHasSeenWhatsNewModal >;

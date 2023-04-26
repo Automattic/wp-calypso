@@ -42,7 +42,7 @@ export default function UpdateCompanyDetailsForm() {
 			let message = error.message;
 
 			if ( error.code === 'rest_invalid_param' && typeof error?.data?.params !== 'undefined' ) {
-				message = translateInvalidPartnerParameterError( error.data.params );
+				message = translateInvalidPartnerParameterError( error.data.params, error.data.details );
 			}
 
 			dispatch( errorNotice( message, { id: notificationId } ) );

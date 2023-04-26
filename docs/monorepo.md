@@ -187,15 +187,20 @@ It is recommended you create a git tag with the package and version you are abou
 
 ```
 git tag "@automattic/calypso-build@6.1.0"
+# You can confirm with "y" when it asks you to push to trunk. This is ok since
+# you aren't pushing commits, and GitHub will protect against that scenario.
 git push --tags
 ```
 
 ### Publishing a package
 
-Once the above steps (checkout `trunk`, get `@automattic` permissions and package tagging) are done, you are ready to publish the package:
+Once the above steps (checkout `trunk`, get `@automattic` permissions, and package tagging) are done, you are ready to publish the package. Depending on the name of the package (found in the package's `package.json` file), you'll need to log into a different scope:
 
-First you need to authenticate with the registry: `yarn npm login --scope automattic`. To verify it worked you can use `yarn npm whoami --scope automattic`
+- If the package name is prefixed with `@automattic` (e.g. `@automattic/components`), run `yarn npm login --scope automattic`.
+- If the package name is not prefixed (e.g. `eslint-plugin-wpcalypso`), run `yarn npm login`.
 
-Then you are ready to publish it: `cd packages/<your-package> && yarn npm publish`.
+To verify it worked, use `yarn npm whoami --scope automattic` or `yarn npm whoami`.
+
+To publish the package, run: `cd packages/<your-package> && yarn npm publish`.
 
 Done!

@@ -1,5 +1,6 @@
 import { PriceTierEntry } from '@automattic/calypso-products';
-
+import { useTranslate } from 'i18n-calypso';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 export interface Purchase {
 	active?: boolean;
 	amount: number;
@@ -43,24 +44,102 @@ export interface Purchase {
 	priceText: string;
 	priceTierList?: Array< PurchasePriceTier >;
 	productDisplayPrice: string;
+
+	/**
+	 * The renewal price of the purchase in the currency's smallest unit.
+	 */
+	priceInteger: number;
+
 	productId: number;
 	productName: string;
 	productSlug: string;
 	productType: string;
 	purchaseRenewalQuantity: number | null;
+
+	/**
+	 * The refund amount for the purchase, not including bundled domains, as a
+	 * float.
+	 *
+	 * Note that this currency may differ from the purchase's currency, so use
+	 * `totalRefundCurrency` when formatting!
+	 *
+	 * @deprecated use `refundInteger`.
+	 */
 	refundAmount: number;
+
+	/**
+	 * The refund amount for the purchase, not including bundled domains, as an
+	 * integer in the currency's smallest unit.
+	 *
+	 * Note that this currency may differ from the purchase's currency, so use
+	 * `totalRefundCurrency` when formatting!
+	 */
+	refundInteger: number;
+
 	refundOptions: RefundOptions | null;
 	refundPeriodInDays: number;
+
+	/**
+	 * The refund amount for the purchase, not including bundled domains, as a
+	 * formatted string.
+	 *
+	 * Note that this currency may differ from the purchase's currency, so use
+	 * `totalRefundCurrency` when formatting!
+	 *
+	 * @deprecated use `refundInteger`.
+	 */
 	refundText: string;
+
 	regularPriceText: string;
+
+	/**
+	 * The renewal price of the purchase in the currency's smallest unit when its
+	 * introductory offer is complete.
+	 */
+	regularPriceInteger: number;
+
 	renewDate: string;
 	saleAmount?: number;
+	saleAmountInteger?: number;
 	siteId: number;
 	siteName: string;
 	subscribedDate: string;
 	subscriptionStatus: 'active' | 'inactive';
+
+	/**
+	 * The refund amount, including bundled domains, in the currency's smallest
+	 * unit.
+	 *
+	 * Note that this currency may differ from the purchase's currency, so use
+	 * `totalRefundCurrency` when formatting!
+	 */
+	totalRefundInteger: number;
+
+	/**
+	 * The refund amount, including bundled domains, for the purchase as a float.
+	 *
+	 * Note that this currency may differ from the purchase's currency, so use
+	 * `totalRefundCurrency` when formatting!
+	 *
+	 * @deprecated use `totalRefundInteger`.
+	 */
 	totalRefundAmount: number;
+
+	/**
+	 * The refund amount currency.
+	 *
+	 * Note that this currency may differ from the purchase's currency!
+	 */
+	totalRefundCurrency: string;
+
+	/**
+	 * The refund amount for the purchase, including bundled domains, as a
+	 * formatted string.
+	 *
+	 * @deprecated use `totalRefundInteger` and `formatCurrency()`.
+	 */
 	totalRefundText: string;
+
 	userId: number;
 	userIsOwner?: boolean;
 	partnerKeyId: number | undefined;
@@ -139,16 +218,22 @@ export interface RawPurchase {
 	product_slug: string;
 	product_type: string;
 	product_display_price: string;
+	price_integer: number;
 	total_refund_amount: number | undefined;
+	total_refund_currency: string;
+	total_refund_integer: number;
 	total_refund_text: string;
 	refund_amount: number;
+	refund_integer: number;
 	refund_text: string;
 	refund_currency_symbol: string;
 	refund_options: RefundOptions | null;
 	refund_period_in_days: number;
 	regular_price_text: string;
+	regular_price_integer: number;
 	renew_date: string;
 	sale_amount: number | undefined;
+	sale_amount_integer: number | undefined;
 	blog_id: number | string;
 	blogname: string;
 	subscribed_date: string;
@@ -269,3 +354,23 @@ export interface MembershipSubscriptionsSite {
 	domain: string;
 	subscriptions: MembershipSubscription[];
 }
+
+export interface Owner {
+	ID: string;
+	display_name: string;
+}
+export type GetChangePaymentMethodUrlFor = ( siteSlug: string, purchase: Purchase ) => string;
+export type GetManagePurchaseUrlFor = ( siteSlug: string, attachedToPurchaseId: string ) => string;
+
+export type RenderRenewsOrExpiresOn = ( args: {
+	moment: ReturnType< typeof useLocalizedMoment >;
+	purchase: Purchase;
+	siteSlug: string | undefined;
+	translate: ReturnType< typeof useTranslate >;
+	getManagePurchaseUrlFor: GetManagePurchaseUrlFor;
+} ) => string;
+
+export type RenderRenewsOrExpiresOnLabel = ( args: {
+	purchase: Purchase;
+	translate: ReturnType< typeof useTranslate >;
+} ) => string;

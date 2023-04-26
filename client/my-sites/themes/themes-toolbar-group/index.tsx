@@ -27,6 +27,7 @@ const ThemesToolbarGroup: React.FC< ThemesToolbarGroupProps > = ( {
 		<ResponsiveToolbarGroup
 			className="themes-toolbar-group"
 			initialActiveIndex={ activeIndex }
+			forceSwipe={ 'undefined' === typeof window }
 			onClick={ ( index: number ) => onSelect( items[ index ]?.key ) }
 		>
 			{ items.map( ( item ) => (

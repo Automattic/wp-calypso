@@ -22,8 +22,8 @@ const ERROR_NOTICE_ID = 'AL_REW_RESTORESTATUS_ERR';
  * replaced by the `freshness` system in the data layer
  * when it arrives. For now, it's statefully ugly.
  *
- * @param  {object} action Redux action
- * @returns {object}        Redux action
+ * @param  {Object} action Redux action
+ * @returns {Object | undefined} Redux action
  */
 const fetchProgress = ( action ) => {
 	const { restoreId, siteId } = action;

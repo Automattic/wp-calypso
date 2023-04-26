@@ -1,6 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
-import { Button, Dropdown, MenuItemsChoice } from '@wordpress/components';
+import { Button, Dropdown, MenuItemsChoice, NavigableMenu } from '@wordpress/components';
 import { useMediaQuery } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -79,6 +79,12 @@ export const SitesSortingDropdown = ( {
 					aria-label={ sprintf( __( 'Sorting by %s. Switch sorting mode' ), currentSortingLabel ) }
 					onClick={ onToggle }
 					aria-expanded={ isOpen }
+					onKeyDown={ ( event: React.KeyboardEvent ) => {
+						if ( ! isOpen && event.code === 'ArrowDown' ) {
+							event.preventDefault();
+							onToggle();
+						}
+					} }
 				>
 					{
 						// translators: %s is the current sorting mode.
@@ -87,14 +93,16 @@ export const SitesSortingDropdown = ( {
 				</SortingButton>
 			) }
 			renderContent={ ( { onClose } ) => (
-				<MenuItemsChoice
-					value={ currentSortingValue }
-					onSelect={ ( value: typeof choices[ 0 ][ 'value' ] ) => {
-						onSitesSortingChange( parseSitesSorting( value ) );
-						onClose();
-					} }
-					choices={ choices }
-				/>
+				<NavigableMenu cycle={ false }>
+					<MenuItemsChoice
+						value={ currentSortingValue }
+						onSelect={ ( value: ( typeof choices )[ 0 ][ 'value' ] ) => {
+							onSitesSortingChange( parseSitesSorting( value ) );
+							onClose();
+						} }
+						choices={ choices }
+					/>
+				</NavigableMenu>
 			) }
 		/>
 	);

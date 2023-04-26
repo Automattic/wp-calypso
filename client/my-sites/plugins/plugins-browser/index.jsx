@@ -34,10 +34,9 @@ import PluginsSearchResultPage from '../plugins-search-results-page';
 
 import './style.scss';
 
-const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews } ) => {
+const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isLoggedIn } ) => {
 	const analyticsPageTitle = 'Plugin Browser' + category ? ` > ${ category }` : '';
 	let analyticsPath = category ? `/plugins/browse/${ category }` : '/plugins';
-	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	if ( selectedSiteId ) {
 		analyticsPath += '/:site';
@@ -63,6 +62,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 		referenceRef: navigationHeaderRef,
 	} = useScrollAboveElement();
 	const searchRef = useRef( null );
+	const categoriesRef = useRef();
 	//  another temporary solution until phase 4 is merged
 	const [ isFetchingPluginsBySearchTerm, setIsFetchingPluginsBySearchTerm ] = useState( false );
 
@@ -83,6 +83,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
 	const sites = useSelector( getSelectedOrAllSitesJetpackCanManage );
+	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const { __, hasTranslation } = useI18n();
 	const locale = useLocale();
@@ -125,9 +126,8 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	if ( ! isRequestingSitesData && noPermissionsError ) {
 		return <NoPermissionsError title={ __( 'Plugins' ) } />;
 	}
-
 	return (
-		<MainComponent wideLayout>
+		<MainComponent wideLayout isLoggedOut={ ! isLoggedIn }>
 			<QueryProductsList persist />
 			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QuerySitePurchases siteId={ selectedSite?.ID } />
@@ -135,6 +135,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				category={ category }
 				selectedSiteId={ selectedSite?.ID }
 				trackPageViews={ trackPageViews }
+				isLoggedIn={ isLoggedIn }
 			/>
 			<DocumentHead title={ __( 'Plugins' ) } />
 
@@ -150,6 +151,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 			<JetpackDisconnectedNotice />
 			<SearchBoxHeader
 				searchRef={ searchRef }
+				categoriesRef={ categoriesRef }
 				stickySearchBoxRef={ searchHeaderRef }
 				isSticky={ isAboveElement }
 				searchTerm={ search }
@@ -159,11 +161,21 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 						? __( 'Flex your site’s features with plugins' )
 						: __( 'Plugins you need to get your projects done' )
 				}
+				subtitle={
+					! isLoggedIn &&
+					( 'en' === locale ||
+						hasTranslation(
+							'Add new functionality and integrations to your site with thousands of plugins.'
+						) ) &&
+					__( 'Add new functionality and integrations to your site with thousands of plugins.' )
+				}
 				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
 				renderTitleInH1={ ! category }
 			/>
 
-			<Categories selected={ category } noSelection={ search ? true : false } />
+			<div ref={ categoriesRef }>
+				<Categories selected={ category } noSelection={ search ? true : false } />
+			</div>
 			<div className="plugins-browser__main-container">{ renderList() }</div>
 			{ ! category && ! search && <EducationFooter /> }
 		</MainComponent>

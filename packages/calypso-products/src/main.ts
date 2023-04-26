@@ -2,6 +2,7 @@ import {
 	TERM_MONTHLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
+	TERM_TRIENNIALLY,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
 	TYPE_PRO,
@@ -22,7 +23,15 @@ import {
 	FEATURE_JETPACK_SEARCH,
 	FEATURE_JETPACK_SEARCH_MONTHLY,
 	TYPE_P2_PLUS,
+	TYPE_ENTERPRISE_GRID_WPCOM,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOOEXPRESS_PLUS,
+	WOO_EXPRESS_PLANS,
 } from './constants';
+import { featureGroups, wooExpressFeatureGroups } from './feature-group-plan-map';
 import { PLANS_LIST } from './plans-list';
 import {
 	isJetpackBusiness,
@@ -42,11 +51,20 @@ import type {
 	PlanSlug,
 	WithCamelCaseSlug,
 	WithSnakeCaseSlug,
+	FeatureGroupMap,
 } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 export function getPlans(): Record< string, Plan > {
 	return PLANS_LIST;
+}
+
+export function getPlanFeaturesGrouped(): Partial< FeatureGroupMap > {
+	return featureGroups;
+}
+
+export function getWooExpressFeaturesGrouped(): Partial< FeatureGroupMap > {
+	return wooExpressFeatureGroups;
 }
 
 export function getPlansSlugs(): string[] {
@@ -104,8 +122,24 @@ export function getPlanClass( planKey: string ): string {
 		return 'is-business-plan';
 	}
 
+	if ( isWooExpressPlusPlan( planKey ) ) {
+		return 'is-wooexpress-plus-plan';
+	}
+
+	if ( isWooExpressMediumPlan( planKey ) ) {
+		return 'is-wooexpress-medium-plan';
+	}
+
+	if ( isWooExpressSmallPlan( planKey ) ) {
+		return 'is-wooexpress-small-plan';
+	}
+
 	if ( isEcommercePlan( planKey ) ) {
 		return 'is-ecommerce-plan';
+	}
+
+	if ( isWpcomEnterpriseGridPlan( planKey ) ) {
+		return 'is-wpcom-enterprise-grid-plan';
 	}
 
 	if ( isProPlan( planKey ) ) {
@@ -239,6 +273,14 @@ export function getBiennialPlan( planSlug: string ): string {
 }
 
 /**
+ * Returns the triennial slug which corresponds to the provided slug or "" if the slug is
+ * not recognized or cannot be converted.
+ */
+export function getTriennialPlan( planSlug: string ): string {
+	return findFirstSimilarPlanKey( planSlug, { term: TERM_TRIENNIALLY } ) || '';
+}
+
+/**
  * Returns true if plan "types" match regardless of their interval.
  *
  * For example (fake plans):
@@ -278,6 +320,28 @@ export function isBloggerPlan( planSlug: string ): boolean {
 
 export function isFreePlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { type: TYPE_FREE } );
+}
+
+// Checks if it is an Enterprise plan (a.k.a VIP), introduced as part of pdgrnI-1Qp-p2.
+// This is not a real plan, but added to display Enterprise in the pricing grid.
+export function isWpcomEnterpriseGridPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { type: TYPE_ENTERPRISE_GRID_WPCOM, group: GROUP_WPCOM } );
+}
+
+export function isWooExpressPlusPlan( planSlug: string ): boolean {
+	return PLAN_WOOEXPRESS_PLUS === planSlug;
+}
+
+export function isWooExpressMediumPlan( planSlug: string ): boolean {
+	return [ PLAN_WOOEXPRESS_MEDIUM, PLAN_WOOEXPRESS_MEDIUM_MONTHLY ].includes( planSlug );
+}
+
+export function isWooExpressSmallPlan( planSlug: string ): boolean {
+	return [ PLAN_WOOEXPRESS_SMALL, PLAN_WOOEXPRESS_SMALL_MONTHLY ].includes( planSlug );
+}
+
+export function isWooExpressPlan( planSlug: string ): boolean {
+	return ( WOO_EXPRESS_PLANS as ReadonlyArray< string > ).includes( planSlug );
 }
 
 export function isFlexiblePlan( planSlug: string ): boolean {
@@ -346,6 +410,10 @@ export function isWpComAnnualPlan( planSlug: string ): boolean {
 
 export function isWpComBiennialPlan( planSlug: string ): boolean {
 	return planMatches( planSlug, { term: TERM_BIENNIALLY, group: GROUP_WPCOM } );
+}
+
+export function isWpComTriennialPlan( planSlug: string ): boolean {
+	return planMatches( planSlug, { term: TERM_TRIENNIALLY, group: GROUP_WPCOM } );
 }
 
 export function isWpComMonthlyPlan( planSlug: string ): boolean {
@@ -481,6 +549,8 @@ export function getBillingMonthsForTerm( term: string ): number {
 		return 12;
 	} else if ( term === TERM_BIENNIALLY ) {
 		return 24;
+	} else if ( term === TERM_TRIENNIALLY ) {
+		return 36;
 	}
 	throw new Error( `Unknown term: ${ term }` );
 }
@@ -492,6 +562,21 @@ export function getBillingYearsForTerm( term: string ): number {
 		return 1;
 	} else if ( term === TERM_BIENNIALLY ) {
 		return 2;
+	} else if ( term === TERM_TRIENNIALLY ) {
+		return 3;
+	}
+	throw new Error( `Unknown term: ${ term }` );
+}
+
+export function getBillingTermForMonths( term: number ): string {
+	if ( term === 1 ) {
+		return TERM_MONTHLY;
+	} else if ( term === 12 ) {
+		return TERM_ANNUALLY;
+	} else if ( term === 24 ) {
+		return TERM_BIENNIALLY;
+	} else if ( term === 36 ) {
+		return TERM_TRIENNIALLY;
 	}
 	throw new Error( `Unknown term: ${ term }` );
 }
@@ -522,7 +607,8 @@ export function applyTestFiltersToPlansList(
 	planName: string | Plan,
 	abtest: string | undefined,
 	extraArgs: Record< string, string | boolean[] > = {}
-): Plan & Pick< WPComPlan, 'getPlanCompareFeatures' > {
+): Plan &
+	Pick< WPComPlan, 'getPlanCompareFeatures' | 'getAnnualPlansOnlyFeatures' | 'getPlanTagline' > {
 	const plan = getPlan( planName );
 	if ( ! plan ) {
 		throw new Error( `Unknown plan: ${ planName }` );
@@ -602,6 +688,8 @@ export function getPlanTermLabel(
 			return translate( 'Annual subscription' );
 		case TERM_BIENNIALLY:
 			return translate( 'Two year subscription' );
+		case TERM_TRIENNIALLY:
+			return translate( 'Three year subscription' );
 	}
 }
 
@@ -633,7 +721,14 @@ export const getPopularPlanSpec = ( {
 
 	const group = GROUP_WPCOM;
 
-	if ( flowName === 'link-in-bio' ) {
+	if ( flowName === 'hosting' ) {
+		return {
+			type: TYPE_BUSINESS,
+			group,
+		};
+	}
+
+	if ( flowName === 'link-in-bio' || flowName === 'link-in-bio-tld' ) {
 		return {
 			type: TYPE_PERSONAL,
 			group,
@@ -683,10 +778,13 @@ export const chooseDefaultCustomerType = ( {
 	const businessPlanSlugs = [
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PREMIUM } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
+		findPlansKeys( { group, term: TERM_TRIENNIALLY, type: TYPE_PREMIUM } )[ 0 ],
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_BUSINESS } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
+		findPlansKeys( { group, term: TERM_TRIENNIALLY, type: TYPE_BUSINESS } )[ 0 ],
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
+		findPlansKeys( { group, term: TERM_TRIENNIALLY, type: TYPE_ECOMMERCE } )[ 0 ],
 		findPlansKeys( { group, term: TERM_ANNUALLY, type: TYPE_PRO } )[ 0 ],
 		findPlansKeys( { group, term: TERM_BIENNIALLY, type: TYPE_PRO } )[ 0 ],
 	]

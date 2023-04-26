@@ -108,10 +108,4 @@
 	font-size: 1.5rem;
 	line-height: 1.5;
 	color: var(--color-neutral-70);
-
-	&::first-letter {
-		color: var(--color-text-subtle);
-		vertical-align: super;
-		font-size: 0.75rem;
-	}
 }

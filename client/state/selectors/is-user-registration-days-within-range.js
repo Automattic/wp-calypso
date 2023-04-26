@@ -5,7 +5,7 @@ const DAY_IN_MS = 1000 * 60 * 60 * 24;
 /**
  * Returns true if the number of days the current user has been registered for falls within the specied range of values.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {Date|null} refDate Date for determination of elapsed days since registration
  * @param {number} from Lower bound on days
  * @param {number} to Upper bound on days

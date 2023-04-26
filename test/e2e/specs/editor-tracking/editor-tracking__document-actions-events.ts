@@ -34,12 +34,16 @@ describe(
 				await testAccount.authenticate( page );
 
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
 			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Open the document actions dropdown', async function () {
@@ -51,6 +55,10 @@ describe(
 					'wpcom_site_editor_document_actions_dropdown_open'
 				);
 				expect( eventDidFire ).toBe( true );
+			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
 			} );
 		} );
 
@@ -66,12 +74,16 @@ describe(
 				testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
 			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Open the document actions dropdown', async function () {
@@ -95,6 +107,10 @@ describe(
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( 'wpcom_site_editor_document_actions_revert_click', function () {
@@ -109,12 +125,16 @@ describe(
 				testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
 			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Customize the current template', async function () {
@@ -144,6 +164,10 @@ describe(
 				);
 				expect( eventDidFire ).toBe( true );
 			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
+			} );
 		} );
 
 		describe( 'wpcom_site_editor_document_actions_show_all_click', function () {
@@ -158,12 +182,16 @@ describe(
 				testAccount = new TestAccount( accountName );
 				await testAccount.authenticate( page );
 				editorTracksEventManager = new EditorTracksEventManager( page );
-				fullSiteEditorPage = new FullSiteEditorPage( page, { target: features.siteType } );
+				fullSiteEditorPage = new FullSiteEditorPage( page );
 			} );
 
 			it( 'Visit the site editor', async function () {
-				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: false } ) );
+				await fullSiteEditorPage.visit( testAccount.getSiteURL( { protocol: true } ) );
 				await fullSiteEditorPage.prepareForInteraction( { leaveWithoutSaving: true } );
+			} );
+
+			it( 'Close the navigation sidebar', async function () {
+				await fullSiteEditorPage.closeNavSidebar();
 			} );
 
 			it( 'Open the document actions dropdown', async function () {
@@ -181,6 +209,10 @@ describe(
 					'wpcom_site_editor_document_actions_show_all_click'
 				);
 				expect( eventDidFire ).toBe( true );
+			} );
+
+			it( 'Close the page', async function () {
+				await page.close();
 			} );
 		} );
 	}

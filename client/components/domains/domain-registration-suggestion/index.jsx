@@ -1,4 +1,5 @@
 import { Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -19,7 +20,13 @@ import {
 	hasDomainInCart,
 	isPaidDomain,
 } from 'calypso/lib/cart-values/cart-items';
-import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'calypso/lib/domains';
+import {
+	getDomainPrice,
+	getDomainSalePrice,
+	getTld,
+	isHstsRequired,
+	isDotGayNoticeRequired,
+} from 'calypso/lib/domains';
 import { HTTPS_SSL } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
@@ -95,7 +102,7 @@ class DomainRegistrationSuggestion extends Component {
 	}
 
 	onButtonClick = () => {
-		const { suggestion, railcarId } = this.props;
+		const { suggestion, railcarId, uiPosition } = this.props;
 
 		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			return;
@@ -108,7 +115,7 @@ class DomainRegistrationSuggestion extends Component {
 			} );
 		}
 
-		this.props.onButtonClick( suggestion );
+		this.props.onButtonClick( suggestion, uiPosition );
 	};
 
 	isUnavailableDomain = ( domain ) => {
@@ -224,6 +231,7 @@ class DomainRegistrationSuggestion extends Component {
 	renderDomain() {
 		const {
 			showHstsNotice,
+			showDotGayNotice,
 			suggestion: { domain_name: domain },
 		} = this.props;
 
@@ -237,19 +245,54 @@ class DomainRegistrationSuggestion extends Component {
 		return (
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">
-					{ title } { showHstsNotice && this.renderInfoBubble() }
+					{ title } { ( showHstsNotice || showDotGayNotice ) && this.renderInfoBubble() }
 				</h3>
 				{ this.renderBadges() }
 			</div>
 		);
 	}
 
-	renderInfoBubble() {
+	getHstsMessage() {
 		const {
-			isFeatured,
-			suggestion: { domain_name: domain },
 			translate,
+			suggestion: { domain_name: domain },
 		} = this.props;
+
+		return translate(
+			'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
+				'to host a website. When you host this domain at WordPress.com an SSL ' +
+				'certificate is included. {{a}}Learn more{{/a}}.',
+			{
+				args: {
+					tld: '.' + getTld( domain ),
+				},
+				components: {
+					a: (
+						<a
+							href={ localizeUrl( HTTPS_SSL ) }
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ ( event ) => {
+								event.stopPropagation();
+							} }
+						/>
+					),
+					strong: <strong />,
+				},
+			}
+		);
+	}
+
+	getDotGayMessage() {
+		const { translate } = this.props;
+
+		return translate(
+			'Any anti-LGBTQ content is prohibited and can result in registration termination. The registry will donate 20% of all registration revenue to LGBTQ non-profit organizations.'
+		);
+	}
+
+	renderInfoBubble() {
+		const { isFeatured, showHstsNotice, showDotGayNotice } = this.props;
 
 		const infoPopoverSize = isFeatured ? 22 : 18;
 		return (
@@ -258,29 +301,8 @@ class DomainRegistrationSuggestion extends Component {
 				iconSize={ infoPopoverSize }
 				position="right"
 			>
-				{ translate(
-					'All domains ending in {{strong}}%(tld)s{{/strong}} require an SSL certificate ' +
-						'to host a website. When you host this domain at WordPress.com an SSL ' +
-						'certificate is included. {{a}}Learn more{{/a}}.',
-					{
-						args: {
-							tld: '.' + getTld( domain ),
-						},
-						components: {
-							a: (
-								<a
-									href={ localizeUrl( HTTPS_SSL ) }
-									target="_blank"
-									rel="noopener noreferrer"
-									onClick={ ( event ) => {
-										event.stopPropagation();
-									} }
-								/>
-							),
-							strong: <strong />,
-						},
-					}
-				) }
+				{ ( showHstsNotice && this.getHstsMessage() ) ||
+					( showDotGayNotice && this.getDotGayMessage() ) }
 			</InfoPopover>
 		);
 	}
@@ -411,6 +433,11 @@ const mapStateToProps = ( state, props ) => {
 
 	if ( isPremium ) {
 		productCost = props.premiumDomain?.cost;
+		if ( props.premiumDomain?.sale_cost ) {
+			productSaleCost = formatCurrency( props.premiumDomain?.sale_cost, currentUserCurrencyCode, {
+				stripZeros,
+			} );
+		}
 	} else {
 		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
 		productSaleCost = getDomainSalePrice(
@@ -423,6 +450,7 @@ const mapStateToProps = ( state, props ) => {
 
 	return {
 		showHstsNotice: isHstsRequired( productSlug, productsList ),
+		showDotGayNotice: isDotGayNoticeRequired( productSlug, productsList ),
 		productCost,
 		productSaleCost,
 		flowName,

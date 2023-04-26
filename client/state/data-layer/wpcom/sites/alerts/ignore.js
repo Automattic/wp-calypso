@@ -1,9 +1,9 @@
 import i18n from 'i18n-calypso';
 import { JETPACK_SITE_ALERT_THREAT_IGNORE, REWIND_STATE_UPDATE } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 export const request = ( action ) => {

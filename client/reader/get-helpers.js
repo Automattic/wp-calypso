@@ -89,7 +89,7 @@ export const getSiteAuthorName = ( site ) => {
 /**
  * Check if route or feed/blog is eligible to use seen posts feature (unseen counts and mark as seen)
  *
- * @param {object} flags eligibility data
+ * @param {Object} flags eligibility data
  * @param {string} flags.currentRoute current route
  * @param {boolean} flags.isWPForTeamsItem id if exists
  * @param {boolean} flags.hasOrganization id if exists

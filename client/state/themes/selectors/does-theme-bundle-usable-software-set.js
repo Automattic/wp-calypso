@@ -7,7 +7,7 @@ import 'calypso/state/themes/init';
  * Returns true if the theme contains a software bundle (like woo-on-plans) and
  * the site specified has the features needed to use the software.
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {string} themeId Theme ID
  * @param {number} siteId Site ID
  * @returns {boolean} True if the theme contains a software bundle that is usable by the specified site.

@@ -1,29 +1,37 @@
 /* eslint-disable no-console */
 import { Button, FormInputValidation } from '@automattic/components';
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, ECOMMERCE_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import React from 'react';
+import React, { useEffect } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormInput from 'calypso/components/forms/form-text-input';
+import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import useSiteVerticalsFeatured from 'calypso/data/site-verticals/use-site-verticals-featured';
 import { useCountriesAndStates } from 'calypso/jetpack-cloud/sections/partner-portal/company-details-form/hooks/use-countries-and-states';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ONBOARD_STORE, USER_STORE } from '../../../../stores';
 import type { Step } from '../../types';
+import type { UserSelect } from '@automattic/data-stores';
 import './style.scss';
 
-const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
+const StoreProfiler: Step = function StoreProfiler( { navigation, flow } ) {
 	const { goBack, goNext, submit } = navigation;
 	const [ siteTitle, setSiteTitle ] = React.useState( '' );
 	const [ verticalId, setVerticalId ] = React.useState( '' );
 	const [ storeCountryCode, setStoreCountryCode ] = React.useState( '' );
 	const translate = useTranslate();
-	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
-	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
+	const currentUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getCurrentUser(),
+		[]
+	);
+	const newUser = useSelect(
+		( select ) => ( select( USER_STORE ) as UserSelect ).getNewUser(),
+		[]
+	);
 	const {
 		setSiteTitle: saveSiteTitleToStore,
 		setVerticalId: saveVerticalIdToStore,
@@ -58,6 +66,15 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 			</option>
 		) );
 	}, [ countriesAndStates ] );
+
+	const region = useGeoLocationQuery()?.data;
+
+	useEffect( () => {
+		if ( ! storeCountryCode && region ) {
+			setStoreCountryCode( region?.country_short );
+		}
+	}, [ region ] );
+
 	const isLoading = verticals.isLoading || ! countriesAndStates;
 
 	const handleSubmit = async ( event: React.FormEvent ) => {
@@ -151,7 +168,9 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 		<StepContainer
 			stepName="store-profiler"
 			skipButtonAlign="top"
+			shouldHideNavButtons={ flow === ECOMMERCE_FLOW }
 			goBack={ goBack }
+			hideBack={ true }
 			goNext={ goNext }
 			formattedHeader={
 				<FormattedHeader
@@ -165,6 +184,7 @@ const StoreProfiler: Step = function StoreProfiler( { navigation } ) {
 			}
 			stepContent={ stepContent }
 			recordTracksEvent={ recordTracksEvent }
+			showFooterWooCommercePowered={ flow === ECOMMERCE_FLOW }
 		/>
 	);
 };

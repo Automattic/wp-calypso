@@ -17,7 +17,7 @@ function render() {
 				status={ this.isActive() }
 				action={ this.toggleActivation }
 				inProgress={ this.props.activateInProgress }
-				htmlFor={ 'html-for-attribute-on-label' }
+				htmlFor="html-for-attribute-on-label"
 			/>
 		</div>
 	);

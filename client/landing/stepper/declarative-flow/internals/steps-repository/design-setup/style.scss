@@ -6,13 +6,6 @@
 $gray-100: #101517;
 $gray-60: #50575e;
 $design-button-primary-color: rgb(17, 122, 201);
-$break-design-preview: 1024px;
-
-@mixin break-design-preview() {
-	@media (min-width: #{ ($break-design-preview) }) {
-		@content;
-	}
-}
 
 .design-setup {
 	.step-container {
@@ -200,23 +193,28 @@ $break-design-preview: 1024px;
 
 			.formatted-header {
 				margin-top: 0;
-			}
 
-			.formatted-header__title {
-				@include onboarding-font-recoleta;
-				color: #101517;
-				font-size: 2rem;
-				font-weight: 400;
-				letter-spacing: 0.2px;
-				margin: 0;
+				.formatted-header__title {
+					@include onboarding-font-recoleta;
+					color: #101517;
+					font-size: 2rem;
+					font-weight: 400;
+					letter-spacing: 0.2px;
+					margin: 0;
 
-				@media ( min-width: 1080px ) {
-					padding: 0;
+					@media ( min-width: 1080px ) {
+						padding: 0;
+					}
+
+					@include break-small {
+						margin: 0 auto;
+						max-width: 60%;
+					}
 				}
 			}
 
 			@include break-small {
-				margin: 16px 0 24px;
+				margin: 11px 0 24px;
 				transform: translateY(-58px);
 				min-height: 42px;
 			}
@@ -584,7 +582,7 @@ $break-design-preview: 1024px;
 			font-weight: 500;
 			line-height: 20px;
 
-			@include break-design-preview {
+			@include break-xlarge {
 				display: none;
 			}
 
@@ -613,7 +611,7 @@ $break-design-preview: 1024px;
 					margin-top: -2px;
 				}
 
-				@include break-design-preview {
+				@include break-xlarge {
 					inset-inline-start: 72px;
 					inset-inline-end: 24px;
 					padding: 1px 0 0;
@@ -638,12 +636,14 @@ $break-design-preview: 1024px;
 		.step-container__content {
 			// 156px = .design-preview__sidebar + step-container__navigation.action-buttons
 			height: calc(100vh - 156px);
-			margin-top: 36px;
+			margin: 36px -8px 0;
+			overflow: hidden;
+			padding: 0 8px;
 			position: relative;
 			z-index: 1;
 		}
 
-		@include break-design-preview {
+		@include break-xlarge {
 			max-width: none;
 			padding-inline-start: 32px;
 			padding-inline-end: 32px;
@@ -659,8 +659,27 @@ $break-design-preview: 1024px;
 			}
 
 			.design-preview__sidebar {
-				margin-top: 72px;
+				margin: 72px -16px 0 -8px;
+				padding: 0 16px 32px 8px;
 			}
 		}
 	}
+}
+
+// Free flow
+.update-design.design-setup,
+.free.design-setup {
+	.step-container:not(.design-setup__preview) {
+		.navigation-link {
+			display: none;
+		}
+	}
+	.step-container__navigation {
+		.step-container__skip-wrapper {
+			button.step-container__navigation-link {
+				display: none;
+			}
+		}
+	}
+
 }

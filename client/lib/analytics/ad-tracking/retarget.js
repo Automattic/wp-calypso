@@ -101,7 +101,7 @@ export async function retarget( urlPath ) {
 
 		// Twitter
 		if ( mayWeTrackByTracker( 'twitter' ) ) {
-			const params = [ 'track', 'PageView' ];
+			const params = [ 'event', 'tw-nvzbs-odfz9' ];
 			debug( 'retarget: [Twitter] [rate limited]', params );
 			window.twq( ...params );
 		}

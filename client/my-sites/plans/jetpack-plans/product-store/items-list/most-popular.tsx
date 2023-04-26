@@ -1,7 +1,7 @@
+import { isJetpackPlanSlug } from '@automattic/calypso-products';
 import classNames from 'classnames';
 import { useStoreItemInfoContext } from '../context/store-item-info-context';
 import { FeaturedItemCard } from '../featured-item-card';
-import { FeaturesList } from '../features-list';
 import { HeroImage } from '../hero-image';
 import { ItemPrice } from '../item-price';
 import { MoreInfoLink } from '../more-info-link';
@@ -22,6 +22,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 	const {
 		getCheckoutURL,
 		getCtaLabel,
+		getCtaAriaLabel,
 		getIsDeprecated,
 		getIsExternal,
 		getIsIncludedInPlan,
@@ -29,10 +30,12 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 		getIsMultisiteCompatible,
 		getIsOwned,
 		getIsPlanFeature,
+		getIsProductInCart,
 		getIsSuperseded,
 		getIsUserPurchaseOwner,
 		getOnClickPurchase,
 		isMultisite,
+		getIsExpired,
 	} = useStoreItemInfoContext();
 
 	return (
@@ -41,7 +44,10 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 			<ul className="jetpack-product-store__most-popular--items">
 				{ items.map( ( item ) => {
 					const isOwned = getIsOwned( item );
+					const isExpired = getIsExpired( item );
 					const isSuperseded = getIsSuperseded( item );
+					const isProductInCart =
+						! isJetpackPlanSlug( item.productSlug ) && getIsProductInCart( item );
 					const isDeprecated = getIsDeprecated( item );
 					const isExternal = getIsExternal( item );
 					const isIncludedInPlanOrSuperseded = getIsIncludedInPlanOrSuperseded( item );
@@ -53,6 +59,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 						( ( isOwned || isIncludedInPlan ) && ! getIsUserPurchaseOwner( item ) );
 
 					const ctaLabel = getCtaLabel( item );
+					const ctaAriaLabel = getCtaAriaLabel( item );
 
 					const hideMoreInfoLink = isDeprecated || isOwned || isIncludedInPlanOrSuperseded;
 
@@ -61,6 +68,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 							isMultiSiteIncompatible={ isMultiSiteIncompatible }
 							isIncludedInPlan={ isIncludedInPlan }
 							isOwned={ isOwned }
+							isExpired={ isExpired }
 							item={ item }
 							siteId={ siteId }
 						/>
@@ -81,7 +89,12 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 						</p>
 					);
 
-					const ctaAsPrimary = ! ( isOwned || getIsPlanFeature( item ) || isSuperseded );
+					const ctaAsPrimary = ! (
+						isProductInCart ||
+						isOwned ||
+						getIsPlanFeature( item ) ||
+						isSuperseded
+					);
 
 					// TODO remove this isEnglish check once we have translations for the new strings
 					const amountSaved = item.productsIncluded?.length ? (
@@ -99,15 +112,16 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 								ctaAsPrimary={ ctaAsPrimary }
 								ctaHref={ getCheckoutURL( item ) }
 								ctaLabel={ ctaLabel }
+								ctaAriaLabel={ ctaAriaLabel }
 								description={ description }
 								hero={ <HeroImage item={ item } /> }
 								isCtaDisabled={ isCtaDisabled }
 								isCtaExternal={ isExternal }
+								isProductInCart={ isProductInCart }
 								onClickCta={ getOnClickPurchase( item ) }
 								price={ price }
 								title={ item.displayName }
 							/>
-							<FeaturesList item={ item } />
 						</li>
 					);
 				} ) }

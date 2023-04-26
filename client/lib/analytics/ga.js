@@ -29,7 +29,8 @@ function initialize() {
 export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function recordPageView(
 	urlPath,
 	pageTitle,
-	useJetpackGoogleAnalytics = false
+	useJetpackGoogleAnalytics = false,
+	useAkismetGoogleAnalytics = false
 ) {
 	gaDebug(
 		'Recording Page View ~ [URL: ' +
@@ -38,10 +39,17 @@ export const gaRecordPageView = makeGoogleAnalyticsTrackingFunction( function re
 			pageTitle +
 			'] [useJetpackGoogleAnalytics: ' +
 			useJetpackGoogleAnalytics +
+			'] [useAksiemtGoogleAnalytics: ' +
+			useAkismetGoogleAnalytics +
 			']'
 	);
 
-	fireGoogleAnalyticsPageView( urlPath, pageTitle, useJetpackGoogleAnalytics );
+	fireGoogleAnalyticsPageView(
+		urlPath,
+		pageTitle,
+		useJetpackGoogleAnalytics,
+		useAkismetGoogleAnalytics
+	);
 } );
 
 /**

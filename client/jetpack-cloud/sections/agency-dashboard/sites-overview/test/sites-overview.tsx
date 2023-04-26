@@ -41,6 +41,8 @@ describe( '<SitesOverview>', () => {
 		currentPage: 1,
 		search: '',
 		filter: { issueTypes: [], showOnlyFavorites: false },
+		selectedSites: [],
+		sort: { field: 'url', direction: 'asc' },
 	};
 
 	const queryClient = new QueryClient();
@@ -62,7 +64,13 @@ describe( '<SitesOverview>', () => {
 			perPage: 1,
 			totalFavorites: 1,
 		};
-		const queryKey = [ 'jetpack-agency-dashboard-sites', context.search, 1, context.filter ];
+		const queryKey = [
+			'jetpack-agency-dashboard-sites',
+			context.search,
+			1,
+			context.filter,
+			context.sort,
+		];
 		queryClient.setQueryData( queryKey, data );
 	};
 
@@ -78,7 +86,9 @@ describe( '<SitesOverview>', () => {
 		);
 		expect( dashboardSubHeading ).toBeInTheDocument();
 
-		const [ emptyStateMessage ] = getAllByText( 'No active sites' );
+		const [ emptyStateMessage ] = getAllByText(
+			"Let's get started with the Jetpack Pro Dashboard"
+		);
 		expect( emptyStateMessage ).toBeInTheDocument();
 
 		const promise = Promise.resolve();

@@ -190,7 +190,7 @@ function enableStreamModeProcessing( req, onStreamRecord ) {
 /**
  * Returns `true` if `v` is a File Form Data, `false` otherwise.
  *
- * @param {object} v - instance to analyze
+ * @param {Object} v - instance to analyze
  * @returns {boolean} `true` if `v` is a DOM File instance
  */
 function isFile( v ) {
@@ -202,7 +202,7 @@ function isFile( v ) {
 /**
  * Performs an XMLHttpRequest against the WordPress.com REST API.
  *
- * @param {Object|string} options - `request path` or `request parameters`
+ * @param {Object | string} options - `request path` or `request parameters`
  * @param {Function} fn - callback function
  * @returns { Object } xhr instance
  */

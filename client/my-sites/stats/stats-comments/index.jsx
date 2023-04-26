@@ -1,12 +1,10 @@
-import { Card } from '@automattic/components';
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get, flowRight } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
-import SectionHeader from 'calypso/components/section-header';
+import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
@@ -16,10 +14,9 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import StatsErrorPanel from '../stats-error';
+import StatsListCard from '../stats-list/stats-list-card';
 import StatsModuleContent from '../stats-module/content-text';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import StatsModuleSelectDropdown from '../stats-module/select-dropdown';
-import CommentTab from './comment-tab';
 
 import './style.scss';
 
@@ -75,7 +72,7 @@ class StatsComments extends Component {
 		return (
 			<StatsModuleContent className="module-content-text-stat">
 				<p>
-					{ translate( 'Total posts with comment followers:' ) }{ ' ' }
+					{ translate( 'Total posts with comment subscribers:' ) }{ ' ' }
 					<a href={ commentFollowURL }>{ numberFormat( commentFollowersTotal ) }</a>
 				</p>
 			</StatsModuleContent>
@@ -99,7 +96,6 @@ class StatsComments extends Component {
 	}
 
 	render() {
-		const { activeFilter } = this.state;
 		const {
 			commentsStatsData,
 			hasCommentsStatsQueryFailed: hasError,
@@ -111,59 +107,57 @@ class StatsComments extends Component {
 		const commentsPosts = get( commentsStatsData, 'posts' );
 		const noData = ! commentsAuthors;
 		const selectOptions = [
-			{ value: 'top-authors', label: translate( 'Comments by authors' ) },
-			{ value: 'top-content', label: translate( 'Comments by posts & pages' ) },
+			{
+				value: 'top-authors',
+				label: translate( 'By authors' ),
+			},
+			{
+				value: 'top-content',
+				label: translate( 'By posts & pages' ),
+			},
 		];
 
-		const classes = classNames( 'stats-module', {
-			'is-loading': ! commentsAuthors,
-			'has-no-data': noData,
-			'is-showing-error': hasError || noData,
-		} );
+		const isLoading = requestingCommentsStats && ! commentsAuthors;
+		let data = this.state.activeFilter === 'top-authors' ? commentsAuthors : commentsPosts;
+
+		data = data?.map( ( item ) => ( { ...item, value: parseInt( item.value, 10 ) } ) );
 
 		return (
-			<div>
+			<>
 				{ siteId && <QuerySiteStats statType="statsComments" siteId={ siteId } /> }
 				{ siteId && (
 					<QuerySiteStats statType="statsCommentFollowers" siteId={ siteId } query={ { max: 7 } } />
 				) }
-				<SectionHeader label={ translate( 'Comments' ) } />
-				<Card className={ classes }>
-					<div className="module-content">
-						{ noData && ! hasError && ! requestingCommentsStats && (
+				<StatsListCard
+					moduleType="comments"
+					data={ data }
+					title={ translate( 'Comments' ) }
+					emptyMessage={ translate( 'No comments posted' ) }
+					mainItemLabel={ translate( 'Author' ) }
+					metricLabel={ translate( 'Comments' ) }
+					splitHeader
+					useShortNumber
+					// Shares don't have a summary page yet.
+					// TODO: limit to 5 items after summary page is added.
+					// showMore={ ... }
+					error={
+						noData &&
+						! hasError &&
+						! requestingCommentsStats && (
 							<StatsErrorPanel
 								className="is-empty-message"
 								message={ translate( 'No comments posted' ) }
 							/>
-						) }
-
-						<StatsModuleSelectDropdown options={ selectOptions } onSelect={ this.changeFilter } />
-
-						{ this.renderCommentFollowers() }
-
-						{ hasError ? <StatsErrorPanel className="network-error" /> : null }
-
-						<CommentTab
-							name="Top Commenters"
-							value={ translate( 'Comments' ) }
-							label={ translate( 'Author' ) }
-							data={ commentsAuthors }
-							isActive={ 'top-authors' === activeFilter }
-						/>
-
-						<CommentTab
-							name="Most Commented"
-							value={ translate( 'Comments' ) }
-							label={ translate( 'Title' ) }
-							data={ commentsPosts }
-							isActive={ 'top-content' === activeFilter }
-						/>
-
-						{ this.renderSummary() }
-						<StatsModulePlaceholder isLoading={ requestingCommentsStats && ! commentsAuthors } />
-					</div>
-				</Card>
-			</div>
+						)
+					}
+					loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+					toggleControl={
+						<SimplifiedSegmentedControl options={ selectOptions } onSelect={ this.changeFilter } />
+					}
+					className="stats__modernised-comments"
+					showLeftIcon
+				/>
+			</>
 		);
 	}
 }

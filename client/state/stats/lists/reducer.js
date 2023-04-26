@@ -14,9 +14,9 @@ import { getSerializedStatsQuery } from './utils';
  * Returns the updated requests state after an action has been dispatched. The
  * state maps site ID, post ID and stat keys to the request stats.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -62,9 +62,9 @@ export const requests = ( state = {}, action ) => {
  * Returns the updated items state after an action has been dispatched. The
  * state maps site ID, statType and and serialized query key to the stat payload.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export const items = withSchemaValidation( itemSchema, ( state = {}, action ) => {
 	switch ( action.type ) {

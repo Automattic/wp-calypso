@@ -7,7 +7,7 @@ const UNREAD_COUNT_CAP = 40;
  * UNREAD_COUNT_CAP. Any value greater than the cap yields 'cap+'. Examples:
  * '1', '20', '39', '40+'
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @returns {string}         Unread count (string because it can be e.g. '40+')
  */
 export function getDocumentHeadCappedUnreadCount( state ) {

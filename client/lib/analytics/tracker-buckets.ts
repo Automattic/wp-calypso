@@ -4,14 +4,18 @@ import {
 	isPiiUrl,
 	isUrlExcludedForPerformance,
 	getTrackingPrefs,
+	mayWeTrackUserGpcInCcpaRegion,
 } from 'calypso/lib/analytics/utils';
 import { isE2ETest } from 'calypso/lib/e2e';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import isJetpackCheckout from '../jetpack/is-jetpack-checkout';
 
 const allAdTrackers = [
 	'bing',
 	'floodlight',
 	'fullstory',
 	'googleAds',
+	'googleTagManager',
 	'ga',
 	'gaEnhancedEcommerce',
 	'hotjar',
@@ -30,7 +34,7 @@ const allAdTrackers = [
 	'adroll',
 ] as const;
 
-type AdTracker = typeof allAdTrackers[ number ];
+type AdTracker = ( typeof allAdTrackers )[ number ];
 
 export enum Bucket {
 	ESSENTIAL = 'essential',
@@ -49,17 +53,20 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 	bing: Bucket.ADVERTISING,
 	floodlight: Bucket.ADVERTISING,
 	googleAds: Bucket.ADVERTISING,
+	googleTagManager: Bucket.ADVERTISING,
 	outbrain: Bucket.ADVERTISING,
 	pinterest: Bucket.ADVERTISING,
 	twitter: Bucket.ADVERTISING,
 	facebook: Bucket.ADVERTISING,
+
+	// Advertising trackers (only Jetpack Cloud or on Jetpack Checkout):
+	linkedin: isJetpackCloud() || isJetpackCheckout() ? Bucket.ADVERTISING : null,
 
 	// Disabled trackers:
 	quantcast: null,
 	gemini: null,
 	experian: null,
 	iconMedia: null,
-	linkedin: null,
 	criteo: null,
 	pandora: null,
 	quora: null,
@@ -68,19 +75,23 @@ export const AdTrackersBuckets: { [ key in AdTracker ]: Bucket | null } = {
 
 const checkGtagInit = (): boolean => 'dataLayer' in window && 'gtag' in window;
 
+const checkWooGTMInit = (): boolean => {
+	return 'dataLayer' in window && 'google_tag_manager' in window;
+};
+
 export const AdTrackersInitGuards: Partial< { [ key in AdTracker ]: () => boolean } > = {
 	ga: checkGtagInit,
 	gaEnhancedEcommerce: checkGtagInit,
 	floodlight: checkGtagInit,
 	googleAds: checkGtagInit,
+	googleTagManager: checkWooGTMInit,
 	fullstory: () => 'FS' in window,
-	hotjar: () => 'hj' in window,
 	bing: () => 'uetq' in window,
 	outbrain: () => 'obApi' in window,
 	pinterest: () => 'pintrk' in window,
 	twitter: () => 'twq' in window,
 	facebook: () => 'fbq' in window,
-	linkedin: () => '_linkedin_data_partner_id' in window,
+	linkedin: () => '_linkedin_data_partner_ids' in window && 'lintrk' in window,
 	criteo: () => 'criteo_q' in window,
 	quora: () => 'qp' in window,
 	adroll: () => 'adRoll' in window,
@@ -100,9 +111,15 @@ export const mayWeTrackByBucket = ( bucket: Bucket ) => {
 		return false;
 	}
 
-	// Disable advertising trackers on specific urls
-	if ( Bucket.ADVERTISING === bucket && isUrlExcludedForPerformance() ) {
-		return false;
+	if ( Bucket.ADVERTISING === bucket ) {
+		// Disable advertising trackers on specific urls
+		if ( isUrlExcludedForPerformance() ) {
+			return false;
+		}
+		// Disable advertising trackers if GPC browser flag is set, and the user location pertains to CCPA.
+		if ( ! mayWeTrackUserGpcInCcpaRegion() ) {
+			return false;
+		}
 	}
 
 	const prefs = getTrackingPrefs();

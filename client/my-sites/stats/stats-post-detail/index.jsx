@@ -5,27 +5,23 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
+import IllustrationStats from 'calypso/assets/images/stats/illustration-stats.svg';
 import QueryPostStats from 'calypso/components/data/query-post-stats';
 import QueryPosts from 'calypso/components/data/query-posts';
 import EmptyContent from 'calypso/components/empty-content';
 import FixedNavigationHeader from 'calypso/components/fixed-navigation-header';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import WebPreview from 'calypso/components/web-preview';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
 import { getSitePost, getPostPreviewUrl } from 'calypso/state/posts/selectors';
-import {
-	getSiteOption,
-	getSiteSlug,
-	isJetpackSite,
-	isSitePreviewable,
-} from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { getPostStat, isRequestingPostStats } from 'calypso/state/stats/posts/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import PostMonths from '../stats-detail-months';
-import PostWeeks from '../stats-detail-weeks';
+import PostDetailHighlightsSection from '../post-detail-highlights-section';
+import PostDetailTableSection from '../post-detail-table-section';
 import StatsPlaceholder from '../stats-module/placeholder';
-import PostLikes from '../stats-post-likes';
 import PostSummary from '../stats-post-summary';
 
 class StatsPostDetail extends Component {
@@ -90,9 +86,9 @@ class StatsPostDetail extends Component {
 	};
 
 	getTitle() {
-		const { isLatestPostsHomepage, post, postFallback, translate } = this.props;
+		const { isPostHomepage, post, postFallback, translate } = this.props;
 
-		if ( isLatestPostsHomepage ) {
+		if ( isPostHomepage ) {
 			return translate( 'Home page / Archives' );
 		}
 
@@ -107,12 +103,46 @@ class StatsPostDetail extends Component {
 		return null;
 	}
 
+	getPost() {
+		const { isPostHomepage, post, postFallback } = this.props;
+
+		const postBase = {
+			title: this.getTitle(),
+			type: isPostHomepage ? 'page' : 'post',
+		};
+
+		// Check if post is valid.
+		if ( typeof post === 'object' && post?.title.length ) {
+			return {
+				...postBase,
+				date: post?.date,
+				post_thumbnail: post?.post_thumbnail,
+				like_count: post?.like_count,
+				comment_count: post?.discussion?.comment_count,
+				type: post?.type,
+			};
+		}
+
+		// Check if postFallback is valid.
+		if ( typeof postFallback === 'object' && postFallback?.post_title.length ) {
+			return {
+				...postBase,
+				date: postFallback?.post_date_gmt,
+				post_thumbnail: null,
+				like_count: null,
+				comment_count: parseInt( postFallback?.comment_count, 10 ),
+				type: postFallback?.post_type,
+			};
+		}
+
+		return postBase;
+	}
+
 	render() {
 		const {
-			isLatestPostsHomepage,
+			isPostHomepage,
 			isRequestingStats,
 			countViews,
-			post,
 			postId,
 			siteId,
 			translate,
@@ -120,9 +150,13 @@ class StatsPostDetail extends Component {
 			showViewLink,
 			previewUrl,
 		} = this.props;
+
 		const isLoading = isRequestingStats && ! countViews;
 
-		const postType = post && post.type !== null ? post.type : 'post';
+		// Prepare post details to PostStatsCard from post or postFallback.
+		const passedPost = this.getPost();
+
+		const postType = passedPost && passedPost.type !== null ? passedPost.type : 'post';
 		let actionLabel;
 		let noViewsLabel;
 
@@ -135,63 +169,50 @@ class StatsPostDetail extends Component {
 		}
 
 		return (
-			<Main className="has-fixed-nav" wideLayout>
+			<Main fullWidthLayout>
 				<PageViewTracker
 					path={ `/stats/${ postType }/:post_id/:site` }
 					title={ `Stats > Single ${ titlecase( postType ) }` }
 				/>
-				{ siteId && ! isLatestPostsHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
+				{ siteId && ! isPostHomepage && <QueryPosts siteId={ siteId } postId={ postId } /> }
 				{ siteId && <QueryPostStats siteId={ siteId } postId={ postId } /> }
 
-				<FixedNavigationHeader
-					navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
-				>
-					{ showViewLink && (
-						<Button onClick={ this.openPreview }>
-							<span>{ actionLabel }</span>
-						</Button>
+				<div className="stats has-fixed-nav">
+					<FixedNavigationHeader
+						navigationItems={ this.getNavigationItemsWithTitle( this.getTitle() ) }
+					>
+						{ showViewLink && (
+							<Button onClick={ this.openPreview }>
+								<span>{ actionLabel }</span>
+							</Button>
+						) }
+					</FixedNavigationHeader>
+
+					<PostDetailHighlightsSection siteId={ siteId } postId={ postId } post={ passedPost } />
+
+					<StatsPlaceholder isLoading={ isLoading } />
+
+					{ ! isLoading && countViews === 0 && (
+						<EmptyContent
+							title={ noViewsLabel }
+							line={ translate( 'Learn some tips to attract more visitors' ) }
+							action={ translate( 'Get more traffic!' ) }
+							actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
+							actionTarget="blank"
+							illustration={ IllustrationStats }
+							illustrationWidth={ 150 }
+						/>
 					) }
-				</FixedNavigationHeader>
 
-				<StatsPlaceholder isLoading={ isLoading } />
+					{ ! isLoading && countViews > 0 && (
+						<>
+							<PostSummary siteId={ siteId } postId={ postId } />
+							<PostDetailTableSection siteId={ siteId } postId={ postId } />
+						</>
+					) }
 
-				{ ! isLoading && countViews === 0 && (
-					<EmptyContent
-						title={ noViewsLabel }
-						line={ translate( 'Learn some tips to attract more visitors' ) }
-						action={ translate( 'Get more traffic!' ) }
-						actionURL="https://wordpress.com/support/getting-more-views-and-traffic/"
-						actionTarget="blank"
-						illustration="calypso/assets/images/stats/illustration-stats.svg"
-						illustrationWidth={ 150 }
-					/>
-				) }
-
-				{ ! isLoading && countViews > 0 && (
-					<div>
-						<PostSummary siteId={ siteId } postId={ postId } />
-
-						{ !! postId && <PostLikes siteId={ siteId } postId={ postId } postType={ postType } /> }
-
-						<PostMonths
-							dataKey="years"
-							title={ translate( 'Months and years' ) }
-							total={ translate( 'Total' ) }
-							siteId={ siteId }
-							postId={ postId }
-						/>
-
-						<PostMonths
-							dataKey="averages"
-							title={ translate( 'Average per day' ) }
-							total={ translate( 'Overall' ) }
-							siteId={ siteId }
-							postId={ postId }
-						/>
-
-						<PostWeeks siteId={ siteId } postId={ postId } />
-					</div>
-				) }
+					<JetpackColophon />
+				</div>
 
 				<WebPreview
 					showPreview={ this.state.showPreview }
@@ -211,18 +232,17 @@ const connectComponent = connect( ( state, { postId } ) => {
 	const siteId = getSelectedSiteId( state );
 	const isJetpack = isJetpackSite( state, siteId );
 	const isPreviewable = isSitePreviewable( state, siteId );
-	const isLatestPostsHomepage =
-		getSiteOption( state, siteId, 'show_on_front' ) === 'posts' && postId === 0;
+	const isPostHomepage = postId === 0;
 
 	return {
 		post: getSitePost( state, siteId, postId ),
 		// NOTE: Post object from the stats response does not conform to the data structure returned by getSitePost!
 		postFallback: getPostStat( state, siteId, postId, 'post' ),
-		isLatestPostsHomepage,
+		isPostHomepage,
 		countViews: getPostStat( state, siteId, postId, 'views' ),
 		isRequestingStats: isRequestingPostStats( state, siteId, postId ),
 		siteSlug: getSiteSlug( state, siteId ),
-		showViewLink: ! isJetpack && ! isLatestPostsHomepage && isPreviewable,
+		showViewLink: ! isJetpack && ! isPostHomepage && isPreviewable,
 		previewUrl: getPostPreviewUrl( state, siteId, postId ),
 		siteId,
 	};

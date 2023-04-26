@@ -42,8 +42,8 @@ export const validStatusValues = {
  * and return the mapped comment object with its author
  *
  * @param {number} siteId site id is not included in the response items
- * @param {object} data raw comment data from API
- * @returns {object} comment and WordPress.com user if available
+ * @param {Object} data raw comment data from API
+ * @returns {Object} comment and WordPress.com user if available
  */
 export const fromApi = ( siteId, data ) => {
 	try {

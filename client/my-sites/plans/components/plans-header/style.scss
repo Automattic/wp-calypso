@@ -1,0 +1,20 @@
+@import "@wordpress/base-styles/breakpoints";
+
+.is-section-plans .plans__section-header-skip {
+	display: flex;
+	justify-content: space-between;
+	margin: 0;
+	margin-bottom: 20px;
+
+	@media ( max-width: $break-small ) {
+		margin: 0 16px;
+	}
+}
+
+.is-section-plans .plans__section-header {
+	&.with-skip-button {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+}

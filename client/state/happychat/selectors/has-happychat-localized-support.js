@@ -6,7 +6,7 @@ import 'calypso/state/happychat/init';
 /**
  * Returns true if Happychat client is connected and server is available to take new localized chats
  *
- * @param {object} state - global redux state
+ * @param {Object} state - global redux state
  * @returns {boolean} Whether new localized chats can be taken by matching operators
  */
 export default function ( state ) {

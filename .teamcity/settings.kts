@@ -52,14 +52,18 @@ project {
 	subProject(_self.projects.WPComTests)
 	subProject(_self.projects.WebApp)
 	subProject(_self.projects.MarTech)
+	buildType(YarnInstall)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
 	buildType(ValidateRenovateConfig)
 	buildType(SmartBuildLauncher)
 
 	params {
+		// Force color support in chalk. For some reason it doesn't detect TeamCity
+		// as supported (even though both TeamCity and chalk support that.)
+		param("env.FORCE_COLOR", "1")
 		param("env.NODE_OPTIONS", "--max-old-space-size=32000")
-		text("E2E_WORKERS", "16", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
+		text("JEST_E2E_WORKERS", "100%", label = "Magellan parallel workers", description = "Number of parallel workers in Magellan (e2e tests)", allowEmpty = true)
 		text("env.JEST_MAX_WORKERS", "16", label = "Jest max workers", description = "How many tests run in parallel", allowEmpty = true)
 		password("matticbot_oauth_token", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN)
 		text("env.CHILD_CONCURRENCY", "15", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
@@ -77,12 +81,9 @@ project {
 		param("teamcity.git.fetchAllHeads", "true")
 
 		// e2e config decryption key references. See PCYsg-vnR-p2 for more info.
-		password("E2E_CONFIG_ENCRYPTION_KEY_JANUARY_22", "credentialsJSON:b06c1dcd-2188-45e2-b08b-dd97b06e2be6", display = ParameterDisplay.HIDDEN)
-		password("E2E_SECRETS_ENCRYPTION_KEY_MARCH_01_22", "credentialsJSON:5631ff82-dd5d-4eb7-bb08-bdb7e51d4ff6", display = ParameterDisplay.HIDDEN)
-		password("E2E_SECRETS_ENCRYPTION_KEY_AUG_22_22", "credentialsJSON:e74f4821-2033-4ef2-b9f9-95c1d7c3898a", display = ParameterDisplay.HIDDEN)
 		password("E2E_SECRETS_ENCRYPTION_KEY_NOV_30_22", "credentialsJSON:d9abde26-f565-4d21-bdf3-e2e00d3e45ec", display = ParameterDisplay.HIDDEN)
-		password("CONFIG_E2E_ENCRYPTION_KEY_LEGACY", "credentialsJSON:819c139c-90a1-4803-8367-00e5aa5fdb07", display = ParameterDisplay.HIDDEN)
-		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_NOV_30_22%", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_JAN_20_23", "credentialsJSON:873582a4-c421-4647-b901-56c86abf09c8", display = ParameterDisplay.HIDDEN)
+		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_JAN_20_23%", display = ParameterDisplay.HIDDEN)
 
 		// Calypso dashboard AWS secrets for S3 bucket.
 		password("CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID", "credentialsJSON:1f324549-3795-43e5-a8c2-fb81d6e7c15d", display = ParameterDisplay.HIDDEN)
@@ -90,6 +91,10 @@ project {
 		password("MATTICBOT_GITHUB_BEARER_TOKEN", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN, label = "Matticbot GitHub Bearer Token")
 		text("CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT", "s3://a8c-calypso-e2e-reports", label = "Calypso E2E Dashboard S3 bucket root")
 
+		// Values related to the WPCOM VCS
+		password("WPCOM_VCS_ROOT_ID", "credentialsJSON:f7437cc0-c8f2-4b10-bdfa-271946bb5f72", display = ParameterDisplay.HIDDEN)
+		password("WPCOM_JETPACK_PLUGIN_PATH", "credentialsJSON:db955a02-2a79-4167-a823-ac4840fd71d7", display = ParameterDisplay.HIDDEN)
+		password("WPCOM_JETPACK_MU_WPCOM_PLUGIN_PATH", "credentialsJSON:81683f57-784e-4535-9af0-26212c9e599b", display = ParameterDisplay.HIDDEN)
 	}
 
 	features {
@@ -106,6 +111,29 @@ project {
 		}
 	}
 }
+
+// This build should mostly be triggered by other builds.
+object YarnInstall : BuildType({
+	name = "Install Dependencies"
+	description = "Installs dependencies, e.g. yarn install"
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+	steps {
+		bashNodeScript {
+			name = "Yarn Install"
+			scriptContent = """
+				# Install modules
+				${_self.yarn_install_cmd}
+			""".trimIndent()
+		}
+	}
+	features {
+		perfmon {
+		}
+	}
+})
 
 object BuildBaseImages : BuildType({
 	name = "Build base images"
@@ -183,9 +211,8 @@ object BuildBaseImages : BuildType({
 
 	triggers {
 		schedule {
-			schedulingPolicy = daily {
-				// Time in UTC. Roughly EU mid day, before US starts
-				hour = 11
+			schedulingPolicy = cron {
+				hours = "*/12"
 			}
 			branchFilter = """
 				+:trunk

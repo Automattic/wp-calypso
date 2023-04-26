@@ -13,7 +13,7 @@ import 'calypso/state/login/init';
 /**
  * Connects the current WordPress.com account with a third-party social account (Google ...).
  *
- * @param {object} socialInfo              Object containing the social service config data
+ * @param {Object} socialInfo              Object containing the social service config data
  * @param {string} socialInfo.service      Social service associated with token, e.g. google.
  * @param {string} socialInfo.access_token OAuth2 Token returned from service.
  * @param {string} socialInfo.id_token     (Optional) OpenID Connect Token returned from service.

@@ -1,10 +1,14 @@
 import config from '@automattic/calypso-config';
-import { WPCOM_DIFM_LITE } from '@automattic/calypso-products';
+import {
+	WPCOM_DIFM_LITE,
+	planHasFeature,
+	FEATURE_UPLOAD_THEMES_PLUGINS,
+	isEcommerce,
+} from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Site } from '@automattic/data-stores';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
-import { mapRecordKeysRecursively, camelToSnakeCase } from '@automattic/js-utils';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
@@ -27,7 +31,10 @@ import {
 	isUserLoggedIn,
 	getCurrentUser,
 } from 'calypso/state/current-user/selectors';
-import { buildDIFMCartExtrasObject } from 'calypso/state/difm/assemblers';
+import {
+	buildDIFMCartExtrasObject,
+	buildDIFMWebsiteContentRequestDTO,
+} from 'calypso/state/difm/assemblers';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
@@ -37,7 +44,6 @@ import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getWebsiteContent } from 'calypso/state/signup/steps/website-content/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
-
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -225,6 +231,7 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 		isPurchasingItem: isPurchasingDomainItem,
 		siteUrl,
 		themeSlugWithRepo,
+		themeStyleVariation,
 		themeItem,
 		siteAccentColor,
 	} = stepData;
@@ -297,20 +304,16 @@ export function createSiteWithCart( callback, dependencies, stepData, reduxStore
 				themeItem,
 			};
 
-			processItemCart(
-				providedDependencies,
-				newCartItems,
-				callback,
-				reduxStore,
-				siteSlug,
+			processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
 				isFreeThemePreselected,
-				themeSlugWithRepo
-			);
+				themeSlugWithRepo,
+				themeStyleVariation,
+			} );
 		}
 	);
 }
 
-export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
+export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo, themeStyleVariation } ) {
 	if ( isEmpty( themeSlugWithRepo ) ) {
 		defer( callback );
 		return;
@@ -319,13 +322,19 @@ export function setThemeOnSite( callback, { siteSlug, themeSlugWithRepo } ) {
 	const theme = themeSlugWithRepo.split( '/' )[ 1 ];
 
 	wpcom.req
-		.post( `/sites/${ siteSlug }/themes/mine`, { theme } )
+		.post( `/sites/${ siteSlug }/themes/mine`, {
+			theme,
+			...( themeStyleVariation && { style_variation_slug: themeStyleVariation } ),
+		} )
 		.then( () => callback() )
 		.catch( ( error ) => callback( [ error ] ) );
 }
 
-function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
+function addDIFMLiteProductToCart( callback, dependencies, step, reduxStore ) {
 	const { selectedDesign, selectedSiteCategory, isLetUsChooseSelected, siteSlug } = dependencies;
+	if ( step.lastKnownFlow === 'do-it-for-me-store' ) {
+		dependencies.isStoreFlow = true;
+	}
 	const extra = buildDIFMCartExtrasObject( dependencies );
 	const cartItem = {
 		product_slug: WPCOM_DIFM_LITE,
@@ -342,17 +351,16 @@ function addDIFMLiteToCart( callback, dependencies, step, reduxStore ) {
 		cartItem,
 	};
 	const newCartItems = [ cartItem ];
-	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug );
 }
 
 /**
- * If the user chooses DIFM Lite for a new site, then
- * create a new site, call the `setDesignOnSite` function (see below)
- * and add the DIFM Lite product to the cart.
- * If the user chooses DIFM Lite for an existing site, then
- * just add the DIFM Lite product to the cart.
+ * If the user chooses DIFM Lite (BBE) for a new site, then
+ * create a new site, and add the DIFM Lite (BBE) product to the cart.
+ * If the user chooses DIFM Lite (BBE) for an existing site, then
+ * just add the DIFM Lite (BBE) product to the cart.
  */
-export function setDIFMLiteDesign( callback, dependencies, step, reduxStore ) {
+export function createSiteAndAddDIFMToCart( callback, dependencies, step, reduxStore ) {
 	const signupDependencies = getSignupDependencyStore( reduxStore.getState() );
 	const { newOrExistingSiteChoice } = signupDependencies;
 
@@ -361,26 +369,18 @@ export function setDIFMLiteDesign( callback, dependencies, step, reduxStore ) {
 	if ( 'new-site' === newOrExistingSiteChoice ) {
 		let siteSlug = null;
 
-		const setDesignOnSiteCallback = ( error ) => {
-			if ( error ) {
-				callback( error );
-				return;
-			}
-			addDIFMLiteToCart( callback, { ...providedDependencies, siteSlug }, step, reduxStore );
-		};
-
 		const createSiteWithCartCallback = ( error, result ) => {
 			if ( error ) {
 				callback( error );
 				return;
 			}
 			siteSlug = result.siteSlug;
-			setDesignOnSite( setDesignOnSiteCallback, { ...providedDependencies, siteSlug } );
+			addDIFMLiteProductToCart( callback, { ...providedDependencies, siteSlug }, step, reduxStore );
 		};
 
 		createSiteWithCart( createSiteWithCartCallback, providedDependencies, step, reduxStore );
 	} else {
-		addDIFMLiteToCart( callback, providedDependencies, step, reduxStore );
+		addDIFMLiteProductToCart( callback, providedDependencies, step, reduxStore );
 	}
 }
 
@@ -391,18 +391,14 @@ export function submitWebsiteContent( callback, { siteSlug }, step, reduxStore )
 		defer( callback );
 		return;
 	}
-	const {
-		pages,
-		siteLogoSection: { siteLogoUrl: site_logo_url },
-		feedbackSection: { genericFeedback: generic_feedback },
-	} = websiteContent;
-	const pagesDTO = pages.map( ( page ) => mapRecordKeysRecursively( page, camelToSnakeCase ) );
+
+	const websiteContentRequestDTO = buildDIFMWebsiteContentRequestDTO( websiteContent );
 
 	wpcom.req
 		.post( {
 			path: `/sites/${ siteSlug }/do-it-for-me/website-content`,
 			apiNamespace: 'wpcom/v2',
-			body: { pages: pagesDTO, site_logo_url, generic_feedback },
+			body: websiteContentRequestDTO,
 		} )
 		.then( () => reduxStore.dispatch( requestSite( siteSlug ) ) )
 		.then( () => callback() )
@@ -506,16 +502,9 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 	const providedDependencies = { cartItem };
 	const newCartItems = [ cartItem, emailItem ].filter( ( item ) => item );
 
-	processItemCart(
-		providedDependencies,
-		newCartItems,
-		callback,
-		reduxStore,
-		siteSlug,
-		null,
-		null,
-		lastKnownFlow
-	);
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, {
+		lastKnownFlow,
+	} );
 }
 export function addAddOnsToCart(
 	callback,
@@ -537,16 +526,7 @@ export function addAddOnsToCart(
 	}
 
 	const newCartItems = cartItem.filter( ( item ) => item );
-	processItemCart(
-		providedDependencies,
-		newCartItems,
-		callback,
-		reduxStore,
-		slug,
-		null,
-		null,
-		null
-	);
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug );
 }
 
 export function addDomainToCart(
@@ -563,16 +543,7 @@ export function addDomainToCart(
 
 	const newCartItems = [ domainItem, googleAppsCartItem ].filter( ( item ) => item );
 
-	processItemCart(
-		providedDependencies,
-		newCartItems,
-		callback,
-		reduxStore,
-		slug,
-		null,
-		null,
-		null
-	);
+	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug );
 }
 
 function processItemCart(
@@ -581,9 +552,7 @@ function processItemCart(
 	callback,
 	reduxStore,
 	siteSlug,
-	isFreeThemePreselected,
-	themeSlugWithRepo,
-	lastKnownFlow
+	{ isFreeThemePreselected, themeSlugWithRepo, themeStyleVariation, lastKnownFlow } = {}
 ) {
 	const addToCartAndProceed = async () => {
 		debug( 'preparing to add cart items (if any) from', newCartItems );
@@ -616,11 +585,15 @@ function processItemCart(
 	const userLoggedIn = isUserLoggedIn( reduxStore.getState() );
 
 	if ( ! userLoggedIn && isFreeThemePreselected ) {
-		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo } );
+		setThemeOnSite( addToCartAndProceed, { siteSlug, themeSlugWithRepo, themeStyleVariation } );
 	} else if ( userLoggedIn && isFreeThemePreselected ) {
 		fetchSitesAndUser(
 			siteSlug,
-			setThemeOnSite.bind( null, addToCartAndProceed, { siteSlug, themeSlugWithRepo } ),
+			setThemeOnSite.bind( null, addToCartAndProceed, {
+				siteSlug,
+				themeSlugWithRepo,
+				themeStyleVariation,
+			} ),
 			reduxStore
 		);
 	} else if ( userLoggedIn && siteSlug ) {
@@ -935,65 +908,6 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 	} );
 }
 
-// Similar to createSite but also sets the site title and description
-export function createVideoPressSite( callback, dependencies, stepData, reduxStore ) {
-	const { site, siteTitle = '', siteDescription = '' } = stepData;
-	const locale = getLocaleSlug();
-
-	const data = {
-		blog_name: site,
-		blog_title: siteTitle,
-		public: Visibility.PublicNotIndexed,
-		options: {
-			theme: 'pub/twentytwentytwo',
-			site_vertical_name: 'videomaker',
-			timezone_string: guessTimezone(),
-			wpcom_public_coming_soon: 1,
-		},
-		validate: false,
-		locale,
-		lang_id: getLanguage( locale ).value,
-		client_id: config( 'wpcom_signup_id' ),
-		client_secret: config( 'wpcom_signup_key' ),
-	};
-
-	wpcom.req.post( '/sites/new', data, function ( errors, response ) {
-		let providedDependencies;
-		let siteSlug;
-
-		if ( !! response && response.blog_details ) {
-			const parsedBlogURL = getUrlParts( response.blog_details.url );
-			siteSlug = parsedBlogURL.hostname;
-
-			providedDependencies = { siteSlug };
-		}
-
-		const callbackWithErrorChecking = ( e ) =>
-			callback( isEmpty( e ) ? undefined : [ e ], providedDependencies );
-
-		if ( isUserLoggedIn( reduxStore.getState() ) && isEmpty( errors ) ) {
-			fetchSitesAndUser(
-				siteSlug,
-				() => {
-					if ( siteDescription ) {
-						wpcom.req.post(
-							`/sites/${ siteSlug }/settings`,
-							{ apiVersion: '1.4' },
-							{ blogdescription: siteDescription },
-							callbackWithErrorChecking
-						);
-					} else {
-						callbackWithErrorChecking( undefined );
-					}
-				},
-				reduxStore
-			);
-		} else {
-			callbackWithErrorChecking( errors );
-		}
-	} );
-}
-
 function recordExcludeStepEvent( step, value ) {
 	recordTracksEvent( 'calypso_signup_actions_exclude_step', {
 		step,
@@ -1254,3 +1168,79 @@ export function isNewOrExistingSiteFulfilled( stepName, defaultDependencies, nex
 		flows.excludeStep( stepName );
 	}
 }
+
+export const buildUpgradeFunction = ( planProps, cartItem ) => {
+	const {
+		additionalStepData,
+		flowName,
+		launchSite,
+		selectedSite,
+		stepName,
+		stepSectionName,
+		themeSlugWithRepo,
+		goToNextStep,
+		submitSignupStep,
+	} = planProps;
+
+	if ( cartItem ) {
+		planProps.recordTracksEvent( 'calypso_signup_plan_select', {
+			product_slug: cartItem.product_slug,
+			free_trial: cartItem.free_trial,
+			from_section: stepSectionName ? stepSectionName : 'default',
+		} );
+
+		// If we're inside the store signup flow and the cart item is a Business or eCommerce Plan,
+		// set a flag on it. It will trigger Automated Transfer when the product is being
+		// activated at the end of the checkout process.
+		if (
+			flowName === 'ecommerce' &&
+			planHasFeature( cartItem.product_slug, FEATURE_UPLOAD_THEMES_PLUGINS )
+		) {
+			cartItem.extra = Object.assign( cartItem.extra || {}, {
+				is_store_signup: true,
+			} );
+		}
+	} else {
+		planProps.recordTracksEvent( 'calypso_signup_free_plan_select', {
+			from_section: stepSectionName ? stepSectionName : 'default',
+		} );
+	}
+
+	const step = {
+		stepName,
+		stepSectionName,
+		cartItem,
+		...additionalStepData,
+	};
+
+	if ( selectedSite && flowName === 'site-selected' && ! cartItem ) {
+		wpcom.req.post(
+			`/domains/${ selectedSite.ID }/${ selectedSite.name }/convert-domain-only-to-site`,
+			{},
+			( error ) => {
+				if ( error ) {
+					errorNotice( error.message );
+					return;
+				}
+				submitSignupStep( step, {
+					cartItem,
+				} );
+				goToNextStep();
+			}
+		);
+		return;
+	}
+
+	const signupVals = {
+		cartItem,
+		...( themeSlugWithRepo && { themeSlugWithRepo } ),
+		...( launchSite && { comingSoon: 0 } ),
+	};
+
+	if ( cartItem && isEcommerce( cartItem ) ) {
+		signupVals.themeSlugWithRepo = 'pub/twentytwentytwo';
+	}
+
+	submitSignupStep( step, signupVals );
+	goToNextStep();
+};

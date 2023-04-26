@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
 import { numberFormat, localize } from 'i18n-calypso';
@@ -16,6 +17,8 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
 import ErrorPanel from '../stats-error';
+import StatsListCard from '../stats-list/stats-list-card';
+import AllTimeNav from '../stats-module/all-time-nav';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 
 import '../stats-module/style.scss';
@@ -105,6 +108,7 @@ class VideoPressStatsModule extends Component {
 			query,
 			period,
 			siteSlug,
+			translate,
 		} = this.props;
 
 		let completeVideoStats = [];
@@ -151,93 +155,171 @@ class VideoPressStatsModule extends Component {
 			page( url );
 		};
 
-		return (
-			<div>
-				<SectionHeader
-					className={ headerClass }
-					label={ this.getModuleLabel() }
-					href={ ! summary ? summaryLink : null }
-				>
-					{ summary && (
-						<DownloadCsv
-							statType={ statType }
-							data={ completeVideoStats }
-							query={ query }
-							path={ path }
-							period={ period }
-						/>
-					) }
-				</SectionHeader>
-				<Card compact className={ cardClasses }>
-					{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
-					{ hasError && <ErrorPanel /> }
+		const isNewVideoPage = config.isEnabled( 'stats/new-video-summary' );
 
-					<div className="videopress-stats-module__grid">
-						<div className="videopress-stats-module__header-row-wrapper">
-							<div className="videopress-stats-module__grid-header">Title</div>
-							<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
-								Impressions
-							</div>
-							<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
-								Hours Watched
-							</div>
-							<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
-								Views
-							</div>
-						</div>
-						{ completeVideoStats.map( ( row, index ) => (
-							<div
-								key={ 'videopress-stats-row-' + index }
-								className="videopress-stats-module__row-wrapper"
-							>
-								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-link">
-									<span
-										onClick={ () => editVideo( row.post_id ) }
-										onKeyUp={ () => editVideo( row.post_id ) }
-										tabIndex="0"
-										role="button"
-									>
-										{ row.title }
-									</span>
-								</div>
-								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
-									<span
-										onClick={ () => showStat( 'impressions', row ) }
-										onKeyUp={ () => showStat( 'impressions', row ) }
-										tabIndex="0"
-										role="button"
-									>
-										{ numberFormat( row.impressions ) }
-									</span>
-								</div>
-								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
-									<span
-										onClick={ () => showStat( 'watch_time', row ) }
-										onKeyUp={ () => showStat( 'watch_time', row ) }
-										tabIndex="0"
-										role="button"
-									>
-										{ row.watch_time > 1
-											? numberFormat( row.watch_time, 1 )
-											: `< ${ numberFormat( 1, 1 ) }` }
-									</span>
-								</div>
-								<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
-									<span
-										onClick={ () => showStat( 'views', row ) }
-										onKeyUp={ () => showStat( 'views', row ) }
-										tabIndex="0"
-										role="button"
-									>
-										{ numberFormat( row.views ) }
-									</span>
-								</div>
-							</div>
-						) ) }
-					</div>
-					<StatsModulePlaceholder isLoading={ isLoading } />
-				</Card>
+		const downloadCSV = (
+			<div className="stats-module__heaver-nav-button">
+				<DownloadCsv
+					statType={ statType }
+					data={ completeVideoStats }
+					query={ query }
+					path={ path }
+					period={ period }
+				/>
 			</div>
+		);
+
+		const normalisedData = completeVideoStats?.map( ( item ) => {
+			return {
+				period: data.period, // need for a URL and is taken from the main props!
+				post_id: item.post_id, // need for a URL
+				label: item.title,
+				value: item.views,
+				impressions: numberFormat( item.impressions ),
+				watch_time:
+					item.watch_time > 1 ? numberFormat( item.watch_time, 1 ) : `< ${ numberFormat( 1, 1 ) }`,
+			};
+		} );
+
+		return (
+			<>
+				{ isNewVideoPage && (
+					<>
+						<AllTimeNav
+							path={ path }
+							query={ query }
+							period={ period }
+							hideNavigation
+							navigationSwap={ downloadCSV }
+						/>
+						<StatsListCard
+							moduleType={ path }
+							data={ normalisedData }
+							title={ this.props.moduleStrings?.title }
+							emptyMessage={ moduleStrings.empty }
+							showMore={ false }
+							error={ hasError && <ErrorPanel /> }
+							loader={ isLoading && <StatsModulePlaceholder isLoading={ isLoading } /> }
+							splitHeader
+							mainItemLabel={ <span>{ translate( 'Video' ) }</span> }
+							additionalColumns={ {
+								header: (
+									<>
+										<span>{ translate( 'Impressions' ) }</span>
+										<span>{ translate( 'Hours watched' ) }</span>
+									</>
+								),
+								body: ( item ) => (
+									<>
+										{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
+										<span
+											onClick={ () => showStat( 'impressions', item ) }
+											onKeyUp={ () => showStat( 'impressions', item ) }
+										>
+											{ item.impressions }
+										</span>
+										{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions */ }
+										<span
+											onClick={ () => showStat( 'watch_time', item ) }
+											onKeyUp={ () => showStat( 'watch_time', item ) }
+										>
+											{ item.watch_time }
+										</span>
+									</>
+								),
+							} }
+						/>
+					</>
+				) }
+				{ ! isNewVideoPage && (
+					<div>
+						<SectionHeader
+							className={ headerClass }
+							label={ this.getModuleLabel() }
+							href={ ! summary ? summaryLink : null }
+						>
+							{ summary && (
+								<DownloadCsv
+									statType={ statType }
+									data={ completeVideoStats }
+									query={ query }
+									path={ path }
+									period={ period }
+								/>
+							) }
+						</SectionHeader>
+						<Card compact className={ cardClasses }>
+							{ noData && <ErrorPanel message={ moduleStrings.empty } /> }
+							{ hasError && <ErrorPanel /> }
+
+							<div className="videopress-stats-module__grid">
+								<div className="videopress-stats-module__header-row-wrapper">
+									<div className="videopress-stats-module__grid-header">Title</div>
+									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
+										Impressions
+									</div>
+									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
+										Hours Watched
+									</div>
+									<div className="videopress-stats-module__grid-header videopress-stats-module__grid-metric">
+										Views
+									</div>
+								</div>
+								{ completeVideoStats.map( ( row, index ) => (
+									<div
+										key={ 'videopress-stats-row-' + index }
+										className="videopress-stats-module__row-wrapper"
+									>
+										<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-link">
+											<span
+												onClick={ () => editVideo( row.post_id ) }
+												onKeyUp={ () => editVideo( row.post_id ) }
+												tabIndex="0"
+												role="button"
+											>
+												{ row.title }
+											</span>
+										</div>
+										<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
+											<span
+												onClick={ () => showStat( 'impressions', row ) }
+												onKeyUp={ () => showStat( 'impressions', row ) }
+												tabIndex="0"
+												role="button"
+											>
+												{ numberFormat( row.impressions ) }
+											</span>
+										</div>
+										<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
+											<span
+												onClick={ () => showStat( 'watch_time', row ) }
+												onKeyUp={ () => showStat( 'watch_time', row ) }
+												tabIndex="0"
+												role="button"
+											>
+												{ row.watch_time > 1
+													? numberFormat( row.watch_time, 1 )
+													: `< ${ numberFormat( 1, 1 ) }` }
+											</span>
+										</div>
+										<div className="videopress-stats-module__grid-cell videopress-stats-module__grid-metric">
+											<span
+												onClick={ () => showStat( 'views', row ) }
+												onKeyUp={ () => showStat( 'views', row ) }
+												tabIndex="0"
+												role="button"
+											>
+												{ numberFormat( row.views ) }
+											</span>
+										</div>
+									</div>
+								) ) }
+							</div>
+							<StatsModulePlaceholder isLoading={ isLoading } />
+						</Card>
+					</div>
+				) }
+			</>
 		);
 	}
 }

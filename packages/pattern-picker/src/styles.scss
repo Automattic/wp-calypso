@@ -90,8 +90,8 @@ $patterns: "17-2", "black", "ella-d", "link-cloud", "matt-smith", "ose-maiko", "
 	background: #fff;
 	border: 1px solid #eee;
 	align-items: center;
-	// stylelint-disable-next-line declaration-property-unit-allowed-list
 	border-radius: 50%;
+	justify-content: center;
 	opacity: 0.5;
 	display: flex;
 	box-shadow: 1px 1px 3px 0 rgb(0 0 0 / 18%);

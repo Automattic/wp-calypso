@@ -1,7 +1,21 @@
+import { isEcommerce } from '@automattic/calypso-products/src';
 import page from 'page';
-import { requestSite } from 'calypso/state/sites/actions';
-import { canCurrentUserUseCustomerHome, getSiteOptions } from 'calypso/state/sites/selectors';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { fetchLaunchpad } from 'calypso/data/sites/use-launchpad';
+import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
+import { launchpadFlowTasks } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/tasks';
+import { getQueryArgs } from 'calypso/lib/query-args';
+import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
+import {
+	canCurrentUserUseCustomerHome,
+	getSiteUrl,
+	getSitePlan,
+} from 'calypso/state/sites/selectors';
+import {
+	getSelectedSiteSlug,
+	getSelectedSiteId,
+	getSelectedSite,
+} from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
 
@@ -29,28 +43,46 @@ export async function maybeRedirect( context, next ) {
 	}
 
 	const siteId = getSelectedSiteId( state );
-	const maybeStalelaunchpadScreenOption = getSiteOptions( state, siteId )?.launchpad_screen;
+	const site = getSelectedSite( state );
+	const isSiteLaunched = site?.launch_status === 'launched' || false;
 
-	// We need the latest site info to determine if a user should be redirected to Launchpad.
-	// As a result, we can't use locally cached data, which might think that Launchpad is
-	// still enabled when, in reality, the final tasks have been completed and everything is
-	// disabled. Because of this, we refetch site information and limit traffic by scoping down
-	// requests to launchpad enabled sites.
-	// See https://cylonp2.wordpress.com/2022/09/19/question-about-infinite-redirect/#comment-1731
-	if ( maybeStalelaunchpadScreenOption && maybeStalelaunchpadScreenOption === 'full' ) {
-		await context.store.dispatch( requestSite( siteId ) );
+	try {
+		const { launchpad_screen, checklist_statuses, site_intent } = await fetchLaunchpad( slug );
+		if (
+			launchpad_screen === 'full' &&
+			! areLaunchpadTasksCompleted(
+				site_intent,
+				launchpadFlowTasks,
+				checklist_statuses,
+				isSiteLaunched
+			)
+		) {
+			// The new stepper launchpad onboarding flow isn't registered within the "page"
+			// client-side router, so page.redirect won't work. We need to use the
+			// traditional window.location Web API.
+			const verifiedParam = getQueryArgs()?.verified;
+			redirectToLaunchpad( slug, site_intent, verifiedParam );
+			return;
+		}
+	} catch ( error ) {}
+
+	// Ecommerce Plan's Home redirects to WooCommerce Home.
+	// Temporary redirection until we create a dedicated Home for Ecommerce.
+	if ( isEcommerce( getSitePlan( state, siteId ) ) ) {
+		const siteUrl = getSiteUrl( state, siteId );
+
+		if ( siteUrl !== null ) {
+			// We need to make sure that sites on the eCommerce plan actually have WooCommerce installed before we redirect to the WooCommerce Home
+			// So we need to trigger a fetch of site plugins
+			await context.store.dispatch( fetchSitePlugins( siteId ) );
+
+			const refetchedState = context.store.getState();
+			const installedWooCommercePlugin = getPluginOnSite( refetchedState, siteId, 'woocommerce' );
+			if ( installedWooCommercePlugin && installedWooCommercePlugin.active ) {
+				window.location.replace( siteUrl + '/wp-admin/admin.php?page=wc-admin' );
+			}
+		}
 	}
 
-	const refetchedOptions = getSiteOptions( context.store.getState(), siteId );
-	const shouldRedirectToLaunchpad = refetchedOptions?.launchpad_screen === 'full';
-
-	if ( shouldRedirectToLaunchpad ) {
-		// The new stepper launchpad onboarding flow isn't registered within the "page"
-		// client-side router, so page.redirect won't work. We need to use the
-		// traditional window.location Web API.
-		const verifiedParam = new URLSearchParams( window.location.search ).has( 'verified' );
-		redirectToLaunchpad( slug, refetchedOptions?.site_intent, verifiedParam );
-		return;
-	}
 	next();
 }

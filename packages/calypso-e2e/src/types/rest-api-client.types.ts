@@ -43,16 +43,13 @@ export interface BearerTokenResponse {
 	};
 }
 
-interface SiteMetadata {
-	ID: number;
-	name: string;
-	description: string;
-	URL: string;
-	site_owner: number;
+export interface DomainData {
+	blog_id: number;
+	domain: string;
 }
 
-export interface AllSitesResponse {
-	sites: Array< SiteMetadata >;
+export interface AllDomainsResponse {
+	domains: Array< DomainData >;
 }
 
 export interface CalypsoPreferencesResponse {
@@ -122,14 +119,24 @@ export interface Invite {
 // Export as Array to expose function calls of arrays.
 export type AllInvitesResponse = Array< Invite >;
 
+interface Widget {
+	id: string;
+	sidebar: string;
+	position: number;
+}
+
+export type AllWidgetsResponse = Array< Widget >;
+
 export interface DeleteInvitesResponse {
 	deleted: string[];
 	invalid: string[];
 }
 
-export interface NewPostResponse {
+export interface PostResponse {
+	ID: number;
 	URL: string;
 	title: string;
+	status: 'trash' | 'publish' | 'private' | 'draft' | 'future' | 'deleted';
 }
 
 export interface NewMediaResponse {
@@ -153,6 +160,31 @@ export interface ReaderResponse {
 
 export interface NewCommentResponse {
 	ID: number;
+	raw_content: string;
+}
+
+export interface CommentLikeResponse {
+	success: boolean;
+	i_like: boolean;
+	like_count: number;
+}
+
+export interface PluginResponse {
+	id: string;
+	slug: string;
+	active: boolean;
+	name: string;
+}
+export interface AllPluginsResponse {
+	plugins: Array< PluginResponse >;
+}
+
+export interface PluginParams {
+	active: boolean;
+	[ key: string ]: string | number | boolean;
+}
+export interface PluginRemovalResponse {
+	log: string[];
 }
 
 /* Error Responses */

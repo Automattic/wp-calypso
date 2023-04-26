@@ -13,9 +13,9 @@ import videoEditor from './video-editor/reducer';
  * Returns the updated editor post ID state after an action has been
  * dispatched.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function postId( state = null, action ) {
 	switch ( action.type ) {

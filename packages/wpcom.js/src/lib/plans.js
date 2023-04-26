@@ -17,7 +17,7 @@ export default class Plans {
 	/**
 	 * Get a list of active WordPress.com plans
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */
@@ -28,7 +28,7 @@ export default class Plans {
 	/**
 	 * Get a list of features for active WordPress.com plans
 	 *
-	 * @param {object} [query] - query object parameter
+	 * @param {Object} [query] - query object parameter
 	 * @param {Function} [fn] - callback function
 	 * @returns {Promise} Promise
 	 */

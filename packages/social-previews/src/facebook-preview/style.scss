@@ -1,155 +1,191 @@
-/*
- * CSS values in this file are specific and
- * designed to match the CSS on external sites,
- * such as Google and Facebook. Therefore there
- * will be exceptions to our CSS guidelines here
- * but please do not "update" this file to
- * conform.
- *
- * @blame: dmsnell
-*/
+@import "./variables";
+@import "../shared";
 
-@import "../variables.scss";
-
-.facebook-preview {
-	border: none;
-	display: flex;
-	overflow-x: auto;
-	max-width: 527px;
-	margin: 20px;
-	-webkit-overflow-scrolling: touch;
+.facebook-preview__section {
+	width: clamp(#{$facebook-preview-min-width}, 100%, #{$facebook-preview-max-width});
+	margin-inline: auto;
 }
 
-.facebook-preview__content {
+.facebook-preview__post {
+	overflow-y: hidden;
+
 	display: flex;
-	max-width: 100%;
-	background-color: #f2f3f5;
+	flex-direction: column;
+
+	background-color: $facebook-preview-card-background-color;
+	border-radius: $facebook-preview-card-border-radius;
+	box-shadow: $facebook-preview-card-box-shadow;
+
+	font-family: $facebook-preview-font-family;
+
+	:any-link {
+		color: $facebook-blue;
+
+		text-decoration: none;
+	}
+}
+
+.facebook-preview__custom-text {
+	margin: 0;
+	padding: 0 1rem 1rem;
+
+	color: $facebook-preview-text-color;
+
+	/* stylelint-disable-next-line scales/font-sizes */
+	font-size: 0.9375rem; // 15px
+	line-height: 1.33;
+	word-break: break-word;
+}
+
+.facebook-preview__custom-text-post-url {
+	display: block;
+	margin-top: 0.5rem;
 }
 
 .facebook-preview__body {
 	display: flex;
 	flex-direction: column;
-	padding: 10px 12px;
-	border: 1px solid #dadde1;
-	overflow: hidden;
-	font-family: Helvetica, Arial, sans-serif;
+
+	border-top: $facebook-preview-body-border;
+	border-bottom: $facebook-preview-body-border;
+
+	&.is-loading {
+		visibility: hidden;
+	}
+
+	&.is-portrait {
+		flex-direction: row;
+	}
 }
 
-.facebook-preview__title {
-	color: #1d2129;
+.facebook-preview__text {
+	position: relative;
 
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	font-size: 16px;
-	font-weight: 600;
-	line-height: 20px;
-	max-height: 100px;
-	transition: color 0.1s ease-in-out;
+	display: flex;
+	align-items: center;
+	flex: 1;
+
+	padding: 0.5rem 1rem;
+
+	background-color: $facebook-preview-text-background-color;
+	color: $facebook-preview-text-color;
+
+	word-break: break-word;
 }
 
-.facebook-preview__description {
-	color: #606770;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	font-size: 14px; //value in Facebook's styles
-	line-height: 20px; //value in Facebook's styles
-	overflow-y: hidden;
+.facebook-preview__text-wrapper {
+	width: 100%;
 }
 
 .facebook-preview__url {
-	color: #606770;
-	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
-	font-size: 12px; //value in Facebook's styles
-	line-height: 11px; //value in Facebook's styles
+	margin-bottom: 0.25rem;
+
+	color: $facebook-preview-light-text-color;
+
+	/* stylelint-disable-next-line scales/font-sizes */
+	font-size: 0.8125rem; // 13px
+	line-height: 1;
 	text-transform: uppercase;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
 }
 
-.facebook-preview__article {
-	.facebook-preview__content {
-		flex-direction: column;
-		min-width: 100%;
-	}
+.facebook-preview__title {
+	margin: 0.25rem 0 0.125rem;
 
-	.facebook-preview__image {
-		max-height: 250px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		overflow-y: hidden;
+	/* stylelint-disable-next-line scales/font-sizes */
+	font-size: 0.9444rem; // 17px
+	font-weight: 600;
+	line-height: 1.18;
+}
 
-		& img {
-			height: auto;
-			width: 100%;
-			max-width: 527px;
-		}
-	}
+.facebook-preview__description {
+	color: $facebook-preview-light-text-color;
 
-	.facebook-preview__body {
-		height: auto;
-		max-height: 100px;
-	}
+	/* stylelint-disable-next-line scales/font-sizes */
+	font-size: 0.9375rem; // 15px
+	line-height: 1.33;
 
-	.facebook-preview__title {
-		margin-bottom: 1px;
-	}
-
-	.facebook-preview__description {
-		display: -webkit-box;
-		-webkit-line-clamp: 1;
-		-webkit-box-orient: vertical;
-	}
-
-	.facebook-preview__url {
-		margin-bottom: 5px;
+	.facebook-preview__body.is-landscape &.is-compact {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 }
 
-.facebook-preview__website {
-	max-height: 158px;
-	overflow: hidden;
+.facebook-preview__image,
+.facebook-preview__custom-image {
+	img {
+		display: block;
 
-	.facebook-preview__image {
-		flex-shrink: 0;
-		height: 158px;
-		width: 158px;
+		object-fit: cover;
+	}
+}
 
-		box-sizing: border-box;
-		border: 1px solid #dadde1;
-		border-right: 0;
+.facebook-preview__image {
+	&.is-empty {
+		width: 140px;
+		height: 140px;
 
-		& img {
-			display: block;
-			font-size: $font-body-small;
-			height: auto;
-			width: 100%;
-		}
+		border-inline-end: $facebook-preview-body-border;
+	}
 
-		&::after {
-			content: "";
-			display: block;
-			height: 100%;
-			width: 100%;
-			background: #fff;
+	&.is-portrait {
+		img {
+			width: 278px;
+			height: 430px;
 		}
 	}
 
-	.facebook-preview__body {
-		width: 100%;
-		height: 136px; //value in Facebook's styles
-		justify-content: center;
+	&.is-landscape {
+		img {
+			// At the moment of writing, the post card on Facebook.com goes from 508 to 680px wide
+			// on desktop. In landscape mode, the image takes the full width of the card, and
+			// respect the 1.91 aspect ratio at any width.
+			width: 100%;
+			aspect-ratio: 1.91;
+		}
+	}
+}
+
+.facebook-preview__custom-image {
+	display: flex;
+	justify-content: center;
+
+	width: 100%;
+
+	background-color: $facebook-preview-image-background;
+
+	&.is-portrait {
+		img {
+			width: 500px;
+			height: 685px;
+		}
 	}
 
-	.facebook-preview__title {
-		margin-bottom: 5px;
-		max-height: 110px;
-		overflow-wrap: break-word;
+	&.is-landscape {
+		img {
+			width: 100%;
+			aspect-ratio: 1.78;
+		}
 	}
+}
 
-	.facebook-preview__url {
-		margin-bottom: 5px;
-	}
-	.facebook-preview__description {
-		max-height: 80px; //value in Facebook's styles
+.facebook-preview__info {
+	position: absolute;
+	right: 15px;
+	top: -10px;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	width: 30px;
+	height: 30px;
+
+	background-color: $facebook-preview-card-background-color;
+	border: $facebook-preview-body-border;
+	border-radius: 50%;
+
+	i {
+		filter: invert(8%);
 	}
 }

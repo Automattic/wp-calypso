@@ -16,7 +16,7 @@ import 'calypso/state/jitm/init';
  * @param {number} siteId The site id to dismiss the jitm for
  * @param {string} id The id of the jitm to dismiss
  * @param {string} featureClass The feature class of the jitm to dismiss
- * @returns {object} The dismiss action
+ * @returns {Object} The dismiss action
  */
 export const dismissJITM = ( siteId, id, featureClass ) => ( {
 	type: JITM_DISMISS,
@@ -30,8 +30,8 @@ export const dismissJITM = ( siteId, id, featureClass ) => ( {
  *
  * @param {number} siteId The site identifier
  * @param {string} messagePath The path of the jitm (ex: "calypso:comments:admin_notices")
- * @param {object} jitms The objects to display
- * @returns {object} The jitm insert action
+ * @param {Object} jitms The objects to display
+ * @returns {Object} The jitm insert action
  */
 export const insertJITM = ( siteId, messagePath, jitms ) => ( {
 	type: JITM_SET,
@@ -44,7 +44,7 @@ export const insertJITM = ( siteId, messagePath, jitms ) => ( {
  *
  * @param {number} siteId The site identifier
  * @param {string} messagePath The path of the jitm (ex: "calypso:comments:admin_notices")
- * @returns {object} The action to clear out all the jitms
+ * @returns {Object} The action to clear out all the jitms
  */
 export const clearJITM = ( siteId, messagePath ) => ( {
 	type: JITM_SET,
@@ -76,7 +76,7 @@ export const setupDevTool = ( siteId, dispatch ) => {
  * @param {number} siteId The site id
  * @param {string} messagePath The jitm message path (ex: calypso:comments:admin_notices)
  * @param {?string} locale Current user locale
- * @returns {object} The action to fetch the jitms
+ * @returns {Object} The action to fetch the jitms
  */
 export const fetchJITM = ( siteId, messagePath, locale ) => ( {
 	type: JITM_FETCH,
@@ -89,16 +89,16 @@ export const fetchJITM = ( siteId, messagePath, locale ) => ( {
  * Returns an action thunk that opens the help center from a JITM CTA
  *
  * @param {Object} payload The payload coming from the JITM CTA
- * @param {Location[]} payload.history The history to pass in, allowing users to go back to the previous page
- * @param {number} payload.index The index of where we are in the history
+ * @param {Location[]} payload.route The route to open the help center to
  * @returns {Function} The action thunk
  */
 export const openHelpCenterFromJITM =
-	( { history = {}, index = 0 } ) =>
+	( { route } ) =>
 	( dispatch ) => {
 		const HELP_CENTER_STORE = HelpCenter.register();
-		dataStoreDispatch( HELP_CENTER_STORE ).setRouterState( history, index );
+		dataStoreDispatch( HELP_CENTER_STORE ).setInitialRoute( route );
 		dataStoreDispatch( HELP_CENTER_STORE ).setShowHelpCenter( true );
+		dataStoreDispatch( HELP_CENTER_STORE ).setChatTag( 'churn_chat_prompt' );
 		dispatch( {
 			type: JITM_OPEN_HELP_CENTER,
 		} );

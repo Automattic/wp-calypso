@@ -47,11 +47,10 @@ const IncludedProductList: React.FC< IncludedProductsProps > = ( { products, des
 
 			<ul>
 				{ products.map( ( productSlug ) => (
-					<li>
+					<li key={ productSlug }>
 						<IncludedProductListItem
 							productSlug={ productSlug }
 							descriptionMap={ descriptionMap }
-							key={ productSlug }
 						/>
 					</li>
 				) ) }

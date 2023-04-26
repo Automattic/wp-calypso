@@ -26,9 +26,15 @@ module.exports = {
 	 * @returns {boolean} Whether or not the namespace is available.
 	 */
 	check: function ( namespace ) {
-		if ( ! this.populated ) this.populate();
-		if ( this.namespaces.indexOf( '*' ) !== -1 ) return true;
-		if ( this.namespaces.indexOf( namespace ) !== -1 ) return true;
+		if ( ! this.populated ) {
+			this.populate();
+		}
+		if ( this.namespaces.indexOf( '*' ) !== -1 ) {
+			return true;
+		}
+		if ( this.namespaces.indexOf( namespace ) !== -1 ) {
+			return true;
+		}
 		/* If it is as 'server:api:controller', it could have a wildcard as 'server:*' */
 		if ( namespace.indexOf( ':' ) !== -1 ) {
 			/* Different levels of the namespace. Using the example of above: 'server' is level 0, 'api' is level 1 and
@@ -36,7 +42,9 @@ module.exports = {
 			const levels = namespace.split( ':' );
 			for ( let i = 1; i < levels.length; i++ ) {
 				const level = levels.slice( 0, i ).join( ':' ) + ':*';
-				if ( this.namespaces.includes( level ) ) return true;
+				if ( this.namespaces.includes( level ) ) {
+					return true;
+				}
 			}
 		}
 		return false;

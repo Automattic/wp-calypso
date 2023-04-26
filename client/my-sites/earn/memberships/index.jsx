@@ -23,6 +23,7 @@ import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import ExternalLink from 'calypso/components/external-link';
 import Gravatar from 'calypso/components/gravatar';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
+import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -53,6 +54,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { ADD_NEWSLETTER_PAYMENT_PLAN_HASH } from './constants';
 
 import './style.scss';
 
@@ -497,25 +499,56 @@ class MembershipsSection extends Component {
 	renderStripeConnected() {
 		return (
 			<div>
-				{ this.props?.query?.stripe_connect_success === 'earn' && (
-					<Notice
-						status="is-success"
-						showDismiss={ false }
-						text={ this.props.translate(
-							'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
-						) }
-					>
-						<NoticeAction href={ `/earn/payments-plans/${ this.props.siteSlug }` } icon="create">
-							{ this.props.translate( 'Add a payment plan' ) }
-						</NoticeAction>
-					</Notice>
-				) }
+				{ this.renderNotices() }
 				{ this.renderEarnings() }
 				{ this.renderSubscriberList() }
 				{ this.renderManagePlans() }
 				{ this.renderSettings() }
 			</div>
 		);
+	}
+
+	renderNotices() {
+		const { siteSlug, translate } = this.props;
+		const stripe_connect_success = this.props?.query?.stripe_connect_success;
+
+		if ( stripe_connect_success === 'earn' ) {
+			return (
+				<Notice
+					status="is-success"
+					showDismiss={ false }
+					text={ translate(
+						'Congrats! Your site is now connected to Stripe. You can now add your first payment plan.'
+					) }
+				>
+					<NoticeAction href={ `/earn/payments-plans/${ siteSlug }` } icon="create">
+						{ translate( 'Add a payment plan' ) }
+					</NoticeAction>
+				</Notice>
+			);
+		}
+
+		if ( stripe_connect_success === 'earn-newsletter' ) {
+			return (
+				<Notice
+					status="is-success"
+					showDismiss={ false }
+					text={ translate(
+						'Congrats! Your site is now connected to Stripe. You can now add payments to your newsletter.'
+					) }
+				>
+					<NoticeAction
+						external
+						icon="create"
+						href={ `/earn/payments-plans/${ siteSlug }${ ADD_NEWSLETTER_PAYMENT_PLAN_HASH }` }
+					>
+						{ translate( 'Add payments' ) }
+					</NoticeAction>
+				</Notice>
+			);
+		}
+
+		return null;
 	}
 
 	renderOnboarding( cta, intro ) {
@@ -589,7 +622,9 @@ class MembershipsSection extends Component {
 					<div>
 						<h3>{ translate( 'Join thousands of others' ) }</h3>
 						{ preventWidows(
-							'Sites that actively promoted their businesses and causes on social media, email, and other platforms have collected tens of thousands of dollars through these blocks.'
+							translate(
+								'Sites that actively promoted their businesses and causes on social media, email, and other platforms have collected tens of thousands of dollars through these blocks.'
+							)
 						) }
 					</div>
 				</div>
@@ -663,9 +698,15 @@ class MembershipsSection extends Component {
 
 		return (
 			<div>
-				<QueryMembershipsSettings siteId={ this.props.siteId } />
+				<QueryMembershipsSettings siteId={ this.props.siteId } source={ this.props.source } />
 				{ this.props.connectedAccountId && this.renderStripeConnected() }
 				{ this.props.connectUrl && ! this.props.connectedAccountId && this.renderConnectStripe() }
+
+				{ ! this.props.connectedAccountId && ! this.props.connectUrl && (
+					<div className="earn__payments-loading">
+						<LoadingEllipsis />
+					</div>
+				) }
 			</div>
 		);
 	}
@@ -695,6 +736,8 @@ const mapStateToProps = ( state ) => {
 			siteHasFeature( state, siteId, FEATURE_DONATIONS ) ||
 			siteHasFeature( state, siteId, FEATURE_RECURRING_PAYMENTS ),
 		isJetpack: isJetpackSite( state, siteId ),
+		source:
+			window.location.hash === ADD_NEWSLETTER_PAYMENT_PLAN_HASH ? 'earn-newsletter' : 'calypso',
 	};
 };
 

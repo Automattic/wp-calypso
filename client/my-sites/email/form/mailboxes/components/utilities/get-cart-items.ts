@@ -1,11 +1,11 @@
 import { isGSuiteProductSlug } from '@automattic/calypso-products';
+import { GSuiteProductUser } from '@automattic/shopping-cart';
 import {
 	googleApps,
 	googleAppsExtraLicenses,
 	titanMailMonthly,
 	titanMailYearly,
 } from 'calypso/lib/cart-values/cart-items';
-import { GSuiteProductUser } from 'calypso/lib/gsuite/new-users';
 import { isTitanMonthlyProduct } from 'calypso/lib/titan';
 import { MailboxForm } from 'calypso/my-sites/email/form/mailboxes';
 import { EmailProperties } from 'calypso/my-sites/email/form/mailboxes/components/utilities/get-email-product-properties';

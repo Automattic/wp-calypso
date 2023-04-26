@@ -5,13 +5,16 @@ import {
 	hasMarketplaceProduct,
 	isJetpackPlan,
 	isJetpackProduct,
+	getPlan,
 } from '@automattic/calypso-products';
 import { Card, CompactCard } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import BackupRetentionOptionOnCancelPurchase from 'calypso/components/backup-retention-management/retention-option-on-cancel-purchase';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
@@ -20,7 +23,7 @@ import {
 	getName,
 	purchaseType,
 	hasAmountAvailableToRefund,
-	isCancelable,
+	canAutoRenewBeTurnedOff,
 	isOneTimePurchase,
 	isRefundable,
 	isSubscription,
@@ -98,14 +101,18 @@ class CancelPurchase extends Component {
 		// For domain transfers, we only allow cancel if it's also refundable
 		const isDomainTransferCancelable = isRefundable( purchase ) || ! isDomainTransfer( purchase );
 
-		return isCancelable( purchase ) && isDomainTransferCancelable;
+		return canAutoRenewBeTurnedOff( purchase ) && isDomainTransferCancelable;
 	};
 
 	redirect = () => {
 		const { purchase, siteSlug } = this.props;
 		let redirectPath = this.props.purchaseListUrl;
 
-		if ( siteSlug && purchase && ( ! isCancelable( purchase ) || isDomainTransfer( purchase ) ) ) {
+		if (
+			siteSlug &&
+			purchase &&
+			( ! canAutoRenewBeTurnedOff( purchase ) || isDomainTransfer( purchase ) )
+		) {
 			redirectPath = this.props.getManagePurchaseUrlFor( siteSlug, purchase.id );
 		}
 
@@ -131,17 +138,24 @@ class CancelPurchase extends Component {
 
 	renderFooterText = () => {
 		const { purchase } = this.props;
-		const { refundText, expiryDate, totalRefundText } = purchase;
-
+		const { expiryDate, refundInteger, totalRefundInteger, totalRefundCurrency } = purchase;
 		if ( hasAmountAvailableToRefund( purchase ) ) {
 			if ( this.state.cancelBundledDomain && this.props.includedDomainPurchase ) {
 				return this.props.translate( '%(refundText)s to be refunded', {
-					args: { refundText: totalRefundText },
+					args: {
+						refundText: formatCurrency( totalRefundInteger, totalRefundCurrency, {
+							isSmallestUnit: true,
+						} ),
+					},
 					context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
 				} );
 			}
 			return this.props.translate( '%(refundText)s to be refunded', {
-				args: { refundText },
+				args: {
+					refundText: formatCurrency( refundInteger, totalRefundCurrency, {
+						isSmallestUnit: true,
+					} ),
+				},
 				context: 'refundText is of the form "[currency-symbol][amount]" i.e. "$20"',
 			} );
 		}
@@ -185,7 +199,9 @@ class CancelPurchase extends Component {
 
 		const { purchase, isJetpackPurchase } = this.props;
 		const purchaseName = getName( purchase );
-		const { siteName, domain: siteDomain, siteId } = purchase;
+		const plan = getPlan( purchase?.productSlug );
+		const planDescription = plan?.getPlanCancellationDescription?.();
+		const { siteName, siteId } = purchase;
 
 		let heading;
 
@@ -218,6 +234,8 @@ class CancelPurchase extends Component {
 					{ titles.cancelPurchase }
 				</HeaderCake>
 
+				<BackupRetentionOptionOnCancelPurchase purchase={ purchase } />
+
 				<Card className="cancel-purchase__card">
 					<h2>{ heading }</h2>
 
@@ -231,10 +249,13 @@ class CancelPurchase extends Component {
 					/>
 				</Card>
 
-				<PurchaseSiteHeader siteId={ siteId } name={ siteName } domain={ siteDomain } />
+				<PurchaseSiteHeader siteId={ siteId } name={ siteName } purchase={ purchase } />
 				<CompactCard className="cancel-purchase__product-information">
 					<div className="cancel-purchase__purchase-name">{ purchaseName }</div>
 					<div className="cancel-purchase__description">{ purchaseType( purchase ) }</div>
+					{ planDescription && (
+						<div className="cancel-purchase__plan-description">{ planDescription }</div>
+					) }
 					<ProductLink purchase={ purchase } selectedSite={ this.props.site } />
 				</CompactCard>
 				<CompactCard className="cancel-purchase__footer">

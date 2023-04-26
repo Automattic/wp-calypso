@@ -1,5 +1,5 @@
 import { localizeUrl } from '@automattic/i18n-utils';
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import { RESULT_TOUR, RESULT_VIDEO, SELL_INTENT } from './constants';
 
 export type LinksForSection = {
@@ -1115,7 +1115,7 @@ export const contextLinksForSection: Record< string, LinksForSection | LinksForS
 			},
 			post_id: 10977,
 			get title() {
-				return __( 'Security', __i18n_text_domain__ );
+				return _x( 'Security', 'Jetpack product name', __i18n_text_domain__ );
 			},
 			get description() {
 				return __(

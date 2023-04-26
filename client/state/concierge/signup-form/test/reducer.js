@@ -1,4 +1,3 @@
-import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import {
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
@@ -18,7 +17,7 @@ describe( 'concierge/signupForm/reducer', () => {
 	const mockSignupForm = {
 		firstname: 'Foo',
 		lastname: 'Bar',
-		timezone: 'UTC',
+		timezone: 'Asia/Kolkata',
 		message: 'hello',
 		phoneNumber: '+910123456789',
 		countryCode: 'IN',
@@ -59,7 +58,7 @@ describe( 'concierge/signupForm/reducer', () => {
 
 	describe( 'timezone', () => {
 		test( 'should use the default detected timezone.', () => {
-			expect( timezone( undefined, {} ) ).toEqual( guessTimezone() );
+			expect( timezone( undefined, {} ) ).toEqual( 'UTC' );
 		} );
 
 		test( 'should return the timezone of the update action', () => {
@@ -124,7 +123,7 @@ describe( 'concierge/signupForm/reducer', () => {
 			expect( signupForm( undefined, {} ) ).toEqual( {
 				firstname: '',
 				lastname: '',
-				timezone: guessTimezone(),
+				timezone: 'UTC',
 				message: '',
 				phoneNumber: '',
 				countryCode: '',

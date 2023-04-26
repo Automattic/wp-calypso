@@ -12,7 +12,7 @@ import 'calypso/state/stats/init';
  * @param  {number}  quantity      Number of periods to include in the query
  * @param  {number}  siteId        Site ID
  * @param  {Array}   statFields    Comma separated list of stat fields
- * @returns {object}  Action object
+ * @returns {Object}  Action object
  */
 
 export function requestChartCounts( { chartTab, date, period, quantity, siteId, statFields } ) {
@@ -33,8 +33,8 @@ export function requestChartCounts( { chartTab, date, period, quantity, siteId, 
  *
  * @param  {number}  siteId   		 Site ID
  * @param  {string}  period   		 Type of duration to include in the query (such as daily)
- * @param  {object}  data   			 Visitor counts API response
- * @returns {object}  Action object
+ * @param  {Object}  data   			 Visitor counts API response
+ * @returns {Object}  Action object
  */
 export function receiveChartCounts( siteId, period, data ) {
 	return {

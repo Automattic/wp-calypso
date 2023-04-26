@@ -1,6 +1,12 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.sites-overview__large-screen {
+	.site-search-filter-container__search .search.is-open .search__open-icon {
+		width: 60px;
+	}
+}
+
 .sites-overview {
 	.current-section {
 		padding: 0 16px;
@@ -12,14 +18,14 @@
 	// The -123px is to undo the padding of .layout__content (79px + 32px) and .sites-overview_container ( 8px + 8px )
 	min-height: calc(100vh - 123px);
 	padding: 16px 0;
-	@include break-large() {
+	@include break-xlarge {
 		padding: 6px 0;
 	}
 }
 .sites-overview__content-wrapper {
 	max-width: 1500px;
 	margin: auto;
-	@include break-large() {
+	@include break-xlarge {
 		padding: 0;
 	}
 }
@@ -98,7 +104,8 @@
 	}
 }
 .sites-overview__status-select-license,
-.sites-overview__status-unselect-license, {
+.sites-overview__status-unselect-license {
+	max-width: 100%;
 	display: inline-flex;
 	flex-direction: row;
 	justify-content: center;
@@ -139,6 +146,43 @@
 	vertical-align: middle;
 	color: var(--studio-gray-5);
 }
+.sites-overview__stats-trend__up,
+.sites-overview__stats-trend__down {
+	vertical-align: middle;
+	display: inline-flex;
+	margin-inline-start: -5px;
+}
+.sites-overview__stats-trend__up {
+	fill: var(--studio-jetpack-green-40);
+}
+.sites-overview__stats-trend__down {
+	fill: var(--studio-red-50);
+}
+.sites-overview__stats-trend__same {
+	vertical-align: middle;
+	height: 8px;
+	width: 8px;
+	border-radius: 50%;
+	background: var(--studio-gray-5);
+	display: inline-flex;
+	margin-inline-end: 5px;
+	@media screen and (max-width: $break-xlarge) {
+		margin-block-start: 8px;
+	}
+}
+.sites-overview__stats .shortened-number,
+.sites-overview__stats-trend .shortened-number {
+	vertical-align: middle;
+	color: var(--studio-gray-80);
+	font-size: 0.75rem;
+}
+.sites-overview__stats-trend svg {
+	position: relative;
+	inset-block-start: 0.3rem;
+	@media screen and (max-width: $break-xlarge) {
+		inset-block-start: 0.27rem;
+	}
+}
 .sites-overview__disabled {
 	color: var(--studio-gray-5);
 	cursor: not-allowed;
@@ -161,11 +205,6 @@
 		margin-inline-end: 5px;
 		font-size: 1rem !important;
 	}
-	@include break-large() {
-		width: calc(100% - 55px);
-		margin-inline-start: 55px;
-		font-size: 0.875rem !important;
-	}
 }
 .sites-overview__overlay {
 	display: block;
@@ -175,9 +214,6 @@
 	background: linear-gradient(to right, rgba(255, 255, 255, 0.8) 30%, rgba(255, 255, 255, 1) 100%);
 	inset-block-start: 0;
 	inset-inline-end: 75px;
-	@include break-large() {
-		inset-inline-end: 0;
-	}
 }
 .sites-overview__vertical-align-middle {
 	vertical-align: middle;
@@ -188,9 +224,7 @@
 	display: flex;
 	align-items: center;
 	height: 40px;
-	@include break-large() {
-		margin: 8px;
-	}
+	position: relative;
 }
 .sites-overview__error-icon {
 	background: #d94f4f;
@@ -200,9 +234,6 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	@include break-large() {
-		width: auto;
-	}
 }
 .sites-overview__error-message {
 	font-size: 0.75rem;
@@ -212,22 +243,24 @@
 }
 .sites-overview__error-message-large-screen {
 	display: none;
-	@include break-large() {
+	@include break-wide {
 		display: inline-block;
 	}
 }
 .sites-overview__error-message-small-screen {
 	display: inline-block;
-	@include break-large() {
+	@include break-wide {
 		display: none;
 	}
 }
 .sites-overview__error-message-link {
 	font-size: 0.75rem;
-	color: #bbb !important;
+	color: var(--studio-white) !important;
 	padding: 6px;
 	position: absolute;
 	inset-inline-end: 16px;
+	text-decoration: underline;
+	font-weight: 500;
 }
 .sites-overview__badge {
 	font-size: 0.75rem !important;
@@ -235,12 +268,20 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	vertical-align: middle;
-	@include break-large() {
+	@include break-wide {
 		max-width: 70px;
 	}
 	@include break-wide() {
 		max-width: fit-content;
 	}
+}
+
+.sites-overview__stats {
+	color: var(--studio-black);
+	display: inline-block;
+	line-height: 17px;
+	height: 18px;
+	padding: 2px 1px;
 }
 .sites-overview__tooltip {
 	.popover__arrow {
@@ -263,16 +304,13 @@
 	inset-block-start: 50%;
 	transform: translateY(-50%);
 	display: inline-flex;
-	@include break-large() {
-		display: none;
-	}
 }
 .sites-overview__status-count {
 	position: absolute;
 	inset-inline-end: 42px;
 	inset-block-start: 50%;
 	transform: translateY(-50%);
-	border-radius: 50%; /* stylelint-disable-line declaration-property-unit-allowed-list */
+	border-radius: 50%;
 	border-width: 2px;
 	border-style: solid;
 	width: 24px;
@@ -281,16 +319,16 @@
 	font-size: 0.75rem;
 	line-height: 20px;
 	box-sizing: border-box;
-	@include break-large() {
-		display: none;
-	}
 }
 .sites-overview__status-failed {
+	background-color: var(--studio-red-50);
 	border-color: var(--studio-red-50);
-	color: var(--studio-red-50);
+	color: var(--color-text-inverted);
 }
 .sites-overview__status-warning {
+	background-color: var(--studio-yellow-20);
 	border-color: var(--studio-yellow-20);
+	color: var(--color-warning-80);
 }
 @keyframes highlight-tab-animation {
 	0% {
@@ -353,5 +391,57 @@
 	@include breakpoint-deprecated( ">660px" ) {
 		left: var(--sidebar-width-min);
 		padding: 0.5rem;
+	}
+}
+
+.sites-overview__column-content {
+	font-size: 0.75rem !important;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+}
+
+.sites-overview__warning {
+	@extend .sites-overview__column-content;
+	color: var(--color-warning-50);
+}
+
+.sites-overview__failed {
+	@extend .sites-overview__column-content;
+	color: var(--studio-red-50);
+}
+
+.sites-overview__critical {
+	@extend .sites-overview__column-content;
+	padding: 15px;
+	color: var(--studio-red-50);
+}
+
+.sites-overview__boost-score {
+	&.boost-score-good {
+		@extend .sites-overview__column-content;
+		color: var(--studio-green-50);
+	}
+
+	&.boost-score-okay {
+		@extend .sites-overview__column-content;
+		color: var(--studio-yellow-50);
+	}
+
+	&.boost-score-bad {
+		@extend .sites-overview__column-content;
+		color: var(--studio-red-50);
+	}
+}
+
+.width-fit-content {
+	width: fit-content !important;
+}
+
+.site-content__small-screen-view {
+	.sites-overview__icon-active {
+		position: relative;
+		left: 4px;
 	}
 }

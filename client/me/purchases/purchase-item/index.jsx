@@ -4,8 +4,10 @@ import {
 	PLAN_MONTHLY_PERIOD,
 	PLAN_ANNUAL_PERIOD,
 	PLAN_BIENNIAL_PERIOD,
+	PLAN_TRIENNIAL_PERIOD,
 } from '@automattic/calypso-products';
 import { CompactCard, Gridicon } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
 import { ExternalLink } from '@wordpress/components';
 import { Icon, warning as warningIcon } from '@wordpress/icons';
 import classNames from 'classnames';
@@ -13,6 +15,7 @@ import i18n, { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
+import akismetIcon from 'calypso/assets/images/icons/akismet-icon.svg';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import SiteIcon from 'calypso/blocks/site-icon';
 import InfoPopover from 'calypso/components/info-popover';
@@ -39,6 +42,11 @@ import {
 } from 'calypso/lib/purchases';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
+import {
+	isTemporarySitePurchase,
+	isJetpackTemporarySitePurchase,
+	isAkismetTemporarySitePurchase,
+} from '../utils';
 import OwnerInfo from './owner-info';
 import 'calypso/me/purchases/style.scss';
 
@@ -55,16 +63,7 @@ class PurchaseItem extends Component {
 	}
 
 	getStatus() {
-		const {
-			purchase,
-			translate,
-			locale,
-			moment,
-			name,
-			isJetpack,
-			isJetpackTemporarySite,
-			isDisconnectedSite,
-		} = this.props;
+		const { purchase, translate, locale, moment, name, isJetpack, isDisconnectedSite } = this.props;
 		const expiry = moment( purchase.expiryDate );
 
 		if ( purchase && isPartnerPurchase( purchase ) ) {
@@ -75,19 +74,24 @@ class PurchaseItem extends Component {
 			} );
 		}
 
-		if ( isDisconnectedSite ) {
-			if ( isJetpackTemporarySite ) {
+		if ( isDisconnectedSite && ! isAkismetTemporarySitePurchase( purchase ) ) {
+			if ( isJetpackTemporarySitePurchase( purchase ) ) {
 				return (
 					<>
 						<span className="purchase-item__is-error">
 							{ translate( 'Activate your product license key' ) }
 						</span>
 						<br />
+						{ /* TODO: These anchor links are causing React console warnings,
+						"Warning: validateDOMNesting(...): <a> cannot appear as a descendant of <a>."
+						Because the <CompactCard> component that renders this also us surrounded by an anchor link.
+						See: <Card> General Guidelines: https://github.com/Automattic/wp-calypso/tree/trunk/packages/components/src/card#general-guidelines
+						TLDR: Don't display more than one primary button or action in a single card. (in which the card itself if a primary action/link in this case) */ }
 						<ExternalLink
 							className="purchase-item__link"
 							href="https://jetpack.com/support/install-jetpack-and-connect-your-new-plan/#how-can-i-activate-my-license-key-in-my-jetpack-installation"
 						>
-							Learn more
+							{ translate( 'Learn more' ) }
 						</ExternalLink>
 					</>
 				);
@@ -152,7 +156,10 @@ class PurchaseItem extends Component {
 					{
 						args: {
 							date: expiry.format( 'LL' ),
-							amount: purchase.priceText,
+							amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
 						},
 						components: {
 							span: <span className="purchase-item__date" />,
@@ -220,7 +227,10 @@ class PurchaseItem extends Component {
 			if ( purchase.billPeriodDays ) {
 				const translateOptions = {
 					args: {
-						amount: purchase.priceText,
+						amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+							isSmallestUnit: true,
+							stripZeros: true,
+						} ),
 						date: renewDate.format( 'LL' ),
 					},
 					components: {
@@ -260,12 +270,27 @@ class PurchaseItem extends Component {
 								translateOptions
 							);
 						}
+					case PLAN_TRIENNIAL_PERIOD:
+						if (
+							locale === 'en' ||
+							i18n.hasTranslation(
+								'Renews every three years at %(amount)s on {{span}}%(date)s{{/span}}'
+							)
+						) {
+							return translate(
+								'Renews every three years at %(amount)s on {{span}}%(date)s{{/span}}',
+								translateOptions
+							);
+						}
 				}
 			}
 
 			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
 				args: {
-					amount: purchase.priceText,
+					amount: formatCurrency( purchase.priceInteger, purchase.currencyCode, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ),
 					date: renewDate.format( 'LL' ),
 				},
 				components: {
@@ -341,16 +366,8 @@ class PurchaseItem extends Component {
 	}
 
 	getPurchaseType() {
-		const {
-			purchase,
-			site,
-			translate,
-			slug,
-			showSite,
-			isDisconnectedSite,
-			isJetpackTemporarySite,
-		} = this.props;
-		if ( isJetpackTemporarySite ) {
+		const { purchase, site, translate, slug, showSite, isDisconnectedSite } = this.props;
+		if ( isTemporarySitePurchase( purchase ) ) {
 			return null;
 		}
 
@@ -480,7 +497,15 @@ class PurchaseItem extends Component {
 	}
 
 	getSiteIcon = () => {
-		const { site, isDisconnectedSite } = this.props;
+		const { site, isDisconnectedSite, purchase } = this.props;
+
+		if ( isAkismetTemporarySitePurchase( purchase ) ) {
+			return (
+				<div className="purchase-item__static-icon">
+					<img src={ akismetIcon } alt="Akismet icon" />
+				</div>
+			);
+		}
 
 		if ( isDisconnectedSite ) {
 			return (
@@ -552,8 +577,9 @@ class PurchaseItem extends Component {
 
 		if ( ! isPlaceholder && getManagePurchaseUrlFor ) {
 			// A "disconnected" Jetpack site's purchases may be managed.
-			// A "disconnected" WordPress.com site may not (the user has been removed).
-			if ( ! isDisconnectedSite || isJetpack ) {
+			// A "disconnected" WordPress.com site may *NOT* be managed (the user has been removed), unless it is a
+			// WPCOM generated temporary site, which is created during the siteless checkout flow. (currently Jetpack & Akismet can have siteless purchases).
+			if ( ! isDisconnectedSite || isJetpack || isTemporarySitePurchase( purchase ) ) {
 				onClick = () => {
 					window.scrollTo( 0, 0 );
 				};
@@ -595,7 +621,6 @@ PurchaseItem.propTypes = {
 	getManagePurchaseUrlFor: PropTypes.func,
 	isDisconnectedSite: PropTypes.bool,
 	isJetpack: PropTypes.bool,
-	isJetpackTemporarySite: PropTypes.bool,
 	isPlaceholder: PropTypes.bool,
 	purchase: PropTypes.object,
 	showSite: PropTypes.bool,

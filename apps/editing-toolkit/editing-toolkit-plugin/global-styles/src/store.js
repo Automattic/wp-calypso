@@ -1,5 +1,8 @@
 import apiFetch from '@wordpress/api-fetch';
-import { registerStore } from '@wordpress/data';
+import { register, createReduxStore } from '@wordpress/data';
+
+// Global data passed from PHP.
+const { STORE_NAME, REST_PATH } = JETPACK_GLOBAL_STYLES_EDITOR_CONSTANTS; // eslint-disable-line no-undef
 
 let cache = {};
 let alreadyFetchedOptions = false;
@@ -34,86 +37,69 @@ const actions = {
 	},
 };
 
-/**
- * Store API
- *
- * Selectors under `wp.data.select( STORE_NAME )`:
- *
- * - getOption( String optionName )
- * - hasLocalChanges()
- *
- * Actions under `wp.data.dispatch( STORE_NAME )`:
- *
- * - updateOptions( Object optionsToUpdate )
- * - publishOptions( Object optionsToUpdate )
- * - resetLocalChanges()
- *
- * @param {string} storeName Name of the store.
- * @param {string} optionsPath REST path used to interact with the options API.
- */
-export default ( storeName, optionsPath ) => {
-	registerStore( storeName, {
-		reducer( state, action ) {
-			switch ( action.type ) {
-				case 'UPDATE_OPTIONS':
-				case 'RESET_OPTIONS':
-				case 'PUBLISH_OPTIONS':
-					return {
-						...state,
-						...action.options,
-					};
+export const store = createReduxStore( STORE_NAME, {
+	reducer( state, action ) {
+		switch ( action.type ) {
+			case 'UPDATE_OPTIONS':
+			case 'RESET_OPTIONS':
+			case 'PUBLISH_OPTIONS':
+				return {
+					...state,
+					...action.options,
+				};
+		}
+
+		return state;
+	},
+
+	actions,
+
+	selectors: {
+		getOption( state, key ) {
+			return state ? state[ key ] : undefined;
+		},
+		hasLocalChanges( state ) {
+			return !! state && Object.keys( cache ).some( ( key ) => cache[ key ] !== state[ key ] );
+		},
+	},
+
+	resolvers: {
+		// eslint-disable-next-line no-unused-vars
+		*getOption( key ) {
+			if ( alreadyFetchedOptions ) {
+				return; // do nothing
 			}
 
-			return state;
+			let options;
+			try {
+				alreadyFetchedOptions = true;
+				options = yield actions.fetchOptions();
+			} catch ( error ) {
+				options = {};
+			}
+			cache = options;
+			return {
+				type: 'UPDATE_OPTIONS',
+				options,
+			};
 		},
+	},
 
-		actions,
-
-		selectors: {
-			getOption( state, key ) {
-				return state ? state[ key ] : undefined;
-			},
-			hasLocalChanges( state ) {
-				return !! state && Object.keys( cache ).some( ( key ) => cache[ key ] !== state[ key ] );
-			},
+	controls: {
+		IO_FETCH_OPTIONS() {
+			return apiFetch( { path: REST_PATH } );
 		},
-
-		resolvers: {
-			// eslint-disable-next-line no-unused-vars
-			*getOption( key ) {
-				if ( alreadyFetchedOptions ) {
-					return; // do nothing
-				}
-
-				let options;
-				try {
-					alreadyFetchedOptions = true;
-					options = yield actions.fetchOptions();
-				} catch ( error ) {
-					options = {};
-				}
-				cache = options;
-				return {
-					type: 'UPDATE_OPTIONS',
-					options,
-				};
-			},
+		IO_PUBLISH_OPTIONS( { options } ) {
+			cache = options; // optimistically update the cache
+			return apiFetch( {
+				path: REST_PATH,
+				method: 'POST',
+				data: {
+					...options,
+				},
+			} );
 		},
+	},
+} );
 
-		controls: {
-			IO_FETCH_OPTIONS() {
-				return apiFetch( { path: optionsPath } );
-			},
-			IO_PUBLISH_OPTIONS( { options } ) {
-				cache = options; // optimistically update the cache
-				return apiFetch( {
-					path: optionsPath,
-					method: 'POST',
-					data: {
-						...options,
-					},
-				} );
-			},
-		},
-	} );
-};
+register( store );

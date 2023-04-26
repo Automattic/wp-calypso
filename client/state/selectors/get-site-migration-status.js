@@ -3,8 +3,8 @@ import getRawSite from 'calypso/state/selectors/get-raw-site';
 /**
  * Returns the migration status of the site
  *
- * @param {object} state Global state tree
- * @param {object} siteId Site ID
+ * @param {Object} state Global state tree
+ * @param {Object} siteId Site ID
  * @returns {string} The status of the site's migration
  */
 export default function getSiteMigrationStatus( state, siteId ) {

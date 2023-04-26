@@ -24,7 +24,7 @@ import 'calypso/state/posts/init';
  * 						{ from: 4, to: 5 },
  * 					]
  * 					Optional. If not provided, the API will return a set of sequential diffs
- * @returns {object} action object
+ * @returns {Object} action object
  */
 export const requestPostRevisions = ( siteId, postId, postType = 'posts', comparisons = [] ) => ( {
 	type: POST_REVISIONS_REQUEST,

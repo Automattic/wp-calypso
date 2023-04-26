@@ -15,7 +15,7 @@ import 'calypso/state/stats/init';
  * @param  {string}   postIds  Comma separated list of Post IDs
  * @param  {number}   num      Number of days to include in the query
  * @param  {string}   date     The most recent day to include in results (YYYY-MM-DD format)
- * @returns {object}  Action object
+ * @returns {Object}  Action object
  */
 export function requestRecentPostViews( siteId, postIds, num, date ) {
 	return {
@@ -32,7 +32,7 @@ export function requestRecentPostViews( siteId, postIds, num, date ) {
  * been received.
  *
  * @param  {number}  siteId   Site ID
- * @returns {object}  Action object
+ * @returns {Object}  Action object
  */
 export function receiveRecentPostViews( siteId, { date, posts } ) {
 	return {

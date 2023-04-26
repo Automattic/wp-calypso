@@ -33,7 +33,8 @@ a.post-relative-time-status__link {
 
 .post-relative-time-status__time,
 .post-relative-time-status__status {
-	display: inline-block;
+	display: inline-flex;
+	align-items: center;
 	margin-right: math.div(11, 12)  * 1em;
 }
 

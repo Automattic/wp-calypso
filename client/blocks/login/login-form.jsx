@@ -350,6 +350,14 @@ export class LoginForm extends Component {
 		return translate( 'Continue' );
 	};
 
+	showJetpackConnectSiteOnly = () => {
+		const { currentQuery } = this.props;
+		const isFromMigrationPlugin = currentQuery?.redirect_to?.includes( 'wpcom-migration' );
+		return (
+			( currentQuery?.skip_user || currentQuery?.allow_site_connection ) && ! isFromMigrationPlugin
+		);
+	};
+
 	renderWooCommerce( { showSocialLogin = true, socialToS } = {} ) {
 		const isFormDisabled = this.state.isFormDisabledWhileLoading || this.props.isFormDisabled;
 		const { requestError, socialAccountIsLinking: linkingSocialUser } = this.props;
@@ -759,7 +767,7 @@ export class LoginForm extends Component {
 					</Fragment>
 				) }
 
-				{ ( currentQuery?.skip_user || currentQuery?.allow_site_connection ) && (
+				{ this.showJetpackConnectSiteOnly() && (
 					<JetpackConnectSiteOnly
 						homeUrl={ currentQuery?.site }
 						redirectAfterAuth={ currentQuery?.redirect_after_auth }

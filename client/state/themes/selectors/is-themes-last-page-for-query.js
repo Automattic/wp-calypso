@@ -9,9 +9,9 @@ const emptyObject = {};
  * Returns true if the query has reached the last page of queryable pages, or
  * null if the total number of queryable themes if unknown.
  *
- * @param  {object}   state  Global state tree
+ * @param  {Object}   state  Global state tree
  * @param  {number}   siteId Site ID
- * @param  {object}   query  Theme query object
+ * @param  {Object}   query  Theme query object
  * @returns {?boolean}        Whether last themes page has been reached
  */
 export function isThemesLastPageForQuery( state, siteId, query = emptyObject ) {

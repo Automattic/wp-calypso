@@ -40,7 +40,7 @@ export type DispatchFromMap< A extends Record< string, ( ...args: any[] ) => any
 		...args: Parameters< A[ actionCreator ] >
 	) => A[ actionCreator ] extends ( ...args: any[] ) => Generator
 		? Promise< GeneratorReturnType< A[ actionCreator ] > >
-		: void;
+		: Promise< void >;
 };
 
 /**
@@ -61,17 +61,4 @@ export type GeneratorReturnType< T extends ( ...args: any[] ) => Generator > = T
 	...args: any
 ) => Generator< any, infer R, any >
 	? R
-	: never;
-
-/**
- * Usually we use ReturnType of all the action creators to deduce all the actions.
- * This works until one of the action creators is a generator and doesn't actually "Return" an action.
- * This type helper allows for actions to be both functions and generators
- */
-export type ReturnOrGeneratorYieldUnion< T extends ( ...args: any ) => any > = T extends (
-	...args: any
-) => infer Return
-	? Return extends Generator< infer T, infer U, any >
-		? T | U
-		: Return
 	: never;

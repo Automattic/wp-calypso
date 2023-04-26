@@ -20,6 +20,7 @@ import {
 	isValueTruthy,
 } from '@automattic/wpcom-checkout';
 import { useMemo } from 'react';
+import { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import {
@@ -34,7 +35,6 @@ import {
 import { createPayPalMethod, createPayPalStore } from '../../payment-methods/paypal';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from '../../payment-methods/wechat';
 import useCreateExistingCards from './use-create-existing-cards';
-import type { StoredCard } from '../../types/stored-cards';
 import type { StripeConfiguration, StripeLoadingError } from '@automattic/calypso-stripe';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -289,21 +289,16 @@ function useCreateApplePay( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	isApplePayAvailable,
-	isWebPayLoading,
 	cartKey,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	isApplePayAvailable: boolean;
-	isWebPayLoading: boolean;
 	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
 	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
-
-	const shouldCreateApplePayMethod = isStripeReady && ! isWebPayLoading && isApplePayAvailable;
+	const shouldCreateApplePayMethod = isStripeReady;
 
 	const applePayMethod = useMemo( () => {
 		return shouldCreateApplePayMethod && stripe && stripeConfiguration && cartKey
@@ -319,25 +314,19 @@ function useCreateGooglePay( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	isGooglePayAvailable,
-	isWebPayLoading,
 	cartKey,
 }: {
 	isStripeLoading: boolean;
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	isGooglePayAvailable: boolean;
-	isWebPayLoading: boolean;
 	cartKey: CartKey | undefined;
 } ): PaymentMethod | null {
 	const isStripeReady =
 		! isStripeLoading &&
 		! stripeLoadingError &&
-		! isWebPayLoading &&
 		stripe &&
 		stripeConfiguration &&
-		isGooglePayAvailable &&
 		isEnabled( 'checkout/google-pay' );
 
 	return useMemo( () => {
@@ -352,9 +341,6 @@ export default function useCreatePaymentMethods( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	isApplePayAvailable,
-	isGooglePayAvailable,
-	isWebPayLoading,
 	storedCards,
 	siteSlug,
 }: {
@@ -362,10 +348,7 @@ export default function useCreatePaymentMethods( {
 	stripeLoadingError: StripeLoadingError;
 	stripeConfiguration: StripeConfiguration | null;
 	stripe: Stripe | null;
-	isApplePayAvailable: boolean;
-	isGooglePayAvailable: boolean;
-	isWebPayLoading: boolean;
-	storedCards: StoredCard[];
+	storedCards: StoredPaymentMethod[];
 	siteSlug: string | undefined;
 } ): PaymentMethod[] {
 	const cartKey = useCartKey();
@@ -434,8 +417,6 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isApplePayAvailable,
-		isWebPayLoading,
 		cartKey,
 	} );
 
@@ -444,8 +425,6 @@ export default function useCreatePaymentMethods( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		isGooglePayAvailable,
-		isWebPayLoading,
 		cartKey,
 	} );
 

@@ -1,24 +1,21 @@
 import {
 	getProductFromSlug,
-	isJetpackAntiSpam,
 	isJetpackAntiSpamSlug,
-	isJetpackBackup,
 	isJetpackBackupSlug,
 	isJetpackPlanSlug,
-	isJetpackScan,
 	isJetpackScanSlug,
-	planHasFeature,
-	WPCOM_FEATURES_ANTISPAM,
-	WPCOM_FEATURES_BACKUPS,
-	WPCOM_FEATURES_SCAN,
+	getAllFeaturesForPlan,
+	planHasSuperiorFeature,
+	isAkismetProduct,
+	AKISMET_PRODUCTS_LIST,
 } from '@automattic/calypso-products';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
 import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
-import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import {
 	getSitePlan,
 	getSiteProducts,
@@ -26,6 +23,7 @@ import {
 	getSiteOption,
 } from 'calypso/state/sites/selectors';
 import getSelectedSite from 'calypso/state/ui/selectors/get-selected-site';
+import AkismetProductOverlapsOwnedProductNotice from './akismet-product-overlaps-owned-product-notice';
 import CartPlanOverlapsOwnedProductNotice from './cart-plan-overlaps-owned-product-notice';
 import JetpackPluginRequiredVersionNotice from './jetpack-plugin-required-version-notice';
 import SitePlanIncludesCartProductNotice from './site-plan-includes-cart-product-notice';
@@ -39,8 +37,10 @@ const PrePurchaseNotices = () => {
 	const dispatch = useDispatch();
 
 	const selectedSite = useSelector( getSelectedSite );
+	const userActivePurchases = useSelector(
+		( state ) => getUserPurchases( state )?.filter( ( purchase ) => purchase.active ) ?? []
+	);
 	const siteId = selectedSite?.ID;
-
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const cartItemSlugs = responseCart.products.map( ( item ) => item.product_slug );
@@ -62,7 +62,6 @@ const PrePurchaseNotices = () => {
 
 		return getSitePlan( state, siteId );
 	} );
-
 	const currentSiteProducts = useSelector( ( state ) => {
 		if ( ! siteId ) {
 			return null;
@@ -72,62 +71,77 @@ const PrePurchaseNotices = () => {
 		return products.filter( ( p ) => ! p.expired );
 	} );
 
-	/**
-	 * The active product on the current site that overlaps/conflicts with the plan currently in the cart.
-	 */
-	const siteProductThatOverlapsCartPlan = useSelector( ( state ) => {
-		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
+	const getMatchingProducts = ( items, planSlug, isCartItem ) => {
+		const planFeatures = getAllFeaturesForPlan( planSlug );
 
-		if ( ! planSlugInCart ) {
+		return items.filter( ( item ) => {
+			const productSlug = isCartItem ? item.product_slug : item.productSlug;
+			//some products have had many variations over the years so we need to check an abstraction for backup, scan and Akismet.
+			return (
+				planFeatures.includes( productSlug ) ||
+				planHasSuperiorFeature( planSlug, productSlug ) ||
+				isJetpackBackupSlug( productSlug ) ||
+				isJetpackScanSlug( productSlug ) ||
+				isJetpackAntiSpamSlug( productSlug )
+			);
+		} );
+	};
+
+	const akismetPurchaseThatOverlapsCartProduct = useMemo( () => {
+		const productSlugInCart = cartItemSlugs.find( ( productSlug ) =>
+			isAkismetProduct( { productSlug } )
+		);
+		const akismetPurchases = userActivePurchases.filter(
+			( purchase ) => isAkismetProduct( purchase ) && 'siteless.akismet.com' === purchase.domain
+		);
+
+		// Continue only if the cart includes Akismet product
+		if ( ! productSlugInCart ) {
 			return null;
 		}
 
-		if (
-			planHasFeature( planSlugInCart, WPCOM_FEATURES_BACKUPS ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS )
-		) {
-			return currentSiteProducts.find( isJetpackBackup );
+		const lowerTierProducts = akismetPurchases.filter(
+			( { productSlug } ) =>
+				AKISMET_PRODUCTS_LIST.indexOf( productSlugInCart ) >
+				AKISMET_PRODUCTS_LIST.indexOf( productSlug )
+		);
+
+		if ( lowerTierProducts.length === 0 ) {
+			return null;
 		}
 
-		if (
-			planHasFeature( planSlugInCart, WPCOM_FEATURES_ANTISPAM ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM )
-		) {
-			return currentSiteProducts.find( isJetpackAntiSpam );
+		const highestTierOverlappedProduct = lowerTierProducts[ lowerTierProducts.length - 1 ];
+
+		// If the highest tiered product is Akismet Free, return null
+		// We don't need to display a notice about multiple paid plans in this case
+		if ( highestTierOverlappedProduct.productSlug === 'ak_free_yearly' ) {
+			return null;
 		}
 
-		if (
-			planHasFeature( planSlugInCart, WPCOM_FEATURES_SCAN ) &&
-			siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN )
-		) {
-			return currentSiteProducts.find( isJetpackScan );
+		// Returns the highest tiered product
+		return lowerTierProducts[ lowerTierProducts.length - 1 ];
+	}, [ cartItemSlugs, userActivePurchases ] );
+
+	const siteProductThatOverlapsCartPlan = useMemo( () => {
+		const planSlugInCart = cartItemSlugs.find( isJetpackPlanSlug );
+		if ( ! planSlugInCart || ! currentSiteProducts ) {
+			return null;
 		}
 
-		return null;
-	} );
+		const matchingProducts = getMatchingProducts( currentSiteProducts, planSlugInCart, false );
+		return matchingProducts?.[ 0 ];
+	}, [ currentSiteProducts, cartItemSlugs ] );
 
-	/**
-	 * The product currently in the cart that overlaps/conflicts with the current active site plan.
-	 */
-	const cartProductThatOverlapsSitePlan = useSelector( ( state ) => {
-		const backupSlugInCart = cartItemSlugs.find( isJetpackBackupSlug );
-		const antiSpamSlugInCart = cartItemSlugs.find( isJetpackAntiSpamSlug );
-		const scanSlugInCart = cartItemSlugs.find( isJetpackScanSlug );
+	const cartProductThatOverlapsSitePlan = useMemo( () => {
+		const planSlugOnSite = currentSitePlan?.product_slug;
 
-		if ( backupSlugInCart && siteHasFeature( state, siteId, WPCOM_FEATURES_BACKUPS ) ) {
-			return getProductFromSlug( backupSlugInCart );
+		if ( ! planSlugOnSite || planSlugOnSite === 'jetpack_free' ) {
+			return null;
 		}
 
-		if ( antiSpamSlugInCart && siteHasFeature( state, siteId, WPCOM_FEATURES_ANTISPAM ) ) {
-			return getProductFromSlug( antiSpamSlugInCart );
-		}
-
-		if ( scanSlugInCart && siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN ) ) {
-			return getProductFromSlug( scanSlugInCart );
-		}
-
-		return null;
-	} );
+		const matchingProducts = getMatchingProducts( responseCart.products, planSlugOnSite, true );
+		return matchingProducts?.[ 0 ];
+	}, [ currentSitePlan, responseCart.products ] );
 
 	const BACKUP_MINIMUM_JETPACK_VERSION = '8.5';
 	const siteHasBackupMinimumPluginVersion = useSelector( ( state ) => {
@@ -143,6 +157,14 @@ const PrePurchaseNotices = () => {
 			backupPluginActive || isJetpackMinimumVersion( state, siteId, BACKUP_MINIMUM_JETPACK_VERSION )
 		);
 	} );
+
+	if ( akismetPurchaseThatOverlapsCartProduct ) {
+		return (
+			<AkismetProductOverlapsOwnedProductNotice
+				purchase={ akismetPurchaseThatOverlapsCartProduct }
+			/>
+		);
+	}
 
 	// All these notices (and the selectors that drive them)
 	// require a site ID to work. We should *conceptually* always
@@ -169,11 +191,7 @@ const PrePurchaseNotices = () => {
 	// We're attempting to buy Jetpack Backup individually,
 	// but this site already has a plan that includes it.
 	// ignore the error on free plans as they do not include any paid features
-	if (
-		currentSitePlan &&
-		cartProductThatOverlapsSitePlan &&
-		currentSitePlan.product_slug !== 'jetpack_free'
-	) {
+	if ( currentSitePlan && cartProductThatOverlapsSitePlan ) {
 		return (
 			<SitePlanIncludesCartProductNotice
 				plan={ currentSitePlan }

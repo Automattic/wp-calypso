@@ -2,16 +2,13 @@ import { initializeTracksWithIdentity, PatternDefinition } from '@automattic/pag
 import { dispatch } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { PagePatternsPlugin } from './page-patterns-plugin';
-
-import './store';
+import { pageLayoutStore } from './store';
 import './index.scss';
 
 declare global {
 	interface Window {
 		starterPageTemplatesConfig?: {
 			templates?: PatternDefinition[];
-			locale?: string;
-			theme?: string;
 			screenAction?: string;
 			tracksUserData?: Parameters< typeof initializeTracksWithIdentity >[ 0 ];
 		};
@@ -23,8 +20,6 @@ const {
 	templates: patterns = [],
 	tracksUserData,
 	screenAction,
-	theme,
-	locale,
 } = window.starterPageTemplatesConfig ?? {};
 
 if ( tracksUserData ) {
@@ -33,13 +28,13 @@ if ( tracksUserData ) {
 
 // Open plugin only if we are creating new page.
 if ( screenAction === 'add' ) {
-	dispatch( 'automattic/starter-page-layouts' ).setOpenState( 'OPEN_FROM_ADD_PAGE' );
+	dispatch( pageLayoutStore ).setOpenState( 'OPEN_FROM_ADD_PAGE' );
 }
 
 // Always register ability to open from document sidebar.
 registerPlugin( 'page-patterns', {
 	render: () => {
-		return <PagePatternsPlugin patterns={ patterns } theme={ theme } locale={ locale } />;
+		return <PagePatternsPlugin patterns={ patterns } />;
 	},
 
 	// `registerPlugin()` types assume `icon` is mandatory however it isn't

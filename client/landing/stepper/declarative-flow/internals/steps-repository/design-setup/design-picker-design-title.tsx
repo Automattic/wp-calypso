@@ -1,12 +1,12 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { WPCOM_FEATURES_PREMIUM_THEMES } from '@automattic/calypso-products';
-import { PremiumBadge } from '@automattic/design-picker';
+import { PremiumBadge, WooCommerceBundledBadge } from '@automattic/design-picker';
 import { useSelect } from '@wordpress/data';
-import WooCommerceBundledBadge from '../../../../../../../packages/design-picker/src/components/woocommerce-bundled-badge';
 import { useSite } from '../../../../hooks/use-site';
 import { SITE_STORE } from '../../../../stores';
+import type { SiteSelect } from '@automattic/data-stores';
 import type { Design } from '@automattic/design-picker';
 import type { FC } from 'react';
+
 import './design-picker-design-title.scss';
 
 type Props = {
@@ -20,12 +20,16 @@ const DesignPickerDesignTitle: FC< Props > = ( { designTitle, selectedDesign } )
 	const isPremiumThemeAvailable = Boolean(
 		useSelect(
 			( select ) =>
-				site && select( SITE_STORE ).siteHasFeature( site.ID, WPCOM_FEATURES_PREMIUM_THEMES )
+				site &&
+				( select( SITE_STORE ) as SiteSelect ).siteHasFeature(
+					site.ID,
+					WPCOM_FEATURES_PREMIUM_THEMES
+				),
+			[ site ]
 		)
 	);
 
-	const showBundledBadge =
-		isEnabled( 'themes/plugin-bundling' ) && selectedDesign.is_bundled_with_woo_commerce;
+	const showBundledBadge = selectedDesign.is_bundled_with_woo_commerce;
 
 	let badge: React.ReactNode = null;
 	if ( showBundledBadge ) {

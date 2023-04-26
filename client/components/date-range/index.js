@@ -93,8 +93,8 @@ export class DateRange extends Component {
 		// Build initial state
 		this.state = {
 			popoverVisible: false,
-			staleStartDate: '',
-			staleEndDate: '',
+			staleStartDate: null,
+			staleEndDate: null,
 			startDate: startDate,
 			endDate: endDate,
 			staleDatesSaved: false,
@@ -269,7 +269,7 @@ export class DateRange extends Component {
 	 *
 	 * @param  {import('moment').Moment} startDate the start date for the range
 	 * @param  {import('moment').Moment} endDate   the end date for the range
-	 * @returns {object}           the date range object
+	 * @returns {Object}           the date range object
 	 */
 	toDateRange( startDate, endDate ) {
 		return {
@@ -368,20 +368,24 @@ export class DateRange extends Component {
 	 * the DateRange without clicking "Apply"
 	 */
 	revertDates = () => {
-		this.setState( ( previousState ) => {
-			const startDate = previousState.staleStartDate;
-			const endDate = previousState.staleEndDate;
+		this.setState(
+			( previousState ) => {
+				const startDate = previousState.staleStartDate;
+				const endDate = previousState.staleEndDate;
+				const newState = {
+					staleDatesSaved: false,
+					startDate: startDate,
+					endDate: endDate,
+					textInputStartDate: this.toDateString( startDate ),
+					textInputEndDate: this.toDateString( endDate ),
+				};
 
-			const newState = {
-				staleDatesSaved: false,
-				startDate: startDate,
-				endDate: endDate,
-				textInputStartDate: this.toDateString( startDate ),
-				textInputEndDate: this.toDateString( endDate ),
-			};
-
-			return newState;
-		} );
+				return newState;
+			},
+			() => {
+				this.props.onDateCommit( this.state.startDate, this.state.endDate );
+			}
+		);
 	};
 
 	/**
@@ -475,7 +479,7 @@ export class DateRange extends Component {
 	 * range specified
 	 *
 	 * @param  {import('moment').Moment}  date             momentJS instance
-	 * @param  {object} options          date range
+	 * @param  {Object} options          date range
 	 * @param  {import('moment').Moment | Date}  options.dateFrom the start of the date range
 	 * @param  {import('moment').Moment | Date}  options.dateTo   the end of the date range
 	 * @returns {import('moment').Moment}                  the date clamped to be within the range
@@ -664,7 +668,7 @@ export class DateRange extends Component {
 		return (
 			<DatePicker
 				calendarViewDate={ this.state.focusedMonth }
-				calendarInitialDate={ this.momentDateToJsDate( calendarInitialDate ) }
+				calendarInitialDate={ this.momentDateToJsDate( calendarInitialDate ) ?? null }
 				rootClassNames={ rootClassNames }
 				modifiers={ modifiers }
 				showOutsideDays={ false }

@@ -1,0 +1,217 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+
+.is-section-reader {
+	background: var(--studio-white);
+}
+
+.layout.has-header-section.is-section-reader .layout__header-section-content {
+	box-sizing: border-box;
+	max-width: 1140px;
+	margin: 0 auto;
+
+	@include break-medium {
+		padding-left: 108px;
+		padding-right: 108px;
+	}
+	@include break-wide {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	h1 {
+		font-family: Recoleta, "Noto Serif", Georgia, "Times New Roman", Times, serif;
+		font-size: 60px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		font-weight: 400;
+		margin-bottom: 4px;
+	}
+	p {
+		font-weight: 400;
+	}
+}
+
+.has-no-sidebar .layout__content {
+	padding-left: 24px;
+	padding-right: 24px;
+	max-width: 1140px;
+	margin: 0 auto;
+
+	@include break-medium {
+		padding-left: 108px;
+		padding-right: 108px;
+	}
+	@include break-wide {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+.tags h4 {
+	color: var(--studio-gray-50);
+	margin-bottom: 15px;
+}
+
+.trending-tags__container {
+	padding-bottom: 58px;
+}
+
+.trending-tags__row {
+	padding: 0;
+
+	@include break-small {
+		display: flex;
+		flex-direction: row;
+		// we need to set the border on the column for mobile and the row for desktop
+		border-top: 1px solid var(--studio-gray-5);
+		&:last-child {
+			border-bottom: 1px solid var(--studio-gray-5);
+		}
+	}
+	.trending-tags__column {
+		width: 100%;
+		// we need to set the border on the column for mobile and the row for desktop
+		border-top: 1px solid var(--studio-gray-5);
+		padding: 10px;
+		box-sizing: border-box;
+		@include break-small {
+			width: 50%;
+			border-top: none;
+			padding: 10px 0;
+		}
+		a:focus {
+			outline: none;
+		}
+		a:focus-visible .trending-tags__title {
+			outline: 2px solid #000;
+			outline-offset: 4px;
+		}
+		.trending-tags__title {
+			font-size: 36px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-weight: 600;
+			color: var(--studio-black);
+			margin-right: 12px;
+			padding-right: 2px;
+		}
+		.trending-tags__count {
+			font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			color: var(--studio-gray-50);
+		}
+	}
+	&:last-child .trending-tags__column:last-child {
+		border-bottom: 1px solid var(--studio-gray-5);
+		@include break-small {
+			border-bottom: none;
+		}
+	}
+}
+.alphabetic-tags__header {
+	background: var(--studio-white);
+	padding-top: 20px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid var(--studio-gray-5);
+	margin-bottom: 26px;
+	padding-left: 10px;
+
+	@include break-small {
+		padding-left: 0;
+	}
+	@include break-large {
+		display: flex;
+		flex-direction: row;
+	}
+
+	h2 {
+		font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		color: var(--studio-gray-50);
+		font-weight: 500;
+		width: 100%;
+		margin-bottom: 20px;
+		@include break-large {
+			width: 50%;
+			margin-bottom: 0;
+		}
+	}
+	.alphabetic-tags__tag-links {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		width: 100%;
+		@include break-large {
+			width: 50%;
+		}
+		button {
+			font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			color: var(--studio-gray-50);
+			text-decoration: none;
+			font-weight: 500;
+			flex-grow: 1;
+			&:last-child {
+				flex-grow: 0;
+			}
+			&:focus {
+				border-radius: 0;
+				box-shadow: none;
+				outline: none;
+			}
+			&:focus-visible {
+				outline: 2px solid #000;
+			}
+		}
+	}
+}
+
+.alphabetic-tags__table {
+	padding-bottom: 26px;
+	border-bottom: 1px solid var(--studio-gray-5);
+	margin-bottom: 26px;
+	padding-left: 10px;
+	@include break-small {
+		padding-left: 0;
+	}
+
+	.alphabetic-tags__letter-title {
+		font-size: 32px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+		margin-bottom: 22px;
+		font-weight: 500;
+
+		&:focus-visible {
+			text-decoration: underline;
+		}
+	}
+	.alphabetic-tags__row {
+		display: flex;
+		flex-wrap: wrap;
+
+		.alphabetic-tags__col {
+			width: 100%;
+			padding: 6px 10px 6px 0;
+			box-sizing: border-box;
+
+			@include break-small {
+				width: 50%;
+			}
+
+			@include break-medium {
+				width: 25%;
+			}
+
+			a {
+				color: var(--studio-gray-80);
+				font-weight: 400;
+				display: inline-block;
+				border-bottom: 1px solid transparent;
+
+				&:hover {
+					border-bottom: 1px solid var(--studio-gray-80);
+				}
+				&:focus {
+					outline: none;
+				}
+				&:focus-visible {
+					outline: 2px solid #000;
+					outline-offset: 4px;
+				}
+			}
+		}
+	}
+}

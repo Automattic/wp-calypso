@@ -31,7 +31,7 @@ export function receiveProductsList( productsList, type = null ) {
 /**
  * Requests the list of all products from the WPCOM API.
  *
- * @param   {object} [query={}] A list of request parameters.
+ * @param   {Object} [query={}] A list of request parameters.
  * @param   {string} query.type The type of products to request (e.g., "jetpack");
  * 								or undefined, for all products
  * @returns {Function} 			an Action thunk

@@ -7,3 +7,5 @@ export type Plan = {
 	user_is_owner: boolean;
 	// TODO: complete
 };
+
+export type { PlanPrices } from './selectors/get-plan-prices';

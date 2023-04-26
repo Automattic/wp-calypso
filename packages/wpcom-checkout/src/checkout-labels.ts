@@ -12,6 +12,7 @@ import {
 	isMonthlyProduct,
 	isYearly,
 	isBiennially,
+	isTriennially,
 } from '@automattic/calypso-products';
 import { translate } from 'i18n-calypso';
 import { isWpComProductRenewal as isRenewal } from './is-wpcom-product-renewal';
@@ -81,6 +82,10 @@ export function getSublabel( serverCartItem: ResponseCartProduct ): string {
 
 	if ( isBiennially( serverCartItem ) ) {
 		return String( translate( 'Billed every two years' ) );
+	}
+
+	if ( isTriennially( serverCartItem ) ) {
+		return String( translate( 'Billed every three years' ) );
 	}
 
 	return '';

@@ -179,6 +179,36 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 
+	test( 'go blog url', () => {
+		expect( localizeUrl( 'https://wordpress.com/go/', 'en' ) ).toEqual(
+			'https://wordpress.com/go/'
+		);
+		// Locales without a Go blog.
+		expect( localizeUrl( 'https://wordpress.com/go/', 'sv' ) ).toEqual(
+			'https://wordpress.com/go/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/', 'pl' ) ).toEqual(
+			'https://wordpress.com/go/'
+		);
+		// Locales with a Go blog.
+		expect( localizeUrl( 'https://wordpress.com/go/', 'pt-br' ) ).toEqual(
+			'https://wordpress.com/pt-br/go/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/', 'es' ) ).toEqual(
+			'https://wordpress.com/es/go/'
+		);
+		// Rewrite specific posts only for Spanish.
+		expect( localizeUrl( 'https://wordpress.com/go/category/a-post/', 'pt-br' ) ).toEqual(
+			'https://wordpress.com/go/category/a-post/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/category/a-post/', 'pl' ) ).toEqual(
+			'https://wordpress.com/go/category/a-post/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/go/category/a-post/', 'es' ) ).toEqual(
+			'https://wordpress.com/es/go/category/a-post/'
+		);
+	} );
+
 	test( 'support url', () => {
 		expect( localizeUrl( 'https://en.support.wordpress.com/', 'en' ) ).toEqual(
 			'https://wordpress.com/support/'
@@ -349,6 +379,36 @@ describe( '#localizeUrl', () => {
 		expect(
 			localizeUrl( 'https://wordpress.com/themes/free/filter/example-filter/', 'de', false )
 		).toEqual( 'https://wordpress.com/de/themes/free/filter/example-filter/' );
+	} );
+
+	test( 'start', () => {
+		expect( localizeUrl( 'https://wordpress.com/start/', 'en', true ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'de', true ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'pl', true ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'en', false ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'de', false ) ).toEqual(
+			'https://wordpress.com/start/de/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/start/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/user/', 'de', true ) ).toEqual(
+			'https://wordpress.com/start/user/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/user/', 'de', false ) ).toEqual(
+			'https://wordpress.com/start/user/de/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/start/user/', 'pl', false ) ).toEqual(
+			'https://wordpress.com/start/user/'
+		);
 	} );
 
 	test( 'tos', () => {

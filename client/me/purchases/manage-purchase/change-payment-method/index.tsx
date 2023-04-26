@@ -6,7 +6,6 @@ import {
 import page from 'page';
 import { Fragment, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import Layout from 'calypso/components/layout';
@@ -17,6 +16,7 @@ import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import {
@@ -24,12 +24,9 @@ import {
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
-import { hasLoadedStoredCardsFromServer } from 'calypso/state/stored-cards/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
 import PaymentMethodSelector from '../payment-method-selector';
 import getPaymentMethodIdFromPayment from '../payment-method-selector/get-payment-method-id-from-payment';
 import useCreateAssignablePaymentMethods from './use-create-assignable-payment-methods';
-import type { PurchasePayment, Purchase } from 'calypso/lib/purchases/types';
 
 interface ChangePaymentMethodProps {
 	getManagePurchaseUrlFor: ( siteSlug: string, purchaseId: number ) => string;
@@ -45,38 +42,31 @@ function ChangePaymentMethod( {
 	siteSlug,
 }: ChangePaymentMethodProps ) {
 	const hasLoadedSites = useSelector( ( state ) => ! isRequestingSites( state ) );
-	const hasLoadedStoredCards = useSelector( hasLoadedStoredCardsFromServer );
 	const hasLoadedUserPurchases = useSelector( hasLoadedUserPurchasesFromServer );
-	const purchase: Purchase | undefined = useSelector( ( state ) =>
-		getByPurchaseId( state, purchaseId )
-	);
-	const payment: PurchasePayment | undefined = useSelector(
-		( state ) => getByPurchaseId( state, purchaseId )?.payment
-	);
-	const selectedSite = useSelector( getSelectedSite );
+	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
+	const payment = useSelector( ( state ) => getByPurchaseId( state, purchaseId )?.payment );
+	const { isLoading: isLoadingStoredCards } = useStoredPaymentMethods( { type: 'card' } );
 
 	const { isStripeLoading } = useStripe();
 
 	const isDataLoading =
-		! hasLoadedSites || ! hasLoadedUserPurchases || ! hasLoadedStoredCards || isStripeLoading;
-	const isDataValid = purchase && selectedSite;
+		! hasLoadedSites || ! hasLoadedUserPurchases || isLoadingStoredCards || isStripeLoading;
 
 	useEffect( () => {
-		if ( ! isDataLoading && ! isDataValid ) {
+		if ( ! isDataLoading && ! purchase ) {
 			// Redirect if invalid data
 			page( purchaseListUrl );
 		}
-	}, [ isDataLoading, isDataValid, purchaseListUrl ] );
+	}, [ isDataLoading, purchase, purchaseListUrl ] );
 
 	const currentPaymentMethodId = getPaymentMethodIdFromPayment( payment );
 	const changePaymentMethodTitle = getChangePaymentMethodTitleCopy( currentPaymentMethodId );
 	const paymentMethods = useCreateAssignablePaymentMethods( currentPaymentMethodId );
 	const reduxDispatch = useDispatch();
 
-	if ( isDataLoading || ! isDataValid ) {
+	if ( isDataLoading || ! purchase ) {
 		return (
 			<Fragment>
-				<QueryStoredCards />
 				<QueryUserPurchases />
 				<PaymentMethodLoader title={ changePaymentMethodTitle } />
 			</Fragment>

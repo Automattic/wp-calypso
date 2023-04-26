@@ -15,7 +15,7 @@ const debug = debugFactory( 'calypso:user:settings' );
  * Currently the assumption is that if a settings.locale_variant slug exists, then that is the current language
  *
  * @param  {string}  languageSettingValue the newly-set language slug string.
- * @param  {object}  settings user settings object.
+ * @param  {Object}  settings user settings object.
  * @returns {boolean} if the language setting has been changed.
  */
 function hasLanguageChanged( languageSettingValue, settings = {} ) {

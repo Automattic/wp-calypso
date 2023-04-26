@@ -1,12 +1,8 @@
 import * as Analyzer from './analyzer';
-import * as Auth from './auth';
 import * as AutomatedTransferEligibility from './automated-transfer-eligibility';
 import * as DomainSuggestions from './domain-suggestions';
 import * as HelpCenter from './help-center';
-import * as I18n from './i18n';
-import * as Launch from './launch';
 import * as Onboard from './onboard';
-import oneWeekPersistenceConfig from './one-week-persistence-config';
 import * as Plans from './plans';
 import * as ProductsList from './products-list';
 import * as Reader from './reader';
@@ -14,7 +10,7 @@ import * as Site from './site';
 import * as StepperInternal from './stepper-internal';
 import * as Subscriber from './subscriber';
 import * as User from './user';
-import * as WPCOMFeatures from './wpcom-features';
+import * as WpcomPlansUI from './wpcom-plans-ui';
 export { useHappinessEngineersQuery } from './queries/use-happiness-engineers-query';
 export { useHas3PC } from './queries/use-has-3rd-party-cookies';
 export { useSiteAnalysis } from './queries/use-site-analysis';
@@ -30,25 +26,26 @@ export * from './site/types';
 export * from './templates';
 export * from './onboard/types';
 export * from './domain-suggestions/types';
+export * from './plans/types';
+export * from './user/types';
+
+const { SubscriptionManager } = Reader;
 
 export {
 	Analyzer,
-	Auth,
 	User,
 	DomainSuggestions,
 	HelpCenter,
-	I18n,
 	Site,
 	Plans,
-	Launch,
-	WPCOMFeatures,
-	Reader,
+	WpcomPlansUI,
 	Onboard,
-	oneWeekPersistenceConfig,
 	ProductsList,
 	AutomatedTransferEligibility,
+	Reader,
 	StepperInternal,
 	Subscriber,
+	SubscriptionManager,
 };
 
 /**
@@ -59,4 +56,6 @@ export { getContextResults } from './contextual-help/contextual-help';
 export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';
-export type { HelpCenterSite } from './help-center/types';
+export type { HelpCenterSite, HelpCenterSelect } from './help-center/types';
+export type { OnboardSelect } from './onboard';
+export type { StepperInternalSelect } from './stepper-internal';

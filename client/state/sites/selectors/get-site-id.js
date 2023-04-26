@@ -10,7 +10,7 @@ import getSite from './get-site';
  * const numericID = getSiteId( state, siteSlug );
  * // or
  * const numericID = getSiteId( state, siteIdentifierOfUnknownFormat );
- * @param  {object}  state       Global state tree
+ * @param  {Object}  state       Global state tree
  * @param  {number|string|null}  siteIdOrSlug Site ID or slug
  * @returns {?number}            Site ID
  */

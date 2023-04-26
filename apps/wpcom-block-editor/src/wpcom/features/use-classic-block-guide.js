@@ -51,7 +51,7 @@ const ClassicGuide = () => {
 												'The <a>block editor</a> is now the default editor for all your sites, but you can still use the Classic block, if you prefer.'
 											),
 											{
-												a: <a href={ 'https://wordpress.com/support/wordpress-editor/' } />,
+												a: <a href="https://wordpress.com/support/wordpress-editor/" />,
 											}
 										) }
 									</p>

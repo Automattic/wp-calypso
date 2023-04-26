@@ -3,12 +3,12 @@ const path = require( 'path' );
 /**
  * Return a Webpack loader configuration object for files / images.
  *
- * @param {object} options Rule.generator options
+ * @param {Object} options Rule.generator options
  * @param options.outputPath Where to output the asset
  * @param options.name Name of the asset
  * @param options.publicPath Path used to generate the URL for the asset
  * @param options.emitFile Whether to write the assets to the filesystem (defaults to true)
- * @returns {object} Webpack loader object
+ * @returns {Object} Webpack loader object
  */
 module.exports.loader = ( {
 	outputPath = 'images/',

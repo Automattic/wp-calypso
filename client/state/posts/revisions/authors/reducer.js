@@ -5,9 +5,9 @@ import { combineReducers } from 'calypso/state/utils';
 /**
  * Tracks all known user objects, indexed by user ID.
  *
- * @param  {object} state  Current state
- * @param  {object} action Action payload
- * @returns {object}        Updated state
+ * @param  {Object} state  Current state
+ * @param  {Object} action Action payload
+ * @returns {Object}        Updated state
  */
 export function items( state = {}, action ) {
 	switch ( action.type ) {

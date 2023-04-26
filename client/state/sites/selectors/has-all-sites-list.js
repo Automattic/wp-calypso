@@ -1,7 +1,7 @@
 /**
  * Returns whether all sites have been fetched.
  *
- * @param {object}    state  Global state tree
+ * @param {Object}    state  Global state tree
  * @returns {boolean}        Request State
  */
 export default function hasAllSitesList( state ) {

@@ -103,7 +103,7 @@ function joinNonEmptyValues( joinString: string, ...values: ( string | undefined
 }
 
 function contactDetailsToTaxInfo( info?: TaxInfo ): ManagedContactDetails {
-	return {
+	const taxInfo: ManagedContactDetails = {
 		countryCode: {
 			value: info?.tax_country_code ?? '',
 			isTouched: true,
@@ -115,6 +115,35 @@ function contactDetailsToTaxInfo( info?: TaxInfo ): ManagedContactDetails {
 			errors: [],
 		},
 	};
+	if ( info?.tax_subdivision_code ) {
+		taxInfo.state = {
+			value: info.tax_subdivision_code,
+			isTouched: true,
+			errors: [],
+		};
+	}
+	if ( info?.tax_city ) {
+		taxInfo.city = {
+			value: info.tax_city,
+			isTouched: true,
+			errors: [],
+		};
+	}
+	if ( info?.tax_organization ) {
+		taxInfo.organization = {
+			value: info.tax_organization,
+			isTouched: true,
+			errors: [],
+		};
+	}
+	if ( info?.tax_address ) {
+		taxInfo.address1 = {
+			value: info.tax_address,
+			isTouched: true,
+			errors: [],
+		};
+	}
+	return taxInfo;
 }
 
 export function TaxInfoArea( {
@@ -123,8 +152,8 @@ export function TaxInfoArea( {
 	storedDetailsId,
 	paymentPartnerProcessorId,
 }: {
-	last4: string;
-	brand: string;
+	last4?: string;
+	brand?: string;
 	storedDetailsId: string;
 	paymentPartnerProcessorId: string;
 } ) {
@@ -165,6 +194,10 @@ export function TaxInfoArea( {
 		setTaxInfo( {
 			tax_country_code: inputValues?.countryCode?.value ?? '',
 			tax_postal_code: inputValues?.postalCode?.value ?? '',
+			tax_subdivision_code: inputValues?.state?.value,
+			tax_city: inputValues?.city?.value,
+			tax_organization: inputValues?.organization?.value,
+			tax_address: inputValues?.address1?.value,
 		} )
 			.then( closeDialog )
 			.catch( setUpdateError );

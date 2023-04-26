@@ -1,7 +1,6 @@
-import type { DEVICES_SUPPORTED, FONT_PAIRINGS } from './constants';
+import type { FONT_PAIRINGS } from './constants';
 import type { ValuesType } from 'utility-types';
 
-export type Device = ValuesType< ValuesType< typeof DEVICES_SUPPORTED > >;
 export type Font = ValuesType< ValuesType< typeof FONT_PAIRINGS > >;
 
 /** @deprecated used for Gutenboarding (/new flow) */
@@ -13,6 +12,7 @@ export interface FontPair {
 export interface Category {
 	slug: string;
 	name: string;
+	description?: string;
 }
 
 export interface StyleVariation {
@@ -61,6 +61,9 @@ export interface DesignRecipe {
 	pattern_ids?: number[] | string[];
 	header_pattern_ids?: number[] | string[];
 	footer_pattern_ids?: number[] | string[];
+	color_variation_title?: string;
+	font_variation_title?: string;
+	slug?: string;
 }
 
 export interface SoftwareSet {
@@ -77,7 +80,14 @@ export type DesignType =
 	| 'premium'
 	| 'standard' // The design is free.
 	| 'default' // The default design and it means user skipped the step and didn't select any design.
-	| 'anchor-fm';
+	| 'anchor-fm'
+	| 'assembler';
+
+export interface PreviewData {
+	site_title?: string;
+	site_tagline?: string;
+	site_logo_url?: string;
+}
 
 export interface Design {
 	slug: string;
@@ -96,6 +106,8 @@ export interface Design {
 	price?: string;
 	software_sets?: SoftwareSet[];
 	is_bundled_with_woo_commerce?: boolean;
+	is_virtual?: boolean;
+	preview_data?: PreviewData;
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;
@@ -117,6 +129,8 @@ export interface DesignOptions {
 	styleVariation?: StyleVariation;
 	verticalId?: string;
 	pageTemplate?: string;
+	trimContent?: boolean;
+	posts_source_site_id?: number;
 }
 
 export interface DesignPreviewOptions {
@@ -129,6 +143,7 @@ export interface DesignPreviewOptions {
 	use_screenshot_overrides?: boolean;
 	disable_viewport_height?: boolean;
 	remove_assets?: boolean;
+	style_variation?: StyleVariation;
 }
 
 /** @deprecated used for Gutenboarding (/new flow) */

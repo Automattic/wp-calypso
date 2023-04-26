@@ -1,13 +1,14 @@
-import { plugins, registerStore, use } from '@wordpress/data';
+import { registerStore } from '@wordpress/data';
 import { controls } from '@wordpress/data-controls';
-import persistOptions from '../one-week-persistence-config';
+import { registerPlugins } from '../plugins';
 import * as actions from './actions';
 import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as selectors from './selectors';
-import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
+import type { SelectFromMap } from '../mapped-types';
 
 export type { State };
+export type OnboardSelect = SelectFromMap< typeof selectors >;
 
 export { SiteGoal, SiteIntent } from './constants';
 export * as utils from './utils';
@@ -21,12 +22,13 @@ export function register(): typeof STORE_KEY {
 	if ( isRegistered ) {
 		return STORE_KEY;
 	}
-	use( plugins.persistence, persistOptions );
 
-	registerStore< State >( STORE_KEY, {
+	registerPlugins();
+
+	registerStore( STORE_KEY, {
 		actions,
 		controls,
-		reducer: reducer as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+		reducer,
 		selectors,
 		persist: [
 			'anchorPodcastId',
@@ -58,13 +60,9 @@ export function register(): typeof STORE_KEY {
 			'ecommerceFlowRecurType',
 			'domainCartItem',
 			'planCartItem',
+			'productCartItems',
 		],
 	} );
 	isRegistered = true;
 	return STORE_KEY;
-}
-
-declare module '@wordpress/data' {
-	function dispatch( key: typeof STORE_KEY ): DispatchFromMap< typeof actions >;
-	function select( key: typeof STORE_KEY ): SelectFromMap< typeof selectors >;
 }

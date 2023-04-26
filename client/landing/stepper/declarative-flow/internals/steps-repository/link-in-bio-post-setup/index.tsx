@@ -2,42 +2,37 @@
 import { StepContainer, base64ImageToBlob, uploadAndSetSiteLogo } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
-import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import SetupForm from '../components/setup-form';
+import useSetupFormInitialValues from '../components/setup-form/hooks/use-setup-form-initial-values';
 import type { Step } from '../../types';
 
 import '../link-in-bio-setup/styles.scss';
 
 const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 	const { submit } = navigation;
-	const { __ } = useI18n();
+	const translate = useTranslate();
 	const site = useSite();
 
 	const linkInBioFormText = {
-		titlePlaceholder: __( 'My Link in Bio' ),
-		titleMissing: __( `Oops. Looks like your Link in Bio name is missing.` ),
-		taglinePlaceholder: __( 'Add a short biography here' ),
+		titlePlaceholder: translate( 'My Link in Bio' ),
+		titleMissing: translate( `Oops. Looks like your Link in Bio name is missing.` ),
+		taglinePlaceholder: translate( 'Add a short biography here' ),
 	};
 
-	const [ siteTitle, setComponentSiteTitle ] = useState( '' );
-	const [ tagline, setTagline ] = useState( '' );
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
 	const [ selectedFile, setSelectedFile ] = useState< File | undefined >();
 	const [ base64Image, setBase64Image ] = useState< string | null >();
 	const [ isLoading, setIsLoading ] = useState< boolean >( false );
 	const [ isSubmitError, setIsSubmitError ] = useState< boolean >( false );
-
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
-	useEffect( () => {
-		setComponentSiteTitle( site?.name || '' );
-		setTagline( site?.description || '' );
-	}, [ site ] );
+	const { siteTitle, setComponentSiteTitle, tagline, setTagline } = useSetupFormInitialValues();
 
 	useEffect( () => {
 		setIsSubmitError( false );
@@ -82,7 +77,7 @@ const LinkInBioPostSetup: Step = function LinkInBioPostSetup( { navigation } ) {
 			formattedHeader={
 				<FormattedHeader
 					id="link-in-bio-setup-header"
-					headerText={ createInterpolateElement( __( 'Personalize your<br />Link in Bio' ), {
+					headerText={ createInterpolateElement( translate( 'Personalize your<br />Link in Bio' ), {
 						br: <br />,
 					} ) }
 					align="center"

@@ -303,3 +303,33 @@ site.statsVisits( function ( err, data ) {
 	// data visits response
 } );
 ```
+
+## Email Stats
+
+### Site#emailStatsAlltime(postId, statType, fn)
+
+Fetches the email stats for the whole period. This fetches the clients, devices & countries.
+
+It requires these params:
+
+- postId - the id of the post which email we are querying
+- statType - The type of stat we are working with. For example: 'opens' for Email Open stats
+- fn - a callback function to be executed (not required)
+
+It returns a request handler.
+
+### Site#emailStatsForPeriod(postId, statType, query, fn)
+
+Fetches the email stats for a specific period. This fetches the timeline.
+
+It requires these params:
+
+- postId - the id of the post which email we are querying
+- statType - The type of stat we are working with. For example: 'opens' for Email Open stats
+- Query - an object containing the query params. Those params are:
+  - `period` (string) - can be `hour` or `day`
+  - `quantity` (number) - the number of elements to fetch
+  - `date` (string) - the date to fetch the stats for. Format: `YYYY-MM-DD`
+- fn - a callback function to be executed (not required)
+
+It returns a request handler.

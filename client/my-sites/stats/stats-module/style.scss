@@ -1,3 +1,4 @@
+
 .stats-module {
 	.upsell-nudge.card {
 		margin: 16px;
@@ -449,13 +450,13 @@ ul.module-header-actions {
 	@include breakpoint-deprecated( ">480px" ) {
 		.stats-module & td.has-no-data:hover, // 1
 		tbody tr:hover td,
-		tbody tr:hover th {
-			background: var(--color-neutral-0);
+		.stats-module & tbody tr:hover th:first-child {
+			background: var(--color-primary-0);
 		}
 
 		.stats-module & td.highest-count:hover,
 		tbody tr td:hover {
-			background: var(--color-neutral-0);
+			background: var(--color-primary-0);
 			color: var(--color-neutral-70);
 		}
 	}
@@ -597,7 +598,6 @@ ul.module-header-actions {
 		padding: 24px 24px 12px;
 	}
 
-	.card.stats-views,
 	.card.section-header + .card {
 		border-radius: 0 0 5px 5px; /* stylelint-disable-line scales/radii */
 		box-shadow: none;
@@ -715,29 +715,12 @@ ul.module-header-actions {
 	}
 }
 
-.stats__module-headerless--unified {
-	.store-stats-widget-list,
-	.earnings_breakdown,
-	.earnings_history,
-	.ads__module-header,
-	.ads__module-header-actions {
-		border-radius: 5px; /* stylelint-disable-line scales/radii */
-	}
+.stats-module__footer-actions--summary {
+	padding-top: 24px;
+}
 
-	.ads__module-header-title {
-		font-size: 20px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		color: var(--studio-gray-100);
-		line-height: 26px;
-		padding: 24px 0 12px;
-		height: auto;
-	}
-
-	.ads__module-header-actions {
-		top: 14px;
-	}
-
-	.ads__module-header {
-		height: auto;
-		line-height: normal;
-	}
+.stats-module__heaver-nav-button {
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
 }

@@ -13,7 +13,7 @@ export const UserLicensesDialog: React.FC< ProductStoreBaseProps > = ( { siteId 
 
 	useEffect( () => {
 		if ( window.location.pathname.startsWith( JPC_PATH_PLANS ) ) {
-			dispatch( successNotice( translate( 'Jetpack is successfully installed' ) ) );
+			dispatch( successNotice( translate( 'Jetpack is successfully connected' ) ) );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );

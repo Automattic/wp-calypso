@@ -15,7 +15,7 @@ export const isActive = ( status ) => ( status ? status === transferStates.START
 /**
  * Indicates whether or not an automated transfer is active for a given site
  *
- * @param {object} state app state
+ * @param {Object} state app state
  * @param {number} siteId site of interest
  * @returns {?boolean} whether or not transfer is active, or null if not known
  */

@@ -1,6 +1,6 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import * as i18n from '@wordpress/i18n';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import * as React from 'react';
 import { englishLocales } from './locales';
 import type { Locale } from './locales';
@@ -77,7 +77,12 @@ export function useLocale(): string {
 		} );
 	}, [ providerHasLocale ] );
 
-	return fromProvider || fromWpI18n || window?._currentUserLocale || 'en';
+	return (
+		fromProvider ||
+		fromWpI18n ||
+		( typeof window !== 'undefined' && window._currentUserLocale ) ||
+		'en'
+	);
 }
 
 /**
@@ -118,4 +123,15 @@ export const withLocale = createHigherOrderComponent(
 export function useIsEnglishLocale(): boolean {
 	const locale = useLocale();
 	return englishLocales.includes( locale );
+}
+
+type HasTranslation = ( single: string, context?: string, domain?: string ) => boolean;
+
+export function useHasEnTranslation(): HasTranslation {
+	const isEnglishLocale = useIsEnglishLocale();
+
+	return useCallback(
+		( ...args ) => isEnglishLocale || i18n.hasTranslation( ...args ),
+		[ isEnglishLocale ]
+	);
 }

@@ -6,7 +6,7 @@ import isVipSite from 'calypso/state/selectors/is-vip-site';
 /**
  * Returns true if the current user is eligible for a domain to paid plan upsell for the site
  *
- * @param {object} state Global state tree
+ * @param {Object} state Global state tree
  * @param {number} siteId Site ID
  * @returns {?boolean} True if the user can participate in the domain to paid plan upsell
  */

@@ -18,7 +18,7 @@ describe( DataHelper.createSuiteTitle( 'Support: Popover/Invalid Keywords' ), fu
 
 	describe.each( [
 		{ siteType: 'Simple', accountName: 'defaultUser' as TestAccountName },
-		{ siteType: 'Atomic', accountName: 'eCommerceUser' as TestAccountName },
+		{ siteType: 'Atomic', accountName: 'atomicUser' as TestAccountName },
 	] )( 'Unsupported search keywords ($siteType)', function ( { accountName } ) {
 		let supportComponent: SupportComponent;
 

@@ -27,8 +27,10 @@ import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getFirstCategoryFromTags } from '../categories/use-categories';
 import { PluginCustomDomainDialog } from '../plugin-custom-domain-dialog';
 import { getPeriodVariationValue } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
@@ -56,6 +58,10 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 		: FEATURE_INSTALL_PLUGINS;
 	const isSiteConnected = useSelector( ( state ) =>
 		getSiteConnectionStatus( state, selectedSite?.ID )
+	);
+
+	const isECommerceTrial = useSelector( ( state ) =>
+		isSiteOnECommerceTrial( state, selectedSite?.ID )
 	);
 
 	const shouldUpgrade =
@@ -98,6 +104,16 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 
 	const pluginsPlansPageFlag = isEnabled( 'plugins-plans-page' );
 	const pluginsPlansPage = `/plugins/plans/${ plugin.slug }/yearly/${ selectedSite?.slug }`;
+
+	let buttonText = translate( 'Install and activate' );
+
+	if ( isMarketplaceProduct || isPreinstalledPremiumPlugin ) {
+		buttonText = translate( 'Purchase and activate' );
+	} else if ( isECommerceTrial ) {
+		buttonText = translate( 'Upgrade your plan' );
+	} else if ( shouldUpgrade ) {
+		buttonText = translate( 'Upgrade and activate' );
+	}
 
 	return (
 		<>
@@ -156,6 +172,13 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 					if ( pluginRequiresCustomPrimaryDomain ) {
 						return setShowAddCustomDomain( true );
 					}
+					if ( isECommerceTrial ) {
+						return page(
+							`/plans/${ selectedSite.slug }?feature=${ encodeURIComponent(
+								FEATURE_INSTALL_PLUGINS
+							) }`
+						);
+					}
 					if ( hasEligibilityMessages ) {
 						if ( pluginsPlansPageFlag && shouldUpgrade ) {
 							return page( pluginsPlansPage );
@@ -178,14 +201,7 @@ export default function CTAButton( { plugin, hasEligibilityMessages, disabled } 
 					( isJetpackSelfHosted && isMarketplaceProduct ) || isSiteConnected === false || disabled
 				}
 			>
-				{
-					// eslint-disable-next-line no-nested-ternary
-					isMarketplaceProduct || isPreinstalledPremiumPlugin
-						? translate( 'Purchase and activate' )
-						: shouldUpgrade
-						? translate( 'Upgrade and activate' )
-						: translate( 'Install and activate' )
-				}
+				{ buttonText }
 			</Button>
 			{ isJetpackSelfHosted && isMarketplaceProduct && (
 				<div className="plugin-details-cta__not-available">
@@ -220,6 +236,8 @@ function onClickInstallPlugin( {
 	preinstalledPremiumPluginProduct,
 	productsList,
 } ) {
+	const tags = Object.keys( plugin.tags );
+
 	dispatch( removePluginStatuses( 'completed', 'error', 'up-to-date' ) );
 
 	dispatch(
@@ -237,6 +255,8 @@ function onClickInstallPlugin( {
 			blog_id: selectedSite?.ID,
 			marketplace_product: isMarketplaceProduct,
 			needs_plan_upgrade: upgradeAndInstall,
+			tags: tags.join( ',' ),
+			category: getFirstCategoryFromTags( tags ),
 		} )
 	);
 
@@ -256,25 +276,21 @@ function onClickInstallPlugin( {
 				`/checkout/${ selectedSite.slug }/${ marketplacePlanToAdd(
 					selectedSite?.plan,
 					billingPeriod
-				) },${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${
-					selectedSite.slug
-				}`
+				) },${ product_slug }`
 			);
 		}
 
-		return page(
-			`/checkout/${ selectedSite.slug }/${ product_slug }?redirect_to=/marketplace/thank-you/${ plugin.slug }/${ selectedSite.slug }#step2`
-		);
+		return page( `/checkout/${ selectedSite.slug }/${ product_slug }#step2` );
 	}
 
 	if ( isPreinstalledPremiumPlugin ) {
 		const checkoutUrl = `/checkout/${ selectedSite.slug }/${ preinstalledPremiumPluginProduct }`;
-		const installUrl = `/marketplace/${ plugin.slug }/install/${ selectedSite.slug }`;
+		const installUrl = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
 		return page( `${ checkoutUrl }?redirect_to=${ installUrl }#step2` );
 	}
 
 	// After buying a plan we need to redirect to the plugin install page.
-	const installPluginURL = `/marketplace/${ plugin.slug }/install/${ selectedSite.slug }`;
+	const installPluginURL = `/marketplace/plugin/${ plugin.slug }/install/${ selectedSite.slug }`;
 	if ( upgradeAndInstall ) {
 		// We also need to add a business plan to the cart.
 		return page(

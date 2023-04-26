@@ -8,9 +8,9 @@ import 'calypso/state/themes/init';
 /**
  * Returns a theme filter term object that corresponds to a given filter term slug
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {string}  search The term to search for
- * @returns {object}         A filter term object
+ * @returns {Object}         A filter term object
  */
 export const findThemeFilterTerm = createSelector(
 	( state, search ) => {

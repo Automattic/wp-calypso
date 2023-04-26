@@ -14,7 +14,7 @@ export const getExportingState = ( state, siteId ) => {
 /**
  * Indicates whether an export activity is in progress.
  *
- * @param  {object} state    Global state tree
+ * @param  {Object} state    Global state tree
  * @param  {number} siteId   The ID of the site to check
  * @returns {boolean}         true if activity is in progress
  */
@@ -27,7 +27,7 @@ export function shouldShowProgress( state, siteId ) {
 /**
  * Indicates whether the export is in progress on the server
  *
- * @param  {object}  state  Global state tree
+ * @param  {Object}  state  Global state tree
  * @param  {number}  siteId The site ID for which to check export progress
  * @returns {boolean}        true if an export is in progress
  */
@@ -101,9 +101,9 @@ export const getPostTypeFieldValue = ( state, siteId, postType, fieldName ) => {
 /**
  * Prepare currently selected advanced settings for an /exports/start request
  *
- * @param  {object} state  Global state tree
+ * @param  {Object} state  Global state tree
  * @param  {number} siteId The ID of the site
- * @returns {object}        The request body
+ * @returns {Object}        The request body
  */
 export function prepareExportRequest( state, siteId, { exportAll = true } = {} ) {
 	// Request body is empty if we're just exporting everything

@@ -1,9 +1,9 @@
 import { combineReducers } from '@wordpress/data';
 import { SiteGoal } from './constants';
-import type { DomainSuggestion } from '../domain-suggestions';
-import type { FeatureId } from '../wpcom-features/types';
 import type { OnboardAction } from './actions';
-import type { DomainForm } from './types';
+import type { DomainForm, ProfilerData } from './types';
+import type { DomainSuggestion } from '../domain-suggestions';
+import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -217,6 +217,19 @@ const siteLogo: Reducer< null | string, OnboardAction > = ( state = null, action
 	return state;
 };
 
+const productCartItems: Reducer< MinimalRequestCartProduct[] | null, OnboardAction > = (
+	state = [],
+	action
+) => {
+	if ( action.type === 'SET_PRODUCT_CART_ITEMS' ) {
+		return action.productCartItems;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return [];
+	}
+	return state;
+};
+
 const planCartItem: Reducer< MinimalRequestCartProduct | null, OnboardAction > = (
 	state = null,
 	action
@@ -293,6 +306,9 @@ const lastLocation: Reducer< string, OnboardAction > = ( state = '', action ) =>
 const intent: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_INTENT' ) {
 		return action.intent;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' && action?.skipFlags?.includes( 'skipIntent' ) ) {
+		return state;
 	}
 	if ( [ 'RESET_INTENT', 'RESET_ONBOARD_STORE' ].includes( action.type ) ) {
 		return '';
@@ -460,6 +476,39 @@ const domainCartItem: Reducer< MinimalRequestCartProduct | undefined, OnboardAct
 	return state;
 };
 
+const isMigrateFromWp: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_IS_MIGRATE_FROM_WP' ) {
+		return action.isMigrateFromWp;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
+const pluginsToVerify: Reducer< string[] | undefined, OnboardAction > = ( state, action ) => {
+	if ( action.type === 'SET_PLUGIN_SLUGS_TO_VERIFY' ) {
+		return action.pluginSlugs;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
+export const profilerData: Reducer< ProfilerData | undefined, OnboardAction > = (
+	state,
+	action
+) => {
+	if ( action.type === 'SET_PROFILER_DATA' ) {
+		return action.profilerData;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return undefined;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -501,6 +550,10 @@ const reducer = combineReducers( {
 	storeLocationCountryCode,
 	ecommerceFlowRecurType,
 	planCartItem,
+	productCartItems,
+	isMigrateFromWp,
+	pluginsToVerify,
+	profilerData,
 } );
 
 export type State = ReturnType< typeof reducer >;

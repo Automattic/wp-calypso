@@ -8,22 +8,25 @@ import PeopleSearch from '../people-section-nav/people-search';
 interface Props {
 	selectedFilter: string;
 	searchTerm?: string;
+	filterCount?: { [ key: string ]: undefined | number };
 }
 function PeopleSectionNavCompact( props: Props ) {
-	const _ = useTranslate();
-	const { selectedFilter, searchTerm } = props;
+	const translate = useTranslate();
+	const { selectedFilter, searchTerm, filterCount } = props;
 	const site = useSelector( ( state ) => getSelectedSite( state ) );
+	const searchPlaceholder =
+		selectedFilter === 'subscribers' ? translate( 'Search by email…' ) : undefined;
 
 	const filters = [
 		{
-			title: _( 'Subscribers' ),
-			path: '/people/subscribers/' + site?.slug,
-			id: 'subscribers',
+			id: 'team',
+			title: translate( 'Team' ),
+			path: '/people/team/' + site?.slug,
 		},
 		{
-			title: _( 'Team' ),
-			path: '/people/team-members/' + site?.slug,
-			id: 'team-members',
+			id: 'subscribers',
+			title: translate( 'Subscribers' ),
+			path: '/people/subscribers/' + site?.slug,
 		},
 	];
 
@@ -36,13 +39,17 @@ function PeopleSectionNavCompact( props: Props ) {
 							key={ filterItem.id }
 							path={ filterItem.path }
 							selected={ filterItem.id === selectedFilter }
+							count={
+								filterCount && !! filterCount[ filterItem.id ] && filterCount[ filterItem.id ]
+							}
 						>
 							{ filterItem.title }
 						</NavItem>
 					);
 				} ) }
 			</NavTabs>
-			<PeopleSearch search={ searchTerm } />
+
+			<PeopleSearch search={ searchTerm } placeholder={ searchPlaceholder } />
 		</>
 	);
 }

@@ -10,7 +10,7 @@ import { getThemeCustomizeUrl, isThemeActive } from 'calypso/state/themes/select
  * @see getThemeCustomizeUrl is used as a drop-in replacement.
  *
  * Ensure that your view makes use of the `QueryBlogStickers` component to function properly.
- * @param  {object}   state       Global state tree
+ * @param  {Object}   state       Global state tree
  * @param  {string}   themeId     Theme ID
  * @param  {number}   siteId      Site ID to open the customizer or block editor for
  * @param  {boolean}  isFSEActive Whether full-site editing is enabled for the site

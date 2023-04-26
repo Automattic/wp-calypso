@@ -6,7 +6,7 @@ import 'calypso/state/jetpack-connect/init';
 /**
  * Returns true if there is an expired secret error.
  *
- * @param  {object}  state Global state tree
+ * @param  {Object}  state Global state tree
  * @returns {boolean}       True if there's an xmlrpc error otherwise false
  */
 export const hasExpiredSecretError = function ( state ) {

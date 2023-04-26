@@ -33,8 +33,11 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 	);
 
 	const billingPeriod = useSelector( getBillingInterval );
-	const { isPreinstalledPremiumPluginUpgraded, preinstalledPremiumPluginProduct } =
-		usePreinstalledPremiumPlugin( plugin.slug );
+	const {
+		preinstalledPremiumPluginProduct,
+		isPreinstalledPremiumPluginFreeInstalled,
+		isPreinstalledPremiumPluginPaidInstalled,
+	} = usePreinstalledPremiumPlugin( plugin.slug );
 
 	const managedPluginMessage = (
 		<span className="plugin-details-cta__preinstalled">
@@ -62,6 +65,18 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		</>
 	);
 
+	const startForFreeButton = (
+		<div className="plugin-details-cta__install">
+			<Button
+				className="plugin-details-cta__install-button"
+				href={ `/checkout/${ selectedSiteSlug }/${ preinstalledPremiumPluginProduct }` }
+				primary
+			>
+				{ translate( 'Start for Free' ) }
+			</Button>
+		</div>
+	);
+
 	const upgradeButton = (
 		<div className="plugin-details-cta__install">
 			<Button
@@ -85,10 +100,15 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		</div>
 	);
 
-	if ( isSimple && isPreinstalledPremiumPluginUpgraded ) {
+	if ( isPreinstalledPremiumPluginPaidInstalled ) {
 		return managedPluginMessage;
 	}
-	if ( isSimple && ! isPreinstalledPremiumPluginUpgraded ) {
+
+	if ( ! isPreinstalledPremiumPluginFreeInstalled ) {
+		return startForFreeButton;
+	}
+
+	if ( isSimple ) {
 		return (
 			<>
 				{ pluginPrice }
@@ -98,7 +118,7 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		);
 	}
 
-	if ( ! isSimple && ! isPluginInstalledOnsite && ! isPreinstalledPremiumPluginUpgraded ) {
+	if ( ! isPluginInstalledOnsite ) {
 		return (
 			<>
 				{ pluginPrice }
@@ -107,14 +127,10 @@ export default function PluginDetailsCTAPreinstalledPremiumPlugins( {
 		);
 	}
 
-	if ( ! isSimple && isPluginInstalledOnsite && ! isPreinstalledPremiumPluginUpgraded ) {
-		return (
-			<>
-				{ pluginPrice }
-				{ upgradeButton }
-			</>
-		);
-	}
-
-	return null;
+	return (
+		<>
+			{ pluginPrice }
+			{ upgradeButton }
+		</>
+	);
 }

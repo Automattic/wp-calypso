@@ -1,0 +1,35 @@
+.domain-upsell-dialog .dialog__content {
+
+	max-width: 572px;
+
+	.domain-upsell-dialog__modal-header {
+		text-align: right;
+
+		svg:hover {
+			cursor: pointer;
+			opacity: 0.5;
+		}
+	}
+
+	.dialog__action-buttons {
+		border: 0;
+		margin-bottom: 30px;
+		margin-right: 25px;
+	}
+
+	h1 {
+		color: var(--studio-gray-100);
+		font-family: Recoleta, Georgia, "Times New Roman", Times, serif;
+		font-size: 2rem;
+		font-weight: 400;
+		line-height: 40px;
+		overflow-wrap: anywhere;
+		margin: 10px 24px;
+	}
+
+	p {
+		color: var(--color-text-subtle);
+		font-size: 1rem;
+		margin: 0 24px;
+	}
+}

@@ -14,8 +14,8 @@ function mergeMetadataEdits( edits, nextEdits ) {
  *   That's important especially for term removals.
  * - metadata edits, which are also arrays, are merged with a special algorithm.
  *
- * @param  {Array<object>} postEditsLog Edits objects to be merged
- * @returns {object?}                    Merged edits object with changes from all sources
+ * @param  {Array<Object>} postEditsLog Edits objects to be merged
+ * @returns {Object?}                    Merged edits object with changes from all sources
  */
 export const mergePostEdits = ( ...postEditsLog ) =>
 	reduce(

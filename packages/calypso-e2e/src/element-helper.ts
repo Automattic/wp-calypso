@@ -76,11 +76,9 @@ export async function clickNavTab(
 
 	// Mobile view - navtabs become a dropdown and thus it must be opened first.
 	if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-		await page.waitForLoadState( 'networkidle', { timeout: 25 * 1000 } );
-
 		// Open the Navtabs which now act as a pseudo-dropdown menu.
 		const navTabsButtonLocator = page.locator( selectors.navTabMobileToggleButton );
-		await navTabsButtonLocator.click();
+		await navTabsButtonLocator.click( { noWaitAfter: true } );
 
 		const navTabIsOpenLocator = page.locator( `${ navTabParent }.is-open` );
 		await navTabIsOpenLocator.waitFor();
@@ -88,15 +86,16 @@ export async function clickNavTab(
 
 	// Click on the intended item and wait for navigation to finish.
 	const navTabItem = page.locator( selectors.navTabItem( { name: name, selected: false } ) );
-	await Promise.all( [ page.waitForNavigation(), navTabItem.click() ] );
 
-	// Final verification.
+	const regex = new RegExp( `.*/${ name.toLowerCase() }/.*` );
+	await Promise.all( [ page.waitForURL( regex ), navTabItem.click() ] );
+
+	// Final verification, check that we are now on the expected navtab.
 	const newSelectedTabLocator = page.locator(
 		selectors.navTabItem( { name: name, selected: true } )
 	);
 	const newSelectedTabName = await newSelectedTabLocator.innerText();
 
-	// Strip numerals from the extracted tab name, similar to above.
 	if ( newSelectedTabName.replace( /[0-9]|,/g, '' ) !== name ) {
 		throw new Error(
 			`Failed to confirm NavTab is active: expected ${ name }, got ${ newSelectedTabName }`
@@ -165,12 +164,12 @@ export async function getIdFromBlock( block: Locator ): Promise< string > {
  * const foobarsText = await page.innerText( '.foobars' );
  * @param {Page} page Page object.
  * @param {string} selector Observer target selector.
- * @param {object} options
+ * @param {Object} options
  * @param {number} options.timeout Maximum time in milliseconds, defaults to 10
  * seconds, pass 0 to disable timeout.
  * @param {number} options.debounce Maximum time to wait between consecutive
  * mutations, defaults to 1 second.
- * @param {object} options.observe Mutation observation options.
+ * @param {Object} options.observe Mutation observation options.
  */
 export async function waitForMutations(
 	page: Page | Frame,

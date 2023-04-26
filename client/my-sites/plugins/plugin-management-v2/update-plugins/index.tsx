@@ -16,13 +16,13 @@ import {
 	handleUpdatePlugins,
 	siteObjectsToSiteIds,
 } from '../../utils';
-import type { Plugin } from '../types';
+import type { PluginComponentProps } from '../types';
 import type { ReactElement } from 'react';
 
 import '../style.scss';
 
 interface Props {
-	plugins: Array< Plugin >;
+	plugins: Array< PluginComponentProps >;
 	isWpCom?: boolean;
 }
 
@@ -32,7 +32,15 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 
 	const sites = useSelector( getSelectedOrAllSitesWithPlugins );
 	const siteIds = useSelector( () => siteObjectsToSiteIds( sites ) ) ?? [];
-	const pluginsWithUpdates = useSelector( ( state ) => getPlugins( state, siteIds, 'updates' ) );
+	const pluginsWithUpdates = useSelector( ( state ) =>
+		// The types of the getPlugins properties are being inferred incorrectly, so here they are casted
+		// to "any" while the return type is preserved.
+		( getPlugins as ( ...any: any ) => ReturnType< typeof getPlugins > )(
+			state,
+			siteIds,
+			'updates'
+		)
+	);
 	const allSites = useSelector( getSites );
 
 	const pluginsOnSites = useSelector( ( state ) => getPluginsOnSites( state, plugins ) );
@@ -40,13 +48,13 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 
 	const pluginUpdateCount = pluginsWithUpdates.length;
 
-	const updateAction = ( siteId: number, sitePlugin: Plugin ) => {
+	const updateAction = ( siteId: number, sitePlugin: PluginComponentProps ) => {
 		dispatch( updatePlugin( siteId, sitePlugin ) );
 	};
 
 	function recordEvent( eventAction: string ) {
 		eventAction += selectedSite ? '' : ' on Multisite';
-		const pluginSlugs = pluginsWithUpdates.map( ( plugin: Plugin ) => plugin.slug );
+		const pluginSlugs = pluginsWithUpdates.map( ( plugin: PluginComponentProps ) => plugin.slug );
 		dispatch( recordGoogleEvent( 'Plugins', eventAction, 'Plugins', pluginSlugs ) );
 	}
 

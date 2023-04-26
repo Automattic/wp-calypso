@@ -25,6 +25,7 @@ import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import PeopleSectionAddNav from '../people-section-add-nav';
 
 class PeopleInvites extends PureComponent {
 	static propTypes = {
@@ -33,10 +34,15 @@ class PeopleInvites extends PureComponent {
 
 	goBack = () => {
 		const siteSlug = get( this.props, 'site.slug' );
-		const fallback = siteSlug ? '/people/team/' + siteSlug : '/people/team';
+		let fallback = siteSlug ? '/people/team/' + siteSlug : '/people/team';
 
-		// Go back to last route with /people/team/$site as the fallback
-		page.back( fallback );
+		if ( isEnabled( 'user-management-revamp' ) ) {
+			fallback = '/people/subscribers/' + siteSlug;
+			page.redirect( fallback );
+		} else {
+			// Go back to last route with /people/team/$site as the fallback
+			page.back( fallback );
+		}
 	};
 
 	render() {
@@ -51,6 +57,16 @@ class PeopleInvites extends PureComponent {
 						path="/people/add-subscribers/:site_id"
 						title="People > Add Subscribers"
 					/>
+					<HeaderCake onClick={ this.goBack }>
+						{ translate( 'Add subscribers to %(sitename)s', {
+							args: {
+								sitename: site.name,
+							},
+						} ) }
+					</HeaderCake>
+					{ isEnabled( 'user-management-revamp' ) && (
+						<PeopleSectionAddNav selectedFilter="subscribers" />
+					) }
 					<EmptyContent
 						title={ translate( 'You are not authorized to view this page' ) }
 						illustration="/calypso/images/illustrations/illustration-404.svg"
@@ -62,13 +78,16 @@ class PeopleInvites extends PureComponent {
 		return (
 			<Main>
 				<PageViewTracker path="/people/add-subscribers/:site_id" title="People > Add Subscribers" />
-				<HeaderCake isCompact onClick={ this.goBack }>
+				<HeaderCake isCompact={ ! isEnabled( 'user-management-revamp' ) } onClick={ this.goBack }>
 					{ translate( 'Add subscribers to %(sitename)s', {
 						args: {
 							sitename: site.name,
 						},
 					} ) }
 				</HeaderCake>
+				{ isEnabled( 'user-management-revamp' ) && (
+					<PeopleSectionAddNav selectedFilter="subscribers" />
+				) }
 				<Card>
 					<EmailVerificationGate
 						noticeText={ this.props.translate( 'You must verify your email to add subscribers.' ) }
@@ -81,6 +100,7 @@ class PeopleInvites extends PureComponent {
 							showTitle={ false }
 							showFormManualListLabel={ true }
 							showCsvUpload={ isEnabled( 'subscriber-csv-upload' ) }
+							submitBtnAlwaysEnable={ true }
 							recordTracksEvent={ recordTracksEvent }
 							onImportFinished={ () => {
 								defer( () => {

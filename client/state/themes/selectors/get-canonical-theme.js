@@ -36,7 +36,7 @@ export const knownConflictingThemes = new Set( [ 'bistro' ] );
  * and multiple screenshots, and a preview URL) first, then WP.org (which has a
  * preview URL), then the given JP site.
  *
- * @param  {object}  state   Global state tree
+ * @param  {Object}  state   Global state tree
  * @param  {number}  siteId  Jetpack Site ID to fall back to
  * @param  {string | null}  themeId Theme ID
  * @returns {?Theme}         Theme object
