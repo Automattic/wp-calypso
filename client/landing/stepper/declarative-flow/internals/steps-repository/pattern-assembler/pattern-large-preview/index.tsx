@@ -20,7 +20,7 @@ interface Props {
 	header: Pattern | null;
 	sections: Pattern[];
 	footer: Pattern | null;
-	activePosition: number;
+	activePatternKey?: string;
 	onDeleteSection: ( position: number ) => void;
 	onMoveUpSection: ( position: number ) => void;
 	onMoveDownSection: ( position: number ) => void;
@@ -36,7 +36,7 @@ const PatternLargePreview = ( {
 	header,
 	sections,
 	footer,
-	activePosition,
+	activePatternKey,
 	onDeleteSection,
 	onMoveUpSection,
 	onMoveDownSection,
@@ -102,7 +102,6 @@ const PatternLargePreview = ( {
 	};
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
-		const key = type === 'section' ? pattern.key : type;
 		const handleMouseEnter = ( event: MouseEvent ) => {
 			setActionBarData( {
 				type,
@@ -131,7 +130,8 @@ const PatternLargePreview = ( {
 
 		return (
 			<div
-				key={ key }
+				key={ pattern.key }
+				id={ pattern.key }
 				className={ classnames(
 					'pattern-large-preview__pattern',
 					`pattern-large-preview__pattern-${ type }`
@@ -148,7 +148,8 @@ const PatternLargePreview = ( {
 	useEffect( () => {
 		let timerId: number;
 		const scrollIntoView = () => {
-			const element = listRef.current?.children[ activePosition ];
+			const element =
+				activePatternKey && listRef.current?.ownerDocument.getElementById( activePatternKey );
 			if ( ! element ) {
 				return;
 			}
@@ -173,7 +174,7 @@ const PatternLargePreview = ( {
 				window.clearTimeout( timerId );
 			}
 		};
-	}, [ activePosition, header, sections, footer ] );
+	}, [ activePatternKey, header, sections, footer ] );
 
 	return (
 		<DeviceSwitcher
@@ -192,6 +193,11 @@ const PatternLargePreview = ( {
 						<div
 							className={ classnames( 'pattern-large-preview__patterns', 'wp-site-blocks' ) }
 							style={ {
+								position: 'absolute',
+								top: 0,
+								bottom: 0,
+								left: 0,
+								right: 0,
 								height: '100vh',
 								overflow: 'auto',
 							} }

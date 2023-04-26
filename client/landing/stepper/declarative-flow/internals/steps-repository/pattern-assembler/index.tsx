@@ -58,7 +58,7 @@ const PatternAssembler = ( {
 	const [ navigatorPath, setNavigatorPath ] = useState( NAVIGATOR_PATHS.MAIN );
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
-	const [ activePosition, setActivePosition ] = useState( -1 );
+	const [ activePatternKey, setActivePatternKey ] = useState< string >();
 	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
 	const { applyThemeWithPatterns } = useDispatch( SITE_STORE );
@@ -97,7 +97,7 @@ const PatternAssembler = ( {
 		setSections,
 		setColorVariation,
 		setFontVariation,
-		generateKey,
+		injectKey,
 		snapshotRecipe,
 	} = useRecipe( site?.ID, allPatterns, categories );
 
@@ -216,14 +216,10 @@ const PatternAssembler = ( {
 			} as DesignRecipe,
 		} as Design );
 
-	const updateActivePatternPosition = ( position: number ) => {
-		const patternPosition = header ? position + 1 : position;
-		setActivePosition( Math.max( patternPosition, 0 ) );
-	};
-
 	const updateHeader = ( pattern: Pattern | null ) => {
-		setHeader( pattern );
-		updateActivePatternPosition( -1 );
+		const nextHeader = pattern ? injectKey( pattern ) : pattern;
+		setHeader( nextHeader );
+		setActivePatternKey( nextHeader?.key );
 		if ( pattern ) {
 			if ( header ) {
 				showNotice( 'replace', pattern );
@@ -235,14 +231,10 @@ const PatternAssembler = ( {
 		}
 	};
 
-	const activateFooterPosition = ( hasFooter: boolean ) => {
-		const lastPosition = hasFooter ? sections.length : sections.length - 1;
-		updateActivePatternPosition( lastPosition );
-	};
-
 	const updateFooter = ( pattern: Pattern | null ) => {
-		setFooter( pattern );
-		activateFooterPosition( !! pattern );
+		const nextFooter = pattern ? injectKey( pattern ) : pattern;
+		setFooter( nextFooter );
+		setActivePatternKey( nextFooter?.key );
 		if ( pattern ) {
 			if ( footer ) {
 				showNotice( 'replace', pattern );
@@ -256,35 +248,32 @@ const PatternAssembler = ( {
 
 	const replaceSection = ( pattern: Pattern ) => {
 		if ( sectionPosition !== null ) {
+			const nextSection = {
+				...pattern,
+				key: sections[ sectionPosition ].key,
+			};
+
 			setSections( [
 				...sections.slice( 0, sectionPosition ),
-				{
-					...pattern,
-					key: sections[ sectionPosition ].key,
-				},
+				nextSection,
 				...sections.slice( sectionPosition + 1 ),
 			] );
-			updateActivePatternPosition( sectionPosition );
+			setActivePatternKey( nextSection.key );
 			showNotice( 'replace', pattern );
 		}
 	};
 
 	const addSection = ( pattern: Pattern ) => {
-		setSections( [
-			...( sections as Pattern[] ),
-			{
-				...pattern,
-				key: generateKey( pattern ),
-			},
-		] );
-		updateActivePatternPosition( sections.length );
+		const nextSection = injectKey( pattern );
+		setSections( [ ...( sections as Pattern[] ), nextSection ] );
+		setActivePatternKey( nextSection.key );
 		showNotice( 'add', pattern );
 	};
 
 	const deleteSection = ( position: number ) => {
 		showNotice( 'remove', sections[ position ] );
 		setSections( [ ...sections.slice( 0, position ), ...sections.slice( position + 1 ) ] );
-		updateActivePatternPosition( position );
+		setActivePatternKey( sections[ position ].key );
 	};
 
 	const moveDownSection = ( position: number ) => {
@@ -295,7 +284,7 @@ const PatternAssembler = ( {
 			section,
 			...sections.slice( position + 2 ),
 		] );
-		updateActivePatternPosition( position + 1 );
+		setActivePatternKey( section.key );
 	};
 
 	const moveUpSection = ( position: number ) => {
@@ -306,7 +295,7 @@ const PatternAssembler = ( {
 			...sections.slice( position - 1, position ),
 			...sections.slice( position + 1 ),
 		] );
-		updateActivePatternPosition( position - 1 );
+		setActivePatternKey( section.key );
 	};
 
 	const onSelect = (
@@ -513,7 +502,7 @@ const PatternAssembler = ( {
 						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'header' ) }
 						onDoneClick={ () => onDoneClick( 'header' ) }
-						updateActivePatternPosition={ () => updateActivePatternPosition( -1 ) }
+						updateActivePatternPosition={ () => setActivePatternKey( header?.key ) }
 						patterns={ patternsMapByCategory[ 'header' ] || [] }
 					/>
 				</NavigatorScreen>
@@ -524,7 +513,7 @@ const PatternAssembler = ( {
 						onSelect={ onSelect }
 						onBack={ () => onPatternSelectorBack( 'footer' ) }
 						onDoneClick={ () => onDoneClick( 'footer' ) }
-						updateActivePatternPosition={ () => activateFooterPosition( !! footer ) }
+						updateActivePatternPosition={ () => setActivePatternKey( footer?.key ) }
 						patterns={ patternsMapByCategory[ 'footer' ] || [] }
 					/>
 				</NavigatorScreen>
@@ -589,7 +578,7 @@ const PatternAssembler = ( {
 				header={ header }
 				sections={ sections }
 				footer={ footer }
-				activePosition={ activePosition }
+				activePatternKey={ activePatternKey }
 				onDeleteSection={ onDeleteSection }
 				onMoveUpSection={ onMoveUpSection }
 				onMoveDownSection={ onMoveDownSection }
