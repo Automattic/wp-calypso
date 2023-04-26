@@ -1,8 +1,7 @@
 import {
 	isWpComFreePlan,
-	isWpcomEnterpriseGridPlan,
-	PlanSlug,
 	getPlanSlugForTermVariant,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
@@ -11,23 +10,28 @@ import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
 import { PLANS_STORE } from 'calypso/my-sites/plans-features-main/store';
-import type { PlansSelect } from '@automattic/data-stores';
+import type { PlansSelect, StorePlanSlug } from '@automattic/data-stores';
 
 interface Props {
-	planName: string;
+	planName: StorePlanSlug | typeof PLAN_ENTERPRISE_GRID_WPCOM;
 	billingTimeframe: TranslateResult;
 	isMonthlyPlan: boolean;
 }
 
-function usePerMonthDescription( { isMonthlyPlan, planName }: Omit< Props, 'billingTimeframe' > ) {
+function PerMonthDescription( {
+	isMonthlyPlan,
+	planName,
+}: {
+	isMonthlyPlan: boolean;
+	planName: StorePlanSlug;
+} ) {
 	const translate = useTranslate();
 	const planPrices = usePlanPrices( {
-		planSlug: planName as PlanSlug,
+		planSlug: planName,
 		returnMonthly: isMonthlyPlan,
 	} );
 	const planYearlyVariantPricesPerMonth = usePlanPrices( {
-		planSlug:
-			getPlanSlugForTermVariant( planName as PlanSlug, Plans.TERM_ANNUALLY ) ?? ( '' as PlanSlug ),
+		planSlug: getPlanSlugForTermVariant( planName, Plans.TERM_ANNUALLY ) ?? ( '' as StorePlanSlug ),
 		returnMonthly: true,
 	} );
 	const plan = useSelect(
@@ -35,9 +39,7 @@ function usePerMonthDescription( { isMonthlyPlan, planName }: Omit< Props, 'bill
 		[ planName ]
 	);
 
-	if ( ! plan || isWpComFreePlan( planName ) || isWpcomEnterpriseGridPlan( planName ) ) {
-		return null;
-	}
+	let perMonthDescription = null;
 
 	if ( isMonthlyPlan ) {
 		// We want `yearlyVariantMaybeDiscountedPricePerMonth` to be the raw price the user
@@ -48,7 +50,7 @@ function usePerMonthDescription( { isMonthlyPlan, planName }: Omit< Props, 'bill
 			planYearlyVariantPricesPerMonth.rawPrice;
 
 		if ( yearlyVariantMaybeDiscountedPricePerMonth < planPrices.rawPrice ) {
-			return translate( `Save %(discountRate)s%% by paying annually`, {
+			perMonthDescription = translate( `Save %(discountRate)s%% by paying annually`, {
 				args: {
 					discountRate: Math.floor(
 						( 100 * ( planPrices.rawPrice - yearlyVariantMaybeDiscountedPricePerMonth ) ) /
@@ -63,39 +65,41 @@ function usePerMonthDescription( { isMonthlyPlan, planName }: Omit< Props, 'bill
 		const maybeDiscountedPrice =
 			planPrices.planDiscountedRawPrice || planPrices.discountedRawPrice || planPrices.rawPrice;
 		const fullTermPriceText =
-			plan.currencyCode && maybeDiscountedPrice
+			plan?.currencyCode && maybeDiscountedPrice
 				? formatCurrency( maybeDiscountedPrice, plan.currencyCode, { stripZeros: true } )
 				: null;
 
-		if ( Plans.TERM_ANNUALLY === plan.billingTerm ) {
-			return translate( 'per month, %(fullTermPriceText)s billed annually', {
+		if ( Plans.TERM_ANNUALLY === plan?.billingTerm ) {
+			perMonthDescription = translate( 'per month, %(fullTermPriceText)s billed annually', {
 				args: { fullTermPriceText },
 			} );
 		}
 
-		if ( Plans.TERM_BIENNIALLY === plan.billingTerm ) {
-			return translate( 'per month, %(fullTermPriceText)s billed every two years', {
+		if ( Plans.TERM_BIENNIALLY === plan?.billingTerm ) {
+			perMonthDescription = translate( 'per month, %(fullTermPriceText)s billed every two years', {
 				args: { fullTermPriceText },
 			} );
 		}
 
-		if ( Plans.TERM_TRIENNIALLY === plan.billingTerm ) {
-			return translate( 'per month, %(fullTermPriceText)s billed every three years', {
-				args: { fullTermPriceText },
-			} );
+		if ( Plans.TERM_TRIENNIALLY === plan?.billingTerm ) {
+			perMonthDescription = translate(
+				'per month, %(fullTermPriceText)s billed every three years',
+				{
+					args: { fullTermPriceText },
+				}
+			);
 		}
 	}
 
-	return null;
+	return <div>{ perMonthDescription }</div>;
 }
 
 const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props ) => {
-	const { planName, billingTimeframe } = props;
+	const { planName, billingTimeframe, isMonthlyPlan } = props;
 	const translate = useTranslate();
-	const perMonthDescription = usePerMonthDescription( props ) || billingTimeframe;
 	const price = formatCurrency( 25000, 'USD' );
 
-	if ( isWpcomEnterpriseGridPlan( planName ) ) {
+	if ( PLAN_ENTERPRISE_GRID_WPCOM === planName ) {
 		return (
 			<div className="plan-features-2023-grid__vip-price">
 				{ translate( 'Starts at {{b}}%(price)s{{/b}} yearly.', {
@@ -107,7 +111,15 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 		);
 	}
 
-	return <div>{ perMonthDescription }</div>;
+	return (
+		<>
+			{ isWpComFreePlan( planName ) ? (
+				billingTimeframe
+			) : (
+				<PerMonthDescription planName={ planName } isMonthlyPlan={ isMonthlyPlan } />
+			) }
+		</>
+	);
 };
 
 export default localize( PlanFeatures2023GridBillingTimeframe );

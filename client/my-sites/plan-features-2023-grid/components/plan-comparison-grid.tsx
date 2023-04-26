@@ -10,8 +10,8 @@ import {
 	PLAN_WOOEXPRESS_PLUS,
 	getPlanFeaturesGrouped,
 	getWooExpressFeaturesGrouped,
-	PLAN_ENTERPRISE_GRID_WPCOM,
 	PlanSlug,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { css } from '@emotion/react';

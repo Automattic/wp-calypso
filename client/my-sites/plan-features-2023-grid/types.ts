@@ -1,6 +1,9 @@
-import { applyTestFiltersToPlansList } from '@automattic/calypso-products';
+import {
+	applyTestFiltersToPlansList,
+	PLAN_ENTERPRISE_GRID_WPCOM,
+} from '@automattic/calypso-products';
 import { FeatureObject } from 'calypso/lib/plans/features-list';
-import type { PricedAPIPlan } from '@automattic/data-stores';
+import type { PricedAPIPlan, StorePlanSlug } from '@automattic/data-stores';
 
 export type TransformedFeatureObject = FeatureObject & {
 	availableForCurrentPlan: boolean;
@@ -19,7 +22,7 @@ export type PlanProperties = {
 	isPlaceholder?: boolean;
 	isVisible: boolean;
 	planConstantObj: ReturnType< typeof applyTestFiltersToPlansList >;
-	planName: string;
+	planName: StorePlanSlug | typeof PLAN_ENTERPRISE_GRID_WPCOM;
 	planObject: PricedAPIPlan | undefined;
 	product_name_short: string;
 	hideMonthly?: boolean;

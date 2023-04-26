@@ -14,13 +14,13 @@ import {
 	isBusinessPlan,
 	getPlanPath,
 	PLAN_FREE,
-	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
 	isWooExpressMediumPlan,
 	isWooExpressSmallPlan,
 	isWooExpressPlan,
 	PlanSlug,
 	isWooExpressPlusPlan,
+	PLAN_ENTERPRISE_GRID_WPCOM,
 } from '@automattic/calypso-products';
 import { PlansSelect } from '@automattic/data-stores';
 import formatCurrency from '@automattic/format-currency';
@@ -131,7 +131,7 @@ type PlanFeatures2023GridProps = {
 	isReskinned: boolean;
 	onUpgradeClick: ( cartItem: MinimalRequestCartProduct | null ) => void;
 	// either you specify the plans prop or isPlaceholder prop
-	plans: Array< string >;
+	plans: PlanProperties[ 'planName' ][];
 	visiblePlans: Array< string >;
 	flowName: string;
 	domainName: string;
@@ -548,8 +548,8 @@ export class PlanFeatures2023Grid extends Component<
 	renderBillingTimeframe( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
-			.map( ( properties ) => {
-				const { planConstantObj, planName, isMonthlyPlan } = properties;
+			.map( ( planProperties ) => {
+				const { planConstantObj, planName, isMonthlyPlan } = planProperties;
 
 				const classes = classNames(
 					'plan-features-2023-grid__table-item',
@@ -1078,7 +1078,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 		const isJetpack = siteId ? isJetpackSite( state, siteId ) : false;
 		const isSiteAT = siteId ? isSiteAutomatedTransfer( state, siteId ) : false;
 
-		const planProperties: PlanProperties[] = plans.map( ( plan: string ) => {
+		const planProperties: PlanProperties[] = plans.map( ( plan ) => {
 			let isPlaceholder = false;
 			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 			const planProductId = planConstantObj.getProductId();
