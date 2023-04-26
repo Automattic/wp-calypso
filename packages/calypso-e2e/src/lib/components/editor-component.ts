@@ -5,34 +5,36 @@ const EDITOR_TIMEOUT = 60 * 1000;
 /** */
 export class EditorComponent {
 	private page: Page;
-	private parentFrame: Page | Frame | null;
+	private editorFrame: Page | Frame | null;
 	private canvasFrame: Page | Frame | null;
 
 	/** */
 	constructor( page: Page ) {
 		this.page = page;
-		this.parentFrame = null;
+		this.editorFrame = null;
 		this.canvasFrame = null;
 	}
 
 	/** */
 	async frame(): Promise< Page | Frame > {
-		if ( this.parentFrame ) {
-			return this.parentFrame;
+		if ( this.editorFrame ) {
+			return this.editorFrame;
 		}
 
-		const parentFrame = await Promise.race( [
-			this.waitForFramedEditor(),
-			this.waitForUnframedEditor(),
-		] );
-
-		if ( ! parentFrame ) {
+		try {
+			this.editorFrame = await Promise.race( [
+				this.waitForFramedEditor(),
+				this.waitForUnframedEditor(),
+			] );
+		} catch ( _error ) {
 			throw new Error( 'Timed out waiting for the Editor' );
 		}
 
-		this.parentFrame = parentFrame;
+		if ( ! this.editorFrame ) {
+			throw new Error( 'Editor frame not found' );
+		}
 
-		return parentFrame;
+		return this.editorFrame;
 	}
 
 	/** */
@@ -41,18 +43,20 @@ export class EditorComponent {
 			return this.canvasFrame;
 		}
 
-		const canvasFrame = await Promise.race( [
-			this.waitForFramedCanvas(),
-			this.waitForUnframedCanvas(),
-		] );
-
-		if ( ! canvasFrame ) {
+		try {
+			this.canvasFrame = await Promise.race( [
+				this.waitForFramedCanvas(),
+				this.waitForUnframedCanvas(),
+			] );
+		} catch ( _error ) {
 			throw new Error( 'Timed out waiting for the Editor canvas' );
 		}
 
-		this.canvasFrame = canvasFrame;
+		if ( ! this.canvasFrame ) {
+			throw new Error( 'Editor canvas frame not found' );
+		}
 
-		return canvasFrame;
+		return this.canvasFrame;
 	}
 
 	/** */
@@ -61,9 +65,9 @@ export class EditorComponent {
 			.frameLocator( 'iframe[src*="calypsoify"]' )
 			.locator( 'body' )
 			.waitFor( { timeout: EDITOR_TIMEOUT } );
-		const parentFrame = this.page.frame( { url: /calypsoify/ } );
+		const editorFrame = this.page.frame( { url: /calypsoify/ } );
 
-		return parentFrame;
+		return editorFrame;
 	}
 
 	/** */
@@ -76,7 +80,8 @@ export class EditorComponent {
 
 	/** */
 	private async waitForFramedCanvas() {
-		await this.page.frameLocator( 'iframe[name="editor-canvas"]' ).locator( 'body' ).waitFor();
+		const canvasBody = this.page.frameLocator( 'iframe[name="editor-canvas"]' ).locator( 'body' );
+		await canvasBody.waitFor();
 		const canvasFrame = this.page.frame( 'editor-canvas' );
 
 		return canvasFrame;
@@ -84,10 +89,10 @@ export class EditorComponent {
 
 	/** */
 	private async waitForUnframedCanvas() {
-		const parentFrame = await this.frame();
-		const canvasWrapper = parentFrame.locator( '.editor-styles-wrapper' );
-		await canvasWrapper.waitFor();
+		const editorFrame = await this.frame();
+		const canvasBody = editorFrame.locator( 'body.editor-styles-wrapper' );
+		await canvasBody.waitFor();
 
-		return parentFrame;
+		return editorFrame;
 	}
 }
