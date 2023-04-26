@@ -3,7 +3,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import './pattern-action-bar-popover.scss';
 
 interface Props {
-	referenceElement: Element | null;
+	referenceElement?: HTMLElement;
 	children: JSX.Element;
 }
 
@@ -16,7 +16,9 @@ const PatternActionBarPopover = ( { referenceElement, children }: Props ) => {
 		wrapperRef.current?.style.setProperty( 'transform', `translateY(${ nextY }px)` );
 	}, [ wrapperRef, referenceRef ] );
 
-	referenceRef.current = referenceElement;
+	if ( referenceElement ) {
+		referenceRef.current = referenceElement;
+	}
 
 	useEffect( () => {
 		if ( ! referenceRef.current || ! referenceRef.current?.ownerDocument?.defaultView ) {
