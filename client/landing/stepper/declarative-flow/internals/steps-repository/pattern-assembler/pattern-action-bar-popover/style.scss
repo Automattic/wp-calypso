@@ -1,0 +1,10 @@
+.pattern-action-bar-popover {
+	position: absolute;
+	left: 0;
+	top: 0;
+
+	.pattern-assembler__pattern-panel-list--is-open & {
+		left: unset;
+		right: 16px;
+	}
+}
