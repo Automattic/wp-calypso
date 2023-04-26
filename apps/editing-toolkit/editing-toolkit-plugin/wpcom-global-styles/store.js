@@ -25,8 +25,8 @@ registerStore( 'automattic/wpcom-global-styles', {
 
 	selectors: {
 		isModalVisible: ( state, currentSidebar, viewCanvasPath ) =>
-			/*state.isModalVisible &&*/
-			currentSidebar === 'edit-site/global-styles' || viewCanvasPath === '/wp_global_styles',
+			state.isModalVisible &&
+			( currentSidebar === 'edit-site/global-styles' || viewCanvasPath === '/wp_global_styles' ),
 	},
 
 	persist: true,
