@@ -45,7 +45,13 @@ body.is-section-plans.is-expired-ecommerce-trial-plan {
 	.ecommerce-trial-expired__footer {
 		border-top: 1px solid var(--color-border-subtle);
 		display: flex;
+		flex-direction: column;
+		gap: 2em;
 		justify-content: center;
 		padding-top: 2em;
+
+		@media ( min-width: $break-small ) {
+			flex-direction: row;
+		}
 	}
 }
