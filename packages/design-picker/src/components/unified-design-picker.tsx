@@ -348,17 +348,10 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
-	const [ viewedSelections, setViewedSelections ] = useState< string[] >( [] );
-
 	const { ref } = useInView( {
 		onChange: ( inView ) => {
-			if (
-				inView &&
-				categorization?.selection &&
-				! viewedSelections.includes( categorization?.selection )
-			) {
+			if ( inView ) {
 				onViewAllDesigns();
-				setViewedSelections( [ ...viewedSelections, categorization?.selection ] );
 			}
 		},
 	} );
