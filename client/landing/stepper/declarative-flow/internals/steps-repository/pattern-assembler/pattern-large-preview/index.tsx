@@ -9,16 +9,12 @@ import { useRef, useEffect, useState } from 'react';
 import { NAVIGATOR_PATHS, STYLES_PATHS } from '../constants';
 import { PATTERN_ASSEMBLER_EVENTS } from '../events';
 import PatternActionBar from '../pattern-action-bar';
-import PatternActionBarPopover from './pattern-action-bar-popover';
 import { encodePatternId } from '../utils';
+import PatternActionBarPopover from './pattern-action-bar-popover';
+import useActionBarProps, { ActionBarData } from './use-action-bar-props';
 import type { Pattern } from '../types';
 import type { MouseEvent } from 'react';
 import './style.scss';
-
-type BlockPopoverData = {
-	type: string;
-	element: HTMLElement;
-};
 
 interface Props {
 	header: Pattern | null;
@@ -56,7 +52,14 @@ const PatternLargePreview = ( {
 		! hasSelectedPattern && STYLES_PATHS.includes( navigator.location.path );
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLDivElement | null >( null );
-	const [ blockPopoverData, setBlockPopoverData ] = useState< BlockPopoverData | null >( null );
+	const [ actionBarData, setActionBarData ] = useState< ActionBarData | null >( null );
+	const actionBarProps = useActionBarProps( sections, actionBarData, {
+		onDeleteSection,
+		onMoveUpSection,
+		onMoveDownSection,
+		onDeleteHeader,
+		onDeleteFooter,
+	} );
 
 	const goToSelectHeaderPattern = () => {
 		navigator.goTo( NAVIGATOR_PATHS.HEADER );
@@ -95,32 +98,10 @@ const PatternLargePreview = ( {
 			  );
 	};
 
-	const getActionBarProps = () => {
-		if ( ! blockPopoverData ) {
-			return {};
-		}
-
-		const { type, element } = blockPopoverData;
-		const position = Number( element.dataset.position );
-		if ( type === 'header' ) {
-			return { onDelete: onDeleteHeader };
-		} else if ( type === 'footer' ) {
-			return { onDelete: onDeleteFooter };
-		}
-
-		return {
-			disableMoveUp: position === 0,
-			disableMoveDown: sections?.length === position + 1,
-			onDelete: () => onDeleteSection( position ),
-			onMoveUp: () => onMoveUpSection( position ),
-			onMoveDown: () => onMoveDownSection( position ),
-		};
-	};
-
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
 		const key = type === 'section' ? pattern.key : type;
 		const handleMouseEnter = ( event: MouseEvent ) => {
-			setBlockPopoverData( {
+			setActionBarData( {
 				type,
 				element: event.currentTarget as HTMLElement,
 			} );
@@ -141,7 +122,7 @@ const PatternLargePreview = ( {
 				clientY <= Math.max( top, 0 ) ||
 				clientY >= Math.min( bottom, offsetParent?.clientHeight || Infinity )
 			) {
-				setBlockPopoverData( null );
+				setActionBarData( null );
 			}
 		};
 
@@ -225,14 +206,9 @@ const PatternLargePreview = ( {
 						<span>{ getDescription() }</span>
 					</div>
 				) }
-				{ blockPopoverData && (
-					<PatternActionBarPopover referenceElement={ blockPopoverData?.element }>
-						<PatternActionBar
-							patternType={ blockPopoverData.type }
-							isRemoveButtonTextOnly
-							source="large_preview"
-							{ ...getActionBarProps() }
-						/>
+				{ actionBarProps && (
+					<PatternActionBarPopover referenceElement={ actionBarData?.element }>
+						<PatternActionBar isRemoveButtonTextOnly source="large_preview" { ...actionBarProps } />
 					</PatternActionBarPopover>
 				) }
 			</>
