@@ -7,7 +7,9 @@ interface Props extends BlockRendererContainerProps {
 
 const PatternsRendererContainer = ( { patternIds, ...props }: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
-	const styles = patternIds.flatMap( ( patternId ) => renderedPatterns[ patternId ].styles );
+	const styles = patternIds
+		.flatMap( ( patternId ) => renderedPatterns[ patternId ]?.styles )
+		.filter( Boolean );
 
 	return <BlockRendererContainer { ...props } styles={ styles } />;
 };

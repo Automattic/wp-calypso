@@ -10,8 +10,8 @@ import { NAVIGATOR_PATHS, STYLES_PATHS } from '../constants';
 import { PATTERN_ASSEMBLER_EVENTS } from '../events';
 import PatternActionBar from '../pattern-action-bar';
 import { encodePatternId } from '../utils';
-import PatternActionBarPopover from './pattern-action-bar-popover';
-import useActionBarProps, { ActionBarData } from './use-action-bar-props';
+import PatternOverlay from './pattern-overlay';
+import useActionBarProps from './use-action-bar-props';
 import type { Pattern } from '../types';
 import type { MouseEvent } from 'react';
 import './style.scss';
@@ -55,8 +55,10 @@ const PatternLargePreview = ( {
 		! hasSelectedPattern && STYLES_PATHS.includes( navigator.location.path );
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLDivElement | null >( null );
-	const [ actionBarData, setActionBarData ] = useState< ActionBarData | null >( null );
-	const actionBarProps = useActionBarProps( sections, actionBarData, {
+	const [ hoveredElement, setHoveredElement ] = useState< HTMLElement | null >( null );
+	const actionBarProps = useActionBarProps( {
+		element: hoveredElement,
+		sectionsLength: sections.length,
 		onDeleteSection,
 		onMoveUpSection,
 		onMoveDownSection,
@@ -103,10 +105,7 @@ const PatternLargePreview = ( {
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
 		const handleMouseEnter = ( event: MouseEvent ) => {
-			setActionBarData( {
-				type,
-				element: event.currentTarget as HTMLElement,
-			} );
+			setHoveredElement( event.currentTarget as HTMLElement );
 		};
 
 		const handleMouseLeave = ( event: MouseEvent ) => {
@@ -124,7 +123,7 @@ const PatternLargePreview = ( {
 				clientY <= Math.max( top, 0 ) ||
 				clientY >= Math.min( bottom, offsetParent?.clientHeight || Infinity )
 			) {
-				setActionBarData( null );
+				setHoveredElement( null );
 			}
 		};
 
@@ -136,6 +135,7 @@ const PatternLargePreview = ( {
 					'pattern-large-preview__pattern',
 					`pattern-large-preview__pattern-${ type }`
 				) }
+				data-type={ type }
 				data-position={ position }
 				onMouseEnter={ handleMouseEnter }
 				onMouseLeave={ handleMouseLeave }
@@ -217,10 +217,18 @@ const PatternLargePreview = ( {
 						<span>{ getDescription() }</span>
 					</div>
 				) }
-				{ actionBarProps && (
-					<PatternActionBarPopover referenceElement={ actionBarData?.element }>
-						<PatternActionBar isRemoveButtonTextOnly source="large_preview" { ...actionBarProps } />
-					</PatternActionBarPopover>
+				{ hoveredElement && (
+					<PatternOverlay
+						referenceElement={ hoveredElement }
+						overlayContent={ <div className="pattern-large-preview__pattern-box-shadow" /> }
+						stickyContent={
+							<PatternActionBar
+								isRemoveButtonTextOnly
+								source="large_preview"
+								{ ...actionBarProps }
+							/>
+						}
+					/>
 				) }
 			</>
 		</DeviceSwitcher>

@@ -1,43 +1,40 @@
-import type { Pattern } from '../types';
-
-export type ActionBarData = {
-	type: string;
-	element: HTMLElement;
-};
-
-export type ActionBarHandlers = {
+interface UseActionBarArguments {
+	element: HTMLElement | null;
+	sectionsLength: number;
 	onDeleteSection: ( position: number ) => void;
 	onMoveUpSection: ( position: number ) => void;
 	onMoveDownSection: ( position: number ) => void;
 	onDeleteHeader: () => void;
 	onDeleteFooter: () => void;
-};
+}
 
-const useActionBarProps = (
-	sections: Pattern[],
-	actionBarData: ActionBarData | null,
-	actionBarHandlers: ActionBarHandlers
-) => {
-	if ( ! actionBarData ) {
+const useActionBarProps = ( {
+	element,
+	sectionsLength,
+	onDeleteSection,
+	onMoveUpSection,
+	onMoveDownSection,
+	onDeleteHeader,
+	onDeleteFooter,
+}: UseActionBarArguments ) => {
+	if ( ! element ) {
 		return null;
 	}
 
-	const { type, element } = actionBarData;
-	const actionBarProps = { patternType: type };
+	const patternType = element.dataset.type;
 	const position = Number( element.dataset.position );
-	const { onDeleteSection, onMoveUpSection, onMoveDownSection, onDeleteHeader, onDeleteFooter } =
-		actionBarHandlers;
+	const actionBarProps = { patternType };
 
-	if ( type === 'header' ) {
+	if ( patternType === 'header' ) {
 		return { ...actionBarProps, onDelete: onDeleteHeader };
-	} else if ( type === 'footer' ) {
+	} else if ( patternType === 'footer' ) {
 		return { ...actionBarProps, onDelete: onDeleteFooter };
 	}
 
 	return {
 		...actionBarProps,
 		disableMoveUp: position === 0,
-		disableMoveDown: sections.length === position + 1,
+		disableMoveDown: sectionsLength === position + 1,
 		onDelete: () => onDeleteSection( position ),
 		onMoveUp: () => onMoveUpSection( position ),
 		onMoveDown: () => onMoveDownSection( position ),

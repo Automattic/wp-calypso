@@ -1,6 +1,7 @@
 import React from 'react';
 import BlockRendererContainer from './block-renderer-container';
 import { usePatternsRendererContext } from './patterns-renderer-context';
+import type { CSSProperties } from 'react';
 
 interface Props {
 	patternId: string;
@@ -23,10 +24,12 @@ const PatternRenderer = ( {
 }: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
+	const style = { pointerEvents: 'none' } as CSSProperties;
 	const content = (
 		<div
 			// eslint-disable-next-line react/no-danger
 			dangerouslySetInnerHTML={ { __html: pattern?.html ?? '' } }
+			style={ style }
 		/>
 	);
 
