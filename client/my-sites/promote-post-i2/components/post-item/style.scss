@@ -7,7 +7,7 @@ body {
 	background-color: $post-item-background-color;
 }
 
-.promote-post {
+.promote-post-i2 {
 	@include promote-post-i2-font;
 
 	.posts-list__header-column {
@@ -107,6 +107,4 @@ body {
 			justify-content: center;
 		}
 	}
-
-
 }
