@@ -11,6 +11,7 @@
 	.components-modal__header {
 		height: auto;
 		position: absolute;
+		border-bottom-width: 0;
 
 		.components-button {
 			top: 16px;
@@ -39,18 +40,27 @@
 	}
 
 	.wpcom-global-styles-modal__text {
-		padding: 64px 48px;
+		padding: 32px;
 		display: flex;
 		flex-direction: column;
+
+		@include break-small {
+			padding: 64px 48px;
+		}
 	}
 
 	.wpcom-global-styles-modal__heading {
 		margin-top: 0;
 		font-family: $brand-serif;
 		font-weight: 400;
-		font-size: 2rem;
-		line-height: 40px;
+		font-size: 1.75rem;
+		line-height: 32px;
 		margin-bottom: 16px;
+
+		@include break-small {
+			font-size: 2rem;
+			line-height: 40px;
+		}
 	}
 
 	.wpcom-global-styles-modal__description {
@@ -77,6 +87,11 @@
 		padding: 64px 0 64px 64px;
 		display: flex;
 		justify-content: flex-end;
+		max-height: 50vh;
+
+		@include break-small {
+			max-height: none;
+		}
 
 		img {
 			width: 100%;
