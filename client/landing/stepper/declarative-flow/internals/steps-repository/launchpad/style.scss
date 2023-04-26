@@ -141,7 +141,7 @@
 }
 
 // Launchpad - Sidebar heading text
-
+.start-writing,
 .newsletter,
 .link-in-bio.launchpad,
 .link-in-bio-tld:not(.domains),
@@ -260,6 +260,10 @@
 		background: var(--studio-blue-10);
 	}
 
+}
+
+.start-writing .launchpad__sidebar-admin-link {
+	display: none;
 }
 
 .launchpad__sidebar-admin-link {
