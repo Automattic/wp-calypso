@@ -13,9 +13,9 @@ import {
 import { is2023PricingGridActivePage } from '@automattic/calypso-products/src/plans-utilities';
 import { WpcomPlansUI } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
-import { useDispatch, withSelect } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
-import { localize, useTranslate, getLocaleSlug } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -27,7 +27,6 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
@@ -55,7 +54,6 @@ import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
-import { PLANS_STORE } from './store';
 import WooExpressPlansPage from './woo-express-plans-page';
 
 import './style.scss';
@@ -243,7 +241,8 @@ class Plans extends Component {
 		} = this.props;
 
 		if ( ! this.props.plansLoaded || ! currentPlan ) {
-			return this.renderLoading();
+			// Maybe we should show a loading indicator here?
+			return null;
 		}
 
 		if ( isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ) {
@@ -334,14 +333,6 @@ class Plans extends Component {
 			return this.renderWooExpressPlansPage();
 		}
 		return this.renderPlansMain();
-	}
-
-	renderLoading() {
-		return (
-			<div className="plans__loading-ellipsis">
-				<LoadingEllipsis active />
-			</div>
-		);
 	}
 
 	render() {
@@ -470,9 +461,7 @@ const ConnectedPlans = connect( ( state, props ) => {
 		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
 		isSiteEligibleForMonthlyPlan: isEligibleForWpComMonthlyPlan( state, selectedSiteId ),
 		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
-		plansLoaded:
-			Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ) &&
-			! props.datastorePlansLoading,
+		plansLoaded: Boolean( getPlanSlug( state, getPlan( PLAN_FREE )?.getProductId() || 0 ) ),
 		is2023PricingGridVisible:
 			props.is2023PricingGridVisible ?? is2023PricingGridActivePage( window ),
 		isDomainAndPlanPackageFlow: !! getCurrentQueryArguments( state )?.domainAndPlanPackage,
@@ -485,22 +474,10 @@ const ConnectedPlans = connect( ( state, props ) => {
 	};
 } )( withCartKey( withShoppingCart( localize( withTrackingTool( 'HotJar' )( Plans ) ) ) ) );
 
-function PlansWrapper( props ) {
+export default function PlansWrapper( props ) {
 	return (
 		<CalypsoShoppingCartProvider>
 			<ConnectedPlans { ...props } />
 		</CalypsoShoppingCartProvider>
 	);
 }
-
-export default withSelect( ( select, ownProps ) => {
-	const locale = getLocaleSlug();
-	// This is a temporary workaround to force the data-store to fetch the plans data.
-	// It should be updated once plans are retrieved via a data-store selector.
-	select( PLANS_STORE ).getSupportedPlans( locale );
-	const datastorePlansLoading = select( PLANS_STORE ).isResolving( 'getSupportedPlans', [
-		locale,
-	] );
-
-	return { ...ownProps, datastorePlansLoading };
-} )( PlansWrapper );
