@@ -10,6 +10,7 @@ interface Props {
 	maxHeight?: 'none' | number;
 	minHeightFor100vh?: number;
 	placeholder?: JSX.Element;
+	isContentOnly?: boolean;
 }
 
 const PatternRenderer = ( {
@@ -19,9 +20,20 @@ const PatternRenderer = ( {
 	minHeight,
 	maxHeight,
 	minHeightFor100vh,
+	isContentOnly,
 }: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
+	const content = (
+		<div
+			// eslint-disable-next-line react/no-danger
+			dangerouslySetInnerHTML={ { __html: pattern?.html ?? '' } }
+		/>
+	);
+
+	if ( isContentOnly ) {
+		return content;
+	}
 
 	return (
 		<BlockRendererContainer
@@ -34,10 +46,7 @@ const PatternRenderer = ( {
 			isMinHeight100vh={ pattern?.html?.includes( 'min-height:100vh' ) }
 			minHeightFor100vh={ minHeightFor100vh }
 		>
-			<div
-				// eslint-disable-next-line react/no-danger
-				dangerouslySetInnerHTML={ { __html: pattern?.html ?? '' } }
-			/>
+			{ content }
 		</BlockRendererContainer>
 	);
 };

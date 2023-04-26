@@ -1,15 +1,15 @@
-import { PatternRenderer } from '@automattic/block-renderer';
+import { PatternRenderer, BlockRendererContainer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
-import { useStyle } from '@automattic/global-styles';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { Popover, __experimentalUseNavigator as useNavigator } from '@wordpress/components';
+import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import { Icon, layout } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useEffect, useState, CSSProperties } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { NAVIGATOR_PATHS, STYLES_PATHS } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import PatternActionBar from './pattern-action-bar';
+import PatternActionBarPopover from './pattern-action-bar-popover';
 import { encodePatternId } from './utils';
 import type { Pattern } from './types';
 import type { MouseEvent } from 'react';
@@ -17,8 +17,7 @@ import './pattern-large-preview.scss';
 
 type BlockPopoverData = {
 	type: string;
-	position: number;
-	element: Element;
+	element: HTMLElement;
 };
 
 interface Props {
@@ -56,16 +55,8 @@ const PatternLargePreview = ( {
 	const shouldShowSelectPatternHint =
 		! hasSelectedPattern && STYLES_PATHS.includes( navigator.location.path );
 	const frameRef = useRef< HTMLDivElement | null >( null );
-	const listRef = useRef< HTMLUListElement | null >( null );
-	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
-	const [ device, setDevice ] = useState< string >( 'desktop' );
+	const listRef = useRef< HTMLDivElement | null >( null );
 	const [ blockPopoverData, setBlockPopoverData ] = useState< BlockPopoverData | null >( null );
-	const [ blockGap ] = useStyle( 'spacing.blockGap' );
-	const [ backgroundColor ] = useStyle( 'color.background' );
-	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
-		'--pattern-large-preview-block-gap': blockGap,
-		'--pattern-large-preview-background': backgroundColor,
-	} as CSSProperties );
 
 	const goToSelectHeaderPattern = () => {
 		navigator.goTo( NAVIGATOR_PATHS.HEADER );
@@ -109,7 +100,8 @@ const PatternLargePreview = ( {
 			return {};
 		}
 
-		const { type, position } = blockPopoverData;
+		const { type, element } = blockPopoverData;
+		const position = Number( element.dataset.position );
 		if ( type === 'header' ) {
 			return { onDelete: onDeleteHeader };
 		} else if ( type === 'footer' ) {
@@ -127,41 +119,46 @@ const PatternLargePreview = ( {
 
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
 		const key = type === 'section' ? pattern.key : type;
-		const handleMouseEnter = ( event ) => {
+		const handleMouseEnter = ( event: MouseEvent ) => {
 			setBlockPopoverData( {
 				type,
-				position,
-				element: event.currentTarget,
+				element: event.currentTarget as HTMLElement,
 			} );
 		};
 
-		const handleMouseLeave = () => {
-			// setBlockPopoverData( null );
+		const handleMouseLeave = ( event: MouseEvent ) => {
+			const { clientX, clientY } = event;
+			const target = event.target as HTMLElement;
+			const { offsetParent } = target;
+			const { left, right, top, bottom } = target.getBoundingClientRect();
+
+			// Use the position to determine whether the mouse leaves the current element or not
+			// because the element is inside the iframe and we cannot get the next element from
+			// the event.relatedTarget
+			if (
+				clientX <= Math.max( left, 0 ) ||
+				clientX >= Math.min( right, offsetParent?.clientWidth || Infinity ) ||
+				clientY <= Math.max( top, 0 ) ||
+				clientY >= Math.min( bottom, offsetParent?.clientHeight || Infinity )
+			) {
+				setBlockPopoverData( null );
+			}
 		};
 
 		return (
-			<li
+			<div
 				key={ key }
 				className={ classnames(
 					'pattern-large-preview__pattern',
 					`pattern-large-preview__pattern-${ type }`
 				) }
+				data-position={ position }
 				onMouseEnter={ handleMouseEnter }
 				onMouseLeave={ handleMouseLeave }
 			>
-				<PatternRenderer
-					key={ device }
-					patternId={ encodePatternId( pattern.ID ) }
-					viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
-					// Disable default max-height
-					maxHeight="none"
-				/>
-			</li>
+				<PatternRenderer patternId={ encodePatternId( pattern.ID ) } isContentOnly />
+			</div>
 		);
-	};
-
-	const updateViewportHeight = () => {
-		setViewportHeight( frameRef.current?.clientHeight );
 	};
 
 	useEffect( () => {
@@ -194,48 +191,33 @@ const PatternLargePreview = ( {
 		};
 	}, [ activePosition, header, sections, footer ] );
 
-	useEffect( () => {
-		const handleResize = () => updateViewportHeight();
-		window.addEventListener( 'resize', handleResize );
-
-		return () => window.removeEventListener( 'resize', handleResize );
-	} );
-
-	// Delay updating the styles to make the transition smooth
-	// See https://github.com/Automattic/wp-calypso/pull/74033#issuecomment-1453056703
-	useEffect( () => {
-		setPatternLargePreviewStyle( {
-			'--pattern-large-preview-block-gap': blockGap,
-			'--pattern-large-preview-background': backgroundColor,
-		} as CSSProperties );
-	}, [ blockGap, backgroundColor ] );
-
 	return (
 		<DeviceSwitcher
 			className="pattern-large-preview"
 			isShowDeviceSwitcherToolbar
 			isShowFrameBorder
 			frameRef={ frameRef }
+			frameClassName="pattern-large-preview__frame"
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
-				// Wait for the animation to end in 200ms
-				window.setTimeout( () => {
-					setDevice( device );
-					updateViewportHeight();
-				}, 205 );
 			} }
 		>
 			<>
 				{ hasSelectedPattern ? (
-					<ul
-						className="pattern-large-preview__patterns"
-						style={ patternLargePreviewStyle }
-						ref={ listRef }
-					>
-						{ header && renderPattern( 'header', header ) }
-						{ sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ) }
-						{ footer && renderPattern( 'footer', footer ) }
-					</ul>
+					<BlockRendererContainer enablePointerEvent>
+						<div
+							className="pattern-large-preview__patterns"
+							style={ {
+								height: '100vh',
+								overflow: 'auto',
+							} }
+							ref={ listRef }
+						>
+							{ header && renderPattern( 'header', header ) }
+							{ sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ) }
+							{ footer && renderPattern( 'footer', footer ) }
+						</div>
+					</BlockRendererContainer>
 				) : (
 					<div className="pattern-large-preview__placeholder">
 						<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 72 } />
@@ -244,21 +226,14 @@ const PatternLargePreview = ( {
 					</div>
 				) }
 				{ blockPopoverData && (
-					<Popover
-						anchor={ blockPopoverData.element }
-						placement="top-start"
-						resize={ false }
-						flip={ false }
-						shift={ true }
-						variant="unstyled"
-					>
+					<PatternActionBarPopover referenceElement={ blockPopoverData?.element }>
 						<PatternActionBar
 							patternType={ blockPopoverData.type }
 							isRemoveButtonTextOnly
 							source="large_preview"
 							{ ...getActionBarProps() }
 						/>
-					</Popover>
+					</PatternActionBarPopover>
 				) }
 			</>
 		</DeviceSwitcher>

@@ -25,6 +25,7 @@ interface BlockRendererContainerProps {
 	minHeight?: number;
 	isMinHeight100vh?: boolean;
 	minHeightFor100vh?: number;
+	enablePointerEvent?: boolean;
 }
 
 interface ScaledBlockRendererContainerProps extends BlockRendererContainerProps {
@@ -43,6 +44,7 @@ const ScaledBlockRendererContainer = ( {
 	minHeight,
 	isMinHeight100vh,
 	minHeightFor100vh,
+	enablePointerEvent,
 }: ScaledBlockRendererContainerProps ) => {
 	const [ isLoaded, setIsLoaded ] = useState( false );
 	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
@@ -139,7 +141,7 @@ const ScaledBlockRendererContainer = ( {
 					position: 'absolute',
 					width: viewportWidth,
 					height: iframeHeight,
-					pointerEvents: 'none',
+					pointerEvents: enablePointerEvent ? 'auto' : 'none',
 					// This is a catch-all max-height for patterns.
 					// See: https://github.com/WordPress/gutenberg/pull/38175.
 					maxHeight,
