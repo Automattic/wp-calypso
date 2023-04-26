@@ -67,19 +67,19 @@ function usePerMonthDescription( { isMonthlyPlan, planName }: Omit< Props, 'bill
 				? formatCurrency( maybeDiscountedPrice, plan.currencyCode, { stripZeros: true } )
 				: null;
 
-		if ( Plans.TERM_ANNUALLY === plan?.billingTerm ) {
+		if ( Plans.TERM_ANNUALLY === plan.billingTerm ) {
 			return translate( 'per month, %(fullTermPriceText)s billed annually', {
 				args: { fullTermPriceText },
 			} );
 		}
 
-		if ( Plans.TERM_BIENNIALLY === plan?.billingTerm ) {
+		if ( Plans.TERM_BIENNIALLY === plan.billingTerm ) {
 			return translate( 'per month, %(fullTermPriceText)s billed every two years', {
 				args: { fullTermPriceText },
 			} );
 		}
 
-		if ( Plans.TERM_TRIENNIALLY === plan?.billingTerm ) {
+		if ( Plans.TERM_TRIENNIALLY === plan.billingTerm ) {
 			return translate( 'per month, %(fullTermPriceText)s billed every three years', {
 				args: { fullTermPriceText },
 			} );
