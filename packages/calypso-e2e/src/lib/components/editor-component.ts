@@ -63,7 +63,7 @@ export class EditorComponent {
 	private async waitForFramedEditor() {
 		await this.page
 			.frameLocator( 'iframe[src*="calypsoify"]' )
-			.locator( 'body' )
+			.locator( '#editor' )
 			.waitFor( { timeout: EDITOR_TIMEOUT } );
 		const editorFrame = this.page.frame( { url: /calypsoify/ } );
 
