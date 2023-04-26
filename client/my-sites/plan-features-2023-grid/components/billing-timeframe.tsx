@@ -177,31 +177,27 @@ function usePerMonthDescription( {
 	return null;
 }
 
-const WooExpressMonthlyPromotion: FunctionComponent< Props > = ( props ) => {
+interface WooExpressMonthlyPromotionProps {
+	billingTimeframe: TranslateResult;
+	monthlyPlanSlug: string;
+	yearlyPlanSlug: string;
+}
+
+const WooExpressMonthlyPromotion: FunctionComponent< WooExpressMonthlyPromotionProps > = (
+	props
+) => {
 	const translate = useTranslate();
-	const { planName, billingTimeframe, isMonthlyPlan } = props;
-	let monthlyPlanSlug = '';
-	let yearlyPlanSlug = '';
-	if ( isWooExpressMediumPlan( planName ) ) {
-		monthlyPlanSlug = PLAN_WOOEXPRESS_MEDIUM_MONTHLY;
-		yearlyPlanSlug = PLAN_WOOEXPRESS_MEDIUM;
-	} else if ( isWooExpressSmallPlan( planName ) ) {
-		monthlyPlanSlug = PLAN_WOOEXPRESS_SMALL_MONTHLY;
-		yearlyPlanSlug = PLAN_WOOEXPRESS_SMALL;
-	}
-	const mediumPlanAnnual = getPlans()[ yearlyPlanSlug ];
-	const mediumPlanMonthly = getPlans()[ monthlyPlanSlug ];
-	const mediumPlanPrices = useSelector( ( state ) => ( {
-		annualPlanMonthlyPrice: getPlanRawPrice( state, mediumPlanAnnual.getProductId(), true ) || 0,
-		monthlyPlanPrice: getPlanRawPrice( state, mediumPlanMonthly.getProductId() ) || 0,
+	const { billingTimeframe, yearlyPlanSlug, monthlyPlanSlug } = props;
+
+	const annualPlan = getPlans()[ yearlyPlanSlug ];
+	const monthlyPlan = getPlans()[ monthlyPlanSlug ];
+	const planPrices = useSelector( ( state ) => ( {
+		annualPlanMonthlyPrice: getPlanRawPrice( state, annualPlan.getProductId(), true ) || 0,
+		monthlyPlanPrice: getPlanRawPrice( state, monthlyPlan.getProductId() ) || 0,
 	} ) );
 
-	if ( ! isWooExpressPlan( planName ) || ! isMonthlyPlan ) {
-		return null;
-	}
-
 	const percentageSavings = Math.round(
-		( 1 - mediumPlanPrices.annualPlanMonthlyPrice / mediumPlanPrices.monthlyPlanPrice ) * 100
+		( 1 - planPrices.annualPlanMonthlyPrice / planPrices.monthlyPlanPrice ) * 100
 	);
 	const discountDescription = percentageSavings
 		? translate( `Save %(percentageSavings)s%% by paying annually`, {
@@ -219,14 +215,43 @@ const WooExpressMonthlyPromotion: FunctionComponent< Props > = ( props ) => {
 	);
 };
 
+/**
+ * Retrieves the monthly and yearly plan slugs for a given WooExpress plan name.
+ *
+ * @param planName - The name of the WooExpress plan to retrieve slugs for.
+ * @returns An object containing the monthly and yearly plan slugs, or an empty object if the plan name is invalid.
+ */
+function getWooExpressPlanSlugs( planName: string ) {
+	let monthlyPlanSlug = null;
+	let yearlyPlanSlug = null;
+
+	if ( isWooExpressMediumPlan( planName ) ) {
+		monthlyPlanSlug = PLAN_WOOEXPRESS_MEDIUM_MONTHLY;
+		yearlyPlanSlug = PLAN_WOOEXPRESS_MEDIUM;
+	} else if ( isWooExpressSmallPlan( planName ) ) {
+		monthlyPlanSlug = PLAN_WOOEXPRESS_SMALL_MONTHLY;
+		yearlyPlanSlug = PLAN_WOOEXPRESS_SMALL;
+	} else {
+		return {};
+	}
+	return { monthlyPlanSlug, yearlyPlanSlug };
+}
+
 const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props ) => {
-	const { planName, billingTimeframe } = props;
+	const { planName, billingTimeframe, isMonthlyPlan } = props;
 	const translate = useTranslate();
 	const perMonthDescription = usePerMonthDescription( props ) || billingTimeframe;
 	const price = formatCurrency( 25000, 'USD' );
 
-	if ( isWooExpressPlan( planName ) ) {
-		return <WooExpressMonthlyPromotion { ...props } />;
+	if ( isWooExpressPlan( planName ) && isMonthlyPlan ) {
+		const wooExpressPlansSlugs = getWooExpressPlanSlugs( planName );
+		if ( wooExpressPlansSlugs.monthlyPlanSlug && wooExpressPlansSlugs.yearlyPlanSlug ) {
+			const wooExpressMonthlyPromotionProps = {
+				billingTimeframe,
+				...wooExpressPlansSlugs,
+			};
+			return <WooExpressMonthlyPromotion { ...wooExpressMonthlyPromotionProps } />;
+		}
 	}
 
 	if ( isWpcomEnterpriseGridPlan( planName ) ) {
