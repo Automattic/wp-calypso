@@ -5,10 +5,11 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import Main from 'calypso/components/main';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isPluginActive from 'calypso/state/selectors/is-plugin-active';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import ConfirmationTask from './confirmation-task';
-import { GetConfirmationTasks } from './confirmation-tasks';
+import { getConfirmationTasks } from './confirmation-tasks';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
@@ -16,8 +17,11 @@ import './style.scss';
 const TrialUpgradeConfirmation = () => {
 	const selectedSite = useSelector( getSelectedSite );
 	const translate = useTranslate();
-	const siteSlug = selectedSite?.slug;
-	const tasks = GetConfirmationTasks( { translate, siteSlug } );
+	const siteId = selectedSite?.ID;
+	const hasWCPay = useSelector(
+		( state ) => siteId && isPluginActive( state, siteId, 'woocommerce-payments' )
+	) as boolean;
+	const tasks = getConfirmationTasks( { translate, hasWCPay } );
 
 	const taskActionUrlProps = {
 		siteName: selectedSite?.name ?? '',
