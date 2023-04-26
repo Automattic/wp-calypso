@@ -7,22 +7,9 @@ type DomainItem = {
 };
 
 export const getIntervalType = ( path?: string ): string => {
-	const pathHasIntervalType = path?.includes( 'intervalType=' );
-
-	if ( pathHasIntervalType ) {
-		const urlPartsFromPath = getUrlParts( path || '' );
-		return urlPartsFromPath.searchParams.get( 'intervalType' ) || 'yearly';
-	}
-
-	const urlParts = getUrlParts( typeof window !== 'undefined' ? window.location.href : '' );
-	const intervalType = urlParts.searchParams.get( 'intervalType' ) || '';
-
-	if ( [ 'yearly', '2yearly', 'monthly' ].includes( intervalType ) ) {
-		return intervalType;
-	}
-
-	// Default value
-	return 'yearly';
+	const url = path ?? window?.location?.href ?? '';
+	const intervalType = getUrlParts( url ).searchParams.get( 'intervalType' ) || 'yearly';
+	return [ 'yearly', '2yearly', 'monthly' ].includes( intervalType ) ? intervalType : 'yearly';
 };
 
 export const getDomainName = ( domainItem: DomainItem ): string | undefined => {
