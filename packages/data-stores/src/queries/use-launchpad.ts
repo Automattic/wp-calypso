@@ -8,10 +8,10 @@ interface APIFetchOptions {
 }
 
 interface Task {
-	id?: string;
-	completed?: boolean;
-	disabled?: boolean;
-	title?: string;
+	id: string;
+	completed: boolean;
+	disabled: boolean;
+	title: string;
 	subtitle?: string;
 	badgeText?: string;
 	actionDispatch?: () => void;
