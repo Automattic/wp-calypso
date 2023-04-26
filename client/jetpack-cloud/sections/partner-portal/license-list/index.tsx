@@ -91,6 +91,7 @@ export default function LicenseList() {
 								attachedAt={ license.attachedAt }
 								revokedAt={ license.revokedAt }
 								filter={ filter }
+								licenseType={ license.ownerType }
 							/>
 						</LicenseTransition>
 					) ) }

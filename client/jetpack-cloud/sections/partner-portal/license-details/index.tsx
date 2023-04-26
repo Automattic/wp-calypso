@@ -3,7 +3,7 @@ import { useTranslate } from 'i18n-calypso';
 import FormattedDate from 'calypso/components/formatted-date';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import LicenseDetailsActions from 'calypso/jetpack-cloud/sections/partner-portal/license-details/actions';
-import { LicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import { LicenseState, LicenseType } from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { getLicenseState, noop } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import './style.scss';
 
@@ -17,6 +17,7 @@ interface Props {
 	attachedAt: string | null;
 	revokedAt: string | null;
 	onCopyLicense?: () => void;
+	licenseType: LicenseType;
 }
 
 const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';
@@ -31,15 +32,15 @@ export default function LicenseDetails( {
 	attachedAt,
 	revokedAt,
 	onCopyLicense = noop,
+	licenseType,
 }: Props ) {
 	const translate = useTranslate();
 	const licenseState = getLicenseState( attachedAt, revokedAt );
-	const debugUrl = siteUrl ? `https://jptools.wordpress.com/debug/?url=${ siteUrl }` : null;
 
 	return (
 		<Card className="license-details">
 			<ul className="license-details__list">
-				<li className="license-details__list-item license-details__list-item--wide">
+				<li className="license-details__list-item">
 					<h4 className="license-details__label">{ translate( 'License code' ) }</h4>
 
 					<div className="license-details__license-key-row">
@@ -58,43 +59,14 @@ export default function LicenseDetails( {
 				</li>
 
 				<li className="license-details__list-item">
-					<h4 className="license-details__label">{ translate( 'Blog URL' ) }</h4>
-					{ siteUrl ? (
-						<a href={ siteUrl } target="_blank" rel="noopener noreferrer">
-							{ siteUrl }
-						</a>
-					) : (
-						<Gridicon icon="minus" />
-					) }
-				</li>
-
-				<li className="license-details__list-item">
-					<h4 className="license-details__label">{ translate( 'Jetpack Debugger' ) }</h4>
-					{ debugUrl ? (
-						<a href={ debugUrl } target="_blank" rel="noopener noreferrer">
-							{ debugUrl }
-						</a>
-					) : (
-						<Gridicon icon="minus" />
-					) }
-				</li>
-
-				<li className="license-details__list-item">
-					<h4 className="license-details__label">{ translate( 'Issued on' ) }</h4>
-					<FormattedDate date={ issuedAt } format={ DETAILS_DATE_FORMAT } />
+					<h4 className="license-details__label">{ translate( "Owner's User ID" ) }</h4>
+					{ username ? <span>{ username }</span> : <Gridicon icon="minus" /> }
 				</li>
 
 				{ licenseState === LicenseState.Attached && (
 					<li className="license-details__list-item">
-						<h4 className="license-details__label">{ translate( 'Assigned on' ) }</h4>
-						<FormattedDate date={ attachedAt } format={ DETAILS_DATE_FORMAT } />
-					</li>
-				) }
-
-				{ licenseState === LicenseState.Detached && (
-					<li className="license-details__list-item">
-						<h4 className="license-details__label">{ translate( 'Assigned on' ) }</h4>
-						<Gridicon icon="minus" />
+						<h4 className="license-details__label">{ translate( 'Site ID' ) }</h4>
+						{ blogId ? <span>{ blogId }</span> : <Gridicon icon="minus" /> }
 					</li>
 				) }
 
@@ -104,16 +76,6 @@ export default function LicenseDetails( {
 						<FormattedDate date={ revokedAt } format={ DETAILS_DATE_FORMAT } />
 					</li>
 				) }
-
-				<li className="license-details__list-item">
-					<h4 className="license-details__label">{ translate( "Owner's User ID" ) }</h4>
-					{ username ? <span>{ username }</span> : <Gridicon icon="minus" /> }
-				</li>
-
-				<li className="license-details__list-item">
-					<h4 className="license-details__label">{ translate( 'Blog ID' ) }</h4>
-					{ blogId ? <span>{ blogId }</span> : <Gridicon icon="minus" /> }
-				</li>
 			</ul>
 
 			<LicenseDetailsActions
@@ -122,6 +84,8 @@ export default function LicenseDetails( {
 				siteUrl={ siteUrl }
 				attachedAt={ attachedAt }
 				revokedAt={ revokedAt }
+				licenseState={ licenseState }
+				licenseType={ licenseType }
 			/>
 		</Card>
 	);

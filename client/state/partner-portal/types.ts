@@ -214,6 +214,7 @@ export interface License {
 	issuedAt: string;
 	attachedAt: string | null;
 	revokedAt: string | null;
+	ownerType: string | null;
 }
 
 export interface LicenseCounts {

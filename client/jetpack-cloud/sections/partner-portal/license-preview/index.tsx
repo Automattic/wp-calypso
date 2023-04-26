@@ -10,12 +10,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import FormattedDate from 'calypso/components/formatted-date';
 import LicenseDetails from 'calypso/jetpack-cloud/sections/partner-portal/license-details';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
-import { LicenseState, LicenseFilter } from 'calypso/jetpack-cloud/sections/partner-portal/types';
+import {
+	LicenseState,
+	LicenseFilter,
+	LicenseType,
+} from 'calypso/jetpack-cloud/sections/partner-portal/types';
 import { getLicenseState } from 'calypso/jetpack-cloud/sections/partner-portal/utils';
 import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
+import Badge from 'calypso/components/badge';
 import './style.scss';
 
 interface Props {
@@ -28,6 +33,7 @@ interface Props {
 	attachedAt: string | null;
 	revokedAt: string | null;
 	filter: LicenseFilter;
+	licenseType: LicenseType;
 }
 
 export default function LicensePreview( {
@@ -40,6 +46,7 @@ export default function LicensePreview( {
 	attachedAt,
 	revokedAt,
 	filter,
+	licenseType,
 }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -117,42 +124,29 @@ export default function LicensePreview( {
 				} ) }
 			>
 				<div>
-					<h3 className="license-preview__domain">
-						{ showDomain && <span>{ domain }</span> }
+					<span className="license-preview__product">{ product }</span>
+				</div>
 
-						{ licenseState === LicenseState.Detached && (
-							<span className="license-preview__tag license-preview__tag--is-detached">
-								<Gridicon icon="info-outline" size={ 18 } />
-								{ translate( 'Unassigned' ) }
-							</span>
-						) }
-
-						{ licenseState === LicenseState.Revoked && (
-							<span className="license-preview__tag license-preview__tag--is-revoked">
-								<Gridicon icon="block" size={ 18 } />
-								{ translate( 'Revoked' ) }
-							</span>
-						) }
-
-						{ justIssued && ! justAssigned && (
-							<span className="license-preview__tag license-preview__tag--is-just-issued">
-								<Gridicon icon="checkmark-circle" size={ 18 } />
-								{ translate( 'Just issued' ) }
-							</span>
-						) }
-
-						{ justAssigned && (
-							<span className="license-preview__tag license-preview__tag--is-assigned">
-								<Gridicon icon="checkmark-circle" size={ 18 } />
-								{ translate( 'Successfully assigned' ) }
-							</span>
-						) }
-					</h3>
-
-					<span className="license-preview__product">
-						<span>{ translate( 'Product:' ) } </span>
-						{ product }
-					</span>
+				<div>
+					{ domain }
+					{ ! domain && licenseState === LicenseState.Detached && (
+						<span>
+							<Badge type="warning">{ translate( 'Unassigned' ) }</Badge>
+							<Button
+								className="license-preview__assign-button"
+								borderless
+								compact
+								onClick={ assign }
+							>
+								{ translate( 'Assign' ) }
+							</Button>
+						</span>
+					) }
+					{ revokedAt && (
+						<span>
+							<Badge type="error">{ translate( 'Revoked' ) }</Badge>
+						</span>
+					) }
 				</div>
 
 				<div>
@@ -188,10 +182,8 @@ export default function LicensePreview( {
 				) }
 
 				<div>
-					{ licenseState === LicenseState.Detached && (
-						<Button compact onClick={ assign }>
-							{ translate( 'Assign License' ) }
-						</Button>
+					{ LicenseType.Standard === licenseType && (
+						<Badge type="success">{ translate( 'Standard license' ) }</Badge>
 					) }
 				</div>
 
@@ -213,6 +205,7 @@ export default function LicensePreview( {
 					attachedAt={ attachedAt }
 					revokedAt={ revokedAt }
 					onCopyLicense={ onCopyLicense }
+					licenseType={ licenseType }
 				/>
 			) }
 		</div>

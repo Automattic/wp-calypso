@@ -84,6 +84,8 @@ export default function LicenseListHeader() {
 		<LicenseListItem header className="license-list__header">
 			<h2>{ translate( 'License state' ) }</h2>
 
+			<h2>{ translate( 'Site' ) }</h2>
+
 			<SortButton
 				sortField={ LicenseSortField.IssuedAt }
 				currentSortField={ sortField }
