@@ -13,9 +13,17 @@ function isPageRegistered() {
 	return !! String( page.base() );
 }
 
+// Check if the path is within Calypso's scope.
+// For example, the path "/home" is within Calypso's scope.
+// The path "/setup" is not within Calypso's scope. Its part of the Stepper framework.
+function isPathOutOfScope( redirectPath: string ): boolean {
+	const paths = [ '/setup' ];
+	return paths.some( ( path ) => redirectPath.startsWith( path ) );
+}
+
 export function navigate( path: string ): void {
 	if ( isSameOrigin( path ) ) {
-		if ( ! isPageRegistered() ) {
+		if ( ! isPageRegistered() && ! isPathOutOfScope( path ) ) {
 			const state = { path };
 			window.history.pushState( state, '', path );
 			dispatchEvent( new PopStateEvent( 'popstate', { state } ) );
