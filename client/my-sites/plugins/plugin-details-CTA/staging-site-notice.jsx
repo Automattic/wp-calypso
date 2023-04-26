@@ -23,8 +23,8 @@ export default function StagingSiteNotice( { plugin } ) {
 				disableHref={ url === '' }
 				icon="notice"
 				href={ url }
-				title={ translate( 'Plugins are not available' ) }
-				description={ translate( 'Plugins are only available for production sites.' ) }
+				title={ translate( 'Paid plugins cannot be purchased on staging sites' ) }
+				description={ translate( 'Subscribe to this plugin on your production site.' ) }
 			/>
 		</>
 	);
