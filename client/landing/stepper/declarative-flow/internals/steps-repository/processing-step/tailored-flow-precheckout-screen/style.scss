@@ -75,6 +75,11 @@
 			background-image:
 				url(calypso/assets/images/onboarding/newsletter-processing-left.png),
 				url(calypso/assets/images/onboarding/newsletter-processing-right.png);
+			@supports (background-image: url(calypso/assets/images/onboarding/newsletter-processing-left.webp), url(calypso/assets/images/onboarding/newsletter-processing-right.webp)) {
+				background-image:
+					url(calypso/assets/images/onboarding/newsletter-processing-left.webp),
+					url(calypso/assets/images/onboarding/newsletter-processing-right.webp);
+			}
 			background-position: left bottom, right top;
 			background-repeat: no-repeat, no-repeat;
 			background-attachment: fixed;
@@ -93,6 +98,11 @@
 				background-image:
 					url(calypso/assets/images/onboarding/newsletter-processing-left-desktop.png),
 					url(calypso/assets/images/onboarding/newsletter-processing-right-desktop.png);
+				@supports (background-image: url(calypso/assets/images/onboarding/newsletter-processing-left-desktop.webp), url(calypso/assets/images/onboarding/newsletter-processing-right-desktop.webp)) {
+					background-image:
+						url(calypso/assets/images/onboarding/newsletter-processing-left-desktop.webp),
+						url(calypso/assets/images/onboarding/newsletter-processing-right-desktop.webp);
+				}
 			}
 		}
 	}

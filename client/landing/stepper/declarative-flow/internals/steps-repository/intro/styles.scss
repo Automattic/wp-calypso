@@ -8,6 +8,9 @@
 
 		.step-container {
 			background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-mobile.png);
+			@supports (background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-mobile.webp)) {
+				background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-mobile.webp);
+			}
 			background-repeat: no-repeat;
 			background-attachment: fixed;
 			background-position-x: center;
@@ -16,6 +19,9 @@
 
 			@include break-medium {
 				background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom.png);
+				@supports (background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom.webp)) {
+					background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom.webp);
+				}
 			}
 
 			@media screen and ( max-height: 512px ) and ( orientation: landscape ) {
