@@ -65,8 +65,8 @@ describe( 'Plans resolvers', () => {
 				type: 'SET_PLAN_PRODUCTS',
 				products: [
 					MockData.STORE_PRODUCT_FREE,
-					MockData.STORE_PRODUCT_PREMIUM_ANNUALLY,
 					MockData.STORE_PRODUCT_PREMIUM_MONTHLY,
+					MockData.STORE_PRODUCT_PREMIUM_ANNUALLY,
 				],
 			} );
 
