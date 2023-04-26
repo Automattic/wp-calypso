@@ -148,15 +148,13 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 										checked={ paidSubscribers }
 										onChange={ onPaidSubscribersChanged }
 									/>
-									<span>
-										{ translate( 'I want to create a paid newsletter' ) }
-										<InfoPopover position="bottom right">
-											{ translate(
-												'Let your audience support your work. Add paid subscriptions and gated content to your newsletter.'
-											) }
-										</InfoPopover>
-									</span>
+									<span>{ translate( 'I want to create a paid newsletter' ) }</span>
 								</FormLabel>
+								<InfoPopover position="bottom right">
+									{ translate(
+										'Let your audience support your work. Add paid subscriptions and gated content to your newsletter.'
+									) }
+								</InfoPopover>
 							</FormFieldset>
 						) }
 					</>
