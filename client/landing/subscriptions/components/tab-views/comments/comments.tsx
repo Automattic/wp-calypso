@@ -49,8 +49,7 @@ const Comments = () => {
 			{ isListControlsEnabled && (
 				<div className="subscriptions-manager__list-actions-bar">
 					<SearchInput
-						// todo: translate when we have agreed on the placeholder
-						placeholder="Search by post name…"
+						placeholder={ translate( 'Search by post, site title, or address…' ) }
 						searchIcon={ <SearchIcon size={ 18 } /> }
 						onSearch={ handleSearch }
 					/>
