@@ -13,18 +13,19 @@ function applyTermAnimation( term, characterIndex, callback ) {
 }
 
 // This function adds an interval which will run every 'interval' seconds
-// It will then grab a random term from the 'termSuggestions' array and apply the animation
+// It will then loop through the terms from the 'termSuggestions' array and apply the animation
 // The interval will be cleared when the user scrolls down the page, and then re-added when
 // the user scrolls back up
-
+let previousIndex = 0;
 export function useTermsSuggestions( termSuggestions = [], interval = INTERVAL_BETWEEN_TERMS ) {
 	const [ termSuggestion, setTermSuggestion ] = useState( termSuggestions[ 0 ] );
 
 	useEffect( () => {
 		function addInterval() {
 			return setInterval( () => {
-				const randomIndex = Math.floor( Math.random() * termSuggestions.length );
-				applyTermAnimation( termSuggestions[ randomIndex ], 0, setTermSuggestion );
+				const currentIndex = previousIndex % termSuggestions.length;
+				previousIndex++;
+				applyTermAnimation( termSuggestions[ currentIndex ], 0, setTermSuggestion );
 			}, interval );
 		}
 		let intervalId = addInterval();
