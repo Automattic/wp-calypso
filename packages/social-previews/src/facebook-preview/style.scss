@@ -3,7 +3,7 @@
 
 .facebook-preview__section {
 	width: clamp(#{$facebook-preview-min-width}, 100%, #{$facebook-preview-max-width});
-	margin: 0 auto;
+	margin-inline: auto;
 }
 
 .facebook-preview__post {
@@ -17,6 +17,12 @@
 	box-shadow: $facebook-preview-card-box-shadow;
 
 	font-family: $facebook-preview-font-family;
+
+	:any-link {
+		color: $facebook-blue;
+
+		text-decoration: none;
+	}
 }
 
 .facebook-preview__custom-text {
@@ -67,6 +73,10 @@
 	word-break: break-word;
 }
 
+.facebook-preview__text-wrapper {
+	width: 100%;
+}
+
 .facebook-preview__url {
 	margin-bottom: 0.25rem;
 
@@ -93,6 +103,12 @@
 	/* stylelint-disable-next-line scales/font-sizes */
 	font-size: 0.9375rem; // 15px
 	line-height: 1.33;
+
+	.facebook-preview__body.is-landscape &.is-compact {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 }
 
 .facebook-preview__image,

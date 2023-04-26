@@ -1,4 +1,4 @@
-import { StepContainer } from '@automattic/onboarding';
+import { StepContainer, START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { getQueryArg } from '@wordpress/url';
@@ -55,7 +55,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	}
 
 	// This is temporary until we can use the launchpad inside the editor.
-	const newWriterFlow = 'true' === getQueryArg( window.location.search, 'showLaunchpad' );
+	const newWriterFlow = 'true' === getQueryArg( window.location.search, START_WRITING_FLOW );
 
 	if (
 		! isLoggedIn ||

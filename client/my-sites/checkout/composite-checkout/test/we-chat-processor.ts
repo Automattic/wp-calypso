@@ -29,7 +29,7 @@ describe( 'weChatProcessor', () => {
 
 	const basicExpectedStripeRequest = {
 		cart: {
-			blog_id: '0',
+			blog_id: 0,
 			cart_key: 'no-site',
 			coupon: '',
 			products: [ product ],
@@ -121,8 +121,8 @@ describe( 'weChatProcessor', () => {
 			...basicExpectedStripeRequest,
 			cart: {
 				...basicExpectedStripeRequest.cart,
-				blog_id: '1234567',
-				cart_key: '1234567',
+				blog_id: 1234567,
+				cart_key: 1234567,
 				coupon: '',
 			},
 			payment: {
@@ -164,8 +164,8 @@ describe( 'weChatProcessor', () => {
 			...basicExpectedStripeRequest,
 			cart: {
 				...basicExpectedStripeRequest.cart,
-				blog_id: '1234567',
-				cart_key: '1234567',
+				blog_id: 1234567,
+				cart_key: 1234567,
 				coupon: '',
 				tax: { location: { postal_code: 'pr267ry', country_code: 'GB' } },
 			},
@@ -197,8 +197,8 @@ describe( 'weChatProcessor', () => {
 			...basicExpectedStripeRequest,
 			cart: {
 				...basicExpectedStripeRequest.cart,
-				blog_id: '1234567',
-				cart_key: '1234567',
+				blog_id: 1234567,
+				cart_key: 1234567,
 				coupon: '',
 				products: [ domainProduct ],
 			},

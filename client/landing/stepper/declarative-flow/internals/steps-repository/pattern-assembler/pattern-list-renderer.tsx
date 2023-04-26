@@ -1,6 +1,5 @@
 import { PatternRenderer } from '@automattic/block-renderer';
-import { Button } from '@automattic/components';
-import { Tooltip } from '@wordpress/components';
+import { Tooltip, __unstableCompositeItem as CompositeItem } from '@wordpress/components';
 import classnames from 'classnames';
 import { useEffect, useCallback, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -14,6 +13,8 @@ interface PatternListItemProps {
 	className: string;
 	isFirst: boolean;
 	isShown: boolean;
+	isSelected?: boolean;
+	composite?: Record< string, unknown >;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
 
@@ -23,17 +24,20 @@ interface PatternListRendererProps {
 	selectedPattern: Pattern | null;
 	activeClassName: string;
 	emptyPatternText?: string;
+	composite?: Record< string, unknown >;
 	onSelect: ( selectedPattern: Pattern | null ) => void;
 }
 
 const PLACEHOLDER_HEIGHT = 100;
-const MAX_HEIGHT_FOR_100VH = 500;
+const MIN_HEIGHT_FOR_100VH = 500;
 
 const PatternListItem = ( {
 	pattern,
 	className,
 	isFirst,
 	isShown,
+	isSelected,
+	composite,
 	onSelect,
 }: PatternListItemProps ) => {
 	const ref = useRef< HTMLButtonElement >();
@@ -59,19 +63,29 @@ const PatternListItem = ( {
 
 	return (
 		<Tooltip text={ pattern.title }>
-			<Button className={ className } ref={ setRefs } onClick={ () => onSelect( pattern ) }>
+			<CompositeItem
+				{ ...composite }
+				role="option"
+				as="button"
+				className={ className }
+				ref={ setRefs }
+				aria-label={ pattern.title }
+				aria-describedby={ pattern.description }
+				aria-current={ isSelected }
+				onClick={ () => onSelect( pattern ) }
+			>
 				{ isShown && inViewOnce ? (
 					<PatternRenderer
 						key={ pattern.ID }
 						patternId={ encodePatternId( pattern.ID ) }
 						viewportWidth={ 1060 }
 						minHeight={ PLACEHOLDER_HEIGHT }
-						maxHeightFor100vh={ MAX_HEIGHT_FOR_100VH }
+						minHeightFor100vh={ MIN_HEIGHT_FOR_100VH }
 					/>
 				) : (
 					<div key={ pattern.ID } style={ { height: PLACEHOLDER_HEIGHT } } />
 				) }
-			</Button>
+			</CompositeItem>
 		</Tooltip>
 	);
 };
@@ -82,6 +96,7 @@ const PatternListRenderer = ( {
 	selectedPattern,
 	activeClassName,
 	emptyPatternText,
+	composite,
 	onSelect,
 }: PatternListRendererProps ) => {
 	return (
@@ -92,6 +107,7 @@ const PatternListRenderer = ( {
 						[ activeClassName ]: ! selectedPattern,
 					} ) }
 					text={ emptyPatternText }
+					composite={ composite }
 					onSelect={ () => onSelect( null ) }
 				/>
 			) }
@@ -104,6 +120,8 @@ const PatternListRenderer = ( {
 					} ) }
 					isFirst={ index === 0 }
 					isShown={ shownPatterns.includes( pattern ) }
+					isSelected={ pattern.ID === selectedPattern?.ID }
+					composite={ composite }
 					onSelect={ onSelect }
 				/>
 			) ) }

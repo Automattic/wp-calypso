@@ -11,22 +11,46 @@ export type GaPurchase = {
 	items: GaItem[];
 };
 
+const parseCartInfo = ( cartInfo: WpcomJetpackCartInfo ) => ( {
+	wpcom: {
+		value: cartInfo.wpcomCostUSD + cartInfo.jetpackCostUSD,
+		items: [ ...cartInfo.wpcomProducts, ...cartInfo.jetpackProducts ],
+	},
+	jetpack: {
+		value: cartInfo.jetpackCostUSD,
+		items: cartInfo.jetpackProducts,
+	},
+	akismet: {
+		value: cartInfo.akismetCostUSD,
+		items: cartInfo.akismetProducts,
+	},
+} );
+
+const getCartInfoType = ( cartInfo: WpcomJetpackCartInfo ) => {
+	if ( cartInfo.containsWpcomProducts ) {
+		return 'wpcom';
+	} else if ( cartInfo.containsJetpackProducts ) {
+		return 'jetpack';
+	} else if ( cartInfo.containsAkismetProducts ) {
+		return 'akismet';
+	}
+
+	return 'wpcom';
+};
+
 export function cartToGaPurchase(
 	orderId: string,
 	cart: ResponseCart,
 	cartInfo: WpcomJetpackCartInfo
 ): GaPurchase {
-	const value = cartInfo.containsWpcomProducts
-		? cartInfo.wpcomCostUSD + cartInfo.jetpackCostUSD
-		: cartInfo.jetpackCostUSD;
-	const cartItems = cartInfo.containsWpcomProducts
-		? [ ...cartInfo.wpcomProducts, ...cartInfo.jetpackProducts ]
-		: cartInfo.jetpackProducts;
+	const cartInfoType = getCartInfoType( cartInfo );
+
+	const { value, items } = parseCartInfo( cartInfo )[ cartInfoType ];
 	return {
 		transaction_id: orderId,
 		coupon: cart.coupon,
 		currency: 'USD', // we track all prices in USD
 		value,
-		items: cartItems.map( ( product ) => productToGaItem( product, cart.currency ) ),
+		items: items.map( ( product ) => productToGaItem( product, cart.currency ) ),
 	};
 }

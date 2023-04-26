@@ -2,6 +2,8 @@
 
 ## Next / TBD
 
+- Don't modify a falsy boolean JSON response body by defaulting it.
+
 ## 6.0.0 / 2021-03-19
 
 - Add "support" for streamed responses and `onStreamRecord`. Doesn't implement, just tolerates the callback.

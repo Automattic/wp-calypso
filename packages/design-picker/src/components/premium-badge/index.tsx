@@ -12,6 +12,7 @@ interface Props {
 	tooltipClassName?: string;
 	tooltipPosition?: string;
 	isPremiumThemeAvailable?: boolean;
+	shouldHideIcon?: boolean;
 	shouldHideTooltip?: boolean;
 	focusOnShow?: boolean;
 }
@@ -23,6 +24,7 @@ const PremiumBadge: FunctionComponent< Props > = ( {
 	tooltipClassName,
 	tooltipPosition = 'bottom left',
 	isPremiumThemeAvailable,
+	shouldHideIcon,
 	shouldHideTooltip,
 	focusOnShow,
 } ) => {
@@ -47,8 +49,12 @@ const PremiumBadge: FunctionComponent< Props > = ( {
 			onMouseEnter={ () => setIsPopoverVisible( true ) }
 			onMouseLeave={ () => setIsPopoverVisible( false ) }
 		>
-			{ /*  eslint-disable-next-line wpcalypso/jsx-gridicon-size */ }
-			<Gridicon className="premium-badge__logo" icon="star" size={ 14 } />
+			{ ! shouldHideIcon && (
+				<>
+					{ /*  eslint-disable-next-line wpcalypso/jsx-gridicon-size */ }
+					<Gridicon className="premium-badge__logo" icon="star" size={ 14 } />
+				</>
+			) }
 			<span>{ labelText || __( 'Premium' ) }</span>
 			{ ! shouldHideTooltip && (
 				<Popover

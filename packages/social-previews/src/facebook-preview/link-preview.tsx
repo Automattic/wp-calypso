@@ -8,7 +8,11 @@ import FacebookPostHeader from './post/header';
 import FacebookPostIcon from './post/icons';
 import type { FacebookPreviewProps } from './types';
 
-const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
+type Props = FacebookPreviewProps & {
+	compactDescription?: boolean;
+};
+
+const FacebookLinkPreview: React.FC< Props > = ( {
 	url,
 	title,
 	description,
@@ -16,8 +20,10 @@ const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 	user,
 	customText,
 	type,
+	imageMode,
+	compactDescription,
 } ) => {
-	const [ mode, isLoadingImage, imgProps ] = useImage();
+	const [ mode, isLoadingImage, imgProps ] = useImage( { mode: imageMode } );
 	const isArticle = type === TYPE_ARTICLE;
 	const portraitMode = ( isArticle && ! image ) || mode === PORTRAIT_MODE;
 	const modeClass = `is-${ portraitMode ? 'portrait' : 'landscape' }`;
@@ -41,12 +47,16 @@ const FacebookLinkPreview: React.FC< FacebookPreviewProps > = ( {
 						</div>
 					) }
 					<div className="facebook-preview__text">
-						<div>
+						<div className="facebook-preview__text-wrapper">
 							<div className="facebook-preview__url">{ baseDomain( url ) }</div>
 							<div className="facebook-preview__title">
 								{ facebookTitle( title ) || baseDomain( url ) }
 							</div>
-							<div className="facebook-preview__description">
+							<div
+								className={ `facebook-preview__description ${
+									compactDescription ? 'is-compact' : ''
+								}` }
+							>
 								{ description && facebookDescription( description ) }
 								{ isArticle &&
 									! description &&

@@ -10,19 +10,21 @@ import {
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import type { BillingTransaction, UpcomingCharge } from './types';
+import type { BillingTransaction, BillingTransactionsType, UpcomingCharge } from './types';
 import type { CalypsoDispatch } from '../types';
 
 import 'calypso/state/billing-transactions/init';
 
-export const requestBillingTransactions = () => {
+export const requestBillingTransactions = ( transactionType?: BillingTransactionsType ) => {
 	return ( dispatch: CalypsoDispatch ) => {
 		dispatch( {
 			type: BILLING_TRANSACTIONS_REQUEST,
 		} );
 
 		return wp.req
-			.get( '/me/billing-history', { apiVersion: '1.3' } )
+			.get( `/me/billing-history` + ( transactionType ? `/${ transactionType }` : '' ), {
+				apiVersion: '1.3',
+			} )
 			.then(
 				( {
 					billing_history,

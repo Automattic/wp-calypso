@@ -12,6 +12,7 @@ export interface FontPair {
 export interface Category {
 	slug: string;
 	name: string;
+	description?: string;
 }
 
 export interface StyleVariation {
@@ -62,6 +63,7 @@ export interface DesignRecipe {
 	footer_pattern_ids?: number[] | string[];
 	color_variation_title?: string;
 	font_variation_title?: string;
+	slug?: string;
 }
 
 export interface SoftwareSet {
