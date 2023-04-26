@@ -76,6 +76,7 @@ const stepNameToModuleName = {
 	'plans-ecommerce-2y': 'plans',
 	'plans-personal-2y': 'plans',
 	'plans-premium-2y': 'plans',
+	'plans-theme-preselected': 'plans-theme-preselected',
 	'design-setup-site': 'design-picker',
 	'new-or-existing-site': 'new-or-existing-site',
 	'difm-site-picker': 'difm-site-picker',

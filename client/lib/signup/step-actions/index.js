@@ -11,12 +11,14 @@ import { isBlankCanvasDesign } from '@automattic/design-picker';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { defer, difference, get, includes, isEmpty, pick, startsWith } from 'lodash';
+import page from 'page';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
+	marketplaceThemeProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
@@ -24,6 +26,7 @@ import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-a
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wpcom from 'calypso/lib/wp';
 import { cartManagerClient } from 'calypso/my-sites/checkout/cart-manager-client';
+import { marketplaceThemeBillingProductSlug } from 'calypso/my-sites/themes/helpers';
 import flows from 'calypso/signup/config/flows';
 import steps from 'calypso/signup/config/steps';
 import {
@@ -36,7 +39,11 @@ import {
 	buildDIFMWebsiteContentRequestDTO,
 } from 'calypso/state/difm/assemblers';
 import { errorNotice } from 'calypso/state/notices/actions';
-import { getProductsList } from 'calypso/state/products-list/selectors';
+import {
+	getProductBySlug,
+	getProductsByBillingSlug,
+	getProductsList,
+} from 'calypso/state/products-list/selectors';
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
 import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
@@ -44,6 +51,9 @@ import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getWebsiteContent } from 'calypso/state/signup/steps/website-content/selectors';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getSiteId } from 'calypso/state/sites/selectors';
+import { THEMES_LOADING_CART } from 'calypso/state/themes/action-types';
+import { requestTheme } from 'calypso/state/themes/actions';
+import { isExternallyManagedTheme as getIsExternallyManagedTheme } from 'calypso/state/themes/selectors';
 const Visibility = Site.Visibility;
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -484,6 +494,102 @@ export function setIntentOnSite( callback, { siteSlug, intent } ) {
 		.then( () => callback() )
 		.catch( ( errors ) => {
 			callback( [ errors ] );
+		} );
+}
+export function addWithThemePlanToCart( callback, dependencies, stepProvidedItems, reduxStore ) {
+	const { cartItem } = stepProvidedItems;
+
+	/**
+	 * If the user selected the free option, then we should abort the checkout part.
+	 */
+	if ( ! cartItem ) {
+		defer( callback );
+		return;
+	}
+
+	reduxStore.dispatch( requestTheme( dependencies.theme, 'wpcom', getLocaleSlug() ) ).then( () => {
+		const state = reduxStore.getState();
+		const themeSlug = dependencies.theme;
+		const isExternallyManagedTheme = getIsExternallyManagedTheme( state, themeSlug );
+
+		if ( isExternallyManagedTheme ) {
+			addExternalManagedThemeToCart(
+				state,
+				reduxStore.dispatch,
+				themeSlug,
+				dependencies.siteSlug,
+				cartItem
+			).then( () => {} );
+		} else {
+			addPlanToCart( callback, dependencies, stepProvidedItems, reduxStore );
+		}
+	} );
+}
+
+const isLoadingCart = ( isLoading ) => ( dispatch ) => {
+	dispatch( {
+		type: THEMES_LOADING_CART,
+		isLoading,
+	} );
+};
+
+/**
+ * Add a Marketplace theme and the Business/eCommerce plan.
+ *
+ * Based on client/state/themes/actions/add-external-managed-theme-to-cart.tsx.
+ *
+ * Decided to duplicate the code in order to reduce scope.
+ *
+ * @param state
+ * @param dispatch
+ * @param themeId
+ * @param siteSlug
+ * @param planCartItem
+ * @returns {Promise<void>}
+ */
+async function addExternalManagedThemeToCart( state, dispatch, themeId, siteSlug, planCartItem ) {
+	const products = getProductsByBillingSlug( state, marketplaceThemeBillingProductSlug( themeId ) );
+
+	if ( undefined === products || products.length === 0 ) {
+		// @TODO What kind of logging should we add here? For now it just bails the code.
+		return;
+	}
+
+	const planProduct = getProductBySlug( state, planCartItem.product_slug );
+
+	let preferredProduct = products.find(
+		( product ) => product.product_term === planProduct.product_term
+	);
+
+	/**
+	 * If no preferred product was found based on the product_term of the plan, default to 'year'.
+	 *
+	 * This shouldn't happen for now but it could happen in the future for 2y plans or longer term plans.
+	 */
+	if ( ! preferredProduct ) {
+		preferredProduct = products.find( ( product ) => product.product_term === 'year' );
+	}
+
+	const productSlug = preferredProduct?.product_slug ?? products[ 0 ].product_slug;
+
+	const externalManagedThemeProduct = marketplaceThemeProduct( productSlug );
+
+	/**
+	 * This holds the products that will be added to the cart. We always want to add the
+	 * theme product, but we only want to add the business plan if the site is not eligible
+	 */
+	const cartItems = [ planCartItem, externalManagedThemeProduct ];
+
+	dispatch( isLoadingCart( true ) );
+	const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
+	cartManagerClient
+		.forCartKey( cartKey )
+		.actions.addProductsToCart( cartItems )
+		.then( () => {
+			page( `/checkout/${ siteSlug }` );
+		} )
+		.finally( () => {
+			dispatch( isLoadingCart( false ) );
 		} );
 }
 
