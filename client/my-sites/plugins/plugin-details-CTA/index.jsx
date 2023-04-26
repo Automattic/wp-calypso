@@ -313,20 +313,19 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						plugin={ plugin }
 					/>
 				) }
-				{ ! isWpcomStaging && (
-					<div className="plugin-details-cta__install">
-						<PrimaryButton
-							isLoggedIn={ isLoggedIn }
-							shouldUpgrade={ shouldUpgrade }
-							hasEligibilityMessages={ hasEligibilityMessages }
-							incompatiblePlugin={ incompatiblePlugin }
-							userCantManageTheSite={ userCantManageTheSite }
-							translate={ translate }
-							plugin={ plugin }
-							saasRedirectHRef={ saasRedirectHRef }
-						/>
-					</div>
-				) }
+				<div className="plugin-details-cta__install">
+					<PrimaryButton
+						isLoggedIn={ isLoggedIn }
+						shouldUpgrade={ shouldUpgrade }
+						hasEligibilityMessages={ hasEligibilityMessages }
+						incompatiblePlugin={ incompatiblePlugin }
+						userCantManageTheSite={ userCantManageTheSite }
+						translate={ translate }
+						plugin={ plugin }
+						saasRedirectHRef={ saasRedirectHRef }
+						isWpcomStaging={ isWpcomStaging }
+					/>
+				</div>
 				{ isWpcomStaging && <StagingSiteNotice plugin={ plugin } /> }
 				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 					<div className="plugin-details-cta__t-and-c">
@@ -383,6 +382,7 @@ function PrimaryButton( {
 	translate,
 	plugin,
 	saasRedirectHRef,
+	isWpcomStaging,
 } ) {
 	const dispatch = useDispatch();
 	const sectionName = useSelector( getSectionName );
@@ -434,7 +434,7 @@ function PrimaryButton( {
 		<CTAButton
 			plugin={ plugin }
 			hasEligibilityMessages={ hasEligibilityMessages }
-			disabled={ incompatiblePlugin || userCantManageTheSite }
+			disabled={ incompatiblePlugin || userCantManageTheSite || isWpcomStaging }
 		/>
 	);
 }
