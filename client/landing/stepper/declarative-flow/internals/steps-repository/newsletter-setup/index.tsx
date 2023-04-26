@@ -36,7 +36,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		taglineLabel: translate( 'Add a brief description' ),
 		taglinePlaceholder: translate( `Letters from Emily Dickinson's garden` ),
 		iconPlaceholder: translate( 'Add a site icon' ),
-		colorLabel: translate( 'Favorite color' ),
+		colorLabel: translate( 'Choose an accent color' ),
 		buttonText: translate( 'Save and continue' ),
 	};
 
