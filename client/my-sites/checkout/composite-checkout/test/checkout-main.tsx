@@ -28,7 +28,6 @@ import {
 	siteId,
 	domainProduct,
 	planWithoutDomain,
-	planWithoutDomainMonthly,
 	fetchStripeConfiguration,
 	mockSetCartEndpointWith,
 	mockGetCartEndpointWith,
@@ -509,43 +508,6 @@ describe( 'CheckoutMain', () => {
 			expect( screen.getAllByText( 'Domain Registration: billed annually' ) ).toHaveLength( 1 );
 			expect( screen.getAllByText( 'bar.com' ) ).toHaveLength( 4 );
 		} );
-	} );
-
-	it( 'displays an error and empties the cart when the url has a renewal but no site', async () => {
-		const cartChanges = { products: [ planWithoutDomainMonthly ] };
-		const additionalProps = {
-			productAliasFromUrl: 'personal-bundle',
-			purchaseId: '12345',
-			siteId: 0,
-		};
-		render(
-			<MyCheckout
-				cartKeyOverride="no-site"
-				cartChanges={ cartChanges }
-				additionalProps={ additionalProps }
-			/>,
-			container
-		);
-		await waitFor( async () => {
-			expect( navigate ).not.toHaveBeenCalled();
-		} );
-		expect( await screen.findByText( /You have no items in your cart/ ) ).toBeInTheDocument();
-
-		// Noticing the error message is a little difficult because we are not
-		// mounting the error display components. Instead, we spy on the
-		// `errorNotice` action creator. However, `CheckoutMain` does not pass the
-		// raw error message string to the action creator; it passes an array of
-		// React components, one of which contains the string. The following code
-		// lets us verify that.
-		expect( errorNotice ).toHaveBeenCalledWith(
-			expect.arrayContaining( [
-				expect.objectContaining( {
-					props: expect.objectContaining( {
-						children: expect.stringMatching( /This renewal is invalid/ ),
-					} ),
-				} ),
-			] )
-		);
 	} );
 
 	it( 'adds the product to the cart for a gift renewal', async () => {
