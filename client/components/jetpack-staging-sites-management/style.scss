@@ -49,3 +49,7 @@
 		font-size: 0.875rem;
 	}
 }
+
+.components-form-toggle.is-checked .components-form-toggle__track {
+	background-color: var(--studio-jetpack-green-50);
+}
