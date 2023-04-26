@@ -8,7 +8,7 @@ import { chevronRight, Icon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useSelector } from 'react-redux';
 import { getSectionName, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { useLaunchpadChecklist } from '../hooks/use-launchpad';
+import { useLaunchpadChecklist } from '../hooks/use-launchpad-checklist';
 import { SITE_STORE } from '../stores';
 import type { SiteSelect } from '@automattic/data-stores';
 
