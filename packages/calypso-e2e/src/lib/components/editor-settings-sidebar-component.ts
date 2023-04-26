@@ -70,7 +70,7 @@ export class EditorSettingsSidebarComponent {
 		if ( envVariables.VIEWPORT_NAME !== 'mobile' ) {
 			return;
 		}
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const locator = editorFrame.locator( selectors.mobileCloseSidebarButton );
 		await locator.click();
 	}
@@ -82,7 +82,7 @@ export class EditorSettingsSidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( tabName: EditorSidebarTab ): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const locator = editorFrame.locator( selectors.tabButton( tabName ) );
 		await locator.click();
 
@@ -106,7 +106,7 @@ export class EditorSettingsSidebarComponent {
 		// Avoid the wpcalypso/staging banner.
 		await this.scrollToBottomOfSidebar();
 
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const sectionLocator = editorFrame.locator( selectors.section( name ) );
 		await sectionLocator.click();
 
@@ -127,7 +127,7 @@ export class EditorSettingsSidebarComponent {
 	 * @returns {Promise<boolean>} True if target is in an expanded state. False otherwise.
 	 */
 	private async targetIsOpen( selector: string ): Promise< boolean > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const locator = editorFrame.locator( selector );
 		const state = await locator.getAttribute( 'aria-expanded' );
 
@@ -148,7 +148,7 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const buttonLocator = editorFrame.locator( selectors.visibilityButton );
 		await buttonLocator.click();
 
@@ -170,7 +170,7 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const buttonLocator = editorFrame.locator( selectors.visibilityButton );
 		await buttonLocator.click();
 
@@ -192,7 +192,7 @@ export class EditorSettingsSidebarComponent {
 		visibility: ArticlePrivacyOptions,
 		{ password }: { password?: string } = {}
 	): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const optionLocator = editorFrame.locator( selectors.visibilityOption( visibility ) );
 		await optionLocator.click();
 
@@ -221,7 +221,7 @@ export class EditorSettingsSidebarComponent {
 	 * @param {string} password Password to be used.
 	 */
 	private async setPostPassword( password: string ): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const inputLocator = editorFrame.locator( selectors.postPasswordInput );
 		await inputLocator.fill( password );
 	}
@@ -236,7 +236,7 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const buttonLocator = editorFrame.locator( selectors.scheduleButton );
 		await buttonLocator.click();
 	}
@@ -254,7 +254,7 @@ export class EditorSettingsSidebarComponent {
 			return;
 		}
 
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const buttonLocator = editorFrame.locator( selectors.scheduleButton );
 		await buttonLocator.click();
 	}
@@ -265,7 +265,7 @@ export class EditorSettingsSidebarComponent {
 	 * @param {ArticlePublishSchedule} date Date of the article to be scheduled.
 	 */
 	async setScheduleDetails( date: ArticlePublishSchedule ): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		let key: keyof ArticlePublishSchedule;
 
 		for ( key in date ) {
@@ -302,7 +302,7 @@ export class EditorSettingsSidebarComponent {
 	 * Clicks on the Revisions section in the sidebar to show a revisions modal.
 	 */
 	async showRevisions(): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const locator = editorFrame.locator( selectors.showRevisionButton );
 		await locator.click();
 	}
@@ -314,7 +314,7 @@ export class EditorSettingsSidebarComponent {
 	 * @throws {Error} If requested cateogry is not found.
 	 */
 	async checkCategory( name: string ): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		//TODO: Categories can be slow because we never do any cleanup. Remove extended timeout once we start doing cleanup.
 		const locator = editorFrame.locator( selectors.categoryCheckbox( name ) );
 
@@ -335,7 +335,7 @@ export class EditorSettingsSidebarComponent {
 	 * @param {string} name Tag name to enter.
 	 */
 	async enterTag( name: string ): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const inputLocator = editorFrame.locator( selectors.tagInput );
 		await inputLocator.fill( name );
 		await this.page.keyboard.press( 'Enter' );
@@ -350,7 +350,7 @@ export class EditorSettingsSidebarComponent {
 	 * @param {string} slug URL slug to set.
 	 */
 	async enterUrlSlug( slug: string ) {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		await editorFrame.getByRole( 'button', { name: /Change URL:/ } ).click();
 		await editorFrame.getByLabel( 'Permalink' ).fill( slug );
 		await editorFrame.getByRole( 'button', { name: 'Close', exact: true } ).click();
@@ -362,7 +362,7 @@ export class EditorSettingsSidebarComponent {
 	 * Useful to work around the wpcalypso/staging banner (for proxied users).
 	 */
 	private async scrollToBottomOfSidebar(): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const locator = editorFrame.locator( selectors.section( 'Discussion' ) );
 		await locator.scrollIntoViewIfNeeded();
 	}

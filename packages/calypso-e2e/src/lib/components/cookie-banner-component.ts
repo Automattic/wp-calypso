@@ -27,7 +27,7 @@ export class CookieBannerComponent {
 	 * Accept and clear the cookie notice.
 	 */
 	async acceptCookie(): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const locator = editorFrame.locator( selectors.acceptCookie );
 
 		// Whether the cookie banner appears is not deterministic.

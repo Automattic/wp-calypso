@@ -28,7 +28,7 @@ export class FullSiteEditorSavePanelComponent {
 	 * Publish or schedule the article.
 	 */
 	async confirmSave(): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const locator = editorFrame.locator( selectors.saveButton );
 		await locator.click();
 	}

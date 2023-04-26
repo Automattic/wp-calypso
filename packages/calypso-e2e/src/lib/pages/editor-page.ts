@@ -116,12 +116,12 @@ export class EditorPage {
 
 	/** */
 	async getEditorFrame() {
-		return await this.editor.getParentFrame();
+		return await this.editor.frame();
 	}
 
 	/** */
 	async getEditorCanvas() {
-		return await this.editor.getCanvas();
+		return await this.editor.canvas();
 	}
 
 	/**
@@ -265,7 +265,7 @@ export class EditorPage {
 		openInlineInserter: OpenInlineInserter
 	): Promise< ElementHandle > {
 		// First, launch the inline inserter in the way expected by the script.
-		await openInlineInserter( await this.editor.getCanvas() );
+		await openInlineInserter( await this.editor.canvas() );
 		await this.addBlockFromInserter( blockName, this.editorInlineBlockInserterComponent );
 
 		const blockHandle = await this.editorGutenbergComponent.getSelectedBlockElementHandle(
@@ -342,7 +342,7 @@ export class EditorPage {
 		patternName: string,
 		inserter: BlockInserter
 	): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 
 		await inserter.searchBlockInserter( patternName );
 		await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
@@ -592,7 +592,7 @@ export class EditorPage {
 	 * Unpublishes the post or page by switching to draft.
 	 */
 	async unpublish(): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 
 		await this.editorToolbarComponent.switchToDraft();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
@@ -611,7 +611,7 @@ export class EditorPage {
 	 * @returns {URL} Published article's URL.
 	 */
 	async getPublishedURLFromToast(): Promise< URL > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const toastLocator = editorFrame.locator( selectors.toastViewPostLink );
 		const publishedURL = ( await toastLocator.getAttribute( 'href' ) ) as string;
 		return new URL( publishedURL );

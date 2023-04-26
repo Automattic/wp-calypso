@@ -33,7 +33,7 @@ export class TemplatePartListComponent {
 	 * @param {string} name The name of the template part to delete.
 	 */
 	async deleteTemplatePart( name: string ): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const actionsButtonLocator = editorFrame.locator( selectors.actionsButtonForPart( name ) );
 		await actionsButtonLocator.click();
 
@@ -47,7 +47,7 @@ export class TemplatePartListComponent {
 	 * @returns True if the template part list component is open and visible, false otherwise.
 	 */
 	async isOpen(): Promise< boolean > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const shellLocator = editorFrame.locator( parentSelector );
 		return ( await shellLocator.count() ) > 0;
 	}

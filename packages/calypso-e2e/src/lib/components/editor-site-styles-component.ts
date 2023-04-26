@@ -55,7 +55,7 @@ export class EditorSiteStylesComponent {
 	 * @returns true if the site styles sidebar/panel is open, false otherwise.
 	 */
 	async siteStylesIsOpen(): Promise< boolean > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const locator = editorFrame.locator( parentSelector );
 		return ( await locator.count() ) > 0;
 	}
@@ -65,7 +65,7 @@ export class EditorSiteStylesComponent {
 	 */
 	async closeSiteStyles(): Promise< void > {
 		if ( await this.siteStylesIsOpen() ) {
-			const editorFrame = await this.editor.getParentFrame();
+			const editorFrame = await this.editor.frame();
 			const locator = editorFrame.locator( selectors.closeSidebarButton );
 			await locator.click();
 		}
@@ -141,7 +141,7 @@ export class EditorSiteStylesComponent {
 	async setStyleVariation( styleVariationName: string ): Promise< void > {
 		await this.returnToTopMenu();
 		await this.clickMenuButton( 'Browse styles' );
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const locator = editorFrame.locator( selectors.styleVariation( styleVariationName ) );
 		await locator.click();
 	}
@@ -152,7 +152,7 @@ export class EditorSiteStylesComponent {
 	 * @param {string} buttonName Button name.
 	 */
 	async clickMenuButton( buttonName: string ): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const locator = editorFrame.locator( selectors.menuButton( buttonName ) );
 		await locator.click();
 	}
@@ -161,7 +161,7 @@ export class EditorSiteStylesComponent {
 	 * Returns to the top-level menu in the site styles sidebar/panel.
 	 */
 	async returnToTopMenu(): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const backButtonLocator = editorFrame.locator( selectors.backButton );
 		// The DOM node of the current active panel is directly replaced on re-render.
 		// This means that we can safely rely on "count()" as an indicator of if there's
@@ -175,7 +175,7 @@ export class EditorSiteStylesComponent {
 	 * Open the more actions menu in the site styles sidebar/panel.
 	 */
 	async openMoreActionsMenu(): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const locator = editorFrame.locator( selectors.moreActionsMenuButton );
 		await locator.click();
 	}

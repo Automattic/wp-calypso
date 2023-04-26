@@ -38,7 +38,7 @@ export class EditorBlockListViewComponent {
 	 * @param {string} blockName Name of the block type (e.g. "Heading").
 	 */
 	async clickFirstBlockOfType( blockName: string ): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const locator = editorFrame.locator( selectors.blockLink( blockName ) ).first();
 		await locator.click();
 	}
@@ -47,7 +47,7 @@ export class EditorBlockListViewComponent {
 	 * Selects and highlights all blocks in the list view.
 	 */
 	async selectAllBlocks(): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const firstBlockLocator = editorFrame.locator(
 			selectors.blockByLocation( { level: 1, position: 1 } )
 		);
@@ -72,7 +72,7 @@ export class EditorBlockListViewComponent {
 	 * @param {BlockListLocation} location Location of block in the block list tree.
 	 */
 	async openOptionsForBlock( location: BlockListLocation ): Promise< void > {
-		const editorFrame = await this.editor.getParentFrame();
+		const editorFrame = await this.editor.frame();
 		const locator = editorFrame.locator(
 			`${ selectors.blockByLocation( location ) } >> ${ selectors.moreOptionsButton }`
 		);

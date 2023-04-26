@@ -16,14 +16,14 @@ export class EditorComponent {
 	}
 
 	/** */
-	async getParentFrame(): Promise< Page | Frame > {
+	async frame(): Promise< Page | Frame > {
 		if ( this.parentFrame ) {
 			return this.parentFrame;
 		}
 
 		const parentFrame = await Promise.race( [
-			this.waitForParentFrame(),
-			this.waitForParentWrapper(),
+			this.waitForFramedEditor(),
+			this.waitForUnframedEditor(),
 		] );
 
 		if ( ! parentFrame ) {
@@ -36,14 +36,14 @@ export class EditorComponent {
 	}
 
 	/** */
-	async getCanvas(): Promise< Page | Frame > {
+	async canvas(): Promise< Page | Frame > {
 		if ( this.canvasFrame ) {
 			return this.canvasFrame;
 		}
 
 		const canvasFrame = await Promise.race( [
-			this.waitForCanvasFrame(),
-			this.waitForCanvasWrapper(),
+			this.waitForFramedCanvas(),
+			this.waitForUnframedCanvas(),
 		] );
 
 		if ( ! canvasFrame ) {
@@ -56,7 +56,7 @@ export class EditorComponent {
 	}
 
 	/** */
-	private async waitForParentFrame() {
+	private async waitForFramedEditor() {
 		await this.page
 			.frameLocator( 'iframe[src*="calypsoify"]' )
 			.locator( 'body' )
@@ -67,7 +67,7 @@ export class EditorComponent {
 	}
 
 	/** */
-	private async waitForParentWrapper() {
+	private async waitForUnframedEditor() {
 		const editorBody = this.page.locator( 'body.block-editor-page' );
 		await editorBody.waitFor( { timeout: EDITOR_TIMEOUT } );
 
@@ -75,7 +75,7 @@ export class EditorComponent {
 	}
 
 	/** */
-	private async waitForCanvasFrame() {
+	private async waitForFramedCanvas() {
 		await this.page.frameLocator( 'iframe[name="editor-canvas"]' ).locator( 'body' ).waitFor();
 		const canvasFrame = this.page.frame( 'editor-canvas' );
 
@@ -83,8 +83,8 @@ export class EditorComponent {
 	}
 
 	/** */
-	private async waitForCanvasWrapper() {
-		const parentFrame = await this.getParentFrame();
+	private async waitForUnframedCanvas() {
+		const parentFrame = await this.frame();
 		const canvasWrapper = parentFrame.locator( '.editor-styles-wrapper' );
 		await canvasWrapper.waitFor();
 
