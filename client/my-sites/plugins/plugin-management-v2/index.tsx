@@ -9,22 +9,22 @@ import { resetPluginStatuses } from 'calypso/state/plugins/installed/status/acti
 import PluginsList from './plugins-list';
 import UpdatePlugins from './update-plugins';
 import { pluginsEmptyMessage } from './utils/get-plugins-empty-message';
-import type { Plugin } from './types';
+import type { PluginComponentProps } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 import type { PluginFilter } from 'calypso/state/plugins/installed/types';
 
 import './style.scss';
 
 interface Props {
-	plugins: Array< Plugin >;
+	plugins: Array< PluginComponentProps >;
 	isLoading: boolean;
 	requestError: boolean;
 	selectedSite: SiteDetails;
 	searchTerm: string;
 	isBulkManagementActive: boolean;
 	toggleBulkManagement: () => void;
-	removePluginNotice: ( plugin: Plugin ) => void;
-	updatePlugin: ( plugin: Plugin ) => void;
+	removePluginNotice: ( plugin: PluginComponentProps ) => void;
+	updatePlugin: ( plugin: PluginComponentProps ) => void;
 	isJetpackCloud: boolean;
 	filter: PluginFilter;
 }

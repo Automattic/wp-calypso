@@ -1452,6 +1452,7 @@ __metadata:
     "@emotion/react": ^11.4.1
     "@testing-library/jest-dom": ^5.16.2
     "@testing-library/react": ^12.1.3
+    "@types/wordpress__components": ^14.0.10
     "@wordpress/components": ^22.1.0
     "@wordpress/i18n": ^4.22.0
     classnames: ^2.3.1

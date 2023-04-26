@@ -12,8 +12,6 @@ import type {
 } from '@automattic/design-picker/src/types';
 
 interface StarterDesignsQueryParams {
-	vertical_id: string;
-	intent: string;
 	seed?: string;
 	_locale: string;
 	include_virtual_designs?: boolean;
@@ -35,7 +33,6 @@ interface StarterDesign {
 	title: string;
 	description: string;
 	recipe: DesignRecipe;
-	verticalizable: boolean;
 	categories: Category[];
 	price?: string;
 	style_variations?: StyleVariation[];
@@ -81,7 +78,6 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		title,
 		description,
 		recipe,
-		verticalizable,
 		categories,
 		price,
 		style_variations,
@@ -100,7 +96,6 @@ function apiStarterDesignsToDesign( design: StarterDesign ): Design {
 		title,
 		description,
 		recipe,
-		verticalizable,
 		categories,
 		is_premium,
 		is_bundled_with_woo_commerce,

@@ -35,7 +35,8 @@ if ( typeof MainDashboardButton !== 'undefined' ) {
 				// eslint-disable-next-line react-hooks/exhaustive-deps
 			}, [] );
 
-			const isStartWritingFlow = getQueryArg( window.location.search, START_WRITING_FLOW );
+			const isStartWritingFlow =
+				getQueryArg( window.location.search, START_WRITING_FLOW ) === 'true';
 			const [ clickGuardRoot ] = useState( () => document.createElement( 'div' ) );
 			useEffect( () => {
 				document.body.appendChild( clickGuardRoot );

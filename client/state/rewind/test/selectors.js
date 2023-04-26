@@ -6,9 +6,14 @@ import {
 	getBackupRetentionUpdateRequestStatus,
 	getBackupStoppedFlag,
 	isFetchingStagingSitesList,
+	isRequestingStagingSiteInfo,
 	hasFetchedStagingSitesList,
+	hasFetchedStagingSiteInfo,
+	getBackupStagingSiteInfo,
 	getBackupStagingSites,
+	getBackupStagingUpdateRequestStatus,
 } from '../selectors';
+import { BACKUP_STAGING_UPDATE_REQUEST } from '../staging/constants';
 import { stagingSites } from '../staging/test/fixtures';
 import { StorageUsageLevels } from '../storage/types';
 
@@ -247,6 +252,133 @@ describe( 'Backup staging sites selectors', () => {
 		test( 'should return the staging sites related to specified site ID', () => {
 			const stateIn = fixtures.stagingSitesLoaded;
 			expect( getBackupStagingSites( stateIn, TEST_SITE_ID ) ).toStrictEqual( stagingSites );
+		} );
+	} );
+} );
+
+describe( 'getBackupStagingUpdateRequestStatus()', () => {
+	const TEST_SITE_ID = 123;
+
+	test( 'should default to UNSUBMITTED when the site under test does not exist in the state at all.', () => {
+		const state = {
+			rewind: {},
+		};
+		expect( getBackupStagingUpdateRequestStatus( state, TEST_SITE_ID ) ).toEqual(
+			BACKUP_STAGING_UPDATE_REQUEST.UNSUBMITTED
+		);
+	} );
+
+	test( 'should default to UNSUBMITTED when no staging flag update request is being made yet.', () => {
+		const state = {
+			rewind: {
+				[ TEST_SITE_ID ]: {},
+			},
+		};
+		expect( getBackupStagingUpdateRequestStatus( state, TEST_SITE_ID ) ).toEqual(
+			BACKUP_STAGING_UPDATE_REQUEST.UNSUBMITTED
+		);
+	} );
+
+	test( 'should return PENDING status when the state indicates a staging update request was initiated.', () => {
+		const state = {
+			rewind: {
+				[ TEST_SITE_ID ]: {
+					updateStagingFlagRequestStatus: BACKUP_STAGING_UPDATE_REQUEST.PENDING,
+				},
+			},
+		};
+		expect( getBackupStagingUpdateRequestStatus( state, TEST_SITE_ID ) ).toEqual(
+			BACKUP_STAGING_UPDATE_REQUEST.PENDING
+		);
+	} );
+} );
+
+describe( 'Backup staging site info', () => {
+	const TEST_SITE_ID = 123456;
+	const fixtures = {
+		emptyRewindState: {
+			rewind: {},
+		},
+		fetchingStagingInfo: {
+			rewind: {
+				[ TEST_SITE_ID ]: {
+					staging: {
+						site: {
+							isFetching: true,
+							hasFetched: false,
+						},
+					},
+				},
+			},
+		},
+		stagingInfoLoaded: {
+			rewind: {
+				[ TEST_SITE_ID ]: {
+					staging: {
+						site: {
+							isFetching: false,
+							hasFetched: true,
+							info: {
+								blog_id: 222222,
+								domain: 'test1.jurassic.ninja',
+								siteurl: 'https://test1.jurassic.ninja',
+								staging: true,
+							},
+						},
+					},
+				},
+			},
+		},
+	};
+
+	describe( 'isRequestingStagingSiteInfo()', () => {
+		test( 'should return false if the rewind state is empty', () => {
+			const stateIn = fixtures.emptyRewindState;
+			expect( isRequestingStagingSiteInfo( stateIn, TEST_SITE_ID ) ).toBe( false );
+		} );
+
+		test( 'should return true if staging site info are being fetch', () => {
+			const stateIn = fixtures.fetchingStagingInfo;
+			expect( isRequestingStagingSiteInfo( stateIn, TEST_SITE_ID ) ).toBe( true );
+		} );
+
+		test( 'should return false if staging site info has been loaded', () => {
+			const stateIn = fixtures.stagingInfoLoaded;
+			expect( isRequestingStagingSiteInfo( stateIn, TEST_SITE_ID ) ).toBe( false );
+		} );
+	} );
+
+	describe( 'hasFetchedStagingSiteInfo()', () => {
+		test( 'should return false if the rewind state is empty', () => {
+			const stateIn = fixtures.emptyRewindState;
+			expect( hasFetchedStagingSiteInfo( stateIn, TEST_SITE_ID ) ).toBe( false );
+		} );
+
+		test( 'should return true if staging site info are being fetch', () => {
+			const stateIn = fixtures.fetchingStagingInfo;
+			expect( hasFetchedStagingSiteInfo( stateIn, TEST_SITE_ID ) ).toBe( false );
+		} );
+
+		test( 'should return false if staging site info has been loaded', () => {
+			const stateIn = fixtures.stagingInfoLoaded;
+			expect( hasFetchedStagingSiteInfo( stateIn, TEST_SITE_ID ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'getBackupStagingSiteInfo()', () => {
+		test( 'should return null if the rewind state is empty', () => {
+			const stateIn = fixtures.emptyRewindState;
+			expect( getBackupStagingSiteInfo( stateIn, TEST_SITE_ID ) ).toBeNull;
+		} );
+
+		test( 'should return the site info object if site info loaded', () => {
+			const stateIn = fixtures.stagingInfoLoaded;
+			expect( getBackupStagingSiteInfo( stateIn, TEST_SITE_ID ) ).toEqual( {
+				blog_id: 222222,
+				domain: 'test1.jurassic.ninja',
+				siteurl: 'https://test1.jurassic.ninja',
+				staging: true,
+			} );
 		} );
 	} );
 } );
