@@ -11,6 +11,7 @@ export const STORE_PRODUCT_FREE: PlanProduct = {
 	rawPrice: 0,
 	price: '€0',
 	annualPrice: '€0',
+	currencyCode: 'EUR',
 };
 export const STORE_PRODUCT_PREMIUM_ANNUALLY: PlanProduct = {
 	productId: 1003,
@@ -23,6 +24,7 @@ export const STORE_PRODUCT_PREMIUM_ANNUALLY: PlanProduct = {
 	rawPrice: 96,
 	price: '€8',
 	annualPrice: '€96',
+	currencyCode: 'EUR',
 };
 export const STORE_PRODUCT_PREMIUM_MONTHLY: PlanProduct = {
 	productId: 1013,
@@ -35,4 +37,5 @@ export const STORE_PRODUCT_PREMIUM_MONTHLY: PlanProduct = {
 	rawPrice: 14,
 	price: '€14',
 	annualPrice: '€168',
+	currencyCode: 'EUR',
 };
