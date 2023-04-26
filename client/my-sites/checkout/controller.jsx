@@ -1,6 +1,5 @@
 import {
 	PLAN_BUSINESS,
-	PLAN_ECOMMERCE,
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
 	isJetpackLegacyItem,
@@ -335,7 +334,6 @@ export function upsellNudge( context, next ) {
 			case PLAN_PERSONAL:
 			case PLAN_PREMIUM:
 			case PLAN_BUSINESS:
-			case PLAN_ECOMMERCE:
 				upsellType = ANNUAL_PLAN_UPGRADE_UPSELL;
 				break;
 			case 'business':
