@@ -1,22 +1,17 @@
 import { Popover } from '@automattic/components';
 import CountCard from '@automattic/components/src/highlight-cards/count-card';
+import formatCurrency from '@automattic/format-currency';
 import { Icon, info, payment, receipt, tip } from '@wordpress/icons';
-import { numberFormat, translate } from 'i18n-calypso';
+import { translate } from 'i18n-calypso';
 import { useMemo, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
 import './highlights-section.scss';
 
-function getAmountAsFormattedString( amount ) {
-	if ( amount === 0 ) {
-		// Per design spec we don't want "$0.00" as a result.
-		// https://github.com/Automattic/wp-calypso/issues/72045
-		// We'll return "$0" in this scenario.
-		return '$0';
-	}
-	// Takes a Number, formats it to 2 decimal places, and prepends a "$".
-	// Amounts are in USD with localized formatting.
-	return '$' + numberFormat( amount, 2 );
+function getAmountAsFormattedString( amount, stripZeros ) {
+	return formatCurrency( amount, 'USD', {
+		stripZeros: stripZeros !== undefined ? stripZeros : amount === 0,
+	} );
 }
 
 function useHighlights( earnings ) {
@@ -55,22 +50,24 @@ function usePayoutNotices( earnings ) {
 	return useMemo( () => {
 		const amountOwed = earnings?.total_amount_owed || 0;
 		const amountOwedFormatted = getAmountAsFormattedString( amountOwed );
+		const amountThreshold = getAmountAsFormattedString( 100, true );
 		const notice = {
 			id: 'notice',
 			value: translate(
-				'Outstanding amount of %(amountOwed)s does not exceed the minimum $100 needed to make the payment.',
+				'Outstanding amount of %(amountOwed)s does not exceed the minimum %(amountThreshold)s needed to make the payment.',
 				{
 					comment: 'WordAds: Insufficient balance for payout.',
-					args: { amountOwed: amountOwedFormatted },
+					args: { amountOwed: amountOwedFormatted, amountThreshold },
 				}
 			),
 		};
 		const limit = {
 			id: 'limit',
 			value: translate(
-				'Payment will be made as soon as the total outstanding amount has reached $100.',
+				'Payment will be made as soon as the total outstanding amount has reached %(amountThreshold)s.',
 				{
 					comment: 'WordAds: Payout limit description.',
+					args: { amountThreshold },
 				}
 			),
 		};
