@@ -1,10 +1,18 @@
 @import "../styles/typography.scss";
 
+$modules-gap :24px;
+
 .stats-widget-modules {
 	margin-top: 24px;
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	column-gap: 24px;
+	column-gap: $modules-gap;
+
+	@media only screen and (max-width: 799px) {
+		grid-template-columns: auto;
+		grid-template-rows: repeat(2, 1fr);
+		row-gap: $modules-gap;
+	}
 }
 
 .stats-widget-module__icon {
