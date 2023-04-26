@@ -9,10 +9,15 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	features: Array< TransformedFeatureObject >;
 	planName: string;
 	domainName: string;
-} > = ( { features, planName, domainName } ) => {
+	hideUnavailableFeatures: boolean;
+} > = ( { features, planName, domainName, hideUnavailableFeatures } ) => {
 	return (
 		<>
 			{ features.map( ( currentFeature, featureIndex ) => {
+				if ( hideUnavailableFeatures && ! currentFeature.availableForCurrentPlan ) {
+					return null;
+				}
+
 				const divClasses = classNames( '', getPlanClass( planName ), {
 					'is-last-feature': featureIndex + 1 === features.length,
 				} );

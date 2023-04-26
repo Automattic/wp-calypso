@@ -78,9 +78,13 @@ export function useThemesThankYouData( themeSlugs: string[] ): ThankYouData {
 		[ translate ]
 	);
 
-	// DotOrg and Externay managed themes
+	// DotOrg (if not also Dotcom) and Externay managed themes
 	// needs an atomic site to be installed.
-	const hasDotOrgThemes = dotOrgThemes.some( ( theme: any ) => !! theme );
+	type Theme = { id: string } | undefined;
+	const hasDotOrgThemes = dotOrgThemes.some(
+		( theme: Theme ) =>
+			!! theme && ! dotComThemes.find( ( dotComTheme: Theme ) => dotComTheme?.id === theme.id )
+	);
 	const hasExternallyManagedThemes = useSelector( ( state ) =>
 		getHasExternallyManagedThemes( state, themeSlugs )
 	);

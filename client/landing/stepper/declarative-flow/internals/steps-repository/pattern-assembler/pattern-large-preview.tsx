@@ -52,6 +52,7 @@ const PatternLargePreview = ( {
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLUListElement | null >( null );
 	const [ viewportHeight, setViewportHeight ] = useState< number | undefined >( 0 );
+	const [ device, setDevice ] = useState< string >( 'desktop' );
 	const [ blockGap ] = useStyle( 'spacing.blockGap' );
 	const [ backgroundColor ] = useStyle( 'color.background' );
 	const [ patternLargePreviewStyle, setPatternLargePreviewStyle ] = useState( {
@@ -123,6 +124,7 @@ const PatternLargePreview = ( {
 				) }
 			>
 				<PatternRenderer
+					key={ device }
 					patternId={ encodePatternId( pattern.ID ) }
 					viewportHeight={ viewportHeight || frameRef.current?.clientHeight }
 					// Disable default max-height
@@ -197,7 +199,10 @@ const PatternLargePreview = ( {
 			onDeviceChange={ ( device ) => {
 				recordTracksEvent( PATTERN_ASSEMBLER_EVENTS.PREVIEW_DEVICE_CLICK, { device } );
 				// Wait for the animation to end in 200ms
-				window.setTimeout( updateViewportHeight, 205 );
+				window.setTimeout( () => {
+					setDevice( device );
+					updateViewportHeight();
+				}, 205 );
 			} }
 		>
 			{ hasSelectedPattern ? (

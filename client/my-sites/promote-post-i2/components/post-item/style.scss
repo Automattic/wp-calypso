@@ -1,0 +1,112 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
+@import "../../style.scss";
+
+$post-item-background-color: var(--color-surface);
+body {
+	background-color: $post-item-background-color;
+}
+
+.promote-post {
+	@include promote-post-i2-font;
+
+	.posts-list__header-column {
+		border-bottom: 1px solid #eee;
+		font-weight: normal;
+		padding-bottom: 8px;
+	}
+
+	.post-item__row {
+		width: 100%;
+	}
+
+	.post-item__post {
+		&-data,
+		&-type,
+		&-publish-date,
+		&-views,
+		&-likes,
+		&-comments,
+		&-link,
+		&-promote {
+			border-bottom: 1px solid #eee;
+			vertical-align: middle;
+		}
+
+		&-type {
+			font-size: 0.875rem;
+			width: 7.4%;
+		}
+
+		&-publish-date {
+			width: 12.8%;
+		}
+
+		&-visitors {
+			width: 9.2%;
+		}
+
+		&-likes {
+			width: 9.2%;
+		}
+
+		&-comments {
+			width: 9.2%;
+		}
+
+		&-link {
+			text-decoration-line: underline;
+			width: 7%;
+		}
+
+		&-promote {
+			color: $studio-simplenote-blue-50;
+			text-decoration-line: underline;
+			width: 5.4%;
+		}
+	}
+
+	.post-item {
+		&__row .post-item__post-data {
+			align-items: center;
+			display: flex;
+			font-weight: 500;
+		}
+
+		&__post-promote-button {
+			color: var(--studio-simplenote-blue-50);
+			text-decoration: none;
+
+			&:hover:not(:disabled) {
+				color: var(--studio-simplenote-blue-50);
+			}
+		}
+	}
+
+	.post-item__post-title {
+		color: $studio-gray-100;
+		margin-left: 16px;
+	}
+
+	.post-item__post-thumbnail-wrapper {
+		display: block;
+		position: relative;
+		height: 78px;
+		width: 108px;
+		align-self: stretch;
+		border: 1px solid #eee;
+		border-radius: 4px;
+		overflow: hidden;
+		margin: 16px 0;
+
+		&_no-image {
+			align-items: center;
+			background: $studio-gray-0;
+			border-radius: 4px;
+			display: flex;
+			justify-content: center;
+		}
+	}
+
+
+}

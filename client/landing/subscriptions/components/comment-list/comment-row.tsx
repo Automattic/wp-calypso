@@ -31,8 +31,8 @@ const CommentRow = ( {
 		}
 		return <Gridicon className="icon" icon="globe" size={ 48 } />;
 	}, [ site_icon, site_title ] );
-	const { mutate: unFollow, isLoading: unfollowing } =
-		SubscriptionManager.usePostUnfollowMutation();
+	const { mutate: unsubscribe, isLoading: unsubscribing } =
+		SubscriptionManager.usePostUnsubscribeMutation();
 	return (
 		<div style={ style } ref={ forwardedRef } className="row-wrapper">
 			<div className="row" role="row">
@@ -58,8 +58,8 @@ const CommentRow = ( {
 				</span>
 				<span className="actions" role="cell">
 					<CommentSettings
-						onUnfollow={ () => unFollow( { post_id, blog_id, id } ) }
-						unfollowing={ unfollowing }
+						onUnsubscribe={ () => unsubscribe( { post_id, blog_id, id } ) }
+						unsubscribing={ unsubscribing }
 					/>
 				</span>
 			</div>
