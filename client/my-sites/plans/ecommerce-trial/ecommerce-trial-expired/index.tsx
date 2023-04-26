@@ -11,6 +11,7 @@ import BodySectionCssClass from 'calypso/layout/body-section-css-class';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { WooExpressPlans } from 'calypso/my-sites/plans/ecommerce-trial/wooexpress-plans';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 import './style.scss';
@@ -20,6 +21,7 @@ const ECommerceTrialExpired = (): JSX.Element => {
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const siteIsAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 
 	const nonECommerceTrialPurchases = useMemo(
 		() =>
@@ -89,7 +91,13 @@ const ECommerceTrialExpired = (): JSX.Element => {
 				/>
 
 				<div className="ecommerce-trial-expired__footer">
-					<Button href={ `/settings/delete-site/${ siteSlug }` } scary icon="trash">
+					{ ! siteIsAtomic && (
+						<Button href={ `/export/${ siteSlug }` }>
+							<Gridicon icon="cloud-download" />
+							<span>{ translate( 'Export your content' ) }</span>
+						</Button>
+					) }
+					<Button href={ `/settings/delete-site/${ siteSlug }` } scary>
 						<Gridicon icon="trash" />
 						<span>{ translate( 'Delete your site permanently' ) }</span>
 					</Button>
