@@ -92,11 +92,16 @@
 			outline-offset: 4px;
 		}
 		.trending-tags__title {
-			font-size: 36px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+			font-size: $font-headline-small;
 			font-weight: 600;
 			color: var(--studio-black);
 			margin-right: 12px;
 			padding-right: 2px;
+
+			@media ( max-width: $break-medium ) {
+				font-size: 28px; /* stylelint-disable-line declaration-property-unit-allowed-list */
+				line-height: 32px;
+			}
 		}
 		.trending-tags__count {
 			font-size: 16px; /* stylelint-disable-line declaration-property-unit-allowed-list */
