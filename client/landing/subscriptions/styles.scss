@@ -55,6 +55,22 @@ body {
 				margin-left: auto;
 			}
 		}
+
+		@media (max-width: $break-small) {
+			&__list-actions-bar {
+				flex-direction: column;
+				align-items: stretch;
+				gap: 0;
+
+				.subscription-manager-sort-controls {
+					margin-top: 30.5px;
+
+					&__button {
+						padding: 0;
+					}
+				}
+			}
+		}
 	}
 
 	.search-component {
@@ -72,7 +88,6 @@ body {
 
 		input.search-component__input[type="search"]::placeholder {
 			color: $studio-gray-50;
-
 		}
 	}
 }
