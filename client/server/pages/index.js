@@ -830,12 +830,16 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
-		if ( req.context.isLoggedIn ) {
+		const showSitesViewToInternalUsers =
+			config.isEnabled( 'subscription-management/internal-users/sites-view' ) &&
+			req.path === '/subscriptions/sites';
+
+		if ( req.context.isLoggedIn && ! showSitesViewToInternalUsers ) {
 			// We want to show the old subscriptions management portal to the logged-in users, until new one in reader is developped for them
 			return res.redirect( 'https://wordpress.com/email-subscriptions?option=settings' );
 		}
 
-		if ( req.cookies.subkey ) {
+		if ( req.cookies.subkey || showSitesViewToInternalUsers ) {
 			// If the user is logged out, and has a subkey cookie, they are authorized to view the page
 			return next();
 		}

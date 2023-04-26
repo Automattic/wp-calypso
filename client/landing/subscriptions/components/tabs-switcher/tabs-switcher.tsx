@@ -3,6 +3,7 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { useIsLoggedIn } from 'calypso/../packages/data-stores/src/reader/hooks';
 import Nav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -20,10 +21,11 @@ const TabsSwitcher = () => {
 	const { pathname } = useLocation();
 	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
 	const locale = useLocale();
+	const { isLoggedIn } = useIsLoggedIn();
 	const shouldEnableCommentsTab =
-		config.isEnabled( 'subscription-management-comments-view' ) && locale === 'en';
+		config.isEnabled( 'subscription-management-comments-view' ) && locale === 'en' && ! isLoggedIn;
 	const shouldEnablePendingTab =
-		config.isEnabled( 'subscription-management-pending-view' ) && locale === 'en';
+		config.isEnabled( 'subscription-management-pending-view' ) && locale === 'en' && ! isLoggedIn;
 
 	const getFullPath = ( subpath: string ) =>
 		`/subscriptions/${ subpath }${ locale !== 'en' ? '/' + locale : '' }`;

@@ -188,6 +188,7 @@
 		"subscription-management-pending-view": true,
 		"subscription-management/comments-list-controls": true,
 		"subscription-management/sites-list-controls": true,
+		"subscription-management/internal-users/sites-view": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/display-thank-you-page": true,
 		"themes/display-thank-you-page-for-woo": true,
