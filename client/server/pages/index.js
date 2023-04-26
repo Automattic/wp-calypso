@@ -830,9 +830,9 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
-		const showSitesViewToInternalUsers =
-			config.isEnabled( 'subscription-management/internal-users/sites-view' ) &&
-			req.path === '/subscriptions/sites';
+		const showSitesViewToInternalUsers = config.isEnabled(
+			'subscription-management/internal-users/sites-view'
+		);
 
 		if ( req.context.isLoggedIn && ! showSitesViewToInternalUsers ) {
 			// We want to show the old subscriptions management portal to the logged-in users, until new one in reader is developped for them
