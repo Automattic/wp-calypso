@@ -27,7 +27,7 @@ const callPendingBlogSubscriptionsEndpoint =
 			pendingPosts.push(
 				...incoming.comment_subscriptions.map( ( pendingSubscription ) => ( {
 					...pendingSubscription,
-					subscription_date: new Date( pendingSubscription.subscription_date ),
+					date_subscribed: new Date( pendingSubscription.date_subscribed ),
 				} ) )
 			);
 		}

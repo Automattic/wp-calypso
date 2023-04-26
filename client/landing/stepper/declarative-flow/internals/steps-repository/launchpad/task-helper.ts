@@ -15,7 +15,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadFlowTaskList, LaunchpadStatuses, Task } from './types';
+import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
@@ -416,28 +416,25 @@ export function getArrayOfFilteredTasks(
  * This is used to as a fallback check to determine if the full
  * screen launchpad should be shown or not.
  *
- * @param {string} siteIntent - The value of a site's site_intent option
- * @param {LaunchpadStatuses} checklist_statuses - The value of a site's checklist_statuses option
+ * @param {LaunchpadChecklist} checklist - The list of tasks for a site's launchpad
  * @param {boolean} isSiteLaunched - The value of a site's is_launched option
- * @param {LaunchpadFlowTaskList} launchpadFlowTasks - The list of tasks for each site_intent
- * @returns {boolean} - True if the final task for the given site_intent is completed
+ * @returns {boolean} - True if the final task for the given site checklist is completed
  */
 export function areLaunchpadTasksCompleted(
-	site_intent: string,
-	launchpadFlowTasks: LaunchpadFlowTaskList,
-	checklist_statuses: LaunchpadStatuses,
+	checklist: LaunchpadChecklist,
 	isSiteLaunched: boolean
 ) {
-	if ( ! site_intent ) {
+	if ( ! Array.isArray( checklist ) ) {
 		return false;
 	}
 
-	const lastTask =
-		launchpadFlowTasks[ site_intent ][ launchpadFlowTasks[ site_intent ].length - 1 ];
+	const lastTask = checklist[ checklist.length - 1 ];
 
-	// If last task is site_launched, return true if site is launched OR site_launch task is completed
-	// Else return the status of the last task (will be false if task is not in checklist_statuses)
-	return lastTask === 'site_launched'
-		? isSiteLaunched || Boolean( checklist_statuses[ lastTask ] )
-		: Boolean( checklist_statuses[ lastTask as keyof LaunchpadStatuses ] );
+	// If last task is site_launched and if site is launched, return true
+	// Else return the status of the last task
+	if ( lastTask?.id === 'site_launched' && isSiteLaunched ) {
+		return true;
+	}
+
+	return lastTask?.completed;
 }

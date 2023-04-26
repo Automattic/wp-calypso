@@ -15,11 +15,9 @@ const SortBy = SubscriptionManager.SiteSubscriptionsSortBy;
 const isListControlsEnabled = config.isEnabled( 'subscription-management/sites-list-controls' );
 
 const getSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[] => [
-	{ value: SortBy.LastUpdated, label: translate( 'Last updated' ) },
-	// todo: translate when we have agreed on the label
-	{ value: SortBy.DateSubscribed, label: 'Date subscribed' },
-	// todo: translate when we have agreed on the label
-	{ value: SortBy.SiteName, label: 'Site name' },
+	{ value: SortBy.LastUpdated, label: translate( 'Recently updated' ) },
+	{ value: SortBy.DateSubscribed, label: translate( 'Recently subscribed' ) },
+	{ value: SortBy.SiteName, label: translate( 'Site name' ) },
 ];
 
 const useSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[] =>

@@ -283,7 +283,9 @@ describe( 'getBackupStagingUpdateRequestStatus()', () => {
 		const state = {
 			rewind: {
 				[ TEST_SITE_ID ]: {
-					updateStagingFlagRequestStatus: BACKUP_STAGING_UPDATE_REQUEST.PENDING,
+					staging: {
+						updateStagingFlagRequestStatus: BACKUP_STAGING_UPDATE_REQUEST.PENDING,
+					},
 				},
 			},
 		};

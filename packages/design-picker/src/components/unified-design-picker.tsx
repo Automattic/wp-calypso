@@ -5,7 +5,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useInView } from 'calypso/lib/use-in-view'; // eslint-disable-line no-restricted-imports
+import { useInView } from 'react-intersection-observer';
 import { SHOW_ALL_SLUG } from '../constants';
 import {
 	getDesignPreviewUrl,
@@ -348,8 +348,13 @@ const UnifiedDesignPicker: React.FC< UnifiedDesignPickerProps > = ( {
 } ) => {
 	const hasCategories = !! Object.keys( categorization?.categories || {} ).length;
 
-	// Track as if user has scrolled to bottom of the design picker
-	const ref = useInView< HTMLDivElement >( onViewAllDesigns, {}, [ categorization?.selection ] );
+	const { ref } = useInView( {
+		onChange: ( inView ) => {
+			if ( inView ) {
+				onViewAllDesigns();
+			}
+		},
+	} );
 	// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 	const bottomAnchorContent = <div className="design-picker__bottom_anchor" ref={ ref }></div>;
 

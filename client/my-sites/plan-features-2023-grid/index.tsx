@@ -136,6 +136,7 @@ type PlanFeatures2023GridProps = {
 	withDiscount: boolean;
 	discountEndDate: Date;
 	hidePlansFeatureComparison: boolean;
+	hideUnavailableFeatures: boolean;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -790,7 +791,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanFeaturesList( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { domainName, translate } = this.props;
+		const { domainName, translate, hideUnavailableFeatures } = this.props;
 		const planProperties = planPropertiesObj.filter(
 			( properties ) =>
 				! isWpcomEnterpriseGridPlan( properties.planName ) &&
@@ -811,6 +812,7 @@ export class PlanFeatures2023Grid extends Component<
 							features={ features }
 							planName={ planName }
 							domainName={ domainName }
+							hideUnavailableFeatures={ hideUnavailableFeatures }
 						/>
 						{ jpFeatures.length !== 0 && (
 							<div className="plan-features-2023-grid__jp-logo" key="jp-logo">
@@ -827,6 +829,7 @@ export class PlanFeatures2023Grid extends Component<
 							features={ jpFeatures }
 							planName={ planName }
 							domainName={ domainName }
+							hideUnavailableFeatures={ hideUnavailableFeatures }
 						/>
 					</Container>
 				);

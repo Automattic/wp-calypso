@@ -1,5 +1,6 @@
 import { Gridicon } from '@automattic/components';
 import { SubscriptionManager } from '@automattic/data-stores';
+import { useTranslate } from 'i18n-calypso';
 import { memo, useMemo } from 'react';
 import TimeSince from 'calypso/components/time-since';
 import { CommentSettings } from '../settings-popover';
@@ -20,10 +21,11 @@ const CommentRow = ( {
 	site_title,
 	site_icon,
 	site_url,
-	subscription_date,
+	date_subscribed,
 	forwardedRef,
 	style,
 }: CommentRowProps ) => {
+	const translate = useTranslate();
 	const hostname = useMemo( () => new URL( site_url ).hostname, [ site_url ] );
 	const siteIcon = useMemo( () => {
 		if ( site_icon ) {
@@ -39,10 +41,10 @@ const CommentRow = ( {
 				<span className="post" role="cell">
 					<div className="title">
 						<a href={ post_url } target="_blank" rel="noreferrer noopener">
-							{ post_title }
+							{ post_title || translate( 'Untitled' ) }
 						</a>
 					</div>
-					<div className="excerpt">{ post_excerpt }</div>
+					{ post_excerpt && <div className="excerpt">{ post_excerpt }</div> }
 				</span>
 				<a href={ site_url } rel="noreferrer noopener" className="title-box" target="_blank">
 					<span className="title-box" role="cell">
@@ -54,7 +56,7 @@ const CommentRow = ( {
 					</span>
 				</a>
 				<span className="date" role="cell">
-					<TimeSince date={ subscription_date.toISOString?.() ?? subscription_date } />
+					<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
 				</span>
 				<span className="actions" role="cell">
 					<CommentSettings

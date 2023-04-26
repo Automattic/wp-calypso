@@ -93,6 +93,7 @@ export class PlansStep extends Component {
 			eligibleForProPlan,
 		} = this.props;
 
+		const intervalType = getIntervalType( this.props.path );
 		let errorDisplay;
 		if ( 'invalid' === this.props.step?.status ) {
 			errorDisplay = (
@@ -111,7 +112,6 @@ export class PlansStep extends Component {
 		if ( eligibleForProPlan ) {
 			const selectedDomainConnection =
 				this.props.progress?.domains?.domainItem?.product_slug === 'domain_map';
-			const intervalType = getIntervalType();
 			return (
 				<div>
 					{ errorDisplay }
@@ -142,7 +142,7 @@ export class PlansStep extends Component {
 					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
-					intervalType={ getIntervalType() }
+					intervalType={ intervalType }
 					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
 					domainName={ getDomainName( this.props.signupDependencies.domainItem ) }
 					customerType={ this.getCustomerType() }

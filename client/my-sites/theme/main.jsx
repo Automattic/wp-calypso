@@ -53,7 +53,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import productionSiteForWpcomStaging from 'calypso/state/selectors/get-production-site-for-wpcom-staging';
+import getProductionSiteForWpcomStaging from 'calypso/state/selectors/get-production-site-for-wpcom-staging';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -655,8 +655,8 @@ class ThemeSheet extends Component {
 				disableHref={ url === '' }
 				icon="notice"
 				href={ url }
-				title={ translate( 'Paid themes are not available' ) }
-				description={ translate( 'Paid themes are only available for production sites.' ) }
+				title={ translate( 'Paid themes cannot be purchased on staging sites' ) }
+				description={ translate( 'Subscribe to this premium theme on your production site.' ) }
 			/>
 		);
 	};
@@ -1476,7 +1476,7 @@ export default connect(
 
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const isWpcomStaging = isSiteWpcomStaging( state, siteId );
-		const productionSite = productionSiteForWpcomStaging( state, siteId );
+		const productionSite = getProductionSiteForWpcomStaging( state, siteId );
 		const productionSiteSlug = getSiteSlug( state, productionSite?.ID );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isStandaloneJetpack = isJetpack && ! isAtomic;
