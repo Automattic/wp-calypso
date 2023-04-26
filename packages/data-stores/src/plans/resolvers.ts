@@ -180,6 +180,7 @@ function normalizePlanProducts(
 				planProduct?.bill_period === MONTHLY_PLAN_BILLING_PERIOD
 					? getAnnualPrice( planProduct )
 					: getFormattedPrice( planProduct ),
+			currencyCode: planProduct.currency_code,
 		} );
 		return plans;
 	}, [] as PlanProduct[] );
