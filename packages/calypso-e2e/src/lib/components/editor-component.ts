@@ -90,8 +90,8 @@ export class EditorComponent {
 	/** */
 	private async waitForUnframedCanvas() {
 		const editorFrame = await this.frame();
-		const canvasBody = editorFrame.locator( 'body.editor-styles-wrapper' );
-		await canvasBody.waitFor();
+		const canvasWrapper = editorFrame.locator( '.editor-styles-wrapper' );
+		await canvasWrapper.waitFor();
 
 		return editorFrame;
 	}
