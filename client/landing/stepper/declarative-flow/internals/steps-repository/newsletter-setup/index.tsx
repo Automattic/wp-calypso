@@ -7,6 +7,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
+import InfoPopover from 'calypso/components/info-popover';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
@@ -94,7 +95,6 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		}
 
 		if ( siteTitle.trim().length ) {
-			// TODO: decide how we store "paid subscriber" intent at the created site
 			submit?.( { siteTitle, tagline, siteAccentColor: accentColor.hex } );
 		}
 	};
@@ -149,11 +149,12 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 										onChange={ onPaidSubscribersChanged }
 									/>
 									<span>
-										{ translate( 'I want to create a Paid Newsletter {{span}}(optional){{/span}}', {
-											components: {
-												span: <span className="site-setup__optional" />,
-											},
-										} ) }
+										{ translate( 'I want to create a paid newsletter' ) }
+										<InfoPopover position="bottom right">
+											{ translate(
+												'Let your audience support your work. Add paid subscriptions and gated content to your newsletter.'
+											) }
+										</InfoPopover>
 									</span>
 								</FormLabel>
 							</FormFieldset>
