@@ -103,6 +103,14 @@ describe( 'UnifiedDesignPickerStep', () => {
 			.get( /\/wpcom\/v2\/starter-designs\/\w+/ )
 			.query( true )
 			.reply( 200, generateMockedStarterDesignDetails );
+
+		const mockIntersectionObserver = jest.fn();
+		mockIntersectionObserver.mockReturnValue( {
+			observe: () => null,
+			unobserve: () => null,
+			disconnect: () => null,
+		} );
+		window.IntersectionObserver = mockIntersectionObserver;
 	} );
 
 	afterAll( () => {
