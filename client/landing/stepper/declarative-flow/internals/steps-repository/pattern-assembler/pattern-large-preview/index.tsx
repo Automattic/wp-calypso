@@ -47,10 +47,9 @@ const PatternLargePreview = ( {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const navigator = useNavigator();
-	const hasSelectedPattern = header || sections.length || footer;
-	const patternIds = [ header, ...sections, footer ]
-		.filter( Boolean )
-		.map( ( pattern ) => pattern && encodePatternId( pattern.ID ) );
+	const patterns = [ header, ...sections, footer ].filter( Boolean ) as Pattern[];
+	const hasSelectedPattern = patterns.length > 0;
+	const patternIds = patterns.map( ( pattern ) => pattern && encodePatternId( pattern.ID ) );
 	const shouldShowSelectPatternHint =
 		! hasSelectedPattern && STYLES_PATHS.includes( navigator.location.path );
 	const frameRef = useRef< HTMLDivElement | null >( null );
@@ -176,6 +175,13 @@ const PatternLargePreview = ( {
 		};
 	}, [ activePatternKey, header, sections, footer ] );
 
+	// Unset the hovered element when it's removed
+	useEffect( () => {
+		if ( hoveredElement && ! hoveredElement?.ownerDocument?.getElementById( hoveredElement.id ) ) {
+			setHoveredElement( null );
+		}
+	}, [ patterns.length ] );
+
 	return (
 		<DeviceSwitcher
 			className="pattern-large-preview"
@@ -217,7 +223,7 @@ const PatternLargePreview = ( {
 						<span>{ getDescription() }</span>
 					</div>
 				) }
-				{ hoveredElement && (
+				{ hoveredElement && hoveredElement.isConnected && (
 					<PatternOverlay
 						referenceElement={ hoveredElement }
 						overlayContent={ <div className="pattern-large-preview__pattern-box-shadow" /> }
