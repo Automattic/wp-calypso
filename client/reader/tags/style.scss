@@ -171,6 +171,37 @@
 	}
 }
 
+@media ( max-width: $break-small ) {
+	.alphabetic-tags__header {
+		border: none;
+		margin: 0;
+		padding: 0;
+
+		.alphabetic-tags__tag-links {
+			align-items: center;
+			flex-direction: column;
+		}
+		h2 {
+			display: none;
+		}
+	}
+	.sticky-container {
+		position: relative;
+	}
+	.sticky-panel {
+		top: 24px;
+		position: absolute;
+		right: -12px;
+	}
+	.sticky-panel-absolute {
+		position: absolute;
+	}
+	.sticky-panel-fixed {
+		position: fixed;
+		right: 12px;
+	}
+}
+
 .alphabetic-tags__table {
 	padding-bottom: 26px;
 	border-bottom: 1px solid var(--studio-gray-5);
