@@ -16,6 +16,7 @@ import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/bil
 import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-plugins-dialog';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import StagingSiteNotice from 'calypso/my-sites/plugins/plugin-details-CTA/staging-site-notice';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
@@ -31,6 +32,7 @@ import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/st
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSectionName } from 'calypso/state/ui/selectors';
@@ -66,6 +68,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+	const isWpcomStaging = useSelector( ( state ) => isSiteWpcomStaging( state, selectedSite?.ID ) );
 	const pluginFeature = isMarketplaceProduct
 		? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 		: FEATURE_INSTALL_PLUGINS;
@@ -310,18 +313,21 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						plugin={ plugin }
 					/>
 				) }
-				<div className="plugin-details-cta__install">
-					<PrimaryButton
-						isLoggedIn={ isLoggedIn }
-						shouldUpgrade={ shouldUpgrade }
-						hasEligibilityMessages={ hasEligibilityMessages }
-						incompatiblePlugin={ incompatiblePlugin }
-						userCantManageTheSite={ userCantManageTheSite }
-						translate={ translate }
-						plugin={ plugin }
-						saasRedirectHRef={ saasRedirectHRef }
-					/>
-				</div>
+				{ ! isWpcomStaging && (
+					<div className="plugin-details-cta__install">
+						<PrimaryButton
+							isLoggedIn={ isLoggedIn }
+							shouldUpgrade={ shouldUpgrade }
+							hasEligibilityMessages={ hasEligibilityMessages }
+							incompatiblePlugin={ incompatiblePlugin }
+							userCantManageTheSite={ userCantManageTheSite }
+							translate={ translate }
+							plugin={ plugin }
+							saasRedirectHRef={ saasRedirectHRef }
+						/>
+					</div>
+				) }
+				{ isWpcomStaging && <StagingSiteNotice plugin={ plugin } /> }
 				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 					<div className="plugin-details-cta__t-and-c">
 						{ translate(
