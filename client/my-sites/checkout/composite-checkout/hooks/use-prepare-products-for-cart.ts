@@ -4,7 +4,6 @@ import { decodeProductFromUrl, isValueTruthy } from '@automattic/wpcom-checkout'
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
-import useCartKey from '../../use-cart-key';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
 import useStripProductsFromUrl from './use-strip-products-from-url';
 import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
@@ -302,7 +301,6 @@ function useAddRenewalItems( {
 	isGiftPurchase?: boolean;
 } ) {
 	const translate = useTranslate();
-	const cartKey = useCartKey();
 
 	useEffect( () => {
 		if ( addHandler !== 'addRenewalItems' ) {
@@ -344,7 +342,6 @@ function useAddRenewalItems( {
 		debug( 'preparing renewals requested in url', productsForCart );
 		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
 	}, [
-		cartKey,
 		addHandler,
 		translate,
 		originalPurchaseId,
