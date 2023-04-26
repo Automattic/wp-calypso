@@ -76,14 +76,12 @@ export default function usePrepareProductsForCart( {
 			originalPurchaseId,
 			'and isLoggedOutCart',
 			isLoggedOutCart,
-			'and isAkismetSitelessCheckout',
-			sitelessCheckoutType === 'akismet',
+			'and sitelessCheckoutType',
+			sitelessCheckoutType,
 			'and siteSlug',
 			siteSlug,
 			'and isNoSiteCart',
 			isNoSiteCart,
-			'and isJetpackCheckout',
-			sitelessCheckoutType === 'jetpack',
 			'and jetpackSiteSlug',
 			jetpackSiteSlug,
 			'and jetpackPurchaseToken',
@@ -313,7 +311,7 @@ function useAddRenewalItems( {
 
 		// Renewals cannot be purchased without a site.
 		const isThereASite = cartKey && typeof cartKey === 'number';
-		if ( ! isThereASite && ! isGiftPurchase ) {
+		if ( ! isThereASite && ! isGiftPurchase && ! sitelessCheckoutType ) {
 			debug( 'creating renewal products failed because there is no site', productAlias );
 			dispatch( {
 				type: 'RENEWALS_ADD_ERROR',
