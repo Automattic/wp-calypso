@@ -606,6 +606,10 @@ function getPlanUpgradeUpsellUrl( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 } ): string | undefined {
+	if ( ! siteSlug ) {
+		return;
+	}
+
 	if ( config.isEnabled( 'upsell/monthly-to-annual' ) ) {
 		if ( cart ) {
 			const upgradeItem = getNextHigherPlanSlug( cart );
