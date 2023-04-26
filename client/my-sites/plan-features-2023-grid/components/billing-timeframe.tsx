@@ -114,7 +114,7 @@ const PlanFeatures2023GridBillingTimeframe: FunctionComponent< Props > = ( props
 	return (
 		<>
 			{ isWpComFreePlan( planName ) ? (
-				billingTimeframe
+				<div>{ billingTimeframe }</div>
 			) : (
 				<PerMonthDescription planName={ planName } isMonthlyPlan={ isMonthlyPlan } />
 			) }
