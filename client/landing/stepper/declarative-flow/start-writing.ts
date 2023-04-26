@@ -60,7 +60,8 @@ const startWriting: Flow = {
 				case 'site-creation-step':
 					return navigate( 'processing' );
 				case 'processing': {
-					if ( providedDependencies?.siteSlug ) {
+					// If we just created a new site.
+					if ( ! providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
 						await updateLaunchpadSettings( String( providedDependencies?.siteSlug ), {
 							checklist_statuses: { first_post_published: true },
 						} );
@@ -70,6 +71,22 @@ const startWriting: Flow = {
 						return redirect(
 							`https://${ providedDependencies?.siteSlug }/wp-admin/post-new.php?${ START_WRITING_FLOW }=true&origin=${ siteOrigin }`
 						);
+					}
+
+					// If the user's site has just been launched.
+					if ( providedDependencies?.blogLaunched && providedDependencies?.siteSlug ) {
+						// If the user launched their site with a plan or domain in their cart, redirect them to
+						// checkout before sending them home.
+						if ( getPlanCartItem() || getDomainCartItem() ) {
+							const encodedReturnUrl = encodeURIComponent( returnUrl );
+
+							return window.location.assign(
+								`/checkout/${ encodeURIComponent(
+									( siteSlug as string ) ?? ''
+								) }?redirect_to=${ encodedReturnUrl }`
+							);
+						}
+						return window.location.replace( returnUrl );
 					}
 					break;
 				}
@@ -87,16 +104,7 @@ const startWriting: Flow = {
 					}
 					return navigate( 'launchpad' );
 				case 'launchpad':
-					if ( getPlanCartItem() || getDomainCartItem() ) {
-						const encodedReturnUrl = encodeURIComponent( returnUrl );
-
-						return window.location.assign(
-							`/checkout/${ encodeURIComponent(
-								( siteSlug as string ) ?? ''
-							) }?redirect_to=${ encodedReturnUrl }`
-						);
-					}
-					return window.location.assign( returnUrl );
+					return navigate( 'processing' );
 			}
 		}
 		return { submit };
@@ -108,9 +116,9 @@ const startWriting: Flow = {
 		const currentUserSiteCount = useSelector( getCurrentUserSiteCount );
 		const locale = useLocale();
 		const currentPath = window.location.pathname;
-		const isLaunchpad =
-			currentPath.includes( 'setup/start-writing/launchpad' ) ||
-			currentPath.includes( 'setup/start-writing/plans' );
+		const isSiteCreationStep =
+			currentPath.endsWith( 'setup/start-writing/' ) ||
+			currentPath.includes( 'setup/start-writing/site-creation-step' );
 		const userAlreadyHasSites = currentUserSiteCount && currentUserSiteCount > 0;
 
 		const logInUrl =
@@ -126,7 +134,7 @@ const startWriting: Flow = {
 				state: AssertConditionState.CHECKING,
 				message: `${ flowName } requires a logged in user`,
 			};
-		} else if ( userAlreadyHasSites && ! isLaunchpad ) {
+		} else if ( userAlreadyHasSites && isSiteCreationStep ) {
 			// Redirect users with existing sites out of the flow as we create a new site as the first step in this flow.
 			// This prevents a bunch of sites being created accidentally.
 			redirect( `/post?${ START_WRITING_FLOW }=true` );

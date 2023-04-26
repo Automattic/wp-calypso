@@ -329,7 +329,7 @@ export function getEnhancedTasks(
 									// Waits for half a second so that the loading screen doesn't flash away too quickly
 									await new Promise( ( res ) => setTimeout( res, 500 ) );
 									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
-									return { goToHome: true, siteSlug };
+									return { blogLaunched: true, siteSlug };
 								} );
 
 								submit?.();
