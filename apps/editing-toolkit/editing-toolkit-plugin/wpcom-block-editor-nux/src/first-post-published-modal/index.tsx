@@ -20,7 +20,7 @@ type CoreEditorPlaceholder = {
 /**
  * Show the first post publish modal
  */
-const PostPublishedModal: React.FC = () => {
+const FirstPostPublishedModal: React.FC = () => {
 	const { link } = useSelect(
 		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
 		[]
@@ -85,7 +85,6 @@ const PostPublishedModal: React.FC = () => {
 			window.top as Window
 		 ).location.href = `https://wordpress.com/setup/write/launchpad?siteSlug=${ siteUrl }`;
 	};
-
 	return (
 		<NuxModal
 			isOpen={ isOpen }
@@ -114,4 +113,4 @@ const PostPublishedModal: React.FC = () => {
 	);
 };
 
-export default PostPublishedModal;
+export default FirstPostPublishedModal;
