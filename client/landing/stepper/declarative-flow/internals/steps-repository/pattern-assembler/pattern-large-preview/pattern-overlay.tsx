@@ -1,5 +1,5 @@
 import { getScrollContainer } from '@wordpress/dom';
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useLayoutEffect, useRef, useCallback, useState } from 'react';
 import './pattern-overlay.scss';
 
 interface Props {
@@ -12,7 +12,7 @@ const STICKY_MARGIN = 72;
 
 const useOverlayRect = ( referenceElement?: HTMLElement ) => {
 	const [ rect, setRect ] = useState< DOMRect >();
-	const referenceRef = useRef< Element | null >( null );
+	const referenceRef = useRef< HTMLElement | null >( null );
 
 	const updatePosition = useCallback( () => {
 		const rect = referenceRef.current?.getBoundingClientRect();
@@ -23,11 +23,9 @@ const useOverlayRect = ( referenceElement?: HTMLElement ) => {
 		setRect( rect );
 	}, [ referenceRef ] );
 
-	if ( referenceElement ) {
-		referenceRef.current = referenceElement;
-	}
+	referenceRef.current = referenceElement ?? null;
 
-	useEffect( () => {
+	useLayoutEffect( () => {
 		if ( ! referenceRef.current || ! referenceRef.current?.ownerDocument?.defaultView ) {
 			return;
 		}
@@ -44,9 +42,21 @@ const useOverlayRect = ( referenceElement?: HTMLElement ) => {
 		};
 	}, [ referenceRef, updatePosition ] );
 
-	useEffect( () => {
+	useLayoutEffect( () => {
+		if ( ! referenceElement ) {
+			return;
+		}
+		const observer = new window.MutationObserver( updatePosition );
+		observer.observe( referenceElement, { attributes: true } );
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [ referenceElement, updatePosition ] );
+
+	useLayoutEffect( () => {
 		updatePosition();
-	}, [ referenceElement ] );
+	}, [ referenceElement, updatePosition ] );
 
 	return rect;
 };

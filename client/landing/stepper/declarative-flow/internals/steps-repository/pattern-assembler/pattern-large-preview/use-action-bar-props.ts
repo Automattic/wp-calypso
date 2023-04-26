@@ -1,3 +1,5 @@
+import { useLayoutEffect, useReducer } from 'react';
+
 interface UseActionBarArguments {
 	element: HTMLElement | null;
 	sectionsLength: number;
@@ -17,17 +19,32 @@ const useActionBarProps = ( {
 	onDeleteHeader,
 	onDeleteFooter,
 }: UseActionBarArguments ) => {
+	const patternType = element?.dataset.type;
+	const position = Number( element?.dataset.position );
+	const actionBarProps = { patternType };
+	const [ , forceRecompute ] = useReducer( ( s ) => ( s + 1 ) % Number.MAX_SAFE_INTEGER, 0 );
+
+	useLayoutEffect( () => {
+		if ( ! element ) {
+			return;
+		}
+		const observer = new window.MutationObserver( forceRecompute );
+		observer.observe( element, { attributes: true } );
+
+		return () => {
+			observer.disconnect();
+		};
+	}, [ element, forceRecompute ] );
+
 	if ( ! element ) {
 		return null;
 	}
 
-	const patternType = element.dataset.type;
-	const position = Number( element.dataset.position );
-	const actionBarProps = { patternType };
-
 	if ( patternType === 'header' ) {
 		return { ...actionBarProps, onDelete: onDeleteHeader };
-	} else if ( patternType === 'footer' ) {
+	}
+
+	if ( patternType === 'footer' ) {
 		return { ...actionBarProps, onDelete: onDeleteFooter };
 	}
 
