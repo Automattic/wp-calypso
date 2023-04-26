@@ -16,6 +16,10 @@
 	padding: 24px;
 	background: var(--jetpack-white-off);
 
+	@media only screen and (max-width: 799px) {
+		padding: 24px 16px;
+	}
+
 	label {
 		cursor: auto;
 		font-family: $font-sf-pro-display;
