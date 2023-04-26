@@ -6,8 +6,13 @@ type NullableDOMRect = ClientRect | DOMRect | null;
 type NullableElement = Element | null;
 
 export const THROTTLE_RATE = 200;
+const FLOATING_POINT_TOLERANCE = 1e-4;
 
-function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
+function floatIsEqual( a: number, b: number ) {
+	return Math.abs( a - b ) < FLOATING_POINT_TOLERANCE;
+}
+
+export function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
 	if ( prevRect === null ) {
 		return nextRect === null;
 	}
@@ -17,16 +22,15 @@ function rectIsEqual( prevRect: NullableDOMRect, nextRect: NullableDOMRect ) {
 	}
 
 	return (
-		prevRect.bottom === nextRect.bottom &&
-		prevRect.left === nextRect.left &&
-		prevRect.right === nextRect.right &&
-		prevRect.top === nextRect.top &&
-		prevRect.width === nextRect.width &&
-		prevRect.height === nextRect.height
+		floatIsEqual( prevRect.bottom, nextRect.bottom ) &&
+		floatIsEqual( prevRect.left, nextRect.left ) &&
+		floatIsEqual( prevRect.right, nextRect.right ) &&
+		floatIsEqual( prevRect.width, nextRect.width ) &&
+		floatIsEqual( prevRect.height, nextRect.height )
 	);
 }
 
-function rectIsZero( rect: NullableDOMRect ) {
+export function rectIsZero( rect: NullableDOMRect ) {
 	if ( rect === null ) {
 		return null;
 	}
