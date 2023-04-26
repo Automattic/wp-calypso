@@ -2083,16 +2083,14 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Limited shares in social media' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get 30 social shares per month to promote your posts on Facebook, Twitter, Tumblr, and more.'
+				'Get 30 social shares per month to promote your posts on Facebook, Tumblr, and more.'
 			),
 	},
 	[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_SHARES_SOCIAL_MEDIA_JP,
 		getTitle: () => i18n.translate( 'Shares on social media' ),
 		getDescription: () =>
-			i18n.translate(
-				'Automatically share your latest post on Facebook, Twitter, Tumblr, and more.'
-			),
+			i18n.translate( 'Automatically share your latest post on Facebook, Tumblr, and more.' ),
 		getConditionalTitle: ( planSlug ) => {
 			if ( ! planSlug ) {
 				return '';
