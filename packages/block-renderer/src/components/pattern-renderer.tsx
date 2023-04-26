@@ -9,7 +9,6 @@ interface Props {
 	minHeight?: number;
 	maxHeight?: 'none' | number;
 	minHeightFor100vh?: number;
-	placeholder?: JSX.Element;
 	isContentOnly?: boolean;
 }
 
