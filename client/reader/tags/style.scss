@@ -24,6 +24,12 @@
 		font-size: 60px; /* stylelint-disable-line declaration-property-unit-allowed-list */
 		font-weight: 400;
 		margin-bottom: 4px;
+
+		@media ( max-width: $break-medium ) {
+			font-size: $font-headline-small;
+			font-weight: 400;
+			line-height: 40px;
+		}
 	}
 	p {
 		font-weight: 400;
