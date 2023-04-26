@@ -50,7 +50,6 @@ export interface PlanProduct {
 	 * 2) to show how much a monthly plan would cost in a year (billed 12$/mo costs $144/yr)
 	 */
 	annualPrice: string;
-	term: ( typeof TERMS_LIST )[ number ] | null;
 }
 
 /**

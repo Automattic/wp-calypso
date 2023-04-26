@@ -6,14 +6,13 @@ import {
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
-import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { localize, TranslateResult, useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import usePlanPrices from 'calypso/my-sites/plans/hooks/use-plan-prices';
+import { PLANS_STORE } from 'calypso/my-sites/plans-features-main/store';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import { PLANS_STORE } from './store';
 import type { PlansSelect } from '@automattic/data-stores';
 
 interface Props {
@@ -34,10 +33,8 @@ function usePerMonthDescription( { isMonthlyPlan, planName }: Omit< Props, 'bill
 			getPlanSlugForTermVariant( planName as PlanSlug, Plans.TERM_ANNUALLY ) ?? ( '' as PlanSlug ),
 		returnMonthly: true,
 	} );
-	const locale = useLocale();
 	const plan = useSelect(
-		( select ) =>
-			( select( PLANS_STORE ) as PlansSelect ).getPlanProductByStoreSlug( planName, locale ),
+		( select ) => ( select( PLANS_STORE ) as PlansSelect ).getPlanProductByStoreSlug( planName ),
 		[ planName ]
 	);
 
@@ -73,19 +70,19 @@ function usePerMonthDescription( { isMonthlyPlan, planName }: Omit< Props, 'bill
 				? formatCurrency( maybeDiscountedPrice, currencyCode, { stripZeros: true } )
 				: null;
 
-		if ( Plans.TERM_ANNUALLY === plan?.term ) {
+		if ( Plans.TERM_ANNUALLY === plan?.billingTerm ) {
 			return translate( 'per month, %(fullTermPriceText)s billed annually', {
 				args: { fullTermPriceText },
 			} );
 		}
 
-		if ( Plans.TERM_BIENNIALLY === plan?.term ) {
+		if ( Plans.TERM_BIENNIALLY === plan?.billingTerm ) {
 			return translate( 'per month, %(fullTermPriceText)s billed every two years', {
 				args: { fullTermPriceText },
 			} );
 		}
 
-		if ( Plans.TERM_TRIENNIALLY === plan?.term ) {
+		if ( Plans.TERM_TRIENNIALLY === plan?.billingTerm ) {
 			return translate( 'per month, %(fullTermPriceText)s billed every three years', {
 				args: { fullTermPriceText },
 			} );
