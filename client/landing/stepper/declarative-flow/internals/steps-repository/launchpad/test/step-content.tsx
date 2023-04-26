@@ -42,6 +42,37 @@ jest.mock( 'react-router-dom', () => ( {
 	} ) ),
 } ) );
 
+jest.mock( 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist', () => ( {
+	useLaunchpadChecklist: () => {
+		const checklist = [
+			{
+				id: 'setup_newsletter',
+				completed: true,
+				disabled: false,
+				title: 'Personalize newsletter',
+			},
+			{ id: 'plan_selected', completed: true, disabled: false, title: 'Choose a plan' },
+			{ id: 'subscribers_added', completed: true, disabled: true, title: 'Add subscribers' },
+			{
+				id: 'verify_email',
+				completed: true,
+				disabled: true,
+				title: 'Confirm email (check your inbox)',
+			},
+			{
+				id: 'first_post_published_newsletter',
+				completed: true,
+				disabled: true,
+				title: 'Start writing',
+			},
+		];
+
+		return {
+			data: { checklist },
+		};
+	},
+} ) );
+
 const user = {
 	ID: 1234,
 	username: 'testUser',
