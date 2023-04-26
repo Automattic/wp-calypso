@@ -58,6 +58,7 @@ body {
 
 		@media (max-width: $break-small) {
 			&__list-actions-bar {
+				margin-bottom: 38.5px;
 				flex-direction: column;
 				align-items: stretch;
 				gap: 0;
