@@ -46,7 +46,7 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 	);
 
 	return (
-		<div id="stats-widget-minichart" className="stats-widget-minichart">
+		<div id="stats-widget-minichart" className="stats-widget-minichart" aria-hidden="true">
 			<div className="stats-widget-minichart__chart-head">
 				<Intervals selected={ period } compact={ false } onChange={ setPeriod } />
 				<Legend
