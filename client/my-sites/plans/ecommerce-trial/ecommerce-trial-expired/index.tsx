@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { Button, Gridicon } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -86,6 +87,13 @@ const ECommerceTrialExpired = (): JSX.Element => {
 					yearlyControlProps={ yearlyControlProps }
 					showIntervalToggle={ true }
 				/>
+
+				<div className="ecommerce-trial-expired__footer">
+					<Button href={ `/settings/delete-site/${ siteSlug }` } scary icon="trash">
+						<Gridicon icon="trash" />
+						<span>{ translate( 'Delete your site permanently' ) }</span>
+					</Button>
+				</div>
 			</Main>
 		</>
 	);
