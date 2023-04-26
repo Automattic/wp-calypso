@@ -104,11 +104,6 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		}, [ dispatch, __ ] ),
 	} );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
-	const isTrasferInProgress =
-		showManageStagingSite &&
-		! isStagingSiteTransferComplete &&
-		( transferStatus !== null || wasCreating );
-
 	useEffect( () => {
 		if ( wasCreating && isStagingSiteTransferComplete ) {
 			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
@@ -156,6 +151,12 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 			);
 		},
 	} );
+
+	const isTrasferInProgress =
+		addingStagingSite ||
+		( showManageStagingSite &&
+			! isStagingSiteTransferComplete &&
+			( transferStatus !== null || wasCreating ) );
 
 	const getExceedQuotaErrorContent = () => {
 		return (
