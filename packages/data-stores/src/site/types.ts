@@ -1,6 +1,7 @@
+import * as selectors from './selectors';
 import type { ActionCreators } from './actions';
-import type { DispatchFromMap } from '../mapped-types';
-import type { FeatureId } from '../wpcom-features';
+import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
+import type { FeatureId } from '../shared-types';
 
 export interface Dispatch {
 	dispatch: DispatchFromMap< ActionCreators >;
@@ -128,8 +129,15 @@ export interface SiteDetails {
 	site_owner?: number;
 	slug: string;
 	visible?: boolean;
+	was_ecommerce_trial?: boolean;
 	wpcom_url?: string;
 	user_interactions?: string[];
+
+	// Jetpack computed properties
+	canAutoupdateFiles?: boolean;
+	canUpdateFiles?: boolean;
+	isMainNetworkSite?: boolean;
+	isSecondaryNetworkSite?: boolean;
 }
 
 export interface SiteDetailsCapabilities {
@@ -233,6 +241,7 @@ export interface SiteDetailsOptions {
 	launchpad_checklist_tasks_statuses?: LaunchPadCheckListTasksStatuses;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
+	can_blaze?: boolean;
 }
 
 export type SiteOption = keyof SiteDetails[ 'options' ];
@@ -251,7 +260,6 @@ export interface Cart {
 	coupon_discounts: unknown[];
 	coupon_discounts_integer: unknown[];
 	is_coupon_applied: boolean;
-	has_bundle_credit: boolean;
 	next_domain_is_free: boolean;
 	next_domain_condition: string;
 	products: unknown[];
@@ -271,7 +279,6 @@ export interface Cart {
 	credits_display: string;
 	credits_integer: number;
 	allowed_payment_methods: unknown[];
-	create_new_blog: boolean;
 	messages: Record< 'errors' | 'success', unknown >;
 }
 
@@ -483,11 +490,14 @@ export interface ActiveTheme {
 	_links: {
 		'wp:user-global-styles': { href: string }[];
 	};
+	global_styles_id: number | null;
 }
 
 export interface CurrentTheme {
 	id: string;
 }
+
+export type SiteSelect = SelectFromMap< typeof selectors >;
 
 export interface SourceSiteMigrationDetails {
 	status: string;

@@ -10,26 +10,40 @@ export async function createWpcomAccountBeforeTransaction(
 	const isJetpackUserLessCheckout = transactionCart.products.some(
 		( product ) => product.extra.isJetpackCheckout
 	);
+	const isAkismetUserLessCheckout = transactionCart.products.some(
+		( product ) => product.extra.isAkismetSitelessCheckout
+	);
 	const isGiftingCheckout = transactionCart.products.some(
 		( product ) => product.extra.isGiftPurchase
 	);
+
+	const signupFlowName = ( () => {
+		if ( isJetpackUserLessCheckout ) {
+			return 'jetpack-userless-checkout';
+		}
+		if ( isAkismetUserLessCheckout ) {
+			return 'akismet-userless-checkout';
+		}
+		if ( isGiftingCheckout ) {
+			return 'gifting-userless-checkout';
+		}
+
+		return 'onboarding-registrationless';
+	} )();
 
 	/*
 	 * We treat Gifting as jetpack-userless-checkout to create and verify the user
 	 * on success checkout.
 	 */
 	return createAccount( {
-		// eslint-disable-next-line no-nested-ternary
-		signupFlowName: isJetpackUserLessCheckout
-			? 'jetpack-userless-checkout'
-			: isGiftingCheckout
-			? 'gifting-userless-checkout'
-			: 'onboarding-registrationless',
+		signupFlowName,
 		email: transactionOptions.contactDetails?.email?.value,
 		siteId: transactionOptions.siteId,
 		recaptchaClientId: transactionOptions.recaptchaClientId,
 	} ).then( ( response ) => {
-		const siteIdFromResponse = response?.blog_details?.blogid;
+		const siteIdFromResponse: number | undefined = parseInt(
+			response?.blog_details?.blogid ?? '0'
+		);
 
 		// We need to store the created site ID so that if the transaction fails,
 		// we can retry safely. createUserAndSiteBeforeTransaction will still be
@@ -43,12 +57,11 @@ export async function createWpcomAccountBeforeTransaction(
 		// If the account is already created (as happens when we are reprocessing
 		// after a transaction error), then the create account response will not
 		// have a site ID, so we fetch from state.
-		const siteId = siteIdFromResponse || transactionOptions.siteId;
+		const siteId: number | undefined = siteIdFromResponse || transactionOptions.siteId || 0;
 		return {
 			...transactionCart,
-			blog_id: siteId ? String( siteId ) : '0',
+			blog_id: siteId,
 			cart_key: ( siteId ? siteId : 'no-site' ) as CartKey,
-			create_new_blog: siteId ? false : true,
 		};
 	} );
 }

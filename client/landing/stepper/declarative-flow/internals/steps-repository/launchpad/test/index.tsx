@@ -3,17 +3,19 @@
  */
 import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
-import { render } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
+import nock from 'nock';
 import React from 'react';
+import * as ReactQuery from 'react-query';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
 import { setStore } from 'calypso/state/redux-store';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import Launchpad from '../index';
-import { buildSiteDetails, defaultSiteDetails } from './lib/fixtures';
+import { buildSiteDetails, defaultSiteDetails, MOCK_USE_QUERY_RESULT } from './lib/fixtures';
 
 jest.mock( '../launchpad-site-preview', () => () => {
 	return <div></div>;
@@ -89,7 +91,7 @@ function renderLaunchpad(
 		);
 	}
 
-	render( <TestLaunchpad { ...props } /> );
+	renderWithProvider( <TestLaunchpad { ...props } /> );
 }
 
 describe( 'Launchpad', () => {
@@ -105,7 +107,19 @@ describe( 'Launchpad', () => {
 	};
 
 	beforeEach( () => {
+		nock( 'https://public-api.wordpress.com' )
+			.persist()
+			.get( `/wpcom/v2/sites/${ siteSlug }/launchpad` )
+			.reply( 200, {
+				checklist_statuses: {},
+				launchpad_screen: 'full',
+				site_intent: '',
+			} );
 		jest.clearAllMocks();
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
 	} );
 
 	afterAll( () => {
@@ -115,6 +129,13 @@ describe( 'Launchpad', () => {
 	describe( 'when loading the Launchpad view', () => {
 		describe( 'and the site is launchpad enabled', () => {
 			it( 'does not redirect', () => {
+				jest
+					.spyOn( ReactQuery, 'useQuery' )
+					.mockImplementation(
+						jest
+							.fn()
+							.mockReturnValue( { ...MOCK_USE_QUERY_RESULT, data: { launchpad_screen: 'full' } } )
+					);
 				const initialReduxState = { currentUser: { id: user.ID } };
 				renderLaunchpad( props, defaultSiteDetails, initialReduxState, siteSlug );
 				expect( replaceMock ).not.toBeCalled();
@@ -123,6 +144,13 @@ describe( 'Launchpad', () => {
 
 		describe( 'and the site is not launchpad enabled', () => {
 			it( 'redirects to Calypso My Home', () => {
+				jest
+					.spyOn( ReactQuery, 'useQuery' )
+					.mockImplementation(
+						jest
+							.fn()
+							.mockReturnValue( { ...MOCK_USE_QUERY_RESULT, data: { launchpad_screen: 'off' } } )
+					);
 				const initialReduxState = { currentUser: { id: user.ID } };
 				renderLaunchpad(
 					props,

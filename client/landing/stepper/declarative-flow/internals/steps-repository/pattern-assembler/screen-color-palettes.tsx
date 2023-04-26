@@ -1,5 +1,6 @@
 import { Button } from '@automattic/components';
 import { ColorPaletteVariations } from '@automattic/global-styles';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { __experimentalNavigatorBackButton as NavigatorBackButton } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import NavigatorHeader from './navigator-header';
@@ -10,6 +11,7 @@ interface Props {
 	stylesheet: string;
 	selectedColorPaletteVariation: GlobalStylesObject | null;
 	onSelect: ( colorPaletteVariation: GlobalStylesObject | null ) => void;
+	onBack: () => void;
 	onDoneClick: () => void;
 }
 
@@ -18,15 +20,29 @@ const ScreenColorPalettes = ( {
 	stylesheet,
 	selectedColorPaletteVariation,
 	onSelect,
+	onBack,
 	onDoneClick,
 }: Props ) => {
 	const translate = useTranslate();
+	const hasEnTranslation = useHasEnTranslation();
 
 	return (
 		<>
 			<NavigatorHeader
 				title={ translate( 'Colors' ) }
-				description={ translate( 'Foreground and background colors used throughout your site.' ) }
+				description={
+					hasEnTranslation(
+						'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
+					)
+						? translate(
+								'Choose from our curated color palettes when you upgrade to the Premium plan or above.'
+						  )
+						: translate(
+								'Select from our curated color palettes or tweak to your heart’s content when you upgrade to the Premium plan or higher.'
+						  )
+				}
+				isPremium
+				onBack={ onBack }
 			/>
 			<div className="screen-container__body">
 				<ColorPaletteVariations
@@ -43,7 +59,7 @@ const ScreenColorPalettes = ( {
 					onClick={ onDoneClick }
 					primary
 				>
-					{ translate( 'Done' ) }
+					{ translate( 'Save' ) }
 				</NavigatorBackButton>
 			</div>
 		</>

@@ -12,10 +12,10 @@ import { connect } from 'react-redux';
 import titlecase from 'to-title-case';
 import illustration404 from 'calypso/assets/images/illustrations/illustration-404.svg';
 import StatsNavigation from 'calypso/blocks/stats-navigation';
+import { navItems } from 'calypso/blocks/stats-navigation/constants';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -29,6 +29,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import PromoCards from '../promo-cards';
 import DatePicker from '../stats-date-picker';
+import StatsPageHeader from '../stats-page-header';
 import StatsPeriodHeader from '../stats-period-header';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import WordAdsChartTabs from '../wordads-chart-tabs';
@@ -62,6 +63,24 @@ const CHARTS = [
 		format: formatCurrency,
 	},
 ];
+
+/**
+ * Define chart properties with translatable string getters
+ * so that they can be translated on the fly. Without this,
+ * you'd have to reload the page in certain instances
+ * to see the translated strings.
+ */
+Object.defineProperty( CHARTS[ 0 ], 'label', {
+	get: () => translate( 'Ads Served' ),
+} );
+
+Object.defineProperty( CHARTS[ 1 ], 'label', {
+	get: () => translate( 'Average CPM' ),
+} );
+
+Object.defineProperty( CHARTS[ 2 ], 'label', {
+	get: () => translate( 'Revenue' ),
+} );
 
 const getActiveTab = ( chartTab ) => find( CHARTS, { attr: chartTab } ) || CHARTS[ 0 ];
 
@@ -135,12 +154,7 @@ class WordAds extends Component {
 			date: endOf.format( 'YYYY-MM-DD' ),
 		};
 
-		// For period option links
-		const wordads = {
-			label: 'Ads',
-			path: '/stats/ads',
-		};
-
+		const wordads = navItems.wordads;
 		const slugPath = slug ? `/${ slug }` : '';
 		const pathTemplate = `${ wordads.path }/{{ interval }}${ slugPath }`;
 
@@ -158,12 +172,9 @@ class WordAds extends Component {
 				/>
 
 				<div className="stats">
-					<FormattedHeader
-						brandFont
-						className="stats__section-header modernized-header"
-						headerText={ translate( 'Jetpack Stats' ) }
+					<StatsPageHeader
+						page="wordads"
 						subHeaderText={ translate( 'See how ads are performing on your site.' ) }
-						align="left"
 					/>
 
 					{ ! canAccessAds && (

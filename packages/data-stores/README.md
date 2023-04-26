@@ -6,48 +6,51 @@ It is meant to be helpful for projects developed inside the [Calypso monorepo](h
 
 ## Usage
 
-To use stores from the package, import and register the relevant store to obtain its key:
+To use stores from the package, import the store object and use it directly. The store will be registered on import.
 
 ```tsx
-import { Plans } from '@automattic/data-stores';
+import { Analyzer } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 
-const PLANS_STORE = Plans.register();
-
-export const PlansSelect = (): React.FunctionComponent<  > => {
-	const plans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
+export const LinkColors = ( { url } ) => {
+	const colorsData = useSelect(
+		// Selecting the store itself provides automatic type inference for the selectors.
+		( select ) => select( Analyzer.store ).getSiteColors( url ),
+		[ url ] // Be sure to include any data dependencies used by the selector!
+	);
 
 	return (
 		<ul>
-			{ plans.map( ( plan ) => (
-				<li key={ plan.title }>{ plan.description }</li>
+			{ colorsData?.link.map( ( linkColors ) => (
+				<li key={ color.hex }>
+					Name: { color.name }. Hex: { color.hex }.
+				</li>
 			) ) }
 		</ul>
 	);
 };
 ```
 
-## A note about store `register` functions
-
-Stores are not registered in their module code. Instead, they expose `register` functions. This is an important technical consideration to avoid [side effects and allow tree-shaking](https://webpack.js.org/guides/tree-shaking/#mark-the-file-as-side-effect-free).
-
-When implementing a store, registration on evaluation should be avoided. Please, follow the pattern of exporting a `register` function.
-
-When an application needs to use a store that should be configured, it may be helpful to expose that store from a wrapper module:
-
-```ts
-// vertical-store.ts
-import { DomainSuggestions } from '@automattic/data-stores';
-export const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register( {
-	/* …my application configuration… */
-} );
-// elsewhere…
-import { DOMAIN_SUGGESTIONS_STORE } from './vertical-store';
-select( DOMAIN_SUGGESTIONS_STORE ).getCategories();
-```
-
 ## Types
 
-The stores in this package are written in TypeScript, and type definitions are generated as part of the build process. Furthermore, we're injecting type information for available selectors and actions into the `@wordpress/data` module, which means that you'll get handy autocomplete suggestions, if you're writing your project in TypeScript and you've enabled your editor's TypeScript feature or plugin.
+The stores in this package are written in TypeScript, and type definitions are generated as part of the build process. If you import and use the store object directly (instead of using the string-based store name), you'll get automatic type inference.
+
+For example:
 
 ![autocomplete](./autocomplete.gif)
+
+## Old registration method
+
+Some stores have not yet been migrated to use the new registration method. To use these stores, you must register them manually.)
+
+```tsx
+import { FooStore } from '@automattic/data-stores';
+import { useSelect } from '@wordpress/data';
+
+const FOO_STORE = FooStore.register();
+
+export const Foo = () => {
+	const foo = useSelect( ( select ) => select( FOO_STORE ).getFoo() );
+	return <span>{ foo }</span>;
+};
+```

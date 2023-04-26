@@ -1,16 +1,17 @@
 import { Site } from '@automattic/data-stores';
 import {
 	ECOMMERCE_FLOW,
-	WOOEXPRESS_FLOW,
-	isLinkInBioFlow,
-	addPlanToCart,
-	createSiteWithCart,
-	isFreeFlow,
-	isMigrationFlow,
-	isCopySiteFlow,
-	isWooExpressFlow,
 	StepContainer,
+	WOOEXPRESS_FLOW,
+	addPlanToCart,
 	addProductsToCart,
+	createSiteWithCart,
+	isCopySiteFlow,
+	isFreeFlow,
+	isLinkInBioFlow,
+	isMigrationFlow,
+	isStartWritingFlow,
+	isWooExpressFlow,
 } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -31,6 +32,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 import './styles.scss';
 
@@ -38,20 +40,27 @@ const DEFAULT_WP_SITE_THEME = 'pub/zoologist';
 const DEFAULT_LINK_IN_BIO_THEME = 'pub/lynx';
 const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
+const DEFAULT_START_WRITING_THEME = 'pub/livro';
 
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
+	);
 
 	const { domainCartItem, planCartItem, siteAccentColor, getSelectedSiteTitle, productCartItems } =
-		useSelect( ( select ) => ( {
-			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
-			siteAccentColor: select( ONBOARD_STORE ).getSelectedSiteAccentColor(),
-			planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
-			productCartItems: select( ONBOARD_STORE ).getProductCartItems(),
-			getSelectedSiteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-		} ) );
+		useSelect(
+			( select ) => ( {
+				domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+				siteAccentColor: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteAccentColor(),
+				planCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem(),
+				productCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getProductCartItems(),
+				getSelectedSiteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
+			} ),
+			[]
+		);
 
 	const username = useSelector( ( state ) => getCurrentUserName( state ) );
 
@@ -62,12 +71,17 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 		theme = DEFAULT_WP_SITE_THEME;
 	} else if ( isWooExpressFlow( flow ) ) {
 		theme = DEFAULT_WOOEXPRESS_FLOW;
+	} else if ( isStartWritingFlow( flow ) ) {
+		theme = DEFAULT_START_WRITING_THEME;
 	} else {
 		theme = isLinkInBioFlow( flow ) ? DEFAULT_LINK_IN_BIO_THEME : DEFAULT_NEWSLETTER_THEME;
 	}
 	const isPaidDomainItem = Boolean( domainCartItem?.product_slug );
 
-	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress() );
+	const progress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgress(),
+		[]
+	);
 	const { setProgress } = useDispatch( ONBOARD_STORE );
 
 	// Default visibility is public
@@ -76,10 +90,11 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 
 	// These flows default to "Coming Soon"
 	if (
-		isLinkInBioFlow( flow ) ||
-		isFreeFlow( flow ) ||
-		isMigrationFlow( flow ) ||
 		isCopySiteFlow( flow ) ||
+		isFreeFlow( flow ) ||
+		isLinkInBioFlow( flow ) ||
+		isMigrationFlow( flow ) ||
+		isStartWritingFlow( flow ) ||
 		wooFlows.includes( flow || '' )
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
@@ -140,7 +155,9 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	}
 
 	useEffect( () => {
-		setProgress( 0.1 );
+		if ( ! isFreeFlow( flow ) ) {
+			setProgress( 0.1 );
+		}
 		if ( submit ) {
 			setPendingAction( createSite );
 			submit();

@@ -14,6 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutMain from './composite-checkout/components/checkout-main';
 import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
+import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
 const logCheckoutError = ( error: Error ) => {
 	logToLogstash( {
@@ -39,9 +40,9 @@ export default function CheckoutMainWrapper( {
 	plan,
 	selectedSite,
 	redirectTo,
+	sitelessCheckoutType,
 	isLoggedOutCart,
 	isNoSiteCart,
-	isJetpackCheckout,
 	isGiftPurchase,
 	jetpackSiteSlug,
 	jetpackPurchaseToken,
@@ -56,9 +57,9 @@ export default function CheckoutMainWrapper( {
 	plan?: string;
 	selectedSite?: { slug?: string };
 	redirectTo?: string;
+	sitelessCheckoutType: SitelessCheckoutType;
 	isLoggedOutCart?: boolean;
 	isNoSiteCart?: boolean;
-	isJetpackCheckout?: boolean;
 	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;
 	jetpackPurchaseToken?: string;
@@ -75,7 +76,7 @@ export default function CheckoutMainWrapper( {
 			logToLogstash( {
 				feature: 'calypso_client',
 				message: 'CheckoutMainWrapper saw productSlug to add',
-				severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+				severity: config( 'env_id' ) === 'production' ? 'info' : 'debug',
 				extra: {
 					productSlug: productAliasFromUrl,
 				},
@@ -117,9 +118,9 @@ export default function CheckoutMainWrapper( {
 							plan={ plan }
 							isComingFromUpsell={ isComingFromUpsell }
 							infoMessage={ prepurchaseNotices }
+							sitelessCheckoutType={ sitelessCheckoutType }
 							isLoggedOutCart={ isLoggedOutCart }
 							isNoSiteCart={ isNoSiteCart }
-							isJetpackCheckout={ isJetpackCheckout }
 							isGiftPurchase={ isGiftPurchase }
 							jetpackSiteSlug={ jetpackSiteSlug }
 							jetpackPurchaseToken={ jetpackPurchaseToken }

@@ -33,13 +33,28 @@
 
 td.site-table__actions {
 	padding: 0;
-	width: 50px;
+
+	@include break-wide {
+		width: 30px;
+	}
+
+	@include break-huge {
+		width: 50px;
+	}
 }
 
 td.site-table__actions-button {
 	border-right: none;
 	button {
-		margin-inline-end: 15px;
+		@include break-wide {
+			margin-inline-start: 8px;
+			margin-inline-end: 8px;
+		}
+
+		@include break-huge {
+			margin-inline-start: 0;
+			margin-inline-end: 15px;
+		}
 	}
 }
 
@@ -54,8 +69,12 @@ td.site-table__td-without-border-bottom {
 .site-table__expandable-button {
 	display: flex;
 	position: relative;
-	right: -10px;
 	top: 2px;
+
+	@include break-huge {
+		right: -10px;
+	}
+
 }
 
 td.site-table__error {
@@ -83,7 +102,7 @@ td.site-table__td-critical {
 }
 
 tr.site-table__table-row-expanded {
-	background: var(--studio-gray-0);
+	background: var(--studio-gray-0) !important;
 	td {
 		border-top: none;
 	}

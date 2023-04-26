@@ -10,6 +10,7 @@ import { UrlData, GoToStep, RecordTracksEvent, ImporterPlatform } from '../types
 import { convertPlatformName, convertToFriendlyWebsiteName } from '../util';
 import ImportPlatformDetails, { coveredPlatforms } from './platform-details';
 import ImportPreview from './preview';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
@@ -118,7 +119,10 @@ const ReadyNotStep: React.FunctionComponent< ReadyNotProps > = ( {
 	recordTracksEvent,
 } ) => {
 	const { __ } = useI18n();
-	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
+	const goals = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+		[]
+	);
 	const { setGoals } = useDispatch( ONBOARD_STORE );
 
 	const recordReadyScreenEvent = () => {
@@ -262,7 +266,10 @@ const ReadyAlreadyOnWPCOMStep: React.FunctionComponent< ReadyWpComProps > = ( {
 	recordTracksEvent,
 } ) => {
 	const { __ } = useI18n();
-	const goals = useSelect( ( select ) => select( ONBOARD_STORE ).getGoals() );
+	const goals = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+		[]
+	);
 	const { setGoals } = useDispatch( ONBOARD_STORE );
 
 	const recordReadyScreenEvent = () => {

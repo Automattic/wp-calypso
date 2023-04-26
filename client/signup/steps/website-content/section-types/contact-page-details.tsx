@@ -97,7 +97,7 @@ export function ContactPageDetails( {
 				fieldValue: value,
 			} )
 		);
-		onChangeField && onChangeField( e );
+		onChangeField?.( e );
 	};
 	const fieldName = page.id + CONTENT_SUFFIX;
 	return (

@@ -91,7 +91,7 @@ class Document extends Component {
 
 		const theme = config( 'theme' );
 
-		const LoadingLogo = chooseLoadingLogo( this.props );
+		const LoadingLogo = chooseLoadingLogo( this.props, app?.isWpMobileApp );
 
 		const isRTL = isLocaleRtl( lang );
 
@@ -259,11 +259,11 @@ class Document extends Component {
 	}
 }
 
-function chooseLoadingLogo( { useLoadingEllipsis } ) {
+function chooseLoadingLogo( { useLoadingEllipsis }, isMobileApp ) {
 	if ( useLoadingEllipsis ) {
 		return LoadingEllipsis;
 	}
-	if ( config.isEnabled( 'jetpack-cloud' ) ) {
+	if ( config.isEnabled( 'jetpack-cloud' ) || isMobileApp ) {
 		return JetpackLogo;
 	}
 

@@ -158,18 +158,17 @@ export class PlansFeaturesMainPM extends Component {
 	}
 
 	getPlanTypeSelector() {
-		const { shouldHideMonthlyToggle } = this.props;
 		const planTypeSelector = {
 			basePlansPath: this.props.basePlansPath,
 			customerType: 'personal',
 			eligibleForWpcomMonthlyPlans: true,
 			isInSignup: this.props.isInSignup,
 			intervalType: this.props.intervalType,
+			showBiannualToggle: this.props.showBiannualToggle,
 		};
 		const plans = this.getPlans();
-		if ( shouldHideMonthlyToggle === false ) {
-			return <PlanTypeSelector { ...planTypeSelector } kind="interval" plans={ plans } />;
-		}
+
+		return <PlanTypeSelector { ...planTypeSelector } kind="interval" plans={ plans } />;
 	}
 
 	render() {
@@ -189,14 +188,14 @@ PlansFeaturesMainPM.propTypes = {
 	customerType: PropTypes.string,
 	flowName: PropTypes.string,
 	hideFreePlan: PropTypes.bool,
-	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly' ] ),
+	intervalType: PropTypes.oneOf( [ 'monthly', 'yearly', '2yearly' ] ),
 	isInSignup: PropTypes.bool,
 	isReskinned: PropTypes.bool,
 	onUpgradeClick: PropTypes.func,
 	plansWithScroll: PropTypes.bool,
 	planTypeSelector: PropTypes.string,
 	redirectToAddDomainFlow: PropTypes.bool,
-	shouldHideMonthlyToggle: PropTypes.bool,
+	showBiannualToggle: PropTypes.bool,
 	shouldShowPlansFeatureComparison: PropTypes.bool,
 	showFAQ: PropTypes.bool,
 };
@@ -210,7 +209,7 @@ PlansFeaturesMainPM.defaultProps = {
 	plansWithScroll: false,
 	planTypeSelector: 'interval',
 	showFAQ: true,
-	shouldHideMonthlyToggle: false,
+	showBiannualToggle: false,
 	shouldShowPlansFeatureComparison: true,
 };
 

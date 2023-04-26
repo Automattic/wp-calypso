@@ -1,6 +1,33 @@
-import { getDiscountedRawPrice, getPlanRawPrice } from '../';
+import { PLAN_BUSINESS } from '@automattic/calypso-products';
+import { getDiscountedRawPrice, getPlanRawPrice, getPlanBillPeriod, getPlanPrices } from '../';
 
 describe( 'selectors', () => {
+	describe( '#getPlanBillPeriod()', () => {
+		const state = {
+			plans: {
+				items: [
+					{
+						product_id: 1008,
+						product_slug: 'business-bundle',
+						bill_period: 365,
+					},
+					{
+						product_id: 1028,
+						product_slug: 'business-bundle-2y',
+						bill_period: 730,
+					},
+				],
+			},
+		};
+		it( 'should return a plan bill period - annual trem', () => {
+			const billPeriod = getPlanBillPeriod( state, 'business-bundle' );
+			expect( billPeriod ).toEqual( 365 );
+		} );
+		it( 'should return a plan bill period - biennial trem', () => {
+			const billPeriod = getPlanBillPeriod( state, 'business-bundle-2y' );
+			expect( billPeriod ).toEqual( 730 );
+		} );
+	} );
 	describe( '#getDiscountedRawPrice()', () => {
 		const state = {
 			plans: {
@@ -93,6 +120,76 @@ describe( 'selectors', () => {
 		it( 'should return monthly raw_price if there is no discount', () => {
 			const rawPrice = getPlanRawPrice( state, 1003, true );
 			expect( rawPrice ).toEqual( 8 );
+		} );
+	} );
+
+	describe( '#getPlanPrices', () => {
+		const state = {
+			plans: {
+				items: [
+					{
+						product_id: 1008,
+						product_slug: 'business-bundle',
+						raw_price: 300,
+						orig_cost: 324,
+					},
+					{
+						product_id: 1028,
+						product_slug: 'business-bundle-2y',
+						raw_price: 480,
+						orig_cost: 540,
+					},
+					{
+						product_id: 1003,
+						product_slug: 'value_bundle',
+						raw_price: 96,
+					},
+				],
+			},
+		};
+
+		it( 'should return plan prices when siteId is null', () => {
+			expect(
+				getPlanPrices( state, {
+					planSlug: PLAN_BUSINESS,
+					siteId: null,
+					returnMonthly: true,
+				} )
+			).toEqual( {
+				rawPrice: 27,
+				discountedRawPrice: 25,
+				planDiscountedRawPrice: 0,
+			} );
+		} );
+
+		it( 'should return plan prices when siteId is passed', () => {
+			const stateWithSiteId = {
+				...state,
+				sites: {
+					plans: {
+						1: {
+							data: [
+								{
+									productSlug: 'business-bundle',
+									rawPrice: 288,
+									rawDiscount: 1,
+								},
+							],
+						},
+					},
+				},
+			};
+			expect(
+				getPlanPrices( stateWithSiteId, {
+					planSlug: PLAN_BUSINESS,
+					siteId: 1,
+					returnMonthly: true,
+				} )
+			).toEqual( {
+				rawPrice: 27,
+				discountedRawPrice: 25,
+				planDiscountedRawPrice: 24,
+			} );
 		} );
 	} );
 } );

@@ -83,7 +83,8 @@ export const getProductsToDisplay = ( {
 
 	const purchasedSlugs = purchasedProductsWithoutAddOn
 		?.map( ( p ) => p?.productSlug )
-		?.filter( ( slug ) => slug );
+		// Remove null or empty product slugs
+		?.filter( Boolean );
 
 	// Products that have not been directly purchased must honor the current filter
 	// selection since they exist in both monthly and yearly version.
@@ -106,9 +107,8 @@ export const getProductsToDisplay = ( {
 			return true;
 		} );
 	return (
-		[ ...purchasedProductsWithoutAddOn, ...filteredProducts ]
-			// Make sure we don't allow any null or invalid products
-			.filter( ( product ): product is SelectorProduct => !! product )
+		// Remove null or empty products
+		[ ...purchasedProductsWithoutAddOn, ...filteredProducts ].filter( Boolean )
 	);
 };
 

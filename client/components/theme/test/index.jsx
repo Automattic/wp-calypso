@@ -17,6 +17,7 @@ describe( 'Theme', () => {
 			screenshot:
 				'https://i0.wp.com/s0.wp.com/wp-content/themes/pub/twentyseventeen/screenshot.png?ssl=1',
 		},
+		actionLabel: 'Info',
 		buttonContents: { dummyAction: { label: 'Dummy action', action: jest.fn() } }, // TODO: test if called when clicked
 		translate: ( string ) => string,
 		setThemesBookmark: () => {},
@@ -27,7 +28,7 @@ describe( 'Theme', () => {
 		describe( 'with default display buttonContents', () => {
 			test( 'should render an element with a className of "theme"', () => {
 				const { container } = render( <Theme { ...props } /> );
-				expect( container.firstChild ).toHaveClass( 'theme', 'is-actionable' );
+				expect( container.firstChild ).toHaveClass( 'theme-card--is-actionable' );
 				expect( container.getElementsByTagName( 'h2' )[ 0 ] ).toHaveTextContent(
 					'Twenty Seventeen'
 				);

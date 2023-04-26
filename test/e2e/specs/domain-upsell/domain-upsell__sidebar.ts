@@ -68,8 +68,8 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 		await domainSearchComponent.search( blogName + '.com' );
 	} );
 
-	it( 'Choose the .com TLD', async function () {
-		selectedDomain = await domainSearchComponent.selectDomain( '.com' );
+	it( 'Choose the the first suggestion', async function () {
+		selectedDomain = await domainSearchComponent.selectFirstSuggestion();
 	} );
 
 	it( 'View available plans', async function () {
@@ -88,5 +88,10 @@ describe( DataHelper.createSuiteTitle( 'Sidebar: Domain upsell' ), function () {
 	it( 'See secure payment', async function () {
 		cartCheckoutPage = new CartCheckoutPage( page );
 		await cartCheckoutPage.validateCartItem( selectedDomain );
+	} );
+
+	afterAll( async function () {
+		const restAPIClient = new RestAPIClient( credentials );
+		await restAPIClient.clearShoppingCart( credentials.testSites?.primary?.id as number );
 	} );
 } );

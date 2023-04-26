@@ -12,7 +12,7 @@ import {
 	BrowserManager,
 	SecretsManager,
 	NewSiteResponse,
-	NewPostResponse,
+	PostResponse,
 	PublishedPostPage,
 	NavbarComponent,
 	MediaHelper,
@@ -33,7 +33,7 @@ describe(
 	function () {
 		const blogName = DataHelper.getBlogName();
 		const planName = 'Premium';
-		const publishedPosts: NewPostResponse[] = [];
+		const publishedPosts: PostResponse[] = [];
 		let testMediaFile: TestFile;
 		let siteCreatedFlag: boolean;
 		let newSiteDetails: NewSiteResponse;
@@ -105,7 +105,7 @@ describe(
 			} );
 
 			it( 'Make purchase', async function () {
-				await cartCheckoutPage.purchase( { timeout: 60 * 1000 } );
+				await cartCheckoutPage.purchase( { timeout: 75 * 1000 } );
 			} );
 
 			it( 'Return to My Home dashboard', async function () {
@@ -137,9 +137,7 @@ describe(
 
 			it.each( postTitles )( 'Post %s is preserved', async function ( postTitle: string ) {
 				// Locate the new post response for the post in question.
-				const postResponse = publishedPosts.find(
-					( r ) => r.title === postTitle
-				) as NewPostResponse;
+				const postResponse = publishedPosts.find( ( r ) => r.title === postTitle ) as PostResponse;
 
 				// Visit the page and validate.
 				await testPage.goto( postResponse.URL );

@@ -26,11 +26,7 @@ jest.mock( 'calypso/state/preferences/selectors', () => ( {
 
 describe( 'TimeMismatchWarning', () => {
 	beforeAll( () => {
-		jest.spyOn( global, 'Date' ).mockImplementation( () => ( { getTimezoneOffset: () => 240 } ) );
-	} );
-
-	afterAll( () => {
-		jest.spyOn( global, 'Date' ).mockRestore();
+		jest.spyOn( global.Date.prototype, 'getTimezoneOffset' ).mockImplementation( () => 240 );
 	} );
 
 	test( 'to render nothing if no site ID is provided', () => {

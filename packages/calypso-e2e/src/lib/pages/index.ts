@@ -30,6 +30,7 @@ export * from './themes-page';
 export * from './use-a-domain-i-own-page';
 export * from './woocommerce-landing-page';
 export * from './writing-settings-page';
+export * from './wp-admin-media-settings-page';
 
 export * from './external';
 export * from './me';

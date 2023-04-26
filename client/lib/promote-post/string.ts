@@ -52,6 +52,12 @@ const BlazePressStrings = () => {
 	translate(
 		'Cannot create subscription. Please {{supportLink}}contact support{{/supportLink}} or try again later.'
 	);
+	translate(
+		'There was an error with the address. Please, verify that all the required data is valid'
+	);
+	translate(
+		'There was an error with the address. The province, state or region should be filled'
+	);
 	translate( 'State field is required' );
 	translate( 'Use saved card' );
 	translate( 'First Name' );
@@ -84,6 +90,14 @@ const BlazePressStrings = () => {
 	translate( 'Audience & Budget' );
 	translate( 'Save and Submit' );
 	translate( 'Next' );
+	translate( 'Close' );
+	translate( 'Make the most of your Blaze campaign' );
+	translate( 'Choose an eye-catching image for your ad' );
+	translate( 'Adjust your title to make it more engaging' );
+	translate( 'Pick the right audience, budget and duration' );
+	translate( 'Get started' );
+	translate( 'Learn more' );
+	translate( "Don't show me this step again." );
 	translate( 'Drop image here' );
 	translate( 'Click or Drag an image here' );
 	translate( 'All fields marked as required' );

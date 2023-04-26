@@ -11,6 +11,8 @@ import {
 } from './site-excerpt-constants';
 import { SiteExcerptData, SiteExcerptNetworkData } from './site-excerpt-types';
 
+export const USE_SITE_EXCERPTS_QUERY_KEY = 'sites-dashboard-sites-data';
+
 const fetchSites = (): Promise< { sites: SiteExcerptNetworkData[] } > => {
 	const siteFilter = config< string[] >( 'site_filter' );
 	return wpcom.me().sites( {
@@ -27,7 +29,7 @@ const fetchSites = (): Promise< { sites: SiteExcerptNetworkData[] } > => {
 export const useSiteExcerptsQuery = () => {
 	const store = useStore();
 
-	return useQuery( [ 'sites-dashboard-sites-data' ], fetchSites, {
+	return useQuery( [ USE_SITE_EXCERPTS_QUERY_KEY ], fetchSites, {
 		select: ( data ) => data?.sites.map( computeFields( data?.sites ) ),
 		initialData: () => {
 			// Not using `useSelector` (i.e. calling `getSites` directly) because we

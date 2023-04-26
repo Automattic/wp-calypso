@@ -92,11 +92,12 @@ async function wpcomPayPalExpress(
 	payload: PayPalExpressEndpointRequestPayload,
 	transactionOptions: PaymentProcessorOptions
 ) {
-	const isJetpackUserLessCheckout =
-		payload.cart.products.some( ( product ) => product.extra.isJetpackCheckout ) &&
-		payload.cart.cart_key === 'no-user';
+	const isUserLessCheckout =
+		payload.cart.products.some(
+			( product ) => product.extra.isJetpackCheckout || product.extra.isAkismetSitelessCheckout
+		) && payload.cart.cart_key === 'no-user';
 
-	if ( transactionOptions.createUserAndSiteBeforeTransaction || isJetpackUserLessCheckout ) {
+	if ( transactionOptions.createUserAndSiteBeforeTransaction || isUserLessCheckout ) {
 		payload.cart = await createWpcomAccountBeforeTransaction( payload.cart, transactionOptions );
 	}
 
@@ -115,7 +116,7 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 }: {
 	successUrl: string;
 	cancelUrl: string;
-	siteId: string | number | undefined;
+	siteId: number | undefined;
 	domainDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): PayPalExpressEndpointRequestPayload {
@@ -125,7 +126,7 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		successUrl,
 		cancelUrl,
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: siteId ? String( siteId ) : undefined,
+			siteId,
 			contactDetails: domainDetails,
 			responseCart,
 		} ),

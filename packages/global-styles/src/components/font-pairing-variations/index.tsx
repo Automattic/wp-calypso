@@ -1,7 +1,12 @@
+import {
+	__unstableComposite as Composite,
+	__unstableUseCompositeState as useCompositeState,
+	__unstableCompositeItem as CompositeItem,
+} from '@wordpress/components';
 import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
 import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
-import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
+import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
 import { useFontPairingVariations } from '../../hooks';
 import FontPairingVariationPreview from './preview';
@@ -11,6 +16,7 @@ import './style.scss';
 interface FontPairingVariationProps {
 	fontPairingVariation: GlobalStylesObject;
 	isActive: boolean;
+	composite?: Record< string, unknown >;
 	onSelect: () => void;
 }
 
@@ -24,6 +30,7 @@ interface FontPairingVariationsProps {
 const FontPairingVariation = ( {
 	fontPairingVariation,
 	isActive,
+	composite,
 	onSelect,
 }: FontPairingVariationProps ) => {
 	const { base } = useContext( GlobalStylesContext );
@@ -35,30 +42,29 @@ const FontPairingVariation = ( {
 		};
 	}, [ fontPairingVariation, base ] );
 
-	const selectOnEnter = ( event: React.KeyboardEvent ) => {
-		if ( event.keyCode === ENTER ) {
-			event.preventDefault();
-			onSelect();
-		}
-	};
-
 	return (
-		<GlobalStylesContext.Provider value={ context }>
-			<div
-				className={ classnames( 'global-styles-variation__item', {
-					'is-active': isActive,
-				} ) }
-				role="button"
-				onClick={ onSelect }
-				onKeyDown={ selectOnEnter }
-				tabIndex={ 0 }
-				aria-current={ isActive }
-			>
-				<div className="global-styles-variation__item-preview">
-					<FontPairingVariationPreview />
-				</div>
+		<CompositeItem
+			role="option"
+			as="button"
+			{ ...composite }
+			className={ classnames( 'global-styles-variation__item', {
+				'is-active': isActive,
+			} ) }
+			onClick={ onSelect }
+			aria-current={ isActive }
+			aria-label={
+				translate( 'Font: %s', {
+					comment: 'Aria label for font preview buttons',
+					args: fontPairingVariation.title ?? translate( 'Default' ),
+				} ) as string
+			}
+		>
+			<div className="global-styles-variation__item-preview">
+				<GlobalStylesContext.Provider value={ context }>
+					<FontPairingVariationPreview title={ fontPairingVariation.title } />
+				</GlobalStylesContext.Provider>
 			</div>
-		</GlobalStylesContext.Provider>
+		</CompositeItem>
 	);
 };
 
@@ -70,13 +76,20 @@ const FontPairingVariations = ( {
 }: FontPairingVariationsProps ) => {
 	const { base } = useContext( GlobalStylesContext );
 	const fontPairingVariations = useFontPairingVariations( siteId, stylesheet ) ?? [];
+	const composite = useCompositeState();
 
 	return (
-		<div className="font-pairing-variations">
+		<Composite
+			{ ...composite }
+			role="listbox"
+			className="font-pairing-variations"
+			aria-label={ translate( 'Font pairing variations' ) }
+		>
 			<FontPairingVariation
 				key="base"
 				fontPairingVariation={ base }
 				isActive={ ! selectedFontPairingVariation }
+				composite={ composite }
 				onSelect={ () => onSelect( null ) }
 			/>
 			{ fontPairingVariations.map( ( fontPairingVariation, index ) => (
@@ -84,10 +97,11 @@ const FontPairingVariations = ( {
 					key={ index }
 					fontPairingVariation={ fontPairingVariation }
 					isActive={ fontPairingVariation.title === selectedFontPairingVariation?.title }
+					composite={ composite }
 					onSelect={ () => onSelect( fontPairingVariation ) }
 				/>
 			) ) }
-		</div>
+		</Composite>
 	);
 };
 

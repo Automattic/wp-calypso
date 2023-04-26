@@ -11,6 +11,8 @@ export type PluginQueryOptions = {
 export type Plugin = {
 	name?: string;
 	slug: string;
+	software_slug?: string;
+	org_slug?: string;
 	version?: string;
 	author?: string;
 	author_name?: string;
@@ -57,6 +59,8 @@ export type ESIndexResult = {
 	plugin: {
 		store_product_monthly_id?: number;
 		store_product_yearly_id?: number;
+		software_slug?: string;
+		org_slug?: string;
 		author: string;
 		title: string;
 		excerpt: string;

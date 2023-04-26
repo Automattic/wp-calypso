@@ -1,34 +1,22 @@
+import {
+	DEFAULT_GLOBAL_STYLES_VARIATION_TITLE,
+	GlobalStylesVariationType,
+} from '@automattic/global-styles';
 import { PATTERN_SOURCE_SITE_ID } from './constants';
+import type { GlobalStylesObject } from '@automattic/global-styles';
 
 export const encodePatternId = ( patternId: number ) =>
 	`${ patternId }-${ PATTERN_SOURCE_SITE_ID }`;
 
-export function createCustomHomeTemplateContent(
-	stylesheet: string,
-	hasHeader: boolean,
-	hasFooter: boolean,
-	hasSections: boolean
-) {
-	const content: string[] = [];
-	if ( hasHeader ) {
-		content.push(
-			`<!-- wp:template-part {"slug":"header","tagName":"header","theme":"${ stylesheet }"} /-->`
-		);
-	}
+export const decodePatternId = ( encodedPatternId: number | string ) =>
+	`${ encodedPatternId }`.split( '-' )[ 0 ];
 
-	if ( hasSections ) {
-		content.push( `
-	<!-- wp:group {"tagName":"main"} -->
-		<main class="wp-block-group">
-		</main>
-	<!-- /wp:group -->` );
-	}
+export const getVariationTitle = ( variation: GlobalStylesObject | null ) =>
+	variation?.title ?? DEFAULT_GLOBAL_STYLES_VARIATION_TITLE;
 
-	if ( hasFooter ) {
-		content.push(
-			`<!-- wp:template-part {"slug":"footer","tagName":"footer","theme":"${ stylesheet }","className":"site-footer-container"} /-->`
-		);
-	}
-
-	return content.join( '\n' );
-}
+export const getVariationType = (
+	variation: GlobalStylesObject | null
+): GlobalStylesVariationType =>
+	variation && variation.title !== DEFAULT_GLOBAL_STYLES_VARIATION_TITLE
+		? GlobalStylesVariationType.Premium
+		: GlobalStylesVariationType.Free;

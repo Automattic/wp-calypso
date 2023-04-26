@@ -19,6 +19,7 @@ import {
 	TYPE_PRO,
 	isDIFMProduct,
 	isJetpackSearchFree,
+	isAkismetProduct,
 } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { encodeProductForUrl } from '@automattic/wpcom-checkout';
@@ -292,10 +293,11 @@ export function handleRenewNowClick(
 				throw new Error( 'Could not find product slug for renewal.' );
 			}
 			const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
+			const serviceSlug = isAkismetProduct( { product_slug: productSlugs[ 0 ] } ) ? 'akismet/' : '';
 
-			let renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
-				siteSlug || ''
-			}`;
+			let renewalUrl = `/checkout/${ serviceSlug }${ productSlugs[ 0 ] }/renew/${
+				purchaseIds[ 0 ]
+			}/${ siteSlug || '' }`;
 			if ( options.redirectTo ) {
 				renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
 			}
@@ -862,6 +864,10 @@ export function purchaseType( purchase: Purchase ) {
 				domain: purchase.meta,
 			},
 		} );
+	}
+
+	if ( purchase.productType === 'marketplace_plugin' || purchase.productType === 'saas_plugin' ) {
+		return i18n.translate( 'Plugin' );
 	}
 
 	if ( purchase.meta ) {

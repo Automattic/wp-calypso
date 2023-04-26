@@ -143,7 +143,7 @@ const JetpackComMasterbar: React.FC< Props > = ( { pathname } ) => {
 			label: translate( 'Bundles' ),
 			items: [
 				{
-					label: translate( 'Complete' ),
+					label: translate( 'Complete', { context: 'Jetpack plan name' } ),
 					tagline: translate( 'The ultimate toolkit' ),
 					href: `${ JETPACK_COM_BASE_URL }/complete/`,
 				},

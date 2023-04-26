@@ -16,13 +16,17 @@ const selectors = {
 	uploadSpinner: '.media-library__list-item-spinner',
 	notReadyOverlay: `.is-transient`,
 	editButton: 'button[data-e2e-button="edit"]',
-	deleteButton: 'button[data-e2e-button="delete"]',
+	deleteButton: '.media-library__header button[data-e2e-button="delete"]',
 	fileInput: 'input.media-library__upload-button-input',
 	uploadRejectionNotice: 'text=/could not be uploaded/i',
 
 	// Edit File modal
 	editFileModal: '.editor-media-modal__content',
 	editImageButton: 'button:has-text("Edit Image"):visible',
+	editModalDeleteButton: '.editor-media-modal button:has-text("Delete"):visible',
+
+	// Popup confirmation
+	confirmationDeleteButton: '.dialog:has-text("Are you sure") button:has-text("Delete")',
 
 	// Iamge Editor
 	imageEditorCanvas: '.image-editor__canvas-container',
@@ -187,6 +191,28 @@ export class MediaPage {
 	async cancelImageEdit(): Promise< void > {
 		await this.page.click( selectors.imageEditorCancelButton );
 		await this.page.waitForSelector( selectors.editFileModal );
+	}
+
+	/**
+	 * Delete the current selected media from the edit modal. Assumes the modal is open.
+	 */
+	async deleteMediaFromModal(): Promise< void > {
+		const modalDeleteButtonLocator = this.page.locator( selectors.editModalDeleteButton );
+		await modalDeleteButtonLocator.click();
+
+		const confirmationDeleteButtonLocator = this.page.locator( selectors.confirmationDeleteButton );
+		await confirmationDeleteButtonLocator.click();
+	}
+
+	/**
+	 * Delete all currently selected media from the main media library page.
+	 */
+	async deleteSelectedMediaFromLibrary(): Promise< void > {
+		const deleteButtonLocator = this.page.locator( selectors.deleteButton );
+		await deleteButtonLocator.click();
+
+		const confirmationDeleteButtonLocator = this.page.locator( selectors.confirmationDeleteButton );
+		await confirmationDeleteButtonLocator.click();
 	}
 
 	/**

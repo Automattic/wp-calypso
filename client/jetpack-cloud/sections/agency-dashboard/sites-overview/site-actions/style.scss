@@ -20,19 +20,12 @@
 	position: absolute;
 	right: 16px;
 	display: inline;
-	@include break-xlarge() {
-		display: none;
-	}
 }
 .site-actions__all-actions {
 	vertical-align: middle;
 	display: flex;
 	color: var(--studio-gray-40);
 	margin: 0 0.1em;
-	@include break-large() {
-		display: inline-flex;
-		height: 100%;
-	}
 }
 a.site-actions__menu-item {
 	margin: 0 -1px;

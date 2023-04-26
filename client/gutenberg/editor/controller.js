@@ -260,23 +260,6 @@ export const post = ( context, next ) => {
 	return next();
 };
 
-export const siteEditor = ( context, next ) => {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-
-	context.primary = (
-		<CalypsoifyIframe
-			// This key is added as a precaution due to it's oberserved necessity in the above post editor.
-			// It will force the component to remount completely when the Id changes.
-			key={ siteId }
-			editorType="site"
-			completedFlow={ getSessionStorageOneTimeValue( 'wpcom_signup_completed_flow' ) }
-		/>
-	);
-
-	return next();
-};
-
 export const exitPost = ( context, next ) => {
 	const postId = getPostID( context );
 	const siteId = getSelectedSiteId( context.store.getState() );
@@ -284,4 +267,27 @@ export const exitPost = ( context, next ) => {
 		context.store.dispatch( stopEditingPost( siteId, postId ) );
 	}
 	next();
+};
+
+/**
+ * Redirects to the un-iframed Site Editor if the config is enabled.
+ *
+ * @param {Object} context Shared context in the route.
+ * @returns {*}            Whatever the next callback returns.
+ */
+export const redirectSiteEditor = async ( context ) => {
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+
+	const queryArgs = context.query || {};
+	// Only add the origin if it's not wordpress.com.
+	if ( location.origin !== 'https://wordpress.com' ) {
+		queryArgs.calypso_origin = location.origin;
+	}
+
+	// We aren't using `getSiteEditorUrl` because it still thinks we should gutenframe the Site Editor.
+	const siteAdminUrl = getSiteAdminUrl( state, siteId );
+	const siteEditorUrl = addQueryArgs( queryArgs, `${ siteAdminUrl }site-editor.php` );
+	// Calling replace to avoid adding an entry to the browser history upon redirect.
+	return location.replace( siteEditorUrl );
 };

@@ -20,7 +20,9 @@ export interface Typography {
 
 export interface GlobalStylesObject {
 	id?: number;
+	slug?: string;
 	title?: string;
+	inline_css?: string;
 	settings: {
 		color?: {
 			palette: {
@@ -36,4 +38,9 @@ export interface GlobalStylesObject {
 		};
 		typography?: Typography;
 	};
+}
+
+export enum GlobalStylesVariationType {
+	Free = 'free',
+	Premium = 'premium',
 }

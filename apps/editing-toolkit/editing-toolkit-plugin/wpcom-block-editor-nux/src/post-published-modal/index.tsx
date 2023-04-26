@@ -3,30 +3,58 @@ import { Button } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { isURL } from '@wordpress/url';
 import React from 'react';
 import NuxModal from '../nux-modal';
+import { selectors as wpcomWelcomeGuideSelectors } from '../store';
 import postPublishedImage from './images/post-published.svg';
-
+import type { SelectFromMap } from '@automattic/data-stores';
 import './style.scss';
+
+type WpcomWelcomeGuideSelectors = SelectFromMap< typeof wpcomWelcomeGuideSelectors >;
+type CoreEditorPlaceholder = {
+	getCurrentPost: ( ...args: unknown[] ) => { link: string };
+	getCurrentPostType: ( ...args: unknown[] ) => string;
+	isCurrentPostPublished: ( ...args: unknown[] ) => boolean;
+};
 
 /**
  * Show the first post publish modal
  */
 const PostPublishedModal: React.FC = () => {
-	const { link } = useSelect( ( select ) => select( 'core/editor' ).getCurrentPost() );
-	const postType = useSelect( ( select ) => select( 'core/editor' ).getCurrentPostType() );
+	const { link } = useSelect(
+		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
+		[]
+	);
+	const postType = useSelect(
+		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPostType(),
+		[]
+	);
 
-	const isCurrentPostPublished = useSelect( ( select ) =>
-		select( 'core/editor' ).isCurrentPostPublished()
+	const isCurrentPostPublished = useSelect(
+		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).isCurrentPostPublished(),
+		[]
 	);
 	const previousIsCurrentPostPublished = useRef( isCurrentPostPublished );
-	const shouldShowFirstPostPublishedModal = useSelect( ( select ) =>
-		select( 'automattic/wpcom-welcome-guide' ).getShouldShowFirstPostPublishedModal()
+	const shouldShowFirstPostPublishedModal = useSelect(
+		( select ) =>
+			(
+				select( 'automattic/wpcom-welcome-guide' ) as WpcomWelcomeGuideSelectors
+			 ).getShouldShowFirstPostPublishedModal(),
+		[]
 	);
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
 	const { fetchShouldShowFirstPostPublishedModal, setShouldShowFirstPostPublishedModal } =
 		useDispatch( 'automattic/wpcom-welcome-guide' );
+
+	const { siteUrlOption, launchpadScreenOption, siteIntentOption } = window?.launchpadOptions || {};
+
+	let siteUrl = '';
+	if ( isURL( siteUrlOption ) ) {
+		// https://mysite.wordpress.com/path becomes mysite.wordpress.com
+		siteUrl = new URL( siteUrlOption ).hostname;
+	}
 
 	useEffect( () => {
 		fetchShouldShowFirstPostPublishedModal();
@@ -57,9 +85,16 @@ const PostPublishedModal: React.FC = () => {
 		setShouldShowFirstPostPublishedModal,
 	] );
 
-	const handleClick = ( event: React.MouseEvent ) => {
+	const handleViewPostClick = ( event: React.MouseEvent ) => {
 		event.preventDefault();
 		( window.top as Window ).location.href = link;
+	};
+
+	const handleNextStepsClick = ( event: React.MouseEvent ) => {
+		event.preventDefault();
+		(
+			window.top as Window
+		 ).location.href = `https://wordpress.com/setup/write/launchpad?siteSlug=${ siteUrl }`;
 	};
 
 	return (
@@ -73,9 +108,16 @@ const PostPublishedModal: React.FC = () => {
 			) }
 			imageSrc={ postPublishedImage }
 			actionButtons={
-				<Button isPrimary onClick={ handleClick }>
-					{ __( 'View Post', 'full-site-editing' ) }
-				</Button>
+				<>
+					<Button isPrimary onClick={ handleViewPostClick }>
+						{ __( 'View Post', 'full-site-editing' ) }
+					</Button>
+					{ launchpadScreenOption === 'full' && siteIntentOption === 'write' && (
+						<Button isSecondary onClick={ handleNextStepsClick }>
+							{ __( 'Next Steps', 'full-site-editing' ) }
+						</Button>
+					) }
+				</>
 			}
 			onRequestClose={ closeModal }
 			onOpen={ () => recordTracksEvent( 'calypso_editor_wpcom_first_post_published_modal_show' ) }

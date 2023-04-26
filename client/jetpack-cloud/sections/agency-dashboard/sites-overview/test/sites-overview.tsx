@@ -42,6 +42,7 @@ describe( '<SitesOverview>', () => {
 		search: '',
 		filter: { issueTypes: [], showOnlyFavorites: false },
 		selectedSites: [],
+		sort: { field: 'url', direction: 'asc' },
 	};
 
 	const queryClient = new QueryClient();
@@ -63,7 +64,13 @@ describe( '<SitesOverview>', () => {
 			perPage: 1,
 			totalFavorites: 1,
 		};
-		const queryKey = [ 'jetpack-agency-dashboard-sites', context.search, 1, context.filter ];
+		const queryKey = [
+			'jetpack-agency-dashboard-sites',
+			context.search,
+			1,
+			context.filter,
+			context.sort,
+		];
 		queryClient.setQueryData( queryKey, data );
 	};
 

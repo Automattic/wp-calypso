@@ -58,6 +58,140 @@ describe( 'useSitesSorting', () => {
 		},
 	];
 
+	const frequentSitesWithStaging = [
+		{
+			ID: 1,
+			title: 'B',
+			options: {
+				updated_at: '2022-05-27T07:19:20+00:00',
+			},
+			user_interactions: [ '2022-09-25' ],
+		},
+		{
+			ID: 2,
+			title: 'A',
+			options: {
+				updated_at: '2022-07-13T17:17:12+00:00',
+				wpcom_staging_blog_ids: [ 3 ],
+			},
+			user_interactions: [ '2022-09-19' ],
+		},
+		{
+			ID: 3,
+			title: 'C',
+			is_wpcom_staging_site: true,
+			options: {
+				updated_at: '2022-06-14T13:32:34+00:00',
+				wpcom_production_blog_id: 2,
+			},
+			user_interactions: [ '2022-09-21', '2022-09-16', '2022-09-13', '2022-09-09' ],
+		},
+		{
+			ID: 4,
+			title: 'E',
+			options: {
+				updated_at: '2022-06-14T13:32:34+00:00',
+			},
+			user_interactions: [ '2022-09-16', '2022-09-13', '2022-09-09' ],
+		},
+	];
+
+	const frequentSitesWithStagingMissingProduction = [
+		{
+			ID: 1,
+			title: 'B',
+			options: {
+				updated_at: '2022-05-27T07:19:20+00:00',
+			},
+			user_interactions: [ '2022-09-25' ],
+		},
+		{
+			ID: 2,
+			title: 'A',
+			options: {
+				updated_at: '2022-07-13T17:17:12+00:00',
+				wpcom_staging_blog_ids: [ 3 ],
+			},
+			user_interactions: [ '2022-09-19' ],
+		},
+		{
+			ID: 3,
+			title: 'C',
+			is_wpcom_staging_site: true,
+			options: {
+				updated_at: '2022-06-14T13:32:34+00:00',
+				wpcom_production_blog_id: 2,
+			},
+			user_interactions: [ '2022-09-21', '2022-09-16', '2022-09-13', '2022-09-09' ],
+		},
+		{
+			ID: 4,
+			title: 'E',
+			options: {
+				updated_at: '2022-06-14T13:32:34+00:00',
+			},
+			user_interactions: [ '2022-09-16', '2022-09-13', '2022-09-09' ],
+		},
+		{
+			ID: 5,
+			title: 'F',
+			is_wpcom_staging_site: true,
+			options: {
+				wpcom_production_blog_id: 10,
+				updated_at: '2022-06-14T13:32:34+00:00',
+			},
+			user_interactions: [ '2022-09-16', '2022-09-13', '2022-09-09' ],
+		},
+	];
+
+	const frequentSitesWithStagingMissing = [
+		{
+			ID: 1,
+			title: 'B',
+			options: {
+				updated_at: '2022-05-27T07:19:20+00:00',
+			},
+			user_interactions: [ '2022-09-25' ],
+		},
+		{
+			ID: 2,
+			title: 'A',
+			options: {
+				updated_at: '2022-07-13T17:17:12+00:00',
+				wpcom_staging_blog_ids: [ 3, 11, 5 ],
+			},
+			user_interactions: [ '2022-09-19' ],
+		},
+		{
+			ID: 3,
+			title: 'C',
+			is_wpcom_staging_site: true,
+			options: {
+				updated_at: '2022-06-14T13:32:34+00:00',
+				wpcom_production_blog_id: 2,
+			},
+			user_interactions: [ '2022-09-21', '2022-09-16', '2022-09-13', '2022-09-09' ],
+		},
+		{
+			ID: 4,
+			title: 'E',
+			options: {
+				updated_at: '2022-06-14T13:32:34+00:00',
+			},
+			user_interactions: [ '2022-09-16', '2022-09-13', '2022-09-09' ],
+		},
+		{
+			ID: 5,
+			title: 'F',
+			is_wpcom_staging_site: true,
+			options: {
+				updated_at: '2022-06-14T13:32:34+00:00',
+				wpcom_production_blog_id: 2,
+			},
+			user_interactions: [ '2022-09-16', '2022-09-13', '2022-09-09' ],
+		},
+	];
+
 	test( 'should not sort sites if unsupported sortKey is provided', () => {
 		const { result } = renderHook( () =>
 			useSitesListSorting( filteredSites, {
@@ -139,6 +273,53 @@ describe( 'useSitesSorting', () => {
 		expect( result.current[ 0 ].title ).toBe( 'A' );
 		expect( result.current[ 1 ].title ).toBe( 'B' );
 		expect( result.current[ 2 ].title ).toBe( 'C' );
+	} );
+
+	test( 'should keep the staging sites under their production sites, retaining the order for other sites', () => {
+		const { result } = renderHook( () =>
+			useSitesListSorting( frequentSitesWithStaging, {
+				sortKey: 'lastInteractedWith',
+				sortOrder: 'asc',
+			} )
+		);
+		// After sortSitesByLastInteractedWith: A -> B -> E -> C
+		expect( result.current.length ).toBe( 4 );
+		expect( result.current[ 0 ].title ).toBe( 'A' );
+		expect( result.current[ 1 ].title ).toBe( 'C' );
+		expect( result.current[ 2 ].title ).toBe( 'B' );
+		expect( result.current[ 3 ].title ).toBe( 'E' );
+	} );
+
+	test( 'should not change the order of a staging site if its associated producion site is filtered out', () => {
+		const { result } = renderHook( () =>
+			useSitesListSorting( frequentSitesWithStagingMissingProduction, {
+				sortKey: 'lastInteractedWith',
+				sortOrder: 'asc',
+			} )
+		);
+		// After sortSitesByLastInteractedWith: A -> B -> F -> E -> C
+		expect( result.current.length ).toBe( 5 );
+		expect( result.current[ 0 ].title ).toBe( 'A' );
+		expect( result.current[ 1 ].title ).toBe( 'C' );
+		expect( result.current[ 2 ].title ).toBe( 'B' );
+		expect( result.current[ 3 ].title ).toBe( 'F' );
+		expect( result.current[ 4 ].title ).toBe( 'E' );
+	} );
+
+	test( 'should staging sites that missing, down to the production site list', () => {
+		const { result } = renderHook( () =>
+			useSitesListSorting( frequentSitesWithStagingMissing, {
+				sortKey: 'lastInteractedWith',
+				sortOrder: 'asc',
+			} )
+		);
+		// After sortSitesByLastInteractedWith: A -> B -> F -> E -> C
+		expect( result.current.length ).toBe( 5 );
+		expect( result.current[ 0 ].title ).toBe( 'A' );
+		expect( result.current[ 1 ].title ).toBe( 'F' );
+		expect( result.current[ 2 ].title ).toBe( 'C' );
+		expect( result.current[ 3 ].title ).toBe( 'B' );
+		expect( result.current[ 4 ].title ).toBe( 'E' );
 	} );
 
 	test( 'should pick the site more frequently interacted with descending', () => {

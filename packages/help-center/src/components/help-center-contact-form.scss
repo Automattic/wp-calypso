@@ -109,30 +109,20 @@ section.contact-form-submit {
 	background: #fff;
 	padding: 16px;
 
-	.button.help-center-contact-form__site-picker-cta.is-primary {
-		background-color: var(--color-accent);
-		border-color: var(--color-accent);
-		color: var(--color-text-inverted);
-		line-height: 2.7;
-
-		&:hover,
-		&:focus {
-			color: var(--color-text-inverted);
-			background-color: var(--color-accent-60);
-			border-color: var(--color-accent-60);
-		}
-
-		&:focus {
-			border: none;
-			box-shadow: none;
-			outline: solid 2px var(--color-accent-60);
-			outline-offset: 2px;
-		}
+	.help-center-contact-form__site-picker-cta.is-primary {
+		text-align: center;
+		padding: 16px;
+		width: 100%;
+		display: block;
+		height: unset;
 
 		&:disabled {
 			background-color: var(--color-surface) !important;
-			border-color: var(--color-neutral-5) !important;
+			border: 1px solid var(--color-neutral-5) !important;
 			color: var(--color-neutral-20) !important;
+		}
+		&:hover:not(:disabled) {
+			color: var(--wp-components-color-accent-inverted, #fff) !important;
 		}
 	}
 
@@ -154,11 +144,6 @@ section.contact-form-submit {
 .help-center-contact-form__site-picker-form-warning,
 .help-center-contact-form__site-picker-form-subtitle {
 	color: var(--studio-gray-60);
-}
-
-.help-center-contact-form__site-picker-cta {
-	width: 100%;
-	padding: 5px 16px !important;
 }
 
 .help-center-contact-form__label {

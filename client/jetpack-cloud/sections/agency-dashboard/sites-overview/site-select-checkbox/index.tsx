@@ -17,7 +17,7 @@ export default function SiteSelectCheckbox( { item, siteError, isLargeScreen }: 
 	);
 
 	function handleCheckboxClick() {
-		item.onSelect( item );
+		item.onSelect?.();
 		recordEvent( item.isSelected ? 'site_unselected' : 'site_selected' );
 	}
 
@@ -25,7 +25,7 @@ export default function SiteSelectCheckbox( { item, siteError, isLargeScreen }: 
 		<span className="site-select-checkbox">
 			<FormInputCheckbox
 				className="disable-card-expand"
-				id={ item.blog_id }
+				id={ `${ item.site.value.blog_id }` }
 				onClick={ handleCheckboxClick }
 				checked={ item.isSelected }
 				readOnly={ true }

@@ -14,6 +14,7 @@ import { UserData } from 'calypso/lib/user/user';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { redirect } from '../import/util';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
@@ -28,7 +29,10 @@ const WooVerifyEmail: Step = function WooVerifyEmail( { navigation } ) {
 	const [ error, setError ] = useState( '' );
 	const sendEmail = useSendEmailVerification();
 	const { setEditEmail } = useDispatch( ONBOARD_STORE );
-	const editEmail = useSelect( ( select ) => select( ONBOARD_STORE ).getEditEmail() );
+	const editEmail = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getEditEmail(),
+		[]
+	);
 
 	const sendVerification = async () => {
 		setEditEmail( '' );

@@ -18,6 +18,7 @@ import {
 	CheckoutFormSubmit,
 	PaymentMethodStep,
 } from '@automattic/composite-checkout';
+import { isHostingFlow } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { styled } from '@automattic/wpcom-checkout';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -35,11 +36,13 @@ import {
 import { getGoogleMailServiceFamily } from 'calypso/lib/gsuite';
 import { isWcMobileApp } from 'calypso/lib/mobile-app';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { areVatDetailsSame } from 'calypso/me/purchases/vat-info/are-vat-details-same';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import useValidCheckoutBackUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-valid-checkout-back-url';
 import { leaveCheckout } from 'calypso/my-sites/checkout/composite-checkout/lib/leave-checkout';
 import { prepareDomainContactValidationRequest } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { getSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { saveContactDetailsCache } from 'calypso/state/domains/management/actions';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
@@ -49,6 +52,7 @@ import useCouponFieldState from '../hooks/use-coupon-field-state';
 import { validateContactDetails } from '../lib/contact-validation';
 import getContactDetailsType from '../lib/get-contact-details-type';
 import { updateCartContactDetailsForCheckout } from '../lib/update-cart-contact-details-for-checkout';
+import { CHECKOUT_STORE } from '../lib/wpcom-store';
 import badge14Src from './assets/icons/badge-14.svg';
 import badge7Src from './assets/icons/badge-7.svg';
 import badgeGenericSrc from './assets/icons/badge-generic.svg';
@@ -184,12 +188,12 @@ export default function WPCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 
-	const contactInfo = useSelect( ( sel ) => sel( 'wpcom-checkout' )?.getContactInfo() ?? {} );
+	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
 
-	const vatDetails = useSelect( ( sel ) => sel( 'wpcom-checkout' )?.getVatDetails() ?? {} );
-	const { setVatDetails } = useVatDetails();
+	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
+	const { setVatDetails, vatDetails: vatDetailsFromServer } = useVatDetails();
 
-	const checkoutActions = useDispatch( 'wpcom-checkout' );
+	const checkoutActions = useDispatch( CHECKOUT_STORE );
 
 	const [ shouldShowContactDetailsValidationErrors, setShouldShowContactDetailsValidationErrors ] =
 		useState( true );
@@ -221,12 +225,12 @@ export default function WPCheckout( {
 		? String( translate( 'Updating cart…' ) )
 		: String( translate( 'Please wait…' ) );
 
-	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
+	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteUrl );
 	const previousPath = useSelector( getPreviousRoute );
 	const goToPreviousPage = () =>
 		leaveCheckout( {
 			siteSlug: siteUrl,
-			jetpackCheckoutBackUrl,
+			forceCheckoutBackUrl,
 			previousPath: customizedPreviousPath || previousPath,
 			tracksEvent: 'calypso_checkout_composite_empty_cart_clicked',
 		} );
@@ -386,19 +390,17 @@ export default function WPCheckout( {
 						if ( validationResponse ) {
 							// When the contact details change, update the VAT details on the server.
 							try {
-								if ( vatDetails.id ) {
-									await setVatDetails( vatDetails );
+								if (
+									vatDetailsInForm.id &&
+									! areVatDetailsSame( vatDetailsInForm, vatDetailsFromServer )
+								) {
+									await setVatDetails( vatDetailsInForm );
 								}
 							} catch ( error ) {
 								reduxDispatch( removeNotice( 'vat_info_notice' ) );
 								if ( shouldShowContactDetailsValidationErrors ) {
 									reduxDispatch(
-										errorNotice(
-											translate(
-												'Your Business Tax ID details are not valid. Please check each field and try again.'
-											),
-											{ id: 'vat_info_notice' }
-										)
+										errorNotice( ( error as Error ).message, { id: 'vat_info_notice' } )
 									);
 								}
 								return false;
@@ -412,7 +414,7 @@ export default function WPCheckout( {
 									responseCart,
 									updateLocation,
 									contactInfo,
-									vatDetails
+									vatDetailsInForm
 								);
 							} catch {
 								// If updating the cart fails, we should not continue. No need
@@ -618,7 +620,9 @@ const SubmitButtonFooter = () => {
 		isJetpackPurchasableItem( product.product_slug )
 	);
 
-	if ( ! hasCartJetpackProductsOnly ) {
+	const signupFlowName = getSignupCompleteFlowName();
+
+	if ( ! hasCartJetpackProductsOnly && ! isHostingFlow( signupFlowName ) ) {
 		return null;
 	}
 

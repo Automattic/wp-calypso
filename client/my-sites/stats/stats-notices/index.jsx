@@ -40,7 +40,7 @@ export default function StatsNotices( { siteId } ) {
 	return (
 		<>
 			{ showOptOutNotice && (
-				<div className="inner-notice-container has-background-color">
+				<div className="inner-notice-container has-odyssey-stats-bg-color">
 					<NoticeBanner
 						level="success"
 						title={ translate( 'Welcome to the new Jetpack Stats!' ) }
@@ -61,7 +61,7 @@ export default function StatsNotices( { siteId } ) {
 				</div>
 			) }
 			{ showFeedbackNotice && (
-				<div className="inner-notice-container has-background-color">
+				<div className="inner-notice-container has-odyssey-stats-bg-color">
 					<NoticeBanner
 						level="info"
 						title={ translate( "We'd love to hear your thoughts on the new Stats" ) }

@@ -51,7 +51,7 @@ export function buildDIFMWebsiteContentRequestDTO(
 ): WebsiteContentRequestDTO {
 	const {
 		pages,
-		siteLogoSection: { siteLogoUrl: site_logo_url },
+		siteInformationSection: { siteLogoUrl: site_logo_url, searchTerms: search_terms },
 		feedbackSection: { genericFeedback: generic_feedback },
 	} = websiteContent;
 	const pagesDTO = pages.map( ( page ) => mapRecordKeysRecursively( page, camelToSnakeCase ) );
@@ -59,5 +59,6 @@ export function buildDIFMWebsiteContentRequestDTO(
 		pages: pagesDTO,
 		site_logo_url: site_logo_url ?? '',
 		generic_feedback: generic_feedback ?? '',
+		search_terms: search_terms ?? '',
 	};
 }

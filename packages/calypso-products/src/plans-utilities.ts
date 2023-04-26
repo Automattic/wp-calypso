@@ -12,6 +12,8 @@ import {
 	PLAN_TRIENNIAL_PERIOD,
 } from './constants';
 
+export { getPlanSlugForTermVariant } from './get-plan-term-variant';
+
 export function isBestValue( plan: string ): boolean {
 	return ( BEST_VALUE_PLANS as ReadonlyArray< string > ).includes( plan );
 }
@@ -57,9 +59,10 @@ export const is2023PricingGridEnabled = (): boolean => {
  * @returns true if the pricing grid maybe shown in a given page
  */
 export const is2023PricingGridActivePage = (
-	browserWindow: Window & typeof globalThis
+	browserWindow?: Window & typeof globalThis,
+	pathname?: string
 ): boolean => {
-	const currentRoutePath = browserWindow.location.pathname ?? '';
+	const currentRoutePath = pathname ?? browserWindow?.location.pathname ?? '';
 	const isPricingGridEnabled = is2023PricingGridEnabled();
 
 	// Is this the internal plans page /plans/<site-slug> ?
@@ -72,8 +75,23 @@ export const is2023PricingGridActivePage = (
 		return isPricingGridEnabled;
 	}
 
+	// Is this the hosting flow?
+	if ( currentRoutePath.startsWith( '/start/hosting' ) ) {
+		return isPricingGridEnabled;
+	}
+
+	// Is this the domain-only flow?
+	if ( currentRoutePath.startsWith( '/start/domain' ) ) {
+		return isPricingGridEnabled;
+	}
+
 	// Is this the launch site flow?
 	if ( currentRoutePath.startsWith( '/start/launch-site/plans-launch' ) ) {
+		return isPricingGridEnabled;
+	}
+
+	// Is this the stepper domain upsell flow?
+	if ( currentRoutePath.startsWith( '/setup/domain-upsell' ) ) {
 		return isPricingGridEnabled;
 	}
 

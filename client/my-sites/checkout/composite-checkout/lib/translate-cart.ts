@@ -55,13 +55,16 @@ export function createTransactionEndpointCartFromResponseCart( {
 	contactDetails,
 	responseCart,
 }: {
-	siteId: string | undefined;
+	siteId: number | undefined;
 	contactDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): RequestCart {
-	if ( responseCart.products.some( ( product ) => product.extra.isJetpackCheckout ) ) {
+	if (
+		responseCart.products.some( ( product ) => {
+			return product.extra.isJetpackCheckout || product.extra.isAkismetSitelessCheckout;
+		} )
+	) {
 		const isUserLess = responseCart.cart_key === 'no-user';
-		const isSiteLess = responseCart.blog_id === 0;
 
 		// At this point, cart_key will be 'no-user' | blog_id | 'no-site', in that order.
 		const cartKey = isUserLess ? responseCart.cart_key : responseCart.blog_id || 'no-site';
@@ -71,9 +74,8 @@ export function createTransactionEndpointCartFromResponseCart( {
 		// Once the WP.com account is created, the cart key is replaced with the blog ID and sent to the
 		// /transactions endpoint. If there is no blog ID, a temporary blog is created on the backend side.
 		return {
-			blog_id: responseCart.blog_id.toString(),
+			blog_id: responseCart.blog_id,
 			cart_key: cartKey as CartKey,
-			create_new_blog: isSiteLess,
 			coupon: responseCart.coupon || '',
 			temporary: false,
 			products: responseCart.products.map( ( item ) =>
@@ -84,9 +86,8 @@ export function createTransactionEndpointCartFromResponseCart( {
 	}
 
 	return {
-		blog_id: siteId || '0',
+		blog_id: siteId ? siteId : 0,
 		cart_key: ( siteId || 'no-site' ) as CartKey,
-		create_new_blog: siteId ? false : true,
 		coupon: responseCart.coupon || '',
 		temporary: false,
 		products: responseCart.products.map( ( item ) =>

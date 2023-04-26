@@ -51,6 +51,13 @@
 		}
 	}
 
+	&.mastodon {
+		h2,
+		.sharing-service__logo {
+			color: var(--color-mastodon);
+		}
+	}
+
 	.sharing-service__name {
 		float: left;
 	}
@@ -131,6 +138,18 @@
 			@include breakpoint-deprecated( "<480px" ) {
 				margin-bottom: 16px;
 				padding: 0 0 16px;
+			}
+		}
+
+		.form-button {
+			margin-top: 26px;
+
+			@include breakpoint-deprecated( "<660px" ) {
+				margin-top: 0;
+			}
+
+			@include breakpoint-deprecated( "<480px" ) {
+				width: 100%;
 			}
 		}
 
@@ -281,6 +300,7 @@
 @include sharing-service( "tumblr", var( --color-tumblr ) );
 @include sharing-service( "linkedin", var( --color-linkedin ) );
 @include sharing-service( "instagram-basic-display", var( --color-instagram ) );
+@include sharing-service( "mastodon", var( --color-mastodon ) );
 
 .sharing-service__name {
 	clear: none;

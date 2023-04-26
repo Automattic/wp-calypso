@@ -4,7 +4,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import FollowersCount from 'calypso/blocks/followers-count';
+import SubscribersCount from 'calypso/blocks/subscribers-count';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
@@ -64,7 +64,7 @@ class StatsNavigation extends Component {
 		return (
 			<div className={ wrapperClass }>
 				<SectionNav selectedText={ label }>
-					<NavTabs label="Stats" selectedText={ label }>
+					<NavTabs selectedText={ label }>
 						{ Object.keys( navItems )
 							.filter( this.isValidItem )
 							.map( ( item ) => {
@@ -87,7 +87,7 @@ class StatsNavigation extends Component {
 					{ isLegacy && showIntervals && (
 						<Intervals selected={ interval } pathTemplate={ pathTemplate } />
 					) }
-					<FollowersCount />
+					{ ! config.isEnabled( 'stats/subscribers-section' ) && <SubscribersCount /> }
 				</SectionNav>
 				{ isLegacy && showIntervals && (
 					<Intervals selected={ interval } pathTemplate={ pathTemplate } standalone />

@@ -30,7 +30,7 @@ export const useProductsToCompare = () => {
 			},
 			{
 				id: 'COMPLETE',
-				name: translate( 'Complete' ),
+				name: translate( 'Complete', { context: 'Jetpack plan name' } ),
 				productSlug: PLAN_JETPACK_COMPLETE,
 			},
 		],

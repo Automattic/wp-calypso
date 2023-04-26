@@ -21,7 +21,11 @@ import {
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import WeChatPaymentQRcodeUnstyled from './wechat-payment-qrcode';
-import type { LineItem, ProcessPayment } from '@automattic/composite-checkout';
+import type {
+	LineItem,
+	PaymentMethod,
+	PaymentMethodSubmitButtonProps,
+} from '@automattic/composite-checkout';
 import type {
 	PaymentMethodStore,
 	StoreSelectors,
@@ -29,17 +33,12 @@ import type {
 	StoreActions,
 	StoreState,
 } from '@automattic/wpcom-checkout';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );
 
-type StoreKey = 'wechat';
 type NounsInStore = 'customerName';
 type WeChatStore = PaymentMethodStore< NounsInStore >;
-
-declare module '@wordpress/data' {
-	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
-	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
-}
 
 interface WeChatStripeResponse {
 	order_id: number;
@@ -65,7 +64,7 @@ export function createWeChatPaymentMethodStore(): WeChatStore {
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
-			action
+			action: AnyAction
 		) {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
@@ -84,7 +83,7 @@ export function createWeChatMethod( {
 }: {
 	store: WeChatStore;
 	siteSlug?: string;
-} ) {
+} ): PaymentMethod {
 	return {
 		id: 'wechat',
 		paymentProcessorId: 'wechat',
@@ -148,7 +147,10 @@ const WeChatPaymentQRcode = styled( WeChatPaymentQRcodeUnstyled )`
 function WeChatFields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
+	const customerName = useSelect(
+		( select ) => ( select( 'wechat' ) as StoreSelectors< NounsInStore > ).getCustomerName(),
+		[]
+	);
 	const { changeCustomerName } = useDispatch( 'wechat' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -175,16 +177,17 @@ function WeChatPayButton( {
 	onClick,
 	store,
 	siteSlug,
-}: {
-	disabled?: boolean;
-	onClick?: ProcessPayment;
+}: PaymentMethodSubmitButtonProps & {
 	store: WeChatStore;
 	siteSlug?: string;
 } ) {
 	const total = useTotal();
 	const { formStatus } = useFormStatus();
 	const { resetTransaction } = useTransactionStatus();
-	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
+	const customerName = useSelect(
+		( select ) => ( select( 'wechat' ) as StoreSelectors< NounsInStore > ).getCustomerName(),
+		[]
+	);
 	const cartKey = useCartKey();
 	const { responseCart: cart } = useShoppingCart( cartKey );
 	const [ stripeResponseWithCode, setStripeResponseWithCode ] =
@@ -259,7 +262,10 @@ function ButtonContents( {
 }
 
 function WeChatSummary() {
-	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
+	const customerName = useSelect(
+		( select ) => ( select( 'wechat' ) as StoreSelectors< NounsInStore > ).getCustomerName(),
+		[]
+	);
 
 	return (
 		<SummaryDetails>

@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -6,7 +5,7 @@ import { getQueryArg, removeQueryArgs, addQueryArgs } from '@wordpress/url';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import { useContext, useEffect, useState, useMemo } from 'react';
+import { useContext, useEffect, useState, useMemo, createRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Count from 'calypso/components/count';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -44,6 +43,8 @@ export default function SitesOverview() {
 	const jetpackSiteDisconnected = useSelector( checkIfJetpackSiteGotDisconnected );
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 
+	const containerRef = createRef< any >();
+
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
@@ -53,14 +54,22 @@ export default function SitesOverview() {
 
 	const [ highlightTab, setHighlightTab ] = useState( false );
 
-	const { search, currentPage, filter, selectedSites, setSelectedSites } =
-		useContext( SitesOverviewContext );
+	const {
+		search,
+		currentPage,
+		filter,
+		sort,
+		selectedSites,
+		setSelectedSites,
+		setIsBulkManagementActive,
+	} = useContext( SitesOverviewContext );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
 		search,
 		currentPage,
-		filter
+		filter,
+		sort
 	);
 
 	const selectedSiteIds = selectedSites.map( ( site ) => site.blog_id );
@@ -101,7 +110,6 @@ export default function SitesOverview() {
 	}, [ refetch, jetpackSiteDisconnected ] );
 
 	const pageTitle = translate( 'Dashboard' );
-	const expandableBlockEnabled = 'Dashboard - Expandable block for sites enabled';
 
 	const basePath = '/dashboard';
 
@@ -124,6 +132,7 @@ export default function SitesOverview() {
 					selected: isFavorite ? filter.showOnlyFavorites : ! filter.showOnlyFavorites,
 					path: `${ basePath }${ isFavorite ? '/favorites' : '' }${ search ? '?s=' + search : '' }`,
 					onClick: () => {
+						setIsBulkManagementActive( false );
 						dispatch(
 							recordTracksEvent( 'calypso_jetpack_agency_dashboard_tab_click', {
 								nav_item: navItem.key,
@@ -141,6 +150,7 @@ export default function SitesOverview() {
 			isMobile,
 			search,
 			translate,
+			setIsBulkManagementActive,
 		]
 	);
 
@@ -233,11 +243,7 @@ export default function SitesOverview() {
 								} ) }
 							>
 								<div className="sites-overview__page-heading">
-									{ isEnabled( 'jetpack/pro-dashboard-expandable-block' ) ? (
-										<h2 className="sites-overview__page-title">{ expandableBlockEnabled }</h2>
-									) : (
-										<h2 className="sites-overview__page-title">{ pageTitle }</h2>
-									) }
+									<h2 className="sites-overview__page-title">{ pageTitle }</h2>
 									<div className="sites-overview__page-subtitle">
 										{ translate( 'Manage all your Jetpack sites from one location' ) }
 									</div>
@@ -268,7 +274,7 @@ export default function SitesOverview() {
 					</div>
 				</div>
 				<div className="sites-overview__content">
-					<div className="sites-overview__content-wrapper">
+					<div ref={ containerRef } className="sites-overview__content-wrapper">
 						{ ( ! showEmptyState || hasAppliedFilter ) && (
 							<SiteSearchFilterContainer
 								searchQuery={ search }
@@ -286,6 +292,7 @@ export default function SitesOverview() {
 								isLoading={ isLoading }
 								currentPage={ currentPage }
 								isFavoritesTab={ isFavoritesTab }
+								ref={ containerRef }
 							/>
 						) }
 					</div>

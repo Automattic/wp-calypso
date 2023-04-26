@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import Count from 'calypso/components/count';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getPostStat } from 'calypso/state/stats/posts/selectors';
@@ -18,21 +19,13 @@ type PostThumbnail = {
 	URL: string;
 };
 
-type PostDiscussion = {
-	comment_count: number;
-	comment_status: string;
-	comments_open: boolean;
-	ping_status: string;
-	pings_open: boolean;
-};
-
 type Post = {
-	date: string;
+	date: string | null;
 	title: string;
-	type: string;
-	like_count: number;
+	type: string | null;
+	like_count: number | null;
 	post_thumbnail: PostThumbnail | null;
-	discussion: PostDiscussion;
+	comment_count: number | null;
 };
 
 const POST_STATS_CARD_TITLE_LIMIT = 48;
@@ -58,6 +51,7 @@ export default function PostDetailHighlightsSection( {
 	post: Post;
 } ) {
 	const translate = useTranslate();
+	const userLocale = useSelector( getCurrentUserLocale );
 
 	const viewCount = useSelector( ( state ) => getPostStat( state, siteId, postId, 'views' ) || 0 );
 
@@ -97,7 +91,8 @@ export default function PostDetailHighlightsSection( {
 						likeCount={ post?.like_count || 0 }
 						post={ postData }
 						viewCount={ viewCount }
-						commentCount={ post?.discussion?.comment_count || 0 }
+						commentCount={ post?.comment_count || 0 }
+						locale={ userLocale }
 					/>
 
 					<Card className="highlight-card">

@@ -249,19 +249,29 @@ const getBlocksTracker = ( eventName ) => ( blockIds, fromRootClientId, toRootCl
  *
  * @param {Array} actionData Data supplied to block insertion or replacement tracking functions.
  * @param {Object} additionalData Additional information.
- * @returns {string} Pattern name being inserted if available.
+ * @returns {Object|null} The inserted pattern with its name and category if available.
  */
 const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
+	const SELECTORS = {
+		// The selected category from the “Explore all patterns modal”
+		PATTERN_EXPLORER_SELECTED_CATEGORY:
+			'.block-editor-block-patterns-explorer__sidebar__categories-list__item.is-pressed',
+		// The selected category from the pattern inserter
+		PATTERN_INSERTER_SELECTED_CATEGORY: '.block-editor-inserter__patterns-selected-category',
+	};
+
+	const { rootClientId, blocks_replaced, insert_method } = additionalData;
+	const context = getBlockEventContextProperties( rootClientId );
+	const {
+		__experimentalBlockPatterns: patterns,
+		__experimentalBlockPatternCategories: patternCategories,
+	} = select( 'core/block-editor' ).getSettings();
+
 	const meta = find( actionData, ( item ) => item?.patternName );
 	let patternName = meta?.patternName;
-
-	const { rootClientId, blocks_replaced } = additionalData;
-	const context = getBlockEventContextProperties( rootClientId );
-
 	// Quick block inserter doesn't use an object to store the patternName
 	// in the metadata. The pattern name is just directly used as a string.
 	if ( ! patternName ) {
-		const patterns = select( 'core/block-editor' ).getSettings().__experimentalBlockPatterns;
 		const actionDataToCheck = Object.values( actionData ).filter(
 			( data ) => typeof data === 'string'
 		);
@@ -272,19 +282,29 @@ const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
 	}
 
 	if ( patternName ) {
-		const patternCategory =
-			// Pattern category dropdown in global inserter
-			document.querySelector( '.block-editor-inserter__panel-header-patterns select' )?.value;
+		const categoryElement =
+			document.querySelector( SELECTORS.PATTERN_EXPLORER_SELECTED_CATEGORY ) ||
+			document.querySelector( SELECTORS.PATTERN_INSERTER_SELECTED_CATEGORY );
+
+		const patternCategory = patternCategories.find(
+			( { label } ) => label === categoryElement?.ariaLabel
+		);
 
 		tracksRecordEvent( 'wpcom_pattern_inserted', {
 			pattern_name: patternName,
-			pattern_category: patternCategory,
+			pattern_category: patternCategory?.name,
 			blocks_replaced,
+			insert_method,
 			...context,
 		} );
+
+		return {
+			name: patternName,
+			categoryName: patternCategory?.name,
+		};
 	}
 
-	return patternName;
+	return null;
 };
 
 /**
@@ -296,15 +316,19 @@ const maybeTrackPatternInsertion = ( actionData, additionalData ) => {
  */
 const trackBlockInsertion = ( blocks, ...args ) => {
 	const [ , rootClientId ] = args;
-	const patternName = maybeTrackPatternInsertion( args, { rootClientId, blocks_replaced: false } );
-	const context = getBlockEventContextProperties( rootClientId );
-
 	const insert_method = getBlockInserterUsed();
+	const insertedPattern = maybeTrackPatternInsertion( args, {
+		rootClientId,
+		blocks_replaced: false,
+		insert_method,
+	} );
+	const context = getBlockEventContextProperties( rootClientId );
 
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
 		blocks_replaced: false,
-		pattern_name: patternName,
+		pattern_name: insertedPattern?.name,
+		pattern_category: insertedPattern?.categoryName,
 		insert_method,
 		...context,
 	} ) );
@@ -344,15 +368,19 @@ const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
 	const rootClientId = select( 'core/block-editor' ).getBlockRootClientId(
 		Array.isArray( originalBlockIds ) ? originalBlockIds[ 0 ] : originalBlockIds
 	);
-	const patternName = maybeTrackPatternInsertion( args, { rootClientId, blocks_replaced: true } );
-	const context = getBlockEventContextProperties( rootClientId );
-
 	const insert_method = getBlockInserterUsed( originalBlockIds );
+	const insertedPattern = maybeTrackPatternInsertion( args, {
+		rootClientId,
+		blocks_replaced: true,
+		insert_method,
+	} );
+	const context = getBlockEventContextProperties( rootClientId );
 
 	trackBlocksHandler( blocks, 'wpcom_block_picker_block_inserted', ( { name } ) => ( {
 		block_name: name,
 		blocks_replaced: true,
-		pattern_name: patternName,
+		pattern_name: insertedPattern?.name,
+		pattern_category: insertedPattern?.categoryName,
 		insert_method,
 		...context,
 	} ) );

@@ -20,6 +20,7 @@ import {
 	sidebar,
 	updateLastRoute,
 	blogDiscoveryByFeedId,
+	sitesSubscriptionManager,
 } from './controller';
 
 import './style.scss';
@@ -118,6 +119,17 @@ export default async function () {
 		updateLastRoute,
 		sidebar,
 		readFollowingP2,
+		makeLayout,
+		clientRender
+	);
+
+	// Sites subscription management
+	page(
+		'/read/subscriptions',
+		redirectLoggedOut,
+		updateLastRoute,
+		sidebar,
+		sitesSubscriptionManager,
 		makeLayout,
 		clientRender
 	);

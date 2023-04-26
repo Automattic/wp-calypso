@@ -1,5 +1,5 @@
 import { Popover } from '@wordpress/components';
-import { LegacyRef, useCallback, useMemo, useRef, useState } from 'react';
+import { LegacyRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 interface SubmenuPopoverProps extends Popover.Props {
 	isVisible?: boolean;
@@ -51,15 +51,26 @@ function useCloseSubmenuA11y() {
  * Checks if the submenu popover has enough space to be displayed on the right.
  * If not, it will return false to be displayed on the left.
  */
-function useHasRightSpace( element: HTMLElement | undefined ): boolean {
+function useHasRightSpace( parentElement: HTMLElement | undefined, isVisible: boolean ): boolean {
+	const [ widthSubmenu, setWidthSubmenu ] = useState( 0 );
+
+	useEffect( () => {
+		if ( isVisible && parentElement ) {
+			const submenuElement = parentElement.querySelector< HTMLElement >( '.submenu-popover' );
+			if ( submenuElement ) {
+				setWidthSubmenu( submenuElement.offsetWidth );
+			}
+		}
+	}, [ parentElement, isVisible ] );
+
 	return useMemo( () => {
-		if ( ! element ) {
+		if ( ! parentElement ) {
 			return true;
 		}
-		const calculatedThreshold = element.offsetWidth * 1.1;
-		const { right } = element.getBoundingClientRect();
+		const calculatedThreshold = widthSubmenu;
+		const { right } = parentElement.getBoundingClientRect();
 		return window.innerWidth - right > calculatedThreshold;
-	}, [ element ] );
+	}, [ parentElement, widthSubmenu ] );
 }
 
 export function useSubmenuPopoverProps< T extends HTMLElement >(
@@ -68,13 +79,14 @@ export function useSubmenuPopoverProps< T extends HTMLElement >(
 	const { offsetTop = 0 } = options;
 	const [ isVisible, setIsVisible ] = useState( false );
 	const anchor = useRef< T >();
-	const hasRightSpace = useHasRightSpace( anchor?.current );
+	const parentElement = anchor?.current;
+	const hasRightSpace = useHasRightSpace( parentElement, isVisible );
 	const closeSubmenuA11y = useCloseSubmenuA11y();
 
 	const submenu: Partial< SubmenuPopoverProps > = {
 		isVisible,
 		placement: hasRightSpace ? 'right-start' : 'left-start',
-		anchorRef: anchor,
+		anchorRect: anchor?.current?.getBoundingClientRect(),
 		offset: { crossAxis: offsetTop },
 		__unstableForcePosition: true,
 	};

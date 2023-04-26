@@ -18,7 +18,6 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
 import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 import EmptyContent from 'calypso/components/empty-content';
-import FormattedHeader from 'calypso/components/formatted-header';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import Main from 'calypso/components/main';
@@ -42,7 +41,9 @@ import ChartTabs from './stats-chart-tabs';
 import Countries from './stats-countries';
 import DatePicker from './stats-date-picker';
 import StatsModule from './stats-module';
+import StatsModuleEmails from './stats-module-emails';
 import StatsNotices from './stats-notices';
+import StatsPageHeader from './stats-page-header';
 import StatsPeriodHeader from './stats-period-header';
 import StatsPeriodNavigation from './stats-period-navigation';
 import statsStrings from './stats-strings';
@@ -169,22 +170,13 @@ class StatsSite extends Component {
 						<JetpackBackupCredsBanner event="stats-backup-credentials" />
 					</div>
 				) }
-				<FormattedHeader
-					brandFont
-					className="stats__section-header modernized-header"
-					headerText={ translate( 'Jetpack Stats' ) }
-					align="left"
+				<StatsPageHeader
+					page="traffic"
 					subHeaderText={ translate(
 						"Learn more about the activity and behavior of your site's visitors. {{learnMoreLink}}Learn more{{/learnMoreLink}}",
 						{
 							components: {
-								learnMoreLink: (
-									<InlineSupportLink
-										supportContext="stats"
-										showIcon={ false }
-										showSupportModal={ ! isOdysseyStats }
-									/>
-								),
+								learnMoreLink: <InlineSupportLink supportContext="stats" showIcon={ false } />,
 							},
 						}
 					) }
@@ -294,30 +286,7 @@ class StatsSite extends Component {
 							showSummaryLink
 						/>
 						{ config.isEnabled( 'newsletter/stats' ) && ! isOdysseyStats && (
-							<>
-								<StatsModule
-									additionalColumns={ {
-										header: (
-											<>
-												<span>{ translate( 'Opens' ) }</span>
-											</>
-										),
-										body: ( item ) => (
-											<>
-												<span>{ item.opens }</span>
-											</>
-										),
-									} }
-									path="emails"
-									moduleStrings={ moduleStrings.emails }
-									period={ this.props.period }
-									query={ query }
-									statType="statsEmailsSummary"
-									mainItemLabel={ translate( 'Latest Emails' ) }
-									metricLabel={ translate( 'Clicks' ) }
-									showSummaryLink
-								/>
-							</>
+							<StatsModuleEmails period={ this.props.period } query={ query } />
 						) }
 						{
 							// File downloads are not yet supported in Jetpack Stats
@@ -343,6 +312,7 @@ class StatsSite extends Component {
 				) }
 				<PromoCards isOdysseyStats={ isOdysseyStats } pageSlug="traffic" slug={ slug } />
 				<JetpackColophon />
+				<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 			</div>
 		);
 	}
@@ -375,7 +345,7 @@ class StatsSite extends Component {
 		sessionStorage.setItem( 'jp-stats-last-tab', 'traffic' );
 
 		return (
-			<Main fullWidthLayout>
+			<Main fullWidthLayout ariaLabel={ translate( 'Jetpack Stats' ) }>
 				{ /* Odyssey: Google My Business pages are currently unsupported. */ }
 				{ ! isOdysseyStats && (
 					<>

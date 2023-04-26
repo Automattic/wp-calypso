@@ -190,13 +190,12 @@ export interface CartSyncManager {
 }
 
 export interface RequestCart {
-	blog_id?: number | string;
+	blog_id: number;
 	cart_key?: CartKey;
 	products: RequestCartProduct[];
 	tax: RequestCartTaxData;
 	coupon: string;
 	temporary: false;
-	create_new_blog?: boolean;
 }
 
 export type RequestCartTaxData = null | {
@@ -224,8 +223,7 @@ export type MinimalRequestCartProduct = Partial< RequestCartProduct > &
 	Pick< RequestCartProduct, 'product_slug' >;
 
 export interface ResponseCart< P = ResponseCartProduct > {
-	blog_id: number | string;
-	create_new_blog: boolean;
+	blog_id: number;
 	cart_key: CartKey;
 	products: P[];
 
@@ -305,7 +303,6 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	next_domain_is_free: boolean;
 	next_domain_condition: '' | 'blog';
 	bundled_domain?: string;
-	has_bundle_credit?: boolean;
 	terms_of_service?: TermsOfServiceRecord[];
 	has_pending_payment?: boolean;
 }
@@ -562,10 +559,17 @@ export interface ResponseCartProductExtra {
 
 	afterPurchaseUrl?: string;
 	isJetpackCheckout?: boolean;
+	isAkismetSitelessCheckout?: boolean;
 
-	// Marketplace properties
+	/**
+	 * Marketplace properties
+	 *
+	 * These extra properties are always set for marketplace products.
+	 * `product_slug` is for identifying the product, and `product_type` is for identifying the type of the product.
+	 */
 	is_marketplace_product?: boolean;
-	plugin_slug?: boolean;
+	product_slug?: string;
+	product_type?: 'marketplace_plugin' | 'marketplace_theme';
 }
 
 export interface ResponseCartGiftDetails {
@@ -576,6 +580,7 @@ export interface ResponseCartGiftDetails {
 
 export interface RequestCartProductExtra extends ResponseCartProductExtra {
 	purchaseId?: string;
+	isAkismetSitelessCheckout?: boolean;
 	isJetpackCheckout?: boolean;
 	isGiftPurchase?: boolean;
 	jetpackSiteSlug?: string;

@@ -115,14 +115,12 @@ export class LayoutGridBlockFlow implements BlockFlow {
 	 * @param {PublishedPostContext} context The current context for the published post at the point of test execution.
 	 */
 	async validateAfterPublish( context: PublishedPostContext ): Promise< void > {
-		const expectedLeftColumnTextLocator = context.page.locator(
-			`text=${ this.configurationData.leftColumnText }`
-		);
-		await expectedLeftColumnTextLocator.waitFor();
+		await context.page
+			.locator( `:text("${ this.configurationData.leftColumnText }"):visible` )
+			.waitFor();
 
-		const expectedRightColumnTextLocator = context.page.locator(
-			`text=${ this.configurationData.rightColumnText }`
-		);
-		await expectedRightColumnTextLocator.waitFor();
+		await context.page
+			.locator( `:text("${ this.configurationData.rightColumnText }"):visible` )
+			.waitFor();
 	}
 }

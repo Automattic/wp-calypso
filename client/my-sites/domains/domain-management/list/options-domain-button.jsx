@@ -2,13 +2,14 @@
 
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Button } from '@automattic/components';
-import { Icon, moreVertical, plus, search } from '@wordpress/icons';
+import { Icon, plus, search } from '@wordpress/icons';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
 import { createRef, Component, Fragment } from 'react';
 import { connect } from 'react-redux';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenu from 'calypso/components/popover-menu';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import { domainAddNew, domainUseMyDomain } from 'calypso/my-sites/domains/paths';
@@ -94,11 +95,7 @@ class AddDomainButton extends Component {
 	};
 
 	renderLabel() {
-		const { ellipsisButton, specificSiteActions, translate } = this.props;
-
-		if ( ellipsisButton ) {
-			return <Icon icon={ moreVertical } className="options-domain-button__ellipsis gridicon" />;
-		}
+		const { specificSiteActions, translate } = this.props;
 
 		let label = translate( 'Other domain options' );
 		if ( specificSiteActions ) {
@@ -116,6 +113,14 @@ class AddDomainButton extends Component {
 	render() {
 		const { specificSiteActions, ellipsisButton, borderless } = this.props;
 		const classes = classNames( 'options-domain-button', ellipsisButton && 'ellipsis' );
+
+		if ( ellipsisButton ) {
+			return (
+				<EllipsisMenu popoverClassName="options-domain-button__popover" position="bottom">
+					{ this.renderOptions() }
+				</EllipsisMenu>
+			);
+		}
 
 		return (
 			<Fragment>

@@ -71,6 +71,7 @@ cached-requests.json
 /build-tools/dist/
 /apps/*/.cache/
 /desktop/.cache/
+/apps/*/release-files/
 
 # webpack assets
 /assets*.json
@@ -115,3 +116,6 @@ yarn-json-output.json
 
 # Profile results:
 /profiles/
+
+# Storybook
+storybook-static

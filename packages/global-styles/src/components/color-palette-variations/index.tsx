@@ -1,6 +1,10 @@
+import {
+	__unstableComposite as Composite,
+	__unstableUseCompositeState as useCompositeState,
+	__unstableCompositeItem as CompositeItem,
+} from '@wordpress/components';
 import { GlobalStylesContext } from '@wordpress/edit-site/build-module/components/global-styles/context';
 import { mergeBaseAndUserConfigs } from '@wordpress/edit-site/build-module/components/global-styles/global-styles-provider';
-import { ENTER } from '@wordpress/keycodes';
 import classnames from 'classnames';
 import { translate } from 'i18n-calypso';
 import { useMemo, useContext } from 'react';
@@ -12,6 +16,7 @@ import './style.scss';
 interface ColorPaletteVariationProps {
 	colorPaletteVariation: GlobalStylesObject;
 	isActive: boolean;
+	composite?: Record< string, unknown >;
 	onSelect: () => void;
 }
 
@@ -25,6 +30,7 @@ interface ColorPaletteVariationsProps {
 const ColorPaletteVariation = ( {
 	colorPaletteVariation,
 	isActive,
+	composite,
 	onSelect,
 }: ColorPaletteVariationProps ) => {
 	const { base } = useContext( GlobalStylesContext );
@@ -36,36 +42,29 @@ const ColorPaletteVariation = ( {
 		};
 	}, [ colorPaletteVariation, base ] );
 
-	const selectOnEnter = ( event: React.KeyboardEvent ) => {
-		if ( event.keyCode === ENTER ) {
-			event.preventDefault();
-			onSelect();
-		}
-	};
-
 	return (
-		<div
+		<CompositeItem
+			role="option"
+			as="button"
+			{ ...composite }
 			className={ classnames( 'global-styles-variation__item', {
 				'is-active': isActive,
 			} ) }
-			role="button"
 			onClick={ onSelect }
-			onKeyDown={ selectOnEnter }
-			tabIndex={ 0 }
 			aria-current={ isActive }
 			aria-label={
 				translate( 'Color: %s', {
 					comment: 'Aria label for color preview buttons',
-					args: colorPaletteVariation.title,
+					args: colorPaletteVariation.title ?? translate( 'Default' ),
 				} ) as string
 			}
 		>
 			<div className="global-styles-variation__item-preview">
 				<GlobalStylesContext.Provider value={ context }>
-					<ColorPaletteVariationPreview />
+					<ColorPaletteVariationPreview title={ colorPaletteVariation.title } />
 				</GlobalStylesContext.Provider>
 			</div>
-		</div>
+		</CompositeItem>
 	);
 };
 
@@ -77,13 +76,20 @@ const ColorPaletteVariations = ( {
 }: ColorPaletteVariationsProps ) => {
 	const { base } = useContext( GlobalStylesContext );
 	const colorPaletteVariations = useColorPaletteVariations( siteId, stylesheet ) ?? [];
+	const composite = useCompositeState();
 
 	return (
-		<div className="color-palette-variations">
+		<Composite
+			{ ...composite }
+			role="listbox"
+			className="color-palette-variations"
+			aria-label={ translate( 'Color palette variations' ) }
+		>
 			<ColorPaletteVariation
 				key="base"
 				colorPaletteVariation={ base }
 				isActive={ ! selectedColorPaletteVariation }
+				composite={ composite }
 				onSelect={ () => onSelect( null ) }
 			/>
 			{ colorPaletteVariations.map( ( colorPaletteVariation, index ) => (
@@ -91,10 +97,11 @@ const ColorPaletteVariations = ( {
 					key={ index }
 					colorPaletteVariation={ colorPaletteVariation }
 					isActive={ colorPaletteVariation.title === selectedColorPaletteVariation?.title }
+					composite={ composite }
 					onSelect={ () => onSelect( colorPaletteVariation ) }
 				/>
 			) ) }
-		</div>
+		</Composite>
 	);
 };
 

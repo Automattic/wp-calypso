@@ -96,7 +96,7 @@ const ATOMIC_REVIVAL_TASKS = [
 	TASK_REACTIVATE_RESTORE_BACKUP,
 ] as const;
 
-type AtomicRevivalTask = typeof ATOMIC_REVIVAL_TASKS[ number ];
+type AtomicRevivalTask = ( typeof ATOMIC_REVIVAL_TASKS )[ number ];
 
 function isRevivalTask( card: string ): card is AtomicRevivalTask {
 	return ATOMIC_REVIVAL_TASKS.includes( card as AtomicRevivalTask );

@@ -1,5 +1,6 @@
 /**
  * @group gutenberg
+ * @group jetpack-wpcom-integration
  */
 
 import {

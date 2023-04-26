@@ -12,6 +12,10 @@ export const getSettingsUrl = ( slug: string ) => {
 	return `/settings/general/${ slug }`;
 };
 
+export const getSiteLogsUrl = ( slug: string ) => {
+	return `/site-logs/${ slug }`;
+};
+
 export const getPluginsUrl = ( slug: string ) => {
 	return `/plugins/${ slug }`;
 };
@@ -38,6 +42,10 @@ export const isNotAtomicJetpack = ( site: SiteExcerptNetworkData ) => {
 
 export const isP2Site = ( site: SiteExcerptNetworkData ) => {
 	return site.options?.is_wpforteams_site;
+};
+
+export const isStagingSite = ( site: SiteExcerptNetworkData | undefined ) => {
+	return site?.is_wpcom_staging_site;
 };
 
 export const SMALL_MEDIA_QUERY = 'screen and ( max-width: 600px )';

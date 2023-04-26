@@ -1,6 +1,7 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { BlockSaveProps } from '@wordpress/blocks';
 import { FunctionComponent } from 'react';
+import config from '../config';
 import { BlockPlan } from '../hooks/pricing-plans';
 import { BlockAttributes } from '../types';
 import BillingButton from './billing-button';
@@ -26,6 +27,10 @@ const PricingPlanDetail: FunctionComponent< BlockSaveProps< BlockAttributes > & 
 	setPlan,
 } ) => {
 	const onCtaClick = () => {
+		if ( ! config.features.tracking ) {
+			return;
+		}
+
 		recordTracksEvent( 'calypso_happyblocks_upgrade_plan_click', {
 			plan: currentPlan.productSlug,
 			domain: attributes.domain,

@@ -8,6 +8,10 @@ import {
 	PLAN_PREMIUM_MONTHLY,
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE_MONTHLY,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_STARTER,
 	TYPE_FREE,
@@ -108,6 +112,23 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
+			props: {
+				hideFreePlan: true,
+				hideEnterprisePlan: true,
+			},
+		},
+
+		// TODO
+		// The new pricing grid and the legacy one act differently
+		// when a paid domain is picked, and the new pricing grid is currently
+		// having different behavior on different flow on the paid domain +
+		// Free plan case. We can deprecate this once that specific behavior
+		// is settled and that we decide to migrate `site-selected` as a reskinned flow.
+		'plans-site-selected-legacy': {
+			stepName: 'plans-site-selected-legacy',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
 		},
 
 		site: {
@@ -130,6 +151,24 @@ export function generateSteps( {
 			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+
+		'user-hosting': {
+			stepName: 'user-hosting',
+			apiRequestFunction: createAccount,
+			providesToken: true,
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'plans_reorder_abtest_variation',
+				'redirect',
+			],
+			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+				isPasswordless: true,
 			},
 		},
 
@@ -205,6 +244,22 @@ export function generateSteps( {
 			fulfilledStepCallback: isPlanFulfilled,
 		},
 
+		'plans-hosting': {
+			stepName: 'plans',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				hideFreePlan: true,
+				hidePremiumPlan: true,
+				hidePersonalPlan: true,
+				hideEnterprisePlan: true,
+				shouldHideNavButtons: true,
+			},
+		},
+
 		'plans-pm': {
 			stepName: 'plans-pm',
 			apiRequestFunction: addPlanToCart,
@@ -213,20 +268,6 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
 		},
-
-		'plans-newsletter': {
-			stepName: 'plans',
-			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug' ],
-			optionalDependencies: [ 'emailItem' ],
-			providesDependencies: [ 'cartItem', 'themeSlugWithRepo', 'comingSoon' ],
-			fulfilledStepCallback: isPlanFulfilled,
-			props: {
-				themeSlugWithRepo: 'pub/lettre',
-				launchSite: true,
-			},
-		},
-
 		'plans-new': {
 			stepName: 'plans',
 			providesDependencies: [ 'cartItem' ],
@@ -391,16 +432,6 @@ export function generateSteps( {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
 			props: {
-				isDomainOnly: true,
-				forceHideFreeDomainExplainerAndStrikeoutUi: true,
-			},
-		},
-
-		'select-domain': {
-			stepName: 'select-domain',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ], // note: siteId, siteSlug are not provided when used in add-domain flow
-			props: {
-				isAllDomains: true,
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 			},
@@ -690,6 +721,51 @@ export function generateSteps( {
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			defaultDependencies: {
 				cartItem: PLAN_ECOMMERCE_MONTHLY,
+				themeSlugWithRepo: 'pub/twentytwentytwo',
+			},
+		},
+
+		'plans-personal-2y': {
+			stepName: 'plans-personal-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PERSONAL_2_YEARS,
+			},
+		},
+
+		'plans-premium-2y': {
+			stepName: 'plans-premium-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_PREMIUM_2_YEARS,
+			},
+		},
+
+		'plans-business-2y': {
+			stepName: 'plans-business-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
+			defaultDependencies: {
+				cartItem: PLAN_BUSINESS_2_YEARS,
+			},
+		},
+
+		'plans-ecommerce-2y': {
+			stepName: 'plans-ecommerce-2y',
+			apiRequestFunction: addPlanToCart,
+			fulfilledStepCallback: isPlanFulfilled,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			defaultDependencies: {
+				cartItem: PLAN_ECOMMERCE_2_YEARS,
 				themeSlugWithRepo: 'pub/twentytwentytwo',
 			},
 		},

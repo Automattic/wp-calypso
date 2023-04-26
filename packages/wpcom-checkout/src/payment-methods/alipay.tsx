@@ -16,20 +16,15 @@ import type {
 	StoreState,
 } from '../payment-method-store';
 import type { PaymentMethod, ProcessPayment, LineItem } from '@automattic/composite-checkout';
+import type { AnyAction } from 'redux';
 
 const debug = debugFactory( 'wpcom-checkout:alipay-payment-method' );
 
 // Disabling this to make migration easier
 /* eslint-disable @typescript-eslint/no-use-before-define */
 
-type StoreKey = 'alipay';
 type NounsInStore = 'customerName';
 type AlipayStore = PaymentMethodStore< NounsInStore >;
-
-declare module '@wordpress/data' {
-	function select( key: StoreKey ): StoreSelectors< NounsInStore >;
-	function dispatch( key: StoreKey ): StoreActions< NounsInStore >;
-}
 
 const actions: StoreActions< NounsInStore > = {
 	changeCustomerName( payload ) {
@@ -50,7 +45,7 @@ export function createAlipayPaymentMethodStore(): AlipayStore {
 			state: StoreState< NounsInStore > = {
 				customerName: { value: '', isTouched: false },
 			},
-			action
+			action: AnyAction
 		): StoreState< NounsInStore > {
 			switch ( action.type ) {
 				case 'CUSTOMER_NAME_SET':
@@ -61,6 +56,17 @@ export function createAlipayPaymentMethodStore(): AlipayStore {
 		actions,
 		selectors,
 	} );
+}
+
+function useCustomerName() {
+	const { customerName } = useSelect( ( select ) => {
+		const store = select( 'alipay' ) as StoreSelectors< NounsInStore >;
+		return {
+			customerName: store.getCustomerName(),
+		};
+	}, [] );
+
+	return customerName;
 }
 
 export function createAlipayMethod( { store }: { store: AlipayStore } ): PaymentMethod {
@@ -78,7 +84,7 @@ export function createAlipayMethod( { store }: { store: AlipayStore } ): Payment
 function AlipayFields() {
 	const { __ } = useI18n();
 
-	const customerName = useSelect( ( select ) => select( 'alipay' ).getCustomerName() );
+	const customerName = useCustomerName();
 	const { changeCustomerName } = useDispatch( 'alipay' );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
@@ -140,7 +146,7 @@ function AlipayPayButton( {
 } ) {
 	const total = useTotal();
 	const { formStatus } = useFormStatus();
-	const customerName = useSelect( ( select ) => select( 'alipay' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	// This must be typed as optional because it's injected by cloning the
 	// element in CheckoutSubmitButton, but the uncloned element does not have
@@ -256,7 +262,7 @@ function AlipayLogo() {
 }
 
 function AlipaySummary() {
-	const customerName = useSelect( ( select ) => select( 'alipay' ).getCustomerName() );
+	const customerName = useCustomerName();
 
 	return (
 		<SummaryDetails>

@@ -9,6 +9,7 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CoursesFooter from './footer';
 import type { Step } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
 
 /**
@@ -21,7 +22,7 @@ const CoursesStep: Step = function CoursesStep( { navigation } ) {
 	const courseSlug = COURSE_SLUGS.BLOGGING_QUICK_START;
 	const { isCourseComplete } = useCourseData( courseSlug );
 	const hideSkip = isMobile && isCourseComplete;
-	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
 
 	return (
 		<>

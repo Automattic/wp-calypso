@@ -1,7 +1,6 @@
 import {
 	StepContainer,
 	isNewsletterOrLinkInBioFlow,
-	isLinkInBioFlow,
 	isFreeFlow,
 	isUpdateDesignFlow,
 	ECOMMERCE_FLOW,
@@ -17,18 +16,13 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useInterval } from 'calypso/lib/interval';
 import useCaptureFlowException from '../../../../hooks/use-capture-flow-exception';
+import { ProcessingResult } from './constants';
 import { useProcessingLoadingMessages } from './hooks/use-processing-loading-messages';
 import { useVideoPressLoadingMessages } from './hooks/use-videopress-loading-messages';
 import TailoredFlowPreCheckoutScreen from './tailored-flow-precheckout-screen';
 import type { StepProps } from '../../types';
+import type { OnboardSelect } from '@automattic/data-stores';
 import './style.scss';
-
-export enum ProcessingResult {
-	NO_ACTION = 'no-action',
-	SUCCESS = 'success',
-	FAILURE = 'failure',
-}
-
 interface ProcessingStepProps extends StepProps {
 	title?: string;
 	subtitle?: string;
@@ -52,10 +46,22 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 		setCurrentMessageIndex( ( s ) => ( s + 1 ) % loadingMessages.length );
 	}, loadingMessages[ currentMessageIndex ]?.duration );
 
-	const action = useSelect( ( select ) => select( ONBOARD_STORE ).getPendingAction() );
-	const progress = useSelect( ( select ) => select( ONBOARD_STORE ).getProgress() );
-	const progressTitle = useSelect( ( select ) => select( ONBOARD_STORE ).getProgressTitle() );
-	const stepProgress = useSelect( ( select ) => select( ONBOARD_STORE ).getStepProgress() );
+	const action = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getPendingAction(),
+		[]
+	);
+	const progress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgress(),
+		[]
+	);
+	const progressTitle = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getProgressTitle(),
+		[]
+	);
+	const stepProgress = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getStepProgress(),
+		[]
+	);
 
 	const getCurrentMessage = () => {
 		return props.title || progressTitle || loadingMessages[ currentMessageIndex ]?.title;
@@ -105,8 +111,12 @@ const ProcessingStep: React.FC< ProcessingStepProps > = function ( props ) {
 	const isJetpackPowered = isNewsletterOrLinkInBioFlow( flowName );
 	const isWooCommercePowered = flowName === ECOMMERCE_FLOW;
 
-	// Currently we have the Domains and Plans only for link in bio
-	if ( isLinkInBioFlow( flowName ) || isFreeFlow( flowName ) || isUpdateDesignFlow( flowName ) ) {
+	// Return tailored processing screens for flows that need them
+	if (
+		isNewsletterOrLinkInBioFlow( flowName ) ||
+		isFreeFlow( flowName ) ||
+		isUpdateDesignFlow( flowName )
+	) {
 		return <TailoredFlowPreCheckoutScreen flowName={ flowName } />;
 	}
 

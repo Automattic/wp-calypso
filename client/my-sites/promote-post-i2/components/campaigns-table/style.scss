@@ -1,0 +1,86 @@
+@import "@automattic/typography/styles/variables";
+
+$font-sf-pro-display: "SF Pro Display", $sans;
+$font-sf-pro-text: "SF Pro Text", $sans;
+
+.promote-post__table {
+	th {
+		font-family: $font-sf-pro-text;
+		font-style: normal;
+		font-weight: 400;
+		font-size: 1rem;
+		line-height: 20px;
+		letter-spacing: -0.15px;
+		color: #50575e;
+		padding-bottom: 8px;
+	}
+
+	tr {
+		font-size: 1rem;
+	}
+
+	tr td:last-child {
+		border: 0;
+	}
+
+	td {
+		padding-top: 16px;
+		padding-bottom: 12px;
+		border-top: 1px solid #d8d8d8; /* #EEEEEE if bg is white */
+		font-size: 1rem;
+		vertical-align: middle;
+	}
+
+
+	.promote-post__campaign-item-wrapper {
+		display: flex;
+		align-items: center;
+	}
+
+	.campaign-item__header-image img {
+		border-radius: 4px;
+		width: 108px;
+		height: 78px;
+		margin-right: 16px;
+	}
+
+	.badge {
+		border-radius: 4px;
+		font-size: 0.875rem;
+
+		&.badge--error {
+			background-color: #facfd2;
+			color: #8a2424;
+		}
+
+		&.badge--warning {
+			color: #4f3500;
+			background-color: #f5e6b3;
+		}
+
+		&.badge--success {
+			color: #00450c;
+			background-color: #b8e6bf;
+		}
+
+		&.badge--info {
+			color: var(--color-neutral-70);
+			background-color: var(--color-neutral-5);
+		}
+
+		&.badge--info-blue {
+			background-color: #bbe0fa;
+			color: #02395c;
+		}
+
+		&.badge--info-green {
+			color: var(--studio-green-80);
+			background-color: rgba(184, 230, 191, 0.64);
+		}
+
+		&.badge--info-purple {
+			color: var(--studio-woocommerce-purple-80);
+			background-color: var(--studio-woocommerce-purple-5);
+		}
+	}
+}

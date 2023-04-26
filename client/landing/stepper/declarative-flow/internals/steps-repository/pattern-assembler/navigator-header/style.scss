@@ -17,6 +17,10 @@
 		.button.is-borderless .gridicon {
 			top: 4px;
 		}
+
+		.premium-badge {
+			margin-inline-start: 20px;
+		}
 	}
 
 	.navigator-header__description {
@@ -24,7 +28,7 @@
 		line-height: 24px;
 		letter-spacing: -0.1px;
 		color: var(--color-neutral-60);
-		padding-bottom: 24px;
+		padding-bottom: 16px;
 	}
 }
 

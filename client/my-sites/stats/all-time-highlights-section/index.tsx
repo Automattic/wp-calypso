@@ -1,10 +1,9 @@
-import config from '@automattic/calypso-config';
 import {
 	Card,
 	ComponentSwapper,
-	PercentCalculator as percentCalculator,
-	ShortenedNumber,
 	formattedNumber,
+	percentCalculator,
+	ShortenedNumber,
 } from '@automattic/components';
 import { eye } from '@automattic/components/src/icons';
 import { Icon, people, postContent, starEmpty, commentContent } from '@wordpress/icons';
@@ -14,12 +13,12 @@ import { useSelector } from 'react-redux';
 import QueryPosts from 'calypso/components/data/query-posts';
 import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import DotPager from 'calypso/components/dot-pager';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
 } from 'calypso/state/stats/lists/selectors';
-import LatestPostCard from './latest-post-card';
-import MostPopularPostCard from './most-popular-card';
+import PostCardsGroup from './post-cards-group';
 
 import './style.scss';
 
@@ -65,6 +64,8 @@ export default function AllTimeHighlightsSection( {
 	const { day, percent, hour, hourPercent } = useSelector(
 		( state ) => getSiteStatsNormalizedData( state, siteId, 'statsInsights', insightsQuery ) || {}
 	) as MostPopularData;
+
+	const userLocale = useSelector( getCurrentUserLocale );
 
 	const isStatsLoading = isStatsRequesting && ! views;
 	const isInsightsLoading = isInsightsRequesting && ! percent;
@@ -113,11 +114,12 @@ export default function AllTimeHighlightsSection( {
 
 		if ( viewsBestDay && ! isStatsLoading ) {
 			const theDay = new Date( viewsBestDay );
-			bestViewsEverMonthDay = theDay.toLocaleDateString( undefined, {
+
+			bestViewsEverMonthDay = theDay.toLocaleDateString( userLocale, {
 				month: 'long',
 				day: 'numeric',
 			} );
-			bestViewsEverYear = theDay.toLocaleDateString( undefined, {
+			bestViewsEverYear = theDay.toLocaleDateString( userLocale, {
 				year: 'numeric',
 			} );
 		}
@@ -128,7 +130,7 @@ export default function AllTimeHighlightsSection( {
 
 		return {
 			id: 'bestViewsEver',
-			heading: translate( 'Best views ever' ),
+			heading: translate( 'Most popular day' ),
 			items: [
 				{
 					id: 'day',
@@ -147,17 +149,14 @@ export default function AllTimeHighlightsSection( {
 				},
 			],
 		};
-	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal ] );
-
-	const isLatestPostReplaced = config.isEnabled( 'stats/latest-post-stats' );
-	const isMostPopularPostShow = config.isEnabled( 'stats/most-popular-post' );
+	}, [ isStatsLoading, translate, views, viewsBestDay, viewsBestDayTotal, userLocale ] );
 
 	const mobileCards = (
 		<div className="highlight-cards-mobile">
-			<h1 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h1>
+			<h3 className="highlight-cards-heading">{ translate( 'Highlights' ) }</h3>
 			<DotPager>
 				<Card className="highlight-card">
-					<div className="highlight-card-heading">{ translate( 'All-time stats' ) }</div>
+					<h4 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h4>
 					<div className="highlight-card-info-item-list">
 						{ infoItems
 							.filter( ( i ) => ! i.hidden )
@@ -183,7 +182,7 @@ export default function AllTimeHighlightsSection( {
 				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
 					return (
 						<Card key={ card.id } className="highlight-card">
-							<div className="highlight-card-heading">{ card.heading }</div>
+							<h4 className="highlight-card-heading">{ card.heading }</h4>
 							<div className="highlight-card-detail-item-list">
 								{ card.items.map( ( item ) => {
 									return (
@@ -202,19 +201,17 @@ export default function AllTimeHighlightsSection( {
 				} ) }
 			</DotPager>
 
-			<div className="highlight-cards-list">
-				<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
-			</div>
+			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
 	);
 
 	const highlightCards = (
 		<div className="highlight-cards">
-			<h1 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h1>
+			<h3 className="highlight-cards-heading">{ translate( 'All-time highlights' ) }</h3>
 
 			<div className="highlight-cards-list">
 				<Card className="highlight-card">
-					<div className="highlight-card-heading">{ translate( 'All-time stats' ) }</div>
+					<h4 className="highlight-card-heading">{ translate( 'All-time stats' ) }</h4>
 					<div className="highlight-card-info-item-list">
 						{ infoItems
 							.filter( ( i ) => ! i.hidden )
@@ -240,7 +237,7 @@ export default function AllTimeHighlightsSection( {
 				{ [ mostPopularTimeItems, bestViewsEverItems ].map( ( card ) => {
 					return (
 						<Card key={ card.id } className="highlight-card">
-							<div className="highlight-card-heading">{ card.heading }</div>
+							<h4 className="highlight-card-heading">{ card.heading }</h4>
 							<div className="highlight-card-detail-item-list">
 								{ card.items.map( ( item ) => {
 									return (
@@ -259,14 +256,7 @@ export default function AllTimeHighlightsSection( {
 				} ) }
 			</div>
 
-			{ isLatestPostReplaced && (
-				<div className="highlight-cards-list">
-					<LatestPostCard siteId={ siteId } siteSlug={ siteSlug } />
-					{ isMostPopularPostShow && (
-						<MostPopularPostCard siteId={ siteId } siteSlug={ siteSlug } />
-					) }
-				</div>
-			) }
+			<PostCardsGroup siteId={ siteId } siteSlug={ siteSlug } />
 		</div>
 	);
 

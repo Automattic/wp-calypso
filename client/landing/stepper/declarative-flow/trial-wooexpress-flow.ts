@@ -4,16 +4,17 @@ import { useSiteSetupFlowProgress } from '../hooks/use-site-setup-flow-progress'
 import { useSiteSlugParam } from '../hooks/use-site-slug-param';
 import { USER_STORE, ONBOARD_STORE, SITE_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
-import AssignTrialPlanStep, {
-	AssignTrialResult,
-} from './internals/steps-repository/assign-trial-plan';
+import AssignTrialPlanStep from './internals/steps-repository/assign-trial-plan';
+import { AssignTrialResult } from './internals/steps-repository/assign-trial-plan/constants';
 import ErrorStep from './internals/steps-repository/error-step';
-import ProcessingStep, { ProcessingResult } from './internals/steps-repository/processing-step';
+import ProcessingStep from './internals/steps-repository/processing-step';
+import { ProcessingResult } from './internals/steps-repository/processing-step/constants';
 import SiteCreationStep from './internals/steps-repository/site-creation-step';
 import WaitForAtomic from './internals/steps-repository/wait-for-atomic';
 import WaitForPluginInstall from './internals/steps-repository/wait-for-plugin-install';
 import { AssertConditionState } from './internals/types';
 import type { AssertConditionResult, Flow, ProvidedDependencies } from './internals/types';
+import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
 
 const wooexpress: Flow = {
 	name: 'wooexpress',
@@ -29,11 +30,29 @@ const wooexpress: Flow = {
 		];
 	},
 	useAssertConditions(): AssertConditionResult {
-		const userIsLoggedIn = useSelect( ( select ) => select( USER_STORE ).isCurrentUserLoggedIn() );
+		const { setProfilerData } = useDispatch( ONBOARD_STORE );
+		const userIsLoggedIn = useSelect(
+			( select ) => ( select( USER_STORE ) as UserSelect ).isCurrentUserLoggedIn(),
+			[]
+		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };
 
 		const flowName = this.name;
 		const locale = useLocale();
+
+		const queryParams = new URLSearchParams( window.location.search );
+		const profilerData = queryParams.get( 'profilerdata' );
+
+		if ( profilerData ) {
+			try {
+				const decodedProfilerData = JSON.parse(
+					decodeURIComponent( escape( window.atob( profilerData ) ) )
+				);
+
+				setProfilerData( decodedProfilerData );
+				// Ignore any bad/invalid data and prevent it from causing downstream issues.
+			} catch {}
+		}
 
 		const getStartUrl = () => {
 			let hasFlowParams = false;
@@ -53,11 +72,6 @@ const wooexpress: Flow = {
 			}
 
 			return `/start/account/user?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
-
-			// Initial URL approach
-			const baseUrl = '/start/account/user' + ( locale && locale !== 'en' ? `/${ locale }` : '' );
-
-			return baseUrl + `?variationName=${ flowName }&redirect_to=${ redirectTarget }`;
 		};
 
 		if ( ! userIsLoggedIn ) {
@@ -73,7 +87,10 @@ const wooexpress: Flow = {
 	},
 	useStepNavigation( currentStep, navigate ) {
 		const flowName = this.name;
-		const intent = useSelect( ( select ) => select( ONBOARD_STORE ).getIntent() );
+		const intent = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
+			[]
+		);
 		const siteSlugParam = useSiteSlugParam();
 
 		const { setStepProgress, setPluginsToVerify } = useDispatch( ONBOARD_STORE );
@@ -82,7 +99,7 @@ const wooexpress: Flow = {
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
 		setStepProgress( flowProgress );
 
-		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) );
+		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );

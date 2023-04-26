@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
 import { useState } from '@wordpress/element';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import StyleVariationPreviews from './style-variation';
 import type { Category, StyleVariation } from '@automattic/design-picker/src/types';
 
@@ -53,6 +53,7 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	actionButtons,
 	showGlobalStylesPremiumBadge,
 } ) => {
+	const translate = useTranslate();
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
 	const isShowDescriptionToggle = shortDescription && description !== shortDescription;
 

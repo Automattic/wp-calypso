@@ -11,17 +11,20 @@ import './style.scss';
 interface Props {
 	sites: Array< SiteData >;
 	isLargeScreen?: boolean;
+	isLoading: boolean;
 }
 
-export default function EditButton( { sites, isLargeScreen }: Props ) {
+export default function EditButton( { sites, isLargeScreen, isLoading }: Props ) {
 	const translate = useTranslate();
 
 	const { setIsBulkManagementActive, setSelectedSites } = useContext( SitesOverviewContext );
 	const recordEvent = useJetpackAgencyDashboardRecordTrackEvent( null, isLargeScreen );
 
 	const handleToggleSelect = () => {
-		// Filter sites with site error as they are not selectable.
-		const filteredSite = sites.filter( ( site ) => ! site.site.error );
+		// Filter sites with site error or monitor error as they are not selectable.
+		const filteredSite = sites.filter(
+			( site ) => site.site.value.is_connected && ! site.monitor.error
+		);
 		setSelectedSites( filteredSite.map( ( item ) => item.site.value ) );
 	};
 
@@ -33,7 +36,12 @@ export default function EditButton( { sites, isLargeScreen }: Props ) {
 
 	return (
 		<ButtonGroup>
-			<Button className="dashboard-bulk-actions__edit-button" compact onClick={ handleEditAll }>
+			<Button
+				className="dashboard-bulk-actions__edit-button"
+				compact
+				onClick={ handleEditAll }
+				disabled={ isLoading }
+			>
 				{ translate( 'Edit All', { context: 'button label' } ) }
 			</Button>
 		</ButtonGroup>

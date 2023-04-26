@@ -3,6 +3,7 @@ import { CardElement } from '@stripe/react-stripe-js';
 import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
+import { creditCardStore } from 'calypso/state/partner-portal/credit-card-form';
 import type { StripeElementChangeEvent, StripeElementStyle } from '@stripe/stripe-js';
 
 export default function CreditCardElementField( {
@@ -17,8 +18,9 @@ export default function CreditCardElementField( {
 	const { __ } = useI18n();
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-	const { card: cardError } = useSelect( ( select ) =>
-		select( 'credit-card' ).getCardDataErrors()
+	const { card: cardError } = useSelect(
+		( select ) => select( creditCardStore ).getCardDataErrors(),
+		[]
 	);
 
 	return (

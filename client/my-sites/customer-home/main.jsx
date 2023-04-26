@@ -6,11 +6,13 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
+import AsyncLoad from 'calypso/components/async-load';
 import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import { useGetDomainsQuery } from 'calypso/data/domains/use-get-domains-query';
 import useHomeLayoutQuery from 'calypso/data/home/use-home-layout-query';
 import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -50,13 +52,15 @@ const Home = ( {
 	sitePlan,
 	isNew7DUser,
 } ) => {
-	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState(
-		getQueryArgs().celebrateLaunch === 'true'
-	);
+	const [ celebrateLaunchModalIsOpen, setCelebrateLaunchModalIsOpen ] = useState( false );
 
 	const translate = useTranslate();
 
 	const { data: layout, isLoading } = useHomeLayoutQuery( siteId );
+
+	const { data: allDomains = [], isSuccess } = useGetDomainsQuery( site?.ID ?? null, {
+		retry: false,
+	} );
 
 	const detectedCountryCode = useSelector( getCurrentUserCountryCode );
 	useEffect( () => {
@@ -78,6 +82,12 @@ const Home = ( {
 			window.hj( 'trigger', 'pnp_survey_1' );
 		}
 	}, [ detectedCountryCode, sitePlan, isNew7DUser ] );
+
+	useEffect( () => {
+		if ( getQueryArgs().celebrateLaunch === 'true' && isSuccess ) {
+			setCelebrateLaunchModalIsOpen( true );
+		}
+	}, [ isSuccess ] );
 
 	if ( ! canUserUseCustomerHome ) {
 		const title = translate( 'This page is not available on this site.' );
@@ -150,8 +160,13 @@ const Home = ( {
 				</>
 			) }
 			{ celebrateLaunchModalIsOpen && (
-				<CelebrateLaunchModal setModalIsOpen={ setCelebrateLaunchModalIsOpen } site={ site } />
+				<CelebrateLaunchModal
+					setModalIsOpen={ setCelebrateLaunchModalIsOpen }
+					site={ site }
+					allDomains={ allDomains }
+				/>
 			) }
+			<AsyncLoad require="calypso/lib/analytics/track-resurrections" placeholder={ null } />
 		</Main>
 	);
 };

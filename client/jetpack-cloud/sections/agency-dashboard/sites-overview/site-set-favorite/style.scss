@@ -5,15 +5,10 @@
 	position: absolute;
 	top: 6px;
 	color: var(--studio-gray-20) !important;
-
-	@include break-xlarge {
-		visibility: hidden;
-		color: var(--color-primary) !important;
-	}
 }
 
 .site-set-favorite__favorite-icon-active {
-	visibility: visible;
+	visibility: visible !important;
 	color: var(--color-primary) !important;
 }
 

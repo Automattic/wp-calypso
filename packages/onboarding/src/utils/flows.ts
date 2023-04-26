@@ -2,6 +2,7 @@ export const NEWSLETTER_FLOW = 'newsletter';
 export const NEWSLETTER_POST_SETUP_FLOW = 'newsletter-post-setup';
 export const HOSTING_LP_FLOW = 'hosting';
 export const LINK_IN_BIO_FLOW = 'link-in-bio';
+export const LINK_IN_BIO_DOMAIN_FLOW = 'link-in-bio-domain';
 export const LINK_IN_BIO_TLD_FLOW = 'link-in-bio-tld';
 export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
 export const VIDEOPRESS_FLOW = 'videopress';
@@ -15,10 +16,12 @@ export const MIGRATION_FLOW = 'import-focused';
 export const COPY_SITE_FLOW = 'copy-site';
 export const BUILD_FLOW = 'build';
 export const WRITE_FLOW = 'write';
+export const START_WRITING_FLOW = 'start-writing';
 export const SITE_SETUP_FLOW = 'site-setup';
 export const WITH_THEME_FLOW = 'with-theme';
 export const WITH_THEME_ASSEMBLER_FLOW = 'with-theme-assembler';
 export const UPDATE_DESIGN_FLOW = 'update-design';
+export const DOMAIN_UPSELL_FLOW = 'domain-upsell';
 
 export const isLinkInBioFlow = ( flowName: string | null ) => {
 	return Boolean(
@@ -35,10 +38,6 @@ export const isNewsletterFlow = ( flowName: string | null ) => {
 
 export const isFreeFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ FREE_FLOW, FREE_POST_SETUP_FLOW ].includes( flowName ) );
-};
-
-export const isHostingLPFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && HOSTING_LP_FLOW === flowName );
 };
 
 export const isNewsletterOrLinkInBioFlow = ( flowName: string | null ) => {
@@ -64,6 +63,10 @@ export const isTailoredSignupFlow = ( flowName: string | null ) => {
 	);
 };
 
+export const isHostingFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && HOSTING_LP_FLOW === flowName );
+};
+
 export const isMigrationFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ MIGRATION_FLOW ].includes( flowName ) );
 };
@@ -87,6 +90,9 @@ export const isWriteFlow = ( flowName: string | null ) => {
 export const isUpdateDesignFlow = ( flowName: string | null ) => {
 	return Boolean( flowName && [ UPDATE_DESIGN_FLOW ].includes( flowName ) );
 };
+export const isStartWritingFlow = ( flowName: string | null ) => {
+	return Boolean( flowName && [ START_WRITING_FLOW ].includes( flowName ) );
+};
 
 export const isSiteAssemblerFlow = ( flowName: string | null ) => {
 	const SITE_ASSEMBLER_FLOWS = [ WITH_THEME_ASSEMBLER_FLOW ];
@@ -103,4 +109,6 @@ export const isWithThemeFlow = ( flowName: string | null ) => {
 export const ecommerceFlowRecurTypes = {
 	YEARLY: 'yearly',
 	MONTHLY: 'monthly',
+	'2Y': '2Y',
+	'3Y': '3Y',
 };

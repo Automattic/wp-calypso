@@ -48,6 +48,11 @@ $masterbar-color-secondary: #101517;
 		color: var(--color-jetpack-masterbar-text);
 	}
 
+	&.masterbar--is-checkout.masterbar--is-akismet {
+		background-color: var(--color-akismet-masterbar-background);
+		border-bottom: 1px solid var(--color-akismet-masterbar-border);
+	}
+
 	// stylelint-disable-next-line unit-allowed-list
 	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {
 		body.font-smoothing-antialiased & {
@@ -835,6 +840,10 @@ a.masterbar__quick-language-switcher {
 		margin: 0 5px;
 	}
 
+	.masterbar__akismet-wordmark {
+		margin: 0 5px;
+	}
+
 	.masterbar__secure-checkout-text {
 		color: var(--color-primary-5);
 		transform: translateY(1px);
@@ -852,6 +861,11 @@ a.masterbar__quick-language-switcher {
 		.masterbar--is-jetpack & {
 			color: var(--color-jetpack-masterbar-text);
 			transform: translateY(-1px);
+		}
+
+		.masterbar--is-akismet & {
+			color: var(--color-jetpack-masterbar-text);
+			transform: translateY(4px);
 		}
 	}
 }

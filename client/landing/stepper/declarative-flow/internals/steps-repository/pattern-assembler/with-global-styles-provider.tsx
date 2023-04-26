@@ -6,11 +6,15 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { ONBOARD_STORE } from '../../../../stores';
 import StepperLoader from '../../components/stepper-loader';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 const withGlobalStylesProvider = createHigherOrderComponent(
 	< OuterProps, >( InnerComponent: React.ComponentType< OuterProps > ) => {
 		return ( props: OuterProps ) => {
-			const selectedDesign = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+			const selectedDesign = useSelect(
+				( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+				[]
+			);
 			const siteSlug = useSiteSlugParam();
 			const siteId = useSiteIdParam();
 			const siteSlugOrId = siteSlug ? siteSlug : siteId;
