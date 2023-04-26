@@ -18,6 +18,7 @@ import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isJetpackCloudOAuth2Client,
+	isGravatarOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
 import { WPCC } from 'calypso/lib/url/support';
@@ -460,7 +461,7 @@ export class UserStep extends Component {
 		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 
-		if ( isWooOAuth2Client( oauth2Client ) ) {
+		if ( isWooOAuth2Client( oauth2Client ) || isGravatarOAuth2Client( oauth2Client ) ) {
 			isSocialSignupEnabled = true;
 		}
 

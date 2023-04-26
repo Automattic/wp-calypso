@@ -1,3 +1,5 @@
+@import "../styles/variables.scss";
+
 .stats-widget-highlights {
 	.stats-widget-highlights__header {
 		display: flex;
@@ -10,30 +12,7 @@
 		}
 
 		a {
-			cursor: pointer;
-			padding: 4px 8px;
-			appearance: none;
-			text-align: center;
-
-			color: var(--studio-white);
-			background: var(--studio-black);
-			font-size: $font-body-extra-small;
-			font-weight: 600;
-			text-decoration: none;
-			line-height: 20px;
-
-			border: 1px solid var(--studio-black);
-			border-radius: 4px;
-
-			&:hover {
-				color: var(--studio-black);
-				background: var(--studio-white);
-			}
-
-			&:visited {
-				color: var(--studio-white);
-				background: var(--studio-black);
-			}
+			@include emerald-button-style;
 		}
 
 	}

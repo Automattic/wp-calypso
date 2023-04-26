@@ -63,9 +63,14 @@ const withThemeAssemblerFlow: Flow = {
 			recordSubmitStep( providedDependencies, intent, flowName, _currentStep );
 
 			switch ( _currentStep ) {
-				case 'processing':
-					window.sessionStorage.setItem( 'wpcom_signup_completed_flow', 'pattern_assembler' );
-					return exitFlow( `/site-editor/${ siteSlug }?canvas=edit` );
+				case 'processing': {
+					const params = new URLSearchParams( {
+						canvas: 'edit',
+						assembler: '1',
+					} );
+
+					return exitFlow( `/site-editor/${ siteSlug }?${ params }` );
+				}
 
 				case 'patternAssembler': {
 					return navigate( 'processing' );

@@ -191,7 +191,7 @@ class Site extends Component {
 						{ this.props.isSiteP2 && ! this.props.isP2Hub && (
 							<span className="site__badge is-p2">P2</span>
 						) }
-						{ site.is_wpcom_staging_site && (
+						{ site?.is_wpcom_staging_site && (
 							<SitesStagingBadge className="site__badge" secondary>
 								{ translate( 'Staging' ) }
 							</SitesStagingBadge>

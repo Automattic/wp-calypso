@@ -32,16 +32,13 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	const site = item.site;
 	const blogId = site.value.blog_id;
 	const isConnectionHealthy = site.value?.is_connection_healthy;
-	const siteError = site.error || item.monitor.error;
 	const isFavorite = item.isFavorite;
 
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
-	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
-
-	const isSiteConnected = data ? data.connected : true;
+	useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
 
 	const currentSiteHasSelectedLicenses =
 		selectedLicensesSiteId === blogId && selectedLicenses?.length;
@@ -50,7 +47,8 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 	const shouldDisableLicenseSelection =
 		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
-	const hasSiteError = site.error || ! isSiteConnected;
+	const hasSiteConnectionError = ! item.site.value.is_connected;
+	const siteError = item.monitor.error || hasSiteConnectionError;
 
 	return (
 		<Fragment>
@@ -58,7 +56,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 				className={ classNames( 'site-table__table-row', {
 					'site-table__table-row-disabled': shouldDisableLicenseSelection,
 					'site-table__table-row-active': currentSiteHasSelectedLicenses,
-					'site-table__table-row-site-error': hasSiteError,
+					'site-table__table-row-site-error': hasSiteConnectionError,
 					'is-expanded': isExpanded,
 				} ) }
 				onClick={ ( event ) => {
@@ -73,7 +71,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 			>
 				{ columns.map( ( column ) => {
 					const row = item[ column.key ];
-					if ( hasSiteError && column.key !== 'site' ) {
+					if ( hasSiteConnectionError && column.key !== 'site' ) {
 						return null;
 					}
 					const isCritical = 'critical' === row.status;
@@ -91,13 +89,14 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 									type={ row.type }
 									isLargeScreen
 									isFavorite={ isFavorite }
+									siteError={ hasSiteConnectionError }
 								/>
 							</td>
 						);
 					}
 				} ) }
 				{ /* Show error content when there is a site error */ }
-				{ hasSiteError && (
+				{ hasSiteConnectionError && (
 					<td
 						className={ classNames( 'site-table__error padding-0', {
 							'site-table__td-without-border-bottom': isExpanded,
@@ -126,7 +125,7 @@ export default function SiteTableRow( { index, columns, item, setExpanded, isExp
 			{ isExpanded && (
 				<tr className="site-table__table-row-expanded">
 					<td colSpan={ Object.keys( item ).length + 1 }>
-						<SiteExpandedContent site={ site.value } hasError={ hasSiteError } />
+						<SiteExpandedContent site={ site.value } hasError={ siteError } />
 						<SitePhpVersion phpVersion={ site.value.php_version_num } />
 					</td>
 				</tr>
