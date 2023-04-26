@@ -1,4 +1,4 @@
-import { createRegistrySelector, registerStore } from '@wordpress/data';
+import { registerStore } from '@wordpress/data';
 
 const DEFAULT_STATE = {
 	isModalVisible: true,
@@ -24,11 +24,9 @@ registerStore( 'automattic/wpcom-global-styles', {
 	},
 
 	selectors: {
-		isModalVisible: createRegistrySelector( ( select ) => ( state ) => {
-			const currentSidebar =
-				select( 'core/interface' ).getActiveComplementaryArea( 'core/edit-site' );
-			return currentSidebar === 'edit-site/global-styles' && state.isModalVisible;
-		} ),
+		isModalVisible: ( state, currentSidebar, viewCanvasPath ) =>
+			state.isModalVisible &&
+			( currentSidebar === 'edit-site/global-styles' || viewCanvasPath === '/wp_global_styles' ),
 	},
 
 	persist: true,

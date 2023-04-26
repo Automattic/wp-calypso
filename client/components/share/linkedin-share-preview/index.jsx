@@ -2,6 +2,7 @@ import { LinkedInPreview } from '@automattic/social-previews';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 import './style.scss';
 
@@ -17,8 +18,14 @@ export class LinkedinSharePreview extends PureComponent {
 	};
 
 	render() {
-		const { articleUrl, externalDisplay, externalProfilePicture, imageUrl, message, seoTitle } =
-			this.props;
+		const {
+			articleSummary,
+			articleUrl,
+			externalDisplay,
+			externalProfilePicture,
+			imageUrl,
+			seoTitle,
+		} = this.props;
 
 		return (
 			<div className="linkedin-share-preview">
@@ -26,8 +33,8 @@ export class LinkedinSharePreview extends PureComponent {
 					image={ imageUrl }
 					name={ externalDisplay }
 					profileImage={ externalProfilePicture }
-					title={ seoTitle }
-					text={ message }
+					title={ decodeEntities( seoTitle ) }
+					text={ decodeEntities( articleSummary ) }
 					url={ articleUrl }
 				/>
 			</div>

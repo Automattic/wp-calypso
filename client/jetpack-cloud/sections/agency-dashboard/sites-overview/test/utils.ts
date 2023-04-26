@@ -85,7 +85,6 @@ describe( 'utils', () => {
 				link: `/backup/${ site.url }`,
 				row: rows.backup,
 				siteDown: false,
-				siteError: false,
 				tooltip: 'Latest backup failed',
 				tooltipId: `${ site.blog_id }-backup`,
 			};
@@ -97,7 +96,6 @@ describe( 'utils', () => {
 				link: `/scan/${ site.url }`,
 				row: rows.scan,
 				siteDown: false,
-				siteError: false,
 				tooltip: 'Potential threats found',
 				tooltipId: `${ site.blog_id }-scan`,
 			};
@@ -110,7 +108,6 @@ describe( 'utils', () => {
 				link: `https://jptools.wordpress.com/debug/?url=${ site.url }`,
 				row: rows.monitor,
 				siteDown: false,
-				siteError: false,
 				tooltip: 'Site appears to be offline',
 				tooltipId: `${ site.blog_id }-monitor`,
 			};
@@ -122,7 +119,6 @@ describe( 'utils', () => {
 				link: `https://wordpress.com/plugins/updates/${ site.url }`,
 				row: rows.plugin,
 				siteDown: false,
-				siteError: false,
 				tooltip: 'Plugin updates are available',
 				tooltipId: `${ site.blog_id }-plugin`,
 			};
@@ -134,7 +130,6 @@ describe( 'utils', () => {
 				link: '',
 				row: rows.stats,
 				siteDown: false,
-				siteError: false,
 				tooltip: undefined,
 				tooltipId: `${ site.blog_id }-stats`,
 			};
@@ -146,7 +141,6 @@ describe( 'utils', () => {
 				link: '',
 				row: rows.boost,
 				siteDown: false,
-				siteError: false,
 				tooltip: undefined,
 				tooltipId: `${ site.blog_id }-boost`,
 			};

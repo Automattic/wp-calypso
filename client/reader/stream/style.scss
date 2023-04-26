@@ -688,6 +688,29 @@
 				margin-bottom: 14px;
 			}
 		}
+
+		.reader-tag-sidebar-stats {
+			display: flex;
+			flex-direction: row;
+			gap: 20px;
+			margin-bottom: 32px;
+
+			.reader-tag-sidebar-stats__item {
+				display: flex;
+				flex-direction: column;
+			}
+
+			.reader-tag-sidebar-stats__count {
+				font-size: $font-title-small;
+				font-weight: bold;
+				width: 90px;
+			}
+
+			.reader-tag-sidebar-stats__title {
+				font-size: $font-body-extra-small;
+				color: var(--color-text-subtle);
+			}
+		}
 	}
 
 	.reader-post-card__tag-link {

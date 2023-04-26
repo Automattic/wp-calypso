@@ -1,6 +1,7 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import titlecase from 'to-title-case';
+import StickyPanel from 'calypso/components/sticky-panel';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { AlphabeticTagsResult, Tag } from './controller';
@@ -102,20 +103,22 @@ export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps 
 
 	return (
 		<>
-			<div className="alphabetic-tags__header">
-				<h2>{ translate( 'Tags from A — Z' ) }</h2>
-				<div className="alphabetic-tags__tag-links">
-					{ Object.keys( tagTables ).map( ( letter: string ) => (
-						<Button
-							isLink
-							key={ 'alphabetic-tags-link-' + letter }
-							onClick={ () => scrollToLetter( letter ) }
-						>
-							{ letter }
-						</Button>
-					) ) }
+			<StickyPanel>
+				<div className="alphabetic-tags__header">
+					<h2>{ translate( 'Tags from A — Z' ) }</h2>
+					<div className="alphabetic-tags__tag-links">
+						{ Object.keys( tagTables ).map( ( letter: string ) => (
+							<Button
+								isLink
+								key={ 'alphabetic-tags-link-' + letter }
+								onClick={ () => scrollToLetter( letter ) }
+							>
+								{ letter }
+							</Button>
+						) ) }
+					</div>
 				</div>
-			</div>
+			</StickyPanel>
 			{ Object.keys( tagTables ).map( ( letter: string ) => (
 				<div className="alphabetic-tags__table" key={ 'alphabetic-tags-table-' + letter }>
 					{ /* eslint-disable jsx-a11y/no-noninteractive-tabindex */ }

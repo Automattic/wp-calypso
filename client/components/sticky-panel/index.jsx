@@ -21,9 +21,12 @@ const commonDefaultProps = {
 };
 
 export function calculateOffset() {
-	// Offset to account for Masterbar
 	const headerEl = document.getElementById( 'header' );
-	return headerEl ? headerEl.getBoundingClientRect().height : 0;
+	// Offset to account for Masterbar if it is fixed position
+	if ( headerEl && getComputedStyle( headerEl ).position === 'fixed' ) {
+		return headerEl.getBoundingClientRect().height;
+	}
+	return 0;
 }
 
 export function getBlockStyle( state ) {
