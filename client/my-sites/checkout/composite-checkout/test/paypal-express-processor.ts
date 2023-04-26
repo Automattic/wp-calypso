@@ -36,7 +36,7 @@ describe( 'payPalExpressProcessor', () => {
 	const basicExpectedRequest = {
 		cancel_url: 'https://example.com/',
 		cart: {
-			blog_id: '0',
+			blog_id: 0,
 			cart_key: 'no-site',
 			coupon: '',
 			products: [ product ],
@@ -116,8 +116,8 @@ describe( 'payPalExpressProcessor', () => {
 				'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
 			cart: {
 				...basicExpectedRequest.cart,
-				blog_id: '1234567',
-				cart_key: '1234567',
+				blog_id: 1234567,
+				cart_key: 1234567,
 				coupon: '',
 			},
 		} );
@@ -153,8 +153,8 @@ describe( 'payPalExpressProcessor', () => {
 				'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
 			cart: {
 				...basicExpectedRequest.cart,
-				blog_id: '1234567',
-				cart_key: '1234567',
+				blog_id: 1234567,
+				cart_key: 1234567,
 				coupon: '',
 				tax: { location: { postal_code: 'pr267ry', country_code: 'GB' } },
 			},
@@ -182,8 +182,8 @@ describe( 'payPalExpressProcessor', () => {
 				'https://example.com/checkout/thank-you/example.wordpress.com/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
 			cart: {
 				...basicExpectedRequest.cart,
-				blog_id: '1234567',
-				cart_key: '1234567',
+				blog_id: 1234567,
+				cart_key: 1234567,
 				coupon: '',
 				products: [ domainProduct ],
 			},
@@ -212,7 +212,7 @@ describe( 'payPalExpressProcessor', () => {
 			cancel_url: 'https://example.com/?cart=no-user',
 			cart: {
 				...basicExpectedRequest.cart,
-				blog_id: '1234567',
+				blog_id: 1234567,
 				cart_key: 1234567,
 				coupon: '',
 			},
@@ -242,7 +242,7 @@ describe( 'payPalExpressProcessor', () => {
 			cancel_url: 'https://example.com/?cart=no-user',
 			cart: {
 				...basicExpectedRequest.cart,
-				blog_id: '0',
+				blog_id: 0,
 				cart_key: 'no-site',
 				coupon: '',
 			},
@@ -270,7 +270,7 @@ describe( 'payPalExpressProcessor', () => {
 				'https://wordpress.com/checkout/thank-you/no-site/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
 			cart: {
 				...basicExpectedRequest.cart,
-				blog_id: '0',
+				blog_id: 0,
 				cart_key: 'no-site',
 				coupon: '',
 			},
@@ -303,7 +303,7 @@ describe( 'payPalExpressProcessor', () => {
 				'https://wordpress.com/checkout/thank-you/no-site/pending/:orderId?redirectTo=%2Fthank-you&receiptId=%3AreceiptId',
 			cart: {
 				...basicExpectedRequest.cart,
-				blog_id: '0',
+				blog_id: 0,
 				cart_key: 'no-site',
 				coupon: '',
 			},
@@ -342,7 +342,7 @@ describe( 'payPalExpressProcessor', () => {
 			cancel_url: 'https://example.com/?cart=no-user',
 			cart: {
 				...basicExpectedRequest.cart,
-				blog_id: '1234567',
+				blog_id: 1234567,
 				cart_key: 1234567,
 				coupon: '',
 			},

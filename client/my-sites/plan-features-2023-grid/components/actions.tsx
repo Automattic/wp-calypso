@@ -292,9 +292,11 @@ const LoggedInPlansFeatureActionButton = ( {
 					<DummyDisabledButton>
 						{ translate( 'Downgrade', { context: 'verb' } ) }
 					</DummyDisabledButton>
-					<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
-						{ isMobile() && translate( 'Please contact support to downgrade your plan.' ) }
-					</div>
+					{ isMobile() && (
+						<div className="plan-features-2023-grid__actions-downgrade-context-mobile">
+							{ translate( 'Please contact support to downgrade your plan.' ) }
+						</div>
+					) }
 				</Plans2023Tooltip>
 			);
 		} else if ( forceDisplayButton ) {

@@ -21,7 +21,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 		{
 			signup: 1,
 			ref: getQueryArgs()?.ref,
-			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
+			...( [ 'domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
 		},
 		checkoutURL
 	);
@@ -188,7 +188,6 @@ const flows = generateFlows( {
 	getRedirectDestination,
 	getSignupDestination,
 	getLaunchDestination,
-	getThankYouNoSiteDestination,
 	getDomainSignupFlowDestination,
 	getEmailSignupFlowDestination,
 	getChecklistThemeDestination,

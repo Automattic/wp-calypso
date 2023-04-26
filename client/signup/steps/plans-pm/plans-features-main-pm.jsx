@@ -209,7 +209,7 @@ PlansFeaturesMainPM.defaultProps = {
 	plansWithScroll: false,
 	planTypeSelector: 'interval',
 	showFAQ: true,
-	showBiannualToggle: false,
+	showBiannualToggle: true,
 	shouldShowPlansFeatureComparison: true,
 };
 

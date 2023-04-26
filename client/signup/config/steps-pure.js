@@ -113,6 +113,23 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
+			props: {
+				hideFreePlan: true,
+				hideEnterprisePlan: true,
+			},
+		},
+
+		// TODO
+		// The new pricing grid and the legacy one act differently
+		// when a paid domain is picked, and the new pricing grid is currently
+		// having different behavior on different flow on the paid domain +
+		// Free plan case. We can deprecate this once that specific behavior
+		// is settled and that we decide to migrate `site-selected` as a reskinned flow.
+		'plans-site-selected-legacy': {
+			stepName: 'plans-site-selected-legacy',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
 		},
 
 		site: {
@@ -425,16 +442,6 @@ export function generateSteps( {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
 			props: {
-				isDomainOnly: true,
-				forceHideFreeDomainExplainerAndStrikeoutUi: true,
-			},
-		},
-
-		'select-domain': {
-			stepName: 'select-domain',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ], // note: siteId, siteSlug are not provided when used in add-domain flow
-			props: {
-				isAllDomains: true,
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 			},
