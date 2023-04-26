@@ -190,7 +190,7 @@ const PatternLargePreview = ( {
 				{ hasSelectedPattern ? (
 					<PatternsRendererContainer patternIds={ patternIds as string[] } enablePointerEvent>
 						<div
-							className="pattern-large-preview__patterns"
+							className={ classnames( 'pattern-large-preview__patterns', 'wp-site-blocks' ) }
 							style={ {
 								height: '100vh',
 								overflow: 'auto',
@@ -198,7 +198,9 @@ const PatternLargePreview = ( {
 							ref={ listRef }
 						>
 							{ header && renderPattern( 'header', header ) }
-							{ sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ) }
+							<main className="wp-block-group">
+								{ sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ) }
+							</main>
 							{ footer && renderPattern( 'footer', footer ) }
 						</div>
 					</PatternsRendererContainer>
