@@ -140,6 +140,7 @@ $z-layers: (
 		".chart__tooltip": 1000,
 		".drop-zone__content": 1010,
 		".main.customize.is-iframe": 9999,
+		".tooltip.popover": 100000,
 		".fullscreen-overlay": 100005,
 		"#wp_editbtns": 100020,
 		"#wp-fullscreen-body": 100010,
@@ -172,7 +173,6 @@ $z-layers: (
 
 		".is-section-woocommerce .global-notices": 999999,
 		".webpack-build-monitor": 99999999,
-		".tooltip.popover": 100000,
 		".people-list-item.card.is-compact:focus": 1,
 	),
 	".is-section-signup": (
