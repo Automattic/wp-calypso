@@ -22,6 +22,10 @@ $max-list-width: 1300px;
 		&.header {
 			padding-bottom: $font-code;
 			padding-top: 0;
+
+			@media (max-width: $break-small) {
+				display: none;
+			}
 		}
 
 		.title-box {
