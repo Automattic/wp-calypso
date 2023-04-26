@@ -9,7 +9,7 @@ import {
 } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import classnames from 'classnames';
-import { useState, useRef, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import PremiumGlobalStylesUpgradeModal from 'calypso/components/premium-global-styles-upgrade-modal';
 import { ActiveTheme } from 'calypso/data/themes/use-active-theme-query';
@@ -57,7 +57,6 @@ const PatternAssembler = ( {
 }: StepProps & withNotices.Props ) => {
 	const [ navigatorPath, setNavigatorPath ] = useState( NAVIGATOR_PATHS.MAIN );
 	const [ sectionPosition, setSectionPosition ] = useState< number | null >( null );
-	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const [ activePatternKey, setActivePatternKey ] = useState< string >();
 	const [ isPatternPanelListOpen, setIsPatternPanelListOpen ] = useState( false );
 	const { goBack, goNext, submit } = navigation;
@@ -479,7 +478,6 @@ const PatternAssembler = ( {
 			className={ classnames( 'pattern-assembler__wrapper', {
 				'pattern-assembler__pattern-panel-list--is-open': isPatternPanelListOpen,
 			} ) }
-			ref={ wrapperRef }
 			tabIndex={ -1 }
 		>
 			{ isEnabled( 'pattern-assembler/notices' ) && (
@@ -536,7 +534,6 @@ const PatternAssembler = ( {
 						replacePatternMode={ sectionPosition !== null }
 						selectedPattern={ sectionPosition !== null ? sections[ sectionPosition ] : null }
 						onSelect={ onSelect }
-						wrapperRef={ wrapperRef }
 						onTogglePatternPanelList={ setIsPatternPanelListOpen }
 						recordTracksEvent={ recordTracksEvent }
 					/>
