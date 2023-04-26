@@ -2,5 +2,46 @@
 @import "@wordpress/base-styles/mixins";
 
 .wpcom-block-editor-post-published-sharing-modal {
-
+	.components-modal__content {
+		margin-top: 0;
+		padding-bottom: 0;
+		.wpcom-block-editor-post-published-sharing-modal__inner {
+			display: flex;
+			.wpcom-block-editor-post-published-sharing-modal__left {
+				width: 50%;
+				padding: 52px 40px 52px 52px;
+			}
+			.wpcom-block-editor-post-published-sharing-modal__right {
+				width: 50%;
+				padding: 52px 52px 52px 40px;
+				border-left: 1px solid var(--studio-gray-5);
+				display: flex;
+				justify-content: center;
+			}
+		}
+		h1 {
+			margin-top: 0;
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 26px;
+		}
+		p {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 18px;
+		}
+		button {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 14px;
+			font-weight: 500;
+		}
+		hr {
+			margin-top: 20px;
+			border-top: 1px solid var(--studio-gray-5);
+			border-bottom: none;
+		}
+		h2 {
+			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+			font-size: 18px;
+			font-weight: 600px;
+		}
+	}
 }
