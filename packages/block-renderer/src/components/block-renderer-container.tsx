@@ -14,7 +14,7 @@ import BlockRendererContext from './block-renderer-context';
 import type { RenderedStyle } from '../types';
 import './block-renderer-container.scss';
 
-interface BlockRendererContainerProps {
+export interface BlockRendererContainerProps {
 	children: React.ReactChild;
 	styles?: RenderedStyle[];
 	scripts?: string;

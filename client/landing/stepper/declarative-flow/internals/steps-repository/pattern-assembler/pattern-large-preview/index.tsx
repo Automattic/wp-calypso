@@ -1,4 +1,4 @@
-import { PatternRenderer, BlockRendererContainer } from '@automattic/block-renderer';
+import { PatternRenderer, PatternsRendererContainer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
@@ -48,6 +48,9 @@ const PatternLargePreview = ( {
 	const hasEnTranslation = useHasEnTranslation();
 	const navigator = useNavigator();
 	const hasSelectedPattern = header || sections.length || footer;
+	const patternIds = [ header, ...sections, footer ]
+		.filter( Boolean )
+		.map( ( pattern ) => pattern && encodePatternId( pattern.ID ) );
 	const shouldShowSelectPatternHint =
 		! hasSelectedPattern && STYLES_PATHS.includes( navigator.location.path );
 	const frameRef = useRef< HTMLDivElement | null >( null );
@@ -185,7 +188,7 @@ const PatternLargePreview = ( {
 		>
 			<>
 				{ hasSelectedPattern ? (
-					<BlockRendererContainer enablePointerEvent>
+					<PatternsRendererContainer patternIds={ patternIds as string[] } enablePointerEvent>
 						<div
 							className="pattern-large-preview__patterns"
 							style={ {
@@ -198,7 +201,7 @@ const PatternLargePreview = ( {
 							{ sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ) }
 							{ footer && renderPattern( 'footer', footer ) }
 						</div>
-					</BlockRendererContainer>
+					</PatternsRendererContainer>
 				) : (
 					<div className="pattern-large-preview__placeholder">
 						<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 72 } />
