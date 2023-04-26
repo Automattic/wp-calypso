@@ -306,15 +306,14 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 
 	const items = groupedTransactionItems.map( ( item ) => {
 		const termLabel = getTransactionTermLabel( item, translate );
-		const isSitelessHoldingSite = /^siteless\.(jetpack|akismet)\.com/.test( item.domain ) ?? false;
 		return (
 			<tr key={ item.id }>
 				<td className="billing-history__receipt-item-name">
 					<span>{ item.variation }</span>
 					<small>({ item.type_localized })</small>
-					{ termLabel ? <em>{ termLabel }</em> : null }
+					{ termLabel && <em>{ termLabel }</em> }
 					<br />
-					{ ! isSitelessHoldingSite && <em>{ item.domain }</em> }
+					{ item.domain && <em>{ item.domain }</em> }
 					{ item.licensed_quantity && (
 						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
 					) }
