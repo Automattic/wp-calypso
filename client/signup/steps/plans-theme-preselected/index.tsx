@@ -27,9 +27,9 @@ function getHidePlanPropsBasedOnSignupDependencies(
 	}
 
 	/**
-	 * Premium themes & variations: Display Premium, Business and eCommerce
+	 * Premium themes: Display Premium, Business and eCommerce
 	 */
-	if ( signupDependencies.themeType === 'premium' || signupDependencies.styleVariation ) {
+	if ( signupDependencies.themeType === 'premium' ) {
 		return { hidePersonalPlan: true };
 	}
 
