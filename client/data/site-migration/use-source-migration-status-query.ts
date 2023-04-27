@@ -1,5 +1,5 @@
 import { SourceSiteMigrationDetails } from '@automattic/data-stores/src/site';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 import type { SiteId } from 'calypso/types';
 

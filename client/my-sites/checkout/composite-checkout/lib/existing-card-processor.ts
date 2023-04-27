@@ -69,13 +69,12 @@ export default async function existingCardProcessor(
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
 		name: transactionData.name ?? '',
-		siteId: dataForProcessor.siteId ? String( dataForProcessor.siteId ) : undefined,
 		country: contactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode( contactDetails ),
 		subdivisionCode: contactDetails?.state?.value,
 		domainDetails,
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: dataForProcessor.siteId ? String( dataForProcessor.siteId ) : undefined,
+			siteId: dataForProcessor.siteId,
 			contactDetails: domainDetails ?? null,
 			responseCart,
 		} ),

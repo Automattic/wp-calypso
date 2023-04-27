@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';

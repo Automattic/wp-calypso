@@ -76,6 +76,7 @@ const noop = () => {};
 export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
 export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
 export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
+export const ANNUAL_PLAN_UPGRADE_UPSELL = 'annual-plan-upgrade-upsell';
 export const PROFESSIONAL_EMAIL_UPSELL = 'professional-email-upsell';
 
 export interface UpsellNudgeManualProps {
@@ -327,7 +328,24 @@ export class UpsellNudge extends Component< UpsellNudgeProps, UpsellNudgeState >
 						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
 					/>
 				);
-
+			case ANNUAL_PLAN_UPGRADE_UPSELL:
+				return isLoading ? (
+					this.renderGenericPlaceholder()
+				) : (
+					<div>
+						<h1>THIS IS THE UPSELL</h1>
+						<BusinessPlanUpgradeUpsell
+							currencyCode={ currencyCode }
+							planRawPrice={ planRawPrice }
+							planDiscountedRawPrice={ planDiscountedRawPrice }
+							receiptId={ receiptId }
+							translate={ translate }
+							handleClickAccept={ this.handleClickAccept }
+							handleClickDecline={ this.handleClickDecline }
+							hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
+						/>
+					</div>
+				);
 			case PROFESSIONAL_EMAIL_UPSELL:
 				return (
 					<ProfessionalEmailUpsell

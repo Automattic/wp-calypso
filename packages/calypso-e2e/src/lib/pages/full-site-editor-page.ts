@@ -21,14 +21,10 @@ import {
 	DimensionsSettings,
 	CookieBannerComponent,
 } from '..';
-import { getCalypsoURL } from '../../data-helper';
 import { getIdFromBlock } from '../../element-helper';
 import envVariables from '../../env-variables';
 
-const wpAdminPath = 'wp-admin/site-editor.php';
-
 const selectors = {
-	editorIframe: `iframe.is-loaded[src*="${ wpAdminPath }"]`,
 	editorRoot: 'body.block-editor-page',
 	editorCanvasIframe: 'iframe[name="editor-canvas"]',
 	editorCanvasRoot: 'body.block-editor-iframe__body',
@@ -75,11 +71,7 @@ export class FullSiteEditorPage {
 	constructor( page: Page ) {
 		this.page = page;
 
-		if ( this.shouldUseIframe() ) {
-			this.editor = page.frameLocator( selectors.editorIframe ).locator( selectors.editorRoot );
-		} else {
-			this.editor = page.locator( selectors.editorRoot );
-		}
+		this.editor = page.locator( selectors.editorRoot );
 
 		this.editorCanvas = this.editor
 			.frameLocator( selectors.editorCanvasIframe )
@@ -128,16 +120,10 @@ export class FullSiteEditorPage {
 			);
 		}
 
-		let targetHref: string;
-		if ( this.shouldUseIframe() ) {
-			targetHref = getCalypsoURL( `/site-editor/${ parsedUrl.host }` );
-		} else {
-			parsedUrl.pathname = '/wp-admin/site-editor.php';
-			parsedUrl.searchParams.set( 'calypso_origin', envVariables.CALYPSO_BASE_URL );
-			targetHref = parsedUrl.href;
-		}
+		parsedUrl.pathname = '/wp-admin/site-editor.php';
+		parsedUrl.searchParams.set( 'calypso_origin', envVariables.CALYPSO_BASE_URL );
 
-		await this.page.goto( targetHref, { timeout: 60 * 1000 } );
+		await this.page.goto( parsedUrl.href, { timeout: 60 * 1000 } );
 	}
 
 	/**
@@ -657,16 +643,6 @@ export class FullSiteEditorPage {
 		if ( ( await toastLocator.count() ) > 0 ) {
 			await toastLocator.click();
 		}
-	}
-
-	/**
-	 * TODO: Temp check -- we will delete when we un-iframe everywhere
-	 */
-	private shouldUseIframe(): boolean {
-		// The only place we are preserving the Site Editor iFrame is Simple sites on staging/production.
-		return (
-			! envVariables.TEST_ON_ATOMIC && envVariables.CALYPSO_BASE_URL === 'https://wordpress.com'
-		);
 	}
 
 	//#endregion

@@ -116,7 +116,7 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 }: {
 	successUrl: string;
 	cancelUrl: string;
-	siteId: string | number | undefined;
+	siteId: number | undefined;
 	domainDetails: DomainContactDetails | null;
 	responseCart: ResponseCart;
 } ): PayPalExpressEndpointRequestPayload {
@@ -126,7 +126,7 @@ function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 		successUrl,
 		cancelUrl,
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: siteId ? String( siteId ) : undefined,
+			siteId,
 			contactDetails: domainDetails,
 			responseCart,
 		} ),

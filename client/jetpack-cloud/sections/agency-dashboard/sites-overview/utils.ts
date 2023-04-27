@@ -57,13 +57,13 @@ export const siteColumns: SiteColumns = [
 	{
 		key: 'backup',
 		title: translate( 'Backup' ),
-		className: 'width-fit-content',
+		className: 'fixed-site-column',
 		isExpandable: true,
 	},
 	{
 		key: 'scan',
 		title: translate( 'Scan' ),
-		className: 'width-fit-content',
+		className: 'fixed-site-column',
 	},
 	{
 		key: 'monitor',
@@ -314,7 +314,6 @@ export const getRowMetaData = (
 	const row = rows[ type ];
 	const siteUrl = rows.site?.value?.url;
 	const siteUrlWithScheme = rows.site?.value?.url_with_scheme;
-	const siteError = rows.site.error;
 	const siteId = rows.site?.value?.blog_id;
 	const { link, isExternalLink } = getLinks( type, row.status, siteUrl, siteUrlWithScheme );
 	const tooltip = getTooltip( type, row.status );
@@ -323,7 +322,6 @@ export const getRowMetaData = (
 		row,
 		link,
 		isExternalLink,
-		siteError,
 		tooltip,
 		tooltipId: `${ siteId }-${ type }`,
 		siteDown: rows.monitor.error,

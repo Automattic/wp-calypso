@@ -1,4 +1,4 @@
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import type { TitanMailboxFields } from 'calypso/my-sites/email/form/mailboxes/constants';
 
