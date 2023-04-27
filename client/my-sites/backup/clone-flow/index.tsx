@@ -18,7 +18,7 @@ import accept from 'calypso/lib/accept';
 import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { applySiteOffset } from 'calypso/lib/site/timezone';
-import { rewindClone } from 'calypso/state/activity-log/actions';
+import { rewindClone, rewindStagingClone } from 'calypso/state/activity-log/actions';
 import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
@@ -81,7 +81,19 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 		return getInProgressBackupForSite( state, siteId );
 	} );
 
-	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
+	// This is the ID which will perform the restore.
+	// For clone restores, it will be the site ID.
+	// For staging restores, it will be the staging/destination site ID.
+	const restoreSiteId = isCloneToStaging ? Number( cloneDestination ) : siteId;
+
+	const rewindState = useSelector( ( state ) => {
+		return getRewindState( state, siteId );
+	} ) as RewindState;
+
+	const stagingSiteRewindState = useSelector( ( state ) => {
+		return getRewindState( state, cloneDestination );
+	} ) as RewindState;
+
 	const cloneRoleCredentials = useSelector( ( state ) => {
 		return getJetpackCredentials( state, siteId, cloneDestination );
 	} );
@@ -100,10 +112,10 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	};
 
 	const inProgressRewindStatus = useSelector( ( state ) => {
-		return getInProgressRewindStatus( state, siteId, backupPeriod );
+		return getInProgressRewindStatus( state, restoreSiteId, backupPeriod );
 	} );
 	const { message, percent, currentEntry, status } = useSelector( ( state ) => {
-		return getRestoreProgress( state, siteId ) || ( {} as RestoreProgress );
+		return getRestoreProgress( state, restoreSiteId ) || ( {} as RestoreProgress );
 	} );
 
 	const CredSettings = {
@@ -143,13 +155,23 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	const requestClone = useCallback( () => {
 		if ( isCloneToStaging ) {
 			// If we're cloning to staging, we should use a new staging action
-			return;
+			return dispatch(
+				rewindStagingClone( siteId, backupPeriod, { types: rewindConfig }, cloneDestination )
+			);
 		}
 
 		return dispatch(
 			rewindClone( siteId, backupPeriod, { types: rewindConfig, roleName: CredSettings.role } )
 		);
-	}, [ isCloneToStaging, dispatch, siteId, backupPeriod, rewindConfig, CredSettings.role ] );
+	}, [
+		isCloneToStaging,
+		dispatch,
+		siteId,
+		backupPeriod,
+		rewindConfig,
+		CredSettings.role,
+		cloneDestination,
+	] );
 
 	const onConfirm = useCallback( () => {
 		dispatch( setValidFrom( 'restore', Date.now() ) );
@@ -181,7 +203,11 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	);
 
 	const loading = rewindState.state === 'uninitialized';
-	const { restoreId } = rewindState.rewind || {};
+
+	const restoreId =
+		( isCloneToStaging
+			? stagingSiteRewindState.rewind?.restoreId
+			: rewindState.rewind?.restoreId ) || null;
 
 	const disableClone = false;
 
@@ -487,7 +513,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 					<QueryRewindState siteId={ siteId } />
 					<QueryBackupStagingSitesList siteId={ siteId } />
 					{ restoreId && 'running' === inProgressRewindStatus && (
-						<QueryRewindRestoreStatus siteId={ siteId } restoreId={ restoreId } />
+						<QueryRewindRestoreStatus siteId={ restoreSiteId } restoreId={ restoreId } />
 					) }
 					{ render() }
 				</div>
