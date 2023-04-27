@@ -78,6 +78,7 @@ function renderWithRedux( ui, customInitialState = {} ) {
 
 const props = {
 	site: {
+		ID: 1234,
 		plan: { product_slug: PLAN_FREE },
 		domain: 'example.wordpress.com',
 	},
@@ -105,7 +106,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					<SiteSettingsFormGeneral
 						{ ...props }
 						siteIsJetpack={ false }
-						site={ { plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
+						site={ { ID: 1234, plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
 					/>
 				);
 				expect( screen.queryByTestId( 'upsell-nudge' ) ).toBeVisible();
@@ -119,7 +120,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 					<SiteSettingsFormGeneral
 						{ ...props }
 						siteIsJetpack={ false }
-						site={ { plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
+						site={ { ID: 1234, plan: { product_slug: plan }, domain: 'example.wordpress.com' } }
 					/>
 				);
 				expect( screen.queryByTestId( 'upsell-nudge' ) ).toBeVisible();
@@ -553,7 +554,7 @@ describe( 'SiteSettingsFormGeneral', () => {
 			testProps = {
 				...props,
 				siteIsJetpack: false,
-				site: { plan: { product_slug: PLAN_PERSONAL }, domain: 'example.wordpress.com' },
+				site: { ID: 1234, plan: { product_slug: PLAN_PERSONAL }, domain: 'example.wordpress.com' },
 				fields: {
 					blog_public: 1,
 					wpcom_coming_soon: 0,
