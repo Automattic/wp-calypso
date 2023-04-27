@@ -66,17 +66,16 @@ const usePostUnsubscribeMutation = () => {
 
 				// remove post from comment subscriptions
 				if ( previousPostSubscriptions ) {
-					previousPostSubscriptions.pages = previousPostSubscriptions.pages.map( ( page ) => ( {
-						...page,
-						comment_subscriptions: page.comment_subscriptions.filter(
-							( subscription ) => subscription.id !== params.id
-						),
-					} ) );
-
-					queryClient.setQueryData< PostSubscriptionsPages >(
-						postSubscriptionsCacheKey,
-						previousPostSubscriptions
-					);
+					queryClient.setQueryData< PostSubscriptionsPages >( postSubscriptionsCacheKey, {
+						...previousPostSubscriptions,
+						pages: previousPostSubscriptions.pages.map( ( page ) => ( {
+							...page,
+							comment_subscriptions: page.comment_subscriptions.filter(
+								( subscription ) => subscription.id !== params.id
+							),
+							total_comment_subscriptions_count: page.total_comment_subscriptions_count - 1,
+						} ) ),
+					} );
 				}
 
 				const previousSubscriptionsCount =
