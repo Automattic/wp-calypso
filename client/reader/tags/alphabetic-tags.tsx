@@ -1,5 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
+import { useState, useEffect, createRef } from 'react';
 import titlecase from 'to-title-case';
 import StickyPanel from 'calypso/components/sticky-panel';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -42,12 +43,13 @@ const TagsColumn = ( props: TagsColProps ) => (
 
 const TagsRow = ( props: TagsRowProps ) => (
 	<div className="alphabetic-tags__row">
-		{ props.tags.map( ( tag: Tag | undefined, index ) => (
-			<div className="alphabetic-tags__col" key={ 'alphabetic-tags-col-' + index }>
-				{ tag && <TagsColumn slug={ tag.slug } title={ tag.title } /> }
-				{ ! tag && <TagsColumn slug="" title="" /> }
-			</div>
-		) ) }
+		{ props.tags.map( ( tag: Tag | undefined, index ) =>
+			tag ? (
+				<div className="alphabetic-tags__col" key={ 'alphabetic-tags-col-' + index }>
+					<TagsColumn slug={ tag.slug } title={ tag.title } />
+				</div>
+			) : null
+		) }
 	</div>
 );
 
@@ -87,6 +89,24 @@ const scrollToLetter = ( letter: string ) => {
 
 export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps ) {
 	const translate = useTranslate();
+	const [ isSticky, setIsSticky ] = useState( false );
+	const tagsTableRef = createRef< HTMLDivElement >();
+
+	useEffect( () => {
+		const handleScroll = () => {
+			if ( ! tagsTableRef.current ) {
+				return;
+			}
+			const tableATop = tagsTableRef.current.getBoundingClientRect().top;
+			setIsSticky( tableATop < 0 );
+		};
+
+		window.addEventListener( 'scroll', handleScroll );
+		return () => {
+			window.removeEventListener( 'scroll', handleScroll );
+		};
+	}, [ tagsTableRef, setIsSticky ] );
+
 	if ( ! alphabeticTags ) {
 		return null;
 	}
@@ -103,35 +123,39 @@ export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps 
 
 	return (
 		<>
-			<StickyPanel>
-				<div className="alphabetic-tags__header">
-					<h2>{ translate( 'Tags from A — Z' ) }</h2>
-					<div className="alphabetic-tags__tag-links">
-						{ Object.keys( tagTables ).map( ( letter: string ) => (
-							<Button
-								isLink
-								key={ 'alphabetic-tags-link-' + letter }
-								onClick={ () => scrollToLetter( letter ) }
-							>
-								{ letter }
-							</Button>
-						) ) }
+			<div className="sticky-container">
+				<StickyPanel className={ isSticky ? 'sticky-panel-fixed' : 'sticky-panel-absolute' }>
+					<div className="alphabetic-tags__header">
+						<h2>{ translate( 'Tags from A — Z' ) }</h2>
+						<div className="alphabetic-tags__tag-links">
+							{ Object.keys( tagTables ).map( ( letter: string ) => (
+								<Button
+									isLink
+									key={ 'alphabetic-tags-link-' + letter }
+									onClick={ () => scrollToLetter( letter ) }
+								>
+									{ letter }
+								</Button>
+							) ) }
+						</div>
 					</div>
-				</div>
-			</StickyPanel>
-			{ Object.keys( tagTables ).map( ( letter: string ) => (
-				<div className="alphabetic-tags__table" key={ 'alphabetic-tags-table-' + letter }>
-					{ /* eslint-disable jsx-a11y/no-noninteractive-tabindex */ }
-					<h3
-						tabIndex={ 0 }
-						className="alphabetic-tags__letter-title"
-						id={ 'alphabetic-tags-table-' + letter }
-					>
-						{ letter }
-					</h3>
-					<TagsTable tags={ tagTables[ letter ] } />
-				</div>
-			) ) }
+				</StickyPanel>
+			</div>
+			<div ref={ tagsTableRef }>
+				{ Object.keys( tagTables ).map( ( letter: string ) => (
+					<div className="alphabetic-tags__table" key={ 'alphabetic-tags-table-' + letter }>
+						{ /* eslint-disable jsx-a11y/no-noninteractive-tabindex */ }
+						<h3
+							tabIndex={ 0 }
+							className="alphabetic-tags__letter-title"
+							id={ 'alphabetic-tags-table-' + letter }
+						>
+							{ letter }
+						</h3>
+						<TagsTable tags={ tagTables[ letter ] } />
+					</div>
+				) ) }
+			</div>
 		</>
 	);
 }
