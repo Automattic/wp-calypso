@@ -2,6 +2,7 @@
 @import "../styles/theme.scss";
 @import "../styles/wp-admin.scss";
 @import "../styles/typography.scss";
+@import "./variables.scss";
 
 .jp-stats-widget {
 	// Offset the margin and padding of the `.postbox .inside` container.
@@ -16,7 +17,7 @@
 	padding: 24px;
 	background: var(--jetpack-white-off);
 
-	@media only screen and (max-width: 799px) {
+	@media only screen and (max-width: $break-dashboard-mobile) {
 		padding: 24px 16px;
 	}
 
