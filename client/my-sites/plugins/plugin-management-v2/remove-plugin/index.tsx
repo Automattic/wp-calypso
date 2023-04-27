@@ -1,5 +1,3 @@
-import { useSelector } from 'react-redux';
-import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import PluginRemoveButton from '../../plugin-remove-button';
 import type { PluginComponentProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
@@ -12,12 +10,10 @@ interface Props {
 }
 
 export default function RemovePlugin( { site, plugin }: Props ) {
-	const pluginOnSite = useSelector( ( state ) => getPluginOnSite( state, site.ID, plugin.slug ) );
-
 	return (
 		<PluginRemoveButton
 			key={ `remove-plugin-${ site.ID }` }
-			plugin={ pluginOnSite }
+			plugin={ plugin }
 			site={ site }
 			menuItem
 			isJetpackCloud

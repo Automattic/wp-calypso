@@ -30,9 +30,10 @@ A module for managing installed plugins on connected sites.
 
 Returns the state of the network request for fetching all available plugins on all Jetpack sites of the current user.
 
-### `getPlugins( state: Object, siteIds: Array, pluginFilter: Object )`
+### `getFilteredAndSortedPlugins( state: Object, siteIds: Array, pluginFilter: Object )`
 
-Get plugins installed on a list of sites (can also be just one site, but it should still be an array). Each plugin returned also lists the sites it's installed on in a `sites` property. Can be filtered by `active`, `inactive`, `updates`.
+Get plugins installed on a list of sites (can also be just one site, but it should still be an array). Each plugin returned also lists the sites it's installed on in a `sites` property. Can be filtered by `active`, `inactive`, `updates` and is sorted
+alphabetically by lowercase plugin slug.
 
 ### `getPluginsWithUpdates( state: Object, siteIds: Array )`
 
