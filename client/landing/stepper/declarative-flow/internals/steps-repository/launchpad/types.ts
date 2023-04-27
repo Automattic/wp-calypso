@@ -30,7 +30,7 @@ export interface LaunchpadStatuses {
 	first_post_published?: boolean;
 	video_uploaded?: boolean;
 	publish_first_course?: boolean;
-	plan_completed?: boolean;
+	plan_selected?: boolean;
 	domain_upsell_deferred?: boolean;
 }
 
