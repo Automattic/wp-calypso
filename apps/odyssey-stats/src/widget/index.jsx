@@ -43,7 +43,7 @@ export function init() {
 								target="__blank"
 								aria-label="Jetpack Stats Website"
 							>
-								<JetpackLogo size={ 25 } monochrome full />
+								<JetpackLogo size={ 20 } monochrome full />
 							</a>
 							<a href={ odysseyStatsBaseUrl }>{ translate( 'View all stats' ) }</a>
 						</div>
