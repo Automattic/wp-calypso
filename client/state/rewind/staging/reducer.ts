@@ -9,6 +9,7 @@ import {
 	JETPACK_BACKUP_STAGING_UPDATE_REQUEST,
 	JETPACK_BACKUP_STAGING_UPDATE_REQUEST_SUCCESS,
 	JETPACK_BACKUP_STAGING_UPDATE_REQUEST_FAILURE,
+	JETPACK_BACKUP_STAGING_SET,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 import { BACKUP_STAGING_UPDATE_REQUEST } from './constants';
@@ -91,6 +92,14 @@ export const site = ( state = getSiteInitialState, action: AnyAction ) => {
 				...state,
 				hasFetched: false,
 				isFetching: false,
+			};
+		case JETPACK_BACKUP_STAGING_SET:
+			return {
+				...state,
+				info: {
+					...state.info,
+					staging: action.staging,
+				},
 			};
 	}
 

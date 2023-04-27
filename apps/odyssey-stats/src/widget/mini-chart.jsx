@@ -1,9 +1,10 @@
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import Chart from 'calypso/components/chart';
 import Legend from 'calypso/components/chart/legend';
+import { rectIsEqual, rectIsZero } from 'calypso/lib/track-element-size';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import StatsEmptyState from 'calypso/my-sites/stats/stats-empty-state';
 import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
@@ -45,8 +46,33 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 		queryDate
 	);
 
+	const chartWrapperRef = useRef( null );
+	const lastRect = useRef( null );
+	useEffect( () => {
+		if ( ! chartWrapperRef?.current ) {
+			return;
+		}
+		const observer = new ResizeObserver( () => {
+			const rect = chartWrapperRef.current ? chartWrapperRef.current.getBoundingClientRect() : null;
+			if ( ! rectIsEqual( lastRect.current, rect ) && ! rectIsZero( rect ) ) {
+				lastRect.current = rect;
+				// Trigger a resize event to force the chart to redraw.
+				window?.dispatchEvent( new Event( 'resize' ) );
+			}
+		} );
+
+		observer.observe( chartWrapperRef.current );
+
+		return () => observer.disconnect();
+	} );
+
 	return (
-		<div id="stats-widget-minichart" className="stats-widget-minichart">
+		<div
+			ref={ chartWrapperRef }
+			id="stats-widget-minichart"
+			className="stats-widget-minichart"
+			aria-hidden="true"
+		>
 			<div className="stats-widget-minichart__chart-head">
 				<Intervals selected={ period } compact={ false } onChange={ setPeriod } />
 				<Legend

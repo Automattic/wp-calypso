@@ -1,7 +1,7 @@
 import { Button, Card } from '@automattic/components';
 import requestExternalAccess from '@automattic/request-external-access';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { translate } from 'i18n-calypso';
-import { useMutation, useQueryClient } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';

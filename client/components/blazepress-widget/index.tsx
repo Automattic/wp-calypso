@@ -1,11 +1,11 @@
 import { getUrlParts } from '@automattic/calypso-url';
 import { Dialog } from '@automattic/components';
 import { useLocale } from '@automattic/i18n-utils';
+import { useQueryClient } from '@tanstack/react-query';
 import classNames from 'classnames';
 import { TranslateOptionsText, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useEffect, useRef, useState } from 'react';
-import { useQueryClient } from 'react-query';
 import { useSelector } from 'react-redux';
 import { BlankCanvas } from 'calypso/components/blank-canvas';
 import BlazeLogo from 'calypso/components/blaze-logo';

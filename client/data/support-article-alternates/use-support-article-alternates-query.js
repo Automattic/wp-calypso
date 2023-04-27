@@ -1,5 +1,5 @@
 import { isDefaultLocale } from '@automattic/i18n-utils';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';

@@ -57,13 +57,13 @@ export const siteColumns: SiteColumns = [
 	{
 		key: 'backup',
 		title: translate( 'Backup' ),
-		className: 'width-fit-content',
+		className: 'fixed-site-column',
 		isExpandable: true,
 	},
 	{
 		key: 'scan',
 		title: translate( 'Scan' ),
-		className: 'width-fit-content',
+		className: 'fixed-site-column',
 	},
 	{
 		key: 'monitor',

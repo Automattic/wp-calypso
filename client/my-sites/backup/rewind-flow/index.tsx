@@ -1,6 +1,6 @@
 import { Card, Spinner } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';

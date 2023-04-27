@@ -21,7 +21,7 @@ const CommentRow = ( {
 	site_title,
 	site_icon,
 	site_url,
-	subscription_date,
+	date_subscribed,
 	forwardedRef,
 	style,
 }: CommentRowProps ) => {
@@ -56,7 +56,7 @@ const CommentRow = ( {
 					</span>
 				</a>
 				<span className="date" role="cell">
-					<TimeSince date={ subscription_date.toISOString?.() ?? subscription_date } />
+					<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
 				</span>
 				<span className="actions" role="cell">
 					<CommentSettings
