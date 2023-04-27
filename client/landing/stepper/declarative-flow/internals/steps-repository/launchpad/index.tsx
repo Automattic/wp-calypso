@@ -1,3 +1,4 @@
+import { useLaunchpad } from '@automattic/data-stores';
 import { StepContainer, START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -7,7 +8,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useLaunchpadChecklist } from 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useRecordSignupComplete } from 'calypso/landing/stepper/hooks/use-record-signup-complete';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
@@ -37,7 +37,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 	const site = useSite();
 	const {
 		isError: launchpadFetchError,
-		data: { launchpad_screen: launchpadScreenOption, site_intent: siteIntentOption },
+		data: { launchpad_screen: launchpadScreenOption, site_intent: siteIntentOption } = {},
 	} = useLaunchpad( siteSlug );
 	const isSiteLaunched = site?.launch_status === 'launched' || false;
 	const recordSignupComplete = useRecordSignupComplete( flow );
