@@ -32,7 +32,7 @@ export const Promo = ( { isSocialActive, adminUrl, translate } ) => {
 
 	return (
 		<Main wideLayout className="jetpack-social__promo">
-			<DocumentHead title={ titleHeader } />{ ' ' }
+			<DocumentHead title={ titleHeader } />
 			<div className="jetpack-social__promo-content">
 				<JetpackRnaActionCard
 					headerText={ titleHeader }
@@ -44,15 +44,14 @@ export const Promo = ( { isSocialActive, adminUrl, translate } ) => {
 					{ ...ctaProps }
 				>
 					<ul className="jetpack-social__features">
-						{ ' ' }
 						{ features.map( ( feature, i ) => (
 							<li className="jetpack-social__feature" key={ i }>
-								<Gridicon size={ 18 } icon="checkmark" /> { preventWidows( feature ) }{ ' ' }
+								<Gridicon size={ 18 } icon="checkmark" /> { preventWidows( feature ) }
 							</li>
-						) ) }{ ' ' }
-					</ul>{ ' ' }
-				</JetpackRnaActionCard>{ ' ' }
-			</div>{ ' ' }
+						) ) }
+					</ul>
+				</JetpackRnaActionCard>
+			</div>
 		</Main>
 	);
 };
