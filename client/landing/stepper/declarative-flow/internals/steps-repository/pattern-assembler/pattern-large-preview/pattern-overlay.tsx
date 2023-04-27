@@ -4,8 +4,8 @@ import './pattern-overlay.scss';
 
 interface Props {
 	referenceElement?: HTMLElement;
-	overlayContent?: JSX.Element;
-	stickyContent?: JSX.Element;
+	overlayContent?: JSX.Element | null;
+	stickyContent?: JSX.Element | null;
 }
 
 const STICKY_MARGIN = 72;

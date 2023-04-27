@@ -1,19 +1,19 @@
-import { PatternRenderer, PatternsRendererContainer } from '@automattic/block-renderer';
+import { PatternsRendererContainer } from '@automattic/block-renderer';
 import { DeviceSwitcher } from '@automattic/components';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import { Icon, layout } from '@wordpress/icons';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useRef, useEffect, useState } from 'react';
 import { NAVIGATOR_PATHS, STYLES_PATHS } from '../constants';
 import { PATTERN_ASSEMBLER_EVENTS } from '../events';
 import PatternActionBar from '../pattern-action-bar';
 import { encodePatternId } from '../utils';
+import PatternItem from './pattern-item';
 import PatternOverlay from './pattern-overlay';
 import useActionBarProps from './use-action-bar-props';
 import type { Pattern } from '../types';
-import type { MouseEvent } from 'react';
+import type { CSSProperties, MouseEvent } from 'react';
 import './style.scss';
 
 interface Props {
@@ -49,11 +49,23 @@ const PatternLargePreview = ( {
 	const navigator = useNavigator();
 	const patterns = [ header, ...sections, footer ].filter( Boolean ) as Pattern[];
 	const hasSelectedPattern = patterns.length > 0;
-	const patternIds = patterns.map( ( pattern ) => pattern && encodePatternId( pattern.ID ) );
+	const patternIds: string[] = patterns.map(
+		( pattern ) => pattern && encodePatternId( pattern.ID )
+	);
 	const shouldShowSelectPatternHint =
 		! hasSelectedPattern && STYLES_PATHS.includes( navigator.location.path );
 	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLDivElement | null >( null );
+	const listStyle: CSSProperties = {
+		position: 'absolute',
+		top: 0,
+		bottom: 0,
+		left: 0,
+		right: 0,
+		height: '100vh',
+		overflow: 'auto',
+	};
+
 	const [ hoveredElement, setHoveredElement ] = useState< HTMLElement | null >( null );
 	const actionBarProps = useActionBarProps( {
 		element: hoveredElement,
@@ -100,48 +112,6 @@ const PatternLargePreview = ( {
 					'You can view your color and font selections after you select a pattern, get started by {{link}}adding a header pattern{{/link}}',
 					options
 			  );
-	};
-
-	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
-		const handleMouseEnter = ( event: MouseEvent ) => {
-			setHoveredElement( event.currentTarget as HTMLElement );
-		};
-
-		const handleMouseLeave = ( event: MouseEvent ) => {
-			const { clientX, clientY } = event;
-			const target = event.target as HTMLElement;
-			const { offsetParent } = target;
-			const { left, right, top, bottom } = target.getBoundingClientRect();
-
-			// Use the position to determine whether the mouse leaves the current element or not
-			// because the element is inside the iframe and we cannot get the next element from
-			// the event.relatedTarget
-			if (
-				clientX <= Math.max( left, 0 ) ||
-				clientX >= Math.min( right, offsetParent?.clientWidth || Infinity ) ||
-				clientY <= Math.max( top, 0 ) ||
-				clientY >= Math.min( bottom, offsetParent?.clientHeight || Infinity )
-			) {
-				setHoveredElement( null );
-			}
-		};
-
-		return (
-			<div
-				key={ pattern.key }
-				id={ pattern.key }
-				className={ classnames(
-					'pattern-large-preview__pattern',
-					`pattern-large-preview__pattern-${ type }`
-				) }
-				data-type={ type }
-				data-position={ position }
-				onMouseEnter={ handleMouseEnter }
-				onMouseLeave={ handleMouseLeave }
-			>
-				<PatternRenderer patternId={ encodePatternId( pattern.ID ) } isContentOnly />
-			</div>
-		);
 	};
 
 	useEffect( () => {
@@ -195,25 +165,21 @@ const PatternLargePreview = ( {
 		>
 			<>
 				{ hasSelectedPattern ? (
-					<PatternsRendererContainer patternIds={ patternIds as string[] } enablePointerEvent>
-						<div
-							className={ classnames( 'pattern-large-preview__patterns', 'wp-site-blocks' ) }
-							style={ {
-								position: 'absolute',
-								top: 0,
-								bottom: 0,
-								left: 0,
-								right: 0,
-								height: '100vh',
-								overflow: 'auto',
-							} }
-							ref={ listRef }
-						>
-							{ header && renderPattern( 'header', header ) }
+					<PatternsRendererContainer patternIds={ patternIds }>
+						<div className="wp-site-blocks" style={ listStyle } ref={ listRef }>
+							<PatternItem pattern={ header } type="header" onHover={ setHoveredElement } />
 							<main className="wp-block-group">
-								{ sections.map( ( pattern, i ) => renderPattern( 'section', pattern, i ) ) }
+								{ sections.map( ( pattern, i ) => (
+									<PatternItem
+										key={ pattern.key }
+										pattern={ pattern }
+										type="section"
+										position={ i }
+										onHover={ setHoveredElement }
+									/>
+								) ) }
 							</main>
-							{ footer && renderPattern( 'footer', footer ) }
+							<PatternItem pattern={ footer } type="footer" onHover={ setHoveredElement } />
 						</div>
 					</PatternsRendererContainer>
 				) : (
@@ -223,16 +189,19 @@ const PatternLargePreview = ( {
 						<span>{ getDescription() }</span>
 					</div>
 				) }
-				{ hoveredElement && hoveredElement.isConnected && (
+
+				{ hoveredElement && (
 					<PatternOverlay
 						referenceElement={ hoveredElement }
 						overlayContent={ <div className="pattern-large-preview__pattern-box-shadow" /> }
 						stickyContent={
-							<PatternActionBar
-								isRemoveButtonTextOnly
-								source="large_preview"
-								{ ...actionBarProps }
-							/>
+							actionBarProps && (
+								<PatternActionBar
+									isRemoveButtonTextOnly
+									source="large_preview"
+									{ ...actionBarProps }
+								/>
+							)
 						}
 					/>
 				) }

@@ -19,8 +19,8 @@ const useActionBarProps = ( {
 	onDeleteHeader,
 	onDeleteFooter,
 }: UseActionBarArguments ) => {
-	const patternType = element?.dataset.type;
-	const position = Number( element?.dataset.position );
+	const patternType = element?.dataset.type ?? '';
+	const position = Number( element?.dataset.position ?? 0 );
 	const actionBarProps = { patternType };
 	const [ , forceRecompute ] = useReducer( ( s ) => ( s + 1 ) % Number.MAX_SAFE_INTEGER, 0 );
 
