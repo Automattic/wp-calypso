@@ -4,9 +4,9 @@
 // `init-app-config` has to be the first import, because there could be packages reference it in their side effect.
 // eslint-disable-next-line import/order
 import './lib/init-app-config';
+import { QueryClient } from '@tanstack/react-query';
 import page from 'page';
 import '@automattic/calypso-polyfills';
-import { QueryClient } from 'react-query';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { getPathWithUpdatedQueryString } from 'calypso/my-sites/stats/utils';
