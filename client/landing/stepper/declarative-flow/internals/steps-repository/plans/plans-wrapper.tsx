@@ -16,6 +16,7 @@ import {
 	isLinkInBioFlow,
 	isNewsletterFlow,
 	isStartWritingFlow,
+	NEWSLETTER_FLOW,
 } from '@automattic/onboarding';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -47,6 +48,8 @@ function getPlanTypes( flowName: string | null ) {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+		case NEWSLETTER_FLOW: 
+			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 		default:
 			return undefined;
 	}
@@ -132,11 +135,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return renderLoading();
 		}
 
-		let plansToShow: string[] = [];
-		if ( isNewsletterFlow( flowName ) ) {
-			plansToShow = [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
-		}
-
 		return (
 			<div>
 				<PlansFeaturesMain
@@ -160,7 +158,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isReskinned={ isReskinned }
 					is2023PricingGridVisible={ props.is2023PricingGridVisible }
 					hidePlansFeatureComparison={ hidePlansFeatureComparison }
-					plansToShow={ plansToShow }
 				/>
 			</div>
 		);
