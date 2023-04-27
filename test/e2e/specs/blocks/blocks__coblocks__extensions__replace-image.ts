@@ -62,9 +62,9 @@ describe( 'CoBlocks: Extensions: Replace Image', function () {
 	} );
 
 	it( `Replace uploaded image`, async () => {
-		const editorFrame = await editorPage.getEditorFrame();
-		await editorFrame.locator( 'button:text("Replace")' ).click();
-		await editorFrame
+		const editorParent = await editorPage.getEditorParent();
+		await editorParent.locator( 'button:text("Replace")' ).click();
+		await editorParent
 			.locator( '.components-form-file-upload input[type="file"]' )
 			.setInputFiles( imageFile.fullpath );
 

@@ -25,7 +25,12 @@ export class EditorWelcomeTourComponent {
 	 * @see {@link https://github.com/Automattic/wp-calypso/issues/57660}
 	 */
 	async forceToggleWelcomeTour( show = true ): Promise< void > {
-		const editorFrame = await this.editor.frame();
+		const editorParent = await this.editor.parent();
+		const editorFrame = await ( await editorParent.elementHandle() )?.ownerFrame();
+		if ( ! editorFrame ) {
+			return;
+		}
+
 		await editorFrame.waitForFunction( async () => {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const welcomeGuide = ( window as any )?.wp?.data?.select( 'automattic/wpcom-welcome-guide' );

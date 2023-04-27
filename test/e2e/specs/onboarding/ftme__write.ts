@@ -123,17 +123,17 @@ describe( DataHelper.createSuiteTitle( 'FTME: Write' ), function () {
 		} );
 
 		it( 'First post congratulatory message is shown', async function () {
-			const editorFrame = await editorPage.getEditorFrame();
+			const editorParent = await editorPage.getEditorParent();
 
-			await editorFrame.locator( ':text("Your first post is published!")' ).waitFor();
+			await editorParent.locator( ':text("Your first post is published!")' ).waitFor();
 			await page.keyboard.press( 'Escape' );
 		} );
 
 		it( 'Dismiss Launchpad modal if shown', async function () {
-			const editorFrame = await editorPage.getEditorFrame();
+			const editorParent = await editorPage.getEditorParent();
 
 			const selector = '.launchpad__save-modal-buttons button';
-			const locator = editorFrame.locator( selector );
+			const locator = editorParent.locator( selector );
 			try {
 				await locator.click( { timeout: 2000 } );
 			} catch {

@@ -34,8 +34,8 @@ export class FullSiteEditorNavSidebarComponent {
 	 * Clicks the Dashboard menu link to exit the editor.
 	 */
 	async exit(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const exitButtonLocator = editorFrame
+		const editorParent = await this.editor.parent();
+		const exitButtonLocator = editorParent
 			.getByRole( 'region', { name: 'Navigation sidebar' } )
 			.locator( selectors.exitButton );
 		await exitButtonLocator.click();
@@ -45,24 +45,24 @@ export class FullSiteEditorNavSidebarComponent {
 	 * Clicks sidebar link to open the template parts list.
 	 */
 	async navigateToTemplatePartsManager(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		await editorFrame.locator( selectors.templatePartsItem ).click();
-		await editorFrame.locator( selectors.manageAllTemplatePartsItem ).click();
+		const editorParent = await this.editor.parent();
+		await editorParent.locator( selectors.templatePartsItem ).click();
+		await editorParent.locator( selectors.manageAllTemplatePartsItem ).click();
 	}
 
 	/**
 	 * Ensures that the nav sidebar is at the top level ("Design")
 	 */
 	async ensureNavigationTopLevel(): Promise< void > {
-		const editorFrame = await this.editor.frame();
+		const editorParent = await this.editor.parent();
 		const waitForNavigationTopLevel = async () => {
-			await editorFrame
+			await editorParent
 				.getByRole( 'region', { name: 'Navigation sidebar' } )
 				.locator( selectors.exitButton )
 				.waitFor();
 		};
 
-		const headerLocator = editorFrame.locator( selectors.navigationScreenTitle );
+		const headerLocator = editorParent.locator( selectors.navigationScreenTitle );
 		await headerLocator.waitFor();
 		const headerText = await headerLocator.innerText();
 		if ( headerText === 'Design' ) {
@@ -88,7 +88,7 @@ export class FullSiteEditorNavSidebarComponent {
 	 * Clicks on a button with the exact name.
 	 */
 	async clickNavButtonByExactText( text: string ): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		await editorFrame.getByRole( 'button', { name: text, exact: true } ).click();
+		const editorParent = await this.editor.parent();
+		await editorParent.getByRole( 'button', { name: text, exact: true } ).click();
 	}
 }

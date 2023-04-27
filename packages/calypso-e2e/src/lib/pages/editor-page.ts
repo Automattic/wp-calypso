@@ -119,8 +119,8 @@ export class EditorPage {
 	}
 
 	/** */
-	async getEditorFrame() {
-		return await this.editor.frame();
+	async getEditorParent() {
+		return await this.editor.parent();
 	}
 
 	/** */
@@ -371,11 +371,11 @@ export class EditorPage {
 		patternName: string,
 		inserter: BlockInserter
 	): Promise< void > {
-		const editorFrame = await this.editor.frame();
+		const editorParent = await this.editor.parent();
 
 		await inserter.searchBlockInserter( patternName );
 		await inserter.selectBlockInserterResult( patternName, { type: 'pattern' } );
-		const insertConfirmationToastLocator = editorFrame.locator(
+		const insertConfirmationToastLocator = editorParent.locator(
 			`.components-snackbar__content:text('Block pattern "${ patternName }" inserted.')`
 		);
 		await insertConfirmationToastLocator.waitFor();
@@ -621,13 +621,13 @@ export class EditorPage {
 	 * Unpublishes the post or page by switching to draft.
 	 */
 	async unpublish(): Promise< void > {
-		const editorFrame = await this.editor.frame();
+		const editorParent = await this.editor.parent();
 
 		await this.editorToolbarComponent.switchToDraft();
 		// @TODO: eventually refactor this out to a ConfirmationDialogComponent.
-		await editorFrame.getByRole( 'button' ).getByText( 'OK' ).click();
+		await editorParent.getByRole( 'button' ).getByText( 'OK' ).click();
 		// @TODO: eventually refactor this out to a EditorToastNotificationComponent.
-		await editorFrame.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
+		await editorParent.getByRole( 'button', { name: 'Dismiss this notice' } ).waitFor();
 	}
 
 	/**
@@ -640,8 +640,8 @@ export class EditorPage {
 	 * @returns {URL} Published article's URL.
 	 */
 	async getPublishedURLFromToast(): Promise< URL > {
-		const editorFrame = await this.editor.frame();
-		const toastLocator = editorFrame.locator( selectors.toastViewPostLink );
+		const editorParent = await this.editor.parent();
+		const toastLocator = editorParent.locator( selectors.toastViewPostLink );
 		const publishedURL = ( await toastLocator.getAttribute( 'href' ) ) as string;
 		return new URL( publishedURL );
 	}

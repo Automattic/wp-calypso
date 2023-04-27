@@ -40,15 +40,15 @@ export class OpenTableFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const editorFrame = await context.editorPage.getEditorFrame();
+		const editorParent = await context.editorPage.getEditorParent();
 		const restaurant = this.configurationData.restaurant.toString();
-		const searchLocator = editorFrame.locator( selectors.searchInput );
+		const searchLocator = editorParent.locator( selectors.searchInput );
 		await searchLocator.fill( restaurant );
 
-		const suggestionLocator = editorFrame.locator( selectors.suggestion( restaurant ) ).first(); // There are many restaurants out there, let's grab the first if the name wasn't specific enough.
+		const suggestionLocator = editorParent.locator( selectors.suggestion( restaurant ) ).first(); // There are many restaurants out there, let's grab the first if the name wasn't specific enough.
 		await suggestionLocator.click();
 
-		const embedButtonLocator = editorFrame.locator( selectors.embedButton );
+		const embedButtonLocator = editorParent.locator( selectors.embedButton );
 		await embedButtonLocator.click();
 	}
 

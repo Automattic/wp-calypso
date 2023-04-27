@@ -38,8 +38,8 @@ export class EditorPublishPanelComponent {
 	 * @returns {Promise<boolean>} True if panel is visible. False otherwise.
 	 */
 	async panelIsOpen(): Promise< boolean > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( `${ panel }:visible` );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( `${ panel }:visible` );
 		try {
 			await locator.waitFor( { timeout: 5 * 1000 } );
 			return true;
@@ -63,9 +63,9 @@ export class EditorPublishPanelComponent {
 		if ( ! ( await this.panelIsOpen() ) ) {
 			return;
 		}
-		const editorFrame = await this.editor.frame();
+		const editorParent = await this.editor.parent();
 		const selector = `${ selectors.cancelPublishButton }:visible, ${ selectors.postPublishClosePanelButton }:visible`;
-		const locator = editorFrame.locator( selector );
+		const locator = editorParent.locator( selector );
 		await locator.click();
 	}
 
@@ -75,8 +75,8 @@ export class EditorPublishPanelComponent {
 	 * Publish or schedule the article.
 	 */
 	async publish(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const publishButtonLocator = editorFrame.locator( selectors.publishButton );
+		const editorParent = await this.editor.parent();
+		const publishButtonLocator = editorParent.locator( selectors.publishButton );
 		await publishButtonLocator.click();
 	}
 
@@ -88,8 +88,8 @@ export class EditorPublishPanelComponent {
 	 * @returns {URL} URL to the published article.
 	 */
 	async getPublishedURL(): Promise< URL > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.publishedArticleURL );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.publishedArticleURL );
 		const publishedURL = ( await locator.getAttribute( 'value' ) ) as string;
 		return new URL( publishedURL );
 	}

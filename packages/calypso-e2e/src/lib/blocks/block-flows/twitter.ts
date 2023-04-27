@@ -37,16 +37,16 @@ export class TwitterBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const editorFrame = await context.editorPage.getEditorFrame();
+		const editorParent = await context.editorPage.getEditorParent();
 
-		const urlInputLocator = editorFrame.locator( selectors.embedUrlInput );
+		const urlInputLocator = editorParent.locator( selectors.embedUrlInput );
 		await urlInputLocator.fill( this.configurationData.embedUrl );
 
-		const embedButtonLocator = editorFrame.locator( selectors.embedButton );
+		const embedButtonLocator = editorParent.locator( selectors.embedButton );
 		await embedButtonLocator.click();
 
 		// We should make sure the actual Iframe loads, because it takes a second.
-		const twitterIframeLocator = editorFrame.locator( selectors.editorTwitterIframe );
+		const twitterIframeLocator = editorParent.locator( selectors.editorTwitterIframe );
 		await twitterIframeLocator.waitFor();
 	}
 

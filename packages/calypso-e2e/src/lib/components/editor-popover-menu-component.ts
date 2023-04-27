@@ -29,8 +29,8 @@ export class EditorPopoverMenuComponent {
 	 * Click menu button by name.
 	 */
 	async clickMenuButton( name: string ): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.menuButton( name ) );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.menuButton( name ) );
 		await locator.click();
 	}
 }

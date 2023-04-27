@@ -27,13 +27,13 @@ export class EditorTemplateModalComponent {
 	 * @param {TemplateCategory} category Name of the category to select.
 	 */
 	async selectTemplateCategory( category: TemplateCategory ): Promise< void > {
-		const editorFrame = await this.editor.frame();
+		const editorParent = await this.editor.parent();
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
-			await editorFrame
+			await editorParent
 				.locator( '.page-pattern-modal__mobile-category-dropdown' )
 				.selectOption( category.toLowerCase() );
 		} else {
-			await editorFrame.getByRole( 'menuitem', { name: category, exact: true } ).click();
+			await editorParent.getByRole( 'menuitem', { name: category, exact: true } ).click();
 		}
 	}
 
@@ -43,15 +43,15 @@ export class EditorTemplateModalComponent {
 	 * @param {string} label Label for the template (the string underneath the preview).
 	 */
 	async selectTemplate( label: string ): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		await editorFrame.getByRole( 'option', { name: label, exact: true } ).click();
+		const editorParent = await this.editor.parent();
+		await editorParent.getByRole( 'option', { name: label, exact: true } ).click();
 	}
 
 	/**
 	 * Select a blank page as your template.
 	 */
 	async selectBlankPage(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		await editorFrame.getByRole( 'button', { name: 'Blank page' } ).click();
+		const editorParent = await this.editor.parent();
+		await editorParent.getByRole( 'button', { name: 'Blank page' } ).click();
 	}
 }

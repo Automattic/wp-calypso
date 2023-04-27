@@ -1,4 +1,4 @@
-import { Page, Frame } from 'playwright';
+import { Page, Locator } from 'playwright';
 
 const EDITOR_TIMEOUT = 60 * 1000;
 
@@ -7,27 +7,27 @@ const EDITOR_TIMEOUT = 60 * 1000;
  */
 export class EditorComponent {
 	private page: Page;
-	private editorFrame: Page | Frame | null;
-	private canvasFrame: Page | Frame | null;
+	private parentLocator: Locator | null;
+	private canvasLocator: Locator | null;
 
 	/** */
 	constructor( page: Page ) {
 		this.page = page;
-		this.editorFrame = null;
-		this.canvasFrame = null;
+		this.parentLocator = null;
+		this.canvasLocator = null;
 	}
 
 	/**
-	 * Returns the parent Editor element. If the Editor is Gutenframed it will
-	 * return the frame object. Otherwise it will return the current page object.
+	 * Returns the Editor parent locator. It will automatically resolve to the
+	 * proper locator, regardless if the Editor is Gutenframed or not.
 	 */
-	async frame(): Promise< Page | Frame > {
-		if ( this.editorFrame ) {
-			return this.editorFrame;
+	async parent(): Promise< Locator > {
+		if ( this.parentLocator ) {
+			return this.parentLocator;
 		}
 
 		try {
-			this.editorFrame = await Promise.race( [
+			this.parentLocator = await Promise.race( [
 				this.waitForFramedEditor(),
 				this.waitForUnframedEditor(),
 			] );
@@ -35,25 +35,20 @@ export class EditorComponent {
 			throw new Error( 'Timed out waiting for the Editor' );
 		}
 
-		if ( ! this.editorFrame ) {
-			throw new Error( 'Editor frame not found' );
-		}
-
-		return this.editorFrame;
+		return this.parentLocator;
 	}
 
 	/**
-	 * Return the Editor canvas parent element. If the canvas is iframed it will
-	 * return the frame object. Otherwise, it will return what's currently
-	 * returned from the frame() method.
+	 * Returns the Editor canvas locator. It will automatically resolve to the
+	 * proper locator, regardless if the canvas is iframed or not.
 	 */
-	async canvas(): Promise< Page | Frame > {
-		if ( this.canvasFrame ) {
-			return this.canvasFrame;
+	async canvas(): Promise< Locator > {
+		if ( this.canvasLocator ) {
+			return this.canvasLocator;
 		}
 
 		try {
-			this.canvasFrame = await Promise.race( [
+			this.canvasLocator = await Promise.race( [
 				this.waitForFramedCanvas(),
 				this.waitForUnframedCanvas(),
 			] );
@@ -61,47 +56,44 @@ export class EditorComponent {
 			throw new Error( 'Timed out waiting for the Editor canvas' );
 		}
 
-		if ( ! this.canvasFrame ) {
-			throw new Error( 'Editor canvas frame not found' );
-		}
-
-		return this.canvasFrame;
+		return this.canvasLocator;
 	}
 
 	/** */
 	private async waitForFramedEditor() {
-		await this.page
+		const parentLocator = this.page
 			.frameLocator( 'iframe[src*="calypsoify"]' )
-			.locator( 'body.block-editor-page' )
-			.waitFor( { timeout: EDITOR_TIMEOUT } );
-		const editorFrame = this.page.frame( { url: /calypsoify/ } );
+			.locator( 'body.block-editor-page' );
 
-		return editorFrame;
+		await parentLocator.waitFor( { timeout: EDITOR_TIMEOUT } );
+		return parentLocator;
 	}
 
 	/** */
 	private async waitForUnframedEditor() {
-		const editorBody = this.page.locator( 'body.block-editor-page' );
-		await editorBody.waitFor( { timeout: EDITOR_TIMEOUT } );
+		const parentLocator = this.page.locator( 'body.block-editor-page' );
 
-		return this.page;
+		await parentLocator.waitFor( { timeout: EDITOR_TIMEOUT } );
+		return parentLocator;
 	}
 
 	/** */
 	private async waitForFramedCanvas() {
-		const canvasBody = this.page.frameLocator( 'iframe[name="editor-canvas"]' ).locator( 'body' );
-		await canvasBody.waitFor( { timeout: EDITOR_TIMEOUT } );
-		const canvasFrame = this.page.frame( 'editor-canvas' );
+		const parentLocator = await this.parent();
+		const canvasLocator = parentLocator
+			.frameLocator( 'iframe[name="editor-canvas"]' )
+			.locator( '.editor-styles-wrapper' );
 
-		return canvasFrame;
+		await canvasLocator.waitFor( { timeout: EDITOR_TIMEOUT } );
+		return canvasLocator;
 	}
 
 	/** */
 	private async waitForUnframedCanvas() {
-		const editorFrame = await this.frame();
-		const canvasWrapper = editorFrame.locator( '.editor-styles-wrapper' );
+		const parentLocator = await this.parent();
+		const canvasWrapper = parentLocator.locator( '.editor-styles-wrapper' );
 		await canvasWrapper.waitFor();
 
-		return editorFrame;
+		return parentLocator;
 	}
 }

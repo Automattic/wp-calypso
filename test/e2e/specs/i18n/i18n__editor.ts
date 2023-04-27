@@ -12,7 +12,7 @@ import {
 	EditorWelcomeTourComponent,
 	EditorComponent,
 } from '@automattic/calypso-e2e';
-import { Page, Browser, Frame } from 'playwright';
+import { Page, Browser, Locator } from 'playwright';
 import type { LanguageSlug } from '@automattic/languages';
 
 type Translations = {
@@ -303,10 +303,10 @@ describe( 'I18N: Editor', function () {
 				// Ensure the Welcome Guide component is shown.
 				await editorWelcomeTourComponent.forceShowWelcomeTour();
 
-				const editorFrame = await editorPage.getEditorFrame();
+				const editorParent = await editorPage.getEditorParent();
 
-				await editorFrame.locator( etkTranslations.welcomeGuide.welcomeTitleSelector ).waitFor();
-				await editorFrame.locator( etkTranslations.welcomeGuide.closeButtonSelector ).click();
+				await editorParent.locator( etkTranslations.welcomeGuide.welcomeTitleSelector ).waitFor();
+				await editorParent.locator( etkTranslations.welcomeGuide.closeButtonSelector ).click();
 			} );
 		} );
 
@@ -316,8 +316,8 @@ describe( 'I18N: Editor', function () {
 			'Translations for block: $blockName',
 			( ...args ) => {
 				const block = args[ 0 ]; // Makes TS stop complaining about incompatible args type
-				let editorFrame: Page | Frame;
 				let editorPage: EditorPage;
+				let editorParent: Locator;
 
 				it( 'Insert test block', async function () {
 					editorPage = new EditorPage( page );
@@ -325,23 +325,26 @@ describe( 'I18N: Editor', function () {
 				} );
 
 				it( 'Render block content translations', async function () {
-					editorFrame = await editorPage.getEditorFrame();
+					editorParent = await editorPage.getEditorParent();
 					// Ensure block contents are translated as expected.
 					// To deal with multiple potential matches (eg. Jetpack/Business Hours > Add Hours)
 					// the first locator is matched.
 					await Promise.all(
 						block.blockEditorContent.map( ( content ) =>
-							editorFrame.locator( `${ block.blockEditorSelector } ${ content }` ).first().waitFor()
+							editorParent
+								.locator( `${ block.blockEditorSelector } ${ content }` )
+								.first()
+								.waitFor()
 						)
 					);
 				} );
 
 				it( 'Render block title translations', async function () {
 					await editorPage.openSettings();
-					await editorFrame.locator( block.blockEditorSelector ).click();
+					await editorParent.locator( block.blockEditorSelector ).click();
 
 					// Ensure the block is highlighted.
-					await editorFrame
+					await editorParent
 						.locator(
 							`:is( ${ block.blockEditorSelector }.is-selected, ${ block.blockEditorSelector }.has-child-selected)`
 						)
@@ -351,15 +354,15 @@ describe( 'I18N: Editor', function () {
 					// the first button in the floating toolbar which selects the overall
 					// block.
 					if (
-						await editorFrame
+						await editorParent
 							.locator( '.block-editor-block-parent-selector__button:visible' )
 							.count()
 					) {
-						await editorFrame.locator( '.block-editor-block-parent-selector__button' ).click();
+						await editorParent.locator( '.block-editor-block-parent-selector__button' ).click();
 					}
 
 					// Ensure the Settings with the block selected shows the expected title.
-					await editorFrame
+					await editorParent
 						.locator( `.block-editor-block-card__title:has-text("${ block.blockPanelTitle }")` )
 						.waitFor();
 				} );

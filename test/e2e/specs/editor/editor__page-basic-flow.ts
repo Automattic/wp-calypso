@@ -63,8 +63,8 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Template content loads into editor', async function () {
-		const editorFrame = await editorPage.getEditorFrame();
-		await editorFrame.locator( `h1:text-is("About Me")` ).waitFor();
+		const editorParent = await editorPage.getEditorParent();
+		await editorParent.locator( `h1:text-is("About Me")` ).waitFor();
 	} );
 
 	it( 'Open setting sidebar', async function () {

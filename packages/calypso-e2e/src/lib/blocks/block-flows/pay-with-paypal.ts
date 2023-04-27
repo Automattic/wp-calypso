@@ -44,14 +44,14 @@ export class PayWithPaypalBlockFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const editorFrame = await context.editorPage.getEditorFrame();
-		const nameLocator = editorFrame.locator( selectors.name );
+		const editorParent = await context.editorPage.getEditorParent();
+		const nameLocator = editorParent.locator( selectors.name );
 		await nameLocator.fill( this.configurationData.name );
 
-		const priceLocator = editorFrame.locator( selectors.price );
+		const priceLocator = editorParent.locator( selectors.price );
 		await priceLocator.fill( this.configurationData.price.toString() );
 
-		const emailLocator = editorFrame.locator( selectors.email );
+		const emailLocator = editorParent.locator( selectors.email );
 		await emailLocator.fill( this.configurationData.email );
 
 		// If the post is not saved as draft, the Pay with Paypal block is not rendered in the published post.

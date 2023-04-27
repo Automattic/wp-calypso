@@ -31,8 +31,8 @@ export class EditorNavSidebarComponent {
 	 * Clicks the Dashboard menu link to exit the editor.
 	 */
 	async exitEditor(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const exitLinkLocator = editorFrame.locator( selectors.exitLink );
+		const editorParent = await this.editor.parent();
+		const exitLinkLocator = editorParent.locator( selectors.exitLink );
 		await exitLinkLocator.click();
 	}
 }

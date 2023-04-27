@@ -30,8 +30,8 @@ export class EditorInlineBlockInserterComponent {
 	 * @param {string} text Text to enter into the search input.
 	 */
 	async searchBlockInserter( text: string ): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.searchInput );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.searchInput );
 		await locator.fill( text );
 	}
 
@@ -42,7 +42,7 @@ export class EditorInlineBlockInserterComponent {
 	 * result will be chosen.
 	 */
 	async selectBlockInserterResult( name: string ): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		await editorFrame.getByRole( 'option', { name, exact: true } ).first().click();
+		const editorParent = await this.editor.parent();
+		await editorParent.getByRole( 'option', { name, exact: true } ).first().click();
 	}
 }

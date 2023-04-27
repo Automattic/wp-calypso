@@ -55,8 +55,8 @@ export class EditorDimensionsComponent {
 	 * Reset all of the dimension settings.
 	 */
 	async resetAll(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const optionsButtonLocator = editorFrame.locator( selectors.optionsButton );
+		const editorParent = await this.editor.parent();
+		const optionsButtonLocator = editorParent.locator( selectors.optionsButton );
 		await optionsButtonLocator.click();
 		await this.editorPopoverMenuComponent.clickMenuButton( 'Reset all' );
 	}
@@ -67,7 +67,7 @@ export class EditorDimensionsComponent {
 	 * @param {number} padding Padding dimension to select.
 	 */
 	private async setPadding( padding: number ): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		await editorFrame.getByLabel( 'All sides padding' ).fill( padding.toString() );
+		const editorParent = await this.editor.parent();
+		await editorParent.getByLabel( 'All sides padding' ).fill( padding.toString() );
 	}
 }

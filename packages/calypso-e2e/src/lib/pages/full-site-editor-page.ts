@@ -381,11 +381,11 @@ export class FullSiteEditorPage {
 	async save(
 		{ checkPreSaveNotices }: { checkPreSaveNotices: boolean } = { checkPreSaveNotices: false }
 	): Promise< void > {
-		const editorFrame = await this.editor.frame();
+		const editorParent = await this.editor.parent();
 		await this.clearExistingSaveConfirmationToast();
 		await this.editorToolbarComponent.saveSiteEditor();
 		if ( checkPreSaveNotices ) {
-			const limitedGlobalStylesPreSaveNotice = editorFrame.locator(
+			const limitedGlobalStylesPreSaveNotice = editorParent.locator(
 				selectors.limitedGlobalStylesPreSaveNotice
 			);
 			if ( this.hasCustomStyles ) {
@@ -403,8 +403,8 @@ export class FullSiteEditorPage {
 	 * Open the navigation sidebar.
 	 */
 	async openNavSidebar(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const openButton = editorFrame.locator( 'button[aria-label="Open Navigation Sidebar"]' );
+		const editorParent = await this.editor.parent();
+		const openButton = editorParent.locator( 'button[aria-label="Open Navigation Sidebar"]' );
 
 		await openButton.click();
 	}
@@ -419,9 +419,9 @@ export class FullSiteEditorPage {
 				'There is no standardized way to close the site editor navigation sidebar on mobile. Navigate to a template or template part instead.'
 			);
 		}
-		const editorFrame = await this.editor.frame();
+		const editorParent = await this.editor.parent();
 		const editorCanvas = await this.editor.canvas();
-		const openButton = editorFrame.locator( 'button[aria-label="Open Navigation Sidebar"]' );
+		const openButton = editorParent.locator( 'button[aria-label="Open Navigation Sidebar"]' );
 
 		await Promise.race( [ openButton.waitFor(), editorCanvas.locator( 'body' ).click() ] );
 	}
@@ -479,8 +479,8 @@ export class FullSiteEditorPage {
 	 * Closes the site styles welcome guide.
 	 */
 	private async closeStylesWelcomeGuide(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.closeStylesWelcomeGuideButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.closeStylesWelcomeGuideButton );
 		await locator.click( { timeout: 5 * 1000 } );
 	}
 
@@ -565,8 +565,8 @@ export class FullSiteEditorPage {
 	 * Selects the "Try it out" option on the Limited Global Styles upgrade modal.
 	 */
 	async tryGlobalStyles(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.limitedGlobalStylesModalTryButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.limitedGlobalStylesModalTryButton );
 		await locator.click();
 	}
 
@@ -634,8 +634,8 @@ export class FullSiteEditorPage {
 	 * @param {string} text The text we expect on the confirmation toast.
 	 */
 	async waitForConfirmationToast( text: string ): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.confirmationToast( text ) );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.confirmationToast( text ) );
 		await locator.waitFor();
 	}
 
@@ -643,8 +643,8 @@ export class FullSiteEditorPage {
 	 * Clears existing save confirmation toasts.
 	 */
 	private async clearExistingSaveConfirmationToast(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const toastLocator = editorFrame.locator( selectors.confirmationToast( 'Site updated.' ) );
+		const editorParent = await this.editor.parent();
+		const toastLocator = editorParent.locator( selectors.confirmationToast( 'Site updated.' ) );
 		if ( ( await toastLocator.count() ) > 0 ) {
 			await toastLocator.click();
 		}

@@ -39,8 +39,8 @@ export class CoverBlock {
 
 		// After uploading the image the focus is switched to the inner
 		// paragraph block (Cover title), so we need to switch it back outside.
-		const editorFrame = await this.editorPage.getEditorFrame();
-		await editorFrame
+		const editorParent = await this.editorPage.getEditorParent();
+		await editorParent
 			.locator( CoverBlock.blockEditorSelector )
 			.click( { position: { x: 1, y: 1 } } );
 	}
@@ -60,8 +60,8 @@ export class CoverBlock {
 	 * @param {'Settings'|'Styles'} name Supported tabs.
 	 */
 	async activateTab( name: 'Settings' | 'Styles' ) {
-		const editorFrame = await this.editorPage.getEditorFrame();
-		await editorFrame.locator( `[aria-label="${ name }"]` ).click();
+		const editorParent = await this.editorPage.getEditorParent();
+		await editorParent.locator( `[aria-label="${ name }"]` ).click();
 	}
 
 	/**
@@ -70,13 +70,13 @@ export class CoverBlock {
 	 * @param {coverStyles} style The title of one of the Cover style buttons
 	 */
 	async setCoverStyle( style: coverStyles ): Promise< void > {
-		const editorFrame = await this.editorPage.getEditorFrame();
-		await editorFrame.locator( `button[aria-label="${ style }"]` ).click();
+		const editorParent = await this.editorPage.getEditorParent();
+		await editorParent.locator( `button[aria-label="${ style }"]` ).click();
 
 		const blockId = await this.block.getAttribute( 'data-block' );
 		const styleSelector = `.is-style-${ style.toLowerCase().replace( ' ', '-' ) }`;
 		const blockSelector = `[data-block="${ blockId }"]`;
 
-		await editorFrame.locator( blockSelector + styleSelector ).waitFor();
+		await editorParent.locator( blockSelector + styleSelector ).waitFor();
 	}
 }

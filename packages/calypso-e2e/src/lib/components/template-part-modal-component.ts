@@ -34,8 +34,8 @@ export class TemplatePartModalComponent {
 	 * @param {string} name Name for the new template.
 	 */
 	async enterTemplateName( name: string ): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.nameInput );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.nameInput );
 		await locator.fill( name );
 	}
 
@@ -43,8 +43,8 @@ export class TemplatePartModalComponent {
 	 * Click the create button for a new template part.
 	 */
 	async clickCreate(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.createButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.createButton );
 		await locator.click();
 	}
 
@@ -54,8 +54,8 @@ export class TemplatePartModalComponent {
 	 * @param {string} name Name of the existing template part.
 	 */
 	async selectExistingTemplatePart( name: string ): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.existingTemplatePart( name ) );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.existingTemplatePart( name ) );
 		await locator.click();
 	}
 }

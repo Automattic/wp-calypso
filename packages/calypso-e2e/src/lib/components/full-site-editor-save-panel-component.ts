@@ -28,8 +28,8 @@ export class FullSiteEditorSavePanelComponent {
 	 * Publish or schedule the article.
 	 */
 	async confirmSave(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.saveButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.saveButton );
 		await locator.click();
 	}
 }

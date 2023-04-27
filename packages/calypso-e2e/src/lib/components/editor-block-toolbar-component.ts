@@ -50,8 +50,8 @@ export class EditorBlockToolbarComponent {
 	 * @param {BlockToolbarButtonIdentifier} identifier Ways to identify the button.
 	 */
 	async clickPrimaryButton( identifier: BlockToolbarButtonIdentifier ): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.button( identifier ) );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.button( identifier ) );
 		await locator.click();
 	}
 
@@ -59,8 +59,8 @@ export class EditorBlockToolbarComponent {
 	 * Click on the options button (three dots).
 	 */
 	async clickOptionsButton(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.button( { ariaLabel: 'Options' } ) );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.button( { ariaLabel: 'Options' } ) );
 		await locator.click();
 	}
 
@@ -68,8 +68,8 @@ export class EditorBlockToolbarComponent {
 	 * Click the up arrow button to move the current block up.
 	 */
 	async moveUp(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.button( { ariaLabel: 'Move up' } ) );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.button( { ariaLabel: 'Move up' } ) );
 		await locator.click();
 	}
 
@@ -77,8 +77,8 @@ export class EditorBlockToolbarComponent {
 	 * Click the down arrow button to move the current block down.
 	 */
 	async moveDown(): Promise< void > {
-		const editorFrame = await this.editor.frame();
-		const locator = editorFrame.locator( selectors.button( { ariaLabel: 'Move down' } ) );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.button( { ariaLabel: 'Move down' } ) );
 		await locator.click();
 	}
 }
