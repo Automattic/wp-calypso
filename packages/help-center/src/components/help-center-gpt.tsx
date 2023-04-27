@@ -19,7 +19,7 @@ const GPTResponsePlaceholder = styled( LoadingPlaceholder )< { width?: string } 
 	:not( :last-child ) {
 		margin-block-end: 0.5rem;
 	}
-	width: ${ ( props ) => ( props.width ? props.width : '100%' ) };
+	width: ${ ( { width = '100%' } ) => width };
 `;
 
 const GPTResponseDisclaimer = styled.div`
