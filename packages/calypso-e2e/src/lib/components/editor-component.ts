@@ -2,7 +2,9 @@ import { Page, Frame } from 'playwright';
 
 const EDITOR_TIMEOUT = 60 * 1000;
 
-/** */
+/**
+ * Represents the Editor component.
+ */
 export class EditorComponent {
 	private page: Page;
 	private editorFrame: Page | Frame | null;
@@ -15,7 +17,10 @@ export class EditorComponent {
 		this.canvasFrame = null;
 	}
 
-	/** */
+	/**
+	 * Returns the parent Editor element. If the Editor is Gutenframed it will
+	 * return the frame object. Otherwise it will return the current page object.
+	 */
 	async frame(): Promise< Page | Frame > {
 		if ( this.editorFrame ) {
 			return this.editorFrame;
@@ -37,7 +42,11 @@ export class EditorComponent {
 		return this.editorFrame;
 	}
 
-	/** */
+	/**
+	 * Return the Editor canvas parent element. If the canvas is iframed it will
+	 * return the frame object. Otherwise, it will return what's currently
+	 * returned from the frame() method.
+	 */
 	async canvas(): Promise< Page | Frame > {
 		if ( this.canvasFrame ) {
 			return this.canvasFrame;
