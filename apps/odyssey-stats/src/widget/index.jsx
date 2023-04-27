@@ -1,6 +1,6 @@
 import '@automattic/calypso-polyfills';
-import { translate } from 'i18n-calypso';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { translate } from 'i18n-calypso';
 import { render } from 'react-dom';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import config from '../lib/config-api';
