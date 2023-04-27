@@ -4,10 +4,8 @@ import {
 	TestAccount,
 	envVariables,
 	PublishedPostPage,
-	PageTemplateModalComponent,
 	getTestAccountByFeature,
 	envToFeatureKey,
-	EditorComponent,
 } from '@automattic/calypso-e2e';
 import { Page, Browser } from 'playwright';
 import type { ArticlePrivacyOptions } from '@automattic/calypso-e2e';
@@ -49,12 +47,9 @@ export function createPrivacyTests( { visibility }: { visibility: ArticlePrivacy
 			} );
 
 			it( 'Start new page', async function () {
-				// @TODO Consider moving this to EditorPage.
+				editorPage = new EditorPage( page );
 				await editorPage.visit( 'page' );
-				const editor = new EditorComponent( page );
-				const pageTemplateModalComponent = new PageTemplateModalComponent( page, editor );
-
-				await pageTemplateModalComponent.selectBlankPage();
+				await editorPage.selectBlankPageTemplate();
 			} );
 
 			it( 'Enter page title', async function () {

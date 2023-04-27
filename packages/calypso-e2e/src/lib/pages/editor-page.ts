@@ -15,6 +15,8 @@ import {
 	EditorSidebarBlockInserterComponent,
 	EditorWelcomeTourComponent,
 	EditorBlockToolbarComponent,
+	EditorTemplateModalComponent,
+	TemplateCategory,
 } from '../components';
 import { BlockInserter, OpenInlineInserter } from './shared-types';
 import type {
@@ -54,6 +56,7 @@ export class EditorPage {
 	private editorInlineBlockInserterComponent: EditorInlineBlockInserterComponent;
 	private editorWelcomeTourComponent: EditorWelcomeTourComponent;
 	private editorBlockToolbarComponent: EditorBlockToolbarComponent;
+	private editorTemplateModalComponent: EditorTemplateModalComponent;
 
 	/**
 	 * Constructs an instance of the component.
@@ -81,6 +84,7 @@ export class EditorPage {
 			page,
 			this.editor
 		);
+		this.editorTemplateModalComponent = new EditorTemplateModalComponent( page, this.editor );
 	}
 
 	//#region Generic and Shell Methods
@@ -143,6 +147,31 @@ export class EditorPage {
 	//#endregion
 
 	//#region Basic Entry
+
+	/**
+	 * Selects blank template from the template modal.
+	 */
+	async selectBlankPageTemplate() {
+		return await this.editorTemplateModalComponent.selectBlankPage();
+	}
+
+	/**
+	 * Select a template category from the sidebar of options.
+	 *
+	 * @param {TemplateCategory} category Name of the category to select.
+	 */
+	async selectTemplateCategory( category: TemplateCategory ) {
+		return await this.editorTemplateModalComponent.selectTemplateCategory( category );
+	}
+
+	/**
+	 * Select a template from the grid of options.
+	 *
+	 * @param {string} label Label for the template (the string underneath the preview).
+	 */
+	async selectTemplate( label: string ) {
+		return await this.editorTemplateModalComponent.selectTemplate( label );
+	}
 
 	/**
 	 * Enters the text into the title block and verifies the result.

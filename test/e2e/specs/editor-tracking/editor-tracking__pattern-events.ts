@@ -8,10 +8,8 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
-	PageTemplateModalComponent,
 	TestAccount,
 	EditorTracksEventManager,
-	EditorComponent,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -43,9 +41,7 @@ describe( DataHelper.createSuiteTitle( 'Editor tracking: Pattern-related events'
 
 		it( 'Select blank template from modal', async function () {
 			// @TODO Consider moving this to EditorPage.
-			const editor = new EditorComponent( page );
-			const pageTemplateModalComponent = new PageTemplateModalComponent( page, editor );
-			await pageTemplateModalComponent.selectBlankPage();
+			await editorPage.selectBlankPageTemplate();
 		} );
 
 		describe( 'From the sidebar inserter', function () {

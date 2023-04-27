@@ -8,7 +8,6 @@ import {
 	envVariables,
 	getTestAccountByFeature,
 	envToFeatureKey,
-	PageTemplateModalComponent,
 	TestAccount,
 	EditorTracksEventManager,
 	SiteType,
@@ -16,7 +15,6 @@ import {
 	TemplatePartBlock,
 	OpenInlineInserter,
 	HeaderBlock,
-	EditorComponent,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 import type { TracksEventProperties } from '@automattic/calypso-e2e';
@@ -164,11 +162,8 @@ describe(
 
 			describe( 'From adding a page template', function () {
 				it( 'Add "Two column about me layout" page template', async function () {
-					// @TODO Consider moving this to EditorPage.
-					const editor = new EditorComponent( page );
-					const pageTemplateModalComponent = new PageTemplateModalComponent( page, editor );
-					await pageTemplateModalComponent.selectTemplateCategory( 'About' );
-					await pageTemplateModalComponent.selectTemplate( 'Two column about me layout' );
+					await editorPage.selectTemplateCategory( 'About' );
+					await editorPage.selectTemplate( 'Two column about me layout' );
 				} );
 
 				it( '"wpcom_block_inserted" event fires with "from_template_selector" set to true', async function () {

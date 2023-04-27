@@ -10,10 +10,8 @@ import {
 	PublishedPostPage,
 	TestAccount,
 	PagesPage,
-	PageTemplateModalComponent,
 	getTestAccountByFeature,
 	envToFeatureKey,
-	EditorComponent,
 } from '@automattic/calypso-e2e';
 import { Browser, Page } from 'playwright';
 
@@ -59,16 +57,11 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Select page template', async function () {
-		// @TODO Consider moving this to EditorPage.
-		const editor = new EditorComponent( page );
-		const pageTemplateModalComponent = new PageTemplateModalComponent( page, editor );
-
-		await pageTemplateModalComponent.selectTemplateCategory( 'About' );
-		await pageTemplateModalComponent.selectTemplate( 'About me' );
+		await editorPage.selectTemplateCategory( 'About' );
+		await editorPage.selectTemplate( 'About me' );
 	} );
 
 	it( 'Template content loads into editor', async function () {
-		// @TODO Consider moving this to EditorPage.
 		const editorFrame = await editorPage.getEditorFrame();
 		await editorFrame.locator( `h1:text-is("About Me")` ).waitFor();
 	} );

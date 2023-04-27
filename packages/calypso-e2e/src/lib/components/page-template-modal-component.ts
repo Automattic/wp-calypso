@@ -1,12 +1,12 @@
 import { Page } from 'playwright';
 import { EditorComponent, envVariables } from '../..';
 
-type TemplateCategory = 'About';
+export type TemplateCategory = 'About';
 
 /**
  * Represents the page template selection modal when first loading a new page in the editor.
  */
-export class PageTemplateModalComponent {
+export class EditorTemplateModalComponent {
 	private page: Page;
 	private editor: EditorComponent;
 
