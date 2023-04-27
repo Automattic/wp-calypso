@@ -66,10 +66,14 @@ export class MyHomePage {
 	 *
 	 * @returns {string} No return value.
 	 */
-	async suggestedDomainName(): Promise< null | string > {
+	async suggestedDomainName(): Promise< string > {
 		await this.page.locator( selectors.domainUpsellSuggestedDomain ).waitFor();
 		const elementHandle = await this.page.waitForSelector( selectors.domainUpsellSuggestedDomain );
-		return await elementHandle.textContent();
+		const domainName = await elementHandle.textContent();
+		if ( domainName === null ) {
+			throw new Error( 'Domain name is null' );
+		}
+		return domainName;
 	}
 
 	/**
