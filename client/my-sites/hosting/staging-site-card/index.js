@@ -160,10 +160,23 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 
 	useEffect( () => {
 		// This is only true if the site transfer is in progress.
-		if ( ! wasCreating && stagingSite.id && transferStatus === null ) {
+		if (
+			! wasCreating &&
+			stagingSite.id &&
+			! isStagingSiteTransferComplete &&
+			transferStatus !== transferStates.REVERTED &&
+			! isReverting
+		) {
 			setWasCreating( true );
 		}
-	}, [ stagingSite, wasCreating, transferStatus ] );
+	}, [
+		addingStagingSite,
+		isReverting,
+		isStagingSiteTransferComplete,
+		stagingSite,
+		transferStatus,
+		wasCreating,
+	] );
 
 	const getExceedQuotaErrorContent = () => {
 		return (
