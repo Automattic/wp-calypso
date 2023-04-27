@@ -349,7 +349,12 @@ describe( 'SiteSettingsFormGeneral', () => {
 				},
 			};
 			const { container, getByLabelText } = renderWithRedux(
-				<SiteSettingsFormGeneral { ...testProps } />
+				<SiteSettingsFormGeneral { ...testProps } />,
+				{
+					ui: {
+						selectedSiteId: 1234,
+					},
+				}
 			);
 			expect(
 				container.querySelectorAll( '.site-settings__general-settings-launch-site' ).length
