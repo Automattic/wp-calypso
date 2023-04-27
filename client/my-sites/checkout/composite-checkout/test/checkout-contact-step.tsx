@@ -21,6 +21,9 @@ import {
 	mockMatchMediaOnWindow,
 	mockGetVatInfoEndpoint,
 	countryList,
+	mockGetPaymentMethodsEndpoint,
+	mockLogStashEndpoint,
+	mockGetSupportedCountriesEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -55,11 +58,10 @@ describe( 'Checkout contact step', () => {
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
 		nock.cleanAll();
-		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/transactions/supported-countries' )
-			.reply( 200, countryList );
 		mockGetVatInfoEndpoint( {} );
+		mockGetPaymentMethodsEndpoint( [] );
+		mockLogStashEndpoint();
+		mockGetSupportedCountriesEndpoint( countryList );
 	} );
 
 	it( 'does not render the contact step when the purchase is free', async () => {
