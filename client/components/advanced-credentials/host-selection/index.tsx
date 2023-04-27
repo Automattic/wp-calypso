@@ -1,8 +1,8 @@
 import { Gridicon } from '@automattic/components';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent, useMemo } from 'react';
-import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import Badge from 'calypso/components/badge';
 import { settingsPath } from 'calypso/lib/jetpack/paths';

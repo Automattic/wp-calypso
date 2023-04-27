@@ -1,5 +1,5 @@
+import { useMutation, useQueryClient, UseMutationResult } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, useQueryClient, UseMutationResult } from 'react-query';
 import wp from 'calypso/lib/wp';
 import { fetchHomeLayout, getCacheKey } from './use-home-layout-query';
 import { useHomeLayoutQueryParams } from './use-home-layout-query-params';

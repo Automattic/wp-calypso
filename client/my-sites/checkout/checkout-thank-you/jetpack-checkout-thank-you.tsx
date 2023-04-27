@@ -1,6 +1,6 @@
 import { Button, Card } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import JetpackLogo from 'calypso/components/jetpack-logo';

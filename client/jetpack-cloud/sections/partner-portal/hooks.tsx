@@ -1,9 +1,9 @@
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { isEqual } from 'lodash';
 import page from 'page';
 import { useCallback, useEffect, useState } from 'react';
-import { useQuery, UseQueryOptions } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import {
 	ensurePartnerPortalReturnUrl,

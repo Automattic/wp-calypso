@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { callApi } from '../helpers';
 import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { PendingPostSubscription, PendingPostSubscriptionsResult } from '../types';
@@ -27,7 +27,7 @@ const callPendingBlogSubscriptionsEndpoint =
 			pendingPosts.push(
 				...incoming.comment_subscriptions.map( ( pendingSubscription ) => ( {
 					...pendingSubscription,
-					subscription_date: new Date( pendingSubscription.subscription_date ),
+					date_subscribed: new Date( pendingSubscription.date_subscribed ),
 				} ) )
 			);
 		}

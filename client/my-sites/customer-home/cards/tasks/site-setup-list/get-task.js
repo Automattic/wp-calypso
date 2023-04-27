@@ -58,6 +58,7 @@ export const getTask = (
 		isBlogger,
 		isFSEActive,
 		isRtl,
+		siteCount,
 	} = {}
 ) => {
 	let taskData = {};
@@ -118,7 +119,8 @@ export const getTask = (
 					: translate( 'Give your new site a title to let people know what your site is about.' ),
 				actionText: isBlogger ? translate( 'Name your blog' ) : translate( 'Name your site' ),
 				actionUrl: `/settings/general/${ siteSlug }`,
-				tour: 'checklistSiteTitle',
+				// only show the tour for the first two sites.
+				tour: siteCount > 2 ? undefined : 'checklistSiteTitle',
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:

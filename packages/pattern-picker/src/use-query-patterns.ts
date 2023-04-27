@@ -1,5 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { Pattern } from './types';
 
@@ -50,7 +50,10 @@ const useQueryPatterns = ( siteSlug: string ): UseQueryResult< Pattern[] > => {
 	const { data: order } = useOrder( queryResult.data?.length ?? 0 );
 
 	if ( queryResult.data && order ) {
-		queryResult.data = order.map( ( index ) => queryResult.data[ index ] );
+		return {
+			...queryResult,
+			data: order.map( ( index ) => queryResult.data[ index ] ),
+		};
 	}
 
 	return queryResult;

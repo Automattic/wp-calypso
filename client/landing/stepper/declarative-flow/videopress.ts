@@ -212,6 +212,11 @@ const videopress: Flow = {
 			case 'chooseADomain':
 				stepValidateSiteTitle();
 				break;
+			case 'processing':
+				if ( ! _siteSlug ) {
+					addVideoPressPendingAction();
+				}
+				break;
 		}
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
@@ -236,13 +241,12 @@ const videopress: Flow = {
 				}
 
 				case 'chooseADomain': {
-					addVideoPressPendingAction();
 					return navigate( 'processing' );
 				}
 
 				case 'launchpad': {
 					clearOnboardingSiteOptions();
-					return navigate( 'processing' );
+					return navigate( `processing?siteSlug=${ _siteSlug }` );
 				}
 			}
 			return providedDependencies;

@@ -1,5 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 export type GlobalStylesStatus = {

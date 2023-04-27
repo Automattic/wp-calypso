@@ -1,11 +1,12 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type {
 	AgencyDashboardFilter,
 	DashboardSortInterface,
+	Site,
 } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 
 const agencyDashboardFilterToQueryObject = ( filter: AgencyDashboardFilter ) => {
@@ -37,6 +38,7 @@ const useFetchDashboardSites = (
 ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const queryClient = useQueryClient();
 	return useQuery(
 		[ 'jetpack-agency-dashboard-sites', searchQuery, currentPage, filter, sort ],
 		() =>
@@ -55,7 +57,20 @@ const useFetchDashboardSites = (
 		{
 			select: ( data ) => {
 				return {
-					sites: data.sites,
+					sites: data.sites.map( ( site: Site ) => {
+						// Since the "sites" API includes the "is_connected" property in the cache of the query set by
+						// the "useFetchTestConnection" hook, we are setting it here again since the "sites" API gets called
+						// more often than the "/test-connection" API which will flush the cache set by the
+						// "useFetchTestConnection" hook
+						const data: { connected: boolean } | undefined = queryClient.getQueryData( [
+							'jetpack-agency-test-connection',
+							site.blog_id,
+						] );
+						return {
+							...site,
+							is_connected: data?.hasOwnProperty( 'connected' ) ? data.connected : true,
+						};
+					} ),
 					total: data.total,
 					perPage: data.per_page,
 					totalFavorites: data.total_favorites,
