@@ -25,7 +25,7 @@ const useSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[
 const Sites = () => {
 	const translate = useTranslate();
 	const { searchTerm, handleSearch } = useSearch();
-	const [ sortTerm, setSortTerm ] = useState( SortBy.LastUpdated );
+	const [ sortTerm, setSortTerm ] = useState( SortBy.DateSubscribed );
 	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery( {
 		searchTerm,
 		sortTerm,
