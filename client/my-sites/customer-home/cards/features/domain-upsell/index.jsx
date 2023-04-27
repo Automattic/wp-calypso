@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, isFreePlanProduct, getIntervalTypeForTerm } from '@automattic/calypso-products';
-import { Button, Card, Gridicon, Spinner } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import domainUpsellIllustration from 'calypso/assets/images/customer-home/illustration--feature-domain-upsell.svg';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
@@ -185,17 +186,45 @@ export function RenderDomainUpsell( {
 
 	const cardTitle =
 		! isFreePlan && ! isMonthlyPlan
-			? translate( 'Make your mark online with a memorable domain name' )
-			: translate( 'Own your online identity with a custom domain' );
+			? translate( 'That perfect domain is waiting' )
+			: translate( 'Own a domain. Build a site.' );
 
 	const cardSubtitle =
 		! isFreePlan && ! isMonthlyPlan
 			? translate(
-					'Your plan includes a free domain for the first year. Stake your claim on the web with a domain name that boosts your brand.'
+					"{{strong}}%(domainSuggestion)s{{/strong}} is included free for one year with any paid plan. Claim it and start building a site that's easy to find, share and follow.",
+					{
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							domainSuggestion: domainSuggestionName,
+						},
+					}
 			  )
 			: translate(
-					"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
+					"{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It's available and easy to find and follow. Get it now and claim a corner of the web.",
+					{
+						components: {
+							strong: <strong />,
+						},
+						args: {
+							domainSuggestion: domainSuggestionName,
+						},
+					}
 			  );
+
+	const domainNameSVG = (
+		<svg viewBox="0 0 40 18" id="map">
+			<text x="-115" y="15">
+				{ domainSuggestionName.length > 34
+					? `${ domainSuggestionName.slice( 0, 32 ) }...`
+					: domainSuggestionName }
+			</text>
+		</svg>
+	);
+
+	const illustrationHeader = domainSuggestionName ? domainNameSVG : null;
 
 	return (
 		<Card className="domain-upsell__card customer-home__card">
@@ -208,31 +237,16 @@ export function RenderDomainUpsell( {
 				</div>
 				<h3>{ cardTitle }</h3>
 				<p>{ cardSubtitle }</p>
-				<div className="suggested-domain-name">
-					<div className="card">
-						<span>
-							<strike>{ siteSlug }</strike>
-						</span>
-						<div className="badge badge--info">{ translate( 'Current' ) }</div>
-					</div>
-					<div className="card">
-						<span>{ domainSuggestionName }</span>
-						{ domainSuggestion?.domain_name ? (
-							<div className="badge badge--success">{ translate( 'Recommended' ) }</div>
-						) : (
-							<div className="badge">
-								<Spinner />
-							</div>
-						) }
-					</div>
+				<div className="domain-upsell-illustration">
+					{ illustrationHeader && <> { illustrationHeader } </> }
+					<img src={ domainUpsellIllustration } alt="" />
 				</div>
-
 				<div className="domain-upsell-actions">
-					<Button href={ searchLink } onClick={ getSearchClickHandler }>
-						{ translate( 'Search for another domain' ) }
-					</Button>
 					<Button primary onClick={ getCtaClickHandler } busy={ ctaIsBusy }>
 						{ translate( 'Buy this domain' ) }
+					</Button>
+					<Button href={ searchLink } onClick={ getSearchClickHandler }>
+						{ translate( 'Search for another domain' ) }
 					</Button>
 				</div>
 			</div>
