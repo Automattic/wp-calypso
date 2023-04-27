@@ -11,7 +11,7 @@ export default function CampaignsTable( props: Props ) {
 	const { campaigns } = props;
 	return (
 		<div>
-			<table className="campaigns-list__table">
+			<table className="promote-post-i2__table">
 				<thead>
 					<tr>
 						<th key="campaign">Campaign</th>

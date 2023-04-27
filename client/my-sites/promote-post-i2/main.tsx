@@ -267,8 +267,7 @@ export default function PromotedPosts( { tab }: Props ) {
 	);
 
 	return (
-		<Main wideLayout className="promote-post">
-			{ /* TODO: Do not forget removing the "Redesign page" sign */ }
+		<Main wideLayout className="promote-post-i2">
 			<DocumentHead title={ translate( 'Advertising - Redesign page!' ) } />
 
 			<div className="promote-post__top-bar">

@@ -11,7 +11,7 @@
 	line-height: 1.43;
 }
 
-.notouch .promote-post .section-nav-tab__link:hover {
+.notouch .promote-post-i2 .section-nav-tab__link:hover {
 	background-color: transparent;
 }
 
@@ -66,7 +66,7 @@ body.is-section-promote-post {
 	}
 }
 
-.promote-post {
+.promote-post-i2 {
 	@media (min-width: 481px) {
 		.section-nav-tab {
 			margin-right: 16px;
@@ -126,21 +126,21 @@ body.is-section-promote-post {
 	}
 }
 
-.promote-post__loading-container {
+.promote-post-i2__loading-container {
 	text-align: center;
 }
 
-.promote-post__header-container {
+.promote-post-i2__header-container {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 
-	.promote-post__heading {
+	.promote-post-i2__heading {
 		flex: 1;
 	}
 }
 
-.promote-post__footer {
+.promote-post-i2__footer {
 	text-align: center;
 	margin: 24px 0;
 
@@ -150,7 +150,7 @@ body.is-section-promote-post {
 	}
 }
 
-.promote-post__empty-content {
+.promote-post-i2__empty-content {
 	.empty-content__title {
 		font-size: $font-body-large;
 		font-weight: bold;
@@ -164,9 +164,9 @@ body.is-section-promote-post {
 
 .is-mobile-app-view {
 	.advertising__page-header,
-	.promote-post .posts-list-banner__container,
-	.promote-post .section-nav,
-	.promote-post .post-item__link {
+	.promote-post-i2 .posts-list-banner__container,
+	.promote-post-i2 .section-nav,
+	.promote-post-i2 .post-item__link {
 		display: none;
 	}
 	.layout.has-no-masterbar.is-group-sites.is-section-promote-post .layout__content {
