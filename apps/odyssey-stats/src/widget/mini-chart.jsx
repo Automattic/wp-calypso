@@ -49,21 +49,25 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 		<div id="stats-widget-minichart" className="stats-widget-minichart">
 			<div className="stats-widget-minichart__chart-head">
 				<Intervals selected={ period } compact={ false } onChange={ setPeriod } />
-				<Legend
-					availableCharts={ [ 'visitors' ] }
-					activeCharts={ [ 'visitors' ] }
-					tabs={ CHARTS }
-					activeTab={ CHART_VIEWS }
-					clickHandler={ nothing }
-				/>
 			</div>
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading={ true } /> }
 			{ ! isLoading && (
-				<Chart barClick={ barClick } data={ chartData } minBarWidth={ 35 }>
-					<StatsEmptyState
-						infoText={ translate( 'There was no data recorded during the selected time period.' ) }
+				<>
+					<Chart barClick={ barClick } data={ chartData } minBarWidth={ 35 }>
+						<StatsEmptyState
+							infoText={ translate(
+								'There was no data recorded during the selected time period.'
+							) }
+						/>
+					</Chart>
+					<Legend
+						availableCharts={ [ 'visitors' ] }
+						activeCharts={ [ 'visitors' ] }
+						tabs={ CHARTS }
+						activeTab={ CHART_VIEWS }
+						clickHandler={ nothing }
 					/>
-				</Chart>
+				</>
 			) }
 		</div>
 	);
