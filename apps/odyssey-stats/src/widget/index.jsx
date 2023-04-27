@@ -1,4 +1,5 @@
 import '@automattic/calypso-polyfills';
+import { translate } from 'i18n-calypso';
 import { render } from 'react-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -44,6 +45,7 @@ export function init() {
 							>
 								<JetpackLogo size={ 25 } monochrome full />
 							</a>
+							<a href={ odysseyStatsBaseUrl }>{ translate( 'View all stats' ) }</a>
 						</div>
 					</div>
 				</div>

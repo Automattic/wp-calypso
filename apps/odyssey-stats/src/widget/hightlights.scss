@@ -12,11 +12,6 @@ $offset-padding-hovering: 8px;
 			font-size: $font-body-large;
 			line-height: 26px;
 		}
-
-		a {
-			@include emerald-button-style;
-		}
-
 	}
 
 	.stats-widget-highlights__body {
