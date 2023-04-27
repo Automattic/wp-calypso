@@ -221,6 +221,10 @@ export default function PromotedPosts( { tab }: Props ) {
 		}
 	}, [ campaignsFull, alreadyScrolled ] );
 
+	useEffect( () => {
+		document.querySelector( 'body' )?.classList.add( 'is-section-promote-post-i2' );
+	}, [] );
+
 	if ( selectedSite?.is_coming_soon || selectedSite?.is_private ) {
 		return (
 			<EmptyContent
@@ -270,7 +274,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		<Main wideLayout className="promote-post-i2">
 			<DocumentHead title={ translate( 'Advertising - Redesign page!' ) } />
 
-			<div className="promote-post__top-bar">
+			<div className="promote-post-i2__top-bar">
 				{ /* TODO: Do not forget to remove "Redesign page" part! */ }
 				<FormattedHeader
 					brandFont
@@ -282,7 +286,7 @@ export default function PromotedPosts( { tab }: Props ) {
 					align="left"
 				/>
 
-				<div className="promote-post__top-bar-buttons">
+				<div className="promote-post-i2__top-bar-buttons">
 					<Button compact className="posts-list-banner__learn-more">
 						<InlineSupportLink supportContext="advertising" showIcon={ false } />
 					</Button>

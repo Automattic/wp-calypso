@@ -15,7 +15,7 @@
 	background-color: transparent;
 }
 
-body.is-section-promote-post {
+body.is-section-promote-post-i2 {
 	.layout__content {
 		position: relative;
 		margin: 0;
@@ -33,7 +33,7 @@ body.is-section-promote-post {
 					width: 100%;
 				}
 
-				.promote-post__search-bar-wrapper,
+				.promote-post-i2__search-bar-wrapper,
 				.posts-list__table,
 				.campaigns-list__table {
 					margin: 0 64px;
@@ -169,7 +169,7 @@ body.is-section-promote-post {
 	.promote-post-i2 .post-item__link {
 		display: none;
 	}
-	.layout.has-no-masterbar.is-group-sites.is-section-promote-post .layout__content {
+	.layout.has-no-masterbar.is-group-sites.is-section-promote-post-i2 .layout__content {
 		padding-top: 0;
 	}
 
