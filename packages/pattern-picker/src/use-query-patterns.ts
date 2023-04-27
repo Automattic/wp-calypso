@@ -48,12 +48,14 @@ const useQueryPatterns = ( siteSlug: string ): UseQueryResult< Pattern[] > => {
 	);
 
 	const { data: order } = useOrder( queryResult.data?.length ?? 0 );
+	let newData = queryResult.data;
 
 	if ( queryResult.data && order ) {
-		queryResult.data = order.map( ( index ) => queryResult.data[ index ] );
+		newData = order.map( ( index ) => queryResult.data[ index ] );
 	}
 
-	return queryResult;
+	// merging this way because data is readonly
+	return { ...{ data: newData }, ...queryResult };
 };
 
 export default useQueryPatterns;
