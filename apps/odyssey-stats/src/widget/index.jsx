@@ -42,7 +42,7 @@ export function init() {
 								target="__blank"
 								aria-label="Jetpack Stats Website"
 							>
-								<JetpackLogo size={ 25 } full />
+								<JetpackLogo size={ 25 } monochrome full />
 							</a>
 						</div>
 					</div>
