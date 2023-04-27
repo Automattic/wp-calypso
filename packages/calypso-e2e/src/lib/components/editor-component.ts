@@ -27,7 +27,7 @@ export class EditorComponent {
 		}
 
 		try {
-			this.parentLocator = await Promise.race( [
+			this.parentLocator = await Promise.any( [
 				this.waitForFramedEditor(),
 				this.waitForUnframedEditor(),
 			] );
@@ -48,7 +48,7 @@ export class EditorComponent {
 		}
 
 		try {
-			this.canvasLocator = await Promise.race( [
+			this.canvasLocator = await Promise.any( [
 				this.waitForFramedCanvas(),
 				this.waitForUnframedCanvas(),
 			] );
