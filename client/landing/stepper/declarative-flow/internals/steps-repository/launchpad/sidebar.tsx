@@ -80,9 +80,10 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		isEmailVerified
 	);
 
-	const { getPlanCartItem } = useSelect(
+	const { getPlanCartItem, getDomainCartItem } = useSelect(
 		( select ) => ( {
 			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
+			getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
 		} ),
 		[]
 	);

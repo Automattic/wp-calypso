@@ -2,6 +2,7 @@ import { isFreePlanProduct } from '@automattic/calypso-products';
 import { Gridicon } from '@automattic/components';
 import { BackButton } from '@automattic/onboarding';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { getQueryArg } from '@wordpress/url';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
@@ -9,6 +10,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { START_WRITING_FLOW } from 'calypso/../packages/onboarding/src';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
@@ -16,6 +18,7 @@ import EmailVerificationGate from 'calypso/components/email-verification/email-v
 import EmptyContent from 'calypso/components/empty-content';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
+import { updateLaunchpadSettings } from 'calypso/data/sites/use-launchpad';
 import {
 	hasPlan,
 	hasDomainInCart,
@@ -53,7 +56,6 @@ import {
 
 import './style.scss';
 import 'calypso/my-sites/domains/style.scss';
-
 class DomainSearch extends Component {
 	static propTypes = {
 		basePath: PropTypes.string.isRequired,
@@ -177,6 +179,24 @@ class DomainSearch extends Component {
 			}
 			// Monthly plans don't have free domains
 			const intervalTypePath = this.props.isSiteOnMonthlyPlan ? 'yearly/' : '';
+
+			const flow = getQueryArg( window.location.search, 'flow' );
+			const nextStepLinkWritingFlow = addQueryArgs(
+				{
+					siteSlug: this.props.selectedSiteSlug,
+					START_WRITING_FLOW: true,
+				},
+				`/setup/start-writing/plans`
+			);
+
+			if ( flow === START_WRITING_FLOW ) {
+				try {
+					await updateLaunchpadSettings( this.props.selectedSiteSlug, {
+						checklist_statuses: { domain_upsell_deferred: true },
+					} );
+				} catch ( error ) {}
+			}
+
 			const nextStepLink =
 				! this.props.isSiteOnFreePlan && ! this.props.isSiteOnMonthlyPlan
 					? `/checkout/${ this.props.selectedSiteSlug }`
@@ -187,7 +207,7 @@ class DomainSearch extends Component {
 							},
 							`/plans/${ intervalTypePath }${ this.props.selectedSiteSlug }`
 					  );
-			page( nextStepLink );
+			page( flow === START_WRITING_FLOW ? nextStepLinkWritingFlow : nextStepLink );
 			return;
 		}
 

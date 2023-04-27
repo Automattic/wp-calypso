@@ -389,6 +389,13 @@ export function getEnhancedTasks(
 						title: translate( 'Choose a domain' ),
 						completed: domainUpsellCompleted,
 						actionDispatch: () => {
+							const startWritingFlow = isStartWritingFlow( flow || null );
+
+							const destionaionUrlWriteFlow = addQueryArgs( `/domains/add/${ siteSlug }`, {
+								flow: flow,
+								domainAndPlanPackage: true,
+							} );
+
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
 							const destinationUrl = domainUpsellCompleted
 								? `/domains/manage/${ siteSlug }`
@@ -397,7 +404,7 @@ export function getEnhancedTasks(
 										flowToReturnTo: flow,
 										new: site?.name,
 								  } );
-							window.location.assign( destinationUrl );
+							window.location.assign( startWritingFlow ? destionaionUrlWriteFlow : destinationUrl );
 						},
 						badgeText: domainUpsellCompleted ? '' : translate( 'Upgrade plan' ),
 					};
