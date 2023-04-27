@@ -46,32 +46,73 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 		( state ) => getUserPurchases( state )?.filter( ( purchase ) => purchase.active ) ?? []
 	);
 
-	const akismetPurchaseThatOverlapsPurchasedProduct = useMemo( () => {
+	const { overlapMessage, thanksHeadline, thanksMessage } = useMemo( () => {
+		const akismetProducts = AKISMET_PRODUCTS_LIST as ReadonlyArray< string >;
 		const akismetPurchases = userActivePurchases.filter(
 			( purchase ) => isAkismetProduct( purchase ) && 'siteless.akismet.com' === purchase.domain
 		);
-		const akismetProducts = AKISMET_PRODUCTS_LIST as ReadonlyArray< string >;
+		const purchaseHasAPILimit =
+			akismetProducts.indexOf( productSlug ) >= akismetProducts.indexOf( 'ak_plus_monthly_1' );
 
-		const lowerTierProducts = akismetPurchases.filter(
-			( { productSlug: ps } ) =>
-				akismetProducts.indexOf( productSlug ) > akismetProducts.indexOf( ps )
+		let thanksHeadline = (
+			<>
+				{ /* the single space literal below is intentional for rendering purposes */ }
+				{ __( 'Let the spam-blocking party begin!', 'akismet-thank-you' ) }{ ' ' }
+				<span className="akismet-checkout-thank-you__emoji">
+					{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
+				</span>
+			</>
+		);
+		let overlapMessage = null;
+		let thanksMessage = createInterpolateElement(
+			sprintf(
+				// translators: %s is the product name
+				__(
+					'Thanks for your purchase. We have sent you an email with your receipt and further instructions on how to activate <strong>%s</strong>.',
+					'akismet-thank-you'
+				),
+				productName
+			),
+			{ strong: <strong /> }
 		);
 
-		if ( lowerTierProducts.length === 0 ) {
-			return null;
+		// If the user already has another Akismet product, adjust the messaging.
+		if ( akismetPurchases.length > 1 ) {
+			thanksHeadline = (
+				<>
+					{ /* the single space literal below is intentional for rendering purposes */ }
+					{ __( 'Congrats on your shiny new spam-blocking upgrade.', 'akismet-thank-you' ) }
+				</>
+			);
+			thanksMessage = createInterpolateElement(
+				sprintf(
+					// translators: %s is the product name
+					__(
+						'Thanks for your purchase. We have sent you an email with your receipt for <strong>%s</strong>.',
+						'akismet-thank-you'
+					),
+					productName
+				),
+				{ strong: <strong /> }
+			);
+
+			if ( purchaseHasAPILimit ) {
+				overlapMessage = createInterpolateElement(
+					__(
+						'You’ve supercharged your spam protection by increasing your API limit! Make sure to cancel any existing plans that you don’t need on your <a>account page</a>.',
+						'akismet-thank-you'
+					),
+					{ a: <a href="https://akismet.com/account/" /> }
+				);
+			}
 		}
 
-		const highestTierOverlappedProduct = lowerTierProducts[ lowerTierProducts.length - 1 ];
-
-		// If the highest tiered product is Akismet Free, return null
-		// We don't need to display a notice about multiple paid plans in this case
-		if ( highestTierOverlappedProduct.productSlug === 'ak_free_yearly' ) {
-			return null;
-		}
-
-		// Returns the highest tiered product
-		return lowerTierProducts[ lowerTierProducts.length - 1 ];
-	}, [ productSlug, userActivePurchases ] );
+		return {
+			overlapMessage,
+			thanksHeadline,
+			thanksMessage,
+		};
+	}, [ productSlug, productName, userActivePurchases ] );
 
 	return (
 		<Main className="akismet-checkout-thank-you">
@@ -87,21 +128,15 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 				{ hasProduct && <QueryProducts /> }
 				<QueryUserPurchases />
 
-				<h2 className="akismet-checkout-thank-you__main-message">
-					{ /* the single space literal below is intentional for rendering purposes */ }
-					{ __( 'Let the spam-blocking party begin!', 'akismet-thank-you' ) }{ ' ' }
-					<span className="akismet-checkout-thank-you__emoji">
-						{ String.fromCodePoint( 0x1f389 ) /* Celebration emoji 🎉 */ }
-					</span>
+				<h2
+					className={
+						isLoading
+							? 'akismet-checkout-thank-you__main-message-loading'
+							: 'akismet-checkout-thank-you__main-message'
+					}
+				>
+					{ thanksHeadline }
 				</h2>
-
-				{ akismetPurchaseThatOverlapsPurchasedProduct && (
-					<div className="akismet-checkout-thank-you__overlap-notice">
-						<p>
-							Thanks for upgrading! Be sure to cancel any overlapping purchases in your account.
-						</p>
-					</div>
-				) }
 
 				<p
 					className={
@@ -110,18 +145,12 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 							: 'akismet-checkout-thank-you__email-message'
 					}
 				>
-					{ createInterpolateElement(
-						sprintf(
-							// translators: %s is the product name
-							__(
-								'Thanks for your purchase. We have sent you an email with your receipt and further instructions on how to activate <strong>%s</strong>.',
-								'akismet-thank-you'
-							),
-							productName
-						),
-						{ strong: <strong /> }
-					) }
+					{ thanksMessage }
 				</p>
+
+				{ overlapMessage && (
+					<p className="akismet-checkout-thank-you__overlap-notice">{ overlapMessage }</p>
+				) }
 
 				<ThankYouAPIKeyClipboard />
 
