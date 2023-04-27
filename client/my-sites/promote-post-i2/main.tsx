@@ -1,5 +1,6 @@
 import './style.scss';
 import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import moment from 'moment';
@@ -254,15 +255,30 @@ export default function PromotedPosts( { tab }: Props ) {
 		! hasTopPostsFinished ||
 		( ! isWpMobileApp() && isLoadingProducts );
 
+	const showBanner =
+		! campaignsIsLoading && ( ! campaignsData?.length || campaignsData.length < 3 );
+
+	const headerSubtitle = ! showBanner && (
+		<div className="promote-post__header-subtitle">
+			{ translate(
+				'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
+			) }
+		</div>
+	);
+
 	return (
 		<Main wideLayout className="promote-post">
+			{ /* TODO: Do not forget removing the "Redesign page" sign */ }
 			<DocumentHead title={ translate( 'Advertising - Redesign page!' ) } />
 
 			<div className="promote-post__top-bar">
 				{ /* TODO: Do not forget to remove "Redesign page" part! */ }
 				<FormattedHeader
 					brandFont
-					className="advertising__page-header"
+					className={ classNames( 'advertising__page-header', {
+						'advertising__page-header_has-banner': showBanner,
+					} ) }
+					children={ headerSubtitle }
 					headerText={ `${ translate( 'Advertising' ) } - Redesign page` }
 					align="left"
 				/>
@@ -274,9 +290,7 @@ export default function PromotedPosts( { tab }: Props ) {
 				</div>
 			</div>
 
-			{ ! campaignsIsLoading && ( ! campaignsData?.length || campaignsData.length < 3 ) && (
-				<PostsListBanner />
-			) }
+			{ showBanner && <PostsListBanner /> }
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' ? (
