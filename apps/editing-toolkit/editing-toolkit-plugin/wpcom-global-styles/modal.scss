@@ -22,10 +22,15 @@
 		display: flex;
 		flex-direction: column-reverse;
 		justify-content: flex-end;
+		align-items: flex-start;
 
 		@include break-small {
 			flex-direction: row;
 			justify-content: flex-start;
+
+			@media (min-height: #{ ($break-small) }) {
+				align-items: stretch;
+			}
 		}
 	}
 
@@ -45,7 +50,9 @@
 		flex-direction: column;
 
 		@include break-small {
-			padding: 64px 48px;
+			@media (min-height: #{ ($break-small) }) {
+				padding: 64px 48px;
+			}
 		}
 	}
 
@@ -58,8 +65,10 @@
 		margin-bottom: 16px;
 
 		@include break-small {
-			font-size: 2rem;
-			line-height: 40px;
+			@media (min-height: #{ ($break-small) }) {
+				font-size: 2rem;
+				line-height: 40px;
+			}
 		}
 	}
 
@@ -84,13 +93,18 @@
 
 	.wpcom-global-styles-modal__image {
 		background-color: #d0cce3;
-		padding: 64px 0 64px 64px;
+		padding: 32px 0 32px 32px;
 		display: flex;
 		justify-content: flex-end;
 		max-height: 50vh;
 
 		@include break-small {
-			max-height: none;
+			max-height: 70vh;
+
+			@media (min-height: #{ ($break-small) }) {
+				max-height: none;
+				padding: 64px 0 64px 64px;
+			}
 		}
 
 		img {
