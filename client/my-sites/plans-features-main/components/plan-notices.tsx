@@ -37,6 +37,8 @@ export default function PlanNotice( {
 		visiblePlanNames
 	);
 
+	const handleDismissNotice = () => setIsNoticeDismissed( true );
+
 	if ( isNoticeDismissed ) {
 		return null;
 	} else if ( ! canUserPurchasePlan ) {
@@ -44,7 +46,7 @@ export default function PlanNotice( {
 			<Notice
 				className="plan-features__notice"
 				showDismiss={ true }
-				onDismissClick={ () => setIsNoticeDismissed( true ) }
+				onDismissClick={ handleDismissNotice }
 				status="is-info"
 			>
 				{ translate(
@@ -57,7 +59,7 @@ export default function PlanNotice( {
 			<Notice
 				className="plan-features__notice-credits"
 				showDismiss={ true }
-				onDismissClick={ () => setIsNoticeDismissed( true ) }
+				onDismissClick={ handleDismissNotice }
 				icon="info-outline"
 				status="is-success"
 			>
@@ -75,7 +77,7 @@ export default function PlanNotice( {
 			<Notice
 				className="plan-features__notice-credits"
 				showDismiss={ true }
-				onDismissClick={ () => setIsNoticeDismissed( true ) }
+				onDismissClick={ handleDismissNotice }
 				icon="info-outline"
 				status="is-success"
 			>
