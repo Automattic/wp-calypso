@@ -58,7 +58,6 @@ describe( 'CheckoutMain', () => {
 		( isJetpackSite as jest.Mock ).mockImplementation( () => false );
 
 		mockGetPaymentMethodsEndpoint( [] );
-
 		mockLogStashEndpoint();
 		mockGetVatInfoEndpoint( {} );
 		mockGetSupportedCountriesEndpoint( countryList );
