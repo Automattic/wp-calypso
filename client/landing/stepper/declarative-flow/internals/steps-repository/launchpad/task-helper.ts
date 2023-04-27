@@ -4,7 +4,13 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { isFreeFlow, isBuildFlow, isWriteFlow, isNewsletterFlow } from '@automattic/onboarding';
+import {
+	isFreeFlow,
+	isBuildFlow,
+	isWriteFlow,
+	isNewsletterFlow,
+	isStartWritingFlow,
+} from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -178,7 +184,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Write your first post' ),
 						completed: firstPostPublishedCompleted,
-						disabled: mustVerifyEmailBeforePosting || isWriteFlow( flow || null ) || false,
+						disabled: mustVerifyEmailBeforePosting || isStartWritingFlow( flow || null ) || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/post/${ siteSlug }` );
