@@ -184,7 +184,6 @@ class DomainSearch extends Component {
 			const nextStepLinkWritingFlow = addQueryArgs(
 				{
 					siteSlug: this.props.selectedSiteSlug,
-					START_WRITING_FLOW: true,
 				},
 				`/setup/start-writing/plans`
 			);
