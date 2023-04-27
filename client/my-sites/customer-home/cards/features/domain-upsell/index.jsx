@@ -243,10 +243,10 @@ export function RenderDomainUpsell( {
 				</div>
 				<div className="domain-upsell-actions">
 					<Button primary onClick={ getCtaClickHandler } busy={ ctaIsBusy }>
-						{ translate( 'Buy this domain' ) }
+						{ translate( 'Get this domain' ) }
 					</Button>
 					<Button href={ searchLink } onClick={ getSearchClickHandler }>
-						{ translate( 'Search for another domain' ) }
+						{ translate( 'Search for a domain' ) }
 					</Button>
 				</div>
 			</div>

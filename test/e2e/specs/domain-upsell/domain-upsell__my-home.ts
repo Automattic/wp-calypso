@@ -49,7 +49,7 @@ describe( DataHelper.createSuiteTitle( 'My Home: Domain upsell' ), function () {
 	} );
 
 	it( 'Buy suggested domain', async function () {
-		await myHomePage.clickBuySuggestedDomain( 'Buy this domain' );
+		await myHomePage.clickBuySuggestedDomain( 'Get this domain' );
 	} );
 
 	it( 'View available plans', async function () {
