@@ -1,6 +1,5 @@
 import { useSelector } from 'react-redux';
-import { getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
-import { getSitePlanRawPrice } from 'calypso/state/sites/plans/selectors/get-site-plan-raw-price';
+import { getPlanPrices } from 'calypso/state/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
 import type { PlanSlug } from '@automattic/calypso-products';
 
@@ -8,15 +7,18 @@ import type { PlanSlug } from '@automattic/calypso-products';
  * Calculate available plan credits given a set of displayed plans
  *
  * @param {*} siteId the selected site id
- * @param {string[]}  plans Plans that are considered for the given calculation
+ * @param {PlanSlug[]}  plans Plans that are considered for the given calculation
  * @returns {number} The amount of credits available for the given plans
  */
 export function usePlanUpgradeCredits( siteId: number | undefined, plans: PlanSlug[] ): number {
 	const plansDetails = useSelector( ( state ) =>
-		plans.map( ( planName ) => ( {
+		plans.map( ( planName: PlanSlug ) => ( {
 			isPlanAvailableForPurchase: isPlanAvailableForPurchase( state, siteId ?? 0, planName ),
-			planDiscountedRawPrice: getPlanDiscountedRawPrice( state, siteId ?? 0, planName ),
-			sitePlanRawPrice: getSitePlanRawPrice( state, siteId ?? 0, planName ),
+			...getPlanPrices( state, {
+				siteId: null,
+				planSlug: planName,
+				returnMonthly: false,
+			} ),
 		} ) )
 	);
 	if ( ! siteId ) {
@@ -24,17 +26,16 @@ export function usePlanUpgradeCredits( siteId: number | undefined, plans: PlanSl
 	}
 
 	const creditsPerPlan = plansDetails.map(
-		( { isPlanAvailableForPurchase, planDiscountedRawPrice, sitePlanRawPrice } ) => {
+		( { isPlanAvailableForPurchase, planDiscountedRawPrice, rawPrice } ) => {
 			if ( ! isPlanAvailableForPurchase ) {
 				return 0;
 			}
-			if ( typeof planDiscountedRawPrice !== 'number' || typeof sitePlanRawPrice !== 'number' ) {
+			if ( typeof planDiscountedRawPrice !== 'number' || typeof rawPrice !== 'number' ) {
 				return 0;
 			}
 
-			return sitePlanRawPrice - planDiscountedRawPrice;
+			return rawPrice - planDiscountedRawPrice;
 		}
 	);
-
 	return Math.max( ...creditsPerPlan );
 }
