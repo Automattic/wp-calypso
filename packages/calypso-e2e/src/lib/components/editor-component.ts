@@ -81,7 +81,7 @@ export class EditorComponent {
 	/** */
 	private async waitForFramedCanvas() {
 		const canvasBody = this.page.frameLocator( 'iframe[name="editor-canvas"]' ).locator( 'body' );
-		await canvasBody.waitFor();
+		await canvasBody.waitFor( { timeout: EDITOR_TIMEOUT } );
 		const canvasFrame = this.page.frame( 'editor-canvas' );
 
 		return canvasFrame;
