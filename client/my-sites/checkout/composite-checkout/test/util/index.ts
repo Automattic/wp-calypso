@@ -1456,6 +1456,12 @@ export const mockPayPalRedirectResponse = () => [
 	{ redirect_url: 'https://test-redirect-url' },
 ];
 
+export function mockGetPaymentMethodsEndpoint( endpointResponse ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( /\/rest\/v1\.2\/me\/payment-methods/ )
+		.reply( 200, endpointResponse );
+}
+
 export function mockCreateAccountEndpoint( endpointResponse ) {
 	const endpoint = jest.fn();
 	endpoint.mockReturnValue( true );

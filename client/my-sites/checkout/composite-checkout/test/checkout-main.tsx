@@ -31,6 +31,7 @@ import {
 	countryList,
 	getBasicCart,
 	mockMatchMediaOnWindow,
+	mockGetPaymentMethodsEndpoint,
 } from './util';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
@@ -69,6 +70,8 @@ describe( 'CheckoutMain', () => {
 			currency: initialCart.currency,
 			locale: initialCart.locale,
 		} );
+
+		mockGetPaymentMethodsEndpoint( [] );
 
 		const store = createTestReduxStore();
 		const queryClient = new QueryClient();
