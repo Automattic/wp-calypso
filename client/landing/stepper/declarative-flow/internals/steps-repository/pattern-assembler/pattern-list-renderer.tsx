@@ -81,6 +81,7 @@ const PatternListItem = ( {
 						viewportWidth={ 1060 }
 						minHeight={ PLACEHOLDER_HEIGHT }
 						minHeightFor100vh={ MIN_HEIGHT_FOR_100VH }
+						disabled
 					/>
 				) : (
 					<div key={ pattern.ID } style={ { height: PLACEHOLDER_HEIGHT } } />
