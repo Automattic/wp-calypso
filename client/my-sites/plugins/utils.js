@@ -15,16 +15,16 @@ export function getVisibleSites( sites ) {
 
 export function useLocalizedPlugins() {
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const { localeSlug: locale } = useTranslate();
+	const { localeSlug } = useTranslate();
 
 	const localizePath = useCallback(
 		( path ) => {
 			const shouldPrefix =
-				! isLoggedIn && isMagnificentLocale( locale ) && path.startsWith( '/plugins' );
+				! isLoggedIn && isMagnificentLocale( localeSlug ) && path.startsWith( '/plugins' );
 
-			return shouldPrefix ? `/${ locale }${ path }` : path;
+			return shouldPrefix ? `/${ localeSlug }${ path }` : path;
 		},
-		[ isLoggedIn, locale ]
+		[ isLoggedIn, localeSlug ]
 	);
 
 	return { localizePath };
