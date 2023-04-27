@@ -1,6 +1,6 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, createRef } from 'react';
 import titlecase from 'to-title-case';
 import StickyPanel from 'calypso/components/sticky-panel';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -90,21 +90,22 @@ const scrollToLetter = ( letter: string ) => {
 export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps ) {
 	const translate = useTranslate();
 	const [ isSticky, setIsSticky ] = useState( false );
+	const tagsTableRef = createRef< HTMLDivElement >();
 
 	useEffect( () => {
 		const handleScroll = () => {
-			const tableA = document.getElementById( 'alphabetic-tags-table-A' );
-			if ( tableA ) {
-				const tableATop = tableA.getBoundingClientRect().top;
-				setIsSticky( tableATop < 0 );
+			if ( ! tagsTableRef.current ) {
+				return;
 			}
+			const tableATop = tagsTableRef.current.getBoundingClientRect().top;
+			setIsSticky( tableATop < 0 );
 		};
 
 		window.addEventListener( 'scroll', handleScroll );
 		return () => {
 			window.removeEventListener( 'scroll', handleScroll );
 		};
-	}, [] );
+	}, [ tagsTableRef, setIsSticky ] );
 
 	if ( ! alphabeticTags ) {
 		return null;
@@ -140,19 +141,21 @@ export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps 
 					</div>
 				</StickyPanel>
 			</div>
-			{ Object.keys( tagTables ).map( ( letter: string ) => (
-				<div className="alphabetic-tags__table" key={ 'alphabetic-tags-table-' + letter }>
-					{ /* eslint-disable jsx-a11y/no-noninteractive-tabindex */ }
-					<h3
-						tabIndex={ 0 }
-						className="alphabetic-tags__letter-title"
-						id={ 'alphabetic-tags-table-' + letter }
-					>
-						{ letter }
-					</h3>
-					<TagsTable tags={ tagTables[ letter ] } />
-				</div>
-			) ) }
+			<div ref={ tagsTableRef }>
+				{ Object.keys( tagTables ).map( ( letter: string ) => (
+					<div className="alphabetic-tags__table" key={ 'alphabetic-tags-table-' + letter }>
+						{ /* eslint-disable jsx-a11y/no-noninteractive-tabindex */ }
+						<h3
+							tabIndex={ 0 }
+							className="alphabetic-tags__letter-title"
+							id={ 'alphabetic-tags-table-' + letter }
+						>
+							{ letter }
+						</h3>
+						<TagsTable tags={ tagTables[ letter ] } />
+					</div>
+				) ) }
+			</div>
 		</>
 	);
 }

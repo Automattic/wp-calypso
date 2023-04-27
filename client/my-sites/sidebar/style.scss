@@ -743,7 +743,7 @@ $font-size: rem(14px);
 			min-height: initial;
 		}
 
-		.focus-content .layout__content:not('.has-no-sidebar') {
+		.focus-content:not(.has-no-sidebar) .layout__content {
 			padding: 47px 0 0;
 		}
 
