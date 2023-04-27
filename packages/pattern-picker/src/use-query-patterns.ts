@@ -50,7 +50,10 @@ const useQueryPatterns = ( siteSlug: string ): UseQueryResult< Pattern[] > => {
 	const { data: order } = useOrder( queryResult.data?.length ?? 0 );
 
 	if ( queryResult.data && order ) {
-		queryResult.data = order.map( ( index ) => queryResult.data[ index ] );
+		return {
+			...queryResult,
+			data: order.map( ( index ) => queryResult.data[ index ] ),
+		};
 	}
 
 	return queryResult;
