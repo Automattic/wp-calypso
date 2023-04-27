@@ -257,6 +257,7 @@ export type Plan = BillingTerm & {
 	 */
 	getInferiorFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
+	getLinkInBioSignupFeatures?: () => Feature[];
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };

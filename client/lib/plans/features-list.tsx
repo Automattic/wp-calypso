@@ -165,7 +165,6 @@ import {
 	FEATURE_CUSTOMIZE_THEMES_BUTTONS_COLORS,
 	FEATURE_TRACK_VIEWS_CLICKS,
 	FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
-	FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 	FEATURE_UNLIMITED_TRAFFIC,
 	FEATURE_MANAGED_HOSTING,
 	WPCOM_FEATURES_NO_ADVERTS,
@@ -1696,12 +1695,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO ]: {
 		getSlug: () => FEATURE_COLLECT_PAYMENTS_LINK_IN_BIO,
-		getTitle: () =>
-			i18n.translate( 'Monetize your Link in Bio with payments, subscriptions, and donations' ),
-	},
-	[ FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION ]: {
-		getSlug: () => FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
-		getTitle: () => i18n.translate( 'Advanced link in bio themes and customization' ),
+		getTitle: () => i18n.translate( 'Charge for premium content' ),
 	},
 	[ FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE ]: {
 		getSlug: () => FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
