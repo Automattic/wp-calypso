@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { callApi } from '../helpers';
 import { useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { PendingPostSubscription, PendingPostSubscriptionsResult } from '../types';

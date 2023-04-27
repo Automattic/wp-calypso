@@ -1,5 +1,5 @@
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useQueryClient, useQuery } from 'react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import { SearchResult } from '../types';
 

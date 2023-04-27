@@ -34,6 +34,7 @@
 		"@automattic/format-currency": "workspace:^",
 		"@automattic/happychat-connection": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
+		"@tanstack/react-query": "^4.29.1",
 		"@wordpress/api-fetch": "^6.19.0",
 		"@wordpress/data-controls": "^2.22.0",
 		"@wordpress/deprecated": "^3.22.0",

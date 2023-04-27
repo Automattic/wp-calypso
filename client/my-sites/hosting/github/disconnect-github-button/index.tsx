@@ -1,6 +1,6 @@
 import { Button } from '@automattic/components';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
-import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';

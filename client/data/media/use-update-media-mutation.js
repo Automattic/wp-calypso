@@ -1,5 +1,5 @@
+import { useMutation } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation } from 'react-query';
 import wp from 'calypso/lib/wp';
 
 export const useUpdateMediaMutation = ( queryOptions = {} ) => {

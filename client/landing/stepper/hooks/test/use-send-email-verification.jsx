@@ -1,9 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react-hooks';
 import nock from 'nock';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { useSendEmailVerification } from '../use-send-email-verification';
 
 describe( 'use-send-email-verification hook', () => {

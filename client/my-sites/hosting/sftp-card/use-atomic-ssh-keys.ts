@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from 'react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import wp from 'calypso/lib/wp';
 
 export const USE_ATOMIC_SSH_KEYS_QUERY_KEY = 'atomic-ssh-keys';

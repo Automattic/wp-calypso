@@ -1,5 +1,5 @@
 import { useLocale } from '@automattic/i18n-utils';
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { Pattern } from './types';
 

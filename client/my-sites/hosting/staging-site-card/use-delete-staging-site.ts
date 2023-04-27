@@ -1,5 +1,5 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
