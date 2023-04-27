@@ -82,4 +82,14 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 	);
 };
 
+ChecklistItem.Placeholder = function () {
+	return (
+		<div className="launchpad__checklist-item is-placeholder">
+			<div className="launchpad__checklist-item-content">
+				<div></div>
+			</div>
+		</div>
+	);
+};
+
 export default ChecklistItem;
