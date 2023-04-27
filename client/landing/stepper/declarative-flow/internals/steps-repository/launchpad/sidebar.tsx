@@ -60,8 +60,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const {
 		data: { checklist: launchpadChecklist },
-		isLoading,
-	} = useLaunchpadChecklist( siteSlug, siteIntentOption, { enabled: !! siteIntentOption } );
+		isFetchedAfterMount,
+	} = useLaunchpadChecklist( siteSlug, siteIntentOption );
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
@@ -183,7 +183,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						</p>
 					</div>
 				) }
-				{ isLoading ? <Checklist.Placeholder /> : <Checklist tasks={ enhancedTasks } /> }
+				{ isFetchedAfterMount ? <Checklist tasks={ enhancedTasks } /> : <Checklist.Placeholder /> }
 			</div>
 			<div className="launchpad__sidebar-admin-link">
 				<StepNavigationLink
