@@ -49,6 +49,7 @@ export const useLaunchpadChecklist = (
 	const queryResult = useQuery( key, () => fetchLaunchpadChecklist( siteSlug, siteIntent ), {
 		retry: 3,
 		placeholderData: { checklist: [] },
+		enabled: !! siteSlug && !! siteIntent,
 	} );
 
 	// Typescript is returning the type "T | undefined" for useQuery,
