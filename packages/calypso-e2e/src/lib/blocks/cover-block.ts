@@ -1,5 +1,5 @@
-import { Locator, Page } from 'playwright';
-import { EditorComponent } from '../components';
+import { Locator } from 'playwright';
+import { EditorPage } from '../pages';
 
 const coverStylesArray = [ 'Default', 'Bottom Wave', 'Top Wave' ] as const;
 export type coverStyles = ( typeof coverStylesArray )[ number ];
@@ -11,20 +11,17 @@ export class CoverBlock {
 	static blockName = 'Cover';
 	static blockEditorSelector = '[aria-label="Block: Cover"]';
 	static coverStyles = coverStylesArray;
-	private page: Page;
-	private editor: EditorComponent;
+	private editorPage: EditorPage;
 	block: Locator;
 
 	/**
 	 * Constructs an instance of this block.
 	 *
-	 * @param {Page} page The underlying page.
-	 * @param {EditorComponent} editor The EditorComponent instance.
+	 * @param {EditorPage} editorPage The EditorPage instance.
 	 * @param {Locator} block Handle referencing the block as inserted on the Gutenberg editor.
 	 */
-	constructor( page: Page, editor: EditorComponent, block: Locator ) {
-		this.page = page;
-		this.editor = editor;
+	constructor( editorPage: EditorPage, block: Locator ) {
+		this.editorPage = editorPage;
 		this.block = block;
 	}
 
@@ -42,7 +39,7 @@ export class CoverBlock {
 
 		// After uploading the image the focus is switched to the inner
 		// paragraph block (Cover title), so we need to switch it back outside.
-		const editorFrame = await this.editor.frame();
+		const editorFrame = await this.editorPage.getEditorFrame();
 		await editorFrame
 			.locator( CoverBlock.blockEditorSelector )
 			.click( { position: { x: 1, y: 1 } } );
@@ -63,7 +60,7 @@ export class CoverBlock {
 	 * @param {'Settings'|'Styles'} name Supported tabs.
 	 */
 	async activateTab( name: 'Settings' | 'Styles' ) {
-		const editorFrame = await this.editor.frame();
+		const editorFrame = await this.editorPage.getEditorFrame();
 		await editorFrame.locator( `[aria-label="${ name }"]` ).click();
 	}
 
@@ -73,7 +70,7 @@ export class CoverBlock {
 	 * @param {coverStyles} style The title of one of the Cover style buttons
 	 */
 	async setCoverStyle( style: coverStyles ): Promise< void > {
-		const editorFrame = await this.editor.frame();
+		const editorFrame = await this.editorPage.getEditorFrame();
 		await editorFrame.locator( `button[aria-label="${ style }"]` ).click();
 
 		const blockId = await this.block.getAttribute( 'data-block' );

@@ -57,6 +57,7 @@ describe( DataHelper.createSuiteTitle( 'Editor: Basic Post Flow' ), function () 
 	} );
 
 	it( 'Select page template', async function () {
+		editorPage = new EditorPage( page );
 		await editorPage.selectTemplateCategory( 'About' );
 		await editorPage.selectTemplate( 'About me' );
 	} );

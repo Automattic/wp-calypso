@@ -54,7 +54,10 @@ describe( 'CoBlocks: Extensions: Cover Styles', function () {
 		const editorCanvas = await editorPage.getEditorCanvas();
 
 		await editorPage.addBlockFromSidebar( CoverBlock.blockName, CoverBlock.blockEditorSelector );
-		coverBlock = new CoverBlock( page, editorCanvas.locator( CoverBlock.blockEditorSelector ) );
+		coverBlock = new CoverBlock(
+			editorPage,
+			editorCanvas.locator( CoverBlock.blockEditorSelector )
+		);
 	} );
 
 	it( 'Upload image', async () => {
