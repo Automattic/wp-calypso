@@ -11,7 +11,7 @@ translate(
 );
 translate( 'That’s a total savings of %(savingsPrice)s!', {
 	args: {
-		discountPrice: '$25',
+		savingsPrice: '$25',
 	},
 	comment: '%(savingsPrice)s is a monetary value, e.g. $25',
 } );
