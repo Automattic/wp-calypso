@@ -1,10 +1,10 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
+import { OnboardSelect } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { OnboardSelect } from 'calypso/../packages/data-stores/src';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';

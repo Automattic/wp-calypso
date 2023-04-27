@@ -40,7 +40,7 @@ export function getEnhancedTasks(
 	submit: NavigationControls[ 'submit' ],
 	displayGlobalStylesWarning: boolean,
 	goToStep?: NavigationControls[ 'goToStep' ],
-	flow?: string | null,
+	flow: string | null = '',
 	isEmailVerified = false,
 	checklistStatuses: LaunchpadStatuses = {},
 	planCartProductSlug?: string | null
@@ -48,7 +48,7 @@ export function getEnhancedTasks(
 	const enhancedTaskList: Task[] = [];
 
 	const productSlug =
-		( flow === START_WRITING_FLOW ? planCartProductSlug : null ) ?? site?.plan?.product_slug;
+		( isStartWritingFlow( flow ) ? planCartProductSlug : null ) ?? site?.plan?.product_slug;
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
@@ -60,7 +60,7 @@ export function getEnhancedTasks(
 
 	const firstPostPublishedCompleted = checklistStatuses?.first_post_published || false;
 
-	const planCompleted = checklistStatuses?.plan_selected || ! isStartWritingFlow( flow || null );
+	const planCompleted = checklistStatuses?.plan_selected || ! isStartWritingFlow( flow );
 
 	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
 
@@ -169,7 +169,7 @@ export function getEnhancedTasks(
 										: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 								} ),
 							} );
-							if ( isStartWritingFlow( flow || null ) && site?.plan?.is_free ) {
+							if ( isStartWritingFlow( flow ) && site?.plan?.is_free ) {
 								plansUrl = addQueryArgs( `/setup/${ START_WRITING_FLOW }/plans`, {
 									...{ siteSlug: siteSlug, 'start-writing': true },
 								} );
@@ -179,7 +179,7 @@ export function getEnhancedTasks(
 						},
 						badgeText:
 							isVideoPressFlowWithUnsupportedPlan ||
-							( isStartWritingFlow( flow || null ) && ! planCompleted )
+							( isStartWritingFlow( flow ) && ! planCompleted )
 								? null
 								: translatedPlanName,
 						completed: ( planCompleted ?? task.completed ) && ! shouldDisplayWarning,
