@@ -47,7 +47,7 @@ const Launchpad: Step = ( { navigation, flow }: LaunchpadProps ) => {
 
 	const {
 		data: { checklist: launchpadChecklist },
-	} = useLaunchpadChecklist( siteSlug, siteIntentOption || null );
+	} = useLaunchpadChecklist( siteSlug, siteIntentOption );
 
 	const fetchingSiteError = useSelect(
 		( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
