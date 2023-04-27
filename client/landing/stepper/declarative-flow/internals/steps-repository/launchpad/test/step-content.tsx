@@ -7,6 +7,7 @@ import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
+import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
@@ -26,6 +27,12 @@ const stepContentProps = {
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
+jest.mock( 'calypso/data/sites/use-launchpad', () => ( {
+	useLaunchpad: jest.fn().mockReturnValue( {
+		data: { site_intent: 'newsletter' },
+	} ),
+} ) );
+
 jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => ( {
 		site: mockSite,
@@ -43,8 +50,8 @@ jest.mock( 'react-router-dom', () => ( {
 } ) );
 
 jest.mock( 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist', () => ( {
-	useLaunchpadChecklist: () => {
-		const checklist = [
+	useLaunchpadChecklist: ( siteSlug, siteIntentOption ) => {
+		let checklist = [
 			{
 				id: 'setup_newsletter',
 				completed: true,
@@ -66,6 +73,31 @@ jest.mock( 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist', 
 				title: 'Start writing',
 			},
 		];
+
+		if ( siteIntentOption === 'start-writing' ) {
+			checklist = [
+				{
+					id: 'first_post_published',
+					completed: true,
+					disabled: false,
+					title: 'Write your first post',
+				},
+				{ id: 'setup_free', completed: true, disabled: false, title: 'Choose a plan' },
+				{ id: 'domain_upsell', completed: false, disabled: false, title: 'Choose a domain' },
+				{
+					id: 'plan_selected',
+					completed: false,
+					disabled: false,
+					title: 'Choose a plan',
+				},
+				{
+					id: 'blog_launched',
+					completed: false,
+					disabled: false,
+					title: 'Launch your blog',
+				},
+			];
+		}
 
 		return {
 			data: { checklist },
@@ -187,6 +219,12 @@ describe( 'StepContent', () => {
 		} );
 
 		it( 'renders correct sidebar tasks', () => {
+			// Change the useLaunchpad hook to return a free site.
+			( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
+				data: {
+					site_intent: 'start-writing',
+				},
+			} );
 			renderStepContent( false, START_WRITING_FLOW );
 
 			expect( screen.getByText( 'Write your first post' ) ).toBeInTheDocument();
