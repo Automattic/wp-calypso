@@ -242,6 +242,10 @@ function sortAlphabetically< T extends SiteDetailsForSorting >(
 	b: T,
 	sortOrder: SitesSortOrder
 ) {
+	if ( ! a?.title || ! b?.title ) {
+		return 0;
+	}
+
 	const normalizedA = a.title.toLocaleLowerCase();
 	const normalizedB = b.title.toLocaleLowerCase();
 
