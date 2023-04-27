@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 import { GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY } from '@automattic/calypso-products';
-import { render, fireEvent, screen, within, waitFor, act } from '@testing-library/react';
+import { render, screen, within, waitFor, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import React from 'react';
 import { navigate } from 'calypso/lib/navigate';
@@ -157,11 +158,12 @@ describe( 'CheckoutMain', () => {
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
 		);
+		const user = userEvent.setup();
 		expect( screen.getAllByLabelText( 'WordPress.com Personal' ) ).toHaveLength( 1 );
-		fireEvent.click( removeProductButton );
+		await user.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		fireEvent.click( confirmButton );
+		await user.click( confirmButton );
 		await waitFor( async () => {
 			expect( screen.queryByLabelText( 'WordPress.com Personal' ) ).not.toBeInTheDocument();
 		} );
@@ -181,10 +183,11 @@ describe( 'CheckoutMain', () => {
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove WordPress.com Personal from cart'
 		);
-		fireEvent.click( removeProductButton );
+		const user = userEvent.setup();
+		await user.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		fireEvent.click( confirmButton );
+		await user.click( confirmButton );
 		await waitFor( () => {
 			expect( navigate ).toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
@@ -204,10 +207,11 @@ describe( 'CheckoutMain', () => {
 		const removeProductButton = await within( activeSection ).findByLabelText(
 			'Remove foo.cash from cart'
 		);
-		fireEvent.click( removeProductButton );
+		const user = userEvent.setup();
+		await user.click( removeProductButton );
 		const confirmModal = await screen.findByRole( 'dialog' );
 		const confirmButton = await within( confirmModal ).findByText( 'Continue' );
-		fireEvent.click( confirmButton );
+		await user.click( confirmButton );
 		await waitFor( async () => {
 			expect( navigate ).not.toHaveBeenCalledWith( '/plans/foo.com' );
 		} );
