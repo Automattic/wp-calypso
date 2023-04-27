@@ -69,6 +69,7 @@ jest.mock( 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist', 
 
 		return {
 			data: { checklist },
+			isFetchedAfterMount: true,
 		};
 	},
 } ) );
