@@ -82,7 +82,7 @@ const ChecklistItem = ( { task, isPrimaryAction }: { task: Task; isPrimaryAction
 	);
 };
 
-ChecklistItem.Placeholder = function () {
+ChecklistItem.Placeholder = () => {
 	return (
 		<div className="launchpad__checklist-item is-placeholder">
 			<div className="launchpad__checklist-item-content">
