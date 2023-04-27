@@ -42,7 +42,6 @@ export function getEnhancedTasks(
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
-	checklistStatuses: LaunchpadStatuses = {},
 	planCartProductSlug?: string | null
 ) {
 	const enhancedTaskList: Task[] = [];
@@ -63,7 +62,9 @@ export function getEnhancedTasks(
 	const firstPostPublishedCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
 
-	const planCompleted = checklistStatuses?.plan_selected || ! isStartWritingFlow( flow );
+	const planCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.plan_selected ||
+		! isStartWritingFlow( flow );
 
 	const videoPressUploadCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;

@@ -67,12 +67,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
-	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks(
-		tasks,
-		flow,
-		isEmailVerified
-	);
-
 	const { getPlanCartItem } = useSelect(
 		( select ) => ( {
 			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
@@ -91,7 +85,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			goToStep,
 			flow,
 			isEmailVerified,
-			checklist_statuses,
 			getPlanCartItem()?.product_slug ?? null
 		);
 
