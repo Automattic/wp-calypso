@@ -78,11 +78,13 @@ describe( 'CheckoutMain', () => {
 			additionalProps,
 			additionalCartProps,
 			useUndefinedCartKey,
+			useUndefinedSiteId,
 		}: {
 			cartChanges: Partial< ResponseCart >;
 			additionalProps: Partial< Parameters< typeof CheckoutMain > >;
 			additionalCartProps: Partial< Parameters< typeof ShoppingCartProvider > >;
 			useUndefinedCartKey?: boolean;
+			useUndefinedSiteId?: boolean;
 		} ) => {
 			const managerClient = createShoppingCartManagerClient( {
 				getCart: mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ),
@@ -110,7 +112,7 @@ describe( 'CheckoutMain', () => {
 						>
 							<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 								<CheckoutMain
-									siteId={ siteId }
+									siteId={ useUndefinedSiteId ? undefined : siteId }
 									siteSlug="foo.com"
 									overrideCountryList={ countryList }
 									{ ...additionalProps }
@@ -130,6 +132,27 @@ describe( 'CheckoutMain', () => {
 
 	it( 'renders the line items with prices', async () => {
 		render( <MyCheckout />, container );
+		await waitFor( () => {
+			screen
+				.getAllByLabelText( 'WordPress.com Personal' )
+				.map( ( element ) => expect( element ).toHaveTextContent( 'R$144' ) );
+		} );
+	} );
+
+	it( 'renders the line items with prices when logged-out', async () => {
+		const cartChanges = { products: [] };
+		render(
+			<MyCheckout
+				cartChanges={ cartChanges }
+				useUndefinedSiteId
+				additionalProps={ {
+					isLoggedOutCart: true,
+					productAliasFromUrl: 'personal',
+					sitelessCheckoutType: 'jetpack',
+				} }
+			/>,
+			container
+		);
 		await waitFor( () => {
 			screen
 				.getAllByLabelText( 'WordPress.com Personal' )

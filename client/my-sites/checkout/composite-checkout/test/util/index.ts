@@ -24,6 +24,11 @@ import type {
 	PossiblyCompleteDomainContactDetails,
 } from '@automattic/wpcom-checkout';
 
+export const normalAllowedPaymentMethods = [
+	'WPCOM_Billing_PayPal_Express',
+	'WPCOM_Billing_Stripe_Payment_Method',
+];
+
 export const stripeConfiguration = {
 	processor_id: 'IE',
 	js_url: 'https://stripe-js-url',
@@ -383,7 +388,7 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 		}, taxInteger );
 
 		return {
-			allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
+			allowed_payment_methods: normalAllowedPaymentMethods,
 			blog_id: 1234,
 			cart_generated_at_timestamp: 12345,
 			cart_key: 1234,
@@ -1123,7 +1128,7 @@ export function getBasicCart(): ResponseCart {
 			display_taxes: true,
 			location: {},
 		},
-		allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
+		allowed_payment_methods: normalAllowedPaymentMethods,
 		total_tax_integer: 700,
 		total_cost_integer: 15600,
 		sub_total_integer: 15600,
@@ -1152,9 +1157,7 @@ export function mockGetCartEndpointWith( initialCart: ResponseCart ) {
 			initialCart.credits_integer >= initialCart.total_cost_integer;
 		return {
 			...initialCart,
-			allowed_payment_methods: isFree
-				? [ 'WPCOM_Billing_WPCOM' ]
-				: [ 'WPCOM_Billing_PayPal_Express' ],
+			allowed_payment_methods: isFree ? [ 'WPCOM_Billing_WPCOM' ] : normalAllowedPaymentMethods,
 		};
 	};
 }
