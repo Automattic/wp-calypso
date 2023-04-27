@@ -1,4 +1,4 @@
-import { PLAN_ENTERPRISE_GRID_WPCOM } from '@automattic/calypso-products';
+import { PlanSlug, PLAN_ENTERPRISE_GRID_WPCOM } from '@automattic/calypso-products';
 import { useSelector } from 'react-redux';
 import { usePlanUpgradeCredits } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -7,7 +7,7 @@ import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors'
 
 export function usePlanUpgradeCreditsDisplay(
 	siteId: number,
-	visiblePlanNames: string[] = []
+	visiblePlanNames: PlanSlug[] = []
 ): {
 	creditsValue: number;
 	isPlanUpgradeCreditEligible: boolean;

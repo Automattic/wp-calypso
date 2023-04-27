@@ -1,3 +1,4 @@
+import { PlanSlug } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -16,7 +17,7 @@ export default function PlanNotice( {
 	visiblePlanNames = [],
 	discountInformation: { withDiscount, discountEndDate },
 }: {
-	visiblePlanNames: string[];
+	visiblePlanNames: PlanSlug[];
 	isInSignup: boolean;
 	siteId: number;
 	discountInformation: {
