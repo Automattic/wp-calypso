@@ -103,7 +103,7 @@ export default function CheckoutMain( {
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
 	plan?: string | undefined;
-	purchaseId?: number | undefined;
+	purchaseId?: number | string | undefined;
 	couponCode?: string | undefined;
 	isComingFromUpsell?: boolean;
 	isLoggedOutCart?: boolean;
