@@ -1,11 +1,13 @@
 import { getScrollContainer } from '@wordpress/dom';
-import { useLayoutEffect, useRef, useCallback, useState } from 'react';
+import { useLayoutEffect, useRef, useCallback, useState, forwardRef } from 'react';
+import type { ForwardedRef } from 'react';
 import './pattern-overlay.scss';
 
 interface Props {
 	referenceElement?: HTMLElement;
-	overlayContent?: JSX.Element | null;
+	children?: JSX.Element | null;
 	stickyContent?: JSX.Element | null;
+	onHover: ( element: HTMLElement | null ) => void;
 }
 
 const STICKY_MARGIN = 72;
@@ -61,7 +63,10 @@ const useOverlayRect = ( referenceElement?: HTMLElement ) => {
 	return rect;
 };
 
-const PatternOverlay = ( { referenceElement, overlayContent, stickyContent }: Props ) => {
+const PatternOverlay = (
+	{ referenceElement, children, stickyContent, onHover }: Props,
+	ref: ForwardedRef< any >
+) => {
 	const overlayRect = useOverlayRect( referenceElement );
 	const overlayStyle = {
 		width: overlayRect?.width,
@@ -76,13 +81,22 @@ const PatternOverlay = ( { referenceElement, overlayContent, stickyContent }: Pr
 				: 'none',
 	};
 
+	const handleMouseLeave = () => {
+		onHover( null );
+	};
+
 	if ( ! overlayRect ) {
 		return null;
 	}
 
 	return (
-		<div className="pattern-overlay" style={ overlayStyle }>
-			{ overlayContent }
+		<div
+			ref={ ref }
+			className="pattern-overlay"
+			style={ overlayStyle }
+			onMouseLeave={ handleMouseLeave }
+		>
+			{ children }
 			{ stickyContent && (
 				<div className="pattern-overlay__sticky-content" style={ stickyContentStyle }>
 					{ stickyContent }
@@ -92,4 +106,4 @@ const PatternOverlay = ( { referenceElement, overlayContent, stickyContent }: Pr
 	);
 };
 
-export default PatternOverlay;
+export default forwardRef( PatternOverlay );

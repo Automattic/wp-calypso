@@ -15,25 +15,6 @@ const PatternItem = ( { pattern, type, position, onHover }: Props ) => {
 		onHover( event.currentTarget as HTMLElement );
 	};
 
-	const handleMouseLeave = ( event: MouseEvent ) => {
-		const { clientX, clientY } = event;
-		const target = event.target as HTMLElement;
-		const { offsetParent } = target;
-		const { left, right, top, bottom } = target.getBoundingClientRect();
-
-		// Use the position to determine whether the mouse leaves the current element or not
-		// because the element is inside the iframe and we cannot get the next element from
-		// the event.relatedTarget
-		if (
-			clientX <= Math.max( left, 0 ) ||
-			clientX >= Math.min( right, offsetParent?.clientWidth || Infinity ) ||
-			clientY <= Math.max( top, 0 ) ||
-			clientY >= Math.min( bottom, offsetParent?.clientHeight || Infinity )
-		) {
-			onHover( null );
-		}
-	};
-
 	if ( ! pattern ) {
 		return null;
 	}
@@ -43,8 +24,11 @@ const PatternItem = ( { pattern, type, position, onHover }: Props ) => {
 			id={ pattern.key }
 			data-type={ type }
 			data-position={ position }
+			// The pattern is rendered inside the iframe. It's not easy to detect the mouse is going outside
+			// since we want to keep the element is still hovering when the mouse is moving onto the action bar.
+			// However, we cannot detect the mouse is moving onto the action bar due to the iframe limitation.
+			// So, we handle the mouse leave event on the pattern overlay
 			onMouseEnter={ handleMouseEnter }
-			onMouseLeave={ handleMouseLeave }
 		>
 			<PatternRenderer patternId={ encodePatternId( pattern.ID ) } isContentOnly />
 		</div>
