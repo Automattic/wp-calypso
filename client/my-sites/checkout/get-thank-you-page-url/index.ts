@@ -588,8 +588,9 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 		}
 	}
 
-	// Only upsell to Business plan when not a monthly plan.
-	if ( isWpComPremiumPlan( currentPlanSlug ) ) {
+	// Don't show the business plan upsell if the current plan is a premium monthly plan.
+	// For the experiment: calypso_postpurchase_upsell_monthly_to_annual_plan
+	if ( isWpComPremiumPlan( currentPlanSlug ) && currentPlan?.term !== TERM_MONTHLY ) {
 		const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan?.term } );
 		return planKey ? getPlan( planKey )?.getPathSlug?.() : undefined;
 	}

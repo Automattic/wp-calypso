@@ -1040,7 +1040,10 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/checkout/foo.bar/offer-plan-upgrade/business/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to business monthly upgrade nudge if jetpack is not in the cart, and premium monthly is in the cart', () => {
+	// NOTE: as part of the calypso_postpurchase_upsell_monthly_to_annual_plan experiment
+	// we're disabling the monthly premium to monthly business plan upsell
+	// https://github.com/Automattic/wp-calypso/pull/76260
+	it( 'redirects to thank you page if jetpack is not in the cart, and premium monthly is in the cart', () => {
 		const cart = {
 			...getMockCart(),
 			products: [
@@ -1057,9 +1060,7 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			receiptId: samplePurchaseId,
 		} );
-		expect( url ).toBe(
-			`/checkout/foo.bar/offer-plan-upgrade/business-monthly/${ samplePurchaseId }`
-		);
+		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
 
 	it( 'redirects to the business upgrade nudge with a placeholder when jetpack is not in the cart and premium is in the cart but there is no receipt', () => {
@@ -1616,7 +1617,10 @@ describe( 'getThankYouPageUrl', () => {
 			);
 		} );
 
-		it( 'offers discounted monthly business plan upgrade when monthly premium plan is purchased.', () => {
+		// NOTE: as part of the calypso_postpurchase_upsell_monthly_to_annual_plan experiment
+		// we're disabling the monthly premium to monthly business plan upsell
+		// https://github.com/Automattic/wp-calypso/pull/76260
+		it( 'shows thank you page for monthly premium plan purchases', () => {
 			const cart = {
 				...getMockCart(),
 				products: [
@@ -1633,9 +1637,7 @@ describe( 'getThankYouPageUrl', () => {
 				receiptId: samplePurchaseId,
 				cart,
 			} );
-			expect( url ).toBe(
-				`/checkout/foo.bar/offer-plan-upgrade/business-monthly/${ samplePurchaseId }`
-			);
+			expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 		} );
 
 		it( 'Does not offers discounted annual business plan upgrade when annual premium plan and DIFM light is purchased together.', () => {
