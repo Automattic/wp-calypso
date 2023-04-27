@@ -21,10 +21,9 @@ export interface BlockRendererContainerProps {
 	inlineCss?: string;
 	viewportWidth?: number;
 	viewportHeight?: number;
-	maxHeight?: 'none' | number;
+	maxHeight?: number;
 	minHeight?: number;
-	isMinHeight100vh?: boolean;
-	minHeightFor100vh?: number;
+	/** Whether to disable the pointer-events */
 	disabled?: boolean;
 }
 
@@ -42,12 +41,11 @@ const ScaledBlockRendererContainer = ( {
 	containerWidth,
 	maxHeight = BLOCK_MAX_HEIGHT,
 	minHeight,
-	isMinHeight100vh,
-	minHeightFor100vh,
 	disabled,
 }: ScaledBlockRendererContainerProps ) => {
 	const [ isLoaded, setIsLoaded ] = useState( false );
-	const [ contentResizeListener, { height: contentHeight } ] = useResizeObserver();
+	const [ contentResizeListener, contentSizes ] = useResizeObserver();
+	const contentHeight = contentSizes.height || 0;
 	const { settings } = useContext( BlockRendererContext );
 	const { styles, assets, duotone } = useMemo(
 		() => ( {
@@ -101,34 +99,16 @@ const ScaledBlockRendererContainer = ( {
 	}, [] );
 
 	const scale = containerWidth / viewportWidth;
-	const heightFor100vh = Math.max(
-		contentHeight || 0,
-		viewportHeight || 0,
-		minHeightFor100vh || 0
-	);
-
-	let scaledHeight = ( contentHeight as number ) * scale || minHeight;
-	if ( isMinHeight100vh ) {
-		// Handling container height of patterns with height 100vh
-		scaledHeight = heightFor100vh * scale;
-	}
-
-	let iframeHeight = contentHeight as number;
-	if ( isMinHeight100vh ) {
-		// Handling iframe height of patterns with height 100vh
-		iframeHeight = heightFor100vh;
-	}
+	const containerHeight = contentHeight * scale || minHeight;
+	const containerMaxHeight = contentHeight > maxHeight ? maxHeight * scale : undefined;
 
 	return (
 		<div
 			className="scaled-block-renderer"
 			style={ {
 				transform: `scale(${ scale })`,
-				height: scaledHeight,
-				maxHeight:
-					maxHeight !== 'none' && ( contentHeight as number ) > maxHeight
-						? ( maxHeight as number ) * scale
-						: undefined,
+				height: containerHeight,
+				maxHeight: containerMaxHeight,
 			} }
 		>
 			<Iframe
@@ -140,7 +120,7 @@ const ScaledBlockRendererContainer = ( {
 				style={ {
 					position: 'absolute',
 					width: viewportWidth,
-					height: iframeHeight,
+					height: viewportHeight || contentHeight,
 					pointerEvents: disabled ? 'none' : 'auto',
 					// This is a catch-all max-height for patterns.
 					// See: https://github.com/WordPress/gutenberg/pull/38175.

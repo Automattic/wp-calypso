@@ -28,7 +28,6 @@ const PatternRenderer = ( { patternId, isContentOnly, ...props }: Omit< Props, '
 			{ ...props }
 			styles={ pattern?.styles ?? [] }
 			scripts={ pattern?.scripts ?? '' }
-			isMinHeight100vh={ pattern?.html?.includes( 'min-height:100vh' ) }
 		>
 			{ content }
 		</BlockRendererContainer>
