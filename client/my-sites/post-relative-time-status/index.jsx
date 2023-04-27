@@ -185,6 +185,34 @@ class PostRelativeTime extends PureComponent {
 	}
 
 	/**
+	 * Get Newsletter status label
+	 *
+	 * @param {string} status Newsletter tatus
+	 */
+	getNewsletterStatus( status ) {
+		if ( ! status ) {
+			return;
+		}
+
+		let statusText;
+		let extraStatusClassName;
+
+		if ( status === 'everybody' ) {
+			extraStatusClassName = 'is-everybody';
+			statusText = this.props.translate( 'Everbody' );
+		} else if ( status === 'future' ) {
+			extraStatusClassName = 'is-subscribers';
+			statusText = this.props.translate( 'Subscribers' );
+		} else if ( status === 'new' ) {
+			extraStatusClassName = 'is-paid-subcribers';
+			statusText = this.props.translate( 'Paid Subscribers' );
+		}
+
+		const statusIcon = 'mail';
+		return this.getLabel( statusText, extraStatusClassName, statusIcon );
+	}
+
+	/**
 	 * Get "private" label
 	 */
 	getPrivateLabel() {
@@ -231,6 +259,8 @@ class PostRelativeTime extends PureComponent {
 		let innerText = (
 			<>
 				{ showPublishedStatus ? this.getStatus() : timeText }
+				{ /* TODO: Figure out why the Jetpack newsletter status is not available */ }
+				{ this.getNewsletterStatus( 'everybody' ) }
 				{ post.status === 'pending' && this.getPendingLabel() }
 				{ post.status === 'private' && this.getPrivateLabel() }
 				{ post.sticky && this.getStickyLabel() }
