@@ -1,16 +1,20 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { ProductsList } from '@automattic/data-stores';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect, useDispatch, dispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
+import { getQueryArg } from '@wordpress/url';
+import { setDomainCartItem } from 'calypso/../packages/data-stores/src/onboard/actions';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import type { Step } from '../../types';
-import type { OnboardSelect } from '@automattic/data-stores';
+import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -35,8 +39,62 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		submit?.( { domain: selectedDomain } );
 	};
 
+	const getInitialSuggestion = function () {
+		const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
+
+		const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
+		const [ , strippedHostname ] =
+			String( siteSlug ).match( wpcomSubdomainWithRandomNumberSuffix ) || [];
+		return strippedHostname ?? String( siteSlug ).split( '.' )[ 0 ];
+	};
+
 	const onSkip = () => {
 		onAddDomain( null );
+	};
+
+	const submitWithDomain = (
+		suggestion: DomainSuggestion | undefined,
+		shouldHideFreePlan = false
+	) => {
+		if ( suggestion ) {
+			const domainCartItem = domainRegistration( {
+				domain: suggestion.domain_name,
+				productSlug: suggestion.product_slug || '',
+			} );
+			// dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
+
+			// setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
+			setDomainCartItem( domainCartItem );
+		} else {
+			setDomainCartItem( undefined );
+		}
+
+		submit?.();
+	};
+
+	const getStartWritingFlowStepContent = () => {
+		return (
+			<CalypsoShoppingCartProvider>
+				<RegisterDomainStep
+					suggestion={ getInitialSuggestion() }
+					// domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
+					domainsWithPlansOnly={ true }
+					// onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
+					onAddDomain={ submitWithDomain }
+					// onAddMapping={ this.handleAddMapping }
+					// onAddTransfer={ this.handleAddTransfer }
+					// isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
+					showAlreadyOwnADomain={ true }
+					basePath=""
+					products={ productsList }
+					vendor={ getSuggestionsVendor( {
+						isSignup: true,
+						isDomainOnly: false,
+						flowName: flow || undefined,
+					} ) }
+				/>
+			</CalypsoShoppingCartProvider>
+		);
 	};
 
 	const getVideoPressFlowStepContent = () => {
@@ -91,6 +149,17 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		);
 	};
 
+	const getStepContent = () => {
+		switch ( flow ) {
+			case 'videopress':
+				return getVideoPressFlowStepContent();
+			case 'start-writing':
+				return getStartWritingFlowStepContent();
+			default:
+				return getDefaultStepContent();
+		}
+	};
+
 	const getFormattedHeader = () => {
 		if ( ! isVideoPressFlow ) {
 			return undefined;
@@ -116,8 +185,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		);
 	};
 
-	const stepContent = isVideoPressFlow ? getVideoPressFlowStepContent() : getDefaultStepContent();
-
 	return (
 		<>
 			<QueryProductsList />
@@ -129,7 +196,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 				isHorizontalLayout={ false }
 				isWideLayout={ true }
 				isLargeSkipLayout={ false }
-				stepContent={ stepContent }
+				stepContent={ getStepContent() }
 				recordTracksEvent={ recordTracksEvent }
 				formattedHeader={ getFormattedHeader() }
 			/>
