@@ -3,15 +3,16 @@ import { useState } from 'react';
 import { DEVICE_TYPES } from './constants';
 import DeviceSwitcherToolbar from './toolbar';
 import type { Device } from './types';
+import type { ReactNode, MutableRefObject, LegacyRef } from 'react';
 import './device-switcher.scss';
 
 interface Props {
-	children: React.ReactNode;
+	children: ReactNode;
 	className?: string;
 	defaultDevice?: Device;
 	isShowDeviceSwitcherToolbar?: boolean;
 	isShowFrameBorder?: boolean;
-	frameRef?: React.MutableRefObject< HTMLDivElement | null >;
+	frameRef?: MutableRefObject< HTMLDivElement | null > | LegacyRef< HTMLDivElement >;
 	frameClassName?: string;
 	onDeviceChange?: ( device: Device ) => void;
 }

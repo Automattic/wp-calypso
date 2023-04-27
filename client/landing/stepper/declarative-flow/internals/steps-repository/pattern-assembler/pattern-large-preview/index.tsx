@@ -4,7 +4,7 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { __experimentalUseNavigator as useNavigator } from '@wordpress/components';
 import { Icon, layout } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import { NAVIGATOR_PATHS, STYLES_PATHS } from '../constants';
 import { PATTERN_ASSEMBLER_EVENTS } from '../events';
 import PatternActionBar from '../pattern-action-bar';
@@ -12,6 +12,7 @@ import { encodePatternId } from '../utils';
 import PatternItem from './pattern-item';
 import PatternOverlay from './pattern-overlay';
 import useActionBarProps from './use-action-bar-props';
+import useOverlayScroll from './use-overlay-scroll';
 import type { Pattern } from '../types';
 import type { CSSProperties, MouseEvent } from 'react';
 import './style.scss';
@@ -32,6 +33,17 @@ interface Props {
 // The pattern renderer element has 1px min height before the pattern is loaded
 const PATTERN_RENDERER_MIN_HEIGHT = 1;
 
+// The container of patterns is inside the iframe, so we need to use inline style
+const LIST_STYLE: CSSProperties = {
+	position: 'absolute',
+	top: 0,
+	bottom: 0,
+	left: 0,
+	right: 0,
+	height: '100vh',
+	overflow: 'auto',
+};
+
 const PatternLargePreview = ( {
 	header,
 	sections,
@@ -47,25 +59,18 @@ const PatternLargePreview = ( {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 	const navigator = useNavigator();
-	const patterns = [ header, ...sections, footer ].filter( Boolean ) as Pattern[];
-	const hasSelectedPattern = patterns.length > 0;
-	const patternIds: string[] = patterns.map(
-		( pattern ) => pattern && encodePatternId( pattern.ID )
+	const patternIds = useMemo(
+		() =>
+			[ header, ...sections, footer ]
+				.filter( Boolean )
+				.map( ( pattern ) => pattern && encodePatternId( pattern.ID ) ) as string[],
+		[ header, sections, footer ]
 	);
+	const hasSelectedPattern = patternIds.length > 0;
 	const shouldShowSelectPatternHint =
 		! hasSelectedPattern && STYLES_PATHS.includes( navigator.location.path );
-	const frameRef = useRef< HTMLDivElement | null >( null );
 	const listRef = useRef< HTMLDivElement | null >( null );
-	const listStyle: CSSProperties = {
-		position: 'absolute',
-		top: 0,
-		bottom: 0,
-		left: 0,
-		right: 0,
-		height: '100vh',
-		overflow: 'auto',
-	};
-
+	const frameRef = useOverlayScroll( listRef );
 	const [ hoveredElement, setHoveredElement ] = useState< HTMLElement | null >( null );
 	const actionBarProps = useActionBarProps( {
 		element: hoveredElement,
@@ -150,7 +155,7 @@ const PatternLargePreview = ( {
 		if ( hoveredElement && ! hoveredElement?.ownerDocument?.getElementById( hoveredElement.id ) ) {
 			setHoveredElement( null );
 		}
-	}, [ patterns.length ] );
+	}, [ patternIds.length ] );
 
 	return (
 		<DeviceSwitcher
@@ -166,7 +171,7 @@ const PatternLargePreview = ( {
 			<>
 				{ hasSelectedPattern ? (
 					<PatternsRendererContainer patternIds={ patternIds }>
-						<div className="wp-site-blocks" style={ listStyle } ref={ listRef }>
+						<div className="wp-site-blocks" style={ LIST_STYLE } ref={ listRef }>
 							<PatternItem pattern={ header } type="header" onHover={ setHoveredElement } />
 							<main className="wp-block-group">
 								{ sections.map( ( pattern, i ) => (
@@ -193,7 +198,6 @@ const PatternLargePreview = ( {
 				{ hoveredElement && (
 					<PatternOverlay
 						referenceElement={ hoveredElement }
-						overlayContent={ <div className="pattern-large-preview__pattern-box-shadow" /> }
 						stickyContent={
 							actionBarProps && (
 								<PatternActionBar
@@ -203,7 +207,10 @@ const PatternLargePreview = ( {
 								/>
 							)
 						}
-					/>
+						onHover={ setHoveredElement }
+					>
+						<div className="pattern-large-preview__pattern-box-shadow" />
+					</PatternOverlay>
 				) }
 			</>
 		</DeviceSwitcher>
