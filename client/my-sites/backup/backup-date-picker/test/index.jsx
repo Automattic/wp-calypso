@@ -15,7 +15,7 @@ jest.mock( 'i18n-calypso', () => ( {
 	...jest.requireActual( 'i18n-calypso' ),
 	useTranslate: jest.fn(),
 } ) );
-jest.mock( 'react-query', () => ( {
+jest.mock( '@tanstack/react-query', () => ( {
 	useQuery: jest.fn(),
 } ) );
 jest.mock( 'react-redux', () => ( {
@@ -32,11 +32,11 @@ jest.mock( '../hooks', () => ( {
 } ) );
 jest.mock( 'calypso/state/selectors/get-rewind-backups' );
 
+import { useQuery } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useQuery } from 'react-query';
 import { useSelector, useDispatch } from 'react-redux';
 import BackupDatePicker from '..';
 import { useCanGoToDate } from '../hooks';

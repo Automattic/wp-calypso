@@ -6,11 +6,21 @@ import { useDispatch } from 'react-redux';
 import { setQueryArgs } from 'calypso/lib/query-args';
 import scrollTo from 'calypso/lib/scroll-to';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { useTermsSuggestions } from './useTermsSuggestions';
 import './style.scss';
 
-const SearchBox = ( { isMobile, searchTerm, searchBoxRef, categoriesRef, isSearching } ) => {
+const SearchBox = ( {
+	isMobile,
+	searchTerm,
+	searchBoxRef,
+	categoriesRef,
+	isSearching,
+	searchTerms,
+} ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	const searchTermSuggestion = useTermsSuggestions( searchTerms ) || 'ecommerce';
 
 	const pageToSearch = useCallback(
 		( s ) => {
@@ -40,7 +50,9 @@ const SearchBox = ( { isMobile, searchTerm, searchBoxRef, categoriesRef, isSearc
 				onSearch={ pageToSearch }
 				defaultValue={ searchTerm }
 				searchMode="on-enter"
-				placeholder={ translate( 'Try searching "ecommerce"' ) }
+				placeholder={ translate( 'Try searching "%(searchTermSuggestion)s"', {
+					args: { searchTermSuggestion },
+				} ) }
 				delaySearch={ false }
 				recordEvent={ recordSearchEvent }
 				searching={ isSearching }
@@ -60,6 +72,7 @@ const SearchBoxHeader = ( props ) => {
 		searchRef,
 		categoriesRef,
 		renderTitleInH1,
+		searchTerms,
 	} = props;
 
 	// Clear the keyword in search box on PluginsBrowser load if required.
@@ -89,6 +102,7 @@ const SearchBoxHeader = ( props ) => {
 					searchBoxRef={ searchRef }
 					isSearching={ isSearching }
 					categoriesRef={ categoriesRef }
+					searchTerms={ searchTerms }
 				/>
 			</div>
 			<div className="search-box-header__sticky-ref" ref={ stickySearchBoxRef }></div>

@@ -6,16 +6,10 @@ type DomainItem = {
 	product_slug?: string;
 };
 
-export const getIntervalType = (): string => {
-	const urlParts = getUrlParts( typeof window !== 'undefined' ? window.location?.href : '' );
-	const intervalType = urlParts?.searchParams.get( 'intervalType' ) || '';
-
-	if ( [ 'yearly', '2yearly', 'monthly' ].includes( intervalType ) ) {
-		return intervalType;
-	}
-
-	// Default value
-	return 'yearly';
+export const getIntervalType = ( path?: string ): string => {
+	const url = path ?? window?.location?.href ?? '';
+	const intervalType = getUrlParts( url ).searchParams.get( 'intervalType' ) || 'yearly';
+	return [ 'yearly', '2yearly', 'monthly' ].includes( intervalType ) ? intervalType : 'yearly';
 };
 
 export const getDomainName = ( domainItem: DomainItem ): string | undefined => {

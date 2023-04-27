@@ -1,5 +1,5 @@
+import { useMutation } from '@tanstack/react-query';
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
-import { useMutation } from 'react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 type Ticket = {

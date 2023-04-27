@@ -783,6 +783,20 @@ describe( 'getPlan', () => {
 
 describe( 'findSimilarPlansKeys', () => {
 	test( 'should return a proper similar plan - by term', () => {
+		expect( findSimilarPlansKeys( PLAN_PERSONAL_MONTHLY, { term: TERM_ANNUALLY } ) ).toEqual( [
+			PLAN_PERSONAL,
+		] );
+		expect( findSimilarPlansKeys( PLAN_PREMIUM_MONTHLY, { term: TERM_ANNUALLY } ) ).toEqual( [
+			PLAN_PREMIUM,
+		] );
+		expect( findSimilarPlansKeys( PLAN_BUSINESS_MONTHLY, { term: TERM_ANNUALLY } ) ).toEqual( [
+			PLAN_BUSINESS,
+		] );
+		expect( findSimilarPlansKeys( PLAN_ECOMMERCE_MONTHLY, { term: TERM_ANNUALLY } ) ).toEqual( [
+			PLAN_ECOMMERCE,
+			PLAN_WOOEXPRESS_MEDIUM,
+			PLAN_WOOEXPRESS_SMALL,
+		] );
 		expect( findSimilarPlansKeys( PLAN_BLOGGER, { term: TERM_BIENNIALLY } ) ).toEqual( [
 			PLAN_BLOGGER_2_YEARS,
 		] );

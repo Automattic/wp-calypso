@@ -176,7 +176,6 @@
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": false,
-		"stats/horizontal-bars-everywhere": true,
 		"stats/new-video-summary": true,
 		"stats/subscribers-section": false,
 		"stepper-woocommerce-poc": true,
@@ -206,6 +205,7 @@
 		"wpcom-user-bootstrap": false,
 		"yolo/staging-sites-i1": true,
 		"newsletter/stats": true,
+		"newsletter/paid-subscribers": true,
 		"woa-logging": true,
 		"woa-logging-moved": true
 	}

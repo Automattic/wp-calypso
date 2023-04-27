@@ -89,10 +89,10 @@ export function generateFlows( {
 		},
 		{
 			name: 'with-theme',
-			steps: [ 'user', 'domains-theme-preselected', 'plans' ],
+			steps: [ 'user', 'domains-theme-preselected', 'plans-theme-preselected' ],
 			destination: getWithThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
-			lastModified: '2022-11-28',
+			lastModified: '2023-04-27',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'theme' ],
 			optionalDependenciesInQuery: [ 'theme_type', 'style_variation' ],

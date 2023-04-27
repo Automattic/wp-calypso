@@ -1,5 +1,5 @@
+import { useQuery, UseQueryResult, QueryOptions } from '@tanstack/react-query';
 import { stringify } from 'qs';
-import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { StarterDesigns } from './types';
 import type {

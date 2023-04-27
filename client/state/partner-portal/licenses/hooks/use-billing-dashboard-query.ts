@@ -1,5 +1,5 @@
+import { useQuery, UseQueryOptions, UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useQuery, UseQueryOptions, UseQueryResult } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { errorNotice, plainNotice } from 'calypso/state/notices/actions';

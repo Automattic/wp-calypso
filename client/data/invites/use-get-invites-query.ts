@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { requestSiteInvites } from 'calypso/state/invites/actions';
 import { isRequestingInvitesForSite } from 'calypso/state/invites/selectors';

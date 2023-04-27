@@ -1,5 +1,10 @@
+import {
+	useMutation,
+	UseMutationOptions,
+	UseMutationResult,
+	useQueryClient,
+} from '@tanstack/react-query';
 import { sprintf, __ } from '@wordpress/i18n';
-import { useMutation, UseMutationOptions, UseMutationResult, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { wpcomJetpackLicensing as wpcomJpl } from 'calypso/lib/wp';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
