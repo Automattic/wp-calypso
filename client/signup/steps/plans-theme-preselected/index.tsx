@@ -21,7 +21,8 @@ function getHidePlanPropsBasedOnSignupDependencies(
 	 */
 	if (
 		signupDependencies.themeType === 'dot-org' ||
-		signupDependencies.themeType === 'managed-externally'
+		signupDependencies.themeType === 'managed-externally' ||
+		signupDependencies.themeType === 'woocommerce'
 	) {
 		return { hidePremiumPlan: true, hidePersonalPlan: true };
 	}

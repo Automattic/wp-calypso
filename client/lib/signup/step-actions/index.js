@@ -526,7 +526,7 @@ export function addWithThemePlanToCart( callback, dependencies, stepProvidedItem
 	} );
 }
 
-const isLoadingCart = ( isLoading ) => ( dispatch ) => {
+const setIsLoadingCart = ( isLoading ) => ( dispatch ) => {
 	dispatch( {
 		type: THEMES_LOADING_CART,
 		isLoading,
@@ -580,7 +580,7 @@ async function addExternalManagedThemeToCart( state, dispatch, themeId, siteSlug
 	 */
 	const cartItems = [ planCartItem, externalManagedThemeProduct ];
 
-	dispatch( isLoadingCart( true ) );
+	dispatch( setIsLoadingCart( true ) );
 	const cartKey = await cartManagerClient.getCartKeyForSiteSlug( siteSlug );
 	cartManagerClient
 		.forCartKey( cartKey )
@@ -589,7 +589,7 @@ async function addExternalManagedThemeToCart( state, dispatch, themeId, siteSlug
 			page( `/checkout/${ siteSlug }` );
 		} )
 		.finally( () => {
-			dispatch( isLoadingCart( false ) );
+			dispatch( setIsLoadingCart( false ) );
 		} );
 }
 
