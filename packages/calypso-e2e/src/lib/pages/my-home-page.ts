@@ -9,7 +9,7 @@ const selectors = {
 		`.primary__customer-home-location-content :text("${ message }")`,
 
 	domainUpsellCard: `.domain-upsell__card`,
-	domainUpsellSuggestedDomain: `.domain-upsell__card .domain-upsell-illustration text`,
+	domainUpsellSuggestedDomain: `.domain-upsell__card .domain-upsell-illustration`,
 	domainUpsellBuyDomain: ( message: string ) =>
 		`.domain-upsell-actions button:text("${ message }")`,
 };
@@ -66,14 +66,14 @@ export class MyHomePage {
 	 *
 	 * @returns {string} No return value.
 	 */
-	async suggestedDomainName(): Promise< string > {
+	async suggestedDomainName(): Promise< string | null > {
 		await this.page.locator( selectors.domainUpsellSuggestedDomain ).waitFor();
-		const elementHandle = await this.page.waitForSelector( selectors.domainUpsellSuggestedDomain );
-		const domainName = await elementHandle.textContent();
-		if ( domainName === null ) {
-			throw new Error( 'Domain name is null' );
-		}
-		return domainName;
+
+		const locator = this.page.locator( selectors.domainUpsellSuggestedDomain );
+
+		await locator.waitFor();
+
+		return await locator.locator( 'text' ).textContent();
 	}
 
 	/**

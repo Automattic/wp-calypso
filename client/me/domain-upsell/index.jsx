@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { getPlan, isFreePlanProduct, getIntervalTypeForTerm } from '@automattic/calypso-products';
-import { Button, Card, Gridicon } from '@automattic/components';
+import { Button, Card, Gridicon, Spinner } from '@automattic/components';
 import { useDomainSuggestions } from '@automattic/domain-picker/src';
 import { useLocale } from '@automattic/i18n-utils';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -9,54 +9,68 @@ import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import domainUpsellIllustration from 'calypso/assets/images/customer-home/illustration--feature-domain-upsell.svg';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { isStagingSite } from 'calypso/sites-dashboard/utils';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { isNotAtomicJetpack, isP2Site, isStagingSite } from 'calypso/sites-dashboard/utils';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import getPrimarySiteSlug from 'calypso/state/selectors/get-primary-site-slug';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 import './style.scss';
 
 export default function DomainUpsell() {
+	const user = useSelector( getCurrentUser );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const selectedSite = useSelector( getSelectedSite );
-	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
-	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSite?.ID ) );
+	const primarySiteSlug = useSelector( getPrimarySiteSlug );
+	const primarySite = useSelector( ( state ) => getSiteBySlug( state, primarySiteSlug ) );
+
+	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, primarySite?.ID ) );
 	const currentPlanIntervalType = getIntervalTypeForTerm(
 		getPlan( currentPlan?.productSlug )?.term
 	);
 
-	const isFreePlan = isFreePlanProduct( selectedSite?.plan );
+	const isFreePlan = isFreePlanProduct( primarySite?.plan );
 
-	const siteDomains = useSelector( ( state ) => getDomainsBySite( state, selectedSite ) );
+	const siteDomains = useSelector( ( state ) => getDomainsBySite( state, primarySite ) );
 	const siteDomainsLength = useMemo(
 		() => siteDomains.filter( ( domain ) => ! domain.isWPCOMDomain ).length,
 		[ siteDomains ]
 	);
 
-	const dismissPreference = `calypso_my_home_domain_upsell_dismiss-${ selectedSite?.ID }`;
+	const dismissPreference = `calypso_profile_domain_upsell_dismiss-${ primarySite?.ID }`;
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 
 	const shouldNotShowUpselDismissed = ! hasPreferences || isDismissed;
 
-	const shouldNotShowMyHomeUpsell = siteDomainsLength || ! isEmailVerified;
+	const shouldNotShowProfileUpsell =
+		user.site_count !== 1 ||
+		! isFreePlan ||
+		siteDomainsLength ||
+		! isEmailVerified ||
+		isP2Site( primarySite ) ||
+		isNotAtomicJetpack( primarySite );
 
-	if ( shouldNotShowUpselDismissed || shouldNotShowMyHomeUpsell || isStagingSite( selectedSite ) ) {
+	if (
+		shouldNotShowUpselDismissed ||
+		shouldNotShowProfileUpsell ||
+		isStagingSite( selectedSite )
+	) {
 		return null;
 	}
 
-	const searchTerm = selectedSiteSlug?.split( '.' )[ 0 ];
+	const searchTerm = user?.display_name;
 
 	return (
 		<CalypsoShoppingCartProvider>
@@ -64,7 +78,7 @@ export default function DomainUpsell() {
 				isFreePlan={ isFreePlan }
 				isMonthlyPlan={ currentPlanIntervalType === 'monthly' }
 				searchTerm={ searchTerm }
-				siteSlug={ selectedSiteSlug }
+				siteSlug={ primarySiteSlug }
 				dismissPreference={ dismissPreference }
 			/>
 		</CalypsoShoppingCartProvider>
@@ -112,7 +126,7 @@ export function RenderDomainUpsell( {
 		`/domains/add/${ siteSlug }`
 	);
 	const getSearchClickHandler = () => {
-		recordTracksEvent( 'calypso_my_home_domain_upsell_search_click', {
+		recordTracksEvent( 'calypso_profile_domain_upsell_search_click', {
 			button_url: searchLink,
 			domain_suggestion: domainSuggestionName,
 			product_slug: domainSuggestionProductSlug,
@@ -131,13 +145,13 @@ export function RenderDomainUpsell( {
 			  );
 
 	const getDismissClickHandler = () => {
-		recordTracksEvent( 'calypso_my_home_domain_upsell_dismiss_click' );
+		recordTracksEvent( 'calypso_profile_domain_upsell_dismiss_click' );
 		dispatch( savePreference( dismissPreference, 1 ) );
 	};
 	const [ ctaIsBusy, setCtaIsBusy ] = useState( false );
 	const getCtaClickHandler = async () => {
 		setCtaIsBusy( true );
-		recordTracksEvent( 'calypso_my_home_domain_upsell_cta_click', {
+		recordTracksEvent( 'calypso_profile_domain_upsell_cta_click', {
 			button_url: purchaseLink,
 			domain_suggestion: domainSuggestionName,
 			product_slug: domainSuggestionProductSlug,
@@ -159,67 +173,52 @@ export function RenderDomainUpsell( {
 
 	const cardTitle =
 		! isFreePlan && ! isMonthlyPlan
-			? translate( 'That perfect domain is waiting' )
-			: translate( 'Own a domain. Build a site.' );
+			? translate( 'Make your mark online with a memorable domain name' )
+			: translate( 'Own your online identity with a custom domain' );
 
 	const cardSubtitle =
 		! isFreePlan && ! isMonthlyPlan
 			? translate(
-					"{{strong}}%(domainSuggestion)s{{/strong}} is included free for one year with any paid plan. Claim it and start building a site that's easy to find, share and follow.",
-					{
-						components: {
-							strong: <strong />,
-						},
-						args: {
-							domainSuggestion: domainSuggestionName,
-						},
-					}
+					'Your plan includes a free domain for the first year. Stake your claim on the web with a domain name that boosts your brand.'
 			  )
 			: translate(
-					"{{strong}}%(domainSuggestion)s{{/strong}} is a perfect site address. It's available and easy to find and follow. Get it now and claim a corner of the web.",
-					{
-						components: {
-							strong: <strong />,
-						},
-						args: {
-							domainSuggestion: domainSuggestionName,
-						},
-					}
+					"Stake your claim on your corner of the web with a site address that's easy to find, share, and follow."
 			  );
 
-	const domainNameSVG = (
-		<svg viewBox="0 0 40 18" id="map">
-			<text x="-115" y="15">
-				{ domainSuggestionName.length > 34
-					? `${ domainSuggestionName.slice( 0, 32 ) }...`
-					: domainSuggestionName }
-			</text>
-		</svg>
-	);
-
-	const illustrationHeader = domainSuggestionName ? domainNameSVG : null;
-
 	return (
-		<Card className="domain-upsell__card customer-home__card">
-			<TrackComponentView eventName="calypso_my_home_domain_upsell_impression" />
+		<Card className="profile-domain-upsell__card customer-home__card">
+			<TrackComponentView eventName="calypso_profile_domain_upsell_impression" />
 			<div>
-				<div className="domain-upsell__card-dismiss">
+				<div className="profile-domain-upsell__card-dismiss">
 					<button onClick={ getDismissClickHandler }>
 						<Gridicon icon="cross" width={ 18 } />
 					</button>
 				</div>
 				<h3>{ cardTitle }</h3>
 				<p>{ cardSubtitle }</p>
-				<div className="domain-upsell-illustration">
-					{ illustrationHeader && <> { illustrationHeader } </> }
-					<img src={ domainUpsellIllustration } alt="" />
+				<div className="suggested-domain-name">
+					<div className="card">
+						<span>{ siteSlug }</span>
+						<div className="badge badge--info">{ translate( 'Current' ) }</div>
+					</div>
+					<div className="card">
+						<span>{ domainSuggestionName }</span>
+						{ domainSuggestion?.domain_name ? (
+							<div className="badge badge--success">{ translate( 'Recommended' ) }</div>
+						) : (
+							<div className="badge">
+								<Spinner />
+							</div>
+						) }
+					</div>
 				</div>
+
 				<div className="domain-upsell-actions">
-					<Button primary onClick={ getCtaClickHandler } busy={ ctaIsBusy }>
-						{ translate( 'Get this domain' ) }
-					</Button>
 					<Button href={ searchLink } onClick={ getSearchClickHandler }>
-						{ translate( 'Search for a domain' ) }
+						{ translate( 'Search for another domain' ) }
+					</Button>
+					<Button primary onClick={ getCtaClickHandler } busy={ ctaIsBusy }>
+						{ translate( 'Buy this domain' ) }
 					</Button>
 				</div>
 			</div>
