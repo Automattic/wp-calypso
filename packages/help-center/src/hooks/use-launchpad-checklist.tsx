@@ -25,7 +25,7 @@ interface LaunchpadTasks {
 
 export const fetchLaunchpadChecklist = (
 	siteSlug: string | null,
-	siteIntent: string | null | undefined
+	siteIntent: string | null
 ): Promise< LaunchpadTasks > => {
 	const slug = encodeURIComponent( siteSlug as string );
 
@@ -43,7 +43,7 @@ export const fetchLaunchpadChecklist = (
 
 export const useLaunchpadChecklist = (
 	siteSlug: string | null,
-	siteIntent: string | null | undefined
+	siteIntent: string | null = null
 ) => {
 	const key = [ 'launchpad-checklist', siteSlug ];
 	const queryResult = useQuery( key, () => fetchLaunchpadChecklist( siteSlug, siteIntent ), {
