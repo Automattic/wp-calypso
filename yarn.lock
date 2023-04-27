@@ -1138,7 +1138,7 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@babel/core": ^7.17.5
-    "@tanstack/react-query": ^4.29.5
+    "@tanstack/react-query": 4.29.1
     "@wordpress/data": ^7.6.0
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
     "@wordpress/icons": ^9.22.0
@@ -6447,13 +6447,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:4.29.5":
-  version: 4.29.5
-  resolution: "@tanstack/query-core@npm:4.29.5"
-  checksum: 16291bd417f3adfcf3506ba6ba5d7e11b08b38c721fcc3893c9cc0557c66425f6023d2815e8b4803a089a2c2f027d42ab3474da1ce79f69d45738e1769b565fd
-  languageName: node
-  linkType: hard
-
 "@tanstack/query-persist-client-core@npm:4.29.1":
   version: 4.29.1
   resolution: "@tanstack/query-persist-client-core@npm:4.29.1"
@@ -6498,7 +6491,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-query@npm:^4.29.1":
+"@tanstack/react-query@npm:4.29.1, @tanstack/react-query@npm:^4.29.1":
   version: 4.29.1
   resolution: "@tanstack/react-query@npm:4.29.1"
   dependencies:
@@ -6514,25 +6507,6 @@ __metadata:
     react-native:
       optional: true
   checksum: a267bb4e5192ef3518aa0313c8f9a92bb0ea902caeb5598e2ea0d542d7253a99f438dcbb1a58eb40e3ad54ca52a06b024188dc1864e1d153ad1a6a4f54d088ba
-  languageName: node
-  linkType: hard
-
-"@tanstack/react-query@npm:^4.29.5":
-  version: 4.29.5
-  resolution: "@tanstack/react-query@npm:4.29.5"
-  dependencies:
-    "@tanstack/query-core": 4.29.5
-    use-sync-external-store: ^1.2.0
-  peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-native: "*"
-  peerDependenciesMeta:
-    react-dom:
-      optional: true
-    react-native:
-      optional: true
-  checksum: b6f08d352cd021fbe8fd600849cd761b36b2a5a38eb2d75dd146894c94b12ca165b25254607aac29a9eae1c9e33280005cbe850c25ea9107eb567661b518428a
   languageName: node
   linkType: hard
 
