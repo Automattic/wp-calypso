@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
-import type { UseQueryOptions } from '@tanstack/react-query';
+import type { UseQueryOptions } from 'react-query';
 
 export const getCacheKey = ( domain: string, mailboxName: string ) => [
 	'emails',

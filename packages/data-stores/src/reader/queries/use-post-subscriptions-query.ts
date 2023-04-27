@@ -1,5 +1,5 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
+import { useInfiniteQuery } from 'react-query';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { PostSubscription } from '../types';

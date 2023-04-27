@@ -8,7 +8,7 @@ import {
 	QueryKey,
 	QueryFunction,
 	useQuery,
-} from '@tanstack/react-query';
+} from 'react-query';
 import { useSelector } from 'react-redux';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
@@ -102,7 +102,7 @@ const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
 export const useESPlugin = (
 	slug: string,
 	fields?: Array< string >,
-	{ enabled = true, staleTime = ONE_DAY_IN_MS, refetchOnMount = true }: UseQueryOptions< any > = {}
+	{ enabled = true, staleTime = ONE_DAY_IN_MS, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 
@@ -139,7 +139,7 @@ export const getESPluginsInfiniteQueryParams = (
 
 export const useESPluginsInfinite = (
 	options: PluginQueryOptions,
-	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions< any > = {}
+	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 

@@ -1,5 +1,5 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useContext } from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 import SitesOverviewContext from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/context';
 import { Site } from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/types';
 import wpcom from 'calypso/lib/wp';

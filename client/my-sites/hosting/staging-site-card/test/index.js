@@ -28,9 +28,9 @@ jest.mock( 'react-redux', () => ( {
 	useDispatch: () => mockUseDispatch,
 } ) );
 
-jest.mock( '@tanstack/react-query', () => ( {
+jest.mock( 'react-query', () => ( {
 	__esModule: true,
-	...jest.requireActual( '@tanstack/react-query' ),
+	...jest.requireActual( 'react-query' ),
 	useQueryClient: () => ( {
 		invalidateQueries: jest.fn(),
 	} ),

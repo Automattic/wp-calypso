@@ -7,11 +7,11 @@ import {
 	getEmptyResponseCart,
 	ShoppingCartProvider,
 } from '@automattic/shopping-cart';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import page from 'page';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { mockCartEndpoint } from 'calypso/my-sites/checkout/composite-checkout/test/util';
 import { createReduxStore } from 'calypso/state';

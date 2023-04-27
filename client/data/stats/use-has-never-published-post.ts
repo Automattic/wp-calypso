@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from 'react-query';
 import wpcom from 'calypso/lib/wp';
-import type { QueryOptions, UseQueryResult } from '@tanstack/react-query';
+import type { QueryOptions, UseQueryResult } from 'react-query';
 
 export const useHasNeverPublishedPostCacheKey = (
 	siteId: number | null,

@@ -1,6 +1,6 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { isPaymentAgreement } from 'calypso/lib/checkout/payment-methods';
 import wp from 'calypso/lib/wp';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
@@ -102,7 +102,7 @@ export function useStoredPaymentMethods( {
 		StoredPaymentMethod[ 'stored_details_id' ]
 	>( ( id ) => requestPaymentMethodDeletion( id ), {
 		onSuccess: () => {
-			queryClient.invalidateQueries( [ storedPaymentMethodsQueryKey ] );
+			queryClient.invalidateQueries( storedPaymentMethodsQueryKey );
 		},
 	} );
 

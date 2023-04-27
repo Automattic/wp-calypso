@@ -2,9 +2,9 @@
  * @jest-environment jsdom
  */
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act } from '@testing-library/react-hooks';
 import nock from 'nock';
+import { setLogger, QueryClient, QueryClientProvider } from 'react-query';
 import { useDispatch } from 'react-redux';
 import LicenseListContext from 'calypso/jetpack-cloud/sections/partner-portal/license-list-context';
 import {
@@ -336,13 +336,13 @@ describe( 'useIssueLicenseMutation', () => {
 			.post( '/wpcom/v2/jetpack-licensing/license', '{"product":"jetpack-scan"}' )
 			.reply( 200, stub );
 
-		const { result, waitFor } = renderHook( () => useIssueLicenseMutation(), {
+		const { result } = renderHook( () => useIssueLicenseMutation(), {
 			wrapper,
 		} );
 
 		await act( async () => result.current.mutateAsync( { product: 'jetpack-scan' } ) );
 
-		await waitFor( () => expect( result.current.data ).toEqual( stub ) );
+		expect( result.current.data ).toEqual( stub );
 	} );
 } );
 
@@ -363,13 +363,13 @@ describe( 'useRevokeLicenseMutation', () => {
 			.delete( '/wpcom/v2/jetpack-licensing/license', '{"license_key":"jetpack-scan_foobarbaz"}' )
 			.reply( 200, stub );
 
-		const { result, waitFor } = renderHook( () => useRevokeLicenseMutation(), {
+		const { result } = renderHook( () => useRevokeLicenseMutation(), {
 			wrapper,
 		} );
 
 		await act( async () => result.current.mutateAsync( { licenseKey: 'jetpack-scan_foobarbaz' } ) );
 
-		await waitFor( () => expect( result.current.data ).toEqual( stub ) );
+		expect( result.current.data ).toEqual( stub );
 	} );
 } );
 
@@ -391,26 +391,31 @@ describe( 'useTOSConsentMutation', () => {
 			.put( '/wpcom/v2/jetpack-licensing/partner', '{"tos":"consented"}' )
 			.reply( 200, stub );
 
-		const { result, waitFor } = renderHook( () => useTOSConsentMutation(), {
+		const { result } = renderHook( () => useTOSConsentMutation(), {
 			wrapper,
 		} );
 
 		await act( async () => result.current.mutateAsync() );
 
-		await waitFor( () => expect( result.current.data ).toEqual( stub ) );
+		expect( result.current.data ).toEqual( stub );
 	} );
 } );
 
 describe( 'useBillingDashboardQuery', () => {
-	function createQueryClient() {
-		const logger = {
+	beforeEach( () => {
+		// Prevent react-query from logging an error due to the failing requests.
+		setLogger( {
 			error: jest.fn(),
-		};
-		return new QueryClient( { logger } );
-	}
+		} );
+	} );
+
+	afterEach( () => {
+		// Restore react-query logger.
+		setLogger( console );
+	} );
 
 	it( 'returns transformed request data', async () => {
-		const queryClient = createQueryClient();
+		const queryClient = new QueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
@@ -486,7 +491,7 @@ describe( 'useBillingDashboardQuery', () => {
 	} );
 
 	it( 'dispatches notification on no invoice available', async () => {
-		const queryClient = createQueryClient();
+		const queryClient = new QueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
@@ -517,7 +522,7 @@ describe( 'useBillingDashboardQuery', () => {
 	} );
 
 	it( 'dispatches notice on error', async () => {
-		const queryClient = createQueryClient();
+		const queryClient = new QueryClient();
 		const wrapper = ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);

@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { CheckboxControl, Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import wpcom from 'calypso/lib/wp';
@@ -45,7 +45,7 @@ export default function PaymentMethodBackupToggle( { card }: { card: StoredPayme
 			queryClient.setQueryData( [ 'payment-method-backup-toggle', storedDetailsId ], data );
 
 			// Invalidate queries made by `useStoredPaymentMethods`.
-			queryClient.invalidateQueries( [ storedPaymentMethodsQueryKey ] );
+			queryClient.invalidateQueries( storedPaymentMethodsQueryKey );
 		},
 	} );
 	const toggleIsBackup = useCallback(

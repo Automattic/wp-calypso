@@ -30,10 +30,11 @@ const SelectVertical: React.FC< Props > = ( {
 	const [ debouncedSearchTerm ] = useDebounce( searchTerm, 150 );
 	const isDebouncing = searchTerm !== debouncedSearchTerm;
 
-	const { data: defaultValue, isInitialLoading: isLoadingDefaultVertical } =
-		useSiteVerticalQueryById( defaultVertical || '' );
+	const { data: defaultValue, isLoading: isLoadingDefaultVertical } = useSiteVerticalQueryById(
+		defaultVertical || ''
+	);
 
-	const { data: suggestions, isInitialLoading: isLoadingSuggestions } = useSiteVerticalsQuery( {
+	const { data: suggestions, isLoading: isLoadingSuggestions } = useSiteVerticalsQuery( {
 		term: debouncedSearchTerm,
 		skip_synonyms: isSkipSynonyms,
 	} );

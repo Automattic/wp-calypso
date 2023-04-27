@@ -1,4 +1,4 @@
-import { useMutation, UseMutationOptions, UseMutationResult } from '@tanstack/react-query';
+import { useMutation, UseMutationOptions, UseMutationResult } from 'react-query';
 import {
 	APIError,
 	APIToggleFavorite,
