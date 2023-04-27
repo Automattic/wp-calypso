@@ -1,5 +1,5 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
 import wpcom from 'calypso/lib/wp';
 import type { VatDetails } from '@automattic/wpcom-checkout';
 

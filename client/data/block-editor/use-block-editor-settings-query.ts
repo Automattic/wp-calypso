@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult } from 'react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { getActiveTheme } from 'calypso/state/themes/selectors';

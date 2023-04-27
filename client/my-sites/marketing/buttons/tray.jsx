@@ -1,5 +1,6 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { localizeUrl } from '@automattic/i18n-utils';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { filter, find } from 'lodash';
@@ -166,7 +167,7 @@ class SharingButtonsTray extends Component {
 						) }
 					</em>
 					<a
-						href="https://wordpress.com/support/settings/privacy-settings/"
+						href={ localizeUrl( 'https://wordpress.com/support/settings/privacy-settings/' ) }
 						target="_blank"
 						rel="noreferrer"
 					>

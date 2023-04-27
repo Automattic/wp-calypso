@@ -6,6 +6,7 @@
  *
  * IF YOU CHANGE THIS FUNCTION ALSO CHANGE THE TESTS!
  */
+import config from '@automattic/calypso-config';
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -18,6 +19,8 @@ import {
 	isWpComPremiumPlan,
 	isTitanMail,
 	isDomainRegistration,
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import {
 	URL_TYPE,
@@ -578,7 +581,16 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 
 	const currentPlan = getPlan( currentPlanSlug );
 
-	if ( isWpComPremiumPlan( currentPlanSlug ) ) {
+	// Upsell an annual plan when on a monthly plan.
+	if ( config.isEnabled( 'upsell/monthly-to-annual' ) ) {
+		if ( currentPlan?.term === TERM_MONTHLY ) {
+			return findFirstSimilarPlanKey( currentPlanSlug, { term: TERM_ANNUALLY } );
+		}
+	}
+
+	// Don't show the business plan upsell if the current plan is a premium monthly plan.
+	// For the experiment: calypso_postpurchase_upsell_monthly_to_annual_plan
+	if ( isWpComPremiumPlan( currentPlanSlug ) && currentPlan?.term !== TERM_MONTHLY ) {
 		const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan?.term } );
 		return planKey ? getPlan( planKey )?.getPathSlug?.() : undefined;
 	}
@@ -595,6 +607,20 @@ function getPlanUpgradeUpsellUrl( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 } ): string | undefined {
+	if ( ! siteSlug ) {
+		return;
+	}
+
+	if ( config.isEnabled( 'upsell/monthly-to-annual' ) ) {
+		if ( cart ) {
+			const upgradeItem = getNextHigherPlanSlug( cart );
+
+			if ( upgradeItem ) {
+				return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ receiptId }`;
+			}
+		}
+	}
+
 	if ( cart && hasPremiumPlan( cart ) ) {
 		const upgradeItem = getNextHigherPlanSlug( cart );
 

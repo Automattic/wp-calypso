@@ -470,6 +470,11 @@ export const setProfilerData = ( profilerData: ProfilerData ) => ( {
 	profilerData,
 } );
 
+export const setPaidSubscribers = ( paidSubscribers: boolean ) => ( {
+	type: 'SET_PAID_SUBSCRIBERS' as const,
+	paidSubscribers,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -525,4 +530,5 @@ export type OnboardAction = ReturnType<
 	| typeof setProductCartItems
 	| typeof setPlanCartItem
 	| typeof setIsMigrateFromWp
+	| typeof setPaidSubscribers
 >;

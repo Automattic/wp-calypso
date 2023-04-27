@@ -71,7 +71,6 @@ $grid-vertical-gutters: 32px;
 }
 
 .stats__module-list--insights {
-
 	&.is-jetpack {
 		@include stats-desktop-grid(
 			"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
@@ -124,10 +123,6 @@ $grid-vertical-gutters: 32px;
 		"social-followers social-followers social-followers social-followers",
 		7
 	);
-
-	@media (max-width: 660px) {
-		padding: 0 16px;
-	}
 
 	.stats__module-wrapper--tags-categories,
 	.list-tags-categories {

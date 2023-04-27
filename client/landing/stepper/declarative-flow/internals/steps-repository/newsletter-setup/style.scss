@@ -16,7 +16,7 @@
 		input,
 		form-textarea {
 			&::placeholder {
-				color: var(--studio-gray-50);
+				color: var(--studio-gray-30);
 			}
 		}
 	}
@@ -30,6 +30,16 @@
 
 		.formatted-header p.formatted-header__subtitle {
 			text-align: center;
+		}
+	}
+
+	.newsletter-setup__paid-subscribers {
+		margin: 15px 0;
+		font-size: $font-body;
+		flex-direction: row;
+
+		.info-popover {
+			margin-left: 10px;
 		}
 	}
 }

@@ -263,7 +263,7 @@ export default function PromotedPosts( { tab }: Props ) {
 		( ! isWpMobileApp() && isLoadingProducts );
 
 	return (
-		<Main wideLayout className="promote-post">
+		<Main wideLayout className="promote-post-i2">
 			<DocumentHead title={ translate( 'Advertising - Redesign page!' ) } />
 
 			<FormattedHeader

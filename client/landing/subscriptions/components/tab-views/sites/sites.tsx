@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
@@ -11,8 +12,6 @@ import { useSearch } from 'calypso/landing/subscriptions/hooks';
 import TabView from '../tab-view';
 
 const SortBy = SubscriptionManager.SiteSubscriptionsSortBy;
-
-const isListControlsEnabled = config.isEnabled( 'subscription-management/sites-list-controls' );
 
 const getSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[] => [
 	{ value: SortBy.LastUpdated, label: translate( 'Recently updated' ) },
@@ -26,7 +25,7 @@ const useSortOptions = ( translate: ReturnType< typeof useTranslate > ): Option[
 const Sites = () => {
 	const translate = useTranslate();
 	const { searchTerm, handleSearch } = useSearch();
-	const [ sortTerm, setSortTerm ] = useState( SortBy.LastUpdated );
+	const [ sortTerm, setSortTerm ] = useState( SortBy.DateSubscribed );
 	const { data, isLoading, error } = SubscriptionManager.useSiteSubscriptionsQuery( {
 		searchTerm,
 		sortTerm,
@@ -35,6 +34,9 @@ const Sites = () => {
 	const sortOptions = useSortOptions( translate );
 	// todo: translate when we have agreed on the error message
 	const errorMessage = error ? 'An error occurred while fetching your subscriptions.' : '';
+	const locale = useLocale();
+	const isListControlsEnabled =
+		config.isEnabled( 'subscription-management/sites-list-controls' ) && locale === 'en';
 
 	if ( ! isLoading && ! totalCount ) {
 		return <Notice type="warning">{ translate( 'You are not subscribed to any sites.' ) }</Notice>;

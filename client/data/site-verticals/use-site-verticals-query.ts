@@ -1,4 +1,4 @@
-import { useQuery, UseQueryResult, QueryKey } from 'react-query';
+import { useQuery, UseQueryResult, QueryKey } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import type { SiteVerticalsResponse, SiteVerticalsQueryParams } from './types';
 

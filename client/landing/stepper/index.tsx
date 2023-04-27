@@ -5,10 +5,10 @@ import { CurrentUser } from '@automattic/calypso-analytics/dist/types/utils/curr
 import config from '@automattic/calypso-config';
 import { User as UserStore } from '@automattic/data-stores';
 import { ECOMMERCE_FLOW, ecommerceFlowRecurTypes } from '@automattic/onboarding';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import ReactDom from 'react-dom';
-import { QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { requestAllBlogsAccess } from 'wpcom-proxy-request';

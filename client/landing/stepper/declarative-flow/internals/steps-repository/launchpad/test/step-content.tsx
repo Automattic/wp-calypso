@@ -2,10 +2,10 @@
  * @jest-environment jsdom
  */
 import { NEWSLETTER_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
