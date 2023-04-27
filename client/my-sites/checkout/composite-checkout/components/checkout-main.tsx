@@ -734,7 +734,7 @@ export default function CheckoutMain( {
 }
 
 function getAnalyticsPath(
-	purchaseId: number | undefined,
+	purchaseId: number | string | undefined,
 	product: string | undefined,
 	selectedSiteSlug: string | undefined,
 	selectedFeature: string | undefined,
