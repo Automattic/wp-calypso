@@ -71,7 +71,6 @@ const StatsInsights = ( props ) => {
 						moduleStrings={ moduleStrings.tags }
 						statType="statsTags"
 						hideSummaryLink
-						//hideNewModule // remove when cleaning 'stats/horizontal-bars-everywhere' FF
 					/>
 					<Comments path="comments" />
 

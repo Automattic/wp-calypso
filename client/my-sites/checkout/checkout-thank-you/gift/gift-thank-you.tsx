@@ -1,7 +1,7 @@
 import { Button } from '@automattic/components';
+import { useQuery } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
-import { useQuery } from 'react-query';
 import successImage from 'calypso/assets/images/marketplace/check-circle.svg';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';

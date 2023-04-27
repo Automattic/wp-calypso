@@ -1,10 +1,10 @@
 import { Button } from '@automattic/components';
+import { useQueryClient } from '@tanstack/react-query';
 import { Icon, starFilled, starEmpty } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useContext } from 'react';
-import { useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import useToggleFavoriteSiteMutation from 'calypso/data/agency-dashboard/use-toggle-favourite-site-mutation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
