@@ -278,16 +278,7 @@ export const exitPost = ( context, next ) => {
 export const redirectSiteEditor = async ( context ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-
-	const queryArgs = context.query || {};
-	// Only add the origin if it's not wordpress.com.
-	if ( location.origin !== 'https://wordpress.com' ) {
-		queryArgs.calypso_origin = location.origin;
-	}
-
-	// We aren't using `getSiteEditorUrl` because it still thinks we should gutenframe the Site Editor.
-	const siteAdminUrl = getSiteAdminUrl( state, siteId );
-	const siteEditorUrl = addQueryArgs( queryArgs, `${ siteAdminUrl }site-editor.php` );
+	const siteEditorUrl = getSiteEditorUrl( state, siteId );
 	// Calling replace to avoid adding an entry to the browser history upon redirect.
 	return location.replace( siteEditorUrl );
 };
