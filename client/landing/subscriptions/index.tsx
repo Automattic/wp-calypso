@@ -58,7 +58,7 @@ window.AppBoot = async () => {
 						<WindowLocaleEffectManager />
 						<BrowserRouter>
 							<Routes>
-								<Route path="/subscriptions*" element={ <SubscriptionManagerPage /> } />
+								<Route path="/subscriptions/*" element={ <SubscriptionManagerPage /> } />
 							</Routes>
 						</BrowserRouter>
 					</MomentProvider>
