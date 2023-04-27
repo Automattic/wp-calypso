@@ -828,6 +828,16 @@ function wpcomPages( app ) {
 				res.send( renderJsx( 'support-user' ) );
 			} );
 	} );
+
+	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
+		if ( req.cookies.subkey || req.context.isLoggedIn ) {
+			// If the user is logged in, or has a subkey cookie, they are authorized to view the page
+			return next();
+		}
+
+		// Otherwise, show them email subscriptions external landing page
+		res.redirect( 'https://wordpress.com/email-subscriptions' );
+	} );
 }
 
 export default function pages() {
