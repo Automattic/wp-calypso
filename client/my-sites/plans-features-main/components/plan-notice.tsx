@@ -14,10 +14,10 @@ import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 export default function PlanNotice( {
 	siteId,
 	isInSignup,
-	visiblePlanNames = [],
+	visiblePlans = [],
 	discountInformation: { withDiscount, discountEndDate },
 }: {
-	visiblePlanNames: PlanSlug[];
+	visiblePlans: PlanSlug[];
 	isInSignup: boolean;
 	siteId: number;
 	discountInformation: {
@@ -35,7 +35,7 @@ export default function PlanNotice( {
 	const activeDiscount = getDiscountByName( withDiscount, discountEndDate );
 	const { creditsValue, isPlanUpgradeCreditEligible } = usePlanUpgradeCreditsDisplay(
 		siteId,
-		visiblePlanNames
+		visiblePlans
 	);
 
 	const handleDismissNotice = () => setIsNoticeDismissed( true );

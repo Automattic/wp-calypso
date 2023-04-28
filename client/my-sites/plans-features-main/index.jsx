@@ -611,7 +611,7 @@ export class PlansFeaturesMain extends Component {
 				<QuerySitePlans siteId={ siteId } />
 				<HappychatConnection />
 				<PlanNotice
-					visiblePlanNames={ visiblePlans }
+					visiblePlans={ visiblePlans }
 					siteId={ siteId }
 					isInSignup={ this.props.isInSignup }
 					discountInformation={ {

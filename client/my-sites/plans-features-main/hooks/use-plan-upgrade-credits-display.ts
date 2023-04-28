@@ -7,19 +7,19 @@ import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors'
 
 export function usePlanUpgradeCreditsDisplay(
 	siteId: number,
-	visiblePlanNames: PlanSlug[] = []
+	visiblePlans: PlanSlug[] = []
 ): {
 	creditsValue: number;
 	isPlanUpgradeCreditEligible: boolean;
 } {
 	const isSiteOnPaidPlan = !! useSelector( ( state ) => isCurrentPlanPaid( state, siteId ) );
 	const currentSitePlanSlug = useSelector( ( state ) => getSitePlanSlug( state, siteId ) );
-	const creditsValue = usePlanUpgradeCredits( siteId, visiblePlanNames );
+	const creditsValue = usePlanUpgradeCredits( siteId, visiblePlans );
 	const isJetpackNotAtomic = useSelector(
 		( state ) => isJetpackSite( state, siteId ) && ! isSiteAutomatedTransfer( state, siteId )
 	);
 	const isHigherPlanAvailable = function () {
-		const visiblePlansWithoutEnterprise = visiblePlanNames.filter(
+		const visiblePlansWithoutEnterprise = visiblePlans.filter(
 			( planName ) => planName !== PLAN_ENTERPRISE_GRID_WPCOM
 		);
 		const highestPlanName = visiblePlansWithoutEnterprise.pop();

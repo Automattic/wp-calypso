@@ -92,7 +92,7 @@ describe( '<PlanNotice /> Tests', () => {
 		renderWithProvider(
 			<PlanNotice
 				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
-				visiblePlanNames={ plansList }
+				visiblePlans={ plansList }
 				isInSignup={ false }
 				siteId={ 10000000 }
 			/>
@@ -114,7 +114,7 @@ describe( '<PlanNotice /> Tests', () => {
 		renderWithProvider(
 			<PlanNotice
 				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
-				visiblePlanNames={ plansList }
+				visiblePlans={ plansList }
 				isInSignup={ false }
 				siteId={ 32234 }
 			/>
@@ -134,7 +134,7 @@ describe( '<PlanNotice /> Tests', () => {
 		renderWithProvider(
 			<PlanNotice
 				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
-				visiblePlanNames={ plansList }
+				visiblePlans={ plansList }
 				isInSignup={ false }
 				siteId={ 32234 }
 			/>
@@ -161,7 +161,7 @@ describe( '<PlanNotice /> Tests', () => {
 		renderWithProvider(
 			<PlanNotice
 				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
-				visiblePlanNames={ plansList }
+				visiblePlans={ plansList }
 				isInSignup={ false }
 				siteId={ 32234 }
 			/>
