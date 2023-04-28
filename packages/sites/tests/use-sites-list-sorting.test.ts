@@ -191,6 +191,28 @@ describe( 'useSitesSorting', () => {
 			user_interactions: [ '2022-09-16', '2022-09-13', '2022-09-09' ],
 		},
 	];
+	const sitesWithEmptyTitle = [
+		{
+			ID: 1,
+			options: {
+				updated_at: '2022-05-27T07:19:20+00:00',
+			},
+			user_interactions: [ '2022-09-13' ],
+		},
+		{
+			ID: 2,
+			options: {
+				updated_at: '2022-07-13T17:17:12+00:00',
+			},
+			user_interactions: [ '2022-09-14' ],
+		},
+		{
+			ID: 3,
+			options: {
+				updated_at: '2022-06-14T13:32:34+00:00',
+			},
+		},
+	];
 
 	test( 'should not sort sites if unsupported sortKey is provided', () => {
 		const { result } = renderHook( () =>
@@ -232,6 +254,20 @@ describe( 'useSitesSorting', () => {
 		expect( result.current[ 0 ].title ).toBe( 'C' );
 		expect( result.current[ 1 ].title ).toBe( 'B' );
 		expect( result.current[ 2 ].title ).toBe( 'A' );
+	} );
+
+	test( 'should not break when sort sites without title', () => {
+		const { result } = renderHook( () =>
+			useSitesListSorting( sitesWithEmptyTitle, {
+				sortKey: 'alphabetically',
+				sortOrder: 'asc',
+			} )
+		);
+
+		expect( result.current.length ).toBe( 3 );
+		expect( result.current[ 0 ].ID ).toBe( 1 );
+		expect( result.current[ 1 ].ID ).toBe( 2 );
+		expect( result.current[ 2 ].ID ).toBe( 3 );
 	} );
 
 	test( 'should sort sites by last interaction descending', () => {

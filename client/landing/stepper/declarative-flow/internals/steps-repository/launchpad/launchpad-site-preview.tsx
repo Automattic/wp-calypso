@@ -6,6 +6,7 @@ import {
 	BUILD_FLOW,
 	WRITE_FLOW,
 	isNewsletterFlow,
+	START_WRITING_FLOW,
 } from '@automattic/onboarding';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -87,6 +88,8 @@ const LaunchpadSitePreview = ( {
 			case BUILD_FLOW:
 				return DEVICE_TYPES.COMPUTER;
 			case WRITE_FLOW:
+				return DEVICE_TYPES.COMPUTER;
+			case START_WRITING_FLOW:
 				return DEVICE_TYPES.COMPUTER;
 			default:
 				return DEVICE_TYPES.PHONE;

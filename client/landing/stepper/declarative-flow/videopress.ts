@@ -213,7 +213,9 @@ const videopress: Flow = {
 				stepValidateSiteTitle();
 				break;
 			case 'processing':
-				addVideoPressPendingAction();
+				if ( ! _siteSlug ) {
+					addVideoPressPendingAction();
+				}
 				break;
 		}
 
@@ -244,7 +246,7 @@ const videopress: Flow = {
 
 				case 'launchpad': {
 					clearOnboardingSiteOptions();
-					return navigate( 'processing' );
+					return navigate( `processing?siteSlug=${ _siteSlug }` );
 				}
 			}
 			return providedDependencies;

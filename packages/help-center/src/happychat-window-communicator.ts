@@ -1,7 +1,7 @@
 import { useHappychatAuth, happychatAuthQueryKey } from '@automattic/happychat-connection';
+import { useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
-import { useQueryClient } from 'react-query';
 import { HELP_CENTER_STORE } from './stores';
 import type { HelpCenterSelect } from '@automattic/data-stores';
 
@@ -89,7 +89,7 @@ export function useHCWindowCommunicator( isMinimized: boolean ) {
 						break;
 
 					case 'happy-chat-authentication-data':
-						queryClient.fetchQuery( happychatAuthQueryKey ).then( ( auth ) => {
+						queryClient.fetchQuery( [ happychatAuthQueryKey ] ).then( ( auth ) => {
 							event.source?.postMessage(
 								{
 									type: 'happy-chat-authentication-data',

@@ -2,6 +2,7 @@ import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import SectionHeading from '../shared/section-heading';
 import DefaultFacebookLinkPreview from './default-link-preview';
+import DefaultFacebookPostPreview from './default-post-preview';
 import FacebookLinkPreview from './link-preview';
 import FacebookPostPreview from './post-preview';
 import type { FacebookPreviewProps } from './types';
@@ -47,7 +48,11 @@ const FacebookPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 						{ __( 'Learn more about links', 'facebook-preview' ) }
 					</ExternalLink>
 				</p>
-				<DefaultFacebookLinkPreview { ...props } />
+				{ isPostPreview ? (
+					<DefaultFacebookPostPreview { ...props } />
+				) : (
+					<DefaultFacebookLinkPreview { ...props } />
+				) }
 			</section>
 		</div>
 	);

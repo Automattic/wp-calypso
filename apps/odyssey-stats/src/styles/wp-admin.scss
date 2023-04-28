@@ -6,8 +6,9 @@
 	}
 }
 
-// Override notice styles
-#wpbody-content > .notice {
+// Since styles of the component Notice should be imported before this file,
+// we can override the styles without more hierarchy for higher specificity.
+.notice {
 	display: block;
 	width: auto;
 	background: var(--studio-white);

@@ -1,5 +1,5 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
 import { Campaign } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import { requestDSP } from 'calypso/lib/promote-post';
 

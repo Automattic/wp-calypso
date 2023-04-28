@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
+import { useQuery } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import { getLocaleSlug } from 'i18n-calypso';
 import { useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import ZendeskChat from 'calypso/components/presales-zendesk-chat';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -12,6 +12,12 @@ import type { ConfigData } from '@automattic/create-calypso-config';
 type PresalesChatResponse = {
 	is_available: boolean;
 };
+
+export type KeyType = 'jpAgency' | 'jpGeneral';
+
+export interface ZendeskJetpackChatProps {
+	keyType: KeyType;
+}
 
 //the API is rate limited if we hit the limit we'll back off and retry
 async function fetchWithRetry(
@@ -38,10 +44,16 @@ async function fetchWithRetry(
 	}
 }
 
-export const ZendeskJetpackChat: React.VFC = () => {
+export const ZendeskJetpackChat: React.VFC< { keyType: KeyType } > = ( { keyType } ) => {
 	const [ error, setError ] = useState( false );
 	const { data: isStaffed } = usePresalesAvailabilityQuery();
-	const zendeskChatKey = config( 'zendesk_presales_chat_key' ) as keyof ConfigData;
+	const zendeskChatKey = useMemo( () => {
+		return config(
+			keyType === 'jpAgency'
+				? 'zendesk_presales_chat_key_jp_agency_dashboard'
+				: 'zendesk_presales_chat_key'
+		) as keyof ConfigData;
+	}, [ keyType ] );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const shouldShowZendeskPresalesChat = useMemo( () => {
 		const isEnglishLocale = ( config( 'english_locales' ) as string[] ).includes(
@@ -57,7 +69,7 @@ export const ZendeskJetpackChat: React.VFC = () => {
 		//adding a safeguard to ensure if there's an unkown error with the widget it won't crash the whole app
 		try {
 			return useQuery< boolean, Error >(
-				'presales-availability',
+				[ 'presales-availability' ],
 				async () => {
 					const url = 'https://public-api.wordpress.com/wpcom/v2/presales/chat';
 					const queryObject = {

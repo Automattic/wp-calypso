@@ -1,7 +1,7 @@
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
 import { PropsOf } from '@emotion/react';
-import { QueryClientProvider, QueryClient } from 'react-query';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import CheckoutMain from 'calypso/my-sites/checkout/composite-checkout/components/checkout-main';
 import {
@@ -20,12 +20,14 @@ export function MockCheckout( {
 	cartChanges,
 	additionalProps,
 	setCart,
+	useUndefinedSiteId,
 }: {
 	initialCart: ResponseCart;
 	mainCartKey: CartKey;
 	cartChanges?: Partial< ResponseCart >;
 	additionalProps?: Partial< PropsOf< typeof CheckoutMain > >;
 	setCart?: SetCart;
+	useUndefinedSiteId?: boolean;
 } ) {
 	const reduxStore = createTestReduxStore();
 	const queryClient = new QueryClient();
@@ -49,7 +51,7 @@ export function MockCheckout( {
 				>
 					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
 						<CheckoutMain
-							siteId={ siteId }
+							siteId={ useUndefinedSiteId ? undefined : siteId }
 							siteSlug="foo.com"
 							overrideCountryList={ countryList }
 							{ ...additionalProps }

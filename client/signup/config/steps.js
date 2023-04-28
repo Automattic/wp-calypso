@@ -2,6 +2,7 @@ import { current as currentPage } from 'page';
 import {
 	addAddOnsToCart,
 	addPlanToCart,
+	addWithThemePlanToCart,
 	createAccount,
 	createSite,
 	createWpForTeamsSite,
@@ -30,6 +31,7 @@ import { generateSteps } from './steps-pure';
 export default generateSteps( {
 	addAddOnsToCart,
 	addPlanToCart,
+	addWithThemePlanToCart,
 	createAccount,
 	createSite,
 	createWpForTeamsSite,

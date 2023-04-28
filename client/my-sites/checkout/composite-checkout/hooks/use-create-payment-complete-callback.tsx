@@ -67,7 +67,7 @@ export default function useCreatePaymentCompleteCallback( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
 	redirectTo?: string | undefined;
-	purchaseId?: number | undefined;
+	purchaseId?: number | string | undefined;
 	feature?: string | undefined;
 	isInModal?: boolean;
 	isComingFromUpsell?: boolean;

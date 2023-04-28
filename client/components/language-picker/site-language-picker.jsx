@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { fetchTranslationsList as fetchWporgTranslationsList } from 'calypso/lib/wporg';
 import { isJetpackSite } from 'calypso/state/sites/selectors';

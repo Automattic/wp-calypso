@@ -7,7 +7,7 @@ import type { PendingPostSubscription } from '@automattic/data-stores/src/reader
 
 export default function PendingPostRow( {
 	id,
-	subscription_date,
+	date_subscribed,
 	site_icon,
 	post_title,
 	post_url,
@@ -49,7 +49,7 @@ export default function PendingPostRow( {
 					</span>
 				</a>
 				<span className="date" role="cell">
-					<TimeSince date={ subscription_date.toISOString?.() ?? subscription_date } />
+					<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
 				</span>
 				<span className="actions" role="cell">
 					<PendingPostSettings
