@@ -1,6 +1,6 @@
 import { useStarterDesignsQuery } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import type { Design } from '@automattic/design-picker';
 
 /**
