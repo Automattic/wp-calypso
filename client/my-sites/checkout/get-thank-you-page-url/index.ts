@@ -6,7 +6,6 @@
  *
  * IF YOU CHANGE THIS FUNCTION ALSO CHANGE THE TESTS!
  */
-import config from '@automattic/calypso-config';
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -100,6 +99,7 @@ export interface PostCheckoutUrlArguments {
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
 	domains?: ResponseDomain[];
+	monthlyToAnnualPostPurchaseExperimentUser?: boolean;
 }
 
 /**
@@ -136,6 +136,7 @@ export default function getThankYouPageUrl( {
 	jetpackTemporarySiteId,
 	adminPageRedirect,
 	domains,
+	monthlyToAnnualPostPurchaseExperimentUser,
 }: PostCheckoutUrlArguments ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -338,6 +339,7 @@ export default function getThankYouPageUrl( {
 					hideUpsell: Boolean( hideNudge ),
 					domains,
 					isDomainOnly,
+					monthlyToAnnualPostPurchaseExperimentUser,
 			  } )
 			: undefined;
 
@@ -573,7 +575,10 @@ function getFallbackDestination( {
  * @param {ResponseCart} cart the cart object
  * @returns {string|undefined} the product slug of the next higher plan if it exists, undefined otherwise.
  */
-function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
+function getNextHigherPlanSlug(
+	cart: ResponseCart,
+	monthlyToAnnualPostPurchaseExperimentUser: boolean
+): string | undefined {
 	const currentPlanSlug = cart && getAllCartItems( cart ).filter( isPlan )[ 0 ]?.product_slug;
 	if ( ! currentPlanSlug ) {
 		return;
@@ -582,7 +587,7 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 	const currentPlan = getPlan( currentPlanSlug );
 
 	// Upsell an annual plan when on a monthly plan.
-	if ( config.isEnabled( 'upsell/monthly-to-annual' ) ) {
+	if ( monthlyToAnnualPostPurchaseExperimentUser ) {
 		if ( currentPlan?.term === TERM_MONTHLY ) {
 			return findFirstSimilarPlanKey( currentPlanSlug, { term: TERM_ANNUALLY } );
 		}
@@ -602,18 +607,20 @@ function getPlanUpgradeUpsellUrl( {
 	receiptId,
 	cart,
 	siteSlug,
+	monthlyToAnnualPostPurchaseExperimentUser,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
+	monthlyToAnnualPostPurchaseExperimentUser: boolean;
 } ): string | undefined {
 	if ( ! siteSlug ) {
 		return;
 	}
 
-	if ( config.isEnabled( 'upsell/monthly-to-annual' ) ) {
+	if ( monthlyToAnnualPostPurchaseExperimentUser ) {
 		if ( cart ) {
-			const upgradeItem = getNextHigherPlanSlug( cart );
+			const upgradeItem = getNextHigherPlanSlug( cart, monthlyToAnnualPostPurchaseExperimentUser );
 
 			if ( upgradeItem ) {
 				return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ receiptId }`;
@@ -622,7 +629,7 @@ function getPlanUpgradeUpsellUrl( {
 	}
 
 	if ( cart && hasPremiumPlan( cart ) ) {
-		const upgradeItem = getNextHigherPlanSlug( cart );
+		const upgradeItem = getNextHigherPlanSlug( cart, monthlyToAnnualPostPurchaseExperimentUser );
 
 		if ( upgradeItem ) {
 			return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ receiptId }`;
@@ -639,6 +646,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	hideUpsell,
 	domains,
 	isDomainOnly,
+	monthlyToAnnualPostPurchaseExperimentUser,
 }: {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
@@ -646,6 +654,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	hideUpsell: boolean;
 	domains: ResponseDomain[] | undefined;
 	isDomainOnly?: boolean;
+	monthlyToAnnualPostPurchaseExperimentUser?: boolean;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
@@ -677,6 +686,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 			receiptId,
 			cart,
 			siteSlug,
+			monthlyToAnnualPostPurchaseExperimentUser,
 		} );
 
 		if ( planUpgradeUpsellUrl ) {
