@@ -316,11 +316,15 @@ a.notice__action {
 	color: inherit;
 	border-radius: 4px;
 
+	.notice__content {
+		padding: 13px 0;
+	}
+
 	.notice__icon-wrapper {
 		border-top-left-radius: 4px;
 		border-bottom-left-radius: 4px;
 		background: var(--studio-gray-0);
-		padding: 13px;
+		padding: 16px;
 		align-items: flex-start;
 		width: unset;
 	}
@@ -346,7 +350,7 @@ a.notice__action {
 	.notice__dismiss {
 		display: flex;
 		flex-shrink: 0;
-		padding: 13px;
+		padding: 16px;
 		cursor: pointer;
 
 		.gridicon {
