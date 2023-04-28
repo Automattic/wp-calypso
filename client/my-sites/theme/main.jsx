@@ -1332,7 +1332,11 @@ class ThemeSheet extends Component {
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
-				<QueryActiveTheme siteId={ siteId } />
+				{
+					siteId && (
+						<QueryActiveTheme siteId={ siteId } />
+					) /* TODO: Make QueryActiveTheme handle falsey siteId */
+				}
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<AutoLoadingHomepageModal source="details" />
 				<div className="theme__sheet-action-bar-container">
