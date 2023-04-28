@@ -31,7 +31,7 @@ const useSiteNotifyMeOfNewPostsMutation = () => {
 
 	return useMutation(
 		async ( params: SiteSubscriptionNotifyMeOfNewPostsParams ) => {
-			if ( ! params.blog_id || typeof params.send_posts === 'undefined' ) {
+			if ( ! params.blog_id || typeof params.send_posts !== 'boolean' ) {
 				throw new Error(
 					// reminder: translate this string when we add it to the UI
 					'Something went wrong while changing the "Notify me of new posts" setting.'
