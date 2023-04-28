@@ -26,14 +26,14 @@ export function useThankYouFoooter(
 	 * If only plugins are present
 	 */
 	if ( hasPlugins && ! hasThemes ) {
-		footerSteps = [ pluginExploreStep, pluginSupportStep ];
+		footerSteps = [ pluginExploreStep, pluginSupportStep, themeSupportStep ];
 	}
 
 	/**
 	 * If only themes are present
 	 */
 	if ( ! hasPlugins && hasThemes ) {
-		footerSteps = [ themeSupportStep, WordPressForumStep ];
+		footerSteps = [ themeSupportStep, WordPressForumStep, pluginExploreStep ];
 	}
 
 	const steps = useNextSteps( footerSteps, pluginSlugs, themeSlugs );
