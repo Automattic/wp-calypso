@@ -13,7 +13,7 @@ interface Task {
 	disabled: boolean;
 	title?: string;
 	subtitle?: string;
-	badgeText?: string;
+	badge_text?: string;
 	actionDispatch?: () => void;
 	isLaunchTask?: boolean;
 	warning?: boolean;

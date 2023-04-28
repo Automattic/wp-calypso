@@ -53,7 +53,7 @@ export function getEnhancedTasks(
 	);
 
 	const planCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.plan_selected ||
+		Boolean( tasks?.find( ( task ) => task.id === 'site_launched' )?.completed ) ||
 		! isStartWritingFlow( flow );
 
 	const videoPressUploadCompleted = Boolean(
@@ -140,7 +140,7 @@ export function getEnhancedTasks(
 
 							window.location.assign( plansUrl );
 						},
-						badgeText:
+						badge_text:
 							isVideoPressFlowWithUnsupportedPlan ||
 							( isStartWritingFlow( flow ) && ! planCompleted )
 								? null
