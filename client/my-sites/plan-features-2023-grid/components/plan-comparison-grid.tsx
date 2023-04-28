@@ -494,10 +494,18 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	restructuredFeatures: RestructuredFeatures;
 	planName: string;
 	isStorageFeature: boolean;
-} > = ( { feature, visiblePlansProperties, restructuredFeatures, planName, isStorageFeature } ) => {
+	flowName: string;
+} > = ( {
+	feature,
+	visiblePlansProperties,
+	restructuredFeatures,
+	planName,
+	isStorageFeature,
+	flowName,
+} ) => {
 	const translate = useTranslate();
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties );
-	const highlightLabel = useHighlightLabel( planName );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties, flowName );
+	const highlightLabel = useHighlightLabel( planName, null );
 	const featureSlug = feature?.getSlug();
 	const hasFeature =
 		isStorageFeature ||
@@ -573,6 +581,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	restructuredFeatures: RestructuredFeatures;
 	restructuredFootnotes: RestructuredFootnotes;
 	isStorageFeature: boolean;
+	flowName: string;
 } > = ( {
 	feature,
 	isHiddenInMobile,
@@ -581,6 +590,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	restructuredFeatures,
 	restructuredFootnotes,
 	isStorageFeature,
+	flowName,
 } ) => {
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
@@ -627,6 +637,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					restructuredFeatures={ restructuredFeatures }
 					planName={ planName }
 					isStorageFeature={ isStorageFeature }
+					flowName={ flowName }
 				/>
 			) ) }
 		</Row>
@@ -890,6 +901,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									restructuredFeatures={ restructuredFeatures }
 									restructuredFootnotes={ restructuredFootnotes }
 									isStorageFeature={ false }
+									flowName={ flowName }
 								/>
 							) ) }
 							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
@@ -901,6 +913,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									restructuredFeatures={ restructuredFeatures }
 									restructuredFootnotes={ restructuredFootnotes }
 									isStorageFeature={ true }
+									flowName={ flowName }
 								/>
 							) : null }
 						</div>

@@ -166,9 +166,9 @@ const PlanLogo: React.FunctionComponent< {
 	planPropertiesObj: PlanProperties[];
 	planIndex: number;
 	planProperties: PlanProperties;
+	flowName: string;
 	isMobile?: boolean;
 	isInSignup: boolean;
-	flowName?: string;
 } > = ( { planPropertiesObj, planProperties, planIndex, isMobile, isInSignup, flowName } ) => {
 	const { planName, current } = planProperties;
 	const translate = useTranslate();

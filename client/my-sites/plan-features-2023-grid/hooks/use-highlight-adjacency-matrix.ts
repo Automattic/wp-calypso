@@ -1,5 +1,5 @@
 import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
-import { NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { isNewsletterFlow } from '@automattic/onboarding';
 import { useSelector } from 'react-redux';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -13,14 +13,14 @@ interface HighlightAdjacencyMatrix {
 	};
 }
 
-const useHighlightIndices = ( visiblePlans: PlanProperties[], flowName?: string ) => {
+const useHighlightIndices = ( visiblePlans: PlanProperties[], flowName: string ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );
 
 	return visiblePlans.reduce< number[] >( ( acc, { planName }, index ) => {
 		let isHighlight = false;
 
-		if ( flowName === NEWSLETTER_FLOW ) {
+		if ( isNewsletterFlow( flowName ) ) {
 			isHighlight = isPremiumPlan( planName ) || currentPlan?.productSlug === planName;
 		} else {
 			isHighlight =
@@ -37,7 +37,7 @@ const useHighlightIndices = ( visiblePlans: PlanProperties[], flowName?: string 
 	}, [] );
 };
 
-const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[], flowName?: string ) => {
+const useHighlightAdjacencyMatrix = ( visiblePlans: PlanProperties[], flowName: string ) => {
 	const highlightIndices = useHighlightIndices( visiblePlans, flowName );
 	const adjacencyMatrix: HighlightAdjacencyMatrix = {};
 
