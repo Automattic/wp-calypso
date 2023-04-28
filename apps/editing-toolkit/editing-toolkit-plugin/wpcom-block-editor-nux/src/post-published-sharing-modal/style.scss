@@ -28,10 +28,18 @@
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 18px;
 		}
-		button {
+		.link-button {
 			/* stylelint-disable-next-line declaration-property-unit-allowed-list */
 			font-size: 14px;
 			font-weight: 500;
+			display: inline-flex;
+			border: none;
+			background: transparent;
+			color: var(--color-text);
+			&:hover {
+				background: transparent;
+				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+			}
 		}
 		hr {
 			margin-top: 20px;
@@ -45,3 +53,38 @@
 		}
 	}
 }
+
+.wpcom-block-editor-post-published-sharing-modal__sharing-button {
+	display: inline-block;
+	position: relative;
+	width: 32px;
+	height: 32px;
+	top: -2px;
+	margin: 8px 8px 0 0;
+	border-radius: 50%;
+	color: var(--color-neutral-80);
+	background: #fff;
+	padding: 7px;
+
+	&:hover {
+		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22), 0 0 0 1px rgba(0, 0, 0, 0.22);
+	}
+
+	.social-logo {
+		top: 0;
+		color: var(--color-text-inverted);
+	}
+}
+
+@mixin sharing-button-service( $name, $color ) {
+	.wpcom-block-editor-post-published-sharing-modal__sharing-button.share-#{ $name } {
+		background: $color;
+
+		&:hover {
+			background: $color;
+		}
+	}
+}
+
+@include sharing-button-service( "facebook", var( --color-facebook ) );
+@include sharing-button-service( "twitter", var( --color-twitter ) );
