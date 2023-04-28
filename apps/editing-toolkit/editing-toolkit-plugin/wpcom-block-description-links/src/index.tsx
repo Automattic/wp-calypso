@@ -61,13 +61,19 @@ const addBlockSupportLinks = (
 	/**
 	 * Some elements are children, but have their own url for Learn More, and we want to show those.
 	 */
-	settings.description = createLocalizedDescriptionWithLearnMore(
-		String( settings.title ),
-		settings.description,
-		childrenBlockLinksWithDifferentUrl[ name ]
-			? childrenBlockLinksWithDifferentUrl[ name ]
-			: blockLinks[ blockName ]
-	);
+	if ( childrenBlockLinksWithDifferentUrl[ name ] ) {
+		settings.description = createLocalizedDescriptionWithLearnMore(
+			String( settings.title ),
+			settings.description,
+			childrenBlockLinksWithDifferentUrl[ name ]
+		);
+	} else if ( blockLinks[ blockName ] ) {
+		settings.description = createLocalizedDescriptionWithLearnMore(
+			String( settings.title ),
+			settings.description,
+			blockLinks[ blockName ]
+		);
+	}
 
 	if (
 		blockLinksWithVariations[ name ] &&
