@@ -28,6 +28,7 @@ export * from './onboard/types';
 export * from './domain-suggestions/types';
 export * from './plans/types';
 export * from './user/types';
+export * from './queries/use-launchpad';
 
 const { SubscriptionManager } = Reader;
 

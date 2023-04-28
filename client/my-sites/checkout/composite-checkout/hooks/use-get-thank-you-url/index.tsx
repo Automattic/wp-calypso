@@ -83,7 +83,7 @@ export default function useGetThankYouUrl( {
 export interface GetThankYouUrlProps {
 	siteSlug: string | undefined;
 	redirectTo?: string | undefined;
-	purchaseId?: number | undefined;
+	purchaseId?: number | string | undefined;
 	feature?: string | undefined;
 	cart: ResponseCart;
 	sitelessCheckoutType: SitelessCheckoutType;

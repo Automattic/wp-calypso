@@ -17,6 +17,7 @@ import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/
 import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
 import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-urls';
 import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
+import getSites from 'calypso/state/selectors/get-sites';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSiteOption, getSiteSlug, getCustomizerUrl } from 'calypso/state/sites/selectors';
@@ -114,6 +115,7 @@ const SiteSetupList = ( {
 	tasks,
 	taskUrls,
 	userEmail,
+	siteCount,
 } ) => {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
@@ -190,6 +192,7 @@ const SiteSetupList = ( {
 				isBlogger,
 				isFSEActive,
 				isRtl,
+				siteCount,
 			} );
 			setCurrentTask( newCurrentTask );
 			trackTaskDisplay( dispatch, newCurrentTask, siteId, isPodcastingSite );
@@ -210,6 +213,7 @@ const SiteSetupList = ( {
 		isBlogger,
 		isFSEActive,
 		isRtl,
+		siteCount,
 	] );
 
 	useEffect( () => {
@@ -336,7 +340,7 @@ const SiteSetupList = ( {
 
 const ConnectedSiteSetupList = connect( ( state, props ) => {
 	const { isFSEActive } = props;
-
+	const siteCount = getSites( state ).length;
 	const siteId = getSelectedSiteId( state );
 	const user = getCurrentUser( state );
 	const designType = getSiteOption( state, siteId, 'design_type' );
@@ -365,6 +369,7 @@ const ConnectedSiteSetupList = connect( ( state, props ) => {
 		tasks: taskList.getAll(),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
 		userEmail: user?.email,
+		siteCount,
 	};
 } )( SiteSetupList );
 

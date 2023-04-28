@@ -66,7 +66,7 @@ import type {
 } from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
-const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
+const debug = debugFactory( 'calypso:checkout-main' );
 
 export default function CheckoutMain( {
 	siteSlug,
@@ -103,7 +103,7 @@ export default function CheckoutMain( {
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
 	plan?: string | undefined;
-	purchaseId?: number | undefined;
+	purchaseId?: number | string | undefined;
 	couponCode?: string | undefined;
 	isComingFromUpsell?: boolean;
 	isLoggedOutCart?: boolean;
@@ -505,6 +505,7 @@ export default function CheckoutMain( {
 	if ( isCheckoutPageLoading ) {
 		debug( 'still loading because one of these is true', {
 			isInitialCartLoading,
+			...( allowedPaymentMethods.includes( 'card' ) ? { isLoadingStoredCards } : {} ),
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
@@ -733,7 +734,7 @@ export default function CheckoutMain( {
 }
 
 function getAnalyticsPath(
-	purchaseId: number | undefined,
+	purchaseId: number | string | undefined,
 	product: string | undefined,
 	selectedSiteSlug: string | undefined,
 	selectedFeature: string | undefined,
