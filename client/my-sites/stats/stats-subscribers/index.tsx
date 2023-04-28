@@ -18,8 +18,8 @@ import Reach from '../stats-reach';
 import SubscribersChartSection, { PeriodType } from '../stats-subscribers-chart-section';
 import SubscribersOverview from '../stats-subscribers-overview';
 import SubscribersSection from '../subscribers-section';
-import SubscribersOverview from './SubscribersOverview';
 import SubscribersHighlightSection from './subscribers-highlight-section';
+import SubscribersOverview from './subscribers-overview';
 
 interface StatsSubscribersPageProps {
 	period: PeriodType;
@@ -67,7 +67,6 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 						vendor={ getSuggestionsVendor() }
 					/>
 				) }
-				<SubscribersOverview siteId={ siteId } />
 				<SubscribersSection siteId={ siteId } slug={ siteSlug } period={ period } />
 				<SubscribersOverview />
 				<div className={ statsModuleListClass }>
