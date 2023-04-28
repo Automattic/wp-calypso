@@ -28,7 +28,6 @@ function useOrder( length: number ) {
 export const useLinkInBioDesigns = (): Design[] => {
 	const queryResult = useStarterDesignsQuery( {
 		_locale: useLocale(),
-		include_pattern_virtual_designs: true,
 	} );
 
 	let designs = queryResult.data
