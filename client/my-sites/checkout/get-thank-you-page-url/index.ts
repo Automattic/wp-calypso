@@ -99,7 +99,7 @@ export interface PostCheckoutUrlArguments {
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
 	domains?: ResponseDomain[];
-	monthlyToAnnualPostPurchaseExperimentUser?: boolean;
+	monthlyToAnnualPostPurchaseExperimentUser: boolean;
 }
 
 /**
@@ -654,7 +654,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	hideUpsell: boolean;
 	domains: ResponseDomain[] | undefined;
 	isDomainOnly?: boolean;
-	monthlyToAnnualPostPurchaseExperimentUser?: boolean;
+	monthlyToAnnualPostPurchaseExperimentUser: boolean;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
