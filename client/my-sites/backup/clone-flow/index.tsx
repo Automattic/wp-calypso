@@ -23,6 +23,8 @@ import { setValidFrom } from 'calypso/state/jetpack-review-prompt/actions';
 import { requestRewindBackups } from 'calypso/state/rewind/backups/actions';
 import { getInProgressBackupForSite } from 'calypso/state/rewind/selectors';
 import getBackupStagingSites from 'calypso/state/rewind/selectors/get-backup-staging-sites';
+import hasFetchedStagingSitesList from 'calypso/state/rewind/selectors/has-fetched-staging-sites-list';
+import isFetchingStagingSitesList from 'calypso/state/rewind/selectors/is-fetching-staging-sites-list';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
@@ -125,6 +127,14 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 	};
 
 	const stagingSites = useSelector( ( state ) => getBackupStagingSites( state, siteId ) );
+	const isRequestingStagingList = useSelector( ( state ) =>
+		isFetchingStagingSitesList( state, siteId )
+	);
+	const hasFetchedStagingList = useSelector( ( state ) =>
+		hasFetchedStagingSitesList( state, siteId )
+	);
+
+	const isLoadingStagingSites = isRequestingStagingList && ! hasFetchedStagingList;
 
 	const getDestinationUrl = () => {
 		if ( isCloneToStaging ) {
@@ -222,6 +232,7 @@ const BackupCloneFlow: FunctionComponent< Props > = ( { siteId } ) => {
 			<p className="clone-flow__info">{ translate( 'Where do you want to copy this site to?' ) }</p>
 			<div className="clone-flow__advanced-credentials">
 				<CloneFlowSuggestionSearch
+					loading={ isLoadingStagingSites }
 					siteSuggestions={ stagingSites }
 					onSearchChange={ onSearchChange }
 					onAddNewClick={ onAddNewClick }
