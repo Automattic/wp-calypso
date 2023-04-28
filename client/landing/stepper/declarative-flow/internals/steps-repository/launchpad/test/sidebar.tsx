@@ -2,14 +2,13 @@
  * @jest-environment jsdom
  */
 import config from '@automattic/calypso-config';
-import { Site } from '@automattic/data-stores';
+import { Site, useLaunchpad } from '@automattic/data-stores';
 import { screen } from '@testing-library/react';
 import { useDispatch } from '@wordpress/data';
 import nock from 'nock';
 import React from 'react';
 import * as redux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
@@ -25,7 +24,8 @@ jest.mock( 'calypso/state/sites/hooks/use-premium-global-styles', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'calypso/data/sites/use-launchpad', () => ( {
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
 	useLaunchpad: jest.fn().mockReturnValue( {
 		data: { site_intent: 'build' },
 	} ),

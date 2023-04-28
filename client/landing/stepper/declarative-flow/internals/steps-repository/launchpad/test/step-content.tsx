@@ -1,13 +1,13 @@
 /**
  * @jest-environment jsdom
  */
+import { useLaunchpad } from '@automattic/data-stores';
 import { NEWSLETTER_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
 import { Provider } from 'react-redux';
-import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
@@ -27,7 +27,8 @@ const stepContentProps = {
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
-jest.mock( 'calypso/data/sites/use-launchpad', () => ( {
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
 	useLaunchpad: jest.fn().mockReturnValue( {
 		data: { site_intent: 'newsletter' },
 	} ),
