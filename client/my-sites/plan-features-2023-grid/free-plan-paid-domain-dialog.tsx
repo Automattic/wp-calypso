@@ -10,10 +10,7 @@ import { useSelector } from 'react-redux';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import usePlanPrices from '../plans/hooks/use-plan-prices';
 import { LoadingPlaceHolder } from './components/loading-placeholder';
-import {
-	USE_GET_WORDPRESS_SUBDOMAIN_QUERY_KEY,
-	useGetWordPressSubdomain,
-} from './hooks/use-get-wordpress-subdomain';
+import { getQueryKey, useGetWordPressSubdomain } from './hooks/use-get-wordpress-subdomain';
 import type { DomainSuggestion } from '@automattic/data-stores';
 
 const DialogContainer = styled.div`
@@ -142,7 +139,7 @@ export function FreePlanPaidDomainDialog( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const {
 		data: wordPressSubdomainSuggestion,
-		isLoading,
+		isInitialLoading,
 		isError,
 	} = useGetWordPressSubdomain( domainName );
 	const planTitle = getPlan( planSlug )?.getTitle();
@@ -155,7 +152,7 @@ export function FreePlanPaidDomainDialog( {
 	function handleFreeDomainClick() {
 		setIsBusy( true );
 		// Since this domain will not be available after it is selected, invalidate the cache.
-		queryClient.invalidateQueries( USE_GET_WORDPRESS_SUBDOMAIN_QUERY_KEY );
+		queryClient.invalidateQueries( getQueryKey( domainName ) );
 		if ( wordPressSubdomainSuggestion ) {
 			onFreePlanSelected( wordPressSubdomainSuggestion );
 		}
@@ -209,11 +206,11 @@ export function FreePlanPaidDomainDialog( {
 					</RowWithBorder>
 					<Row>
 						<DomainName>
-							{ isLoading && <LoadingPlaceHolder /> }
+							{ isInitialLoading && <LoadingPlaceHolder /> }
 							{ ! isError && <div>{ wordPressSubdomainSuggestion?.domain_name }</div> }
 						</DomainName>
 						<StyledButton
-							disabled={ isLoading || ! wordPressSubdomainSuggestion }
+							disabled={ isInitialLoading || ! wordPressSubdomainSuggestion }
 							busy={ isBusy }
 							onClick={ handleFreeDomainClick }
 						>

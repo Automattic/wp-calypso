@@ -24,14 +24,14 @@ const SubdomainSuggestion = styled.div`
 const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { domainName } ) => {
 	const {
 		data: wordPressSubdomainSuggestion,
-		isLoading,
+		isInitialLoading,
 		isError,
 	} = useGetWordPressSubdomain( domainName );
 
 	return (
 		<SubdomainSuggestion>
 			<div className="is-domain-name">{ domainName }</div>
-			{ isLoading && <LoadingPlaceHolder /> }
+			{ isInitialLoading && <LoadingPlaceHolder /> }
 			{ ! isError && <div>{ wordPressSubdomainSuggestion?.domain_name }</div> }
 		</SubdomainSuggestion>
 	);

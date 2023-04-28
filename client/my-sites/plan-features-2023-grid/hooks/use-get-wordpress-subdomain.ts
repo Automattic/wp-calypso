@@ -2,14 +2,14 @@ import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import type { DomainSuggestion } from '@automattic/data-stores';
 
-export const USE_GET_WORDPRESS_SUBDOMAIN_QUERY_KEY = 'wordPressSubdomain';
+export const getQueryKey = ( domainName: string ) => [ 'wordPressSubdomain', domainName ];
 
 /**
  * Returns the expected *.wordpress.com for a given domain name
  */
 export function useGetWordPressSubdomain( domainName: string ) {
 	return useQuery< DomainSuggestion[], unknown, DomainSuggestion >(
-		[ USE_GET_WORDPRESS_SUBDOMAIN_QUERY_KEY, domainName ],
+		getQueryKey( domainName ),
 		() =>
 			wpcom.domains().suggestions( {
 				query: domainName,
