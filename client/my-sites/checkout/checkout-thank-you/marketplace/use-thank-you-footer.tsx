@@ -78,7 +78,7 @@ function useThemeSteps(): FooterStep[] {
 	return [
 		{
 			key: 'thank_you_footer_support_guides_themes',
-			title: translate( 'Learn More' ),
+			title: translate( 'Learn About Themes' ),
 			description: translate( 'Discover everything you need to know about Themes.' ),
 			link: 'https://wordpress.com/support/themes/',
 			linkText: translate( 'Theme Support' ),
