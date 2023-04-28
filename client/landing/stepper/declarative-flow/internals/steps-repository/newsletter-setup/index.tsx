@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Onboard } from '@automattic/data-stores';
 import { hexToRgb, StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -39,8 +40,14 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		buttonText: translate( 'Save and continue' ),
 	};
 
-	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo, setGoals } =
-		useDispatch( ONBOARD_STORE );
+	const {
+		setSiteTitle,
+		setSiteAccentColor,
+		setSiteDescription,
+		setSiteLogo,
+		setGoals,
+		resetGoals,
+	} = useDispatch( ONBOARD_STORE );
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
 	const [ paidSubscribers, setPaidSubscribers ] = useState( false );
@@ -84,13 +91,15 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
 		setSiteAccentColor( accentColor.hex );
+		setPaidSubscribers( paidSubscribers ); // @TODO delete this?
 
 		if ( paidSubscribers ) {
-			//todo use Onboard.SiteGoal ?
-			setGoals( 'paid-newsletter' );
+			console.log( 'Setting paid subscriber status YES 💚' ); // eslint-disable-line no-console
+			setGoals( Onboard.SiteGoal.PaidSubscribers );
+		} else {
+			console.log( 'Setting paid subscriber status NO 🍎' ); // eslint-disable-line no-console
+			resetGoals();
 		}
-		//todo delete this?
-		setPaidSubscribers( paidSubscribers );
 
 		if ( selectedFile && base64Image ) {
 			try {
