@@ -41,7 +41,7 @@ const SiteSettings = ( {
 					isUpdating={ updatingNotifyMeOfNewPosts }
 				/>
 			) }
-			<PopoverMenuItem itemComponent="div">
+			<PopoverMenuItem itemComponent="div" className="settings-popover__delivery-frequency-item">
 				<p className="settings-popover__item-label">{ translate( 'Email me new posts' ) }</p>
 				<DeliveryFrequencyInput
 					value={ deliveryFrequency }

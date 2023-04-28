@@ -16,7 +16,7 @@ const NotifyMeOfNewPostsToggle = ( {
 	const translate = useTranslate();
 
 	return (
-		<PopoverMenuItem itemComponent="div">
+		<PopoverMenuItem itemComponent="div" className="settings-popover__notify-me-of-new-posts-item">
 			<ToggleControl
 				className="settings-popover__notify-me-of-new-posts-toggle"
 				label={ translate( 'Notify me of new posts' ) }

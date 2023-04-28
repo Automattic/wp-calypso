@@ -31,6 +31,10 @@
 		width: calc(100% - 42px);
 	}
 
+	.settings-popover__delivery-frequency-item {
+		padding-top: 0;
+	}
+
 	.settings-popover__delivery-frequency-control,
 	.settings-popover__item-button {
 		&.is-loading {
@@ -78,6 +82,11 @@
 		line-height: $font-body;
 	}
 
+	.settings-popover__notify-me-of-new-posts-item {
+		padding-bottom: 0;
+		margin-bottom: 16px;
+	}
+
 	.settings-popover__notify-me-of-new-posts-toggle {
 		font-size: $font-body-small;
 		margin-bottom: 16px;
@@ -92,7 +101,6 @@
 		font-size: $font-body-extra-small;
 		text-align: left;
 		width: 212px;
-		//margin-top: 16px;
 	}
 }
 
