@@ -39,7 +39,7 @@ export default function getFlowPlanFeatures(
 	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && nextDomainIsFree;
 	return getPlanFeaturesObject( featureAccessor() )
 		.filter( ( feature ) => {
-			return showFreeDomainFeature || feature.get_slug() !== FEATURE_CUSTOM_DOMAIN;
+			return showFreeDomainFeature || feature.getSlug() !== FEATURE_CUSTOM_DOMAIN;
 		} )
 		.map( ( feature ) => {
 			return {
