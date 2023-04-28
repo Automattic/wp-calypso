@@ -59,10 +59,13 @@ const newsletter: Flow = {
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const { setGoalsOnSite } = useDispatch( SITE_STORE );
+		/*
 		const goals = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
 			[]
 		);
+		*/
+		const goals = new Set().add( 'paid-newsletter' );
 
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
@@ -124,9 +127,18 @@ const newsletter: Flow = {
 						);
 					}
 
-					alert( 'paidSubscribers  ' + providedDependencies?.siteSlug + ' ' + goals );
+					// @TODO: REMOVE BEFORE MERGE
+					/* eslint-disable no-console */
+					console.log(
+						'newsletter.ts flow, paidSubscribers:',
+						providedDependencies?.siteSlug,
+						goals
+					);
+					/* eslint-enable */
+
+					// Save an intention to set up paid subscribers as a "goal"
 					if ( providedDependencies?.paidSubscribers && providedDependencies?.siteSlug ) {
-						setGoalsOnSite( providedDependencies?.siteSlug, goals );
+						setGoalsOnSite( providedDependencies.siteSlug, goals );
 					}
 
 					if ( providedDependencies?.goToCheckout ) {

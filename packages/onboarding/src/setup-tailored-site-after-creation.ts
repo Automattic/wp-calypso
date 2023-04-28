@@ -4,6 +4,7 @@ import { select, dispatch } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
 import {
 	isLinkInBioFlow,
+	isNewsletterFlow,
 	isNewsletterOrLinkInBioFlow,
 	LINK_IN_BIO_FLOW,
 	FREE_FLOW,
@@ -47,6 +48,7 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 	const siteTitle = select( ONBOARD_STORE ).getSelectedSiteTitle();
 	const siteDescription = select( ONBOARD_STORE ).getSelectedSiteDescription();
 	const siteLogo = select( ONBOARD_STORE ).getSelectedSiteLogo();
+	const paidSubscribers = select( ONBOARD_STORE ).getPaidSubscribers();
 
 	if ( siteId && flowName ) {
 		const formData: ( string | File )[][] = [];
@@ -75,6 +77,21 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			}
 
 			settings.launchpad_screen = 'full';
+		}
+
+		// @TODO: We could just detect if we should set goals, and ignore what's the flow...
+		if ( isNewsletterFlow( flowName ) ) {
+			// @TODO: REMOVE BEFORE MERGE
+			/* eslint-disable no-console */
+			console.log( 'setup tailored site after creation' );
+			console.log( 'paidSubscribers:', paidSubscribers );
+			// console.log( providedDependencies?.siteSlug, goals );
+			/* eslint-enable */
+
+			// Save an intention to set up paid subscribers as a "goal"
+			// if ( providedDependencies?.paidSubscribers && providedDependencies?.siteSlug ) {
+			// 	setGoalsOnSite( providedDependencies.siteSlug, goals );
+			// }
 		}
 
 		formData.push( [ 'settings', JSON.stringify( settings ) ] );
