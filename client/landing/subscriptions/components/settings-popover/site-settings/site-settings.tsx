@@ -3,10 +3,12 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Separator from 'calypso/components/popover-menu/separator';
 import SettingsPopover from '../settings-popover';
 import DeliveryFrequencyInput from './delivery-frequency-input';
+import NotifyMeOfNewPostsToggle from './notify-me-of-new-posts-toggle';
 import UnsubscribeSiteButton from './unsubscribe-site-button';
 import type { SiteSubscriptionDeliveryFrequency } from '@automattic/data-stores/src/reader/types';
 
 type SiteSettingsProps = {
+	notifyMeOfNewPosts: boolean;
 	deliveryFrequency: SiteSubscriptionDeliveryFrequency;
 	onDeliveryFrequencyChange: ( value: SiteSubscriptionDeliveryFrequency ) => void;
 	onUnsubscribe: () => void;
@@ -15,6 +17,7 @@ type SiteSettingsProps = {
 };
 
 const SiteSettings = ( {
+	notifyMeOfNewPosts,
 	deliveryFrequency,
 	onDeliveryFrequencyChange,
 	onUnsubscribe,
@@ -25,6 +28,7 @@ const SiteSettings = ( {
 
 	return (
 		<SettingsPopover>
+			<NotifyMeOfNewPostsToggle value={ notifyMeOfNewPosts } isUpdating={ false } />
 			<PopoverMenuItem itemComponent="div">
 				<p className="settings-popover__item-label">{ translate( 'Email me new posts' ) }</p>
 				<DeliveryFrequencyInput
