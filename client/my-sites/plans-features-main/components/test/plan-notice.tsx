@@ -146,7 +146,7 @@ describe( '<PlanNotice /> Tests', () => {
 		);
 	} );
 
-	test( 'A marketing message <PlanNotice /> when no other notices are available and marketing messages are available', () => {
+	test( 'A marketing message <PlanNotice /> when no other notices are available and marketing messages are available and the user is not in signup', () => {
 		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
 		mIsCurrentPlanPaid.mockImplementation( () => true );
 		mGetDiscountByName.mockImplementation( () => false );
@@ -169,5 +169,30 @@ describe( '<PlanNotice /> Tests', () => {
 			/>
 		);
 		expect( screen.getByRole( 'status' ).textContent ).toBe( 'An important marketing message' );
+	} );
+
+	test( 'No <PlanNotice /> should be shown when in signup', () => {
+		mIsCurrentUserCurrentPlanOwner.mockImplementation( () => true );
+		mIsCurrentPlanPaid.mockImplementation( () => true );
+		mGetDiscountByName.mockImplementation( () => false );
+		mUsePlanUpgradeCreditsDisplay.mockImplementation( () => ( {
+			creditsValue: 0,
+			isPlanUpgradeCreditEligible: false,
+		} ) );
+		mUseMarketingMessage.mockImplementation( () => [
+			false,
+			[ { id: '12121', text: 'An important marketing message' } ],
+			() => ( {} ),
+		] );
+		//
+		renderWithProvider(
+			<PlanNotice
+				discountInformation={ { withDiscount: 'test', discountEndDate: new Date() } }
+				visiblePlans={ plansList }
+				isInSignup={ true }
+				siteId={ 32234 }
+			/>
+		);
+		expect( screen.queryByRole( 'status' ) ).not.toBeInTheDocument();
 	} );
 } );
