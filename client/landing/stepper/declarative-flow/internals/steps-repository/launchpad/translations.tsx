@@ -6,6 +6,7 @@ import {
 	FREE_FLOW,
 	WRITE_FLOW,
 	BUILD_FLOW,
+	START_WRITING_FLOW,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 import { TranslatedLaunchpadStrings } from './types';
@@ -20,10 +21,8 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 	switch ( flow ) {
 		case NEWSLETTER_FLOW:
 			translatedStrings.flowName = translate( 'Newsletter' );
-			translatedStrings.title = translate( "You're all set to start publishing" );
-			translatedStrings.subtitle = translate(
-				'Why not welcome your readers with your first post?'
-			);
+			translatedStrings.title = translate( "Your newsletter's ready!" );
+			translatedStrings.subtitle = translate( 'Now it’s time to let your readers know.' );
 			break;
 		case LINK_IN_BIO_FLOW:
 		case LINK_IN_BIO_TLD_FLOW:
@@ -44,6 +43,11 @@ export function getLaunchpadTranslations( flow: string | null ): TranslatedLaunc
 			translatedStrings.flowName = translate( 'Video' );
 			translatedStrings.title = translate( 'Your site is almost ready!' );
 			translatedStrings.launchTitle = translate( 'Your site is almost ready!' );
+			break;
+		case START_WRITING_FLOW:
+			translatedStrings.flowName = translate( 'Blog' );
+			translatedStrings.title = translate( "Your blog's almost ready!" );
+			translatedStrings.launchTitle = translate( "Your blog's almost ready!" );
 			break;
 		case WRITE_FLOW:
 		case BUILD_FLOW:

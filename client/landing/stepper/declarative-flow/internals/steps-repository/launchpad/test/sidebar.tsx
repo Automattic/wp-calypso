@@ -199,7 +199,7 @@ describe( 'Sidebar', () => {
 			} );
 
 			const domainProcessingNotification = screen.queryByText(
-				/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+				/We are currently setting up your new domain!/i
 			);
 
 			expect( domainProcessingNotification ).not.toBeInTheDocument();
@@ -232,7 +232,7 @@ describe( 'Sidebar', () => {
 				} );
 
 				const domainProcessingNotification = screen.getByText(
-					/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+					/We are currently setting up your new domain!/i
 				);
 
 				expect( domainProcessingNotification ).toBeInTheDocument();
@@ -266,7 +266,7 @@ describe( 'Sidebar', () => {
 				} );
 
 				const domainProcessingNotification = screen.queryByText(
-					/We are currently setting up your new domain! It may take a few minutes before it is ready./i
+					/We are currently setting up your new domain!/i
 				);
 
 				expect( domainProcessingNotification ).not.toBeInTheDocument();
@@ -322,44 +322,6 @@ describe( 'Sidebar', () => {
 				expect( domainUpsellTaskFreeFlow ).toBeVisible();
 				expect( domainUpsellTaskBadgeFreeFlow ).toBeVisible();
 			} );
-
-			it( 'displays the upgrade plan badge on the "Choose a domain" task for write flow', () => {
-				const writeFlowProps = { ...props, flow: 'write' };
-
-				const siteDetails = buildSiteDetails( {
-					options: {
-						...defaultSiteDetails.options,
-					},
-					plan: {
-						is_free: true,
-					},
-				} );
-				renderSidebar( writeFlowProps, siteDetails );
-
-				const domainUpsellTaskFreeFlow = screen.queryByText( 'Choose a domain' );
-				const domainUpsellTaskBadgeFreeFlow = screen.queryByText( 'Upgrade plan' );
-				expect( domainUpsellTaskFreeFlow ).toBeVisible();
-				expect( domainUpsellTaskBadgeFreeFlow ).toBeVisible();
-			} );
-
-			it( 'displays the upgrade plan badge on the "Choose a domain" task for build flow', () => {
-				const buildFlowProps = { ...props, flow: 'build' };
-
-				const siteDetails = buildSiteDetails( {
-					options: {
-						...defaultSiteDetails.options,
-					},
-					plan: {
-						is_free: true,
-					},
-				} );
-				renderSidebar( buildFlowProps, siteDetails );
-
-				const domainUpsellTaskFreeFlow = screen.queryByText( 'Choose a domain' );
-				const domainUpsellTaskBadgeFreeFlow = screen.queryByText( 'Upgrade plan' );
-				expect( domainUpsellTaskFreeFlow ).toBeVisible();
-				expect( domainUpsellTaskBadgeFreeFlow ).toBeVisible();
-			} );
 		} );
 
 		describe( 'and the site is on a paid plan', () => {
@@ -374,42 +336,6 @@ describe( 'Sidebar', () => {
 					},
 				} );
 				renderSidebar( freeFlowProps, siteDetails );
-
-				const domainUpsellTask = screen.queryByText( 'Choose a domain' );
-				const domainUpsellTaskBadge = screen.queryByText( 'Upgrade plan' );
-				expect( domainUpsellTask ).toBeVisible();
-				expect( domainUpsellTaskBadge ).toBeNull();
-			} );
-
-			it( 'does not display the upgrade plan badge on the "Choose a domain" task for write flow', () => {
-				const writeFlowProps = { ...props, flow: 'write' };
-				const siteDetails = buildSiteDetails( {
-					options: {
-						...defaultSiteDetails.options,
-					},
-					plan: {
-						is_free: false,
-					},
-				} );
-				renderSidebar( writeFlowProps, siteDetails );
-
-				const domainUpsellTask = screen.queryByText( 'Choose a domain' );
-				const domainUpsellTaskBadge = screen.queryByText( 'Upgrade plan' );
-				expect( domainUpsellTask ).toBeVisible();
-				expect( domainUpsellTaskBadge ).toBeNull();
-			} );
-
-			it( 'does not display the upgrade plan badge on the "Choose a domain" task for build flow', () => {
-				const buildFlowProps = { ...props, flow: 'build' };
-				const siteDetails = buildSiteDetails( {
-					options: {
-						...defaultSiteDetails.options,
-					},
-					plan: {
-						is_free: false,
-					},
-				} );
-				renderSidebar( buildFlowProps, siteDetails );
 
 				const domainUpsellTask = screen.queryByText( 'Choose a domain' );
 				const domainUpsellTaskBadge = screen.queryByText( 'Upgrade plan' );

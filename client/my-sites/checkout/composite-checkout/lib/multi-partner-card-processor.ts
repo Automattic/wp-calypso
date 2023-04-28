@@ -120,7 +120,7 @@ async function stripeCardProcessor(
 		} ),
 		paymentMethodToken,
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: siteId ? String( siteId ) : undefined,
+			siteId,
 			contactDetails:
 				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart: responseCart,
@@ -174,7 +174,6 @@ async function ebanxCardProcessor(
 		includeDomainDetails,
 		includeGSuiteDetails,
 		responseCart,
-		siteId,
 		contactDetails,
 		reduxDispatch,
 	} = transactionOptions;
@@ -201,7 +200,6 @@ async function ebanxCardProcessor(
 		...submitData,
 		couponId: responseCart.coupon,
 		country: submitData.countryCode,
-		siteId: siteId ? String( siteId ) : undefined,
 		deviceId: paymentMethodToken?.deviceId,
 		domainDetails: getDomainDetails( contactDetails, {
 			includeDomainDetails,
@@ -209,7 +207,7 @@ async function ebanxCardProcessor(
 		} ),
 		paymentMethodToken: paymentMethodToken.token,
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+			siteId: transactionOptions.siteId,
 			contactDetails:
 				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart: transactionOptions.responseCart,

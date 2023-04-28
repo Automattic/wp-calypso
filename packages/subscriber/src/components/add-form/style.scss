@@ -2,23 +2,13 @@
 .step-container.subscribers {
 	padding: 0 1.5rem;
 
-	.add-subscriber__title-container,
-	.add-subscriber__form--container {
-		margin: auto;
-	}
-
 	.add-subscriber .add-subscriber__title-container {
-		max-width: 376px;
 		text-align: center;
 
 		.onboarding-subtitle {
 			margin-bottom: 1.5rem;
 			font-size: 1.25rem;
 		}
-	}
-
-	.add-subscriber .add-subscriber__form--container {
-		max-width: 368px;
 	}
 
 	.add-subscriber__form-submit-btn {
@@ -85,7 +75,7 @@
 	.components-button {
 		height: auto;
 		padding: 0;
-		font-size: 1rem;
+		font-size: 0.875rem;
 		color: var(--color-text);
 		text-decoration: underline;
 		border: none;
@@ -200,19 +190,25 @@
 	}
 
 	.add-subscriber__form--disclaimer {
-		font-size: 0.875rem;
+		font-size: $font-body-small;
 		line-height: 1.25;
 		color: var(--studio-gray-50);
-		margin-bottom: 1.5rem;
+		margin-top: 1.5rem;
 
 		a,
 		button {
+			font-size: $font-body-small;
 			color: var(--color-text);
 			text-decoration: underline;
+			height: unset;
 
 			&:hover {
 				color: var(--color-text-subtle);
 			}
+		}
+
+		.components-button {
+			padding: 0;
 		}
 	}
 }

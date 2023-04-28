@@ -1,19 +1,24 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { useMemo } from 'react';
 import type { Pattern, Category } from '../types';
 
 const usePatternsMapByCategory = ( patterns: Pattern[], categories: Category[] ) => {
 	return useMemo( () => {
-		const categoriesMap = categories.reduce(
-			( map, category ) => ( {
-				...map,
-				[ category.name ]: [],
-			} ),
-			{}
-		) as { [ key: string ]: Pattern[] };
+		const categoriesMap: Record< string, Pattern[] > = {};
 
 		patterns.forEach( ( pattern ) => {
-			pattern.categories.forEach( ( category ) => {
-				categoriesMap[ category ]?.push( pattern );
+			// Filter pattern with the meta assembler_waitlist because of rendering issues
+			if (
+				pattern.pattern_meta?.assembler_waitlist &&
+				! isEnabled( 'pattern-assembler/show-waitlist-patterns' )
+			) {
+				return;
+			}
+			Object.keys( pattern.categories ).forEach( ( category ) => {
+				if ( ! categoriesMap[ category ] ) {
+					categoriesMap[ category ] = [];
+				}
+				categoriesMap[ category ].push( pattern );
 			} );
 		} );
 		return categoriesMap;

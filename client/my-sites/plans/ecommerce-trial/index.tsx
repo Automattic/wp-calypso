@@ -1,35 +1,29 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { plansLink } from '@automattic/calypso-products';
-import { useTranslate } from 'i18n-calypso';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import BodySectionCssClass from 'calypso/layout/body-section-css-class';
-import ECommercePlanFeatures from 'calypso/my-sites/plans/components/ecommerce-plan-features';
 import ECommerceTrialBanner from './ecommerce-trial-banner';
-import { getWooExpressMediumFeatureSets } from './wx-medium-features';
+import { WooExpressPlans } from './wooexpress-plans';
+import type { Site } from 'calypso/my-sites/scan/types';
 
 import './style.scss';
 
 interface ECommerceTrialPlansPageProps {
 	interval?: 'monthly' | 'yearly';
-	siteSlug: string;
+	site: Site;
 }
 
 const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 	const interval = props.interval ?? 'monthly';
-	const siteSlug = props.siteSlug;
+	const siteSlug = props.site?.slug;
+	const siteId = props.site?.ID;
 
-	const translate = useTranslate();
-
-	const triggerTracksEvent = useCallback( ( tracksLocation: string ) => {
+	const triggerPlansGridTracksEvent = useCallback( ( planSlug: string ) => {
 		recordTracksEvent( 'calypso_wooexpress_plans_page_upgrade_cta_clicked', {
-			location: tracksLocation,
+			location: 'plans_grid',
+			plan_slug: planSlug,
 		} );
 	}, [] );
-
-	// WX Medium and Commerce have the same features
-	const wooExpressMediumPlanFeatureSets = useMemo( () => {
-		return getWooExpressMediumFeatureSets( { translate, interval } );
-	}, [ translate, interval ] );
 
 	return (
 		<>
@@ -39,13 +33,14 @@ const ECommerceTrialPlansPage = ( props: ECommerceTrialPlansPageProps ) => {
 				<ECommerceTrialBanner />
 			</div>
 
-			<ECommercePlanFeatures
-				interval={ interval }
-				monthlyControlProps={ { path: plansLink( '/plans', siteSlug, 'monthly', true ) } }
-				planFeatureSets={ wooExpressMediumPlanFeatureSets }
+			<WooExpressPlans
+				siteId={ siteId }
 				siteSlug={ siteSlug }
-				triggerTracksEvent={ triggerTracksEvent }
+				interval={ interval }
 				yearlyControlProps={ { path: plansLink( '/plans', siteSlug, 'yearly', true ) } }
+				monthlyControlProps={ { path: plansLink( '/plans', siteSlug, 'monthly', true ) } }
+				showIntervalToggle={ true }
+				triggerTracksEvent={ triggerPlansGridTracksEvent }
 			/>
 		</>
 	);

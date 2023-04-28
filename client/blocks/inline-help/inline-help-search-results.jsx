@@ -24,6 +24,8 @@ import {
 } from './constants';
 import PlaceholderLines from './placeholder-lines';
 
+import './style.scss';
+
 const noop = () => {};
 
 function debounceSpeak( { message = '', priority = 'polite', timeout = 800 } ) {
@@ -72,7 +74,7 @@ function HelpSearchResults( {
 		// "Managing Purchases" documentation link for users who have not made a purchase.
 		filterManagePurchaseLink( hasPurchases, isPurchasesSection )
 	);
-	const { data: searchData, isLoading: isSearching } = useHelpSearchQuery( searchQuery );
+	const { data: searchData, isInitialLoading: isSearching } = useHelpSearchQuery( searchQuery );
 
 	const searchResults = searchData?.wordpress_support_links ?? [];
 	const hasAPIResults = searchResults.length > 0;

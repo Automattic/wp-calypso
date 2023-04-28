@@ -14,3 +14,11 @@ export { default as getRewindStorageUsageLevel } from './get-rewind-storage-usag
 export { default as getBackupRetentionDays } from './get-backup-retention-days';
 export { default as getBackupCurrentSiteSize } from './get-backup-current-site-size';
 export { default as getBackupRetentionUpdateRequestStatus } from './get-backup-retention-update-status';
+export { default as getBackupStoppedFlag } from './get-backup-stopped-flag';
+export { default as isFetchingStagingSitesList } from './is-fetching-staging-sites-list';
+export { default as hasFetchedStagingSitesList } from './has-fetched-staging-sites-list';
+export { default as getBackupStagingSites } from './get-backup-staging-sites';
+export { default as getBackupStagingUpdateRequestStatus } from './get-backup-staging-update-status';
+export { default as isRequestingStagingSiteInfo } from './is-requesting-staging-site-info';
+export { default as hasFetchedStagingSiteInfo } from './has-fetched-staging-site-info';
+export { default as getBackupStagingSiteInfo } from './get-backup-staging-site-info';

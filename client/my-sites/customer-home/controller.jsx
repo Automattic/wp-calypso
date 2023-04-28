@@ -1,6 +1,8 @@
 import { isEcommerce } from '@automattic/calypso-products/src';
 import page from 'page';
+import { fetchLaunchpadChecklist } from 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist';
 import { fetchLaunchpad } from 'calypso/data/sites/use-launchpad';
+import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
@@ -9,7 +11,11 @@ import {
 	getSiteUrl,
 	getSitePlan,
 } from 'calypso/state/sites/selectors';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSiteSlug,
+	getSelectedSiteId,
+	getSelectedSite,
+} from 'calypso/state/ui/selectors';
 import { redirectToLaunchpad } from 'calypso/utils';
 import CustomerHome from './main';
 
@@ -37,14 +43,26 @@ export async function maybeRedirect( context, next ) {
 	}
 
 	const siteId = getSelectedSiteId( state );
+	const site = getSelectedSite( state );
+	const isSiteLaunched = site?.launch_status === 'launched' || false;
+
 	try {
-		const { launchpad_screen, site_intent } = await fetchLaunchpad( slug );
-		if ( launchpad_screen === 'full' ) {
+		const { launchpad_screen: launchpadScreenOption, site_intent: siteIntentOption } =
+			await fetchLaunchpad( slug );
+		// We can remove this fetchLaunchpadChecklist call once we add the checklist data into the launchpad endpoint
+		const { checklist: launchpadChecklist } = await fetchLaunchpadChecklist(
+			slug,
+			siteIntentOption
+		);
+		if (
+			launchpadScreenOption === 'full' &&
+			! areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched )
+		) {
 			// The new stepper launchpad onboarding flow isn't registered within the "page"
 			// client-side router, so page.redirect won't work. We need to use the
 			// traditional window.location Web API.
 			const verifiedParam = getQueryArgs()?.verified;
-			redirectToLaunchpad( slug, site_intent, verifiedParam );
+			redirectToLaunchpad( slug, siteIntentOption, verifiedParam );
 			return;
 		}
 	} catch ( error ) {}

@@ -34,6 +34,7 @@ export const PLAN_WOOEXPRESS_SMALL = 'wooexpress-small-bundle-yearly';
 export const PLAN_WOOEXPRESS_SMALL_MONTHLY = 'wooexpress-small-bundle-monthly';
 export const PLAN_WOOEXPRESS_MEDIUM = 'wooexpress-medium-bundle-yearly';
 export const PLAN_WOOEXPRESS_MEDIUM_MONTHLY = 'wooexpress-medium-bundle-monthly';
+export const PLAN_WOOEXPRESS_PLUS = 'wooexpress-plus'; // Not a real plan;
 export const PLAN_ECOMMERCE_3_YEARS = 'ecommerce-bundle-3y';
 export const PLAN_FREE = 'free_plan';
 export const PLAN_HOST_BUNDLE = 'host-bundle';
@@ -45,6 +46,7 @@ export const PLAN_P2_FREE = 'p2_free_plan'; // Not a real plan; it's a renamed W
 export const PLAN_WPCOM_FLEXIBLE = 'wpcom-flexible'; // Not a real plan; it's a renamed WP.com Free for the plans overhaul.
 export const PLAN_WPCOM_PRO = 'pro-plan';
 export const PLAN_WPCOM_PRO_MONTHLY = 'pro-plan-monthly';
+export const PLAN_WPCOM_PRO_2_YEARS = 'pro-plan-2y';
 export const PLAN_WPCOM_STARTER = 'starter-plan';
 export const PLAN_ENTERPRISE_GRID_WPCOM = 'plan-enterprise-grid-wpcom'; // Not a real plan; we show the VIP section in the plans grid as part of pdgrnI-1Qp-p2.
 
@@ -78,10 +80,14 @@ export const WPCOM_PLANS = <const>[
 	PLAN_WPCOM_FLEXIBLE,
 	PLAN_WPCOM_PRO,
 	PLAN_WPCOM_PRO_MONTHLY,
+	PLAN_WPCOM_PRO_2_YEARS,
 	PLAN_WPCOM_STARTER,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_WOOEXPRESS_MEDIUM,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOOEXPRESS_PLUS,
 ];
 
 export const WPCOM_MONTHLY_PLANS = <const>[
@@ -91,9 +97,19 @@ export const WPCOM_MONTHLY_PLANS = <const>[
 	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE_TRIAL_MONTHLY,
 	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOOEXPRESS_PLUS,
 	PLAN_WPCOM_PRO_MONTHLY,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	PLAN_FREE,
+];
+
+export const WOO_EXPRESS_PLANS = <const>[
+	PLAN_WOOEXPRESS_MEDIUM,
+	PLAN_WOOEXPRESS_MEDIUM_MONTHLY,
+	PLAN_WOOEXPRESS_SMALL,
+	PLAN_WOOEXPRESS_SMALL_MONTHLY,
+	PLAN_WOOEXPRESS_PLUS,
 ];
 
 export const WPCOM_DIFM_LITE = 'wp_difm_lite';

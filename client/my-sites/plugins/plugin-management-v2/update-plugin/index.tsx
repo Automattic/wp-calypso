@@ -11,16 +11,16 @@ import getSites from 'calypso/state/selectors/get-sites';
 import PluginActionStatus from '../plugin-action-status';
 import { getAllowedPluginActions } from '../utils/get-allowed-plugin-actions';
 import { getPluginActionStatuses } from '../utils/get-plugin-action-statuses';
-import type { Plugin } from '../types';
+import type { PluginComponentProps } from '../types';
 import type { SiteDetails } from '@automattic/data-stores';
 
 import './style.scss';
 
 interface Props {
-	plugin: Plugin;
+	plugin: PluginComponentProps;
 	selectedSite?: SiteDetails;
 	className?: string;
-	updatePlugin?: ( plugin: Plugin ) => void;
+	updatePlugin?: ( plugin: PluginComponentProps ) => void;
 }
 
 export default function UpdatePlugin( { plugin, selectedSite, className, updatePlugin }: Props ) {
@@ -28,13 +28,13 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 	const allSites = useSelector( getSites );
 	const state = useSelector( ( state ) => state );
 
-	const getPluginSites = ( plugin: Plugin ) => {
+	const getPluginSites = ( plugin: PluginComponentProps ) => {
 		return Object.keys( plugin.sites ).map( ( siteId ) => {
 			const site = allSites.find( ( s ) => s?.ID === parseInt( siteId ) );
 			return {
 				...site,
 				...plugin.sites[ siteId ],
-			};
+			} as any; // This must be cast as any until this file is updated to work with the selectors in state/plugins/installed/selectors
 		} );
 	};
 
@@ -141,7 +141,7 @@ export default function UpdatePlugin( { plugin, selectedSite, className, updateP
 					borderless
 					compact
 				>
-					{ translate( '{{span}}Update to {{/span}} %s', {
+					{ translate( '{{span}}Update to {{/span}}%s', {
 						components: {
 							span: <span />,
 						},

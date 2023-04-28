@@ -17,12 +17,12 @@ import {
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
-	PRODUCT_JETPACK_SOCIAL_ADVANCED,
-	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	PRODUCT_JETPACK_SOCIAL_BASIC,
 	PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY,
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 } from './jetpack';
 
 export const FEATURE_WP_SUBDOMAIN = 'wordpress-subdomain';
@@ -54,6 +54,7 @@ export const FEATURE_CLOUDFLARE_ANALYTICS = 'cloudflare-analytics';
 export const FEATURE_GOOGLE_MY_BUSINESS = 'google-my-business';
 export const FEATURE_SFTP = 'sftp';
 export const FEATURE_SSH = 'ssh';
+export const FEATURE_SITE_STAGING_SITES = 'staging-sites';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
@@ -309,6 +310,25 @@ export const FEATURE_DEV_TOOLS = 'dev-tools';
 export const FEATURE_WP_UPDATES = 'wp-updates';
 export const FEATURE_MULTI_SITE = 'multi-site';
 export const FEATURE_SELL_SHIP = 'sell-ship';
+export const FEATURE_SELL_INTERNATIONALLY = 'sell-internationally';
+export const FEATURE_AUTOMATIC_SALES_TAX = 'automatic-sales-tax';
+export const FEATURE_AUTOMATED_BACKUPS_SECURITY_SCAN = 'automated-backups-security-scan';
+export const FEATURE_INTEGRATED_SHIPMENT_TRACKING = 'integrated-shipment-tracking';
+export const FEATURE_SELL_EGIFTS_AND_VOUCHERS = 'sell-e-gifts-and-vouchers';
+export const FEATURE_EMAIL_MARKETING = 'email-marketing';
+export const FEATURE_MARKETPLACE_SYNC_SOCIAL_MEDIA_INTEGRATION =
+	'marketplace-sync-social-media-integration';
+export const FEATURE_BACK_IN_STOCK_NOTIFICATIONS = 'back-in-stock-notifications';
+export const FEATURE_MARKETING_AUTOMATION = 'marketing-automation';
+export const FEATURE_AUTOMATED_EMAIL_TRIGGERS = 'automated-email-triggers';
+export const FEATURE_CART_ABANDONMENT_EMAILS = 'cart-abandonment-emails';
+export const FEATURE_REFERRAL_PROGRAMS = 'referral-programs';
+export const FEATURE_CUSTOMER_BIRTHDAY_EMAILS = 'customer-birthday-emails';
+export const FEATURE_LOYALTY_POINTS_PROGRAMS = 'loyalty-points-programs';
+export const FEATURE_OFFER_BULK_DISCOUNTS = 'offer-bulk-discounts';
+export const FEATURE_RECOMMEND_ADD_ONS = 'recommend-add-ons';
+export const FEATURE_ASSEMBLED_PRODUCTS_AND_KITS = 'assembled-products-and-kits';
+export const FEATURE_MIN_MAX_ORDER_QUANTITY = 'min-max-order-quantity';
 export const FEATURE_CUSTOM_STORE = 'custom-store';
 export const FEATURE_INVENTORY = 'inventory';
 export const FEATURE_CHECKOUT = 'checkout-v1';
@@ -318,6 +338,7 @@ export const FEATURE_EXTENSIONS = 'extensions-v1';
 export const FEATURE_STATS_JP = 'stats-jp';
 export const FEATURE_SPAM_JP = 'spam-jp';
 export const FEATURE_LTD_SOCIAL_MEDIA_JP = 'ltd-social-media-jp';
+export const FEATURE_SHARES_SOCIAL_MEDIA_JP = 'shares-social-media-jp';
 export const FEATURE_CONTACT_FORM_JP = 'contact-form-jp';
 export const FEATURE_PAID_SUBSCRIBERS_JP = 'paid-subscribers-jp';
 export const FEATURE_VIDEOPRESS_JP = 'videopress-jp';
@@ -332,3 +353,30 @@ export const FEATURE_PLUGIN_AUTOUPDATE_JP = 'plugin-autoupdate-jp';
 export const FEATURE_PREMIUM_CONTENT_JP = 'premium-content-jp';
 export const FEATURE_SITE_ACTIVITY_LOG_JP = 'site-activity-log-jp';
 export const FEATURE_AUTOMATTIC_DATACENTER_FAILOVER = 'automattic-datacenter-fail-over';
+
+// Woo Express Features
+export const FEATURE_WOOCOMMERCE_STORE = 'woocommerce-store'; // WooCommerce store
+export const FEATURE_WOOCOMMERCE_MOBILE_APP = 'woocommerce-mobile-app'; // WooCommerce mobile app
+export const FEATURE_WORDPRESS_CMS = 'wordpress-cms'; // WordPress CMS
+export const FEATURE_WORDPRESS_MOBILE_APP = 'wordpress-mobile-app'; // WordPress mobile app
+export const FEATURE_FREE_SSL_CERTIFICATE = 'free-ssl-certificate'; // Free SSL certificate
+export const FEATURE_GOOGLE_ANALYTICS_V3 = 'google-analytics-v3'; // Google Analytics
+export const FEATURE_LIST_UNLIMITED_PRODUCTS = 'list-unlimited-products'; // List unlimited products
+export const FEATURE_GIFT_CARDS = 'gift-cards'; // Gift cards
+export const FEATURE_PRODUCT_BUNDLES = 'product-bundles'; // Product bundles
+export const FEATURE_CUSTOM_PRODUCT_KITS = 'custom-product-kits'; // Custom product kits
+export const FEATURE_LIST_PRODUCTS_BY_BRAND = 'list-products-by-brand'; // List products by brand
+export const FEATURE_PRODUCT_RECOMMENDATIONS = 'product-recommendations'; // Product recommendations
+export const FEATURE_INTEGRATED_PAYMENTS = 'integrated-payments'; // Integrated payments
+export const FEATURE_INTERNATIONAL_PAYMENTS = 'international-payments'; // International payments
+export const FEATURE_AUTOMATED_SALES_TAXES = 'automated-sales-taxes'; // Automated sales taxes
+export const FEATURE_ACCEPT_LOCAL_PAYMENTS = 'accept-local-payments'; // Accept local payments
+export const FEATURE_PROMOTE_ON_TIKTOK = 'promote-on-tiktok'; // Promote on TikTok
+export const FEATURE_SYNC_WITH_PINTEREST = 'sync-with-pinterest'; // Sync with Pinterest
+export const FEATURE_CONNECT_WITH_FACEBOOK = 'connect-with-facebook'; // Connect with Facebook
+export const FEATURE_ABANDONED_CART_RECOVERY = 'abandoned-cart-recovery'; // Abandoned cart recovery
+export const FEATURE_ADVERTISE_ON_GOOGLE = 'advertise-on-google'; // Advertise on Google
+export const FEATURE_CUSTOM_ORDER_EMAILS = 'custom-order-emails'; // Custom order emails
+export const FEATURE_LIVE_SHIPPING_RATES = 'live-shipping-rates'; // Live shipping rates
+export const FEATURE_DISCOUNTED_SHIPPING = 'discounted-shipping'; // Discounted shipping
+export const FEATURE_PRINT_SHIPPING_LABELS = 'print-shipping-labels'; // Print shipping labels

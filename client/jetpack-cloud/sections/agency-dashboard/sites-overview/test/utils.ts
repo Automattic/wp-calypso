@@ -3,6 +3,7 @@
  */
 
 import { translate } from 'i18n-calypso';
+import { site } from '../test/test-utils/constants';
 import * as utils from '../utils';
 import type { SiteData, Site } from '../types';
 
@@ -26,68 +27,18 @@ describe( 'utils', () => {
 	describe( '#getRowMetaData()', () => {
 		const scanThreats = 4;
 		const pluginUpdates = [ 'plugin-1', 'plugin-2', 'plugin-3' ];
-		const siteUrl = 'test.jurassic.ninja';
-		const siteObj: Site = {
-			blog_id: 1234,
-			url: 'test.jurassic.ninja',
-			url_with_scheme: 'https://test.jurassic.ninja/',
-			monitor_active: false,
-			monitor_site_status: false,
-			has_scan: true,
-			has_backup: false,
-			latest_scan_threats_found: [],
-			latest_backup_status: '',
-			is_connection_healthy: true,
-			awaiting_plugin_updates: [],
-			is_favorite: false,
-			monitor_last_status_change: '2020-12-01T00:00:00+00:00',
-			monitor_settings: {
-				monitor_active: false,
-				monitor_site_status: false,
-				last_down_time: '',
-				monitor_deferment_time: 5,
-				monitor_user_emails: [],
-				monitor_user_email_notifications: true,
-				monitor_user_wp_note_notifications: true,
-			},
-			site_stats: {
-				views: {
-					total: 0,
-					trend: 'up',
-					trend_change: 0,
-				},
-				visitors: {
-					total: 0,
-					trend: 'up',
-					trend_change: 0,
-				},
-			},
-			jetpack_boost_scores: {
-				overall: 100,
-				mobile: 50,
-				desktop: 50,
-			},
-		};
+		const siteObj: Site = site;
 		const rows: SiteData = {
 			site: {
 				value: siteObj,
 				error: false,
 				type: 'site',
-				status: '',
-			},
-			boost: {
-				type: 'boost',
 				status: 'active',
-				data: {
-					desktop: 100,
-					mobile: 100,
-					overall: 100,
-				},
 			},
 			backup: {
 				type: 'backup',
 				value: translate( 'Failed' ),
-				status: 'failed',
+				status: 'critical',
 			},
 			monitor: {
 				error: false,
@@ -126,29 +77,27 @@ describe( 'utils', () => {
 		test( 'should return the meta data for the feature type', () => {
 			const { getRowMetaData } = utils;
 			let isLargeScreen = true;
-			expect( getRowMetaData( rows, 'site', isLargeScreen ).row.value.url ).toEqual( siteUrl );
+			expect( getRowMetaData( rows, 'site', isLargeScreen ).row.value.url ).toEqual( site.url );
 
 			const expectedBackupValue = {
 				eventName: 'calypso_jetpack_agency_dashboard_backup_failed_click_large_screen',
 				isExternalLink: false,
-				link: `/backup/${ siteUrl }`,
+				link: `/backup/${ site.url }`,
 				row: rows.backup,
 				siteDown: false,
-				siteError: false,
 				tooltip: 'Latest backup failed',
-				tooltipId: '1234-backup',
+				tooltipId: `${ site.blog_id }-backup`,
 			};
 			expect( getRowMetaData( rows, 'backup', isLargeScreen ) ).toEqual( expectedBackupValue );
 
 			const expectedScanValue = {
 				eventName: 'calypso_jetpack_agency_dashboard_scan_threats_click_large_screen',
 				isExternalLink: false,
-				link: `/scan/${ siteUrl }`,
+				link: `/scan/${ site.url }`,
 				row: rows.scan,
 				siteDown: false,
-				siteError: false,
 				tooltip: 'Potential threats found',
-				tooltipId: '1234-scan',
+				tooltipId: `${ site.blog_id }-scan`,
 			};
 			expect( getRowMetaData( rows, 'scan', isLargeScreen ) ).toEqual( expectedScanValue );
 
@@ -156,26 +105,46 @@ describe( 'utils', () => {
 			const expectedMonitorValue = {
 				eventName: 'calypso_jetpack_agency_dashboard_monitor_site_down_click_small_screen',
 				isExternalLink: true,
-				link: `https://jptools.wordpress.com/debug/?url=${ siteUrl }`,
+				link: `https://jptools.wordpress.com/debug/?url=${ site.url }`,
 				row: rows.monitor,
 				siteDown: false,
-				siteError: false,
 				tooltip: 'Site appears to be offline',
-				tooltipId: '1234-monitor',
+				tooltipId: `${ site.blog_id }-monitor`,
 			};
 			expect( getRowMetaData( rows, 'monitor', isLargeScreen ) ).toEqual( expectedMonitorValue );
 
 			const expectedPluginValue = {
 				eventName: 'calypso_jetpack_agency_dashboard_update_plugins_click_small_screen',
 				isExternalLink: true,
-				link: `https://wordpress.com/plugins/updates/${ siteUrl }`,
+				link: `https://wordpress.com/plugins/updates/${ site.url }`,
 				row: rows.plugin,
 				siteDown: false,
-				siteError: false,
 				tooltip: 'Plugin updates are available',
-				tooltipId: '1234-plugin',
+				tooltipId: `${ site.blog_id }-plugin`,
 			};
 			expect( getRowMetaData( rows, 'plugin', isLargeScreen ) ).toEqual( expectedPluginValue );
+
+			const expectedStatsValue = {
+				eventName: undefined,
+				isExternalLink: false,
+				link: '',
+				row: rows.stats,
+				siteDown: false,
+				tooltip: undefined,
+				tooltipId: `${ site.blog_id }-stats`,
+			};
+			expect( getRowMetaData( rows, 'stats', isLargeScreen ) ).toEqual( expectedStatsValue );
+
+			const expectedBoostValue = {
+				eventName: undefined,
+				isExternalLink: false,
+				link: '',
+				row: rows.boost,
+				siteDown: false,
+				tooltip: undefined,
+				tooltipId: `${ site.blog_id }-boost`,
+			};
+			expect( getRowMetaData( rows, 'boost', isLargeScreen ) ).toEqual( expectedBoostValue );
 		} );
 	} );
 
@@ -226,7 +195,7 @@ describe( 'utils', () => {
 				{
 					site: {
 						error: true,
-						status: '',
+						status: 'active',
 						type: 'site',
 						value: sites[ 0 ],
 					},
@@ -269,6 +238,187 @@ describe( 'utils', () => {
 					},
 				},
 			] );
+		} );
+	} );
+
+	describe( 'getSiteCountText', () => {
+		const { getSiteCountText } = utils;
+		it( 'should return null when given an empty array of sites', () => {
+			const sites: Site[] = [];
+			const result = getSiteCountText( sites );
+			expect( result ).toBeNull();
+		} );
+
+		it( 'should return the URL of a single site', () => {
+			const sites: Site[] = [ site ];
+			const result = getSiteCountText( sites );
+			expect( result ).toEqual( site.url );
+		} );
+
+		it( 'should return the correct text for multiple sites', () => {
+			const sites: Site[] = [
+				{ ...site, blog_id: 1 },
+				{ ...site, blog_id: 2 },
+			];
+			const result = getSiteCountText( sites );
+			expect( result ).toEqual( '2 sites' );
+		} );
+	} );
+
+	describe( 'getBoostRating', () => {
+		const { getBoostRating, BOOST_THRESHOLDS: thresholds } = utils;
+
+		it( 'should return the correct rating for a high boost score', () => {
+			const boostScore = 95;
+			const expectedRating = 'A';
+			const result = getBoostRating( boostScore );
+			expect( result ).toEqual( expectedRating );
+		} );
+
+		it( 'should return the correct rating for a moderate boost score', () => {
+			const boostScore = 60;
+			const expectedRating = 'C';
+			const result = getBoostRating( boostScore );
+			expect( result ).toEqual( expectedRating );
+		} );
+
+		it( 'should return the correct rating for a low boost score', () => {
+			const boostScore = 10;
+			const expectedRating = 'F';
+			const result = getBoostRating( boostScore );
+			expect( result ).toEqual( expectedRating );
+		} );
+
+		it( 'should return the correct rating for each threshold value', () => {
+			thresholds.forEach( ( { threshold, rating } ) => {
+				const result = getBoostRating( threshold + 1 );
+				expect( result ).toEqual( rating );
+			} );
+		} );
+	} );
+
+	describe( 'getBoostRatingClass', () => {
+		const { getBoostRatingClass } = utils;
+		it( 'should return "boost-score-good" for a high boost score', () => {
+			const boostScore = 80;
+			const expectedClass = 'boost-score-good';
+			const result = getBoostRatingClass( boostScore );
+			expect( result ).toEqual( expectedClass );
+		} );
+
+		it( 'should return "boost-score-okay" for a moderate boost score', () => {
+			const boostScore = 40;
+			const expectedClass = 'boost-score-okay';
+			const result = getBoostRatingClass( boostScore );
+			expect( result ).toEqual( expectedClass );
+		} );
+
+		it( 'should return "boost-score-bad" for a low boost score', () => {
+			const boostScore = 10;
+			const expectedClass = 'boost-score-bad';
+			const result = getBoostRatingClass( boostScore );
+			expect( result ).toEqual( expectedClass );
+		} );
+	} );
+
+	describe( 'extractBackupTextValues', () => {
+		const { extractBackupTextValues } = utils;
+
+		it( 'should extract values for multiple keys from a string', () => {
+			const str = '1 theme, 2 posts and 5 pages';
+			const expectedValues = { post: 2, page: 5, theme: 1 };
+			const result = extractBackupTextValues( str );
+			expect( result ).toEqual( expectedValues );
+		} );
+
+		it( 'should handle singular and plural forms correctly', () => {
+			const str = '1 post and 3 pages';
+			const expectedValues = { post: 1, page: 3 };
+			const result = extractBackupTextValues( str );
+			expect( result ).toEqual( expectedValues );
+		} );
+
+		it( 'should return an empty object for a string without values', () => {
+			const str = '';
+			const expectedValues = {};
+			const result = extractBackupTextValues( str );
+			expect( result ).toEqual( expectedValues );
+		} );
+	} );
+
+	describe( 'getExtractedBackupTitle', () => {
+		const { getExtractedBackupTitle } = utils;
+
+		let backup: { activityTitle: string; activityDescription: any };
+
+		beforeEach( () => {
+			// Reset backup before each test
+			backup = {
+				activityTitle: 'Backup title',
+				activityDescription: [ { children: [ { text: '' } ] } ],
+			};
+		} );
+
+		it( 'should return the backup title when backupText is empty', () => {
+			backup.activityTitle = 'Backup title';
+			const expectedTitle = 'Backup title';
+			const result = getExtractedBackupTitle( backup );
+			expect( result ).toEqual( expectedTitle );
+		} );
+
+		it( 'should extract and format post and page counts from backupText', () => {
+			backup.activityDescription = [ { children: [ { text: '3 posts and 1 page' } ] } ];
+			const expectedTitle = '3 posts, 1 page';
+			const result = getExtractedBackupTitle( backup );
+			expect( result ).toEqual( expectedTitle );
+		} );
+
+		it( 'should handle missing post and page counts', () => {
+			backup.activityDescription = [ { children: [ { text: '3 pages' } ] } ];
+			let result = getExtractedBackupTitle( backup );
+			expect( result ).toEqual( '3 pages' );
+
+			backup.activityDescription = [ { children: [ { text: '5 posts' } ] } ];
+			result = getExtractedBackupTitle( backup );
+			expect( result ).toEqual( '5 posts' );
+		} );
+	} );
+
+	describe( 'getMonitorDowntimeText', () => {
+		const { getMonitorDowntimeText } = utils;
+		it( 'should return "Downtime" when given undefined downtime', () => {
+			const downtime = undefined;
+			const expectedText = 'Downtime';
+			const result = getMonitorDowntimeText( downtime );
+			expect( result ).toEqual( expectedText );
+		} );
+
+		it( 'should return the correct text for a high downtime value for 1 day', () => {
+			const downtime = 1440;
+			const expectedText = 'Downtime for 1d';
+			const result = getMonitorDowntimeText( downtime );
+			expect( result ).toEqual( expectedText );
+		} );
+
+		it( 'should return the correct text for a moderate downtime value only in hours', () => {
+			const downtime = 120;
+			const expectedText = 'Downtime for 2h';
+			const result = getMonitorDowntimeText( downtime );
+			expect( result ).toEqual( expectedText );
+		} );
+
+		it( 'should return the correct text for a moderate downtime value in hours and min', () => {
+			const downtime = 150;
+			const expectedText = 'Downtime for 2h 30m';
+			const result = getMonitorDowntimeText( downtime );
+			expect( result ).toEqual( expectedText );
+		} );
+
+		it( 'should return the correct text for a low downtime value', () => {
+			const downtime = 20;
+			const expectedText = 'Downtime for 20m';
+			const result = getMonitorDowntimeText( downtime );
+			expect( result ).toEqual( expectedText );
 		} );
 	} );
 } );

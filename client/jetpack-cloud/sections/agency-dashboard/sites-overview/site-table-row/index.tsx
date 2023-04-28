@@ -1,6 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
-import { Button } from '@automattic/components';
-import { Icon, chevronDown, chevronUp } from '@wordpress/icons';
 import classNames from 'classnames';
 import { Fragment } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,34 +11,34 @@ import { getIsPartnerOAuthTokenLoaded } from 'calypso/state/partner-portal/partn
 import SiteActions from '../site-actions';
 import SiteErrorContent from '../site-error-content';
 import SiteExpandedContent from '../site-expanded-content';
+import SitePhpVersion from '../site-expanded-content/site-php-version';
 import SiteStatusContent from '../site-status-content';
+import SiteTableExpand from '../site-table-expand';
 import type { SiteData, SiteColumns } from '../types';
 
 import './style.scss';
 
 interface Props {
+	index: number;
 	columns: SiteColumns;
 	item: SiteData;
 	setExpanded: () => void;
 	isExpanded: boolean;
 }
 
-export default function SiteTableRow( { columns, item, setExpanded, isExpanded }: Props ) {
+export default function SiteTableRow( { index, columns, item, setExpanded, isExpanded }: Props ) {
 	const dispatch = useDispatch();
 
 	const site = item.site;
 	const blogId = site.value.blog_id;
 	const isConnectionHealthy = site.value?.is_connection_healthy;
-	const siteError = site.error || item.monitor.error;
 	const isFavorite = item.isFavorite;
 
 	const isPartnerOAuthTokenLoaded = useSelector( getIsPartnerOAuthTokenLoaded );
 	const selectedLicenses = useSelector( getSelectedLicenses );
 	const selectedLicensesSiteId = useSelector( getSelectedLicensesSiteId );
 
-	const { data } = useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
-
-	const isSiteConnected = data ? data.connected : true;
+	useFetchTestConnection( isPartnerOAuthTokenLoaded, isConnectionHealthy, blogId );
 
 	const currentSiteHasSelectedLicenses =
 		selectedLicensesSiteId === blogId && selectedLicenses?.length;
@@ -50,9 +47,8 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 	const shouldDisableLicenseSelection =
 		selectedLicenses?.length && ! currentSiteHasSelectedLicenses;
 
-	const hasSiteError = site.error || ! isSiteConnected;
-
-	const isExpandedContentEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
+	const hasSiteConnectionError = ! item.site.value.is_connected;
+	const siteError = item.monitor.error || hasSiteConnectionError;
 
 	return (
 		<Fragment>
@@ -60,7 +56,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 				className={ classNames( 'site-table__table-row', {
 					'site-table__table-row-disabled': shouldDisableLicenseSelection,
 					'site-table__table-row-active': currentSiteHasSelectedLicenses,
-					'site-table__table-row-site-error': hasSiteError,
+					'site-table__table-row-site-error': hasSiteConnectionError,
 					'is-expanded': isExpanded,
 				} ) }
 				onClick={ ( event ) => {
@@ -75,7 +71,7 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 			>
 				{ columns.map( ( column ) => {
 					const row = item[ column.key ];
-					if ( hasSiteError && column.key !== 'site' ) {
+					if ( hasSiteConnectionError && column.key !== 'site' ) {
 						return null;
 					}
 					const isCritical = 'critical' === row.status;
@@ -93,17 +89,17 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 									type={ row.type }
 									isLargeScreen
 									isFavorite={ isFavorite }
+									siteError={ hasSiteConnectionError }
 								/>
 							</td>
 						);
 					}
 				} ) }
 				{ /* Show error content when there is a site error */ }
-				{ hasSiteError && (
+				{ hasSiteConnectionError && (
 					<td
-						className={ classNames( 'site-table__error', {
+						className={ classNames( 'site-table__error padding-0', {
 							'site-table__td-without-border-bottom': isExpanded,
-							'padding-0': isExpandedContentEnabled,
 						} ) }
 						// If there is an error, we need to span the whole row because we don't show any column.
 						colSpan={ columns.length - 1 }
@@ -112,33 +108,25 @@ export default function SiteTableRow( { columns, item, setExpanded, isExpanded }
 					</td>
 				) }
 				<td
-					className={ classNames( 'site-table__actions', {
+					className={ classNames( 'site-table__actions site-table__actions-button', {
 						'site-table__td-without-border-bottom': isExpanded,
-						'site-table__actions-button': isExpandedContentEnabled,
 					} ) }
-					// If there is an error, we need to span the whole row because we don't show the expand buttons.
-					colSpan={ hasSiteError && isExpandedContentEnabled ? 2 : 1 }
 				>
 					<SiteActions isLargeScreen site={ site } siteError={ siteError } />
 				</td>
-				{ /* Show expand buttons only when the feature is enabled and there is no site error. */ }
-				{ ! hasSiteError && isExpandedContentEnabled && (
-					<td
-						className={ classNames( 'site-table__actions site-table__expand-row', {
-							'site-table__td-without-border-bottom': isExpanded,
-						} ) }
-					>
-						<Button className="site-table__expandable-button" borderless onClick={ setExpanded }>
-							<Icon icon={ isExpanded ? chevronUp : chevronDown } />
-						</Button>
-					</td>
-				) }
+				<SiteTableExpand
+					index={ index }
+					isExpanded={ isExpanded }
+					setExpanded={ setExpanded }
+					siteId={ site.value.blog_id }
+				/>
 			</tr>
 			{ /* Show expanded content when expandable block is enabled. */ }
 			{ isExpanded && (
 				<tr className="site-table__table-row-expanded">
 					<td colSpan={ Object.keys( item ).length + 1 }>
-						<SiteExpandedContent site={ site.value } />
+						<SiteExpandedContent site={ site.value } hasError={ siteError } />
+						<SitePhpVersion phpVersion={ site.value.php_version_num } />
 					</td>
 				</tr>
 			) }

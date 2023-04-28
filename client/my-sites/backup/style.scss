@@ -70,6 +70,27 @@
 	}
 }
 
+.backup__header {
+	display: flex;
+	margin-bottom: 32px;
+}
+
+.backup__header-left {
+	text-align: left;
+	flex-grow: 1;
+}
+
+.backup__header-right {
+	text-align: right;
+	margin-top: 8px;
+}
+
+.backup__header-title {
+	font-size: $font-title-large;
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+
 .backup__restore-banner {
 	width: 100%;
 
@@ -79,6 +100,21 @@
 
 	@include breakpoint-deprecated( "<480px" ) {
 		margin-bottom: 16px;
+	}
+}
+
+.backup__agencies-survey-banner {
+	&.banner.card {
+		border-left-color: var(--color-jetpack);
+
+		.banner__icon-circle {
+			background-color: var(--color-jetpack);
+		}
+
+		.banner__icon-circle > img {
+			width: 19px;
+			height: 19px;
+		}
 	}
 }
 
@@ -164,4 +200,11 @@
 			@include banner-color( var( --color-accent ) );
 		}
 	}
+}
+
+.backup__clone-button .components-tooltip .components-popover__content {
+	background-color: #50575e;
+	width: 168px;
+	white-space: normal;
+	text-align: left;
 }

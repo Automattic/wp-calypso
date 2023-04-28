@@ -32,6 +32,11 @@ export interface CurrentUser {
 	 * The user's existing sites count.
 	 */
 	site_count: number;
+
+	/**
+	 * The subkey for Subscription Management
+	 */
+	subscriptionManagementSubkey?: string;
 }
 
 export interface NewUser {

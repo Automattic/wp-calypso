@@ -21,6 +21,10 @@ import {
 	getBasicCart,
 	mockMatchMediaOnWindow,
 	mockGetVatInfoEndpoint,
+	countryList,
+	mockLogStashEndpoint,
+	mockGetSupportedCountriesEndpoint,
+	mockGetPaymentMethodsEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -62,8 +66,10 @@ describe( 'Checkout contact step', () => {
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
 		nock.cleanAll();
-		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
 		mockGetVatInfoEndpoint( {} );
+		mockGetPaymentMethodsEndpoint( [] );
+		mockLogStashEndpoint();
+		mockGetSupportedCountriesEndpoint( countryList );
 	} );
 
 	it( 'does not complete the contact step when the contact step button has not been clicked and there are no cached details', async () => {
@@ -166,12 +172,6 @@ describe( 'Checkout contact step', () => {
 				country_code: 'US',
 				email: 'test@example.com',
 			};
-			nock.cleanAll();
-			nock( 'https://public-api.wordpress.com' )
-				.persist()
-				.post( '/rest/v1.1/logstash' )
-				.reply( 200 );
-			mockGetVatInfoEndpoint( {} );
 
 			const messages = ( () => {
 				if ( valid === 'valid' ) {

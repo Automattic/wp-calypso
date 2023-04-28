@@ -1,5 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
 import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
-import { useQuery } from 'react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 export type SupportArticleResult = {
@@ -14,7 +14,7 @@ export function useSibylQuery( query: string, isJetpackSite: boolean, isAtomic: 
 	const site = ! isJetpackSite || isAtomic ? 'wpcom' : 'jpop';
 
 	return useQuery< SupportArticleResult[] >(
-		query,
+		[ query ],
 		async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {

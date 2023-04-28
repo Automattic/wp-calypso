@@ -1,0 +1,50 @@
+@import "../styles/typography.scss";
+@import "./variables.scss";
+
+$modules-gap :24px;
+
+.stats-widget-modules {
+	margin-top: 24px;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	column-gap: $modules-gap;
+
+	@media only screen and (max-width: $break-dashboard-mobile) {
+		grid-template-columns: auto;
+		grid-template-rows: repeat(2, 1fr);
+		row-gap: $modules-gap;
+	}
+}
+
+.stats-widget-module__icon {
+	margin-bottom: 16px;
+}
+
+.stats-widget-module__title {
+	font-family: $font-sf-pro-text;
+	font-weight: 500;
+	font-size: $font-body-small;
+	line-height: 20px;
+	letter-spacing: -0.24px;
+}
+
+.stats-widget-module__value {
+	margin-top: 4px;
+	font-family: $font-sf-pro-display;
+	font-weight: 400;
+	font-size: $font-headline-small;
+	line-height: 1;
+	letter-spacing: -0.02em;
+}
+
+.stats-widget-module__info {
+	margin-top: 16px;
+	button {
+		@include emerald-button-style;
+	}
+
+	a {
+		font-size: $font-body-extra-small;
+		line-height: 0.5;
+	}
+}

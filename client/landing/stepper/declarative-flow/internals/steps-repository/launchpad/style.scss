@@ -28,12 +28,19 @@
 		}
 	}
 
+	.step-container__content {
+		@include break-large {
+			height: 100vh;
+		}
+	}
+
 	.button.is-borderless.navigation-link {
 		color: var(--studio-gray-100);
 	}
 }
 
 .launchpad__container {
+	height: 100%;
 	display: flex;
 	flex-direction: column;
 }
@@ -102,6 +109,7 @@
 	flex-direction: column;
 
 	@include break-large {
+		height: 100%;
 		flex-direction: row;
 	}
 }
@@ -110,14 +118,14 @@
 
 .launchpad__sidebar {
 	max-width: 100%;
-	margin: 24px 16px 32px;
+	margin: 0 16px 32px;
 	display: flex;
 	flex-direction: column;
 
 	@include break-large {
 		max-width: 360px;
-		margin: 24px 20px 24px 24px;
-		height: 95vh;
+		margin: 0 20px 24px 24px;
+		gap: 80px;
 	}
 }
 
@@ -133,9 +141,9 @@
 }
 
 // Launchpad - Sidebar heading text
-
+.start-writing,
 .newsletter,
-.link-in-bio:not(.domains),
+.link-in-bio.launchpad,
 .link-in-bio-tld:not(.domains),
 .free,
 .build,
@@ -162,12 +170,8 @@
 
 .launchpad__sidebar-header {
 	display: flex;
-	margin-left: 8px;
-	margin-top: 4px;
-
-	@include break-large {
-		margin-left: 0;
-	}
+	padding-left: 24px;
+	padding-top: 28px;
 }
 
 .launchpad__sidebar-header-logo {
@@ -203,6 +207,8 @@
 
 	.launchpad__url-box-domain {
 		display: flex;
+		flex-direction: row;
+		align-items: center;
 		flex-grow: 1;
 		width: 0;
 	}
@@ -212,27 +218,21 @@
 		white-space: nowrap;
 		overflow: hidden;
 		padding: 4px 0;
-		padding-right: 12px;
+		padding-right: 8px;
 		letter-spacing: -0.24px;
 		font-size: $font-body-small;
 	}
 
 	.launchpad__url-box-domain:hover > .launchpad__clipboard-button {
-		position: inherit;
-		top: 0;
+		opacity: 1;
 	}
 
 	.launchpad__clipboard-button:focus {
-		position: inherit;
-		top: 0;
+		opacity: 1;
 	}
 
 	.launchpad__clipboard-button {
-		padding-left: 8px;
-		padding-right: 8px;
-		position: absolute;
-		top: -1000em;
-		min-width: 34px;
+		opacity: 0;
 	}
 }
 
@@ -242,16 +242,17 @@
 
 .launchpad__domain-notification {
 	display: flex;
-	margin-bottom: 16px;
+	gap: 8px;
+	font-size: 0.875rem;
+	margin-bottom: 36px;
 
-	@include break-large {
-		margin-bottom: 10px;
+	&-icon {
+		padding-top: 2px;
 	}
 }
 
 .launchpad__domain-checkmark-icon {
-	flex: 0 0 36px;
-	fill: var(--studio-green-40);
+	fill: var(--studio-green-50);
 }
 
 .launchpad__domain-upgrade-badge {
@@ -261,8 +262,12 @@
 
 }
 
+.start-writing .launchpad__sidebar-admin-link {
+	display: none;
+}
+
 .launchpad__sidebar-admin-link {
-	padding: 80px 20px 10px;
+	padding-left: 20px;
 	display: none;
 
 	.button.navigation-link {
@@ -451,7 +456,7 @@
 	flex-grow: 1;
 
 	@include break-large {
-		margin: 53px 20px 12px 20px;
+		margin: 0 20px 20px 20px;
 	}
 
 	.preview-toolbar__toolbar {
@@ -465,11 +470,11 @@
 	.web-preview__inner {
 		height: 680px;
 		@include break-large {
-			height: 867px;
+			height: 100%;
 		}
 	}
 
-	.launchpad__-web-preview.web-preview__inner.is-visible.is-phone.is-loaded {
+	.launchpad__-web-preview.web-preview__inner.is-visible.is-phone {
 		height: 680px;
 		@include break-large {
 			height: 767px;
@@ -591,15 +596,6 @@
 
 // Launchpad - Processing Screens
 .processing {
-	.wordpress-logo {
-		position: absolute;
-		inset-inline-start: 20px;
-		inset-block-start: 20px;
-		fill: var(--color-text);
-		stroke: var(--color-text);
-		transform-origin: 0 0;
-	}
-
 	.processing-step__progress-bar {
 		background-color: #fff;
 	}

@@ -3,11 +3,11 @@ import { dispatch, select } from '@wordpress/data-controls';
 import { __ } from '@wordpress/i18n';
 import { STORE_KEY as SITE_STORE } from '../site';
 import { CreateSiteParams, Visibility, NewSiteBlogDetails } from '../site/types';
-import { FeatureId } from '../wpcom-features/types';
 import { SiteGoal, STORE_KEY } from './constants';
 import { ProfilerData } from './types';
 import type { State } from '.';
 import type { DomainSuggestion } from '../domain-suggestions';
+import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -470,6 +470,11 @@ export const setProfilerData = ( profilerData: ProfilerData ) => ( {
 	profilerData,
 } );
 
+export const setPaidSubscribers = ( paidSubscribers: boolean ) => ( {
+	type: 'SET_PAID_SUBSCRIBERS' as const,
+	paidSubscribers,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -525,4 +530,5 @@ export type OnboardAction = ReturnType<
 	| typeof setProductCartItems
 	| typeof setPlanCartItem
 	| typeof setIsMigrateFromWp
+	| typeof setPaidSubscribers
 >;

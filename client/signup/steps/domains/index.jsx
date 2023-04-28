@@ -1,4 +1,4 @@
-import { VIDEOPRESS_FLOW, isWithThemeFlow } from '@automattic/onboarding';
+import { VIDEOPRESS_FLOW, isWithThemeFlow, isHostingFlow } from '@automattic/onboarding';
 import { isTailoredSignupFlow } from '@automattic/onboarding/src';
 import { localize } from 'i18n-calypso';
 import { defer, get, isEmpty } from 'lodash';
@@ -26,7 +26,6 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import wpcom from 'calypso/lib/wp';
@@ -142,13 +141,6 @@ class DomainsStep extends Component {
 				}
 			);
 		}
-
-		loadExperimentAssignment( 'paid_media_signup_2023_03_legacy_free_presentation' ).then(
-			( experimentName ) => {
-				this.setState( { experiment: experimentName } );
-				this.setState( { experimentIsLoading: false } );
-			}
-		);
 	}
 
 	getLocale() {
@@ -573,6 +565,11 @@ class DomainsStep extends Component {
 					isReskinned={ this.props.isReskinned }
 					reskinSideContent={ this.getSideContent() }
 					isInLaunchFlow={ 'launch-site' === this.props.flowName }
+					promptText={
+						this.isHostingFlow()
+							? this.props.translate( 'Stand out with a short and memorable domain' )
+							: undefined
+					}
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -627,6 +624,8 @@ class DomainsStep extends Component {
 		);
 	};
 
+	isHostingFlow = () => isHostingFlow( this.props.flowName );
+
 	getSubHeaderText() {
 		const { flowName, isAllDomains, siteType, stepSectionName, isReskinned, translate } =
 			this.props;
@@ -649,6 +648,23 @@ class DomainsStep extends Component {
 
 			return translate(
 				'Set your video site apart with a custom domain. Not sure yet? {{span}}Decide later{{/span}}.',
+				{ components }
+			);
+		}
+
+		if ( this.isHostingFlow() ) {
+			const components = {
+				span: (
+					<button
+						className="tailored-flow-subtitle__cta-text"
+						style={ { fontWeight: 500, fontSize: '1em', display: 'inline' } }
+						onClick={ () => this.handleSkip( undefined, true ) }
+					/>
+				),
+			};
+
+			return translate(
+				'Find the perfect domain for your exciting new project or {{span}}decide later{{/span}}.',
 				{ components }
 			);
 		}

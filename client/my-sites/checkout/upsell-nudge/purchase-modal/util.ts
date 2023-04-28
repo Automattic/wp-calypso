@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { errorNotice } from 'calypso/state/notices/actions';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
-import type { StoredCard } from 'calypso/my-sites/checkout/composite-checkout/types/stored-cards';
+import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 
 type SetStep = ( step: string ) => void;
 type OnClose = () => void;
@@ -15,7 +15,7 @@ export function useSubmitTransaction( {
 	setStep,
 	onClose,
 }: {
-	storedCard: StoredCard | undefined;
+	storedCard: StoredPaymentMethod | undefined;
 	setStep: SetStep;
 	onClose: OnClose;
 } ): SubmitTransactionFunction {

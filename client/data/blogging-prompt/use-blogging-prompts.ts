@@ -1,5 +1,5 @@
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import moment from 'moment';
-import { useQuery, UseQueryResult } from 'react-query';
 import wp from 'calypso/lib/wp';
 
 export interface BloggingPrompt {

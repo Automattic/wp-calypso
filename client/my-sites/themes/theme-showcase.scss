@@ -1,186 +1,13 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
-$theme-img-filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.05));
-
-body.is-section-themes {
+.is-section-themes {
 	&.theme-default.color-scheme {
 		--color-surface-backdrop: var(--studio-white);
 	}
 
 	.layout:not(.has-no-sidebar) .layout__content {
 		padding-top: var(--masterbar-height);
-	}
-
-	.themes__selection .themes-list .theme {
-		background: none;
-		border-radius: 2px;
-		box-shadow: none;
-		cursor: default;
-		margin: 0 16px 48px;
-
-		&.is-active {
-			.theme__info {
-				align-items: center;
-				background: var(--color-primary);
-				border-bottom-left-radius: 2px;
-				border-bottom-right-radius: 2px;
-				box-sizing: content-box;
-				flex-direction: row;
-				gap: 16px;
-				margin-top: 0;
-				padding: 8px 24px;
-			}
-
-			.theme__info-title {
-				color: var(--color-text-inverted);
-			}
-
-			.theme__more-button {
-				position: relative;
-
-				button {
-					color: var(--color-primary-10);
-					margin-top: -2px;
-				}
-			}
-		}
-
-		.theme__content {
-			overflow: visible;
-			padding: 0;
-		}
-
-		.theme__thumbnail {
-			cursor: pointer;
-		}
-
-		.theme__img {
-			aspect-ratio: 4/3;
-			border: 1px solid rgba(0, 0, 0, 0.1);
-			filter: $theme-img-filter;
-			padding: 0;
-			position: relative;
-		}
-
-		.theme__info {
-			align-items: flex-start;
-			background: transparent;
-			box-sizing: content-box;
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-			height: 48px;
-			gap: 4px;
-			margin-top: 16px;
-			position: relative;
-			text-rendering: optimizeLegibility;
-			-webkit-font-smoothing: antialiased;
-
-			&:not(.has-style-variations) {
-				.theme__more-button {
-					top: 0;
-				}
-			}
-		}
-
-		.theme__info-title {
-			color: var(--color-neutral-80);
-			font-size: 1rem;
-			font-weight: 500;
-			line-height: 24px;
-			margin: 0;
-			padding: 0;
-		}
-
-		.theme__upsell {
-			display: flex;
-			flex-basis: 100%;
-			font-size: 0;
-			line-height: 20px;
-			padding: 0;
-
-			.premium-badge,
-			.woocommerce-bundled-badge {
-				margin: 0;
-				vertical-align: middle;
-			}
-		}
-
-		.theme__info-upsell-description {
-			color: var(--color-neutral-60);
-			display: flex;
-			flex-basis: 100%;
-			font-size: 0.875rem;
-			line-height: 20px;
-		}
-
-		.theme__badge-active {
-			background-color: var(--color-primary-0);
-			border-radius: 20px; /* stylelint-disable-line scales/radii */
-			color: var(--color-neutral-100);
-			font-size: 0.75rem;
-			line-height: 20px;
-			padding: 0 10px;
-			text-transform: none;
-		}
-
-		.theme__info-style-variations {
-			align-items: center;
-			display: flex;
-			font-size: 0;
-			height: 24px;
-			gap: 4px;
-
-			.style-variation__badge-more-wrapper > * {
-				background: transparent;
-			}
-		}
-
-		.theme__more-button {
-			bottom: 0;
-			border: 0;
-			height: 20px;
-			position: absolute;
-			right: 0;
-
-			&:hover {
-				background-color: transparent;
-			}
-
-			button {
-				font-size: 0;
-				padding: 0;
-			}
-		}
-	}
-
-	.theme__upsell-popover {
-		svg {
-			height: inherit;
-			padding: 0;
-			transform: none;
-			width: inherit;
-		}
-
-		&.premium-badge {
-			svg {
-				height: initial;
-				width: initial;
-			}
-		}
-	}
-
-	.theme__upsell-popover.info-popover__tooltip {
-		.popover__inner {
-			background: #fff;
-			color: var(--color-neutral-50);
-			text-align: left;
-		}
-
-		.theme__upsell-header {
-			color: var(--color-neutral-100);
-		}
 	}
 }
 
@@ -215,8 +42,10 @@ body.is-section-themes {
 		}
 
 		.page-sub-header {
-			font-size: 1rem;
-			max-width: 640px;
+			font-size: $font-body-large;
+			line-height: 26px;
+			margin-bottom: 8px;
+			max-width: 680px;
 		}
 	}
 
@@ -301,10 +130,6 @@ body.is-section-themes {
 .theme-showcase {
 	.themes__selection .themes-list {
 		margin: 32px -16px 0;
-
-		.theme {
-			margin: 0 16px 32px;
-		}
 	}
 
 	.themes__content .upsell-nudge {
@@ -469,13 +294,16 @@ body.is-section-themes {
 	margin-top: 24px;
 	padding: 0;
 
-	@include break-small {
+	@include breakpoint-deprecated( ">660px" ) {
 		flex-direction: row;
+		gap: 0;
 	}
 
 	.themes-toolbar-group {
 		height: 28px;
 		max-width: 100%;
+		// See https://stackoverflow.com/a/66689926
+		min-width: 0;
 		flex: 1;
 	}
 
@@ -485,6 +313,7 @@ body.is-section-themes {
 		box-sizing: border-box;
 		height: 28px;
 		padding: 4px;
+		z-index: 1;
 
 		.segmented-control__item {
 			&.is-selected {

@@ -9,10 +9,10 @@ export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
 	getLaunchDestination = noop,
-	getThankYouNoSiteDestination = noop,
 	getDomainSignupFlowDestination = noop,
 	getEmailSignupFlowDestination = noop,
 	getChecklistThemeDestination = noop,
+	getWithThemeDestination = noop,
 	getDestinationFromIntent = noop,
 	getDIFMSignupDestination = noop,
 	getDIFMSiteContentCollectionDestination = noop,
@@ -21,7 +21,7 @@ export function generateFlows( {
 	const flows = [
 		{
 			name: HOSTING_LP_FLOW,
-			steps: [ 'plans', 'user', 'domains' ],
+			steps: [ 'plans-hosting', 'user-hosting', 'domains' ],
 			destination: getHomeDestination,
 			description:
 				'Create an account and a blog and give the user the option of adding a domain and plan to the cart.',
@@ -89,11 +89,13 @@ export function generateFlows( {
 		},
 		{
 			name: 'with-theme',
-			steps: [ 'user', 'domains-theme-preselected', 'plans' ],
-			destination: getChecklistThemeDestination,
+			steps: [ 'user', 'domains-theme-preselected', 'plans-theme-preselected' ],
+			destination: getWithThemeDestination,
 			description: 'Preselect a theme to activate/buy from an external source',
-			lastModified: '2022-11-28',
+			lastModified: '2023-04-27',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'theme' ],
+			optionalDependenciesInQuery: [ 'theme_type', 'style_variation' ],
 		},
 		{
 			name: 'with-theme-assembler',
@@ -324,24 +326,8 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'add-domain',
-			steps: [
-				'select-domain',
-				'site-or-domain',
-				'site-picker',
-				'themes',
-				'plans-site-selected',
-				'user',
-			],
-			destination: getThankYouNoSiteDestination,
-			description: 'An approach to add a domain via the all domains view',
-			disallowResume: true,
-			lastModified: '2020-08-11',
-			showRecaptcha: true,
-		},
-		{
 			name: 'site-selected',
-			steps: [ 'themes-site-selected', 'plans-site-selected' ],
+			steps: [ 'themes-site-selected', 'plans-site-selected-legacy' ],
 			destination: getSiteDestination,
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
 			optionalDependenciesInQuery: [ 'siteId' ],

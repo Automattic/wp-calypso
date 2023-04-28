@@ -7,16 +7,15 @@ import { memo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useSelector } from 'react-redux';
 import StatsSparkline from 'calypso/blocks/stats-sparkline';
-import JetpackLogo from 'calypso/components/jetpack-logo';
 import TimeSince from 'calypso/components/time-since';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { displaySiteUrl, getDashboardUrl, isNotAtomicJetpack, MEDIA_QUERIES } from '../utils';
+import { displaySiteUrl, getDashboardUrl, isStagingSite, MEDIA_QUERIES } from '../utils';
 import { SitesEllipsisMenu } from './sites-ellipsis-menu';
 import SitesP2Badge from './sites-p2-badge';
-import { PlanRenewNag } from './sites-plan-renew-nag';
 import { SiteItemThumbnail } from './sites-site-item-thumbnail';
 import { SiteLaunchNag } from './sites-site-launch-nag';
 import { SiteName } from './sites-site-name';
+import { SitePlan } from './sites-site-plan';
 import { SiteUrl, Truncated } from './sites-site-url';
 import SitesStagingBadge from './sites-staging-badge';
 import { ThumbnailLink } from './thumbnail-link';
@@ -79,23 +78,6 @@ const ListTileSubtitle = styled.div`
 	align-items: center;
 `;
 
-const SitePlan = styled.div`
-	display: inline;
-	> * {
-		vertical-align: middle;
-		line-height: normal;
-	}
-`;
-
-const SitePlanIcon = styled.div`
-	display: inline-block;
-	margin-inline-end: 6px;
-`;
-
-const PlanRenewNagContainer = styled.div`
-	line-height: 20px;
-`;
-
 export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
@@ -103,7 +85,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 
 	const isP2Site = site.options?.is_wpforteams_site;
-	const isStagingSite = site.is_wpcom_staging_site;
+	const isWpcomStagingSite = isStagingSite( site );
 
 	let siteUrl = site.URL;
 	if ( site.options?.is_redirect && site.options?.unmapped_url ) {
@@ -131,7 +113,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 								{ site.title }
 							</SiteName>
 							{ isP2Site && <SitesP2Badge>P2</SitesP2Badge> }
-							{ isStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
+							{ isWpcomStagingSite && <SitesStagingBadge>{ __( 'Staging' ) }</SitesStagingBadge> }
 						</ListTileTitle>
 					}
 					subtitle={
@@ -144,24 +126,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 				/>
 			</Column>
 			<Column mobileHidden>
-				<SitePlan>
-					{ isNotAtomicJetpack( site ) && ! site.plan?.expired && (
-						<SitePlanIcon>
-							<JetpackLogo size={ 16 } />
-						</SitePlanIcon>
-					) }
-					{ site.plan?.expired ? (
-						<PlanRenewNagContainer>
-							<PlanRenewNag
-								plan={ site.plan }
-								isSiteOwner={ site?.site_owner === userId }
-								checkoutUrl={ `/checkout/${ site.slug }/${ site.plan?.product_slug }` }
-							/>
-						</PlanRenewNagContainer>
-					) : (
-						site.plan?.product_name_short
-					) }
-				</SitePlan>
+				<SitePlan site={ site } userId={ userId } />
 			</Column>
 			<Column mobileHidden>
 				{ translatedStatus }

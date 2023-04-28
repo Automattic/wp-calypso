@@ -20,6 +20,7 @@
 
 		@include break-small {
 			height: auto;
+			padding-top: 2px;
 		}
 
 		@include onboarding-break-mobile-landscape {

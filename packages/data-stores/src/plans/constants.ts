@@ -17,9 +17,6 @@ export const plansSlugs = [
 	TIMELESS_PLAN_ECOMMERCE,
 ] as const;
 
-// order of the plans used to determine recommended plan based on features
-export const plansOrder = plansSlugs;
-
 export const DEFAULT_PAID_PLAN = TIMELESS_PLAN_PREMIUM;
 
 // plan products constants

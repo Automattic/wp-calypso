@@ -2,10 +2,10 @@
  * @jest-environment jsdom
  */
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, fireEvent } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { siteColumns } from '../../utils';
@@ -52,14 +52,30 @@ describe( '<SiteCard>', () => {
 				value: siteObj,
 				error: true,
 				type: 'site',
-				status: '',
+				status: 'active',
+			},
+			stats: {
+				type: 'stats',
+				status: 'active',
+				value: {
+					views: {
+						total: 0,
+						trend: 'up',
+						trend_change: 0,
+					},
+					visitors: {
+						total: 0,
+						trend: 'up',
+						trend_change: 0,
+					},
+				},
 			},
 			backup: {
 				type: 'backup',
-				status: '',
+				status: 'inactive',
 				value: '',
 			},
-			monitor: { error: false, type: 'monitor', status: '', value: '' },
+			monitor: { error: false, type: 'monitor', status: 'inactive', value: '' },
 			scan: { threats: 3, type: 'scan', status: 'failed', value: '3 Threats' },
 			plugin: { updates: 3, type: 'plugin', status: 'warning', value: '3 Available' },
 		};

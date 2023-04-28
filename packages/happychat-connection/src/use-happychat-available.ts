@@ -1,11 +1,9 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { buildConnectionForCheckingAvailability } from './connection';
 import { HappychatAuth } from './types';
 import useHappychatAuth from './use-happychat-auth';
 
 type HCAvailability = { available?: boolean; status?: string; env?: 'staging' | 'production' };
-
-const key = Date.now();
 
 function getHCAvailabilityAndStatus( dataAuth: HappychatAuth ) {
 	return new Promise< HCAvailability >( ( resolve ) => {
@@ -58,11 +56,14 @@ export function useHappychatAvailable( enabled = true, staleTime = 10 * 60 * 100
 	const { data: dataAuth, isLoading: isLoadingAuth } = useHappychatAuth();
 
 	return useQuery(
-		'happychat-available' + key,
+		[ 'happychat-available' ],
 		() => getHCAvailabilityAndStatus( dataAuth as HappychatAuth ),
 		{
 			enabled: ! isLoadingAuth && !! dataAuth && enabled,
 			staleTime,
+			meta: {
+				persist: false,
+			},
 		}
 	);
 }

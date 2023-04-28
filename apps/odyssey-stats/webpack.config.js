@@ -51,13 +51,16 @@ const excludedPackagePlugins = excludedPackages.map(
 
 module.exports = {
 	bail: ! isDevelopment,
-	entry: path.join( __dirname, 'src', 'app' ),
+	entry: {
+		build: path.join( __dirname, 'src', 'app' ),
+		'widget-loader': path.join( __dirname, 'src', 'widget-loader' ),
+	},
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: false,
 	output: {
 		path: outputPath,
-		filename: 'build.min.js',
-		chunkFilename: '[contenthash].js',
+		filename: '[name].min.js',
+		chunkFilename: '[name]-[contenthash].js?minify=false',
 	},
 	optimization: {
 		minimize: ! isDevelopment,
@@ -124,7 +127,7 @@ module.exports = {
 			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
 		} ),
 		...SassConfig.plugins( {
-			filename: 'build.min.css',
+			filename: '[name].min.css',
 			chunkFilename: '[contenthash].css',
 			minify: ! isDevelopment,
 		} ),
@@ -183,6 +186,10 @@ module.exports = {
 		// The sprite is loaded separately in Jetpack.
 		new webpack.NormalModuleReplacementPlugin( /^\.\.\/gridicon$/, '../gridicon/no-asset' ),
 		new webpack.NormalModuleReplacementPlugin( /^\.\/gridicon$/, './gridicon/no-asset' ),
+		new webpack.NormalModuleReplacementPlugin(
+			/^@automattic\/calypso-config$/,
+			path.resolve( __dirname, 'src/lib/config-api' )
+		),
 		new webpack.NormalModuleReplacementPlugin(
 			/^calypso\/components\/jetpack-colophon$/,
 			'calypso/components/jetpack/jetpack-footer'

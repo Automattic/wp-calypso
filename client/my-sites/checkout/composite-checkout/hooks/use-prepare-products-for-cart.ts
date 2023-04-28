@@ -5,7 +5,6 @@ import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useReducer } from 'react';
 import getCartFromLocalStorage from '../lib/get-cart-from-local-storage';
-import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
 import useStripProductsFromUrl from './use-strip-products-from-url';
 import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
@@ -85,8 +84,6 @@ export default function usePrepareProductsForCart( {
 		jetpackPurchaseToken
 	);
 
-	useFetchProductsIfNotLoaded();
-
 	const addHandler = chooseAddHandler( {
 		isLoading: state.isLoading,
 		originalPurchaseId,
@@ -118,6 +115,7 @@ export default function usePrepareProductsForCart( {
 	} );
 	useAddRenewalItems( {
 		originalPurchaseId,
+		sitelessCheckoutType, // Akismet products can renew independently of a site
 		productAlias: productAliasFromUrl,
 		dispatch,
 		addHandler,
@@ -184,6 +182,11 @@ function chooseAddHandler( {
 	isNoSiteCart?: boolean;
 	isGiftPurchase?: boolean;
 } ): AddHandler {
+	// Akismet products can be renewed in a "siteless" context
+	if ( sitelessCheckoutType === 'akismet' && originalPurchaseId ) {
+		return 'addRenewalItems';
+	}
+
 	if ( sitelessCheckoutType === 'jetpack' || sitelessCheckoutType === 'akismet' ) {
 		return 'addProductFromSlug';
 	}
@@ -262,12 +265,14 @@ function useAddProductsFromLocalStorage( {
 
 function useAddRenewalItems( {
 	originalPurchaseId,
+	sitelessCheckoutType,
 	productAlias,
 	dispatch,
 	addHandler,
 	isGiftPurchase,
 }: {
 	originalPurchaseId: string | number | null | undefined;
+	sitelessCheckoutType: SitelessCheckoutType;
 	productAlias: string | null | undefined;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	addHandler: AddHandler;
@@ -289,6 +294,7 @@ function useAddRenewalItems( {
 					return null;
 				}
 				return createRenewalItemToAddToCart( {
+					sitelessCheckoutType,
 					productAlias: productSlug,
 					purchaseId: subscriptionId,
 					isGiftPurchase,
@@ -313,7 +319,15 @@ function useAddRenewalItems( {
 		}
 		debug( 'preparing renewals requested in url', productsForCart );
 		dispatch( { type: 'RENEWALS_ADD', products: productsForCart } );
-	}, [ addHandler, translate, originalPurchaseId, productAlias, dispatch, isGiftPurchase ] );
+	}, [
+		addHandler,
+		translate,
+		originalPurchaseId,
+		productAlias,
+		dispatch,
+		isGiftPurchase,
+		sitelessCheckoutType,
+	] );
 }
 
 function useAddProductFromSlug( {
@@ -481,10 +495,12 @@ function getProductSlugFromAlias( productAlias: string ): string {
 function createRenewalItemToAddToCart( {
 	productAlias,
 	purchaseId,
+	sitelessCheckoutType,
 	isGiftPurchase,
 }: {
 	productAlias: string;
 	purchaseId: string | number | undefined | null;
+	sitelessCheckoutType: SitelessCheckoutType;
 	isGiftPurchase?: boolean;
 } ): RequestCartProduct | null {
 	const { slug, meta, quantity } = getProductPartsFromAlias( productAlias );
@@ -498,6 +514,7 @@ function createRenewalItemToAddToCart( {
 
 	const renewalItemExtra: RequestCartProductExtra = {
 		purchaseId: String( purchaseId ),
+		isAkismetSitelessCheckout: sitelessCheckoutType === 'akismet',
 		purchaseType: 'renewal',
 		isGiftPurchase,
 	};

@@ -20,6 +20,7 @@ export type OptionalUserData = {
 	display_name: string;
 	email: string;
 	email_verified: boolean;
+	blaze_credits_enabled: boolean;
 	has_unseen_notes: boolean;
 	is_new_reader: boolean;
 	is_valid_google_apps_country: boolean;
@@ -35,7 +36,6 @@ export type OptionalUserData = {
 	primary_blog_url: string;
 	site_count: number;
 	jetpack_site_count?: number;
-	has_promote_widget?: boolean;
 	has_jetpack_partner_access?: boolean;
 	jetpack_partner_types?: string[];
 	social_login_connections: unknown;

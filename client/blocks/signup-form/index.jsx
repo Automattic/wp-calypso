@@ -41,7 +41,11 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import formState from 'calypso/lib/form-state';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
-import { isCrowdsignalOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import {
+	isCrowdsignalOAuth2Client,
+	isWooOAuth2Client,
+	isGravatarOAuth2Client,
+} from 'calypso/lib/oauth2-clients';
 import { login, lostPassword } from 'calypso/lib/paths';
 import { addQueryArgs } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
@@ -1097,6 +1101,7 @@ class SignupForm extends Component {
 								handleResponse={ this.handleWooCommerceSocialConnect }
 								socialService={ this.props.socialService }
 								socialServiceResponse={ this.props.socialServiceResponse }
+								redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 							/>
 						) }
 					</LoggedOutForm>
@@ -1170,12 +1175,14 @@ class SignupForm extends Component {
 							socialService={ this.props.socialService }
 							socialServiceResponse={ this.props.socialServiceResponse }
 							isReskinned={ this.props.isReskinned }
+							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 						/>
 					) }
 					{ this.props.footerLink || this.footerLink() }
 				</div>
 			);
 		}
+
 		return (
 			<div
 				className={ classNames( 'signup-form', this.props.className, {
@@ -1209,7 +1216,8 @@ class SignupForm extends Component {
 							socialServiceResponse={ this.props.socialServiceResponse }
 							isReskinned={ this.props.isReskinned }
 							flowName={ this.props.flowName }
-							compact={ this.props.isWoo }
+							compact={ this.props.isWoo || isGravatarOAuth2Client( this.props.oauth2Client ) }
+							redirectToAfterLoginUrl={ this.props.redirectToAfterLoginUrl }
 						/>
 					</Fragment>
 				) }

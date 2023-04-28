@@ -9,7 +9,9 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 
 import './style.scss';
 
-interface PremiumGlobalStylesUpgradeModalProps {
+export interface PremiumGlobalStylesUpgradeModalProps {
+	customizeDescription?: ( description: React.ReactChild ) => JSX.Element;
+	tryItOutText?: string;
 	checkout: () => void;
 	closeModal: () => void;
 	isOpen: boolean;
@@ -17,6 +19,8 @@ interface PremiumGlobalStylesUpgradeModalProps {
 }
 
 export default function PremiumGlobalStylesUpgradeModal( {
+	tryItOutText,
+	customizeDescription = ( description ) => <p>{ description }</p>,
 	checkout,
 	closeModal,
 	isOpen,
@@ -40,8 +44,8 @@ export default function PremiumGlobalStylesUpgradeModal( {
 					<>
 						<div className="upgrade-modal__col">
 							<h1 className="upgrade-modal__heading">{ translate( 'Unlock this style' ) }</h1>
-							<p>
-								{ translate(
+							{ customizeDescription(
+								translate(
 									'Get access to all theme styles, fonts, colors, and tons of other features by upgrading to {{strong}}%s{{/strong}}.',
 									{
 										components: {
@@ -51,11 +55,11 @@ export default function PremiumGlobalStylesUpgradeModal( {
 										comment:
 											'The variable is the plan name: "...by upgrading to WordPress.com Premium."',
 									}
-								) }
-							</p>
+								)
+							) }
 							<div className="upgrade-modal__actions bundle">
 								<Button className="upgrade-modal__cancel" onClick={ () => tryStyle() }>
-									{ translate( 'Try it out first' ) }
+									{ tryItOutText ?? translate( 'Try it out first' ) }
 								</Button>
 								<Button
 									className="upgrade-modal__upgrade-plan"
@@ -68,7 +72,7 @@ export default function PremiumGlobalStylesUpgradeModal( {
 						</div>
 						<div className="upgrade-modal__col">
 							<div className="upgrade-modal__included">
-								<h2>{ translate( 'Included with your purchase' ) }</h2>
+								<h2>{ translate( 'Included with your Premium plan' ) }</h2>
 								<ul>
 									<li className="upgrade-modal__included-item">
 										<Gridicon icon="checkmark" size={ 16 } />

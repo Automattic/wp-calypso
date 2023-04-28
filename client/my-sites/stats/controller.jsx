@@ -89,6 +89,35 @@ function getSiteFilters( siteId ) {
 			id: 'stats-insights',
 		},
 		{
+			title: i18n.translate( 'Subscribers' ),
+			path: '/stats/subscribers/' + siteId,
+			id: 'stats-subscribers',
+		},
+		{
+			title: i18n.translate( 'Days' ),
+			path: '/stats/subscribers/day/' + siteId,
+			id: 'stats-subscribers-day',
+			period: 'day',
+		},
+		{
+			title: i18n.translate( 'Weeks' ),
+			path: '/stats/subscribers/week/' + siteId,
+			id: 'stats-subscribers-week',
+			period: 'week',
+		},
+		{
+			title: i18n.translate( 'Months' ),
+			path: '/stats/subscribers/month/' + siteId,
+			id: 'stats-subscribers-month',
+			period: 'month',
+		},
+		{
+			title: i18n.translate( 'Years' ),
+			path: '/stats/subscribers/year/' + siteId,
+			id: 'stats-subscribers-year',
+			period: 'year',
+		},
+		{
 			title: i18n.translate( 'Hours' ),
 			path: '/stats/hour/' + siteId,
 			id: 'stats-hour',
@@ -220,6 +249,26 @@ export function redirectToDefaultModulePage( context ) {
 export function insights( context, next ) {
 	context.primary = (
 		<AsyncLoad require="calypso/my-sites/stats/stats-insights" placeholder={ PageLoading } />
+	);
+	next();
+}
+
+export function subscribers( context, next ) {
+	const givenSiteId = context.params.site;
+	const filters = getSiteFilters( givenSiteId );
+	const activeFilter = find( filters, ( filter ) => {
+		return (
+			context.path.indexOf( filter.path ) >= 0 ||
+			( filter.altPaths && context.path.indexOf( filter.altPaths ) >= 0 )
+		);
+	} );
+
+	context.primary = (
+		<AsyncLoad
+			require="calypso/my-sites/stats/stats-subscribers-page"
+			placeholder={ PageLoading }
+			period={ activeFilter.period } // TODO: investigate rangeOfPeriod() for date changes
+		/>
 	);
 	next();
 }

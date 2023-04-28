@@ -8,10 +8,10 @@ import {
 	makeSuccessResponse,
 	CheckoutFormSubmit,
 } from '@automattic/composite-checkout';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 import { createExistingCardMethod } from 'calypso/my-sites/checkout/composite-checkout/payment-methods/existing-credit-card';
 import { createReduxStore } from 'calypso/state';
@@ -76,6 +76,10 @@ function mockTaxLocationEndpoint( { isSet = false } = {} ) {
 }
 
 describe( 'Existing credit card payment methods', () => {
+	beforeEach( () => {
+		nock.cleanAll();
+	} );
+
 	it( 'renders an existing card option for a stored card', async () => {
 		mockTaxLocationEndpoint();
 		const existingCard = getExistingCardPaymentMethod();

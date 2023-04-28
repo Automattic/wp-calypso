@@ -31,13 +31,18 @@ const BlazePressStrings = () => {
 	translate( 'You can pause spending at any time.' );
 	translate( 'Saved cards' );
 	translate( 'Add new card' );
+	translate( '(ending %(lastFour)s)' );
+	translate( 'Expires on %(month)s/%(year)s' );
 	translate( 'What will be the Goal?' );
 	translate( 'Expand your target audience by adjusting audience setting' );
 	translate( 'Budget' );
 	translate( 'Daily budget' );
+	translate( 'Min amount is $%(minBudget)s' );
+	translate( 'Max amount is $%(maxBudget)s' );
 	translate( 'Between' );
 	translate( 'Days' );
-	translate( 'Max' );
+	translate( 'Min %(minDays)d day' );
+	translate( 'Max %(maxDays)d days' );
 	translate( 'Start date' );
 	translate( 'Creating your Ad' );
 	translate( 'Oops!' );
@@ -51,6 +56,12 @@ const BlazePressStrings = () => {
 	translate( 'Advertising Policy' );
 	translate(
 		'Cannot create subscription. Please {{supportLink}}contact support{{/supportLink}} or try again later.'
+	);
+	translate(
+		'There was an error with the address. Please verify that all the required data is valid'
+	);
+	translate(
+		'There was an error with the address. The province, state or region should be filled'
 	);
 	translate( 'State field is required' );
 	translate( 'Use saved card' );
@@ -84,6 +95,14 @@ const BlazePressStrings = () => {
 	translate( 'Audience & Budget' );
 	translate( 'Save and Submit' );
 	translate( 'Next' );
+	translate( 'Close' );
+	translate( 'Make the most of your Blaze campaign' );
+	translate( 'Choose an eye-catching image for your ad' );
+	translate( 'Adjust your title to make it more engaging' );
+	translate( 'Pick the right audience, budget and duration' );
+	translate( 'Get started' );
+	translate( 'Learn more' );
+	translate( "Don't show me this step again." );
 	translate( 'Drop image here' );
 	translate( 'Click or Drag an image here' );
 	translate( 'All fields marked as required' );
@@ -91,13 +110,6 @@ const BlazePressStrings = () => {
 	translate( 'All' );
 	translate( 'Mobile devices' );
 	translate( 'Desktop devices' );
-	translate( 'Close' );
-	translate( 'Learn more' );
-	translate( 'Get started' );
-	translate( 'Pick the right audience, budget and duration' );
-	translate( 'Adjust your title to make it more engaging' );
-	translate( 'Make the most of your Blaze campaign' );
-	translate( 'Choose an eye-catching image for your ad' );
 };
 
 if ( window.BlazePress ) {

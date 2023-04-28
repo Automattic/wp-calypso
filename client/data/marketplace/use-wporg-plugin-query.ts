@@ -7,7 +7,7 @@ import {
 	UseInfiniteQueryResult,
 	QueryKey,
 	QueryFunction,
-} from 'react-query';
+} from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import {
 	extractSearchInformation,
@@ -25,7 +25,7 @@ export const getWPORGPluginsQueryParams = (
 	options: PluginQueryOptions,
 	locale: string
 ): [ QueryKey, QueryFunction< { plugins: any[]; pagination: { page: number } }, QueryKey > ] => {
-	const cacheKey = getPluginsListKey( WPORG_CACHE_KEY + '-normalized', options );
+	const cacheKey = getPluginsListKey( [ WPORG_CACHE_KEY, 'normalized' ], options );
 	const fetchFn = () => {
 		const [ search, author ] = extractSearchInformation( options.searchTerm );
 		return fetchPluginsList( {
@@ -46,7 +46,11 @@ export const getWPORGPluginsQueryParams = (
 
 export const useWPORGPlugins = (
 	options: PluginQueryOptions,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: UseQueryOptions< any > = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 
@@ -65,13 +69,17 @@ const extractPagination = ( pages: Array< { plugins: object; info: object } > = 
 
 export const useWPORGInfinitePlugins = (
 	options: PluginQueryOptions,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: UseQueryOptions< any > = {}
 ): UseInfiniteQueryResult => {
 	const [ search, author ] = extractSearchInformation( options.searchTerm );
 	const locale = useSelector( getCurrentUserLocale );
 
 	return useInfiniteQuery(
-		getPluginsListKey( WPORG_CACHE_KEY, options, true ),
+		getPluginsListKey( [ WPORG_CACHE_KEY ], options, true ),
 		( { pageParam = 1 } ) =>
 			fetchPluginsList( {
 				pageSize: options.pageSize,

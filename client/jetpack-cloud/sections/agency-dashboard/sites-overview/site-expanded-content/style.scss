@@ -30,6 +30,10 @@ $color-yellow: var(--studio-yellow-50);
 	}
 }
 
+.expanded-card__clickable:focus-visible {
+	outline: thin dotted;
+}
+
 .expanded-card__header {
 	font-size: 0.875rem;
 	color: var(--studio-gray-80);
@@ -53,12 +57,11 @@ $color-yellow: var(--studio-yellow-50);
 	margin-block: 16px;
 	display: flex;
 	flex-wrap: wrap;
-
 }
 
 .site-expanded-content__card-content-column {
 	flex: auto;
-	max-width: 100%;
+	max-width: 285px;
 }
 
 .site-expanded-content__card-content-score {
@@ -120,7 +123,7 @@ $color-yellow: var(--studio-yellow-50);
 	.expanded-card {
 		width: 100%;
 		margin: 0;
-		min-height: 180px;
+		min-height: 150px;
 	}
 
 	.site-expanded-content__card-content-column {
@@ -181,4 +184,102 @@ $color-yellow: var(--studio-yellow-50);
 
 .expanded-card__not-enabled {
 	background: none;
+}
+
+.site-expanded-content__php-version {
+	@extend .site-expanded-content__card-content-score-title;
+	padding: 0 16px 16px;
+}
+
+.site-content__small-screen-view {
+	.site-expanded-content__php-version {
+		padding: 1.5px 0;
+	}
+}
+
+.site-expanded-content__license-selected .gridicon {
+	position: relative;
+	inset-block-start: 3px;
+	inset-inline-end: 5px;
+}
+
+.site-expanded-content__tooltip .popover__inner {
+	width: 300px;
+}
+
+@mixin chart-bar-styles($background-color, $hover-background-color) {
+	.chart__bar-section {
+		background-color: $background-color;
+		border-radius: 0;
+
+		&:hover {
+			background-color: $hover-background-color;
+		}
+	}
+}
+
+
+.site-expanded-content__chart {
+	.chart {
+		padding: 0;
+
+		.chart__y-axis-markers {
+			display: none;
+		}
+
+		.chart__bar {
+			height: 24px;
+
+			&:hover {
+				background: none;
+			}
+
+			&.site-expanded-content__chart-bar-is-downtime {
+				@include chart-bar-styles($color-red, var(--studio-red-60));
+				height: 8px !important;
+				position: relative !important;
+				top: 7.5px;
+			}
+
+			&.site-expanded-content__chart-bar-is-uptime {
+				@include chart-bar-styles($color-green, var(--studio-jetpack-green-50));
+			}
+
+			&.site-expanded-content__chart-bar-no-data {
+				@include chart-bar-styles(var(--studio-gray-0), var(--studio-gray-5));
+			}
+		}
+
+		.chart__bars {
+			height: auto;
+		}
+	}
+}
+
+.site-expanded-content__x-axis-pointers {
+	font-size: 0.75rem;
+	color: var(--studio-gray-40);
+	position: relative;
+
+	span {
+		&:nth-child(2) {
+			position: absolute;
+			right: 0;
+		}
+	}
+}
+
+.chart__tooltip {
+	.popover__inner {
+		width: auto !important;
+	}
+}
+
+.expanded-card__loading {
+	opacity: 0.5;
+}
+
+.expanded-card__error {
+	opacity: 0.5;
+	cursor: not-allowed;
 }

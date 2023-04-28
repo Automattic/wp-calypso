@@ -14,6 +14,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import { useState } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
+import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSiteSlug } from 'calypso/landing/stepper/hooks/use-site-slug';
 import {
 	domainRegistration,
 	domainMapping,
@@ -37,12 +39,13 @@ import './style.scss';
 
 const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
-
 	const { __ } = useI18n();
 
 	const [ showUseYourDomain, setShowUseYourDomain ] = useState( false );
 
 	const dispatch = useReduxDispatch();
+	const flowToReturnTo = useQuery().get( 'flowToReturnTo' );
+	const siteSlug = useSiteSlug();
 
 	const { submit, exitFlow } = navigation;
 
@@ -94,16 +97,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			} );
 			dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
-			let hideFreePlan;
-
-			if ( flow === DOMAIN_UPSELL_FLOW ) {
-				hideFreePlan = true;
-			} else {
-				hideFreePlan = Boolean( suggestion.product_slug ) || shouldHideFreePlan;
-			}
-
-			setHideFreePlan( hideFreePlan );
+			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
 			setDomainCartItem( domainCartItem );
+		} else {
+			setDomainCartItem( undefined );
 		}
 
 		submit?.();
@@ -148,7 +145,7 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 			case NEWSLETTER_FLOW:
 				return createInterpolateElement(
 					__(
-						'Help your Newsletter stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
+						'Make your newsletter stand out with a custom domain. Not sure yet? <span>Decide later</span>.'
 					),
 					decideLaterComponent
 				);
@@ -177,6 +174,10 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 	const getHeaderText = () => {
 		if ( showUseYourDomain ) {
 			return '';
+		}
+
+		if ( flow === NEWSLETTER_FLOW ) {
+			return __( 'Your domain. Your identity.' );
 		}
 
 		return __( 'Choose a domain' );
@@ -242,18 +243,22 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		if ( showUseYourDomain ) {
 			return setShowUseYourDomain( false );
 		}
+
+		if ( flow === DOMAIN_UPSELL_FLOW ) {
+			return exitFlow?.( `/setup/${ flowToReturnTo }/launchpad?siteSlug=${ siteSlug }` );
+		}
 		return exitFlow?.( '/sites' );
 	};
 
 	const getBackLabelText = () => {
-		if ( showUseYourDomain ) {
+		if ( flow === DOMAIN_UPSELL_FLOW ) {
 			return __( 'Back' );
 		}
 		return __( 'Back to sites' );
 	};
 
 	const shouldHideBackButton = () => {
-		if ( showUseYourDomain ) {
+		if ( flow === DOMAIN_UPSELL_FLOW ) {
 			return false;
 		}
 		return ! isCopySiteFlow( flow );

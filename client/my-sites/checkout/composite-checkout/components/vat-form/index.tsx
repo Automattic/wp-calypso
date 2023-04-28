@@ -2,55 +2,17 @@ import { Field } from '@automattic/wpcom-checkout';
 import { CheckboxControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch as useReduxDispatch } from 'react-redux';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { getVatVendorInfo } from 'calypso/me/purchases/billing-history/vat-vendor-details';
 import useVatDetails from 'calypso/me/purchases/vat-info/use-vat-details';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import useCountryList, { isVatSupported } from '../../hooks/use-country-list';
 import { CHECKOUT_STORE } from '../../lib/wpcom-store';
 
 import './style.css';
-
-const countriesSupportingVat = [
-	'AT',
-	'AU',
-	'BE',
-	'BG',
-	'CH',
-	'CY',
-	'CZ',
-	'DE',
-	'DK',
-	'EE',
-	'EL',
-	'ES',
-	'FI',
-	'FR',
-	'GB',
-	'GR',
-	'HR',
-	'HU',
-	'IE',
-	'IT',
-	'JP',
-	'LT',
-	'LU',
-	'LV',
-	'MT',
-	'NL',
-	'PL',
-	'PT',
-	'RO',
-	'SE',
-	'SI',
-	'SK',
-	'XI',
-];
-
-export function isVatSupportedFor( countryCode: string ): boolean {
-	return Boolean( countriesSupportingVat.includes( countryCode ) );
-}
 
 export function VatForm( {
 	section,
@@ -66,12 +28,22 @@ export function VatForm( {
 	 */
 	countryCode: string | undefined;
 } ) {
+	const countries = useCountryList();
 	const translate = useTranslate();
 	const vatDetailsInForm = useSelect( ( select ) => select( CHECKOUT_STORE ).getVatDetails(), [] );
 	const wpcomStoreActions = useDispatch( CHECKOUT_STORE );
+	const vendorInfo = getVatVendorInfo( countryCode ?? 'GB', 'now', translate );
 	const setVatDetailsInForm = wpcomStoreActions?.setVatDetails;
 	const { vatDetails: vatDetailsFromServer, isLoading: isLoadingVatDetails } = useVatDetails();
 	const [ isFormActive, setIsFormActive ] = useState< boolean >( false );
+
+	const isVatSupportedFor = useCallback(
+		( code: string ) =>
+			countries
+				.filter( isVatSupported )
+				.some( ( country ) => country.code === code || country.tax_country_codes.includes( code ) ),
+		[ countries ]
+	);
 
 	// When the form loads or the country code changes, take one of the following
 	// actions.
@@ -130,6 +102,7 @@ export function VatForm( {
 		setVatDetailsInForm( {} );
 		setIsFormActive( false );
 	}, [
+		isVatSupportedFor,
 		countryCode,
 		vatDetailsInForm,
 		setVatDetailsInForm,
@@ -192,7 +165,13 @@ export function VatForm( {
 					className="vat-form__expand-button"
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
-					label={ translate( 'Add Business Tax ID details' ) }
+					label={
+						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+						translate( 'Add %s details', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
 					disabled={ isDisabled }
 				/>
 			</div>
@@ -206,7 +185,13 @@ export function VatForm( {
 					className="vat-form__expand-button"
 					checked={ isFormActive }
 					onChange={ toggleVatForm }
-					label={ translate( 'Add Business Tax ID details' ) }
+					label={
+						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+						translate( 'Add %s details', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
 					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 				/>
 				{ countryCode === 'GB' && (
@@ -214,7 +199,13 @@ export function VatForm( {
 						className="vat-form__expand-button"
 						checked={ vatDetailsInForm.country === 'XI' }
 						onChange={ toggleNorthernIreland }
-						label={ translate( 'Is the tax ID for Northern Ireland?' ) }
+						label={
+							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+							translate( 'Is %s for Northern Ireland?', {
+								textOnly: true,
+								args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+							} )
+						}
 						disabled={ isDisabled }
 					/>
 				) }
@@ -223,7 +214,13 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-organization' }
 					type="text"
-					label={ String( translate( 'Organization for tax ID' ) ) }
+					label={
+						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+						translate( 'Organization for %s', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
 					value={ vatDetailsInForm.name ?? '' }
 					disabled={ isDisabled }
 					onChange={ ( newValue: string ) => {
@@ -236,7 +233,13 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-id' }
 					type="text"
-					label={ String( translate( 'Business Tax ID Number' ) ) }
+					label={
+						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+						translate( '%s ID', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
 					value={ vatDetailsInForm.id ?? '' }
 					disabled={ isDisabled || Boolean( vatDetailsFromServer.id ) }
 					onChange={ ( newValue: string ) => {
@@ -251,7 +254,13 @@ export function VatForm( {
 				<Field
 					id={ section + '-vat-address' }
 					type="text"
-					label={ String( translate( 'Address for tax ID' ) ) }
+					label={
+						/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+						translate( 'Address for %s', {
+							textOnly: true,
+							args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+						} )
+					}
 					value={ vatDetailsInForm.address ?? '' }
 					autoComplete="address"
 					disabled={ isDisabled }
@@ -267,8 +276,10 @@ export function VatForm( {
 				<div>
 					<FormSettingExplanation>
 						{ translate(
-							'To change your Business Tax ID number, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
+							/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
+							'To change your %(taxName)s ID, {{contactSupportLink}}please contact support{{/contactSupportLink}}.',
 							{
+								args: { taxName: vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) },
 								components: {
 									contactSupportLink: (
 										<a

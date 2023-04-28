@@ -7,6 +7,7 @@ import {
 	renderMarketplaceTestPage,
 	renderMarketplaceThankYou,
 	renderPluginsInstallPage,
+	renderThemesInstallPage,
 	redirectToHome,
 	renderMarketplaceSignupSuccess,
 } from './controller';
@@ -28,12 +29,21 @@ export default function () {
 	}
 
 	page(
-		'/marketplace/:productSlug?/install/:site?',
+		'/marketplace/plugin/:productSlug?/install/:site?',
 		siteSelection,
 		renderPluginsInstallPage,
 		makeLayout,
 		clientRender
 	);
+
+	page(
+		'/marketplace/theme/:themeSlug?/install/:site?',
+		siteSelection,
+		renderThemesInstallPage,
+		makeLayout,
+		clientRender
+	);
+
 	page(
 		'/marketplace/thank-you/:site?',
 		siteSelection,

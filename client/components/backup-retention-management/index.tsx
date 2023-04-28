@@ -1,4 +1,4 @@
-import { Button, Card, Dialog, Spinner } from '@automattic/components';
+import { Button, Card, Spinner } from '@automattic/components';
 import { useEffect, useState, useCallback } from '@wordpress/element';
 import { removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -7,8 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useStorageText } from 'calypso/components/backup-storage-space/hooks';
 import { UpsellPrice } from 'calypso/components/backup-storage-space/usage-warning/upsell';
 import QuerySiteProducts from 'calypso/components/data/query-site-products';
+import ExternalLink from 'calypso/components/external-link';
 import { addQueryArgs } from 'calypso/lib/route';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
+import { JETPACK_BACKUP_RETENTION_UPDATE_RESET } from 'calypso/state/action-types';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { updateBackupRetention } from 'calypso/state/rewind/retention/actions';
 import { BACKUP_RETENTION_UPDATE_REQUEST } from 'calypso/state/rewind/retention/constants';
@@ -24,6 +26,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { RETENTION_OPTIONS, STORAGE_ESTIMATION_ADDITIONAL_BUFFER } from './constants';
 import InfoTooltip from './info-tooltip';
 import LoadingPlaceholder from './loading';
+import RetentionConfirmationDialog from './retention-confirmation-dialog';
 import RetentionOptionsControl from './retention-options/retention-options-control';
 import useUpsellInfo from './use-upsell-info';
 import type { RetentionOptionInput } from './types';
@@ -178,7 +181,7 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 		updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.PENDING;
 
 	const [ confirmationDialogVisible, setConfirmationDialogVisible ] = useState( false );
-	const onConfirmationClose = useCallback( () => {
+	const onClose = useCallback( () => {
 		setConfirmationDialogVisible( false );
 	}, [] );
 
@@ -233,8 +236,12 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 			updateRetentionRequestStatus === BACKUP_RETENTION_UPDATE_REQUEST.FAILED
 		) {
 			setConfirmationDialogVisible( false );
+			dispatch( {
+				type: JETPACK_BACKUP_RETENTION_UPDATE_RESET,
+				siteId,
+			} );
 		}
-	}, [ updateRetentionRequestStatus ] );
+	}, [ dispatch, siteId, updateRetentionRequestStatus ] );
 
 	// Update retention period automatically after being redirect from checkout
 	useEffect( () => {
@@ -311,6 +318,28 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 						<div className="retention-form__instructions">
 							{ translate( 'Select the number of days you would like your backups to be saved.' ) }
 						</div>
+						{ 2 === currentRetentionPlan && (
+							<div className="retention-form__short-retention-notice">
+								{ translate(
+									"You're currently saving only {{span}}%(currentRetentionPlan)d days{{/span}} of backups as a way to stay within your storage limits. You can change this by selecting a different setting below. Learn more about {{ExternalLink}}Backup Storage and Retention{{/ExternalLink}}",
+									{
+										components: {
+											ExternalLink: (
+												<ExternalLink
+													href="https://jetpack.com/support/backup/jetpack-vaultpress-backup-storage-and-retention/"
+													target="_blank"
+													rel="noopener noreferrer"
+													icon
+													size={ 14 }
+												/>
+											),
+											span: <span className="highlight-days" />,
+										},
+										args: { currentRetentionPlan },
+									}
+								) }
+							</div>
+						) }
 						<RetentionOptionsControl
 							currentRetentionPlan={ currentRetentionPlan }
 							onChange={ onRetentionSelectionChange }
@@ -338,35 +367,14 @@ const BackupRetentionManagement: FunctionComponent< OwnProps > = ( {
 						<div className="retention-form__submit">
 							{ storageUpgradeRequired ? purchaseStorageButton : updateSettingsButton }
 						</div>
-						<Dialog
-							additionalClassNames="backup-retention-management retention-form__confirmation-dialog"
-							isVisible={ confirmationDialogVisible }
-							onClose={ onConfirmationClose }
-							buttons={ [
-								<Button onClick={ onConfirmationClose }>{ translate( 'Cancel' ) }</Button>,
-								<Button
-									onClick={ updateRetentionPeriod }
-									primary
-									disabled={ disableFormSubmission }
-								>
-									{ updateRetentionRequestStatus !== BACKUP_RETENTION_UPDATE_REQUEST.PENDING ? (
-										translate( 'Confirm change' )
-									) : (
-										<Spinner size={ 22 } />
-									) }
-								</Button>,
-							] }
-						>
-							<h3>{ translate( 'Update settings' ) }</h3>
-							<p>
-								{ translate(
-									'You are about to reduce the number of days your backups are being saved. Backups older than %(retentionDays)s days will be lost.',
-									{
-										args: { retentionDays: retentionSelected },
-									}
-								) }
-							</p>
-						</Dialog>
+						<RetentionConfirmationDialog
+							confirmationDialogVisible={ confirmationDialogVisible }
+							retentionSelected={ retentionSelected }
+							updateRetentionRequestStatus={ updateRetentionRequestStatus }
+							onClose={ onClose }
+							onConfirmation={ updateRetentionPeriod }
+							disableFormSubmission={ disableFormSubmission }
+						/>
 					</div>
 				</Card>
 			</div>

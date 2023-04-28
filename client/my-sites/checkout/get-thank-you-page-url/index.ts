@@ -6,6 +6,7 @@
  *
  * IF YOU CHANGE THIS FUNCTION ALSO CHANGE THE TESTS!
  */
+import config from '@automattic/calypso-config';
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_RESET_PLANS,
@@ -18,6 +19,8 @@ import {
 	isWpComPremiumPlan,
 	isTitanMail,
 	isDomainRegistration,
+	TERM_MONTHLY,
+	TERM_ANNUALLY,
 } from '@automattic/calypso-products';
 import {
 	URL_TYPE,
@@ -212,6 +215,10 @@ export default function getThankYouPageUrl( {
 	const receiptIdOrPlaceholder = getReceiptIdOrPlaceholder( receiptId, purchaseId );
 	debug( 'receiptIdOrPlaceholder is', receiptIdOrPlaceholder );
 
+	// Check to see if the cart is a renewal and get the first renewal item
+	const firstRenewalInCart =
+		cart && hasRenewalItem( cart ) ? getRenewalItems( cart )[ 0 ] : undefined;
+
 	// jetpack userless & siteless checkout uses a special thank you page
 	if ( sitelessCheckoutType === 'jetpack' ) {
 		// extract a product from the cart, in userless/siteless checkout there should only be one
@@ -239,6 +246,10 @@ export default function getThankYouPageUrl( {
 	if ( sitelessCheckoutType === 'akismet' ) {
 		// extract a product from the cart, in siteless checkout there should only be one
 		const productSlug = cart?.products[ 0 ]?.product_slug ?? 'no_product';
+		// This is a renewal, return to the individual product management page for this subscription
+		if ( firstRenewalInCart ) {
+			return managePurchase( 'siteless.akismet.com', firstRenewalInCart.subscription_id );
+		}
 
 		debug( 'redirecting to siteless Akismet thank you' );
 		return `/checkout/akismet/thank-you/${ productSlug }`;
@@ -265,8 +276,6 @@ export default function getThankYouPageUrl( {
 
 	// Manual renewals usually have a `redirectTo` but if they do not, return to
 	// the manage purchases page.
-	const firstRenewalInCart =
-		cart && hasRenewalItem( cart ) ? getRenewalItems( cart )[ 0 ] : undefined;
 	if ( siteSlug && firstRenewalInCart?.subscription_id ) {
 		const managePurchaseUrl = managePurchase( siteSlug, firstRenewalInCart.subscription_id );
 		debug(
@@ -304,7 +313,8 @@ export default function getThankYouPageUrl( {
 	const isDomainOnly =
 		siteSlug === 'no-site' && getAllCartItems( cart ).every( isDomainRegistration );
 	if (
-		( cart?.create_new_blog || signupFlowName === 'domain' ) &&
+		( [ 'no-user', 'no-site' ].includes( String( cart?.cart_key ?? '' ) ) ||
+			signupFlowName === 'domain' ) &&
 		! isDomainOnly &&
 		urlFromCookie &&
 		receiptIdOrPlaceholder &&
@@ -533,14 +543,23 @@ function getFallbackDestination( {
 		}
 	}
 
-	const pluginSlugs =
-		cart?.products
-			?.filter( ( product ) => product?.extra?.is_marketplace_product )
-			?.map( ( product ) => product?.extra?.plugin_slug ) || [];
+	const marketplaceProducts =
+		cart?.products?.filter( ( product ) => product?.extra?.is_marketplace_product ) || [];
 
-	if ( pluginSlugs.length > 0 ) {
+	const marketplacePluginSlugs = marketplaceProducts
+		.filter( ( { extra } ) => extra.product_type === 'marketplace_plugin' )
+		.map( ( { extra } ) => extra.product_slug );
+
+	const marketplaceThemeSlugs = marketplaceProducts
+		.filter( ( { extra } ) => extra.product_type === 'marketplace_theme' )
+		.map( ( { extra } ) => extra.product_slug );
+
+	if ( marketplaceProducts.length > 0 ) {
 		debug( 'site with marketplace products' );
-		return `/marketplace/thank-you/${ siteSlug }?plugins=${ pluginSlugs.join( ',' ) }`;
+		return addQueryArgs(
+			{ plugins: marketplacePluginSlugs.join( ',' ), themes: marketplaceThemeSlugs.join( ',' ) },
+			`/marketplace/thank-you/${ siteSlug }`
+		);
 	}
 
 	debug( 'simple thank-you page' );
@@ -562,7 +581,16 @@ function getNextHigherPlanSlug( cart: ResponseCart ): string | undefined {
 
 	const currentPlan = getPlan( currentPlanSlug );
 
-	if ( isWpComPremiumPlan( currentPlanSlug ) ) {
+	// Upsell an annual plan when on a monthly plan.
+	if ( config.isEnabled( 'upsell/monthly-to-annual' ) ) {
+		if ( currentPlan?.term === TERM_MONTHLY ) {
+			return findFirstSimilarPlanKey( currentPlanSlug, { term: TERM_ANNUALLY } );
+		}
+	}
+
+	// Don't show the business plan upsell if the current plan is a premium monthly plan.
+	// For the experiment: calypso_postpurchase_upsell_monthly_to_annual_plan
+	if ( isWpComPremiumPlan( currentPlanSlug ) && currentPlan?.term !== TERM_MONTHLY ) {
 		const planKey = findFirstSimilarPlanKey( PLAN_BUSINESS, { term: currentPlan?.term } );
 		return planKey ? getPlan( planKey )?.getPathSlug?.() : undefined;
 	}
@@ -579,6 +607,20 @@ function getPlanUpgradeUpsellUrl( {
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 } ): string | undefined {
+	if ( ! siteSlug ) {
+		return;
+	}
+
+	if ( config.isEnabled( 'upsell/monthly-to-annual' ) ) {
+		if ( cart ) {
+			const upgradeItem = getNextHigherPlanSlug( cart );
+
+			if ( upgradeItem ) {
+				return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ receiptId }`;
+			}
+		}
+	}
+
 	if ( cart && hasPremiumPlan( cart ) ) {
 		const upgradeItem = getNextHigherPlanSlug( cart );
 

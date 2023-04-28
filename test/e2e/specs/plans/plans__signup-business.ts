@@ -69,7 +69,7 @@ describe(
 			} );
 
 			it( 'Make purchase', async function () {
-				await cartCheckoutPage.purchase( { timeout: 60 * 1000 } );
+				await cartCheckoutPage.purchase( { timeout: 75 * 1000 } );
 			} );
 
 			it( 'Skip Onboarding', async function () {

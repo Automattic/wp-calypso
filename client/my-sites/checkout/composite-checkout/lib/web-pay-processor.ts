@@ -41,7 +41,6 @@ export default async function webPayProcessor(
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...submitData,
 		name: submitData.name || '',
-		siteId: siteId ? String( siteId ) : undefined,
 		country: contactDetails?.countryCode?.value ?? '',
 		postalCode: getPostalCode( contactDetails ),
 		domainDetails: getDomainDetails( contactDetails, {
@@ -49,7 +48,7 @@ export default async function webPayProcessor(
 			includeGSuiteDetails,
 		} ),
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: siteId ? String( siteId ) : undefined,
+			siteId,
 			contactDetails:
 				getDomainDetails( contactDetails, { includeDomainDetails, includeGSuiteDetails } ) ?? null,
 			responseCart: responseCart,

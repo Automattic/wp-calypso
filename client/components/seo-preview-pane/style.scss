@@ -84,17 +84,18 @@
 }
 
 .seo-preview-pane__preview-area {
-	margin: 10px auto;
-	max-width: 100%;
+	flex: 1;
+
+	margin: 0 auto;
+	padding: 1.5rem 0;
+
+	background-color: #f3f5f9;
 }
 
 .seo-preview-pane__preview {
 	min-width: 400px;
 	height: auto;
 	margin: 0 10px;
-
-	background-color: var(--color-surface);
-	border: 1px solid var(--color-neutral-5);
 
 	.reader-post-card {
 		padding: 10px;

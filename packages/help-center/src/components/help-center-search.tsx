@@ -4,7 +4,7 @@ import { useSelect } from '@wordpress/data';
 import { useState, useCallback, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import InlineHelpSearchCard from 'calypso/blocks/inline-help/inline-help-search-card';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -18,7 +18,7 @@ import { SibylArticles } from './help-center-sibyl-articles';
 import type { SiteSelect } from '@automattic/data-stores';
 
 export const HelpCenterSearch = () => {
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 	const query = params.get( 'query' );
@@ -30,7 +30,7 @@ export const HelpCenterSearch = () => {
 		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).getSite( siteId ),
 		[ siteId ]
 	);
-	let launchpadEnabled = site && site?.options.launchpad_screen === 'full';
+	let launchpadEnabled = site && site?.options?.launchpad_screen === 'full';
 
 	if ( ! launchpadEnabled ) {
 		launchpadEnabled = window?.helpCenterData?.currentSite?.launchpad_screen === 'full';
@@ -40,9 +40,9 @@ export const HelpCenterSearch = () => {
 	// we need to keep the query param up-to-date with that
 	useEffect( () => {
 		if ( query ) {
-			history.push( '/?query=' + searchQuery );
+			navigate( '/?query=' + searchQuery );
 		}
-	}, [ searchQuery, query, history ] );
+	}, [ searchQuery, query, navigate ] );
 
 	const redirectToArticle = useCallback(
 		( event, result ) => {
@@ -63,9 +63,9 @@ export const HelpCenterSearch = () => {
 				params.set( 'blogId', result.blog_id );
 			}
 
-			history.push( `/post/?${ params }`, searchResult );
+			navigate( `/post/?${ params }`, searchResult );
 		},
-		[ history, searchQuery ]
+		[ navigate, searchQuery ]
 	);
 
 	return (

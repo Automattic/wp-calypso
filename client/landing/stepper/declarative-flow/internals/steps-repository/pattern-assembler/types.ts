@@ -1,9 +1,12 @@
 export type Pattern = {
-	id: number;
+	ID: number;
 	name: string;
+	title: string;
+	description?: string;
 	category?: Category;
-	categories: string[];
+	categories: Record< string, Category | undefined >;
 	key?: string;
+	pattern_meta?: Record< string, boolean | undefined >;
 };
 
 export interface NavigatorLocation {
@@ -12,7 +15,8 @@ export interface NavigatorLocation {
 }
 
 export type Category = {
-	name: string;
-	label: string;
-	description: string;
+	name?: string;
+	slug?: string;
+	label?: string;
+	description?: string;
 };

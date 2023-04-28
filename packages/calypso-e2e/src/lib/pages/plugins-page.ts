@@ -45,6 +45,7 @@ const selectors = {
 	// Plugin details view
 	pluginDetailsHeaderTitle: ( section: string ) =>
 		`.plugin-details-header__name:text("${ section }")`,
+	planUpgradeRequiredIcon: 'span.plugin-details-cta__upgrade-required-icon',
 
 	// Post install
 	installedPluginCard: '.thank-you__step',
@@ -78,7 +79,12 @@ export class PluginsPage {
 	 * @param {string} site Optional site URL.
 	 */
 	async visit( site = '' ): Promise< void > {
-		await this.page.goto( getCalypsoURL( `plugins/${ site }` ) );
+		await Promise.all( [
+			this.page.waitForResponse( /\/sites\/\d+\/plugins/, { timeout: 20 * 1000 } ),
+			// This is one of the last, reliable web requests to finish on this page
+			// and is a pretty good indicator the async loading is done.
+			this.page.goto( getCalypsoURL( `plugins/${ site }` ), { timeout: 20 * 1000 } ),
+		] );
 	}
 
 	/**
@@ -279,11 +285,30 @@ export class PluginsPage {
 	}
 
 	/**
-	 * Clicks on the Install Plugin button.
+	 * Clicks on the button to install the plugin.
+	 *
+	 * For sites without a supported plan, this method will click on the additional
+	 * modal that appears prompting the user to purchase a plan upgrade.
 	 */
 	async clickInstallPlugin(): Promise< void > {
-		const locator = this.page.locator( selectors.installButton );
-		await Promise.all( [ this.page.waitForResponse( /.*install\?.*/ ), locator.click() ] );
+		const needsPlanUpgrade = await this.page.locator( selectors.planUpgradeRequiredIcon ).count();
+
+		if ( needsPlanUpgrade ) {
+			await Promise.all( [
+				this.page.waitForResponse( /eligibility/ ),
+				// Depending on whethe the plugin is free or requires a monthly subscription,
+				// the text shown on the install button is slightly different.
+				this.page.getByRole( 'button', { name: /(Purchase|Upgrade) and activate/ } ).click(),
+			] );
+			// Modal will appear to re-confirm to the user that an upgrade is necessary.
+			// Accept the confirmation.
+			await this.page.getByRole( 'button', { name: 'Upgrade and activate plugin' } ).click();
+		} else {
+			await Promise.all( [
+				this.page.waitForResponse( /.*install\?.*/ ),
+				this.page.getByRole( 'button', { name: 'Install and activate' } ).click(),
+			] );
+		}
 	}
 
 	/**

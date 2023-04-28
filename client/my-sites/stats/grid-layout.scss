@@ -29,9 +29,48 @@ $grid-vertical-gutters: 32px;
 	}
 }
 
+.stats__module-list.stats__module--unified.subscribers-page {
 
-.stats__module-list.stats__module--unified.is-insights-page-enabled {
+	@include stats-desktop-grid(
+		"followers followers followers followers followers followers publicize publicize publicize publicize publicize publicize"
+		"emails emails emails emails emails emails emails emails emails emails emails emails",
+		2
+	);
 
+	@include stats-tablet-grid(
+		"followers followers followers followers publicize publicize publicize publicize"
+		"emails emails emails emails emails emails emails emails",
+		2
+	);
+
+	@include stats-mobile-grid(
+		"followers followers followers followers"
+		"publicize publicize publicize publicize"
+		"emails emails emails emails",
+		3
+	);
+
+	@media (max-width: 660px) {
+		padding: 0 16px;
+	}
+
+	.stats__module-wrapper--followers,
+	.list-followers {
+		grid-area: followers;
+	}
+
+	.stats__module-wrapper--publicize,
+	.list-publicize {
+		grid-area: publicize;
+	}
+
+	.stats__module-wrapper--emails,
+	.list-emails {
+		grid-area: emails;
+	}
+}
+
+.stats__module-list--insights {
 	&.is-jetpack {
 		@include stats-desktop-grid(
 			"tags-categories tags-categories tags-categories tags-categories tags-categories tags-categories comments comments comments comments comments comments"
@@ -85,31 +124,6 @@ $grid-vertical-gutters: 32px;
 		7
 	);
 
-	@media (max-width: 660px) {
-		padding: 0 16px;
-	}
-
-	// Temporary change until all cards are replaced with new components. Remove when cleaning 'stats/insights-page-grid' FF.
-	@media (min-width: 661px) {
-		.stats__module-wrapper--tags-categories {
-			display: flex;
-			flex-direction: column;
-			align-items: stretch;
-
-			& > * {
-				margin: 0;
-
-				& + div {
-					flex: 1 0 auto;
-				}
-			}
-
-			.card.stats-module {
-				margin-bottom: 0;
-			}
-		}
-	}
-
 	.stats__module-wrapper--tags-categories,
 	.list-tags-categories {
 		grid-area: tags-categories;
@@ -145,7 +159,6 @@ $grid-vertical-gutters: 32px;
 		grid-area: publicize;
 	}
 }
-
 
 .is-section-stats .stats__module-list--traffic {
 	@include stats-desktop-grid(

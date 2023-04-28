@@ -37,7 +37,6 @@ interface SidebarProps {
 	onClickCategory?: ( category: Category ) => void;
 	actionButtons: React.ReactNode;
 	showGlobalStylesPremiumBadge: boolean;
-	patternAssemblerCTA?: React.ReactNode;
 }
 
 const Sidebar: React.FC< SidebarProps > = ( {
@@ -53,7 +52,6 @@ const Sidebar: React.FC< SidebarProps > = ( {
 	onClickCategory,
 	actionButtons,
 	showGlobalStylesPremiumBadge,
-	patternAssemblerCTA,
 } ) => {
 	const translate = useTranslate();
 	const [ isShowFullDescription, setIsShowFullDescription ] = useState( false );
@@ -119,7 +117,6 @@ const Sidebar: React.FC< SidebarProps > = ( {
 			{ actionButtons && (
 				<div className="design-preview__sidebar-action-buttons">{ actionButtons }</div>
 			) }
-			{ patternAssemblerCTA }
 		</div>
 	);
 };

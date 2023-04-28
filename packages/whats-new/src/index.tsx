@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { useLocale } from '@automattic/i18n-utils';
+import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
-import { useQuery } from 'react-query';
 import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 import Guide from './components/guide';
 import WhatsNewPage from './whats-new-page';
@@ -30,7 +30,7 @@ const WhatsNewGuide: React.FC< Props > = ( { onClose } ) => {
 	const locale = useLocale();
 
 	const { data, isLoading } = useQuery< WhatsNewAnnouncement[] >(
-		'WhatsNewAnnouncements',
+		[ 'WhatsNewAnnouncements' ],
 		async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {

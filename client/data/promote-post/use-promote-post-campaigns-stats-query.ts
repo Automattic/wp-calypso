@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { CampaignStats } from 'calypso/data/promote-post/use-promote-post-campaigns-query';
 import { requestDSP } from 'calypso/lib/promote-post';
 

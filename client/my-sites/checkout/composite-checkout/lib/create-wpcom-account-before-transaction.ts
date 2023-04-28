@@ -41,7 +41,9 @@ export async function createWpcomAccountBeforeTransaction(
 		siteId: transactionOptions.siteId,
 		recaptchaClientId: transactionOptions.recaptchaClientId,
 	} ).then( ( response ) => {
-		const siteIdFromResponse = response?.blog_details?.blogid;
+		const siteIdFromResponse: number | undefined = parseInt(
+			response?.blog_details?.blogid ?? '0'
+		);
 
 		// We need to store the created site ID so that if the transaction fails,
 		// we can retry safely. createUserAndSiteBeforeTransaction will still be
@@ -55,12 +57,11 @@ export async function createWpcomAccountBeforeTransaction(
 		// If the account is already created (as happens when we are reprocessing
 		// after a transaction error), then the create account response will not
 		// have a site ID, so we fetch from state.
-		const siteId = siteIdFromResponse || transactionOptions.siteId;
+		const siteId: number | undefined = siteIdFromResponse || transactionOptions.siteId || 0;
 		return {
 			...transactionCart,
-			blog_id: siteId ? String( siteId ) : '0',
+			blog_id: siteId,
 			cart_key: ( siteId ? siteId : 'no-site' ) as CartKey,
-			create_new_blog: siteId ? false : true,
 		};
 	} );
 }

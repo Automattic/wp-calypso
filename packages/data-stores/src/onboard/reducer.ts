@@ -3,7 +3,7 @@ import { SiteGoal } from './constants';
 import type { OnboardAction } from './actions';
 import type { DomainForm, ProfilerData } from './types';
 import type { DomainSuggestion } from '../domain-suggestions';
-import type { FeatureId } from '../wpcom-features/types';
+import type { FeatureId } from '../shared-types';
 // somewhat hacky, but resolves the circular dependency issue
 import type { Design, FontPair, StyleVariation } from '@automattic/design-picker/src/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -509,6 +509,16 @@ export const profilerData: Reducer< ProfilerData | undefined, OnboardAction > = 
 	return state;
 };
 
+const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_PAID_SUBSCRIBERS' ) {
+		return action.paidSubscribers;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -554,6 +564,7 @@ const reducer = combineReducers( {
 	isMigrateFromWp,
 	pluginsToVerify,
 	profilerData,
+	paidSubscribers,
 } );
 
 export type State = ReturnType< typeof reducer >;

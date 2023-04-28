@@ -8,7 +8,7 @@ import {
 	QueryKey,
 	QueryFunction,
 	useQuery,
-} from 'react-query';
+} from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import { decodeEntities } from 'calypso/lib/formatting';
 import {
@@ -44,6 +44,8 @@ const mapIndexResultsToPluginData = ( results: ESHits ): Plugin[] => {
 		const plugin: Plugin = {
 			name: decodeEntities( hit.plugin?.title ), // TODO: add localization
 			slug: decodeEntities( hit.slug ),
+			software_slug: hit.plugin?.software_slug,
+			org_slug: hit.plugin?.org_slug,
 			version: hit[ 'plugin.stable_tag' ],
 			author: hit.author,
 			author_name: hit.plugin?.author,
@@ -93,14 +95,14 @@ export const getESPluginQueryParams = (
 				mapIndexResultsToPluginData( data.results )
 			)
 			.then( ( plugins: Plugin[] ) => plugins?.[ 0 ] || null );
-	return [ cacheKey, fetchFn ];
+	return [ [ cacheKey ], fetchFn ];
 };
 
 const ONE_DAY_IN_MS = 1000 * 60 * 60 * 24;
 export const useESPlugin = (
 	slug: string,
 	fields?: Array< string >,
-	{ enabled = true, staleTime = ONE_DAY_IN_MS, refetchOnMount = true }: UseQueryOptions = {}
+	{ enabled = true, staleTime = ONE_DAY_IN_MS, refetchOnMount = true }: UseQueryOptions< any > = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 
@@ -117,7 +119,7 @@ export const getESPluginsInfiniteQueryParams = (
 ): [ QueryKey, QueryFunction< ESResponse, QueryKey > ] => {
 	const [ searchTerm, author ] = extractSearchInformation( options.searchTerm );
 	const pageSize = options.pageSize ?? DEFAULT_PAGE_SIZE;
-	const cacheKey = getPluginsListKey( 'DEBUG-new-site-seach', options, true );
+	const cacheKey = getPluginsListKey( [ 'DEBUG-new-site-seach' ], options, true );
 	const groupId =
 		config.isEnabled( 'marketplace-jetpack-plugin-search' ) && options.category !== 'popular'
 			? 'marketplace'
@@ -137,7 +139,7 @@ export const getESPluginsInfiniteQueryParams = (
 
 export const useESPluginsInfinite = (
 	options: PluginQueryOptions,
-	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions = {}
+	{ enabled = true, staleTime = 10000, refetchOnMount = true }: UseQueryOptions< any > = {}
 ): UseQueryResult => {
 	const locale = useSelector( getCurrentUserLocale );
 

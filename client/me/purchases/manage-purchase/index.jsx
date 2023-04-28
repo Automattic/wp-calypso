@@ -30,6 +30,10 @@ import {
 	getMonthlyPlanByYearly,
 	hasMarketplaceProduct,
 	isDIFMProduct,
+	isAkismetProduct,
+	isAkismetFreeProduct,
+	isJetpackBackupT1Slug,
+	AKISMET_UPGRADES_PRODUCTS_MAP,
 } from '@automattic/calypso-products';
 import { Spinner, Button, Card, CompactCard, ProductIcon, Gridicon } from '@automattic/components';
 import classNames from 'classnames';
@@ -44,7 +48,6 @@ import Badge from 'calypso/components/badge';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
-import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import HeaderCake from 'calypso/components/header-cake';
 import CancelPurchaseForm from 'calypso/components/marketing-survey/cancel-purchase-form';
@@ -205,8 +208,10 @@ class ManagePurchase extends Component {
 	handleRenew = () => {
 		const { purchase, siteSlug, redirectTo } = this.props;
 		const options = redirectTo ? { redirectTo } : undefined;
+		const isSitelessRenewal = isAkismetTemporarySitePurchase( purchase );
 
-		this.props.handleRenewNowClick( purchase, siteSlug, options );
+		// If this renewal is for a siteless purchase, we'll drop the site slug
+		this.props.handleRenewNowClick( purchase, ! isSitelessRenewal ? siteSlug : '', options );
 	};
 
 	handleRenewMonthly = () => {
@@ -246,11 +251,11 @@ class ManagePurchase extends Component {
 
 	renderRenewButton() {
 		const { purchase, translate } = this.props;
-
 		if (
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
-			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) )
+			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) ||
+			isAkismetFreeProduct( purchase )
 		) {
 			return null;
 		}
@@ -277,7 +282,8 @@ class ManagePurchase extends Component {
 			! isComplete( purchase ) &&
 			! isP2Plus( purchase );
 		const isUpgradeableProduct =
-			! isPlan( purchase ) && JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
+			! isPlan( purchase ) &&
+			( isJetpackBackupT1Slug( purchase.productSlug ) || isAkismetProduct( purchase ) );
 
 		if ( ! isUpgradeablePlan && ! isUpgradeableProduct ) {
 			return null;
@@ -288,6 +294,10 @@ class ManagePurchase extends Component {
 		}
 
 		const upgradeUrl = this.getUpgradeUrl();
+
+		if ( ! upgradeUrl ) {
+			return null;
+		}
 
 		// If the "renew now" button is showing, it will be using primary styles
 		// Show the upgrade button without the primary style if both buttons are present
@@ -314,7 +324,8 @@ class ManagePurchase extends Component {
 		if (
 			isPartnerPurchase( purchase ) ||
 			! isRenewable( purchase ) ||
-			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) )
+			( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) ||
+			isAkismetFreeProduct( purchase )
 		) {
 			return null;
 		}
@@ -335,7 +346,7 @@ class ManagePurchase extends Component {
 	renderRenewAnnuallyNavItem() {
 		const { translate, purchase, relatedMonthlyPlanPrice } = this.props;
 		const annualPrice = getRenewalPrice( purchase ) / 12;
-		const savings = Math.round(
+		const savings = Math.floor(
 			( 100 * ( relatedMonthlyPlanPrice - annualPrice ) ) / relatedMonthlyPlanPrice
 		);
 		return this.renderRenewalNavItem(
@@ -372,6 +383,13 @@ class ManagePurchase extends Component {
 
 		const isUpgradeableBackupProduct = JETPACK_BACKUP_T1_PRODUCTS.includes( purchase.productSlug );
 		const isUpgradeableSecurityPlan = JETPACK_SECURITY_T1_PLANS.includes( purchase.productSlug );
+
+		if ( isAkismetProduct( purchase ) ) {
+			// For the first Iteration of Calypso Akismet checkout we are only suggesting
+			// for immediate upgrades to the next plan. We will change this in the future
+			// with appropriate page.
+			return AKISMET_UPGRADES_PRODUCTS_MAP[ purchase.productSlug ];
+		}
 
 		if ( isUpgradeableBackupProduct || isUpgradeableSecurityPlan ) {
 			return `/plans/storage/${ siteSlug }`;
@@ -443,7 +461,11 @@ class ManagePurchase extends Component {
 	renderEditPaymentMethodNavItem() {
 		const { purchase, translate, siteSlug, getChangePaymentMethodUrlFor } = this.props;
 
-		if ( isPartnerPurchase( purchase ) || ! this.props.site ) {
+		if ( isPartnerPurchase( purchase ) ) {
+			return null;
+		}
+
+		if ( ! this.props.site && ! isAkismetTemporarySitePurchase( purchase ) ) {
 			return null;
 		}
 
@@ -1135,7 +1157,6 @@ class ManagePurchase extends Component {
 
 		return (
 			<Fragment>
-				<QueryStoredCards />
 				<TrackPurchasePageView
 					eventName="calypso_manage_purchase_view"
 					purchaseId={ this.props.purchaseId }

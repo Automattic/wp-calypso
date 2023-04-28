@@ -33,10 +33,10 @@ export default function useParameter( {
 	locationStateParamName,
 	sanitize,
 }: UseParameterType ): string | null {
-	const { state: locationState = {}, search } = useLocation< StateType >();
+	const { state: locationState, search } = useLocation();
 
 	// Use location state if available
-	const locationStateParamValue = locationState[ locationStateParamName ];
+	const locationStateParamValue = locationState?.[ locationStateParamName ];
 	if ( locationState && locationStateParamValue ) {
 		return sanitize( locationStateParamValue );
 	}

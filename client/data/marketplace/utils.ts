@@ -1,4 +1,4 @@
-import { QueryKey } from 'react-query';
+import { QueryKey } from '@tanstack/react-query';
 import { PluginQueryOptions } from './types';
 
 const PLUGINS_CACHE_VERSION = 1;
@@ -18,5 +18,5 @@ export const getPluginsListKey = (
 		options.tag && ! options.searchTerm ? options.tag : '',
 	];
 
-	return [ PLUGINS_CACHE_VERSION.toString(), key, ...keyParams ];
+	return [ ...key, PLUGINS_CACHE_VERSION.toString(), ...keyParams ];
 };

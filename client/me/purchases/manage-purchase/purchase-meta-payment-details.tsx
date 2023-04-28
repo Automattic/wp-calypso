@@ -1,8 +1,7 @@
-import { isDomainTransfer } from '@automattic/calypso-products';
-import { useSelector } from 'react-redux';
+import { isAkismetFreeProduct, isDomainTransfer } from '@automattic/calypso-products';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isOneTimePurchase, isPaidWithCreditCard } from 'calypso/lib/purchases';
-import { getAllStoredCards } from 'calypso/state/stored-cards/selectors';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
 import { canEditPaymentDetails } from '../utils';
 import PaymentInfoBlock from './payment-info-block';
 import type { Purchase, GetChangePaymentMethodUrlFor } from 'calypso/lib/purchases/types';
@@ -12,6 +11,7 @@ interface PaymentProps {
 	getChangePaymentMethodUrlFor: GetChangePaymentMethodUrlFor;
 	siteSlug?: string;
 	site?: string;
+	isAkismetPurchase: boolean;
 }
 
 function PurchaseMetaPaymentDetails( {
@@ -19,13 +19,18 @@ function PurchaseMetaPaymentDetails( {
 	getChangePaymentMethodUrlFor,
 	siteSlug,
 	site,
+	isAkismetPurchase,
 }: PaymentProps ) {
-	const cards = useSelector( getAllStoredCards );
+	const { paymentMethods: cards } = useStoredPaymentMethods( { type: 'card' } );
 	const handleEditPaymentMethodClick = () => {
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
 	};
 
-	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
+	if (
+		isOneTimePurchase( purchase ) ||
+		isDomainTransfer( purchase ) ||
+		isAkismetFreeProduct( purchase )
+	) {
 		return null;
 	}
 
@@ -34,8 +39,8 @@ function PurchaseMetaPaymentDetails( {
 	if (
 		! canEditPaymentDetails( purchase ) ||
 		! isPaidWithCreditCard( purchase ) ||
-		! site ||
-		! siteSlug
+		! siteSlug ||
+		( ! site && ! isAkismetPurchase )
 	) {
 		return <li>{ paymentDetails }</li>;
 	}

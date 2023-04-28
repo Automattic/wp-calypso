@@ -1,12 +1,12 @@
+import { useQuery } from '@tanstack/react-query';
 import { localize } from 'i18n-calypso';
-import { useQuery } from 'react-query';
 import EmptyContent from 'calypso/components/empty-content';
 import wpcom from 'calypso/lib/wp';
 import { ConnectedThemesSelection } from './themes-selection';
 
 const FseThemes = localize( ( { translate, ...restProps } ) => {
 	const { data, error, isLoading } = useQuery(
-		'fse-themes',
+		[ 'fse-themes' ],
 		() =>
 			wpcom.req.get( '/themes', {
 				filter: 'full-site-editing',

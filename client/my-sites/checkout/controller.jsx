@@ -1,4 +1,9 @@
-import { isJetpackLegacyItem } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	isJetpackLegacyItem,
+} from '@automattic/calypso-products';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -39,6 +44,7 @@ import UpsellNudge, {
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
 	PROFESSIONAL_EMAIL_UPSELL,
+	ANNUAL_PLAN_UPGRADE_UPSELL,
 } from './upsell-nudge';
 import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './utils';
 
@@ -55,7 +61,7 @@ export function checkoutAkismetSiteless( context, next ) {
 function sitelessCheckout( context, next, extraProps ) {
 	const state = context.store.getState();
 	const isLoggedOut = ! isUserLoggedIn( state );
-	const { productSlug: product } = context.params;
+	const { productSlug: product, purchaseId } = context.params;
 	const isUserComingFromLoginForm = context.query?.flow === 'coming_from_login';
 
 	setSectionMiddleware( { name: 'checkout' } )( context );
@@ -73,6 +79,7 @@ function sitelessCheckout( context, next, extraProps ) {
 			<CheckoutSitelessDocumentTitle />
 
 			<CheckoutMainWrapper
+				purchaseId={ purchaseId }
 				productAliasFromUrl={ product }
 				productSourceFromUrl={ context.query.source }
 				couponCode={ couponCode }
@@ -324,6 +331,11 @@ export function upsellNudge( context, next ) {
 		upgradeItem = context.params.upgradeItem;
 
 		switch ( upgradeItem ) {
+			case PLAN_PERSONAL:
+			case PLAN_PREMIUM:
+			case PLAN_BUSINESS:
+				upsellType = ANNUAL_PLAN_UPGRADE_UPSELL;
+				break;
 			case 'business':
 			case 'business-2-years':
 			case 'business-3-years':

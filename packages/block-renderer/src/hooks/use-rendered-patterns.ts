@@ -16,6 +16,7 @@ const fetchRenderedPatterns = (
 	const params = new URLSearchParams( {
 		stylesheet,
 		pattern_ids,
+		_locale: 'user',
 	} );
 
 	if ( title ) {
@@ -41,11 +42,15 @@ const useRenderedPatterns = (
 ) => {
 	const [ renderedPatterns, setRenderedPatterns ] = useState( {} );
 
-	// If we query too many patterns at once, the endpoint will be very slow.
-	// Hence, do local pagination to ensure the performance.
-	const totalPage = Math.ceil( patternIds.length / PAGE_SIZE );
-
 	useEffect( () => {
+		if ( ! patternIds.length ) {
+			return;
+		}
+
+		// If we query too many patterns at once, the endpoint will be very slow.
+		// Hence, do local pagination to ensure the performance.
+		const totalPage = Math.ceil( patternIds.length / PAGE_SIZE );
+
 		const promises = [];
 		for ( let i = 0; i < totalPage; i++ ) {
 			promises.push( fetchRenderedPatterns( siteId, stylesheet, patternIds, siteInfo, i ) );
@@ -56,7 +61,7 @@ const useRenderedPatterns = (
 				pages.reduce( ( previous, current ) => ( { ...previous, ...current } ), {} )
 			);
 		} );
-	}, [] );
+	}, [ patternIds.length ] );
 
 	return renderedPatterns;
 };

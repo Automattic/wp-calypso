@@ -12,6 +12,7 @@ export interface FontPair {
 export interface Category {
 	slug: string;
 	name: string;
+	description?: string;
 }
 
 export interface StyleVariation {
@@ -60,6 +61,9 @@ export interface DesignRecipe {
 	pattern_ids?: number[] | string[];
 	header_pattern_ids?: number[] | string[];
 	footer_pattern_ids?: number[] | string[];
+	color_variation_title?: string;
+	font_variation_title?: string;
+	slug?: string;
 }
 
 export interface SoftwareSet {
@@ -79,6 +83,12 @@ export type DesignType =
 	| 'anchor-fm'
 	| 'assembler';
 
+export interface PreviewData {
+	site_title?: string;
+	site_tagline?: string;
+	site_logo_url?: string;
+}
+
 export interface Design {
 	slug: string;
 	title: string;
@@ -97,7 +107,7 @@ export interface Design {
 	software_sets?: SoftwareSet[];
 	is_bundled_with_woo_commerce?: boolean;
 	is_virtual?: boolean;
-	preselected_style_variation?: StyleVariation; // Preselected style variation on virtual themes.
+	preview_data?: PreviewData;
 
 	/** @deprecated used for Gutenboarding (/new flow) */
 	stylesheet?: string;

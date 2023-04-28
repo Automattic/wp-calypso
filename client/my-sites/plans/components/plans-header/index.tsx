@@ -58,11 +58,12 @@ const DomainUpsellHeader: React.FunctionComponent = () => {
 
 const PlansHeader: React.FunctionComponent< {
 	domainFromHomeUpsellFlow?: string;
-} > = ( { domainFromHomeUpsellFlow } ) => {
+	subHeaderText?: string;
+} > = ( { domainFromHomeUpsellFlow, subHeaderText } ) => {
 	const translate = useTranslate();
-	const plansDescription = translate(
-		'See and compare the features available on each WordPress.com plan.'
-	);
+	const plansDescription =
+		subHeaderText ??
+		translate( 'See and compare the features available on each WordPress.com plan.' );
 
 	if ( domainFromHomeUpsellFlow ) {
 		return <DomainUpsellHeader />;

@@ -123,13 +123,24 @@ export const HelpCenterContactPage: FC = () => {
 			<div className="help-center-contact-page__content">
 				<h3>{ __( 'Contact our WordPress.com experts', __i18n_text_domain__ ) }</h3>
 				<HelpCenterActiveTicketNotice tickets={ tickets } />
-				{ /* Christmas */ }
+				{ /* Easter */ }
 				<GMClosureNotice
-					displayAt="2022-12-17 00:00Z"
-					closesAt="2022-12-24 00:00Z"
-					reopensAt="2022-12-26 07:00Z"
+					displayAt="2023-04-03 00:00Z"
+					closesAt="2023-04-09 00:00Z"
+					reopensAt="2023-04-10 07:00Z"
 					enabled={ hasAccessToLivechat }
 				/>
+				{ renderChat.env === 'staging' && (
+					<Notice
+						status="warning"
+						actions={ [ { label: 'Learn more', url: 'https://wp.me/PCYsg-Q7X' } ] }
+						className="help-center-contact-page__staging-notice"
+						isDismissible={ false }
+					>
+						Targeting HappyChat staging
+					</Notice>
+				) }
+
 				<div className={ classnames( 'help-center-contact-page__boxes' ) }>
 					<Link to="/contact-form?mode=FORUM">
 						<div
@@ -173,16 +184,6 @@ export const HelpCenterContactPage: FC = () => {
 									</div>
 								</div>
 							</ConditionalLink>
-							{ renderChat.env === 'staging' && (
-								<Notice
-									status="warning"
-									actions={ [ { label: 'HUD', url: 'https://hud-staging.happychat.io/' } ] }
-									className="help-center-contact-page__staging-notice"
-									isDismissible={ false }
-								>
-									Using HappyChat staging
-								</Notice>
-							) }
 						</div>
 					) }
 

@@ -3,15 +3,16 @@ import styled from '@emotion/styled';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useCallback } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
-import { useInView } from 'calypso/lib/use-in-view';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { PLAN_RENEW_NAG_EVENT_NAMES } from '../utils';
 
 interface SitesGridActionRenewProps {
 	site: SiteExcerptData;
+	hideRenewLink?: boolean;
 }
 
 const Container = styled.div( {
@@ -36,7 +37,7 @@ const RenewLink = styled.a( {
 	},
 } );
 
-export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
+export function SitesGridActionRenew( { site, hideRenewLink }: SitesGridActionRenewProps ) {
 	const { __ } = useI18n();
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const isSiteOwner = site.site_owner === userId;
@@ -50,7 +51,9 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 		} );
 	}, [ isSiteOwner, productSlug ] );
 
-	const ref = useInView< HTMLSpanElement >( trackCallback );
+	const { ref } = useInView( {
+		onChange: ( inView ) => inView && trackCallback(),
+	} );
 
 	return (
 		<Container>
@@ -61,7 +64,7 @@ export function SitesGridActionRenew( { site }: SitesGridActionRenewProps ) {
 						sprintf( __( '%s Plan expired.' ), site.plan?.product_name_short )
 					}
 				</span>
-				{ isSiteOwner && (
+				{ isSiteOwner && ! hideRenewLink && (
 					<RenewLink
 						href={ `/checkout/${ site.slug }/${ productSlug }` }
 						onClick={ () => {

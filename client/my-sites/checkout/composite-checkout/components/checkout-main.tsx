@@ -16,9 +16,9 @@ import QueryPostCounts from 'calypso/components/data/query-post-counts';
 import QueryProducts from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import wp from 'calypso/lib/wp';
 import useSiteDomains from 'calypso/my-sites/checkout/composite-checkout/hooks/use-site-domains';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
@@ -42,7 +42,7 @@ import usePrepareProductsForCart from '../hooks/use-prepare-products-for-cart';
 import useRecordCartLoaded from '../hooks/use-record-cart-loaded';
 import useRecordCheckoutLoaded from '../hooks/use-record-checkout-loaded';
 import useRemoveFromCartAndRedirect from '../hooks/use-remove-from-cart-and-redirect';
-import useStoredCards from '../hooks/use-stored-cards';
+import { useStoredPaymentMethods } from '../hooks/use-stored-payment-methods';
 import { logStashLoadErrorEvent, logStashEvent } from '../lib/analytics';
 import existingCardProcessor from '../lib/existing-card-processor';
 import filterAppropriatePaymentMethods from '../lib/filter-appropriate-payment-methods';
@@ -55,7 +55,6 @@ import { translateResponseCartToWPCOMCart } from '../lib/translate-cart';
 import weChatProcessor from '../lib/we-chat-processor';
 import webPayProcessor from '../lib/web-pay-processor';
 import { CHECKOUT_STORE } from '../lib/wpcom-store';
-import { StoredCard } from '../types/stored-cards';
 import WPCheckout from './wp-checkout';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
@@ -67,9 +66,7 @@ import type {
 } from '@automattic/wpcom-checkout';
 
 const { colors } = colorStudio;
-const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
-
-const wpcomGetStoredCards = (): StoredCard[] => wp.req.get( { path: '/me/stored-cards' } );
+const debug = debugFactory( 'calypso:checkout-main' );
 
 export default function CheckoutMain( {
 	siteSlug,
@@ -106,7 +103,7 @@ export default function CheckoutMain( {
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
 	plan?: string | undefined;
-	purchaseId?: number | undefined;
+	purchaseId?: number | string | undefined;
 	couponCode?: string | undefined;
 	isComingFromUpsell?: boolean;
 	isLoggedOutCart?: boolean;
@@ -256,9 +253,7 @@ export default function CheckoutMain( {
 
 	const getThankYouUrl = useCallback( () => {
 		const url = getThankYouUrlBase();
-		logStashEvent( 'thank you url generated', {
-			url,
-		} );
+		logStashEvent( 'thank you url generated', { url }, 'info' );
 		return url;
 	}, [ getThankYouUrlBase ] );
 
@@ -322,10 +317,10 @@ export default function CheckoutMain( {
 		);
 
 	const {
-		storedCards,
+		paymentMethods: storedCards,
 		isLoading: isLoadingStoredCards,
 		error: storedCardsError,
-	} = useStoredCards( wpcomGetStoredCards, Boolean( isLoggedOutCart ) );
+	} = useStoredPaymentMethods( { isLoggedOut: isLoggedOutCart, type: 'card' } );
 
 	useActOnceOnStrings( [ storedCardsError ].filter( isValueTruthy ), ( messages ) => {
 		messages.forEach( ( message ) => {
@@ -510,6 +505,7 @@ export default function CheckoutMain( {
 	if ( isCheckoutPageLoading ) {
 		debug( 'still loading because one of these is true', {
 			isInitialCartLoading,
+			...( allowedPaymentMethods.includes( 'card' ) ? { isLoadingStoredCards } : {} ),
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: responseCart.products.length < 1,
@@ -603,9 +599,7 @@ export default function CheckoutMain( {
 
 	const handlePaymentMethodChanged = useCallback(
 		( method: string ) => {
-			logStashEvent( 'payment_method_select', {
-				newMethodId: String( method ),
-			} );
+			logStashEvent( 'payment_method_select', { newMethodId: String( method ) }, 'info' );
 			// Need to convert to the slug format used in old checkout so events are comparable
 			const rawPaymentMethodSlug = String( method );
 			const legacyPaymentMethodSlug = translateCheckoutPaymentMethodToTracksPaymentMethod(
@@ -687,6 +681,7 @@ export default function CheckoutMain( {
 			<QueryJetpackSaleCoupon />
 			<QuerySitePlans siteId={ updatedSiteId } />
 			<QuerySitePurchases siteId={ updatedSiteId } />
+			{ isSiteless && <QueryUserPurchases /> }
 			<QueryPlans />
 			<QueryProducts />
 			<QueryContactDetailsCache />
@@ -739,7 +734,7 @@ export default function CheckoutMain( {
 }
 
 function getAnalyticsPath(
-	purchaseId: number | undefined,
+	purchaseId: number | string | undefined,
 	product: string | undefined,
 	selectedSiteSlug: string | undefined,
 	selectedFeature: string | undefined,

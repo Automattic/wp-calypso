@@ -37,6 +37,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
+	emailManagementAddEmailForwards,
 	emailManagementAddGSuiteUsers,
 	emailManagementForwarding,
 	emailManagementInbox,
@@ -61,8 +62,8 @@ import isDIFMLiteInProgress from 'calypso/state/selectors/is-difm-lite-in-progre
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isStagingSite from 'calypso/state/selectors/is-staging-site';
 import wasEcommerceTrialSite from 'calypso/state/selectors/was-ecommerce-trial-site';
 import { requestSite } from 'calypso/state/sites/actions';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
@@ -77,7 +78,6 @@ import { isSupportSession } from 'calypso/state/support/selectors';
 import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-
 /*
  * @FIXME Shorthand, but I might get rid of this.
  */
@@ -205,6 +205,7 @@ function isPathAllowedForDomainOnlySite( path, slug, primaryDomain, contextParam
 		domainManagementTransferOut,
 		domainManagementTransferToOtherSite,
 		emailManagement,
+		emailManagementAddEmailForwards,
 		emailManagementAddGSuiteUsers,
 		emailManagementForwarding,
 		emailManagementInbox,
@@ -303,8 +304,10 @@ function onSelectedSiteAvailable( context ) {
 				'/checkout/',
 				'/domains/',
 				'/email/',
+				'/export/',
 				'/plans/my-plan/trial-expired/',
 				'/purchases/',
+				'/settings/delete-site/',
 			];
 
 			if ( ! permittedPathPrefixes.some( ( prefix ) => context.pathname.startsWith( prefix ) ) ) {
@@ -553,9 +556,23 @@ export function siteSelection( context, next ) {
 		// onSelectedSiteAvailable might render an error page about domain-only sites or redirect
 		// to wp-admin. In that case, don't continue handling the route.
 		dispatch( setSelectedSiteId( siteId ) );
-		if ( onSelectedSiteAvailable( context ) ) {
-			next();
-		}
+
+		const currentPlanSlug = getSitePlanSlug( getState(), siteId );
+		const shouldUpdateStateAfterUpgrade =
+			context.pathname.startsWith( '/plans/my-plan/trial-upgraded/' ) &&
+			[ PLAN_FREE, PLAN_JETPACK_FREE ].includes( currentPlanSlug );
+
+		// This will fetch the site and update the state after the plan is upgraded if the site is on the trial-upgraded flow.
+		const promise = shouldUpdateStateAfterUpgrade
+			? dispatch( requestSite( siteId ) ).catch( () => {
+					return null;
+			  } )
+			: Promise.resolve();
+		promise.then( () => {
+			if ( onSelectedSiteAvailable( context ) ) {
+				next();
+			}
+		} );
 	} else {
 		// Fetch the site by siteFragment and then try to select again
 		dispatch( requestSite( siteFragment ) )
@@ -568,7 +585,8 @@ export function siteSelection( context, next ) {
 					const unmappedSlug = withoutHttp( getSiteOption( getState(), site.ID, 'unmapped_url' ) );
 
 					if ( unmappedSlug !== siteSlug && unmappedSlug === siteFragment ) {
-						return page.redirect( context.path.replace( siteFragment, siteSlug ) );
+						const hash = context.hashstring ? `#${ context.hashstring }` : '';
+						return page.redirect( context.path.replace( siteFragment, siteSlug ) + hash );
 					}
 				}
 
@@ -685,7 +703,7 @@ export function stagingSiteNotSupportedRedirect( context, next ) {
 	const store = context.store;
 	const selectedSite = getSelectedSite( store.getState() );
 
-	if ( selectedSite && isStagingSite( store.getState(), selectedSite.ID ) ) {
+	if ( selectedSite && isSiteWpcomStaging( store.getState(), selectedSite.ID ) ) {
 		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
 
 		return page.redirect( `/home/${ siteSlug }` );

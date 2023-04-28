@@ -1,6 +1,5 @@
 import { Page, ElementHandle, Locator } from 'playwright';
 
-const editorPane = 'div.edit-post-visual-editor__content-area';
 const selectors = {
 	// Title
 	title: '.editor-post-title__input',
@@ -147,7 +146,7 @@ export class EditorGutenbergComponent {
 	async getSelectedBlockElementHandle( blockEditorSelector: string ): Promise< ElementHandle > {
 		// Note the :is() selector. This is to support both the block API v1 and V2.
 		const locator = this.editorCanvas.locator(
-			`:is(${ editorPane } ${ blockEditorSelector }.is-selected, ${ editorPane } ${ blockEditorSelector }.has-child-selected)`
+			`:is(${ blockEditorSelector }.is-selected, ${ blockEditorSelector }.has-child-selected)`
 		);
 		await locator.waitFor();
 		return ( await locator.elementHandle() ) as ElementHandle;

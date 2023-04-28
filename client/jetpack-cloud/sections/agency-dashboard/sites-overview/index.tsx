@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { isWithinBreakpoint } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
@@ -15,7 +14,6 @@ import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import useFetchDashboardSites from 'calypso/data/agency-dashboard/use-fetch-dashboard-sites';
-import useDetectWindowBoundary from 'calypso/lib/detect-window-boundary';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { resetSite } from 'calypso/state/jetpack-agency-dashboard/actions';
 import {
@@ -28,14 +26,13 @@ import OnboardingWidget from '../../partner-portal/primary/onboarding-widget';
 import SitesOverviewContext from './context';
 import SiteAddLicenseNotification from './site-add-license-notification';
 import SiteContent from './site-content';
+import SiteContentHeader from './site-content-header';
 import SiteSearchFilterContainer from './site-search-filter-container/SiteSearchFilterContainer';
 import SiteWelcomeBanner from './site-welcome-banner';
 import { getProductSlugFromProductType } from './utils';
 import type { Site } from '../sites-overview/types';
 
 import './style.scss';
-
-const CALYPSO_MASTERBAR_HEIGHT = 47;
 
 export default function SitesOverview() {
 	const translate = useTranslate();
@@ -55,8 +52,15 @@ export default function SitesOverview() {
 
 	const [ highlightTab, setHighlightTab ] = useState( false );
 
-	const { search, currentPage, filter, sort, selectedSites, setSelectedSites } =
-		useContext( SitesOverviewContext );
+	const {
+		search,
+		currentPage,
+		filter,
+		sort,
+		selectedSites,
+		setSelectedSites,
+		setIsBulkManagementActive,
+	} = useContext( SitesOverviewContext );
 
 	const { data, isError, isLoading, refetch } = useFetchDashboardSites(
 		isPartnerOAuthTokenLoaded,
@@ -104,7 +108,6 @@ export default function SitesOverview() {
 	}, [ refetch, jetpackSiteDisconnected ] );
 
 	const pageTitle = translate( 'Dashboard' );
-	const expandableBlockEnabled = 'Dashboard - Expandable block for sites enabled';
 
 	const basePath = '/dashboard';
 
@@ -127,6 +130,7 @@ export default function SitesOverview() {
 					selected: isFavorite ? filter.showOnlyFavorites : ! filter.showOnlyFavorites,
 					path: `${ basePath }${ isFavorite ? '/favorites' : '' }${ search ? '?s=' + search : '' }`,
 					onClick: () => {
+						setIsBulkManagementActive( false );
 						dispatch(
 							recordTracksEvent( 'calypso_jetpack_agency_dashboard_tab_click', {
 								nav_item: navItem.key,
@@ -144,6 +148,7 @@ export default function SitesOverview() {
 			isMobile,
 			search,
 			translate,
+			setIsBulkManagementActive,
 		]
 	);
 
@@ -174,10 +179,6 @@ export default function SitesOverview() {
 			source: 'dashboard',
 		} );
 	}, [ selectedLicensesSiteId, selectedLicenses ] );
-
-	const [ divRef, hasCrossed ] = useDetectWindowBoundary( CALYPSO_MASTERBAR_HEIGHT );
-
-	const outerDivProps = divRef ? { ref: divRef as React.RefObject< HTMLDivElement > } : {};
 
 	const renderIssueLicenseButton = () => {
 		return (
@@ -229,26 +230,11 @@ export default function SitesOverview() {
 					<div className="sites-overview__content-wrapper">
 						<SiteWelcomeBanner isDashboardView />
 						{ data?.sites && <SiteAddLicenseNotification /> }
-						<div className="sites-overview__viewport" { ...outerDivProps }>
-							<div
-								className={ classNames( 'sites-overview__page-title-container', {
-									'is-sticky': showIssueLicenseButtonsLargeScreen && hasCrossed,
-								} ) }
-							>
-								<div className="sites-overview__page-heading">
-									{ isEnabled( 'jetpack/pro-dashboard-expandable-block' ) ? (
-										<h2 className="sites-overview__page-title">{ expandableBlockEnabled }</h2>
-									) : (
-										<h2 className="sites-overview__page-title">{ pageTitle }</h2>
-									) }
-									<div className="sites-overview__page-subtitle">
-										{ translate( 'Manage all your Jetpack sites from one location' ) }
-									</div>
-								</div>
-
-								{ showIssueLicenseButtonsLargeScreen && renderIssueLicenseButton() }
-							</div>
-						</div>
+						<SiteContentHeader
+							content={ renderIssueLicenseButton() }
+							pageTitle={ pageTitle }
+							showStickyContent={ !! showIssueLicenseButtonsLargeScreen }
+						/>
 						<SectionNav
 							applyUpdatedStyles
 							selectedText={

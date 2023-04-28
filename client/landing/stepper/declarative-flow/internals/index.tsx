@@ -1,30 +1,29 @@
-import { ProgressBar } from '@automattic/components';
-import {
-	isNewsletterOrLinkInBioFlow,
-	isWooExpressFlow,
-	SITE_SETUP_FLOW,
-} from '@automattic/onboarding';
+import { isNewsletterOrLinkInBioFlow, isWooExpressFlow } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
-import classnames from 'classnames';
-import { useEffect, useState, useCallback, Suspense } from 'react';
+import { useEffect, useState, useCallback, Suspense, lazy } from 'react';
 import Modal from 'react-modal';
-import { Switch, Route, Redirect, generatePath, useHistory, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, generatePath, useNavigate, useLocation } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { STEPPER_INTERNAL_STORE } from 'calypso/landing/stepper/stores';
 import { recordFullStoryEvent } from 'calypso/lib/analytics/fullstory';
 import { recordPageView } from 'calypso/lib/analytics/page-view';
 import { recordSignupStart } from 'calypso/lib/analytics/signup';
-import SignupHeader from 'calypso/signup/signup-header';
+import AsyncCheckoutModal from 'calypso/my-sites/checkout/modal/async';
+import {
+	getSignupCompleteFlowNameAndClear,
+	getSignupCompleteStepNameAndClear,
+} from 'calypso/signup/storageUtils';
+import { useSite } from '../../hooks/use-site';
+import useSyncRoute from '../../hooks/use-sync-route';
 import { ONBOARD_STORE } from '../../stores';
+import kebabCase from '../../utils/kebabCase';
 import recordStepStart from './analytics/record-step-start';
+import StepRoute from './components/step-route';
 import StepperLoader from './components/stepper-loader';
-import VideoPressIntroBackground from './steps-repository/intro/videopress-intro-background';
 import { AssertConditionState, Flow, StepperStep } from './types';
 import './global.scss';
 import type { OnboardSelect, StepperInternalSelect } from '@automattic/data-stores';
-
-const kebabCase = ( value: string ) => value.replace( /([a-z0-9])([A-Z])/g, '$1-$2' ).toLowerCase();
 
 /**
  * This component accepts a single flow property. It does the following:
@@ -44,13 +43,15 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	const stepPaths = flowSteps.map( ( step ) => step.slug );
 	const location = useLocation();
 	const currentStepRoute = location.pathname.split( '/' )[ 2 ]?.replace( /\/+$/, '' );
-	const history = useHistory();
+	const navigate = useNavigate();
 	const { search } = useLocation();
 	const { setStepData } = useDispatch( STEPPER_INTERNAL_STORE );
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
 		[]
 	);
+
+	const site = useSite();
 	const ref = useQuery().get( 'ref' ) || '';
 
 	const stepProgress = useSelect(
@@ -62,6 +63,11 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		stepProgress ? stepProgress.progress : 0
 	);
 	const previousProgressValue = stepProgress ? previousProgress / stepProgress.count : 0;
+
+	// this pre-loads all the lazy steps down the flow.
+	useEffect( () => {
+		Promise.all( flowSteps.map( ( step ) => 'asyncComponent' in step && step.asyncComponent() ) );
+	}, stepPaths );
 
 	const isFlowStart = useCallback( () => {
 		if ( ! flow || ! stepProgress ) {
@@ -76,7 +82,7 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		return false;
 	}, [ flow, stepProgress ] );
 
-	const navigate = async ( path: string, extraData = {} ) => {
+	const _navigate = async ( path: string, extraData = {} ) => {
 		// If any extra data is passed to the navigate() function, store it to the stepper-internal store.
 		setStepData( {
 			path: path,
@@ -85,14 +91,14 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		} );
 
 		const _path = path.includes( '?' ) // does path contain search params
-			? generatePath( `/${ flow.name }/${ path }` )
-			: generatePath( `/${ flow.name }/${ path }${ search }` );
+			? generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }` )
+			: generatePath( `/${ flow.variantSlug ?? flow.name }/${ path }${ search }` );
 
-		history.push( _path, stepPaths );
+		navigate( _path, { state: stepPaths } );
 		setPreviousProgress( stepProgress?.progress ?? 0 );
 	};
 
-	const stepNavigation = flow.useStepNavigation( currentStepRoute, navigate );
+	const stepNavigation = flow.useStepNavigation( currentStepRoute, _navigate );
 
 	// Retrieve any extra step data from the stepper-internal store. This will be passed as a prop to the current step.
 	const stepData = useSelect(
@@ -100,7 +106,9 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		[]
 	);
 
-	flow.useSideEffect?.( currentStepRoute, navigate );
+	flow.useSideEffect?.( currentStepRoute, _navigate );
+
+	useSyncRoute();
 
 	useEffect( () => {
 		window.scrollTo( 0, 0 );
@@ -115,14 +123,22 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 
 	useEffect( () => {
 		// We record the event only when the step is not empty. Additionally, we should not fire this event whenever the intent is changed
-		if ( currentStepRoute ) {
-			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
-
-			// Also record page view for data and analytics
-			const pathname = window.location.pathname || '';
-			const pageTitle = `Setup > ${ flow.name } > ${ currentStepRoute }`;
-			recordPageView( pathname, pageTitle );
+		if ( ! currentStepRoute ) {
+			return;
 		}
+
+		const signupCompleteFlowName = getSignupCompleteFlowNameAndClear();
+		const signupCompleteStepName = getSignupCompleteStepNameAndClear();
+		const isReEnteringStep =
+			signupCompleteFlowName === flow.name && signupCompleteStepName === currentStepRoute;
+		if ( ! isReEnteringStep ) {
+			recordStepStart( flow.name, kebabCase( currentStepRoute ), { intent } );
+		}
+
+		// Also record page view for data and analytics
+		const pathname = window.location.pathname || '';
+		const pageTitle = `Setup > ${ flow.name } > ${ currentStepRoute }`;
+		recordPageView( pathname, pageTitle );
 
 		// We leave out intent from the dependency list, due to the ONBOARD_STORE being reset in the exit flow.
 		// This causes the intent to become empty, and thus this event being fired again.
@@ -141,10 +157,13 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 				throw new Error( assertCondition.message ?? 'An error has occurred.' );
 		}
 
+		const StepComponent = 'asyncComponent' in step ? lazy( step.asyncComponent ) : step.component;
+
 		return (
-			<step.component
+			<StepComponent
 				navigation={ stepNavigation }
 				flow={ flow.name }
+				variantSlug={ flow.variantSlug }
 				stepName={ step.slug }
 				data={ stepData }
 			/>
@@ -155,14 +174,6 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 		if ( isNewsletterOrLinkInBioFlow( flow.name ) ) {
 			return flow.title;
 		}
-	};
-
-	const getShowWooLogo = () => {
-		if ( isWooExpressFlow( flow.name ) ) {
-			return true;
-		}
-
-		return false;
 	};
 
 	let progressBarExtraStyle: React.CSSProperties = {};
@@ -176,35 +187,31 @@ export const FlowRenderer: React.FC< { flow: Flow } > = ( { flow } ) => {
 	return (
 		<Suspense fallback={ <StepperLoader /> }>
 			<DocumentHead title={ getDocumentHeadTitle() } />
-			<Switch>
-				{ flowSteps.map( ( step ) => {
-					return (
-						<Route key={ step.slug } path={ `/${ flow.name }/${ step.slug }` }>
-							<div className={ classnames( flow.name, flow.classnames, kebabCase( step.slug ) ) }>
-								{ 'videopress' === flow.name && 'intro' === step.slug && (
-									<VideoPressIntroBackground />
-								) }
-								{ flow.name !== SITE_SETUP_FLOW && (
-									// The progress bar is removed from the site-setup due to its fragility.
-									// See https://github.com/Automattic/wp-calypso/pull/73653
-									<ProgressBar
-										// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-										className="flow-progress"
-										value={ progressValue * 100 }
-										total={ 100 }
-										style={ progressBarExtraStyle }
-									/>
-								) }
-								<SignupHeader pageTitle={ flow.title } showWooLogo={ getShowWooLogo() } />
-								{ renderStep( step ) }
-							</div>
-						</Route>
-					);
-				} ) }
-				<Route>
-					<Redirect to={ `/${ flow.name }/${ stepPaths[ 0 ] }${ search }` } />
-				</Route>
-			</Switch>
+			<Routes>
+				{ flowSteps.map( ( step ) => (
+					<Route
+						key={ step.slug }
+						path={ `/${ flow.variantSlug ?? flow.name }/${ step.slug }` }
+						element={
+							<StepRoute
+								step={ step }
+								flow={ flow }
+								progressBarExtraStyle={ progressBarExtraStyle }
+								progressValue={ progressValue }
+								showWooLogo={ isWooExpressFlow( flow.name ) }
+								renderStep={ renderStep }
+							/>
+						}
+					/>
+				) ) }
+				<Route
+					path="*"
+					element={
+						<Navigate to={ `/${ flow.variantSlug ?? flow.name }/${ stepPaths[ 0 ] }${ search }` } />
+					}
+				/>
+			</Routes>
+			<AsyncCheckoutModal siteId={ site?.ID } />
 		</Suspense>
 	);
 };

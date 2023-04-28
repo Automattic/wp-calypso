@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { Button, Card, CompactCard } from '@automattic/components';
+import { formatCurrency } from '@automattic/format-currency';
 import classNames from 'classnames';
 import { localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -170,13 +171,16 @@ export function ReceiptBody( {
 					</Button>
 				</div>
 			</Card>
-			{ transaction.tax_external_id && transaction.tax_external_id.length > 0 && (
+			{ /* Temporarily disable taxamo receipt link until we can get a go ahead
+
+            { transaction.tax_external_id && transaction.tax_external_id.length > 0 && (
 				<ReceiptExternalLink transaction={ transaction } />
-			) }
+			) } */ }
 		</div>
 	);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function ReceiptExternalLink( { transaction }: { transaction: BillingTransaction } ) {
 	const translate = useTranslate();
 	const externalTaxlink =
@@ -307,15 +311,18 @@ function ReceiptLineItems( { transaction }: { transaction: BillingTransaction } 
 				<td className="billing-history__receipt-item-name">
 					<span>{ item.variation }</span>
 					<small>({ item.type_localized })</small>
-					{ termLabel ? <em>{ termLabel }</em> : null }
+					{ termLabel && <em>{ termLabel }</em> }
 					<br />
-					<em>{ item.domain }</em>
+					{ item.domain && <em>{ item.domain }</em> }
 					{ item.licensed_quantity && (
 						<em>{ renderTransactionQuantitySummary( item, translate ) }</em>
 					) }
 				</td>
 				<td className={ 'billing-history__receipt-amount ' + transaction.credit }>
-					{ item.amount }
+					{ formatCurrency( item.amount_integer, item.currency, {
+						isSmallestUnit: true,
+						stripZeros: true,
+					} ) }
 					{ transaction.credit && (
 						<span className="billing-history__credit-badge">{ translate( 'Refund' ) }</span>
 					) }

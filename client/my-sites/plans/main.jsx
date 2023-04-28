@@ -54,7 +54,7 @@ import DomainUpsellDialog from './components/domain-upsell-dialog';
 import PlansHeader from './components/plans-header';
 import ECommerceTrialPlansPage from './ecommerce-trial';
 import ModernizedLayout from './modernized-layout';
-import WooExpressMediumPlansPage from './wx-medium';
+import WooExpressPlansPage from './woo-express-plans-page';
 
 import './style.scss';
 
@@ -187,9 +187,11 @@ class Plans extends Component {
 
 	isInvalidPlanInterval() {
 		const { isSiteEligibleForMonthlyPlan, intervalType, selectedSite } = this.props;
-		const isWpcomMonthly = intervalType === 'monthly';
 
-		return selectedSite && isWpcomMonthly && ! isSiteEligibleForMonthlyPlan;
+		if ( 'monthly' === intervalType && selectedSite ) {
+			// This is the reason isInvalidPlanInterval even exists and the redirection isn't handled at controller level
+			return ! isSiteEligibleForMonthlyPlan;
+		}
 	}
 
 	redirectIfInvalidPlanInterval() {
@@ -282,22 +284,45 @@ class Plans extends Component {
 		);
 	}
 
+	getIntervalForWooExpressPlans() {
+		const { intervalType } = this.props;
+
+		// Only accept monthly or yearly for the interval; otherwise let the component provide a default.
+		const interval =
+			intervalType === 'monthly' || intervalType === 'yearly' ? intervalType : undefined;
+
+		return interval;
+	}
+
 	renderEcommerceTrialPage() {
-		const { intervalType, selectedSite } = this.props;
+		const { selectedSite } = this.props;
 
 		if ( ! selectedSite ) {
 			return this.renderPlaceholder();
 		}
 
-		// Only accept monthly or yearly for the interval; otherwise let the component provide a default.
-		const interval =
-			intervalType === 'monthly' || intervalType === 'yearly' ? intervalType : undefined;
-		return <ECommerceTrialPlansPage interval={ interval } siteSlug={ selectedSite.slug } />;
+		const interval = this.getIntervalForWooExpressPlans();
+
+		return <ECommerceTrialPlansPage interval={ interval } site={ selectedSite } />;
 	}
 
-	renderWooExpressMediumPage() {
-		const { currentPlan, selectedSite } = this.props;
-		return <WooExpressMediumPlansPage currentPlan={ currentPlan } selectedSite={ selectedSite } />;
+	renderWooExpressPlansPage() {
+		const { currentPlan, selectedSite, isSiteEligibleForMonthlyPlan } = this.props;
+
+		if ( ! selectedSite ) {
+			return this.renderPlaceholder();
+		}
+
+		const interval = this.getIntervalForWooExpressPlans();
+
+		return (
+			<WooExpressPlansPage
+				currentPlan={ currentPlan }
+				interval={ interval }
+				selectedSite={ selectedSite }
+				showIntervalToggle={ isSiteEligibleForMonthlyPlan }
+			/>
+		);
 	}
 
 	renderMainContent( { isEcommerceTrial, isWooExpressPlan } ) {
@@ -305,7 +330,7 @@ class Plans extends Component {
 			return this.renderEcommerceTrialPage();
 		}
 		if ( isWooExpressPlan ) {
-			return this.renderWooExpressMediumPage();
+			return this.renderWooExpressPlansPage();
 		}
 		return this.renderPlansMain();
 	}
@@ -338,6 +363,11 @@ class Plans extends Component {
 			PLAN_WOOEXPRESS_SMALL,
 			PLAN_WOOEXPRESS_SMALL_MONTHLY,
 		].includes( currentPlanSlug );
+		const wooExpressSubHeaderText = translate(
+			"Discover what's available in your Woo Express plan."
+		);
+		// Use the Woo Express subheader text if the current plan has the Performance or trial plans or fallback to the default subheader text.
+		const subHeaderText = isWooExpressPlan || isEcommerceTrial ? wooExpressSubHeaderText : null;
 
 		const allDomains = isDomainAndPlanPackageFlow ? getDomainRegistrations( this.props.cart ) : [];
 		const yourDomainName = allDomains.length
@@ -371,7 +401,7 @@ class Plans extends Component {
 				{ isDomainUpsell && <DomainUpsellDialog domain={ selectedSite.slug } /> }
 				{ canAccessPlans && (
 					<div>
-						{ ! isDomainAndPlanPackageFlow && <PlansHeader /> }
+						{ ! isDomainAndPlanPackageFlow && <PlansHeader subHeaderText={ subHeaderText } /> }
 						{ isDomainAndPlanPackageFlow && (
 							<>
 								<div className="plans__header">

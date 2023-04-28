@@ -182,6 +182,7 @@ const webpackConfig = {
 		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
 		'entry-stepper': [ path.join( __dirname, 'landing', 'stepper' ) ],
 		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
+		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: sourceMapType,

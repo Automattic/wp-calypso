@@ -21,7 +21,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 		{
 			signup: 1,
 			ref: getQueryArgs()?.ref,
-			...( [ 'domain', 'add-domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
+			...( [ 'domain' ].includes( flowName ) && { isDomainOnly: 1 } ),
 		},
 		checkoutURL
 	);
@@ -133,6 +133,16 @@ function getChecklistThemeDestination( { flowName, siteSlug, themeParameter } ) 
 	return `/home/${ siteSlug }`;
 }
 
+function getWithThemeDestination( { siteSlug, themeParameter, styleVariation, themeType } ) {
+	if ( 'dot-org' === themeType ) {
+		return `/marketplace/theme/${ themeParameter }/install/${ siteSlug }`;
+	}
+
+	const style = styleVariation ? `&style=${ styleVariation }` : '';
+
+	return `/setup/site-setup/designSetup?siteSlug=${ siteSlug }&theme=${ themeParameter }${ style }&hideBack=true`;
+}
+
 function getEditorDestination( dependencies ) {
 	return `/page/${ dependencies.siteSlug }/home`;
 }
@@ -178,10 +188,10 @@ const flows = generateFlows( {
 	getRedirectDestination,
 	getSignupDestination,
 	getLaunchDestination,
-	getThankYouNoSiteDestination,
 	getDomainSignupFlowDestination,
 	getEmailSignupFlowDestination,
 	getChecklistThemeDestination,
+	getWithThemeDestination,
 	getEditorDestination,
 	getDestinationFromIntent,
 	getDIFMSignupDestination,

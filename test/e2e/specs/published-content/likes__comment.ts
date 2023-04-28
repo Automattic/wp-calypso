@@ -28,14 +28,15 @@ describe( 'Likes: Comment', function () {
 			accountName: 'simpleSitePersonalPlanUser',
 		},
 	] );
-	const comment = DataHelper.getRandomPhrase();
 	const postContent =
 		'The foolish man seeks happiness in the distance. The wise grows it under his feet.\n— James Oppenheim';
 	let page: Page;
-	let newPost: PostResponse;
-	let newComment: NewCommentResponse;
-	let restAPIClient: RestAPIClient;
+	let commentsComponent: CommentsComponent;
 	let testAccount: TestAccount;
+	let newPost: PostResponse;
+	let commentToBeLiked: NewCommentResponse;
+	let commentToBeUnliked: NewCommentResponse;
+	let restAPIClient: RestAPIClient;
 
 	beforeAll( async function () {
 		page = await browser.newPage();
@@ -52,10 +53,31 @@ describe( 'Likes: Comment', function () {
 			}
 		);
 
-		newComment = await restAPIClient.createComment(
+		commentToBeLiked = await restAPIClient.createComment(
 			testAccount.credentials.testSites?.primary.id as number,
 			newPost.ID,
-			comment
+			DataHelper.getRandomPhrase()
+		);
+		commentToBeUnliked = await restAPIClient.createComment(
+			testAccount.credentials.testSites?.primary.id as number,
+			newPost.ID,
+			DataHelper.getRandomPhrase()
+		);
+
+		// For AT sites the API will respond with a HTTP 404
+		// unless time is given for the comment to "settle" in place.
+		// It could be argued that adding this arbitrary delay is
+		// "more representative" of users.
+		// @see: https://github.com/Automattic/wp-calypso/issues/75952
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			await page.waitForTimeout( 5 * 1000 );
+		}
+
+		// Establish proper state for the comment to be unliked.
+		await restAPIClient.commentAction(
+			'like',
+			testAccount.credentials.testSites?.primary.id as number,
+			commentToBeUnliked.ID
 		);
 
 		await testAccount.authenticate( page );
@@ -65,44 +87,18 @@ describe( 'Likes: Comment', function () {
 		await page.goto( newPost.URL );
 	} );
 
-	describe( 'Like', function () {
-		let commentsComponent: CommentsComponent;
-
-		beforeAll( async function () {
-			// Establish proper state.
-			await restAPIClient.commentAction(
-				'unlike',
-				testAccount.credentials.testSites?.primary.id as number,
-				newComment.ID
-			);
-
-			await page.reload();
-		} );
-
-		it( 'Like the comment', async function () {
-			commentsComponent = new CommentsComponent( page );
-			await commentsComponent.like( comment );
-		} );
+	it( 'Like the comment', async function () {
+		commentsComponent = new CommentsComponent( page );
+		await commentsComponent.like( commentToBeLiked.raw_content );
 	} );
 
-	describe( 'Unlike', function () {
-		let commentsComponent: CommentsComponent;
-
-		beforeAll( async function () {
-			// Establish proper state.
-			await restAPIClient.commentAction(
-				'like',
-				testAccount.credentials.testSites?.primary.id as number,
-				newComment.ID
-			);
-
-			await page.reload();
-		} );
-
-		it( 'Unlike the comment', async function () {
-			commentsComponent = new CommentsComponent( page );
-			await commentsComponent.unlike( comment );
-		} );
+	it( 'Unlike the comment', async function () {
+		if ( envVariables.TEST_ON_ATOMIC ) {
+			// AT comments appear unable to respond to `scrollIntoViewIfNeeded`
+			// unless the focus is "unstuck" by shiting the page.
+			await page.mouse.wheel( 0, 120 );
+		}
+		await commentsComponent.unlike( commentToBeUnliked.raw_content );
 	} );
 
 	afterAll( async function () {

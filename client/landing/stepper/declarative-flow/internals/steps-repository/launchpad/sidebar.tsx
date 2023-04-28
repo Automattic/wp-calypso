@@ -1,15 +1,17 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
+import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
+import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
+import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
-import WordPressLogo from 'calypso/components/wordpress-logo';
-import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -62,19 +64,24 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
-	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles();
-	const {
-		data: { checklist_statuses },
-	} = useLaunchpad( siteSlug );
+	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
+	const { data: { checklist_statuses } = {} } = useLaunchpad( siteSlug );
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
-	const { flowName, title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
+	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
 	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks(
 		tasks,
 		flow,
 		isEmailVerified
+	);
+
+	const { getPlanCartItem } = useSelect(
+		( select ) => ( {
+			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
+		} ),
+		[]
 	);
 
 	const enhancedTasks: Task[] | null =
@@ -88,7 +95,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			goToStep,
 			flow,
 			isEmailVerified,
-			checklist_statuses
+			checklist_statuses,
+			getPlanCartItem()?.product_slug ?? null
 		);
 
 	const currentTask = getTasksProgress( enhancedTasks );
@@ -112,21 +120,15 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	return (
 		<div className="launchpad__sidebar">
-			<div className="launchpad__sidebar-header">
-				<WordPressLogo className="launchpad__sidebar-header-logo" size={ 24 } />
-				<span className="launchpad__sidebar-header-flow-name">{ flowName }</span>
-			</div>
 			<div className="launchpad__sidebar-content-container">
-				{ currentTask && enhancedTasks?.length && (
-					<div className="launchpad__progress-bar-container">
-						<CircularProgressBar
-							size={ 40 }
-							enableDesktopScaling
-							currentStep={ currentTask }
-							numberOfSteps={ enhancedTasks?.length }
-						/>
-					</div>
-				) }
+				<div className="launchpad__progress-bar-container">
+					<CircularProgressBar
+						size={ 40 }
+						enableDesktopScaling
+						currentStep={ currentTask }
+						numberOfSteps={ enhancedTasks?.length || null }
+					/>
+				</div>
 				{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace*/ }
 				<h1 className="launchpad__sidebar-h1">
 					{ showLaunchTitle && launchTitle ? launchTitle : title }
@@ -151,7 +153,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 									onMouseLeave={ () => setClipboardCopied( false ) }
 									ref={ clipboardButtonEl }
 								>
-									<Gridicon icon="clipboard" />
+									<Icon icon={ copy } size={ 18 } />
 								</ClipboardButton>
 								<Tooltip
 									context={ clipboardButtonEl.current }
@@ -173,10 +175,13 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 				</div>
 				{ isDomainSSLProcessing && (
 					<div className="launchpad__domain-notification">
-						<Gridicon className="launchpad__domain-checkmark-icon" icon="checkmark-circle" />
+						<div className="launchpad__domain-notification-icon">
+							<Gridicon className="launchpad__domain-checkmark-icon" icon="checkmark" size={ 18 } />
+						</div>
 						<p>
 							{ translate(
-								'We are currently setting up your new domain! It may take a few minutes before it is ready.'
+								'We are currently setting up your new domain!{{br/}}It may take a few minutes before it is ready.',
+								{ components: { br: <br /> } }
 							) }
 						</p>
 					</div>

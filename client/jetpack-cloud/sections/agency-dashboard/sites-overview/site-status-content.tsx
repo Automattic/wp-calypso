@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { Button, Gridicon, ShortenedNumber } from '@automattic/components';
 import { Icon, arrowUp, arrowDown } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
@@ -7,7 +6,6 @@ import { translate } from 'i18n-calypso';
 import page from 'page';
 import { useRef, useState, useMemo, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import Badge from 'calypso/components/badge';
 import Tooltip from 'calypso/components/tooltip';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { selectLicense, unselectLicense } from 'calypso/state/jetpack-agency-dashboard/actions';
@@ -30,6 +28,7 @@ interface Props {
 	type: AllowedTypes;
 	isLargeScreen?: boolean;
 	isFavorite?: boolean;
+	siteError: boolean;
 }
 
 export default function SiteStatusContent( {
@@ -37,14 +36,14 @@ export default function SiteStatusContent( {
 	type,
 	isLargeScreen = false,
 	isFavorite = false,
+	siteError,
 }: Props ) {
 	const dispatch = useDispatch();
 
 	const {
 		link,
 		isExternalLink,
-		row: { value, status, error },
-		siteError,
+		row: { value, status },
 		tooltipId,
 		siteDown,
 		eventName,
@@ -54,7 +53,6 @@ export default function SiteStatusContent( {
 	let { tooltip } = metadataRest;
 
 	const { isBulkManagementActive } = useContext( SitesOverviewContext );
-	const isExpandedBlockEnabled = isEnabled( 'jetpack/pro-dashboard-expandable-block' );
 
 	const siteId = rows.site.value.blog_id;
 	const siteUrl = rows.site.value.url;
@@ -69,6 +67,9 @@ export default function SiteStatusContent( {
 	// when the row is not monitor and monitor status is down
 	// since monitor is clickable when site is down.
 	const disabledStatus = siteError || ( type !== 'monitor' && siteDown );
+
+	// Disable selection and toggle when there is a site error or site is down
+	const hasAnyError = !! ( siteError || siteDown );
 
 	const statusContentRef = useRef< HTMLSpanElement | null >( null );
 	const [ showTooltip, setShowTooltip ] = useState( false );
@@ -128,7 +129,7 @@ export default function SiteStatusContent( {
 			isHighSeverityError = true;
 		}
 		let errorContent;
-		if ( error ) {
+		if ( siteError ) {
 			errorContent = (
 				<span className="sites-overview__status-critical">
 					<Gridicon size={ 24 } icon="notice-outline" />
@@ -153,7 +154,7 @@ export default function SiteStatusContent( {
 					<SiteSelectCheckbox
 						isLargeScreen={ isLargeScreen }
 						item={ rows }
-						siteError={ siteError }
+						siteError={ hasAnyError }
 					/>
 				) : (
 					<SiteSetFavorite
@@ -200,7 +201,7 @@ export default function SiteStatusContent( {
 					status={ status }
 					tooltip={ tooltip }
 					tooltipId={ tooltipId }
-					siteError={ siteError }
+					siteError={ hasAnyError }
 					isLargeScreen={ isLargeScreen }
 				/>
 			);
@@ -260,23 +261,11 @@ export default function SiteStatusContent( {
 				break;
 			}
 			case 'failed': {
-				content = isExpandedBlockEnabled ? (
-					<div className="sites-overview__failed">{ value }</div>
-				) : (
-					<Badge className="sites-overview__badge" type="error">
-						{ value }
-					</Badge>
-				);
+				content = <div className="sites-overview__failed">{ value }</div>;
 				break;
 			}
 			case 'warning': {
-				content = isExpandedBlockEnabled ? (
-					<div className="sites-overview__warning">{ value }</div>
-				) : (
-					<Badge className="sites-overview__badge" type="warning">
-						{ value }
-					</Badge>
-				);
+				content = <div className="sites-overview__warning">{ value }</div>;
 				break;
 			}
 			case 'success': {

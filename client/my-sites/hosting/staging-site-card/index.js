@@ -1,18 +1,21 @@
-import { Button, Card, Gridicon, LoadingPlaceholder } from '@automattic/components';
+import { Button, Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useQueryClient } from 'react-query';
 import { connect, useDispatch } from 'react-redux';
+import SiteIcon from 'calypso/blocks/site-icon';
 import CardHeading from 'calypso/components/card-heading';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
 import { urlToSlug } from 'calypso/lib/url';
+import { LoadingPlaceholder } from 'calypso/my-sites/hosting/staging-site-card/loading-placeholder';
 import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site-card/use-add-staging-site';
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
+import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
@@ -21,23 +24,9 @@ import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { DeleteStagingSite } from './delete-staging-site';
 import { useDeleteStagingSite } from './use-delete-staging-site';
+import { useHasSiteAccess } from './use-has-site-access';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
-
-const FirstPlaceholder = styled( LoadingPlaceholder )( {
-	height: 24,
-	width: '85%',
-	marginBottom: '0.25em',
-} );
-const SecondPlaceholder = styled( LoadingPlaceholder )( {
-	height: 24,
-	width: '60%',
-	marginBottom: '1.5em',
-} );
-const ButtonPlaceholder = styled( LoadingPlaceholder )( {
-	width: '148px',
-	height: '40px',
-} );
 
 const StyledLoadingBar = styled( LoadingBar )( {
 	marginBottom: '1em',
@@ -48,11 +37,38 @@ const ActionButtons = styled.div( {
 	gap: '1em',
 } );
 
-const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
+const ExceedQuotaErrorWrapper = styled.div( {
+	marginTop: '1em',
+} );
+
+const SiteRow = styled.div( {
+	display: 'flex',
+	alignItems: 'center',
+	marginBottom: 24,
+	'.site-icon': { flexShrink: 0 },
+} );
+
+const SiteInfo = styled.div( {
+	display: 'flex',
+	flexDirection: 'column',
+	marginLeft: 10,
+} );
+export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ loadingError, setLoadingError ] = useState( false );
+	const [ isErrorValidQuota, setIsErrorValidQuota ] = useState( false );
+
+	const { data: hasValidQuota, isLoading: isLoadingQuotaValidation } = useHasValidQuotaQuery(
+		siteId,
+		{
+			enabled: ! disabled,
+			onError: () => {
+				setIsErrorValidQuota( true );
+			},
+		}
+	);
 
 	const { data: stagingSites, isLoading: isLoadingStagingSites } = useStagingSite( siteId, {
 		enabled: ! disabled,
@@ -69,9 +85,12 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 	const stagingSite = useMemo( () => {
 		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
 	}, [ stagingSites ] );
+	const hasSiteAccess = useHasSiteAccess( stagingSite.id );
 
-	const showAddStagingSite = ! isLoadingStagingSites && stagingSites?.length === 0;
-	const showManageStagingSite = ! isLoadingStagingSites && stagingSites?.length > 0;
+	const showAddStagingSite =
+		! isLoadingStagingSites && ! isLoadingQuotaValidation && stagingSites?.length === 0;
+	const showManageStagingSite =
+		! isLoadingStagingSites && ! isLoadingQuotaValidation && stagingSites?.length > 0;
 
 	const [ wasCreating, setWasCreating ] = useState( false );
 	const [ progress, setProgress ] = useState( 0.1 );
@@ -138,6 +157,18 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 		},
 	} );
 
+	const getExceedQuotaErrorContent = () => {
+		return (
+			<ExceedQuotaErrorWrapper data-testid="quota-message">
+				<Notice status="is-warning" showDismiss={ false }>
+					{ __(
+						'Your available storage space is lower than 50%, which is insufficient for creating a staging site.'
+					) }
+				</Notice>
+			</ExceedQuotaErrorWrapper>
+		);
+	};
+
 	const getNewStagingSiteContent = () => {
 		return (
 			<>
@@ -148,7 +179,7 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 				</p>
 				<Button
 					primary
-					disabled={ disabled || addingStagingSite }
+					disabled={ disabled || addingStagingSite || isLoadingQuotaValidation || ! hasValidQuota }
 					onClick={ () => {
 						dispatch( recordTracksEvent( 'calypso_hosting_configuration_staging_site_add_click' ) );
 						setWasCreating( true );
@@ -158,6 +189,7 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 				>
 					<span>{ translate( 'Add staging site' ) }</span>
 				</Button>
+				{ ! hasValidQuota && ! isLoadingQuotaValidation && getExceedQuotaErrorContent() }
 			</>
 		);
 	};
@@ -165,18 +197,22 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 	const getManageStagingSiteContent = () => {
 		return (
 			<>
-				<p>
-					{ translate( 'Your staging site is available at {{a}}%(stagingSiteName)s{{/a}}.', {
-						args: {
-							stagingSiteName: stagingSite.url,
-						},
-						components: {
-							a: <a href={ stagingSite.url } />,
-						},
-					} ) }
-				</p>
+				<p>{ translate( 'Your staging site is available at:' ) }</p>
+				<SiteRow>
+					<SiteIcon siteId={ stagingSite.id } size={ 40 } />
+					<SiteInfo>
+						<div>{ stagingSite.name }</div>
+						<div>
+							<a href={ stagingSite.url }>{ stagingSite.url }</a>
+						</div>
+					</SiteInfo>
+				</SiteRow>
 				<ActionButtons>
-					<Button primary href={ `/home/${ urlToSlug( stagingSite.url ) }` } disabled={ disabled }>
+					<Button
+						primary
+						href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
+						disabled={ disabled }
+					>
 						<span>{ translate( 'Manage staging site' ) }</span>
 					</Button>
 					<DeleteStagingSite
@@ -207,36 +243,57 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 				? __( 'We are setting up your staging site. We’ll email you once it is ready.' )
 				: __( 'We are setting up the staging site. We’ll email the site owner once it is ready.' );
 		return (
-			<>
+			<div data-testid="transferring-staging-content">
 				<StyledLoadingBar progress={ progress } />
 				<p>{ message }</p>
-			</>
+			</div>
 		);
 	}, [ progress, __, siteOwnerId, currentUserId, isReverting ] );
 
-	const getLoadingStagingSitesPlaceholder = () => {
+	const getLoadingErrorContent = ( message ) => {
 		return (
-			<>
-				<FirstPlaceholder />
-				<SecondPlaceholder />
-				<ButtonPlaceholder />
-			</>
+			<Notice status="is-error" showDismiss={ false }>
+				{ message }
+			</Notice>
 		);
 	};
 
-	const getLoadingErrorContent = () => {
+	const getAccessError = () => {
 		return (
 			<Notice status="is-error" showDismiss={ false }>
-				{ __(
-					'Unable to load staging sites. Please contact support if you believe you are seeing this message in error.'
-				) }
+				<div data-testid="staging-sites-access-message">
+					{ translate(
+						'Unable to access the staging site {{a}}%(stagingSiteName)s{{/a}}. Please contact the site owner.',
+						{
+							args: {
+								stagingSiteName: stagingSite.url,
+							},
+							components: {
+								a: <a href={ stagingSite.url } />,
+							},
+						}
+					) }
+				</div>
 			</Notice>
 		);
 	};
 
 	let stagingSiteCardContent;
+
 	if ( ! isLoadingStagingSites && loadingError ) {
-		stagingSiteCardContent = getLoadingErrorContent();
+		stagingSiteCardContent = getLoadingErrorContent(
+			__(
+				'Unable to load staging sites. Please contact support if you believe you are seeing this message in error.'
+			)
+		);
+	} else if ( ! isLoadingQuotaValidation && isErrorValidQuota ) {
+		stagingSiteCardContent = getLoadingErrorContent(
+			__(
+				'Unable to validate your site quota. Please contact support if you believe you are seeing this message in error.'
+			)
+		);
+	} else if ( ! wasCreating && ! hasSiteAccess && transferStatus !== null ) {
+		stagingSiteCardContent = getAccessError();
 	} else if ( addingStagingSite || isTrasferInProgress || isReverting ) {
 		stagingSiteCardContent = getTransferringStagingSiteContent();
 	} else if ( showManageStagingSite && isStagingSiteTransferComplete ) {
@@ -244,7 +301,7 @@ const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, transl
 	} else if ( showAddStagingSite && ! addingStagingSite ) {
 		stagingSiteCardContent = getNewStagingSiteContent();
 	} else {
-		stagingSiteCardContent = getLoadingStagingSitesPlaceholder();
+		stagingSiteCardContent = <LoadingPlaceholder />;
 	}
 
 	return (

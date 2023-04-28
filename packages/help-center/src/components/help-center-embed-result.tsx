@@ -1,12 +1,11 @@
 /* eslint-disable no-restricted-imports */
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Button } from '@automattic/components';
-import { Flex, FlexItem } from '@wordpress/components';
+import { Button, Flex, FlexItem } from '@wordpress/components';
 import { useEffect } from '@wordpress/element';
 import { Icon, external } from '@wordpress/icons';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import { BackButton } from './back-button';
 import { BackToTopButton } from './back-to-top-button';
@@ -15,7 +14,7 @@ import ArticleFetchingContent from './help-center-article-fetching-content';
 
 export const HelpCenterEmbedResult: React.FC = () => {
 	const { state, search } = useLocation();
-	const history = useHistory();
+	const navigate = useNavigate();
 	const sectionName = useSelector( getSectionName );
 
 	const params = new URLSearchParams( search );
@@ -39,11 +38,11 @@ export const HelpCenterEmbedResult: React.FC = () => {
 
 	const redirectBack = () => {
 		if ( canNavigateBack ) {
-			history.goBack();
+			navigate( -1 );
 		} else if ( query ) {
-			history.push( `/?query=${ query }` );
+			navigate( `/?query=${ query }` );
 		} else {
-			history.push( '/' );
+			navigate( '/' );
 		}
 	};
 
@@ -56,7 +55,6 @@ export const HelpCenterEmbedResult: React.FC = () => {
 					</FlexItem>
 					<FlexItem>
 						<Button
-							borderless={ true }
 							href={ link ?? '' }
 							target="_blank"
 							className="help-center-embed-result__external-button"

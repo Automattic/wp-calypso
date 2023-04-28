@@ -14,6 +14,7 @@ const Intervals = ( props ) => {
 		standalone,
 		compact = true,
 		intervalValues = intervals,
+		onChange,
 	} = props;
 	const classes = classnames( 'stats-navigation__intervals', className, {
 		'is-standalone': standalone,
@@ -22,9 +23,14 @@ const Intervals = ( props ) => {
 	return (
 		<SegmentedControl primary className={ classes } compact={ compact }>
 			{ intervalValues.map( ( i ) => {
-				const path = pathTemplate.replace( /{{ interval }}/g, i.value );
+				const path = pathTemplate?.replace( /{{ interval }}/g, i.value );
 				return (
-					<SegmentedControl.Item key={ i.value } path={ path } selected={ i.value === selected }>
+					<SegmentedControl.Item
+						key={ i.value }
+						path={ path }
+						selected={ i.value === selected }
+						onClick={ () => onChange && onChange( i.value ) }
+					>
 						{ i.label }
 					</SegmentedControl.Item>
 				);
@@ -35,10 +41,11 @@ const Intervals = ( props ) => {
 
 Intervals.propTypes = {
 	className: PropTypes.string,
-	pathTemplate: PropTypes.string.isRequired,
+	pathTemplate: PropTypes.string,
 	selected: PropTypes.string.isRequired,
 	standalone: PropTypes.bool,
 	intervalValues: PropTypes.array,
+	onChange: PropTypes.func,
 };
 
 Intervals.defaultProps = {

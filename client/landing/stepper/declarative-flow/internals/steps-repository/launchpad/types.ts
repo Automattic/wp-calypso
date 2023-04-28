@@ -2,7 +2,6 @@ export interface Task {
 	id: string;
 	completed: boolean;
 	disabled: boolean;
-	taskType: string;
 	title?: string;
 	subtitle?: string;
 	badgeText?: string;
@@ -10,6 +9,8 @@ export interface Task {
 	isLaunchTask?: boolean;
 	warning?: boolean;
 }
+
+export type LaunchpadChecklist = Task[];
 
 export interface LaunchpadFlowTaskList {
 	[ string: string ]: string[];
@@ -29,7 +30,8 @@ export interface LaunchpadStatuses {
 	first_post_published?: boolean;
 	video_uploaded?: boolean;
 	publish_first_course?: boolean;
-	plan_completed?: boolean;
+	plan_selected?: boolean;
+	domain_upsell_deferred?: boolean;
 }
 
 export interface LaunchpadResponse {

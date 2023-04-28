@@ -72,8 +72,8 @@ jest.mock( '@automattic/domain-picker/src', () => {
 let pageLink = '';
 jest.mock( 'page', () => ( link ) => ( pageLink = link ) );
 
-const domainUpsellHeadingPaidPlan = 'Make your mark online with a memorable domain name';
 const domainUpsellHeadingFreePlan = 'Own your online identity with a custom domain';
+const domainUpsellHeadingPaidPlan = 'Make your mark online with a memorable domain name';
 const buyThisDomainCta = 'Buy this domain';
 const searchForDomainCta = 'Search for another domain';
 

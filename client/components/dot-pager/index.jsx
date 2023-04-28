@@ -81,6 +81,7 @@ export const DotPager = ( {
 	children,
 	className = '',
 	onPageSelected = null,
+	isClickEnabled = false,
 	...props
 } ) => {
 	// Filter out the empty children
@@ -115,6 +116,7 @@ export const DotPager = ( {
 				currentPage={ currentPage }
 				pageClassName="dot-pager__page"
 				containerClassName="dot-pager__pages"
+				isClickEnabled={ isClickEnabled }
 			>
 				{ normalizedChildren }
 			</Swipeable>

@@ -296,6 +296,7 @@ export const PLAN_JETPACK_SECURITY_T2_YEARLY = 'jetpack_security_t2_yearly';
 export const PLAN_JETPACK_SECURITY_T2_MONTHLY = 'jetpack_security_t2_monthly';
 export const PLAN_JETPACK_COMPLETE = 'jetpack_complete';
 export const PLAN_JETPACK_COMPLETE_MONTHLY = 'jetpack_complete_monthly';
+export const PLAN_JETPACK_GOLDEN_TOKEN = 'jetpack_golden_token_lifetime';
 
 // Legacy Security Plans
 export const PLAN_JETPACK_SECURITY_DAILY = 'jetpack_security_daily';
@@ -350,7 +351,11 @@ export const JETPACK_MONTHLY_PLANS = <const>[
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
-export const JETPACK_RESET_PLANS = <const>[ ...JETPACK_SECURITY_PLANS, ...JETPACK_COMPLETE_PLANS ];
+export const JETPACK_RESET_PLANS = <const>[
+	...JETPACK_SECURITY_PLANS,
+	...JETPACK_COMPLETE_PLANS,
+	PLAN_JETPACK_GOLDEN_TOKEN,
+];
 export const JETPACK_RESET_PLANS_BY_TERM = <const>[
 	{
 		yearly: PLAN_JETPACK_COMPLETE,

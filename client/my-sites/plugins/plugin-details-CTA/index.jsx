@@ -5,17 +5,18 @@ import {
 	WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS,
 } from '@automattic/calypso-products';
 import { Gridicon, Button } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { Fragment, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getPluginPurchased, getSoftwareSlug, getSaasRedirectUrl } from 'calypso/lib/plugins/utils';
+import { addQueryArgs } from 'calypso/lib/route';
 import { userCan } from 'calypso/lib/site/utils';
 import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/billing-interval-switcher';
 import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-plugins-dialog';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import StagingSiteNotice from 'calypso/my-sites/plugins/plugin-details-CTA/staging-site-notice';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
@@ -31,9 +32,10 @@ import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/st
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSectionName } from 'calypso/state/ui/selectors';
 import { PREINSTALLED_PLUGINS } from '../constants';
 import { PluginPrice } from '../plugin-price';
 import usePreinstalledPremiumPlugin from '../use-preinstalled-premium-plugin';
@@ -66,6 +68,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+	const isWpcomStaging = useSelector( ( state ) => isSiteWpcomStaging( state, selectedSite?.ID ) );
 	const pluginFeature = isMarketplaceProduct
 		? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 		: FEATURE_INSTALL_PLUGINS;
@@ -320,8 +323,10 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						translate={ translate }
 						plugin={ plugin }
 						saasRedirectHRef={ saasRedirectHRef }
+						isWpcomStaging={ isWpcomStaging }
 					/>
 				</div>
+				{ isWpcomStaging && <StagingSiteNotice plugin={ plugin } /> }
 				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 					<div className="plugin-details-cta__t-and-c">
 						{ translate(
@@ -377,8 +382,11 @@ function PrimaryButton( {
 	translate,
 	plugin,
 	saasRedirectHRef,
+	isWpcomStaging,
 } ) {
 	const dispatch = useDispatch();
+	const sectionName = useSelector( getSectionName );
+
 	const onClick = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_plugin_details_get_started_click', {
@@ -390,13 +398,19 @@ function PrimaryButton( {
 	}, [ dispatch, plugin, isLoggedIn ] );
 
 	if ( ! isLoggedIn ) {
+		const startUrl = addQueryArgs(
+			{
+				ref: sectionName + '-lp',
+			},
+			'/start/business'
+		);
 		return (
 			<Button
 				type="a"
 				className="plugin-details-cta__install-button"
 				primary
 				onClick={ onClick }
-				href={ localizeUrl( 'https://wordpress.com/start/business' ) }
+				href={ startUrl }
 			>
 				{ translate( 'Get started' ) }
 			</Button>
@@ -420,7 +434,7 @@ function PrimaryButton( {
 		<CTAButton
 			plugin={ plugin }
 			hasEligibilityMessages={ hasEligibilityMessages }
-			disabled={ incompatiblePlugin || userCantManageTheSite }
+			disabled={ incompatiblePlugin || userCantManageTheSite || isWpcomStaging }
 		/>
 	);
 }

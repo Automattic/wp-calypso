@@ -1,6 +1,6 @@
 import { is2023PricingGridActivePage, getPlan, PLAN_FREE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { isHostingLPFlow, isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
+import { isSiteAssemblerFlow, isTailoredSignupFlow } from '@automattic/onboarding';
 import { isDesktop, subscribeIsDesktop } from '@automattic/viewport';
 import classNames from 'classnames';
 import i18n, { localize } from 'i18n-calypso';
@@ -79,6 +79,25 @@ export class PlansStep extends Component {
 		return customerType;
 	}
 
+	replacePaidDomainWithFreeDomain = ( freeDomainSuggestion ) => {
+		if ( freeDomainSuggestion?.product_slug ) {
+			return;
+		}
+		const domainItem = undefined;
+		const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
+
+		this.props.submitSignupStep(
+			{
+				stepName: 'domains',
+				domainItem,
+				isPurchasingItem: false,
+				siteUrl,
+				stepSectionName: undefined,
+			},
+			{ domainItem }
+		);
+	};
+
 	plansFeaturesList() {
 		const {
 			disableBloggerPlanWithNonBlogDomain,
@@ -93,6 +112,7 @@ export class PlansStep extends Component {
 			eligibleForProPlan,
 		} = this.props;
 
+		const intervalType = getIntervalType( this.props.path );
 		let errorDisplay;
 		if ( 'invalid' === this.props.step?.status ) {
 			errorDisplay = (
@@ -111,7 +131,6 @@ export class PlansStep extends Component {
 		if ( eligibleForProPlan ) {
 			const selectedDomainConnection =
 				this.props.progress?.domains?.domainItem?.product_slug === 'domain_map';
-			const intervalType = getIntervalType();
 			return (
 				<div>
 					{ errorDisplay }
@@ -142,7 +161,7 @@ export class PlansStep extends Component {
 					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
-					intervalType={ getIntervalType() }
+					intervalType={ intervalType }
 					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
 					domainName={ getDomainName( this.props.signupDependencies.domainItem ) }
 					customerType={ this.getCustomerType() }
@@ -155,8 +174,10 @@ export class PlansStep extends Component {
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
-					hidePremiumPlan={ isHostingLPFlow( this.props.flowName ) }
-					hidePersonalPlan={ isHostingLPFlow( this.props.flowName ) }
+					hidePremiumPlan={ this.props.hidePremiumPlan }
+					hidePersonalPlan={ this.props.hidePersonalPlan }
+					hideEnterprisePlan={ this.props.hideEnterprisePlan }
+					replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
 				/>
 			</div>
 		);
@@ -225,7 +246,7 @@ export class PlansStep extends Component {
 				: translate( 'The WordPress Pro plan comes with a 14-day full money back guarantee' );
 		}
 
-		if ( useEmailOnboardingSubheader ) {
+		if ( useEmailOnboardingSubheader && ! hideFreePlan ) {
 			return translate(
 				'Add more features to your professional website with a plan. Or {{link}}start with email and a free site{{/link}}.',
 				{ components: { link: freePlanButton } }
@@ -237,10 +258,18 @@ export class PlansStep extends Component {
 		}
 
 		if ( this.state.isDesktop ) {
+			if ( hideFreePlan ) {
+				return translate( "Pick one that's right for you and unlock features that help you grow." );
+			}
+
 			return translate(
 				"Pick one that's right for you and unlock features that help you grow. Or {{link}}start with a free site{{/link}}.",
 				{ components: { link: freePlanButton } }
 			);
+		}
+
+		if ( hideFreePlan ) {
+			return translate( 'Choose a plan.' );
 		}
 
 		return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
@@ -300,7 +329,7 @@ export class PlansStep extends Component {
 					stepName={ stepName }
 					positionInFlow={ positionInFlow }
 					headerText={ headerText }
-					shouldHideNavButtons={ isHostingLPFlow( this.props.flowName ) }
+					shouldHideNavButtons={ this.props.shouldHideNavButtons }
 					fallbackHeaderText={ fallbackHeaderText }
 					subHeaderText={ subHeaderText }
 					fallbackSubHeaderText={ fallbackSubHeaderText }

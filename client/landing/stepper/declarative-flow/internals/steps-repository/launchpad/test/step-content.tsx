@@ -1,10 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { NEWSLETTER_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import nock from 'nock';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
@@ -14,9 +15,10 @@ import StepContent from '../step-content';
 import { defaultSiteDetails } from './lib/fixtures';
 
 const mockSite = defaultSiteDetails;
+const siteSlug = 'testlinkinbio.wordpress.com';
 
 const stepContentProps = {
-	siteSlug: 'testsite.wordpress.com',
+	siteSlug,
 	/* eslint-disable @typescript-eslint/no-empty-function */
 	submit: () => {},
 	goNext: () => {},
@@ -74,6 +76,20 @@ function renderStepContent( emailVerified = false, flow: string ) {
 }
 
 describe( 'StepContent', () => {
+	beforeEach( () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/sites/${ siteSlug }/launchpad` )
+			.reply( 200, {
+				checklist_statuses: {},
+				launchpad_screen: 'full',
+				site_intent: '',
+			} );
+	} );
+
+	afterEach( () => {
+		nock.cleanAll();
+	} );
+
 	// To get things started, test basic rendering for Newsletter flow
 	// In future, we can add additional flows and test interactivity of items
 	describe( 'when flow is Newsletter', () => {
@@ -81,33 +97,31 @@ describe( 'StepContent', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
 			expect( screen.getByText( 'Newsletter' ) ).toBeInTheDocument();
-			expect( screen.getByText( "You're all set to start publishing" ) ).toBeInTheDocument();
-			expect(
-				screen.getByText( 'Why not welcome your readers with your first post?' )
-			).toBeInTheDocument();
+			expect( screen.getByText( "Your newsletter's ready!" ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Now it’s time to let your readers know.' ) ).toBeInTheDocument();
 		} );
 
 		it( 'renders correct sidebar tasks', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
-			expect( screen.getByText( 'Personalize Newsletter' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Choose a Plan' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Add Subscribers' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Confirm Email (Check Your Inbox)' ) ).toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Write your first post' } ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Personalize newsletter' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Choose a plan' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Add subscribers' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Confirm email (check your inbox)' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'button', { name: 'Start writing' } ) ).toBeInTheDocument();
 		} );
 
 		it( 'renders correct status for each task', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
-			const personalizeListItem = screen.getByText( 'Personalize Newsletter' ).closest( 'li' );
-			const choosePlanListItem = screen.getByText( 'Choose a Plan' ).closest( 'li' );
-			const addSubscribersListItem = screen.getByText( 'Add Subscribers' ).closest( 'li' );
+			const personalizeListItem = screen.getByText( 'Personalize newsletter' ).closest( 'li' );
+			const choosePlanListItem = screen.getByText( 'Choose a plan' ).closest( 'li' );
+			const addSubscribersListItem = screen.getByText( 'Add subscribers' ).closest( 'li' );
 			const confirmEmailListItem = screen
-				.getByText( 'Confirm Email (Check Your Inbox)' )
+				.getByText( 'Confirm email (check your inbox)' )
 				.closest( 'li' );
 			const firstPostListItem = screen
-				.getByRole( 'button', { name: 'Write your first post' } )
+				.getByRole( 'button', { name: 'Start writing' } )
 				.closest( 'li' );
 
 			expect( personalizeListItem ).toHaveClass( 'completed' );
@@ -127,7 +141,39 @@ describe( 'StepContent', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
 
 			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Edit design' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'when flow is Start writing', () => {
+		it( 'renders correct sidebar header content', () => {
+			renderStepContent( false, START_WRITING_FLOW );
+
+			expect( screen.getByText( "Your blog's almost ready!" ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( 'Keep up the momentum with these final steps.' )
+			).toBeInTheDocument();
+		} );
+
+		it( 'renders correct sidebar tasks', () => {
+			renderStepContent( false, START_WRITING_FLOW );
+
+			expect( screen.getByText( 'Write your first post' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Choose a domain' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Choose a plan' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Launch your blog' ) ).toBeInTheDocument();
+		} );
+
+		it( 'renders correct status for each task', () => {
+			renderStepContent( false, START_WRITING_FLOW );
+
+			const choosePlanListItem = screen.getByText( 'Choose a plan' ).closest( 'li' );
+			expect( choosePlanListItem ).toHaveClass( 'pending' );
+		} );
+
+		it( 'renders web preview section', () => {
+			renderStepContent( false, START_WRITING_FLOW );
+
+			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
 		} );
 	} );
 } );

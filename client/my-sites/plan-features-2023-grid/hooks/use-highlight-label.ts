@@ -1,29 +1,21 @@
-import {
-	getPlanSlugForTermVariant,
-	isBusinessPlan,
-	isPremiumPlan,
-	PlanSlug,
-	TERM_BIENNIALLY,
-} from '@automattic/calypso-products';
+import { isBusinessPlan } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isPopularPlan } from '../lib/is-popular-plan';
 
 const useHighlightLabel = ( planName: string ) => {
 	const translate = useTranslate();
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );
-	const isCurrentPlan = [
-		currentPlan?.productSlug,
-		getPlanSlugForTermVariant( currentPlan?.productSlug as PlanSlug, TERM_BIENNIALLY ),
-	].includes( planName );
+	const isCurrentPlan = currentPlan?.productSlug === planName;
 
 	if ( isCurrentPlan ) {
 		return translate( 'Your plan' );
 	} else if ( isBusinessPlan( planName ) ) {
 		return translate( 'Best for devs' );
-	} else if ( isPremiumPlan( planName ) ) {
+	} else if ( isPopularPlan( planName ) ) {
 		return translate( 'Popular' );
 	}
 

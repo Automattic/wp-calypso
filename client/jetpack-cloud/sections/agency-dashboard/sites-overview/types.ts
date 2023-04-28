@@ -57,7 +57,7 @@ export interface Site {
 	has_scan: boolean;
 	has_backup: boolean;
 	has_boost: boolean;
-	latest_scan_threats_found: Array< any >;
+	latest_scan_threats_found: Array< string >;
 	latest_backup_status: string;
 	is_connection_healthy: boolean;
 	awaiting_plugin_updates: Array< string >;
@@ -66,14 +66,16 @@ export interface Site {
 	monitor_last_status_change: string;
 	isSelected?: boolean;
 	site_stats: SiteStats;
-	onSelect?: ( value: boolean ) => void;
+	onSelect?: () => void;
 	jetpack_boost_scores: BoostData;
+	php_version_num: number;
+	is_connected: boolean;
 }
 export interface SiteNode {
 	value: Site;
 	error: boolean;
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
+	status: AllowedStatusTypes;
 }
 
 export interface StatsNode {
@@ -89,13 +91,13 @@ export interface BoostNode {
 }
 export interface BackupNode {
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
+	status: AllowedStatusTypes;
 	value: ReactChild;
 }
 
 export interface ScanNode {
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
+	status: AllowedStatusTypes;
 	value: ReactChild;
 	threats: number;
 }
@@ -108,7 +110,7 @@ interface PluginNode {
 }
 export interface MonitorNode {
 	type: AllowedTypes;
-	status: AllowedStatusTypes | string;
+	status: AllowedStatusTypes;
 	value: ReactChild;
 	error?: boolean;
 	settings?: MonitorSettings;
@@ -122,18 +124,17 @@ export interface SiteData {
 	plugin: PluginNode;
 	monitor: MonitorNode;
 	isFavorite?: boolean;
-	[ key: string ]: any;
+	isSelected?: boolean;
+	onSelect?: () => void;
 }
 
 export interface RowMetaData {
 	row: {
 		value: Site | SiteStats | BoostData | ReactChild;
-		status: AllowedStatusTypes | string;
-		error?: boolean;
+		status: AllowedStatusTypes;
 	};
 	link: string;
 	isExternalLink: boolean;
-	siteError: boolean;
 	tooltip: ReactChild | undefined;
 	tooltipId: string;
 	siteDown?: boolean;
@@ -148,11 +149,11 @@ export type Preference = {
 };
 
 export type StatusEventNames = {
-	[ key in AllowedStatusTypes | string ]: { small_screen: string; large_screen: string };
+	[ key in AllowedStatusTypes ]?: { small_screen: string; large_screen: string };
 };
 
 export type StatusTooltip = {
-	[ key in AllowedStatusTypes | string ]: ReactChild;
+	[ key in AllowedStatusTypes ]?: ReactChild;
 };
 
 export type AllowedActionTypes = 'issue_license' | 'view_activity' | 'view_site' | 'visit_wp_admin';
@@ -184,10 +185,11 @@ export type AgencyDashboardFilterOption =
 	| 'backup_warning'
 	| 'threats_found'
 	| 'site_disconnected'
+	| 'site_down'
 	| 'plugin_updates';
 
 export type AgencyDashboardFilter = {
-	issueTypes: Array< AgencyDashboardFilterOption | string >;
+	issueTypes: Array< AgencyDashboardFilterOption >;
 	showOnlyFavorites: boolean;
 };
 
@@ -244,4 +246,10 @@ export interface ToggleActivateMonitorArgs {
 export interface Backup {
 	activityTitle: string;
 	activityDescription: { children: { text: string }[] }[];
+}
+
+export type AllowedMonitorPeriods = 'day' | 'week' | '30 days' | '90 days';
+
+export interface MonitorUptimeAPIResponse {
+	[ key: string ]: { status: string; downtime_in_minutes?: number };
 }

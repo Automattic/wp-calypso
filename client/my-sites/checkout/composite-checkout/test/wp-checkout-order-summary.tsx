@@ -28,6 +28,25 @@ import {
 	PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY,
 	PRODUCT_JETPACK_VIDEOPRESS,
 	PRODUCT_JETPACK_VIDEOPRESS_MONTHLY,
+	PRODUCT_AKISMET_FREE,
+	PRODUCT_AKISMET_PERSONAL_MONTHLY,
+	PRODUCT_AKISMET_PERSONAL_YEARLY,
+	PRODUCT_AKISMET_PLUS_MONTHLY,
+	PRODUCT_AKISMET_PLUS_YEARLY,
+	PRODUCT_AKISMET_PLUS_20K_MONTHLY,
+	PRODUCT_AKISMET_PLUS_20K_YEARLY,
+	PRODUCT_AKISMET_PLUS_30K_MONTHLY,
+	PRODUCT_AKISMET_PLUS_30K_YEARLY,
+	PRODUCT_AKISMET_PLUS_40K_MONTHLY,
+	PRODUCT_AKISMET_PLUS_40K_YEARLY,
+	PRODUCT_AKISMET_ENTERPRISE_MONTHLY,
+	PRODUCT_AKISMET_ENTERPRISE_YEARLY,
+	PRODUCT_AKISMET_ENTERPRISE_350K_MONTHLY,
+	PRODUCT_AKISMET_ENTERPRISE_350K_YEARLY,
+	PRODUCT_AKISMET_ENTERPRISE_2M_MONTHLY,
+	PRODUCT_AKISMET_ENTERPRISE_2M_YEARLY,
+	PRODUCT_AKISMET_ENTERPRISE_GT2M_MONTHLY,
+	PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY,
 } from '@automattic/calypso-products';
 import { checkoutTheme } from '@automattic/composite-checkout';
 import { ShoppingCartProvider, createShoppingCartManagerClient } from '@automattic/shopping-cart';
@@ -37,6 +56,7 @@ import { useTranslate } from 'i18n-calypso';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import WPCheckoutOrderSummary from '../components/wp-checkout-order-summary';
+import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import {
 	mockSetCartEndpointWith,
@@ -59,7 +79,7 @@ jest.mock( '@automattic/calypso-config', () => {
 	return mock;
 } );
 
-const productSlugs = [
+const jetpackProductSlugs = [
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
@@ -82,24 +102,65 @@ const productSlugs = [
 	PRODUCT_JETPACK_VIDEOPRESS,
 ];
 
-const nonFeatureListProductSlugs = [
+const akismetProductSlugs = [
+	PRODUCT_AKISMET_FREE,
+	PRODUCT_AKISMET_PERSONAL_MONTHLY,
+	PRODUCT_AKISMET_PERSONAL_YEARLY,
+	PRODUCT_AKISMET_PLUS_MONTHLY,
+	PRODUCT_AKISMET_PLUS_YEARLY,
+	PRODUCT_AKISMET_PLUS_20K_MONTHLY,
+	PRODUCT_AKISMET_PLUS_20K_YEARLY,
+	PRODUCT_AKISMET_PLUS_30K_MONTHLY,
+	PRODUCT_AKISMET_PLUS_30K_YEARLY,
+	PRODUCT_AKISMET_PLUS_40K_MONTHLY,
+	PRODUCT_AKISMET_PLUS_40K_YEARLY,
+	PRODUCT_AKISMET_ENTERPRISE_MONTHLY,
+	PRODUCT_AKISMET_ENTERPRISE_YEARLY,
+];
+
+const nonFeatureListAkismetProductSlugs = [
+	PRODUCT_AKISMET_ENTERPRISE_350K_MONTHLY,
+	PRODUCT_AKISMET_ENTERPRISE_350K_YEARLY,
+	PRODUCT_AKISMET_ENTERPRISE_2M_MONTHLY,
+	PRODUCT_AKISMET_ENTERPRISE_2M_YEARLY,
+	PRODUCT_AKISMET_ENTERPRISE_GT2M_MONTHLY,
+	PRODUCT_AKISMET_ENTERPRISE_GT2M_YEARLY,
+];
+
+const nonFeatureListJetpackProductSlugs = [
 	PRODUCT_JETPACK_BACKUP_T2_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
 ];
 
-const allProducts = productSlugs.map( ( currentProduct ) => {
+const allJetpackProducts = jetpackProductSlugs.map( ( currentProduct ) => {
 	return convertProductSlugToResponseProduct( currentProduct );
 } );
-const allNonFeatureListProducts = nonFeatureListProductSlugs.map( ( currentProduct ) => {
+const allAkismetProducts = akismetProductSlugs.map( ( currentProduct ) => {
 	return convertProductSlugToResponseProduct( currentProduct );
 } );
+const allNonFeatureListJetpackProductsSlugs = nonFeatureListJetpackProductSlugs.map(
+	( currentProduct ) => convertProductSlugToResponseProduct( currentProduct )
+);
+const allNonFeatureListAkismetProductsSlugs = nonFeatureListAkismetProductSlugs.map(
+	( currentProduct ) => convertProductSlugToResponseProduct( currentProduct )
+);
 
 // Converting to Set to remove duplicate strings to avoid unnecessary loops
-const allFeatures = new Set(
-	allProducts.reduce( ( featureList: string[], currentProduct ) => {
+const allJetpackFeatures = new Set(
+	allJetpackProducts.reduce( ( featureList: string[], currentProduct ) => {
 		const currentProductFeatures = getJetpackProductFeatures(
+			currentProduct,
+			identity as translateType
+		);
+		return [ ...featureList, ...currentProductFeatures ];
+	}, [] )
+);
+
+const allAkismetFeatures = new Set(
+	allAkismetProducts.reduce( ( featureList: string[], currentProduct ) => {
+		const currentProductFeatures = getAkismetProductFeatures(
 			currentProduct,
 			identity as translateType
 		);
@@ -153,9 +214,71 @@ describe( 'WPCheckoutOrderSummary', () => {
 		mockConfig.isEnabled.mockRestore();
 	} );
 
+	describe( 'CheckoutSummaryAkismetProductFeatures', () => {
+		// Loop through adding all akismet products to cart, and ensureing their respective feature lists are shown
+		allAkismetProducts.forEach( ( product ) => {
+			const { product_name, bill_period, product_slug } = product;
+
+			test( `${ product_name } feature list shows up if ${ product_name } ${ bill_period } is in the cart`, async () => {
+				const product = convertProductSlugToResponseProduct( product_slug );
+				const productFeatures = getAkismetProductFeatures( product, identity as translateType );
+				const cartChanges = {
+					products: [ product ],
+				};
+
+				render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
+
+				await waitFor( () => {
+					productFeatures.map( ( feature ) => {
+						expect( screen.queryByText( feature ) ).toBeInTheDocument();
+					} );
+				} );
+			} );
+		} );
+
+		// Ensure enterprise plans do not render feature list, as they are not allowed in cart
+		allNonFeatureListAkismetProductsSlugs.forEach( ( product ) => {
+			const { product_name, bill_period, product_slug } = product;
+
+			test( `Akismet Enterprise plan ${ product_name } ${ bill_period } does not show feature list`, async () => {
+				const product = convertProductSlugToResponseProduct( product_slug );
+				const productFeatures = getAkismetProductFeatures( product, identity as translateType );
+
+				expect( productFeatures.length ).toEqual( 0 );
+			} );
+		} );
+
+		// eslint-disable-next-line jest/expect-expect
+		test( 'No feature list items show up if there are multiple items in the cart', async () => {
+			const cartChanges = {
+				products: allAkismetProducts,
+			};
+
+			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
+
+			await waitFor( () => {
+				allAkismetFeatures.forEach( ( feature ) => {
+					expect( screen.queryByText( feature ) ).toBeNull();
+				} );
+			} );
+		} );
+
+		test( 'No feature list items show up if the cart is empty', async () => {
+			const cartChanges = { products: [] };
+
+			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
+
+			await waitFor( async () => {
+				allAkismetFeatures.forEach( ( feature ) => {
+					expect( screen.queryByText( feature ) ).toBeNull();
+				} );
+			} );
+		} );
+	} );
+
 	describe( 'CheckoutSummaryJetpackProductFeatures', () => {
-		// Loop through adding all products to cart, and ensuring their respective feature lists are shown
-		allProducts.forEach( ( product ) => {
+		// Loop through adding all jetpack products to cart, and ensuring their respective feature lists are shown
+		allJetpackProducts.forEach( ( product ) => {
 			const { product_name, bill_period, product_slug } = product;
 
 			test( `${ product_name } feature list shows up if ${ product_name } ${ bill_period } is in the cart`, async () => {
@@ -176,7 +299,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 		} );
 
 		// Ensure deprecated Security T2 and Backup T2 plans do not show a feature list
-		allNonFeatureListProducts.forEach( ( product ) => {
+		allNonFeatureListJetpackProductsSlugs.forEach( ( product ) => {
 			const { product_name, bill_period, product_slug } = product;
 
 			test( `Deprecated T2 plan ${ product_name } ${ bill_period } does not show feature list`, async () => {
@@ -189,13 +312,13 @@ describe( 'WPCheckoutOrderSummary', () => {
 
 		test( 'No feature list items show up if there are multiple items in the cart', async () => {
 			const cartChanges = {
-				products: allProducts,
+				products: allJetpackProducts,
 			};
 
 			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
 
 			await waitFor( async () => {
-				allFeatures.forEach( ( feature ) => {
+				allJetpackFeatures.forEach( ( feature ) => {
 					expect( screen.queryByText( feature ) ).toBeNull();
 				} );
 			} );
@@ -207,7 +330,7 @@ describe( 'WPCheckoutOrderSummary', () => {
 			render( <MyCheckoutSummary cartChanges={ cartChanges } /> );
 
 			await waitFor( async () => {
-				allFeatures.forEach( ( feature ) => {
+				allJetpackFeatures.forEach( ( feature ) => {
 					expect( screen.queryByText( feature ) ).toBeNull();
 				} );
 			} );

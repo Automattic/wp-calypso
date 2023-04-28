@@ -25,6 +25,7 @@
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
+		"anchor/sunset-integration": false,
 		"calypsoify/plugins": true,
 		"cancellation-offers": true,
 		"catch-js-errors": false,
@@ -76,13 +77,12 @@
 		"plans/personal-plan": true,
 		"plans/pro-plan": false,
 		"plans/starter-plan": false,
-		"plans/wooexpress-medium": false,
-		"plans/wooexpress-small": false,
 		"plugins/ssr-categories": true,
 		"plugins/ssr-details": true,
 		"plugins/ssr-landing": true,
 		"post-list/qr-code-link": false,
 		"press-this": true,
+		"promote-post/redesign-i2": false,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"reader": true,
@@ -99,15 +99,16 @@
 		"signup/social": true,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
-		"stats/horizontal-bars-everywhere": true,
-		"stats/insights-page-grid": true,
 		"stats/new-video-summary": false,
+		"stats/subscribers-section": false,
 		"stepper-woocommerce-poc": true,
 		"themes/premium": true,
 		"upgrades/redirect-payments": true,
 		"upgrades/upcoming-renewals-notices": true,
 		"upgrades/wpcom-monthly-plans": true,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false
+		"wpcom-user-bootstrap": false,
+		"woa-logging": true,
+		"woa-logging-moved": true
 	}
 }

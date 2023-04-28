@@ -3,7 +3,7 @@
  *
  * @jest-environment jsdom
  */
-
+import config from '@automattic/calypso-config';
 import {
 	JETPACK_REDIRECT_URL,
 	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
@@ -17,7 +17,12 @@ import {
 	WPCOM_DIFM_LITE,
 } from '@automattic/calypso-products';
 import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
-import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
+import {
+	getEmptyResponseCart,
+	getEmptyResponseCartProduct,
+	ResponseCart,
+	CartKey,
+} from '@automattic/shopping-cart';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
 
@@ -26,8 +31,18 @@ jest.mock( '@automattic/calypso-products', () => ( {
 	...( jest.requireActual( '@automattic/calypso-products' ) as object ),
 	redirectCheckoutToWpAdmin: jest.fn(),
 } ) );
+const mockConfig = config as unknown as { isEnabled: jest.Mock };
+jest.mock( '@automattic/calypso-config', () => {
+	const mock = () => '';
+	mock.isEnabled = jest.fn();
+	return mock;
+} );
 
 const samplePurchaseId = 12342424241;
+
+function getMockCart(): ResponseCart {
+	return { ...getEmptyResponseCart(), cart_key: 12345 };
+}
 
 const defaultArgs = {
 	getUrlFromCookie: jest.fn( () => undefined ),
@@ -86,7 +101,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the thank-you page with a placeholder receipt id when a site but no orderId is set and the cart contains the personal plan', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -109,7 +124,7 @@ describe( 'getThankYouPageUrl', () => {
 	// the updated URL.
 	it( 'redirects to the business plan bump offer page with a placeholder receipt id when a site but no orderId is set and the cart contains the premium plan', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -125,9 +140,30 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/:receiptId' );
 	} );
 
+	it( 'redirects to premium plan annual upsell when feature upsell/monthly-to-annual is set and the cart contains the premium monthly plan', () => {
+		mockConfig.isEnabled.mockImplementation( ( flag ) => flag === 'upsell/monthly-to-annual' );
+
+		const cart = {
+			...getMockCart(),
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_slug: 'value_bundle_monthly',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+		} );
+		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/value_bundle/:receiptId' );
+		mockConfig.isEnabled.mockImplementation( ( flag ) => flag !== 'upsell/monthly-to-annual' );
+	} );
+
 	it( 'redirects to the thank-you page with a placeholder receiptId with a site when the cart is not empty but there is no receipt id', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [ { ...getEmptyResponseCartProduct(), id: 'something' } ],
 		};
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
@@ -169,7 +205,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the thank-you page with a feature when a site and a valid feature is set with no receipt but the cart is not empty', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -222,7 +258,7 @@ describe( 'getThankYouPageUrl', () => {
 			purchaseId: samplePurchaseId,
 			isJetpackNotAtomic: true,
 			cart: {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -262,7 +298,7 @@ describe( 'getThankYouPageUrl', () => {
 			purchaseId: samplePurchaseId,
 			isJetpackNotAtomic: true,
 			cart: {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -286,7 +322,7 @@ describe( 'getThankYouPageUrl', () => {
 			purchaseId: samplePurchaseId,
 			isJetpackNotAtomic: true,
 			cart: {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -313,7 +349,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			isJetpackNotAtomic: true,
 			cart: {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -340,7 +376,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			isJetpackNotAtomic: true,
 			cart: {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -367,7 +403,7 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			isJetpackNotAtomic: true,
 			cart: {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -399,7 +435,7 @@ describe( 'getThankYouPageUrl', () => {
 			purchaseId: samplePurchaseId,
 			isJetpackNotAtomic: true,
 			cart: {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -431,7 +467,7 @@ describe( 'getThankYouPageUrl', () => {
 			purchaseId: samplePurchaseId,
 			isJetpackNotAtomic: true,
 			cart: {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -450,7 +486,7 @@ describe( 'getThankYouPageUrl', () => {
 			purchaseId: samplePurchaseId,
 			isJetpackNotAtomic: true,
 			cart: {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -469,7 +505,7 @@ describe( 'getThankYouPageUrl', () => {
 			purchaseId: samplePurchaseId,
 			isJetpackNotAtomic: true,
 			cart: {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -504,7 +540,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the afterPurchaseUrl from a cart item if set', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -522,7 +558,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the afterPurchaseUrl from the most recent cart item if multiple are set', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -557,7 +593,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to internal redirectTo url if set even if afterPurchaseUrl exists on a cart item', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -618,7 +654,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to manage purchase page if there is a renewal', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -634,7 +670,7 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'does not redirect to url from cookie if cart contains a Google Apps product without a domain receipt', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -654,7 +690,7 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'does redirect to url from cookie if cart contains a Google Apps product with a domain receipt', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -677,7 +713,7 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'Redirects to root if there is no purchase and cart contains a Google Apps product without a domain receipt', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -699,7 +735,7 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'redirects to afterPurchaseUrl if set even if there is a url from a cookie', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -720,7 +756,7 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'redirects to url from cookie with notice type set to "purchase-success"', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -740,7 +776,7 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'Should store the current URL in the redirect cookie when called from the editor', () => {
 		const saveUrlToCookie = jest.fn();
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [],
 		};
 		const url = 'http://localhost/editor';
@@ -762,7 +798,7 @@ describe( 'getThankYouPageUrl', () => {
 	it( 'Should store the thank you URL in the redirect cookie when called from the editor with an e-commerce plan', () => {
 		const saveUrlToCookie = jest.fn();
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -780,11 +816,11 @@ describe( 'getThankYouPageUrl', () => {
 		expect( saveUrlToCookie ).toBeCalledWith( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
-	it( 'redirects to url from cookie followed by purchase id if create_new_blog is set', () => {
+	it( 'redirects to url from cookie followed by purchase id if there is no site', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
-			...getEmptyResponseCart(),
-			create_new_blog: true,
+			...getMockCart(),
+			cart_key: 'no-site' as CartKey,
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -802,11 +838,11 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/cookie/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to url from cookie followed by receipt id if create_new_blog is set', () => {
+	it( 'redirects to url from cookie followed by receipt id if there is no site', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
-			...getEmptyResponseCart(),
-			create_new_blog: true,
+			...getMockCart(),
+			cart_key: 'no-site' as CartKey,
 			products: [ { ...getEmptyResponseCartProduct(), id: '123' } ],
 		};
 		const url = getThankYouPageUrl( {
@@ -819,12 +855,11 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/cookie/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to url from cookie followed by receipt id if create_new_blog is not set but wpcom_signup_complete_flow_name from session storage is equal to "domain"', () => {
+	it( 'redirects to url from cookie followed by receipt id if there is a site but wpcom_signup_complete_flow_name from session storage is equal to "domain"', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		window.sessionStorage.setItem( 'wpcom_signup_complete_flow_name', 'domain' );
 		const cart = {
-			...getEmptyResponseCart(),
-			create_new_blog: false,
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -842,11 +877,11 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/cookie/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to url from cookie followed by receipt id placeholder if create_new_blog is set', () => {
+	it( 'redirects to url from cookie followed by receipt id placeholder if there is no site', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
-			...getEmptyResponseCart(),
-			create_new_blog: true,
+			...getMockCart(),
+			cart_key: 'no-site' as CartKey,
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -863,11 +898,11 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/cookie/:receiptId` );
 	} );
 
-	it( 'redirects to url from cookie followed by placeholder receiptId if create_new_blog is set and there is no receipt', () => {
+	it( 'redirects to url from cookie followed by placeholder receiptId if there is no site, and there is no receipt', () => {
 		const getUrlFromCookie = jest.fn( () => '/cookie' );
 		const cart = {
-			...getEmptyResponseCart(),
-			create_new_blog: true,
+			...getMockCart(),
+			cart_key: 'no-site' as CartKey,
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -884,10 +919,10 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/cookie/:receiptId' );
 	} );
 
-	it( 'redirects to thank-you page followed by placeholder receiptId if no cookie url is set, create_new_blog is set, and there is no receipt', () => {
+	it( 'redirects to thank-you page followed by placeholder receiptId if no cookie url is set, there is no site, and there is no receipt', () => {
 		const cart = {
-			...getEmptyResponseCart(),
-			create_new_blog: true,
+			...getMockCart(),
+			cart_key: 'no-site' as CartKey,
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -899,10 +934,10 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
-	it( 'redirects to thank-you page followed by purchase id if no cookie url is set, create_new_blog is set, and there is no receipt', () => {
+	it( 'redirects to thank-you page followed by purchase id if no cookie url is set, there is no site, and there is no receipt', () => {
 		const cart = {
-			...getEmptyResponseCart(),
-			create_new_blog: true,
+			...getMockCart(),
+			cart_key: 'no-site' as CartKey,
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -921,7 +956,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to thank-you page for a new site with a domain and some failed purchases', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -943,7 +978,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to thank-you page for a new site without a domain', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -965,7 +1000,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to thank-you page for a new site with a domain and no failed purchases but G Suite is not in the cart if user is in invalid country', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -987,7 +1022,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to business upgrade nudge if jetpack is not in the cart, and premium is in the cart', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -1005,9 +1040,12 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( `/checkout/foo.bar/offer-plan-upgrade/business/${ samplePurchaseId }` );
 	} );
 
-	it( 'redirects to business monthly upgrade nudge if jetpack is not in the cart, and premium monthly is in the cart', () => {
+	// NOTE: as part of the calypso_postpurchase_upsell_monthly_to_annual_plan experiment
+	// we're disabling the monthly premium to monthly business plan upsell
+	// https://github.com/Automattic/wp-calypso/pull/76260
+	it( 'redirects to thank you page if jetpack is not in the cart, and premium monthly is in the cart', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -1022,14 +1060,12 @@ describe( 'getThankYouPageUrl', () => {
 			cart,
 			receiptId: samplePurchaseId,
 		} );
-		expect( url ).toBe(
-			`/checkout/foo.bar/offer-plan-upgrade/business-monthly/${ samplePurchaseId }`
-		);
+		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
 
 	it( 'redirects to the business upgrade nudge with a placeholder when jetpack is not in the cart and premium is in the cart but there is no receipt', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -1047,7 +1083,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the thank you page if jetpack is not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -1066,7 +1102,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the thank you page if jetpack is not in the cart, personal is in the cart, and the previous route is not the nudge', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -1136,7 +1172,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'Is displayed if site has eligible domain and Blogger plan is in the cart', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1160,7 +1196,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'Is displayed if site has eligible domain and Personal plan is in the cart', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1184,7 +1220,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'Is displayed if site has eligible domain and Business plan is in the cart', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1208,7 +1244,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'Is displayed if site has eligible domain and eCommerce plan is in the cart', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1232,7 +1268,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'Is displayed if site has domain registration and eligible plan in the cart', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1261,7 +1297,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'Is displayed if user is buying a domain only registration', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1296,7 +1332,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'Is not displayed if Google Workspace is in the cart', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1318,7 +1354,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'Is not displayed if Professional Email is in the cart', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1340,7 +1376,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'Is not displayed if Professional Email is in the cart and email query parameter is present', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1367,7 +1403,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'Is not displayed if Premium plan is in the cart; we show the business upgrade instead', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1389,7 +1425,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'Is not displayed if nudges should be hidden and site has eligible domain and Personal plan is in the cart', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1413,7 +1449,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to thank-you page if jetpack is in the cart', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -1432,7 +1468,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to thank you page if jetpack is not in the cart, personal is in the cart, but hideNudge is true', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -1472,7 +1508,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the jetpack checkout thank you when jetpack checkout arg is set', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -1491,7 +1527,7 @@ describe( 'getThankYouPageUrl', () => {
 
 	it( 'redirects to the akismet checkout thank you when akismet siteless arg is set', () => {
 		const cart = {
-			...getEmptyResponseCart(),
+			...getMockCart(),
 			products: [
 				{
 					...getEmptyResponseCartProduct(),
@@ -1508,6 +1544,27 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/akismet/thank-you/ak_plus_yearly_2' );
 	} );
 
+	it( 'redirects to the purchase management page when is akismet siteless and the purchaseType is a renewal', () => {
+		const cart = {
+			...getEmptyResponseCart(),
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_slug: 'ak_plus_yearly_2',
+					subscription_id: '123abc',
+					extra: { purchaseType: 'renewal' },
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			sitelessCheckoutType: 'akismet',
+		} );
+		expect( url ).toBe( '/me/purchases/siteless.akismet.com/123abc' );
+	} );
+
 	it( 'redirects to the jetpack checkout thank you with `no_product` when jetpack checkout arg is set and the cart is empty', () => {
 		const url = getThankYouPageUrl( {
 			...defaultArgs,
@@ -1520,7 +1577,7 @@ describe( 'getThankYouPageUrl', () => {
 	describe( 'Plan Upgrade Upsell Nudge', () => {
 		it( 'offers discounted business plan upgrade when premium plan is purchased.', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1540,7 +1597,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'offers discounted biennial business plan upgrade when biennial premium plan is purchased.', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1560,9 +1617,12 @@ describe( 'getThankYouPageUrl', () => {
 			);
 		} );
 
-		it( 'offers discounted monthly business plan upgrade when monthly premium plan is purchased.', () => {
+		// NOTE: as part of the calypso_postpurchase_upsell_monthly_to_annual_plan experiment
+		// we're disabling the monthly premium to monthly business plan upsell
+		// https://github.com/Automattic/wp-calypso/pull/76260
+		it( 'shows thank you page for monthly premium plan purchases', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1577,14 +1637,12 @@ describe( 'getThankYouPageUrl', () => {
 				receiptId: samplePurchaseId,
 				cart,
 			} );
-			expect( url ).toBe(
-				`/checkout/foo.bar/offer-plan-upgrade/business-monthly/${ samplePurchaseId }`
-			);
+			expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 		} );
 
 		it( 'Does not offers discounted annual business plan upgrade when annual premium plan and DIFM light is purchased together.', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1614,7 +1672,7 @@ describe( 'getThankYouPageUrl', () => {
 				sessionStorage.setItem( 'wpcom_signup_complete_flow_name', flowName );
 
 				const cart = {
-					...getEmptyResponseCart(),
+					...getMockCart(),
 					products: [
 						{
 							...getEmptyResponseCartProduct(),
@@ -1640,7 +1698,7 @@ describe( 'getThankYouPageUrl', () => {
 	describe( 'Jetpack Siteless Checkout Thank You', () => {
 		it( 'redirects when jetpack checkout arg is set, but siteSlug is undefined.', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1661,7 +1719,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'redirects with receiptId query param when a valid receipt ID is provided', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1683,7 +1741,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'redirects with receiptId query param when a valid receipt ID is provided as a string', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1705,7 +1763,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'redirects without receiptId query param when an invalid receipt ID is provided', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1729,7 +1787,7 @@ describe( 'getThankYouPageUrl', () => {
 
 		it( 'redirects with jetpackTemporarySiteId query param when available', () => {
 			const cart = {
-				...getEmptyResponseCart(),
+				...getMockCart(),
 				products: [
 					{
 						...getEmptyResponseCartProduct(),
@@ -1754,7 +1812,7 @@ describe( 'getThankYouPageUrl', () => {
 			const url = getThankYouPageUrl( {
 				...defaultArgs,
 				cart: {
-					...getEmptyResponseCart(),
+					...getMockCart(),
 					products: [
 						{
 							...getEmptyResponseCartProduct(),
@@ -1768,38 +1826,51 @@ describe( 'getThankYouPageUrl', () => {
 			expect( url ).toBe( '/checkout/gift/thank-you/foo.bar' );
 		} );
 
-		it( '/marketplace/than-you/:productSlug/:site when purchasing a marketplace product', () => {
+		it( '/marketplace/than-you/:productSlug/:site when purchasing marketplace products', () => {
 			const url = getThankYouPageUrl( {
 				...defaultArgs,
 				cart: {
-					...getEmptyResponseCart(),
+					...getMockCart(),
 					products: [
 						{
 							...getEmptyResponseCartProduct(),
 							extra: {
 								is_marketplace_product: true,
-								plugin_slug: 'slug1',
+								product_type: 'marketplace_plugin',
+								product_slug: 'plugin-slug1',
 							},
 						},
 						{
 							...getEmptyResponseCartProduct(),
 							extra: {
 								is_marketplace_product: true,
-								plugin_slug: 'slug2',
+								product_type: 'marketplace_plugin',
+								product_slug: 'plugin-slug2',
 							},
 						},
 						{
 							...getEmptyResponseCartProduct(),
 							extra: {
-								is_marketplace_product: false,
-								plugin_slug: 'not_marketplace',
+								is_marketplace_product: true,
+								product_type: 'marketplace_theme',
+								product_slug: 'theme-slug1',
+							},
+						},
+						{
+							...getEmptyResponseCartProduct(),
+							extra: {
+								is_marketplace_product: true,
+								product_type: 'marketplace_theme',
+								product_slug: 'theme-slug2',
 							},
 						},
 					],
 				},
 				siteSlug: 'site.slug',
 			} );
-			expect( url ).toBe( '/marketplace/thank-you/site.slug?plugins=slug1%2Cslug2' ); // %2C is a comma
+			expect( url ).toBe(
+				'/marketplace/thank-you/site.slug?plugins=plugin-slug1%2Cplugin-slug2&themes=theme-slug1%2Ctheme-slug2'
+			); // %2C is a comma
 		} );
 
 		it( 'Error when gift purchase missing blog_slug', () => {
@@ -1807,7 +1878,7 @@ describe( 'getThankYouPageUrl', () => {
 				getThankYouPageUrl( {
 					...defaultArgs,
 					cart: {
-						...getEmptyResponseCart(),
+						...getMockCart(),
 						products: [
 							{
 								...getEmptyResponseCartProduct(),

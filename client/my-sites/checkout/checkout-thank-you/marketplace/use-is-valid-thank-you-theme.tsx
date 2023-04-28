@@ -1,4 +1,6 @@
 import { useSelector } from 'react-redux';
+import { useQueryProductsList } from 'calypso/components/data/query-products-list';
+import { useQuerySitePurchases } from 'calypso/components/data/query-site-purchases';
 import {
 	isThemePremium,
 	isPremiumThemeAvailable,
@@ -14,6 +16,9 @@ type Theme = {
 const useIsValidThankYouTheme = ( theme: Theme, siteId: number ): boolean => {
 	const themeId = theme.id;
 	const retired = theme.retired;
+
+	useQuerySitePurchases( siteId );
+	useQueryProductsList();
 
 	const isExternallyManagedTheme = useSelector( ( state ) =>
 		getIsExternallyManagedTheme( state, themeId )

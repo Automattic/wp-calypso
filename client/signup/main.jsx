@@ -6,6 +6,7 @@ import {
 	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
+import { camelToSnakeCase } from '@automattic/js-utils';
 import debugModule from 'debug';
 import {
 	clone,
@@ -36,8 +37,9 @@ import {
 	recordSignupProcessingScreen,
 	recordSignupPlanChange,
 } from 'calypso/lib/analytics/signup';
+import { loadExperimentAssignment } from 'calypso/lib/explat';
 import * as oauthToken from 'calypso/lib/oauth-token';
-import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { isWooOAuth2Client, isGravatarOAuth2Client } from 'calypso/lib/oauth2-clients';
 import SignupFlowController from 'calypso/lib/signup/flow-controller';
 import FlowProgressIndicator from 'calypso/signup/flow-progress-indicator';
 import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
@@ -207,6 +209,11 @@ class Signup extends Component {
 				)
 			);
 		}
+
+		// preload the experiment to minimize the perceived loading time
+		if ( this.props.flowName === flows.defaultFlowName ) {
+			loadExperimentAssignment( 'calypso_plans_2yr_toggle' );
+		}
 	}
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
@@ -229,7 +236,7 @@ class Signup extends Component {
 			this.updateShouldShowLoadingScreen( progress );
 		}
 
-		if ( isReskinnedFlow( flowName ) ) {
+		if ( isReskinnedFlow( flowName ) || this.props.isGravatar ) {
 			document.body.classList.add( 'is-white-signup' );
 			debug( 'In componentWillReceiveProps, addded is-white-signup class' );
 		} else {
@@ -306,11 +313,37 @@ class Signup extends Component {
 		}
 	}
 
+	getRecordPropsFromFlow = () => {
+		const requiredDeps = this.getCurrentFlowSupportedQueryParams();
+
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		const optionalDependenciesInQuery = flow?.optionalDependenciesInQuery ?? [];
+		const optionalDeps = this.extractFlowDependenciesFromQuery( optionalDependenciesInQuery );
+
+		const deps = { ...requiredDeps, ...optionalDeps };
+
+		const snakeCaseDeps = {};
+
+		for ( const depsKey in deps ) {
+			snakeCaseDeps[ camelToSnakeCase( depsKey ) ] = deps[ depsKey ];
+		}
+
+		return snakeCaseDeps;
+	};
+
 	getRecordProps() {
 		const { signupDependencies } = this.props;
+		let theme = get( signupDependencies, 'selectedDesign.theme' );
+
+		if ( ! theme && signupDependencies.themeParameter ) {
+			theme = signupDependencies.themeParameter;
+		}
+
+		const deps = this.getRecordPropsFromFlow();
 
 		return {
-			theme: get( signupDependencies, 'selectedDesign.theme' ),
+			...deps,
+			theme,
 			intent: get( signupDependencies, 'intent' ),
 			starting_point: get( signupDependencies, 'startingPoint' ),
 		};
@@ -324,7 +357,7 @@ class Signup extends Component {
 		const flowName = this.props.flowName;
 		// p2v1 also has a user step at the end but the flow is otherwise broken.
 		// reader also has a user step at the end, but this change doesn't fix that flow.
-		const eligbleFlows = [ 'domain', 'add-domain' ];
+		const eligbleFlows = [ 'domain' ];
 		if ( ! eligbleFlows.includes( flowName ) || ! this.props.progress ) {
 			return;
 		}
@@ -590,14 +623,11 @@ class Signup extends Component {
 		return window.location.origin + path;
 	};
 
-	getDependenciesInQuery = () => {
+	extractFlowDependenciesFromQuery = ( dependencies ) => {
 		const queryObject = this.props.initialContext?.query ?? {};
-		const dependenciesInQuery =
-			flows.getFlow( this.props.flowName, this.props.isLoggedIn )?.providesDependenciesInQuery ??
-			[];
 
 		const result = {};
-		for ( const dependencyKey of dependenciesInQuery ) {
+		for ( const dependencyKey of dependencies ) {
 			const value = queryObject[ dependencyKey ];
 			if ( value != null ) {
 				result[ dependencyKey ] = value;
@@ -605,6 +635,13 @@ class Signup extends Component {
 		}
 
 		return result;
+	};
+
+	getDependenciesInQuery = () => {
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		const requiredDependenciesInQuery = flow?.providesDependenciesInQuery ?? [];
+
+		return this.extractFlowDependenciesFromQuery( requiredDependenciesInQuery );
 	};
 
 	getCurrentFlowSupportedQueryParams = () => {
@@ -779,9 +816,14 @@ class Signup extends Component {
 			};
 		}
 
+		const stepClassName =
+			this.props.stepName === 'user-hosting' || this.props.isGravatar
+				? 'user'
+				: this.props.stepName;
+
 		return (
 			<div className="signup__step" key={ stepKey }>
-				<div className={ `signup__step is-${ kebabCase( this.props.stepName ) }` }>
+				<div className={ `signup__step is-${ stepClassName }` }>
 					{ shouldRenderLocaleSuggestions && (
 						<LocaleSuggestions path={ this.props.path } locale={ this.props.locale } />
 					) }
@@ -853,13 +895,14 @@ class Signup extends Component {
 			return this.props.siteId && waitToRenderReturnValue;
 		}
 
-		const isReskinned = isReskinnedFlow( this.props.flowName );
+		const isReskinned = isReskinnedFlow( this.props.flowName ) || this.props.isGravatar;
+		const showPageHeader = ! isP2Flow( this.props.flowName ) && ! this.props.isGravatar;
 
 		return (
 			<>
 				<div className={ `signup is-${ kebabCase( this.props.flowName ) }` }>
 					<DocumentHead title={ this.props.pageTitle } />
-					{ ! isP2Flow( this.props.flowName ) && (
+					{ showPageHeader && (
 						<SignupHeader
 							progressBar={ {
 								flowName: this.props.flowName,
@@ -903,6 +946,7 @@ export default connect(
 		// See: https://github.com/Automattic/wp-calypso/pull/57386
 		const siteId = getSelectedSiteId( state ) || getSiteId( state, signupDependencies.siteSlug );
 		const siteDomains = getDomainsBySiteId( state, siteId );
+		const oauth2Client = getCurrentOAuth2Client( state );
 
 		return {
 			domainsWithPlansOnly: getCurrentUser( state )
@@ -922,7 +966,8 @@ export default connect(
 			siteId,
 			siteType: getSiteType( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
-			oauth2Client: getCurrentOAuth2Client( state ),
+			oauth2Client,
+			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 		};
 	},
 	{

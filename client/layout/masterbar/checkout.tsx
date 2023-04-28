@@ -41,7 +41,7 @@ const CheckoutMasterbar = ( {
 	loadHelpCenterIcon,
 }: Props ) => {
 	const translate = useTranslate();
-	const jetpackCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
+	const forceCheckoutBackUrl = useValidCheckoutBackUrl( siteSlug );
 
 	const getCheckoutType = () => {
 		if ( window.location.pathname.startsWith( '/checkout/jetpack' ) || isJetpackNotAtomic ) {
@@ -69,7 +69,7 @@ const CheckoutMasterbar = ( {
 	const closeAndLeave = () =>
 		leaveCheckout( {
 			siteSlug,
-			jetpackCheckoutBackUrl,
+			forceCheckoutBackUrl,
 			previousPath,
 			tracksEvent: 'calypso_masterbar_close_clicked',
 		} );

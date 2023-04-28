@@ -336,7 +336,16 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/tags', '/tag' ],
+		paths: [ '/tags' ],
+		module: 'calypso/reader/tags',
+		group: 'reader',
+		trackLoadPerformance: true,
+		enableLoggedOut: true,
+		isomorphic: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/tag' ],
 		module: 'calypso/reader/tag-stream',
 		group: 'reader',
 		enableLoggedOut: true,
@@ -368,6 +377,19 @@ const sections = [
 		module: 'calypso/reader/conversations',
 		group: 'reader',
 		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/read/notifications' ],
+		module: 'calypso/reader/notifications',
+		group: 'reader',
+		trackLoadPerformance: true,
+	},
+	{
+		name: 'reader',
+		paths: [ '/read/subscriptions' ],
+		module: 'calypso/reader/subscriptions',
+		group: 'reader',
 	},
 	{
 		name: 'help',
@@ -411,6 +433,7 @@ const sections = [
 		module: 'calypso/gutenberg/editor',
 		group: 'gutenberg',
 		trackLoadPerformance: true,
+		enableLoggedOut: true,
 	},
 	{
 		name: 'import',
@@ -534,6 +557,12 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
+		name: 'jetpack-cloud-golden-token',
+		paths: [ '/golden-token' ],
+		module: 'calypso/jetpack-cloud/sections/golden-token',
+		group: 'jetpack-cloud',
+	},
+	{
 		name: 'jetpack-social',
 		paths: [ '/jetpack-social' ],
 		module: 'calypso/jetpack-cloud/sections/jetpack-social',
@@ -562,13 +591,6 @@ const sections = [
 		paths: [ '/advertising', '/advertising/[^\\/]+(/[^\\/])?' ],
 		module: 'calypso/my-sites/promote-post',
 		group: 'sites',
-	},
-	{
-		name: 'subscriptions',
-		paths: [ '/subscriptions' ],
-		module: 'calypso/my-sites/subscriptions',
-		group: 'sites',
-		enableLoggedOut: true,
 	},
 	{
 		name: 'site-logs',

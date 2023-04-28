@@ -26,6 +26,7 @@ const noop = () => {};
 
 export function generateSteps( {
 	addPlanToCart = noop,
+	addWithThemePlanToCart = noop,
 	addAddOnsToCart = noop,
 	createAccount = noop,
 	createSite = noop,
@@ -112,6 +113,23 @@ export function generateSteps( {
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
 			providesDependencies: [ 'cartItem' ],
+			props: {
+				hideFreePlan: true,
+				hideEnterprisePlan: true,
+			},
+		},
+
+		// TODO
+		// The new pricing grid and the legacy one act differently
+		// when a paid domain is picked, and the new pricing grid is currently
+		// having different behavior on different flow on the paid domain +
+		// Free plan case. We can deprecate this once that specific behavior
+		// is settled and that we decide to migrate `site-selected` as a reskinned flow.
+		'plans-site-selected-legacy': {
+			stepName: 'plans-site-selected-legacy',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			providesDependencies: [ 'cartItem' ],
 		},
 
 		site: {
@@ -134,6 +152,24 @@ export function generateSteps( {
 			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+			},
+		},
+
+		'user-hosting': {
+			stepName: 'user-hosting',
+			apiRequestFunction: createAccount,
+			providesToken: true,
+			providesDependencies: [
+				'bearer_token',
+				'username',
+				'marketing_price_group',
+				'plans_reorder_abtest_variation',
+				'redirect',
+			],
+			optionalDependencies: [ 'plans_reorder_abtest_variation', 'redirect' ],
+			props: {
+				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
+				isPasswordless: true,
 			},
 		},
 
@@ -207,6 +243,31 @@ export function generateSteps( {
 			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,
+		},
+
+		'plans-theme-preselected': {
+			stepName: 'plans-theme-preselected',
+			apiRequestFunction: addWithThemePlanToCart,
+			dependencies: [ 'siteSlug', 'theme' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+
+		'plans-hosting': {
+			stepName: 'plans',
+			apiRequestFunction: addPlanToCart,
+			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isPlanFulfilled,
+			props: {
+				hideFreePlan: true,
+				hidePremiumPlan: true,
+				hidePersonalPlan: true,
+				hideEnterprisePlan: true,
+				shouldHideNavButtons: true,
+			},
 		},
 
 		'plans-pm': {
@@ -381,16 +442,6 @@ export function generateSteps( {
 			stepName: 'domain-only',
 			providesDependencies: [ 'siteId', 'siteSlug', 'siteUrl', 'domainItem' ], // note: siteId, siteSlug are not provided when used in domain flow
 			props: {
-				isDomainOnly: true,
-				forceHideFreeDomainExplainerAndStrikeoutUi: true,
-			},
-		},
-
-		'select-domain': {
-			stepName: 'select-domain',
-			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ], // note: siteId, siteSlug are not provided when used in add-domain flow
-			props: {
-				isAllDomains: true,
 				isDomainOnly: true,
 				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 			},

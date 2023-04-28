@@ -1,4 +1,5 @@
 import { getCurrentUser } from '@automattic/calypso-analytics';
+import { isPlan } from '@automattic/calypso-products';
 import { costToUSD, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 import { mayWeTrackByTracker } from '../tracker-buckets';
 import { cartToGaPurchase } from '../utils/cart-to-ga-purchase';
@@ -12,6 +13,7 @@ import {
 	ICON_MEDIA_ORDER_PIXEL_URL,
 	GA_PRODUCT_BRAND_WPCOM,
 	GA_PRODUCT_BRAND_JETPACK,
+	GA_PRODUCT_BRAND_AKISMET,
 } from './constants';
 import { cartToCriteoItems, recordInCriteo } from './criteo';
 import { recordParamsInFloodlightGtag } from './floodlight';
@@ -19,8 +21,9 @@ import {
 	fireEcommercePurchase as fireEcommercePurchaseGA4,
 	Ga4PropertyGtag,
 } from './google-analytics-4';
+import { initGTMContainer, loadGTMContainer } from './gtm-container';
 import { loadTrackingScripts } from './load-tracking-scripts';
-import { initWooGTMContainer, isWooExpressUpgrade, loadWooGTMContainer } from './woo';
+import { isWooExpressUpgrade } from './woo';
 
 // Ensure setup has run.
 import './setup';
@@ -60,7 +63,9 @@ export async function recordOrder( cart, orderId, sitePlanSlug ) {
 	recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo );
+	recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo );
 	recordOrderInWooGTM( cart, orderId, sitePlanSlug );
+	recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo );
 
 	// Fire a single tracking event without any details about what was purchased
 
@@ -135,6 +140,12 @@ export async function recordOrder( cart, orderId, sitePlanSlug ) {
 
 		debug( 'recordOrder: [LinkedIn]', params );
 		window.lintrk( 'track', params );
+	}
+
+	if ( mayWeTrackByTracker( 'twitter' ) && wpcomJetpackCartInfo.containsJetpackProducts ) {
+		const params = [ 'event', 'tw-odlje-oekzo', { value: wpcomJetpackCartInfo.jetpackCostUSD } ];
+		debug( 'recordOrder: [Twitter]', params );
+		window.twq( ...params );
 	}
 
 	// Uses JSON.stringify() to print the expanded object because during localhost or .live testing after firing this
@@ -278,11 +289,27 @@ function recordOrderInFacebook( cart, orderId, wpcomJetpackCartInfo ) {
 	// WPCom
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		if ( null !== wpcomJetpackCartInfo.wpcomCostUSD && wpcomJetpackCartInfo.wpcomCostUSD > 0 ) {
+			const cartItemsArray = wpcomJetpackCartInfo.wpcomProducts.map( ( product ) => {
+				return {
+					product_slug: product.product_slug ?? '',
+					id: product.product_id ?? '',
+					product_name: product.product_name ?? '',
+					bill_period: product.bill_period ?? 0,
+					is_sale_coupon_applied: product.is_sale_coupon_applied ?? false,
+					is_bundled: product.is_bundled ?? false,
+					is_domain_registration: product.is_domain_registration ?? false,
+					is_plan: isPlan( product ) ?? false,
+					value: costToUSD( product.cost, product.currency ) ?? 0,
+					quantity: product.volume ?? 1,
+				};
+			} );
 			const params = [
-				'trackSingle',
+				'trackSingle', // Allows sending to a single pixel when multiple are loaded on the page.
 				TRACKING_IDS.facebookInit,
 				'Purchase',
 				{
+					contents: cartItemsArray.length > 0 ? cartItemsArray : [],
+					content_type: 'product',
 					product_slug: wpcomJetpackCartInfo.wpcomProducts
 						.map( ( product ) => product.product_slug )
 						.join( ', ' ),
@@ -439,12 +466,12 @@ function recordOrderInGoogleAds( cart, orderId, wpcomJetpackCartInfo ) {
 	if ( mayWeTrackByTracker( 'googleAds' ) && wpcomJetpackCartInfo.containsAkismetProducts ) {
 		const params = [
 			'event',
-			'purchase',
+			'conversion',
 			{
-				transactionId: orderId,
 				send_to: TRACKING_IDS.akismetGoogleAdsGtagPurchase,
 				transactionTotal: wpcomJetpackCartInfo.akismetCost,
 				currencyCode: cart.currency,
+				transactionId: orderId,
 			},
 		];
 		debug( 'recordOrderInGoogleAds: Record Akismet Purchase', params );
@@ -555,6 +582,50 @@ function recordOrderInJetpackGA( cart, orderId, wpcomJetpackCartInfo ) {
 }
 
 /**
+ * Records an order in the Akismet.com GA4 Property
+ *
+ * @param {Object} cart - cart as `ResponseCart` object
+ * @param {number} orderId - the order id
+ * @param {Object} wpcomJetpackCartInfo - info about WPCOM, Jetpack, and Akismet in the cart
+ * @returns {void}
+ */
+function recordOrderInAkismetGA( cart, orderId, wpcomJetpackCartInfo ) {
+	if ( ! mayWeTrackByTracker( 'ga' ) ) {
+		return;
+	}
+
+	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
+		fireEcommercePurchaseGA4(
+			cartToGaPurchase( orderId, cart, wpcomJetpackCartInfo ),
+			Ga4PropertyGtag.AKISMET
+		);
+
+		const akismetParams = [
+			'event',
+			'purchase',
+			{
+				send_to: TRACKING_IDS.akismetGoogleAnalyticsGtag,
+				value: wpcomJetpackCartInfo.akismetCostUSD,
+				currency: 'USD',
+				transaction_id: orderId,
+				coupon: cart.coupon?.toString() ?? '',
+				items: wpcomJetpackCartInfo.akismetProducts.map(
+					( { product_id, product_name_en, cost, volume } ) => ( {
+						id: product_id.toString(),
+						name: product_name_en.toString(),
+						quantity: parseInt( volume ),
+						price: ( costToUSD( cost, cart.currency ) ?? '' ).toString(),
+						brand: GA_PRODUCT_BRAND_AKISMET,
+					} )
+				),
+			},
+		];
+		debug( 'recordOrderInAkismetGA: Record Akismet Purchase', akismetParams );
+		window.gtag( ...akismetParams );
+	}
+}
+
+/**
  * Records an order in the WordPress.com GA4 Property
  *
  * @param {Object} cart - cart as `ResponseCart` object
@@ -583,6 +654,57 @@ function recordOrderInWPcomGA4( cart, orderId, wpcomJetpackCartInfo ) {
 }
 
 /**
+ * Sends a purchase event to Google Tag Manager for Akismet purchases.
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart
+ * @param {string} orderId
+ * @param {Object} wpcomJetpackCartInfo - info about WPCOM, Akismet, and Jetpack in the cart
+ * @returns {void}
+ */
+function recordOrderInAkismetGTM( cart, orderId, wpcomJetpackCartInfo ) {
+	if ( wpcomJetpackCartInfo.containsAkismetProducts ) {
+		loadGTMContainer( TRACKING_IDS.akismetGoogleTagManagerId )
+			.then( () => initGTMContainer() )
+			.then( () => {
+				debug(
+					`recordOrderInAkismetGTM: Initialized GTM container ${ TRACKING_IDS.akismetGoogleTagManagerId }`
+				);
+
+				// We ensure that we can track with GTM
+				if ( ! mayWeTrackByTracker( 'googleTagManager' ) ) {
+					return;
+				}
+
+				const purchaseEventMeta = {
+					event: 'purchase',
+					ecommerce: {
+						coupon: cart.coupon?.toString() ?? '',
+						transaction_id: orderId,
+						currency: 'USD',
+						items: wpcomJetpackCartInfo.akismetProducts.map(
+							( { product_id, product_name, cost, volume, bill_period } ) => ( {
+								id: product_id.toString(),
+								name: product_name.toString(),
+								quantity: parseInt( volume ),
+								price: costToUSD( cost, cart.currency ) ?? 0,
+								billing_term: bill_period === '365' ? 'yearly' : 'monthly',
+							} )
+						),
+						value: wpcomJetpackCartInfo.akismetCostUSD,
+					},
+				};
+
+				window.dataLayer.push( purchaseEventMeta );
+
+				debug( `recordOrderInAkismetGTM: Record Akismet GTM purchase`, purchaseEventMeta );
+			} )
+			.catch( ( error ) => {
+				debug( 'recordOrderInAkismetGTM: Error loading GTM container', error );
+			} );
+	}
+}
+
+/**
  * Sends a purchase event to Google Tag Manager for eligible Woo Express upgrades.
  *
  * @param {import('@automattic/shopping-cart').ResponseCart} cart
@@ -595,8 +717,8 @@ function recordOrderInWooGTM( cart, orderId, sitePlanSlug ) {
 		return;
 	}
 
-	loadWooGTMContainer()
-		.then( () => initWooGTMContainer() )
+	loadGTMContainer( TRACKING_IDS.wooGoogleTagManagerId )
+		.then( () => initGTMContainer() )
 		.then( () => {
 			debug(
 				`recordOrderInWooGTM: Initialized GTM container ${ TRACKING_IDS.wooGoogleTagManagerId }`

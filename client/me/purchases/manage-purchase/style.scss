@@ -402,7 +402,7 @@
 	margin-left: 12px;
 }
 
-.manage-purchase__jetpack-user-license {
+.manage-purchase__license-clipboard-container {
 	display: flex;
 	align-items: center;
 	flex-wrap: wrap;
@@ -422,11 +422,11 @@
 	}
 }
 
-.manage-purchase__jetpack-user-license-clipboard {
+.manage-purchase__license-clipboard {
 	display: flex;
 	margin-top: 16px;
 
-	input.form-text-input.manage-purchase__jetpack-user-license-input {
+	input.form-text-input.manage-purchase__license-clipboard-input {
 		font-size: $font-body-small;
 		margin-right: 16px;
 		background-color: var(--studio-gray-0);
@@ -443,6 +443,13 @@
 
 	@include breakpoint-deprecated( ">480px" ) {
 		margin-top: 0;
+	}
+
+	&.loading {
+		@include placeholder( --color-neutral-20 );
+		padding: 0.5rem;
+		margin: 0 16px;
+		width: 200px;
 	}
 }
 

@@ -2,14 +2,13 @@ import { useStripe } from '@automattic/calypso-stripe';
 import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import {
 	useCreateCreditCard,
 	useCreateExistingCards,
 	useCreatePayPal,
 } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-methods';
+import { useStoredPaymentMethods } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-payment-methods';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
-import { getStoredCards } from 'calypso/state/stored-cards/selectors';
 import useFetchAvailablePaymentMethods from './use-fetch-available-payment-methods';
 import type { PaymentMethod } from '@automattic/composite-checkout';
 
@@ -42,7 +41,7 @@ export default function useCreateAssignablePaymentMethods(
 				: String( translate( 'PayPal' ) ),
 	} );
 
-	const storedCards = useSelector( getStoredCards );
+	const { paymentMethods: storedCards } = useStoredPaymentMethods( { type: 'card' } );
 	const existingCardMethods = useCreateExistingCards( {
 		isStripeLoading,
 		stripeLoadingError,

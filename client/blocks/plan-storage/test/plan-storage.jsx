@@ -12,9 +12,9 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_FREE,
 } from '@automattic/calypso-products';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { PlanStorage } from '../index';
 
@@ -149,12 +149,58 @@ describe( 'PlanStorage basic tests', () => {
 						},
 						options: {
 							is_automated_transfer: true,
+							wpcom_staging_blog_ids: [],
 						},
 					},
 				},
 			},
 		} );
 		expect( container.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
+		expect( container.getElementsByClassName( 'plan-storage__shared_quota' ) ).toHaveLength( 0 );
+	} );
+
+	test( 'should render for an atomic site with a staging site', () => {
+		const { container } = renderComponent( <PlanStorage siteId={ siteId } />, {
+			sites: {
+				items: {
+					[ siteId ]: {
+						name: 'yourjetpack.blog',
+						jetpack: true,
+						plan: {
+							product_slug: PLAN_BUSINESS,
+						},
+						options: {
+							is_automated_transfer: true,
+							wpcom_staging_blog_ids: [ 456 ],
+						},
+					},
+				},
+			},
+		} );
+		expect( container.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
+		expect( container.getElementsByClassName( 'plan-storage__shared_quota' ) ).toHaveLength( 1 );
+	} );
+
+	test( 'should render for a staging site', () => {
+		const { container } = renderComponent( <PlanStorage siteId={ siteId } />, {
+			sites: {
+				items: {
+					[ siteId ]: {
+						name: 'staging-4e35-awesomesite.wpcomstaging.com',
+						is_wpcom_staging_site: true,
+						jetpack: true,
+						plan: {
+							product_slug: PLAN_BUSINESS,
+						},
+						options: {
+							is_automated_transfer: true,
+						},
+					},
+				},
+			},
+		} );
+		expect( container.getElementsByClassName( 'plan-storage' ) ).toHaveLength( 1 );
+		expect( container.getElementsByClassName( 'plan-storage__shared_quota' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'should not render for jetpack sites', () => {

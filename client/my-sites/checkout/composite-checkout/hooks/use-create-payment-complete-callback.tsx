@@ -67,7 +67,7 @@ export default function useCreatePaymentCompleteCallback( {
 	createUserAndSiteBeforeTransaction?: boolean;
 	productAliasFromUrl?: string | undefined;
 	redirectTo?: string | undefined;
-	purchaseId?: number | undefined;
+	purchaseId?: number | string | undefined;
 	feature?: string | undefined;
 	isInModal?: boolean;
 	isComingFromUpsell?: boolean;
@@ -107,7 +107,11 @@ export default function useCreatePaymentCompleteCallback( {
 			// created site in the Thank You page URL.
 			// TODO: It does not seem like this would be needed for Akismet, but marking to follow up
 			let jetpackTemporarySiteId;
-			if ( sitelessCheckoutType === 'jetpack' && ! siteSlug && responseCart.create_new_blog ) {
+			if (
+				sitelessCheckoutType === 'jetpack' &&
+				! siteSlug &&
+				[ 'no-user', 'no-site' ].includes( String( responseCart.cart_key ) )
+			) {
 				jetpackTemporarySiteId =
 					transactionResult.purchases && Object.keys( transactionResult.purchases ).pop();
 			}
@@ -217,7 +221,9 @@ export default function useCreatePaymentCompleteCallback( {
 				return;
 			}
 
-			reloadCart();
+			reloadCart().catch( () => {
+				// No need to do anything here. CartMessages will report this error to the user.
+			} );
 			redirectThroughPending( url, {
 				siteSlug,
 				orderId: transactionResult.order_id,

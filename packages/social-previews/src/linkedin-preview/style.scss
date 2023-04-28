@@ -1,0 +1,83 @@
+.linkedin-preview {
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 8px;
+	overflow: hidden;
+	max-width: 555px;
+	background-color: #fff;
+
+	&__header {
+		display: flex;
+		gap: 0.5rem;
+		padding: 0.8rem 1rem 0;
+		margin-bottom: 0.8rem;
+
+		&--avatar img {
+			width: 48px;
+			height: 48px;
+			border-radius: 50%;
+		}
+
+		&--profile {
+			display: flex;
+			flex-direction: column;
+		}
+
+		&--profile-title {
+			font-size: 0.75rem;
+		}
+
+		&--profile-info {
+			display: flex;
+			gap: 0.25rem;
+		}
+
+		&--profile-name {
+			font-weight: 600;
+		}
+
+		&--profile-meta {
+			display: flex;
+			align-items: center;
+			gap: 0.25rem;
+		}
+	}
+
+	&__caption {
+		margin: 0 1rem;
+		font-size: 0.875rem;
+		line-height: 20px;
+		font-weight: 400;
+	}
+
+	&__content article {
+		margin-top: 0.5rem;
+		background-color: #eef3f8;
+		display: flex;
+		flex-direction: column;
+	}
+
+	&__description {
+		padding: 0.5rem 0.75rem;
+
+		&--title {
+			margin: 0;
+			font-size: 0.875rem;
+			font-weight: 600;
+		}
+
+		&--meta {
+			margin-top: 0.5rem;
+			display: flex;
+			gap: 0.25rem;
+			font-size: 0.875rem;
+			font-weight: 400;
+			color: rgba(0, 0, 0, 0.6);
+		}
+	}
+
+	&__image {
+		object-fit: cover;
+		width: 100%;
+	}
+}
