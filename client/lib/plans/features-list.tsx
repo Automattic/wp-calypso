@@ -610,7 +610,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_CUSTOM_DOMAIN,
 		getTitle: ( domainName?: string ) => {
 			if ( domainName ) {
-				return i18n.translate( 'The domain %(domainName)s is free for the first year', {
+				return i18n.translate( '%(domainName)s is included', {
 					args: { domainName },
 				} );
 			}
@@ -2080,7 +2080,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_LTD_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_LTD_SOCIAL_MEDIA_JP,
-		getTitle: () => i18n.translate( 'Limited shares in social media' ),
+		getTitle: () => i18n.translate( 'Limited automatic shares in social media' ),
 		getDescription: () =>
 			i18n.translate(
 				'Get 30 social shares per month to promote your posts on Facebook, Twitter, Tumblr, and more.'
@@ -2135,7 +2135,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_UNLTD_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_UNLTD_SOCIAL_MEDIA_JP,
-		getTitle: () => i18n.translate( 'Unlimited shares in social media' ),
+		getTitle: () => i18n.translate( 'Unlimited automatic shares in social media' ),
 		getDescription: () =>
 			i18n.translate( 'Share your latest posts to your social channels, without limits.' ),
 	},

@@ -11,7 +11,7 @@ import type { SiteDetails } from '@automattic/data-stores';
 import '../style.scss';
 
 interface Props {
-	selectedSite: SiteDetails;
+	selectedSite?: SiteDetails;
 	items: Array< PluginComponentProps >;
 	isLoading: boolean;
 	columns: Columns;

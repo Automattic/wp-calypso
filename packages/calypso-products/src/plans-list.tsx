@@ -483,6 +483,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_FREE_THEMES_SIGNUP,
 	],
 	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_BEAUTIFUL_THEMES,
 		FEATURE_PAGES,
 		FEATURE_USERS,

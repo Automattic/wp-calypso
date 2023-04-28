@@ -201,7 +201,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Write your first post' ),
 						completed: firstPostPublishedCompleted,
-						disabled: mustVerifyEmailBeforePosting || false,
+						disabled: mustVerifyEmailBeforePosting || isStartWritingFlow( flow || null ) || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/post/${ siteSlug }` );

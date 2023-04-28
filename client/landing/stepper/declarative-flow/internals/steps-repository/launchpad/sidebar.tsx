@@ -1,5 +1,5 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
-import { OnboardSelect } from '@automattic/data-stores';
+import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
@@ -9,7 +9,6 @@ import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
-import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -66,9 +65,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
-	const {
-		data: { checklist_statuses },
-	} = useLaunchpad( siteSlug );
+	const { data: { checklist_statuses } = {} } = useLaunchpad( siteSlug );
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 

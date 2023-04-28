@@ -1,0 +1,39 @@
+// TODO: Refactor to mixin or shared component.
+// Similar CSS in stats/wordads/highlights-section.scss
+
+.highlight-cards.subscribers-page {
+	// Visually center the info icon.
+	h1 {
+		display: flex;
+		flex-flow: nowrap;
+		align-items: center;
+	}
+	// Override the default minimum width.
+	.highlight-card {
+		min-width: 240px;
+	}
+	// Hide unused icon div.
+	.highlight-card-icon {
+		display: none;
+	}
+	// Left-hand padding and coloring for info icon.
+	.info-wrapper {
+		display: flex;
+		margin-left: 8px;
+	}
+	.info-icon {
+		fill: var(--studio-gray-40);
+	}
+}
+
+.tooltip-subscribers-page {
+	// Remove excess margin at bottom of tooltip.
+	.highlight-card-tooltip-content {
+		display: block;
+		max-width: 260px;
+
+		p:last-child {
+			margin: 0;
+		}
+	}
+}
