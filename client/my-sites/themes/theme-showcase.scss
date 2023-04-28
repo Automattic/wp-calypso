@@ -42,8 +42,10 @@
 		}
 
 		.page-sub-header {
-			font-size: 1rem;
-			max-width: 640px;
+			font-size: $font-body-large;
+			line-height: 26px;
+			margin-bottom: 8px;
+			max-width: 680px;
 		}
 	}
 
