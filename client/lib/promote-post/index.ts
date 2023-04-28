@@ -2,8 +2,8 @@ import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
 import { __ } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
-import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import wpcom from 'calypso/lib/wp';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
@@ -33,6 +33,11 @@ declare global {
 				showGetStartedMessage?: boolean;
 				onGetStartedMessageClose?: ( dontShowAgain: boolean ) => void;
 				source?: string;
+				isRunningInJetpack?: boolean;
+				jetpackXhrParams?: {
+					apiRoot: string;
+					headerNonce: string;
+				};
 			} ) => void;
 			strings: any;
 		};
@@ -68,6 +73,8 @@ export async function showDSP(
 	await loadDSPWidgetJS();
 	return new Promise( ( resolve, reject ) => {
 		if ( window.BlazePress ) {
+			const isRunningInJetpack = config.isEnabled( 'is_running_in_jetpack_site' );
+
 			window.BlazePress.render( {
 				siteSlug: siteSlug,
 				domNode: typeof domNodeOrId !== 'string' ? domNodeOrId : undefined,
@@ -88,6 +95,13 @@ export async function showDSP(
 				uploadImageLabel: isWpMobileApp() ? __( 'Tap to add image' ) : undefined,
 				showGetStartedMessage: ! isWpMobileApp(), // Don't show the GetStartedMessage in the mobile app.
 				source: source,
+				isRunningInJetpack,
+				jetpackXhrParams: isRunningInJetpack
+					? {
+							apiRoot: config( 'api_root' ),
+							headerNonce: config( 'nonce' ),
+					  }
+					: undefined,
 			} );
 		} else {
 			reject( false );
@@ -119,13 +133,26 @@ export const requestDSP = async < T >(
 ): Promise< T > => {
 	const URL_BASE = `/sites/${ siteId }/wordads/dsp/api/v1`;
 	const path = `${ URL_BASE }${ apiUri }`;
-	await requestAllBlogsAccess();
-	return await request< T >( {
+
+	const params = {
 		path,
 		method,
+		apiNamespace: config.isEnabled( 'is_running_in_jetpack_site' )
+			? 'jetpack/v4/blaze-app'
+			: 'wpcom/v2',
 		body,
-		apiNamespace: 'wpcom/v2',
-	} );
+	};
+
+	switch ( method ) {
+		case 'POST':
+			return await wpcom.req.post( params );
+		case 'PUT':
+			return await wpcom.req.put( params );
+		case 'DELETE':
+			return await wpcom.req.del( params );
+		default:
+			return await wpcom.req.get( params );
+	}
 };
 
 export enum PromoteWidgetStatus {

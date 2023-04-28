@@ -1,14 +1,18 @@
+import config from '@automattic/calypso-config';
 import { safeImageUrl } from '@automattic/calypso-url';
 import './style.scss';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import page from 'page';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { recordDSPEntryPoint } from 'calypso/lib/promote-post';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { useRouteModal } from 'calypso/lib/route-modal';
 import PostRelativeTimeStatus from 'calypso/my-sites/post-relative-time-status';
 import { getPostType } from 'calypso/my-sites/promote-post/utils';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getAdvertisingDashboardPath } from '../../utils';
 
 type Discussion = {
 	comment_count: number;
@@ -42,9 +46,14 @@ export default function PostItem( { post }: Props ) {
 	const dispatch = useDispatch();
 	const keyValue = 'post-' + post.ID;
 	const { openModal } = useRouteModal( 'blazepress-widget', keyValue );
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
 	const onClickPromote = async () => {
-		openModal();
+		if ( config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+			page( getAdvertisingDashboardPath( `/${ selectedSiteSlug }/posts/promote/${ keyValue }` ) );
+		} else {
+			openModal();
+		}
 		dispatch( recordDSPEntryPoint( 'promoted_posts-post_item' ) );
 	};
 
@@ -70,8 +79,8 @@ export default function PostItem( { post }: Props ) {
 							xmlns="http://www.w3.org/2000/svg"
 						>
 							<path
-								fill-rule="evenodd"
-								clip-rule="evenodd"
+								fillRule="evenodd"
+								clipRule="evenodd"
 								d="M17.5576 5.4415L16.4996 4.38344L15.4415 5.4415L14.5576 4.55762L15.6157 3.49956L14.5576 2.4415L15.4415 1.55762L16.4996
 								2.61568L17.5576 1.55762L18.4415 2.4415L17.3834 3.49956L18.4415 4.55762L17.5576 5.4415ZM17.5 15.8333V6.85506C17.1831 6.94936 16.8475 7 16.5 7C16.4159 7 16.3326 6.99704
 								16.25 6.99121V11.1306L13.769 8.71854C13.5264 8.48271 13.1402 8.48271 12.8976 8.71854L9.92167 11.6119L7.48278 10.0311C7.26548 9.89025 6.98384 9.89799 6.77461 10.0506L3.75

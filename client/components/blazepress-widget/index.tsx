@@ -13,6 +13,7 @@ import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import { showDSP, usePromoteWidget, PromoteWidgetStatus } from 'calypso/lib/promote-post';
 import './style.scss';
 import { useRouteModal } from 'calypso/lib/route-modal';
+import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post/utils';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -29,7 +30,8 @@ type BlazePressTranslatable = ( original: string, extra?: TranslateOptionsText )
 
 export function goToOriginalEndpoint() {
 	const { pathname } = getUrlParts( window.location.href );
-	page( pathname );
+	const index = pathname.indexOf( '/promote' );
+	page( index < 0 ? pathname : pathname.substring( 0, index ) );
 }
 
 const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
@@ -64,7 +66,7 @@ const BlazePressWidget = ( props: BlazePressPromotionProps ) => {
 	const onClose = ( goToCampaigns?: boolean ) => {
 		queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 		if ( goToCampaigns ) {
-			page( `/advertising/${ siteSlug }/campaigns` );
+			page( getAdvertisingDashboardPath( `/${ siteSlug }/campaigns` ) );
 		} else {
 			queryClient && queryClient.invalidateQueries( [ 'promote-post-campaigns', siteId ] );
 			if ( previousRoute ) {

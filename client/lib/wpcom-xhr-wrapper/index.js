@@ -3,7 +3,7 @@ import { getLogoutUrl } from 'calypso/lib/user/shared-utils';
 import { clearStore } from 'calypso/lib/user/store';
 
 // For Calypso in Jetpack, these API namespaces are accessed from the site, not from wp.com.
-const DIRECT_API_NAMESPACES = [ 'jetpack/v4', 'my-jetpack/v1' ];
+const DIRECT_API_NAMESPACES = [ 'jetpack/v4', 'my-jetpack/v1', 'jetpack/v4/blaze-app' ];
 
 export default async function ( params, callback ) {
 	const xhr = ( await import( /* webpackChunkName: "wpcom-xhr-request" */ 'wpcom-xhr-request' ) )

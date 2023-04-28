@@ -32,7 +32,7 @@ import {
 } from 'calypso/state/stats/lists/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { PostType } from 'calypso/types';
-import { unifyCampaigns } from './utils';
+import { getAdvertisingDashboardPath, unifyCampaigns } from './utils';
 
 export type TabType = 'posts' | 'campaigns';
 export type TabOption = {
@@ -279,7 +279,10 @@ export default function PromotedPosts( { tab }: Props ) {
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' ? (
 				<>
-					<PageViewTracker path="/advertising/:site/campaigns" title="Advertising > Campaigns" />
+					<PageViewTracker
+						path={ getAdvertisingDashboardPath( '/:site/campaigns' ) }
+						title="Advertising > Campaigns"
+					/>
 					<CampaignsList
 						hasLocalUser={ hasLocalUser }
 						isError={ isError }
@@ -290,7 +293,10 @@ export default function PromotedPosts( { tab }: Props ) {
 					/>
 				</>
 			) : (
-				<PageViewTracker path="/advertising/:site/posts" title="Advertising > Ready to Blaze" />
+				<PageViewTracker
+					path={ getAdvertisingDashboardPath( '/:site/posts' ) }
+					title="Advertising > Ready to Blaze"
+				/>
 			) }
 
 			<QuerySiteStats siteId={ selectedSiteId } statType="statsTopPosts" query={ topPostsQuery } />

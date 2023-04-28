@@ -1,8 +1,8 @@
+import { Gridicon } from '@automattic/components';
 import { sprintf } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 import './style.scss';
-import Gridicon from 'calypso/../packages/components/src/gridicon';
 import Search from 'calypso/components/search';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import CampaignsFilter from '../campaigns-filter';
