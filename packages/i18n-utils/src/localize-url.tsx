@@ -169,10 +169,22 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 	},
 };
 
+function hasTrailingSlash( urlString: string ) {
+	let url;
+	try {
+		url = new URL( String( urlString ), INVALID_URL );
+	} catch ( e ) {
+		return false;
+	}
+
+	return url.pathname.endsWith( '/' );
+}
+
 export function localizeUrl(
 	fullUrl: string,
 	locale: Locale = getDefaultLocale(),
-	isLoggedIn = true
+	isLoggedIn = true,
+	preserveTrailingSlashVariation = false
 ): string {
 	let url;
 	try {
@@ -191,6 +203,10 @@ export function localizeUrl(
 
 	if ( ! url.pathname.endsWith( '.php' ) ) {
 		// Essentially a trailingslashit.
+		// We need to do this because the matching list is standardised to use
+		// trailing slashes everywhere.
+		// However, if the `preserveTrailingSlashVariation` option is enabled, we
+		// remove the trailing slash at the end again, when appropriate.
 		url.pathname = ( url.pathname + '/' ).replace( /\/+$/, '/' );
 	}
 
@@ -209,7 +225,21 @@ export function localizeUrl(
 
 	for ( let i = lookup.length - 1; i >= 0; i-- ) {
 		if ( lookup[ i ] in urlLocalizationMapping ) {
-			return urlLocalizationMapping[ lookup[ i ] ]( url, locale, isLoggedIn ).href;
+			const mapped = urlLocalizationMapping[ lookup[ i ] ]( url, locale, isLoggedIn ).href;
+
+			if ( ! preserveTrailingSlashVariation ) {
+				return mapped;
+			}
+
+			try {
+				const mappedUrl = new URL( mapped );
+				if ( ! hasTrailingSlash( fullUrl ) ) {
+					mappedUrl.pathname = mappedUrl.pathname.replace( /\/+$/, '' );
+				}
+				return mappedUrl.href;
+			} catch {
+				return mapped;
+			}
 		}
 	}
 
@@ -221,11 +251,16 @@ export function useLocalizeUrl() {
 	const providerLocale = useLocale();
 
 	return useCallback(
-		( fullUrl: string, locale?: Locale, isLoggedIn?: boolean ) => {
+		(
+			fullUrl: string,
+			locale?: Locale,
+			isLoggedIn?: boolean,
+			preserveTrailingSlashVariation?: boolean
+		) => {
 			if ( locale ) {
-				return localizeUrl( fullUrl, locale, isLoggedIn );
+				return localizeUrl( fullUrl, locale, isLoggedIn, preserveTrailingSlashVariation );
 			}
-			return localizeUrl( fullUrl, providerLocale, isLoggedIn );
+			return localizeUrl( fullUrl, providerLocale, isLoggedIn, preserveTrailingSlashVariation );
 		},
 		[ providerLocale ]
 	);

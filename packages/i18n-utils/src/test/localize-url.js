@@ -91,11 +91,34 @@ describe( '#localizeUrl', () => {
 	} );
 
 	test( 'trailing slash variations', () => {
-		expect( localizeUrl( 'https://automattic.com/cookies/', 'de' ) ).toEqual(
+		const loggedIn = false;
+
+		// Add trailing slashes everywhere (default).
+		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', loggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/'
 		);
-		expect( localizeUrl( 'https://automattic.com/cookies', 'de' ) ).toEqual(
+		expect( localizeUrl( 'https://automattic.com/cookies', 'de', loggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', loggedIn ) ).toEqual(
+			'https://automattic.com/de/cookies/?foo=bar'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', loggedIn ) ).toEqual(
+			'https://automattic.com/de/cookies/#baz'
+		);
+
+		// Preserve trailing slash variation.
+		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', loggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies/'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies', 'de', loggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', loggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies?foo=bar'
+		);
+		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', loggedIn, true ) ).toEqual(
+			'https://automattic.com/de/cookies#baz'
 		);
 	} );
 
