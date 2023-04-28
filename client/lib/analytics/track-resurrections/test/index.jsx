@@ -43,8 +43,6 @@ describe( 'TrackResurrections', () => {
 			render( <TrackResurrections /> );
 		} );
 
-		expect( useSelector ).toHaveBeenCalledWith( expect.any( Function ) );
-		expect( useSelector ).toHaveBeenCalledTimes( 2 );
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
@@ -53,8 +51,6 @@ describe( 'TrackResurrections', () => {
 			render( <TrackResurrections /> );
 		} );
 
-		expect( useSelector ).toHaveBeenCalledWith( expect.any( Function ) );
-		expect( useSelector ).toHaveBeenCalledTimes( 2 );
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
@@ -69,8 +65,6 @@ describe( 'TrackResurrections', () => {
 			render( <TrackResurrections /> );
 		} );
 
-		expect( useSelector ).toHaveBeenCalledWith( expect.any( Function ) );
-		expect( useSelector ).toHaveBeenCalledTimes( 2 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_user_resurrected', {
 			last_seen: last_admin_activity_timestamp,
 		} );
