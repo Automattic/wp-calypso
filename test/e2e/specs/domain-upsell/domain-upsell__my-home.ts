@@ -20,7 +20,7 @@ describe( DataHelper.createSuiteTitle( 'My Home: Domain upsell' ), function () {
 	let cartCheckoutPage: CartCheckoutPage;
 	let plansPage: PlansPage;
 	let myHomePage: MyHomePage;
-	let suggestedDomain: string | null;
+	let selectedDomain: string;
 	let page: Page;
 	const credentials = SecretsManager.secrets.testAccounts.simpleSiteFreePlanUser;
 
@@ -45,8 +45,9 @@ describe( DataHelper.createSuiteTitle( 'My Home: Domain upsell' ), function () {
 	} );
 
 	it( 'Get available domain', async function () {
-		suggestedDomain = await myHomePage.suggestedDomainName();
+		const suggestedDomain = await myHomePage.suggestedDomainName();
 		expect( suggestedDomain ).toBeTruthy();
+		selectedDomain = suggestedDomain !== null ? suggestedDomain.toString() : '';
 	} );
 
 	it( 'Buy suggested domain', async function () {
@@ -72,6 +73,6 @@ describe( DataHelper.createSuiteTitle( 'My Home: Domain upsell' ), function () {
 
 	it( 'Domain is added to the cart', async function () {
 		cartCheckoutPage = new CartCheckoutPage( page );
-		await cartCheckoutPage.validateCartItem( suggestedDomain );
+		await cartCheckoutPage.validateCartItem( selectedDomain );
 	} );
 } );
