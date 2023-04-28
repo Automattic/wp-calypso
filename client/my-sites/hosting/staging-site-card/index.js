@@ -24,7 +24,6 @@ import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { DeleteStagingSite } from './delete-staging-site';
 import { useDeleteStagingSite } from './use-delete-staging-site';
-import { useHasSiteAccess } from './use-has-site-access';
 
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
 
@@ -85,7 +84,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	const stagingSite = useMemo( () => {
 		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
 	}, [ stagingSites ] );
-	const hasSiteAccess = useHasSiteAccess( stagingSite.id );
+	const hasSiteAccess = stagingSite?.site_owner === currentUserId;
 
 	const showAddStagingSite =
 		! isLoadingStagingSites && ! isLoadingQuotaValidation && stagingSites?.length === 0;
@@ -159,24 +158,21 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 			( transferStatus !== null || wasCreating ) );
 
 	useEffect( () => {
-		// This is only true if the site transfer is in progress.
+		// We know that a user has been navigated to an other page and came back if
+		// The transfer status is not in a final state (complete or failure)
+		// the site is not reverting
+		// the user owns the staging site
+		// and wasCreating that is set up by the add staging site button is false
 		if (
 			! wasCreating &&
-			stagingSite.id &&
 			! isStagingSiteTransferComplete &&
 			transferStatus !== transferStates.REVERTED &&
+			hasSiteAccess &&
 			! isReverting
 		) {
 			setWasCreating( true );
 		}
-	}, [
-		addingStagingSite,
-		isReverting,
-		isStagingSiteTransferComplete,
-		stagingSite,
-		transferStatus,
-		wasCreating,
-	] );
+	}, [ wasCreating, isStagingSiteTransferComplete, transferStatus, hasSiteAccess, isReverting ] );
 
 	const getExceedQuotaErrorContent = () => {
 		return (
