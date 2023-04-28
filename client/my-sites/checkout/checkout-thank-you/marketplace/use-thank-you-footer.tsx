@@ -58,6 +58,18 @@ export function useThankYouFoooter(
 					},
 			  ]
 			: [] ),
+		...( hasThemes
+			? [
+					{
+						key: 'thank_you_footer_support_guides_themes',
+						title: translate( 'Learn More' ),
+						description: translate( 'Discover everything you need to know about Themes.' ),
+						link: 'https://wordpress.com/support/themes/',
+						linkText: translate( 'Theme Support' ),
+						eventKey: 'calypso_plugin_thank_you_theme_support_click',
+					},
+			  ]
+			: [] ),
 	];
 	const steps = useNextSteps( footerSteps, pluginSlugs, themeSlugs );
 
