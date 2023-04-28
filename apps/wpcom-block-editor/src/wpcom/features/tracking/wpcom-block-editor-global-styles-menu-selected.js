@@ -29,6 +29,10 @@ function trackGlobalStylesMenuSelected( event, target ) {
 		tracksRecordEvent( 'wpcom_block_editor_global_styles_menu_selected', {
 			menu: 'layout',
 		} );
+	} else if ( buttonText === __( 'Browse styles' ) ) {
+		tracksRecordEvent( 'wpcom_block_editor_global_styles_menu_selected', {
+			menu: 'styles',
+		} );
 	}
 }
 
