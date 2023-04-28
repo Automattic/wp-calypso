@@ -1,7 +1,7 @@
 import { LoadingContent } from '@automattic/composite-checkout';
 import { styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 
 export function CheckoutLoadingPlaceholder( {
@@ -9,9 +9,17 @@ export function CheckoutLoadingPlaceholder( {
 }: {
 	checkoutLoadingConditions: Array< { name: string; isLoading: boolean } >;
 } ) {
-	const initialRenderTime = useRef( Date.now() );
 	const showLoadingInfoThresholdMs = 1000;
-	const shouldShowLoadingInfo = Date.now() - initialRenderTime.current > showLoadingInfoThresholdMs;
+	const [ shouldShowLoadingInfo, setShowLoadingInfo ] = useState( false );
+	useEffect( () => {
+		const timer = setTimeout( () => {
+			setShowLoadingInfo( true );
+		}, showLoadingInfoThresholdMs );
+		return () => {
+			clearTimeout( timer );
+		};
+	}, [] );
+
 	return (
 		<div>
 			{ shouldShowLoadingInfo && (
