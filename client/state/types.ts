@@ -19,7 +19,7 @@ import type { ThunkDispatch } from 'redux-thunk';
  */
 export interface IAppState extends DefaultRootState {
 	plugins?: IPluginsState;
-	marketplace: IMarketplaceState;
+	marketplace?: IMarketplaceState;
 	countries?: CountriesState;
 	billingTransactions?: BillingTransactionsState;
 }
