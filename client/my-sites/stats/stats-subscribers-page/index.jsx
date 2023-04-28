@@ -16,8 +16,8 @@ import StatsModuleEmails from '../stats-module-emails';
 import StatsPageHeader from '../stats-page-header';
 import Reach from '../stats-reach';
 import SubscribersSection from '../subscribers-section';
-import SubscribersOverview from './SubscribersOverview';
 import SubscribersHighlightSection from './subscribers-highlight-section';
+import SubscribersOverview from './subscribers-overview';
 
 const StatsSubscribersPage = ( { period } ) => {
 	const translate = useTranslate();
@@ -62,8 +62,8 @@ const StatsSubscribersPage = ( { period } ) => {
 						vendor={ getSuggestionsVendor() }
 					/>
 				) }
-				<SubscribersOverview siteId={ siteId } />
 				<SubscribersSection siteId={ siteId } slug={ siteSlug } period={ period } />
+				<SubscribersOverview />
 				<div className={ statsModuleListClass }>
 					<Followers path="followers" />
 					<Reach />
