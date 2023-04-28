@@ -29,11 +29,26 @@ $offset-padding-hovering: 8px;
 		grid-template-columns: repeat(2, 1fr);
 		column-gap: 24px;
 		margin: 26px (-$offset-padding-hovering) 0;
+
+		@media only screen and (max-width: $break-dashboard-mobile) {
+			grid-template-columns: none;
+		}
 	}
 
 	.stats-widget-highlights__column {
 		// Make sure the highlight section doesn't overflow the container, which makes ellipsis work.
 		min-width: 0;
+
+		@media only screen and (max-width: $break-dashboard-mobile) {
+			display: none;
+		}
+
+		&.is-mobile-show {
+			@media only screen and (max-width: $break-dashboard-mobile) {
+				display: block;
+				width: 100%;
+			}
+		}
 	}
 
 	.stats-widget-highlights-card__title {
