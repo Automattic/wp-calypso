@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -527,6 +528,7 @@ export class SharingService extends Component {
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
 		const showLinkedInNotice =
 			'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } );
+		const serviceStatus = this.props.service.status ?? 'ok';
 
 		const header = (
 			<div>
@@ -552,6 +554,28 @@ export class SharingService extends Component {
 				) }
 			</div>
 		);
+
+		if ( 'ok' !== serviceStatus ) {
+			return (
+				<li>
+					<FoldableCard disabled header={ header } compact className={ classNames } />
+					<Notice isCompact status="is-error" className="sharing-service__unsupported">
+						{ this.props.translate(
+							'This service is no longer supported. {{a}}Learn more about this.{{/a}}',
+							{
+								components: {
+									a: (
+										<a
+											href={ localizeUrl( 'https://wordpress.com/support/unsupported-service' ) }
+										/>
+									),
+								},
+							}
+						) }
+					</Notice>
+				</li>
+			);
+		}
 
 		const action = (
 			<ServiceAction
