@@ -1,4 +1,8 @@
-import { applyTestFiltersToPlansList, getPlan, isMonthly } from '@automattic/calypso-products';
+import {
+	applyTestFiltersToPlansList,
+	getPlan,
+	FEATURE_CUSTOM_DOMAIN,
+} from '@automattic/calypso-products';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import {
@@ -8,7 +12,10 @@ import {
 
 export default function getFlowPlanFeatures(
 	flowName: string,
-	product: ResponseCartProduct | undefined
+	product: ResponseCartProduct | undefined,
+	hasDomainsInCart: boolean,
+	hasRenewalInCart: boolean,
+	nextDomainIsFree: boolean
 ) {
 	const productSlug = product?.product_slug;
 
@@ -39,22 +46,15 @@ export default function getFlowPlanFeatures(
 	}
 
 	const highlightedFeatures = getHighlightedFeatures( flowName, planConstantObj );
-	let featuresObject = getPlanFeaturesObject( featureAccessor() );
-
-	if ( isMonthly( planConstantObj.getStoreSlug() ) ) {
-		const annualOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() ?? [];
-
-		if ( annualOnlyFeatures.length > 0 ) {
-			featuresObject = featuresObject.filter( ( feature ) => {
-				return ! annualOnlyFeatures.includes( feature.getSlug() );
-			} );
-		}
-	}
-
-	return featuresObject.map( ( feature ) => {
-		return {
-			...feature,
-			isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
-		};
-	} );
+	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && nextDomainIsFree;
+	return getPlanFeaturesObject( featureAccessor() )
+		.filter( ( feature ) => {
+			return showFreeDomainFeature || feature.getSlug() !== FEATURE_CUSTOM_DOMAIN;
+		} )
+		.map( ( feature ) => {
+			return {
+				...feature,
+				isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
+			};
+		} );
 }
