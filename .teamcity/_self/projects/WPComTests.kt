@@ -43,8 +43,8 @@ object WPComTests : Project({
 	buildType(gutenbergPlaywrightBuildType("desktop", "c341e9b9-1118-48e9-a569-325100f5fd9" , atomic=true, edge=false));
 	buildType(gutenbergPlaywrightBuildType("mobile", "e0f7e412-ae6c-41d3-9eec-c57c94dd8385", atomic=true, edge=false));
 	// Gutenberg Atomic Edge
-	buildType(gutenbergPlaywrightBuildType("desktop", "4c66d90d-99c6-4ecb-9507-18bc2f44b551" , atomic=true, edge=true));
-	buildType(gutenbergPlaywrightBuildType("mobile", "ba0f925b-497b-4156-977e-5bfbe94f5744", atomic=true, edge=true));
+	buildType(gutenbergPlaywrightBuildType("desktop", "4c66d90d-99c6-4ecb-9507-18bc2f44b551" , atomic=true, edge=true, slackChannel="#gutenberg-on-dotcom"));
+	buildType(gutenbergPlaywrightBuildType("mobile", "ba0f925b-497b-4156-977e-5bfbe94f5744", atomic=true, edge=true, slackChannel="#gutenberg-on-dotcom"));
 
 	// Editor Tracking
 	buildType(editorTrackingBuildType("desktop", "bd15ed14-e77d-11ec-8fea-0242ac120002", atomic=false, edge=false));
@@ -67,7 +67,7 @@ object WPComTests : Project({
 	buildType(P2E2ETests)
 })
 
-fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false ): E2EBuildType {
+fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomic: Boolean = false, edge: Boolean = false, slackChannel: String = "#gutenberg-e2e" ): E2EBuildType {
 	var siteType = if (atomic) "atomic" else "simple";
 	var edgeType = if (edge) "edge" else "production";
 
@@ -110,7 +110,7 @@ fun gutenbergPlaywrightBuildType( targetDevice: String, buildUuid: String, atomi
 			notifications {
 				notifierSettings = slackNotifier {
 					connection = "PROJECT_EXT_11"
-					sendTo = "#gutenberg-e2e"
+					sendTo = slackChannel
 					messageFormat = verboseMessageFormat {
 						addBranch = true
 						addStatusText = true
