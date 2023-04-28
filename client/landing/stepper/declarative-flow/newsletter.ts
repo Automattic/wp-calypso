@@ -15,7 +15,7 @@ import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
-import type { UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 
 const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
@@ -59,13 +59,10 @@ const newsletter: Flow = {
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
 		const { setGoalsOnSite } = useDispatch( SITE_STORE );
-		/*
 		const goals = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
 			[]
 		);
-		*/
-		const goals = new Set().add( 'paid-newsletter' );
 
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
