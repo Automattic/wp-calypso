@@ -261,6 +261,8 @@ export class Theme extends Component {
 	goToCheckout = ( plan = 'premium' ) => {
 		const { siteSlug } = this.props;
 
+		this.props.recordTracksEvent( 'calypso_theme_tooltip_upgrade_nudge_click', { plan } );
+
 		if ( siteSlug ) {
 			const params = new URLSearchParams();
 			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
@@ -331,7 +333,7 @@ export class Theme extends Component {
 					'You have a subscription for this theme, but it will only be usable if you have the <link>Business plan</link> on your site.'
 				),
 				{
-					link: <LinkButton isLink onClic={ () => this.goToCheckout( 'business' ) } />,
+					link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
 				}
 			);
 		} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
@@ -396,7 +398,7 @@ export class Theme extends Component {
 				}
 			),
 			{
-				Link: <LinkButton isLink onClick={ this.goToCheckout } />,
+				Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'premium' ) } />,
 			}
 		);
 	};
