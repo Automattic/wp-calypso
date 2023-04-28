@@ -1,4 +1,5 @@
 @import "../styles/variables.scss";
+@import "./variables.scss";
 
 $offset-padding-hovering: 8px;
 
@@ -11,6 +12,15 @@ $offset-padding-hovering: 8px;
 			font-weight: 500;
 			font-size: $font-body-large;
 			line-height: 26px;
+		}
+	}
+
+	.stats-widget-highlights__tabs {
+		display: none;
+		margin-top: 16px;
+
+		@media only screen and (max-width: $break-dashboard-mobile) {
+			display: block;
 		}
 	}
 

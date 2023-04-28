@@ -3,6 +3,8 @@ import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import { useState } from 'react';
+import SegmentedControl from 'calypso/components/segmented-control';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
 
@@ -91,6 +93,8 @@ function TopColumn( {
 
 export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } ) {
 	const translate = useTranslate();
+	const [ selectedTab, setSelectedTab ] = useState( 'topPostsAndPages' );
+
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
@@ -111,16 +115,44 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 	);
 
 	const headingTitle = translate( '7 Day Highlights' );
+	const topPostsAndPagesTitle = translate( 'Top Posts & Pages' );
+	const topReferrersTitle = translate( 'Top Referrers' );
+
+	const moduleTabs = [
+		{
+			value: 'topPostsAndPages',
+			label: topPostsAndPagesTitle,
+		},
+		{
+			value: 'topReferrers',
+			label: topReferrersTitle,
+		},
+	];
 
 	return (
 		<div className="stats-widget-highlights stats-widget-card" aria-label={ headingTitle }>
 			<div className="stats-widget-highlights__header">
 				<label>{ headingTitle }</label>
 			</div>
+			<div className="stats-widget-highlights__tabs">
+				<SegmentedControl primary className="test">
+					{ moduleTabs.map( ( tab ) => {
+						return (
+							<SegmentedControl.Item
+								key={ tab.value }
+								selected={ tab.value === selectedTab }
+								onClick={ () => setSelectedTab( tab.value ) }
+							>
+								{ tab.label }
+							</SegmentedControl.Item>
+						);
+					} ) }
+				</SegmentedControl>
+			</div>
 			<div className="stats-widget-highlights__body">
 				<TopColumn
 					className="stats-widget-highlights__column"
-					title={ translate( 'Top Posts & Pages' ) }
+					title={ topPostsAndPagesTitle }
 					viewAllUrl={ viewAllPostsStatsUrl }
 					viewAllText={ translate( 'View all posts & pages stats' ) }
 					items={ topPostsAndPages }
@@ -131,7 +163,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 				/>
 				<TopColumn
 					className="stats-widget-highlights__column"
-					title={ translate( 'Top Referrers' ) }
+					title={ topReferrersTitle }
 					viewAllUrl={ viewAllReferrerStatsUrl }
 					viewAllText={ translate( 'View all referrer stats' ) }
 					items={ topReferrers }
