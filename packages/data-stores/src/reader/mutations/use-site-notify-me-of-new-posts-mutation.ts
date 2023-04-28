@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
-import type { SiteSubscription } from '../types';
+import type { SiteSubscriptionsPages } from '../types';
 
 type SiteSubscriptionNotifyMeOfNewPostsParams = {
 	send_posts: boolean;
@@ -11,16 +11,6 @@ type SiteSubscriptionNotifyMeOfNewPostsParams = {
 type SiteSubscriptionNotifyMeOfNewPostsResponse = {
 	success: boolean;
 	subscribed: boolean;
-};
-
-type SiteSubscriptionPage = {
-	subscriptions: SiteSubscription[];
-	total_subscriptions: number;
-};
-
-type SiteSubscriptionsPages = {
-	pageParams: [];
-	pages: SiteSubscriptionPage[];
 };
 
 const useSiteNotifyMeOfNewPostsMutation = () => {
