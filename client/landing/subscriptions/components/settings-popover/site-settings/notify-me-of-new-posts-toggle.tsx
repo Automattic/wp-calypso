@@ -1,6 +1,12 @@
-import { ToggleControl } from '@wordpress/components';
+import { ToggleControl as OriginalToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
+
+const ToggleControl = OriginalToggleControl as React.ComponentType<
+	OriginalToggleControl.Props & {
+		disabled?: boolean;
+	}
+>;
 
 type NotifyMeOfNewPostsToggleProps = {
 	value: boolean;
