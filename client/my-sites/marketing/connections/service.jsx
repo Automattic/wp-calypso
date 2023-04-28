@@ -37,6 +37,7 @@ import {
 	isFetchingConnections,
 } from 'calypso/state/sharing/publicize/selectors';
 import { getAvailableExternalAccounts, isServiceExpanded } from 'calypso/state/sharing/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AccountDialog from './account-dialog';
 import Connection from './connection';
@@ -78,6 +79,7 @@ export class SharingService extends Component {
 		updateSiteConnection: PropTypes.func,
 		warningNotice: PropTypes.func,
 		isP2HubSite: PropTypes.bool,
+		isJetpack: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -98,6 +100,7 @@ export class SharingService extends Component {
 		updateSiteConnection: () => {},
 		warningNotice: () => {},
 		isP2HubSite: false,
+		isJetpack: false,
 	};
 
 	/**
@@ -566,7 +569,11 @@ export class SharingService extends Component {
 								components: {
 									a: (
 										<a
-											href={ localizeUrl( 'https://wordpress.com/support/unsupported-service' ) }
+											href={ localizeUrl(
+												this.props.isJetpack
+													? 'https://jetpack.com/support/unsupported-service'
+													: 'https://wordpress.com/support/unsupported-service'
+											) }
 										/>
 									),
 								},
@@ -692,6 +699,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				userId,
 				isExpanded: isServiceExpanded( state, service ),
 				isP2HubSite: isSiteP2Hub( state, siteId ),
+				isJetpack: isJetpackSite( state, siteId ),
 			};
 			return typeof mapStateToProps === 'function' ? mapStateToProps( state, props ) : props;
 		},
