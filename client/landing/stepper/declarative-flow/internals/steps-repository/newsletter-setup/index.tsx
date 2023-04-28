@@ -39,7 +39,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		buttonText: translate( 'Save and continue' ),
 	};
 
-	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
+	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo, setGoals } =
 		useDispatch( ONBOARD_STORE );
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
@@ -84,6 +84,12 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
 		setSiteAccentColor( accentColor.hex );
+
+		if ( paidSubscribers ) {
+			//todo use Onboard.SiteGoal ?
+			setGoals( 'paid-newsletter' );
+		}
+		//todo delete this?
 		setPaidSubscribers( paidSubscribers );
 
 		if ( selectedFile && base64Image ) {
