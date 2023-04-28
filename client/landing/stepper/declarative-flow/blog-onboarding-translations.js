@@ -26,7 +26,7 @@ translate( 'Save and continue' );
 translate(
 	'Help your blog stand out with a custom domain. Not sure yet? {{laterLink}}Decide later.{{/laterLink}}',
 	{
-		components: { strong: createElement( 'a' ) },
+		components: { a: createElement( 'a' ) },
 	}
 );
 
