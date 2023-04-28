@@ -84,7 +84,8 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	const stagingSite = useMemo( () => {
 		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
 	}, [ stagingSites ] );
-	const hasSiteAccess = stagingSite?.site_owner === currentUserId;
+	const hasSiteAccess =
+		! stagingSite.id || Boolean( stagingSite.id && stagingSite?.has_site_access );
 
 	const showAddStagingSite =
 		! isLoadingStagingSites && ! isLoadingQuotaValidation && stagingSites?.length === 0;
@@ -160,19 +161,28 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	useEffect( () => {
 		// We know that a user has been navigated to an other page and came back if
 		// The transfer status is not in a final state (complete or failure)
+		// the staging site exists
 		// the site is not reverting
 		// the user owns the staging site
 		// and wasCreating that is set up by the add staging site button is false
 		if (
 			! wasCreating &&
 			! isStagingSiteTransferComplete &&
+			stagingSite.id &&
 			transferStatus !== transferStates.REVERTED &&
 			hasSiteAccess &&
 			! isReverting
 		) {
 			setWasCreating( true );
 		}
-	}, [ wasCreating, isStagingSiteTransferComplete, transferStatus, hasSiteAccess, isReverting ] );
+	}, [
+		wasCreating,
+		isStagingSiteTransferComplete,
+		transferStatus,
+		hasSiteAccess,
+		isReverting,
+		stagingSite,
+	] );
 
 	const getExceedQuotaErrorContent = () => {
 		return (
