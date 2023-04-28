@@ -110,13 +110,12 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 		queryDate
 	);
 
+	const headingTitle = translate( '7 Day Highlights' );
+
 	return (
-		<div
-			className="stats-widget-highlights stats-widget-card"
-			aria-label={ translate( '7 Day Highlights' ) }
-		>
+		<div className="stats-widget-highlights stats-widget-card" aria-label={ headingTitle }>
 			<div className="stats-widget-highlights__header">
-				<label>{ translate( '7 Day Highlights' ) }</label>
+				<label>{ headingTitle }</label>
 			</div>
 			<div className="stats-widget-highlights__body">
 				<TopColumn
