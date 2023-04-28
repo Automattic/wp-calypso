@@ -18,7 +18,8 @@ import { ResponseDomain } from 'calypso/lib/domains/types';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
-import { getEnhancedTasks } from './task-helper';
+import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
+import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
 
@@ -74,10 +75,16 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		[]
 	);
 
+	const startWritingFlowTasks: Task[] | null = getArrayOfFilteredTasks(
+		tasks,
+		flow,
+		isEmailVerified
+	);
+
 	const enhancedTasks: Task[] | null =
 		site &&
 		getEnhancedTasks(
-			launchpadChecklist,
+			flow === 'start-writing' ? startWritingFlowTasks : launchpadChecklist,
 			siteSlug,
 			site,
 			submit,
