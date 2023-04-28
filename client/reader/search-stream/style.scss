@@ -14,9 +14,10 @@
 	border-radius: 6px;
 	.search__icon-navigation {
 		/* stylelint-disable-next-line scales/radii */
-		border-bottom-left-radius: 6px;
-		/* stylelint-disable-next-line scales/radii */
-		border-top-left-radius: 6px;
+		border-radius: 6px;
+		@include breakpoint-deprecated( "<660px" ) {
+			border-radius: 0;
+		}
 	}
 	.search__input.form-text-input[type="search"],
 	.search__close-icon {
@@ -55,6 +56,9 @@
 	margin-bottom: 0;
 	/* stylelint-disable-next-line scales/radii */
 	border-radius: 6px;
+	@include breakpoint-deprecated( "<660px" ) {
+		border-radius: 0;
+	}
 }
 
 .search-stream__input-card.card {
