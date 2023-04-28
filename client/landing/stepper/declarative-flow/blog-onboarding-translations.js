@@ -1,5 +1,4 @@
 import { translate } from 'i18n-calypso';
-import { createElement } from 'react';
 
 /* Binary selection page */
 translate( 'Start writing' );
@@ -23,12 +22,7 @@ translate( "Let people know what your blog's about" );
 translate( 'Save and continue' );
 
 /* Pick a domain page */
-translate(
-	'Help your blog stand out with a custom domain. Not sure yet? {{laterLink}}Decide later.{{/laterLink}}',
-	{
-		components: { a: createElement( 'a' ) },
-	}
-);
+translate( 'Help your blog stand out with a custom domain. Not sure yet?' );
 
 /* Pick a domain modal */
 translate( 'Custom domains require a paid plan.' );
