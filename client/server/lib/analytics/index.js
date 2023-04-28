@@ -42,6 +42,7 @@ function getUserFromRequest( request ) {
 const analytics = {
 	tracks: {
 		createPixel: function ( data ) {
+			console.log( 'createPixel', data );
 			data._rt = new Date().getTime();
 			data._ = '_';
 			const pixelUrl = URL.format( {

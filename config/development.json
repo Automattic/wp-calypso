@@ -26,7 +26,7 @@
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"zendesk_presales_chat_key": "216bf91d-f10f-4f66-bf65-a0cba220cd38",
 	"features": {
-		"ad-tracking": false,
+		"ad-tracking": true,
 		"akismet/siteless-checkout": true,
 		"anchor/sunset-integration": true,
 		"calypso/help-center": true,
@@ -62,7 +62,7 @@
 		"external-media/openverse": true,
 		"full-site-editing/beta-opt-in": true,
 		"fullstory": true,
-		"cookie-banner": false,
+		"cookie-banner": true,
 		"google-drive": true,
 		"google-my-business": true,
 		"gutenboarding/alpha-templates": false,

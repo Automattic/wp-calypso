@@ -39,6 +39,7 @@ let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
+	debug( 'Loading Tracks script: stats.wp.com/w.js?63' );
 	_loadTracksResult = loadScript( '//stats.wp.com/w.js?63' );
 }
 
@@ -113,6 +114,7 @@ export function getTracksLoadPromise() {
 }
 
 export function pushEventToTracksQueue( args: Array< any > ) {
+	console.log( 'pushEventToTracksQueue', args );
 	if ( typeof window !== 'undefined' ) {
 		window._tkq = window._tkq || [];
 		window._tkq.push( args );
