@@ -8,7 +8,10 @@ import {
 
 export default function getFlowPlanFeatures(
 	flowName: string,
-	plan: ResponseCartProduct | undefined
+	plan: ResponseCartProduct | undefined,
+	hasDomainsInCart: boolean,
+	hasRenewalInCart: boolean,
+	nextDomainIsFree: boolean
 ) {
 	const productSlug = plan?.product_slug;
 
@@ -33,10 +36,15 @@ export default function getFlowPlanFeatures(
 	}
 
 	const highlightedFeatures = getHighlightedFeatures( flowName, planConstantObj );
-	return getPlanFeaturesObject( featureAccessor() ).map( ( feature ) => {
-		return {
-			...feature,
-			isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
-		};
-	} );
+	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart && nextDomainIsFree;
+	return getPlanFeaturesObject( featureAccessor() )
+		.filter( ( feature ) => {
+			return showFreeDomainFeature || feature.get_slug() !== FEATURE_CUSTOM_DOMAIN;
+		} )
+		.map( ( feature ) => {
+			return {
+				...feature,
+				isHighlightedFeature: highlightedFeatures.includes( feature.getSlug() ),
+			};
+		} );
 }
