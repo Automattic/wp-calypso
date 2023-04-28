@@ -1,4 +1,6 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
+import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
+import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
@@ -7,9 +9,9 @@ import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
-import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
 import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
@@ -63,9 +65,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
-	const {
-		data: { checklist_statuses },
-	} = useLaunchpad( siteSlug );
+	const { data: { checklist_statuses } = {} } = useLaunchpad( siteSlug );
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
@@ -75,6 +75,13 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		tasks,
 		flow,
 		isEmailVerified
+	);
+
+	const { getPlanCartItem } = useSelect(
+		( select ) => ( {
+			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
+		} ),
+		[]
 	);
 
 	const enhancedTasks: Task[] | null =
@@ -88,7 +95,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			goToStep,
 			flow,
 			isEmailVerified,
-			checklist_statuses
+			checklist_statuses,
+			getPlanCartItem()?.product_slug ?? null
 		);
 
 	const currentTask = getTasksProgress( enhancedTasks );

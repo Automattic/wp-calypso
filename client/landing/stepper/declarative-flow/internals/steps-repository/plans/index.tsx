@@ -1,5 +1,5 @@
 import { is2023PricingGridActivePage } from '@automattic/calypso-products';
-import { DOMAIN_UPSELL_FLOW, StepContainer } from '@automattic/onboarding';
+import { DOMAIN_UPSELL_FLOW, START_WRITING_FLOW, StepContainer } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import PlansWrapper from './plans-wrapper';
@@ -12,7 +12,7 @@ const plans: Step = function Plans( { navigation, flow } ) {
 	const handleSubmit = () => {
 		const providedDependencies: ProvidedDependencies = {};
 
-		if ( flow === DOMAIN_UPSELL_FLOW ) {
+		if ( flow === DOMAIN_UPSELL_FLOW || flow === START_WRITING_FLOW ) {
 			providedDependencies.goToCheckout = true;
 		}
 

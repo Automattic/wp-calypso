@@ -79,6 +79,25 @@ export class PlansStep extends Component {
 		return customerType;
 	}
 
+	replacePaidDomainWithFreeDomain = ( freeDomainSuggestion ) => {
+		if ( freeDomainSuggestion?.product_slug ) {
+			return;
+		}
+		const domainItem = undefined;
+		const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
+
+		this.props.submitSignupStep(
+			{
+				stepName: 'domains',
+				domainItem,
+				isPurchasingItem: false,
+				siteUrl,
+				stepSectionName: undefined,
+			},
+			{ domainItem }
+		);
+	};
+
 	plansFeaturesList() {
 		const {
 			disableBloggerPlanWithNonBlogDomain,
@@ -158,6 +177,7 @@ export class PlansStep extends Component {
 					hidePremiumPlan={ this.props.hidePremiumPlan }
 					hidePersonalPlan={ this.props.hidePersonalPlan }
 					hideEnterprisePlan={ this.props.hideEnterprisePlan }
+					replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
 				/>
 			</div>
 		);

@@ -74,7 +74,7 @@ const ProductStore: React.FC< ProductStoreProps > = ( {
 			{ showJetpackFree && <JetpackFree urlQueryArgs={ urlQueryArgs } siteId={ siteId } /> }
 
 			<Recommendations />
-			<ZendeskJetpackChat />
+			<ZendeskJetpackChat keyType="jpGeneral" />
 			<OpenSourceSection />
 
 			<StoreFooter />

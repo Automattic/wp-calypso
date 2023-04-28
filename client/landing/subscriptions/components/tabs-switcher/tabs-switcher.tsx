@@ -20,10 +20,11 @@ const TabsSwitcher = () => {
 	const { pathname } = useLocation();
 	const { data: counts } = SubscriptionManager.useSubscriptionsCountQuery();
 	const locale = useLocale();
+	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const shouldEnableCommentsTab =
-		config.isEnabled( 'subscription-management-comments-view' ) && locale === 'en';
+		config.isEnabled( 'subscription-management-comments-view' ) && locale === 'en' && ! isLoggedIn;
 	const shouldEnablePendingTab =
-		config.isEnabled( 'subscription-management-pending-view' ) && locale === 'en';
+		config.isEnabled( 'subscription-management-pending-view' ) && locale === 'en' && ! isLoggedIn;
 
 	const getFullPath = ( subpath: string ) =>
 		`/subscriptions/${ subpath }${ locale !== 'en' ? '/' + locale : '' }`;

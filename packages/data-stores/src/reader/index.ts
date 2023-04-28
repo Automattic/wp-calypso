@@ -1,4 +1,4 @@
-import { useSubscriberEmailAddress } from './hooks';
+import { useSubscriberEmailAddress, useIsLoggedIn } from './hooks';
 import {
 	usePostUnsubscribeMutation,
 	useSiteDeliveryFrequencyMutation,
@@ -38,6 +38,7 @@ export const SubscriptionManager = {
 	usePendingSiteDeleteMutation,
 	usePendingPostConfirmMutation,
 	usePendingPostDeleteMutation,
+	useIsLoggedIn,
 };
 
 // Types

@@ -830,13 +830,8 @@ function wpcomPages( app ) {
 	} );
 
 	app.get( [ '/subscriptions', '/subscriptions/*' ], function ( req, res, next ) {
-		if ( req.context.isLoggedIn ) {
-			// We want to show the old subscriptions management portal to the logged-in users, until new one in reader is developped for them
-			return res.redirect( 'https://wordpress.com/email-subscriptions?option=settings' );
-		}
-
-		if ( req.cookies.subkey ) {
-			// If the user is logged out, and has a subkey cookie, they are authorized to view the page
+		if ( req.cookies.subkey || req.context.isLoggedIn ) {
+			// If the user is logged in, or has a subkey cookie, they are authorized to view the page
 			return next();
 		}
 
