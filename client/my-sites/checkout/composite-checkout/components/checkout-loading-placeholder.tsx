@@ -9,7 +9,7 @@ export function CheckoutLoadingPlaceholder( {
 }: {
 	checkoutLoadingConditions: Array< { name: string; isLoading: boolean } >;
 } ) {
-	const showLoadingInfoThresholdMs = 1000;
+	const showLoadingInfoThresholdMs = 5000;
 	const [ shouldShowLoadingInfo, setShowLoadingInfo ] = useState( false );
 	useEffect( () => {
 		const timer = setTimeout( () => {
