@@ -45,6 +45,10 @@ jest.mock( 'calypso/state/rewind/selectors/get-backup-staging-sites', () =>
 	jest.fn().mockImplementation( () => [] )
 );
 
+jest.mock( 'calypso/state/rewind/selectors/has-fetched-staging-sites-list', () =>
+	jest.fn().mockImplementation( () => [] )
+);
+
 jest.mock( 'calypso/state/rewind/selectors/is-fetching-staging-sites-list', () =>
 	jest.fn().mockImplementation( () => [] )
 );
