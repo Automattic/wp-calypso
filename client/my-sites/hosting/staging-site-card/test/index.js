@@ -131,7 +131,7 @@ describe( 'StagingSiteCard component', () => {
 
 	it( 'shows the manage staging site button, in case we have one available', () => {
 		useStagingSite.mockReturnValue( {
-			data: [ { id: 2, url: 'https://staging.example.com', has_site_access: true } ],
+			data: [ { id: 2, url: 'https://staging.example.com', user_has_permission: true } ],
 			isLoading: false,
 		} );
 		useCheckStagingSiteStatus.mockReturnValue( 'complete' );
@@ -147,7 +147,7 @@ describe( 'StagingSiteCard component', () => {
 
 	it( 'shows transferring message when we creating a staging site', async () => {
 		useStagingSite.mockReturnValue( {
-			data: [ { id: 2, url: 'https://staging.example.com', has_site_access: true } ],
+			data: [ { id: 2, url: 'https://staging.example.com', user_has_permission: true } ],
 			isLoading: false,
 		} );
 
@@ -202,7 +202,7 @@ describe( 'StagingSiteCard component', () => {
 
 	it( 'show access site error', () => {
 		useStagingSite.mockReturnValue( {
-			data: [ { id: 2, url: 'https://staging.example.com', has_site_access: false } ],
+			data: [ { id: 2, url: 'https://staging.example.com', user_has_permission: false } ],
 			isLoading: false,
 		} );
 		render( <StagingSiteCard { ...defaultProps } /> );
