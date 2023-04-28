@@ -6,7 +6,7 @@ import { render } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import { useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import TrackResurrections from './TrackResurrections';
+import TrackResurrections from '../TrackResurrections';
 
 jest.mock( 'react-redux', () => ( {
 	useSelector: jest.fn(),
