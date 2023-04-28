@@ -67,25 +67,22 @@ describe( 'Likes: Comment', function () {
 		// The comment takes some time to settle. If we request the like
 		// immediately we might be getting the `unknown_comment` error. Let's do
 		// a few retries to make sure the like is getting through.
-		let likeRetryCount = 10;
-		const likeRetryTimer = setInterval( async () => {
+		const likeRetryCount = 10;
+		for ( let i = 0; i <= likeRetryCount; i++ ) {
 			try {
 				await restAPIClient.commentAction(
 					'like',
 					testAccount.credentials.testSites?.primary.id as number,
 					commentToBeUnliked.ID
 				);
-
-				clearInterval( likeRetryTimer );
+				break;
 			} catch ( error ) {
-				likeRetryCount--;
-
-				if ( likeRetryCount === 0 ) {
-					clearInterval( likeRetryTimer );
+				if ( i === likeRetryCount ) {
 					throw error;
 				}
+				await page.waitForTimeout( 1000 );
 			}
-		}, 1000 );
+		}
 
 		await testAccount.authenticate( page );
 	} );
