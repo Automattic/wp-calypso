@@ -9,6 +9,7 @@ import type { SiteSubscriptionDeliveryFrequency } from '@automattic/data-stores/
 
 type SiteSettingsProps = {
 	notifyMeOfNewPosts: boolean;
+	onNotifyMeOfNewPostsChange: ( value: boolean ) => void;
 	deliveryFrequency: SiteSubscriptionDeliveryFrequency;
 	onDeliveryFrequencyChange: ( value: SiteSubscriptionDeliveryFrequency ) => void;
 	onUnsubscribe: () => void;
@@ -18,6 +19,7 @@ type SiteSettingsProps = {
 
 const SiteSettings = ( {
 	notifyMeOfNewPosts,
+	onNotifyMeOfNewPostsChange,
 	deliveryFrequency,
 	onDeliveryFrequencyChange,
 	onUnsubscribe,
@@ -28,7 +30,11 @@ const SiteSettings = ( {
 
 	return (
 		<SettingsPopover>
-			<NotifyMeOfNewPostsToggle value={ notifyMeOfNewPosts } isUpdating={ false } />
+			<NotifyMeOfNewPostsToggle
+				value={ notifyMeOfNewPosts }
+				onChange={ onNotifyMeOfNewPostsChange }
+				isUpdating={ false }
+			/>
 			<PopoverMenuItem itemComponent="div">
 				<p className="settings-popover__item-label">{ translate( 'Email me new posts' ) }</p>
 				<DeliveryFrequencyInput

@@ -5,11 +5,13 @@ import PopoverMenuItem from 'calypso/components/popover-menu/item';
 type NotifyMeOfNewPostsToggleProps = {
 	value: boolean;
 	isUpdating: boolean;
+	onChange: ( value: boolean ) => void;
 };
 
 const NotifyMeOfNewPostsToggle = ( {
 	value = false,
 	isUpdating = false,
+	onChange,
 }: NotifyMeOfNewPostsToggleProps ) => {
 	const translate = useTranslate();
 
@@ -18,7 +20,7 @@ const NotifyMeOfNewPostsToggle = ( {
 			<ToggleControl
 				className="settings-popover__notify-me-of-new-posts-toggle"
 				label={ translate( 'Notify me of new posts' ) }
-				onChange={ () => null }
+				onChange={ () => onChange( ! value ) }
 				checked={ value }
 				disabled={ isUpdating }
 			/>
