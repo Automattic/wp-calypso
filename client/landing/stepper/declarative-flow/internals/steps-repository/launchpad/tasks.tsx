@@ -85,6 +85,11 @@ export const tasks: Task[] = [
 		disabled: false,
 	},
 	{
+		id: 'blog_launched',
+		completed: false,
+		disabled: false,
+	},
+	{
 		id: 'setup_write',
 		completed: true,
 		disabled: true,
@@ -141,6 +146,6 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'setup_free',
 		DOMAIN_UPSELL,
 		'plan_selected',
-		'site_launched',
+		'blog_launched',
 	],
 };

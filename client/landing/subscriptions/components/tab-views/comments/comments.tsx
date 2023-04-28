@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
@@ -21,13 +22,14 @@ const useSortOptions = (): Option[] => {
 	];
 };
 
-const isListControlsEnabled = config.isEnabled( 'subscription-management/comments-list-controls' );
-
 const Comments = () => {
 	const translate = useTranslate();
 	const [ sortTerm, setSortTerm ] = useState( SortBy.RecentlySubscribed );
 	const { searchTerm, handleSearch } = useSearch();
 	const sortOptions = useSortOptions();
+	const locale = useLocale();
+	const isListControlsEnabled =
+		config.isEnabled( 'subscription-management/comments-list-controls' ) && locale === 'en';
 
 	const {
 		data: { posts, totalCount },
@@ -49,8 +51,7 @@ const Comments = () => {
 			{ isListControlsEnabled && (
 				<div className="subscriptions-manager__list-actions-bar">
 					<SearchInput
-						// todo: translate when we have agreed on the placeholder
-						placeholder="Search by post name…"
+						placeholder={ translate( 'Search by post, site title, or address…' ) }
 						searchIcon={ <SearchIcon size={ 18 } /> }
 						onSearch={ handleSearch }
 					/>

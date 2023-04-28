@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import PropTypes from 'prop-types';
 import { useRef } from 'react';
-import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { getPluginsWithUpdates } from 'calypso/state/plugins/installed/selectors';

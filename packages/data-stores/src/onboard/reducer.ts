@@ -499,6 +499,16 @@ export const profilerData: Reducer< ProfilerData | undefined, OnboardAction > = 
 	return state;
 };
 
+const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_PAID_SUBSCRIBERS' ) {
+		return action.paidSubscribers;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
@@ -543,6 +553,7 @@ const reducer = combineReducers( {
 	isMigrateFromWp,
 	pluginsToVerify,
 	profilerData,
+	paidSubscribers,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -130,7 +130,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		{
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
-			include_pattern_virtual_designs: true,
 		},
 		{
 			enabled: true,

@@ -1,8 +1,9 @@
+@import "./variables.scss";
+
 $segmentedControlItemBorderRadius: 4px;
 $barDarkColor: var(--color-primary-60);
 
 .stats-widget-minichart {
-	padding-bottom: 14px;
 	border-bottom: 1px solid #c3c4c7;
 
 	.stats-widget-minichart__chart-head {
@@ -11,13 +12,17 @@ $barDarkColor: var(--color-primary-60);
 		justify-content: space-between;
 		align-items: center;
 		width: 100%;
-		padding: 10px 20px;
+		padding: 16px 24px;
 		box-sizing: border-box;
 	}
 
 	.chart__legend {
-		margin: 0;
-		padding: 7px 0;
+		margin: 16px 0;
+		padding: 0;
+
+		.chart__legend-options {
+			margin: auto;
+		}
 	}
 
 	.chart__legend-option {
@@ -77,6 +82,10 @@ $barDarkColor: var(--color-primary-60);
 		&.stats-navigation__intervals {
 			height: 36px;
 			min-width: 259px;
+
+			@media only screen and (max-width: $break-dashboard-mobile) {
+				width: 100%;
+			}
 		}
 
 		.segmented-control__item {

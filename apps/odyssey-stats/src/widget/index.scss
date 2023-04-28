@@ -2,6 +2,7 @@
 @import "../styles/theme.scss";
 @import "../styles/wp-admin.scss";
 @import "../styles/typography.scss";
+@import "./variables.scss";
 
 .jp-stats-widget {
 	// Offset the margin and padding of the `.postbox .inside` container.
@@ -15,6 +16,10 @@
 .stats-widget-wrapper {
 	padding: 24px;
 	background: var(--jetpack-white-off);
+
+	@media only screen and (max-width: $break-dashboard-mobile) {
+		padding: 24px 16px;
+	}
 
 	label {
 		cursor: auto;
@@ -32,8 +37,19 @@
 }
 
 .stats-widget-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 	margin-top: 24px;
+
 	a {
 		display: inline-block;
+		font-style: normal;
+		font-weight: 500;
+		font-size: $font-body-small;
+		line-height: 20px;
+		letter-spacing: -0.24px;
+		text-decoration-line: underline;
+		color: var(--studio-gray-100);
 	}
 }

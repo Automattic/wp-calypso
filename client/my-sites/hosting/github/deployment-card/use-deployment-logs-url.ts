@@ -1,5 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';

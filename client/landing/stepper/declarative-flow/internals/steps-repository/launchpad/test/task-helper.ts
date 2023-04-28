@@ -82,6 +82,25 @@ describe( 'Task Helpers', () => {
 				} );
 			} );
 		} );
+		describe( 'when checking if the first post is published', () => {
+			describe( 'and the flow is start-writing', () => {
+				it( 'disable the click link so the user will not get distracted going back to the post', () => {
+					const fakeTasks = [ buildTask( { id: 'first_post_published', completed: false } ) ];
+					const enhancedTasks = getEnhancedTasks(
+						fakeTasks,
+						'fake.wordpress.com',
+						null,
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						() => {},
+						false,
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						() => {},
+						'start-writing'
+					);
+					expect( enhancedTasks[ 0 ].disabled ).toEqual( true );
+				} );
+			} );
+		} );
 	} );
 
 	describe( 'getArrayOfFilteredTasks', () => {

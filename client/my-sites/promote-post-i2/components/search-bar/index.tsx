@@ -85,9 +85,9 @@ export default function SearchBar( props: Props ) {
 	}
 
 	return (
-		<div className="promote-post__search-bar-wrapper">
+		<div className="promote-post-i2__search-bar-wrapper">
 			<Search
-				className="promote-post__search-bar-search"
+				className="promote-post-i2__search-bar-search"
 				initialValue={ searchInput }
 				value={ searchInput }
 				placeholder={ translate( 'Search…' ) }
@@ -114,7 +114,7 @@ export default function SearchBar( props: Props ) {
 
 			{ mode === 'posts' && (
 				<SelectDropdown
-					className="promote-post__search-bar-dropdown"
+					className="promote-post-i2__search-bar-dropdown"
 					onSelect={ ( option: SortOption ) => setSortOption( option.value ) }
 					options={ sortOptions }
 					selectedText={ getSelectedSortOption( currentSortOption ) }
