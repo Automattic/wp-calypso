@@ -69,6 +69,8 @@ const discount = {
 };
 describe( '<PlanNotice /> Tests', () => {
 	beforeEach( () => {
+		jest.resetAllMocks();
+
 		mGetDiscountByName.mockImplementation( () => false );
 		mUseMarketingMessage.mockImplementation( () => [ false, [], () => ( {} ) ] );
 		mIsCurrentPlanPaid.mockImplementation( () => true );

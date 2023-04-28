@@ -8,11 +8,12 @@ import {
 	PlanSlug,
 } from '@automattic/calypso-products';
 import { usePlanUpgradeCredits } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits';
+import { usePlanUpgradeCreditsDisplay } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-display';
 import isAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
-import { usePlanUpgradeCreditsDisplay } from '../use-plan-upgrade-credits-display';
+
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	isCurrentPlanPaid: jest.fn(),
 	isJetpackSite: jest.fn(),
@@ -50,6 +51,8 @@ const plansList: PlanSlug[] = [
 ];
 describe( 'usePlanUpgradeCreditsDisplay hook', () => {
 	beforeEach( () => {
+		jest.resetAllMocks();
+
 		mGetSitePlanSlug.mockImplementation( () => 'TYPE_BUSINESS' );
 		mIsCurrentPlanPaid.mockImplementation( () => true );
 		mUsePlanUpgradeCredits.mockImplementation( () => 100 );
@@ -58,17 +61,14 @@ describe( 'usePlanUpgradeCreditsDisplay hook', () => {
 	} );
 
 	test( 'Show a plans upgrade credit when the necessary conditions are met above', () => {
-		const mocks = [];
-
 		const { result } = renderHookWithProvider( () =>
 			usePlanUpgradeCreditsDisplay( siteId, plansList )
 		);
 		expect( result.current ).toEqual( { creditsValue: 100, isPlanUpgradeCreditEligible: true } );
-		mocks.forEach( ( m ) => m.mockRestore() );
 	} );
 
 	test( 'Plan upgrade credits should not be shown when a site is on the highest purchasable plan', () => {
-		mGetSitePlanSlug.mockImplementation( () => TYPE_ECOMMERCE );
+		mGetSitePlanSlug.mockImplementation( () => PLAN_ECOMMERCE );
 		const { result } = renderHookWithProvider( () =>
 			usePlanUpgradeCreditsDisplay( siteId, plansList )
 		);

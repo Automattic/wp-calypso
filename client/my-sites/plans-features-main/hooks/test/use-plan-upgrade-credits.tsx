@@ -45,6 +45,7 @@ const plansList: PlanSlug[] = [
 
 describe( 'usePlanUpgradeCredits hook', () => {
 	beforeEach( () => {
+		jest.resetAllMocks();
 		mGetSitePlanRawPrice.mockImplementation( ( _state, _siteId, planSlug ) => {
 			switch ( planSlug ) {
 				case PLAN_FREE:
