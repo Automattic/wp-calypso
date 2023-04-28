@@ -88,7 +88,6 @@ const useSiteNotifyMeOfNewPostsMutation = () => {
 				}
 			},
 			onSettled: () => {
-				// pass in a more minimal key, everything to the right will be invalidated
 				queryClient.invalidateQueries( [ 'read', 'site-subscriptions' ] );
 			},
 		}
