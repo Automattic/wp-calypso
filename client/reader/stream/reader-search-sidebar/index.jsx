@@ -8,14 +8,16 @@ function unescape( str ) {
 
 // create function to transform item into a site object
 const getSiteFromItem = ( item ) => {
-	console.log( 'item', item );
+	if ( item.site_name === undefined ) {
+		return null;
+	}
 	return {
 		feed_ID: item.feed_ID,
 		blog_ID: item.blogId,
 		URL: item.feed_URL ?? item.url,
-		name: unescape( item.site_name ),
+		name: unescape( item?.site_name ),
 		site_icon: item.site_icon ?? null,
-		description: unescape( item.site_description ),
+		description: unescape( item?.site_description ),
 		last_updated: 0,
 		unseen_count: 0,
 	};
@@ -24,8 +26,9 @@ const getSiteFromItem = ( item ) => {
 const ReaderSearchSidebar = ( { items } ) => {
 	const translate = useTranslate();
 
-	const sites = items.map( ( item ) => getSiteFromItem( item ) );
-	console.log( 'sites', sites );
+	const sites = items
+		.map( ( item ) => getSiteFromItem( item ) )
+		.filter( ( site ) => site !== null );
 
 	const recommendedSitesLinks = sites.map( ( site ) => (
 		<ReaderListFollowingItem key={ site.feed_ID } site={ site } path="/" />

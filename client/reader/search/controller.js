@@ -35,7 +35,7 @@ const exported = {
 			streamKey = 'search:' + JSON.stringify( { sort, q } );
 			isQuerySuggestion = context.query.isSuggestion === '1';
 		} else {
-			streamKey = 'custom_recs_posts_with_images';
+			streamKey = 'custom_recs_sites_with_images';
 		}
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );

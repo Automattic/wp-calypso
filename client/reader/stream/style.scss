@@ -568,6 +568,19 @@
 	}
 }
 
+.search-stream__results {
+	.stream__two-column {
+		.stream__right-column {
+			.reader-sidebar-site_url {
+				display: block;
+			}
+			.reader-sidebar-site_description {
+				display: -webkit-box;
+			}
+		}
+	}
+}
+
 .stream__two-column {
 	align-items: flex-start;
 	display: flex;
@@ -710,6 +723,26 @@
 				font-size: $font-body-extra-small;
 				color: var(--color-text-subtle);
 			}
+		}
+
+		.reader-sidebar-site_url {
+			display: none;
+			color: var(--color-text-subtle);
+			font-weight: 400;
+			font-size: $font-body-extra-small;
+			line-height: 18px;
+		}
+
+		.reader-sidebar-site_description {
+			display: none;
+			color: var(--color-neutral-70);
+			font-weight: 600;
+			font-size: $font-body-extra-small;
+			line-height: 18px;
+			overflow: hidden;
+			width: auto;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
 		}
 	}
 
