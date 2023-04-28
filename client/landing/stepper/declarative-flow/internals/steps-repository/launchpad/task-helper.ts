@@ -123,6 +123,19 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
+				case 'setup_blog':
+					taskData = {
+						title: translate( 'Set up your blog' ),
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							window.location.assign(
+								addQueryArgs( `/setup/${ START_WRITING_FLOW }/setup-blog`, {
+									siteSlug,
+								} )
+							);
+						},
+					};
+					break;
 				case 'setup_newsletter':
 					taskData = {
 						title: translate( 'Personalize newsletter' ),

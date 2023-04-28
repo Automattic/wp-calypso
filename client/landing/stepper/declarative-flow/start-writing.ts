@@ -31,6 +31,10 @@ const startWriting: Flow = {
 			},
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
+				slug: 'setup-blog',
+				asyncComponent: () => import( './internals/steps-repository/setup-blog' ),
+			},
+			{
 				slug: 'launchpad',
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
 			},
