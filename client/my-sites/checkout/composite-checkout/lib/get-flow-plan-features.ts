@@ -1,4 +1,4 @@
-import { getPlan } from '@automattic/calypso-products';
+import { getPlan, FEATURE_CUSTOM_DOMAIN } from '@automattic/calypso-products';
 import { ResponseCartProduct } from '@automattic/shopping-cart';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import {
