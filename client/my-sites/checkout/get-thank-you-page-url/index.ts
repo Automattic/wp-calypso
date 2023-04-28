@@ -99,7 +99,7 @@ export interface PostCheckoutUrlArguments {
 	jetpackTemporarySiteId?: string;
 	adminPageRedirect?: string;
 	domains?: ResponseDomain[];
-	monthlyToAnnualPostPurchaseExperimentUser: boolean;
+	monthlyToAnnualPostPurchaseExperimentUser?: boolean;
 }
 
 /**
@@ -577,7 +577,7 @@ function getFallbackDestination( {
  */
 function getNextHigherPlanSlug(
 	cart: ResponseCart,
-	monthlyToAnnualPostPurchaseExperimentUser: boolean
+	monthlyToAnnualPostPurchaseExperimentUser?: boolean
 ): string | undefined {
 	const currentPlanSlug = cart && getAllCartItems( cart ).filter( isPlan )[ 0 ]?.product_slug;
 	if ( ! currentPlanSlug ) {
@@ -612,7 +612,7 @@ function getPlanUpgradeUpsellUrl( {
 	receiptId: ReceiptId | ReceiptIdPlaceholder;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
-	monthlyToAnnualPostPurchaseExperimentUser: boolean;
+	monthlyToAnnualPostPurchaseExperimentUser?: boolean;
 } ): string | undefined {
 	if ( ! siteSlug ) {
 		return;
@@ -654,7 +654,7 @@ function getRedirectUrlForPostCheckoutUpsell( {
 	hideUpsell: boolean;
 	domains: ResponseDomain[] | undefined;
 	isDomainOnly?: boolean;
-	monthlyToAnnualPostPurchaseExperimentUser: boolean;
+	monthlyToAnnualPostPurchaseExperimentUser?: boolean;
 } ): string | undefined {
 	if ( hideUpsell ) {
 		return;
