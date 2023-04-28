@@ -126,11 +126,7 @@ const newsletter: Flow = {
 
 					// @TODO: REMOVE BEFORE MERGE
 					/* eslint-disable no-console */
-					console.log(
-						'newsletter.ts flow, paidSubscribers:',
-						providedDependencies?.siteSlug,
-						goals
-					);
+					console.log( 'newsletter.ts flow controller:', providedDependencies?.siteSlug, goals );
 					/* eslint-enable */
 
 					// Save an intention to set up paid subscribers as a "goal"
