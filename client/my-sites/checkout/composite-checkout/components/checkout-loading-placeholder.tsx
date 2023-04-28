@@ -21,12 +21,12 @@ export function CheckoutLoadingPlaceholder( {
 	}, [] );
 
 	return (
-		<div>
+		<>
 			{ shouldShowLoadingInfo && (
 				<CheckoutLoadingInfo checkoutLoadingConditions={ checkoutLoadingConditions } />
 			) }
 			<LoadingContent />
-		</div>
+		</>
 	);
 }
 

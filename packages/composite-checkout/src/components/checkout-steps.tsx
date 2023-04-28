@@ -202,6 +202,7 @@ const CheckoutWrapper = styled.div`
 export const MainContentWrapper = styled.div`
 	display: flex;
 	flex-direction: column;
+	flex-wrap: wrap;
 	width: 100%;
 
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
