@@ -47,7 +47,7 @@ describe( DataHelper.createSuiteTitle( 'My Home: Domain upsell' ), function () {
 	it( 'Get available domain', async function () {
 		const suggestedDomain = await myHomePage.suggestedDomainName();
 		expect( suggestedDomain ).toBeTruthy();
-		selectedDomain = suggestedDomain !== null ? suggestedDomain.toString() : '';
+		selectedDomain = suggestedDomain ?? '';
 	} );
 
 	it( 'Buy suggested domain', async function () {

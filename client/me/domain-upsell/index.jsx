@@ -52,7 +52,7 @@ export default function DomainUpsell() {
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const isDismissed = useSelector( ( state ) => getPreference( state, dismissPreference ) );
 
-	const shouldNotShowUpselDismissed = ! hasPreferences || isDismissed;
+	const shouldNotShowUpsellDismissed = ! hasPreferences || isDismissed;
 
 	const shouldNotShowProfileUpsell =
 		user.site_count !== 1 ||
@@ -63,7 +63,7 @@ export default function DomainUpsell() {
 		isNotAtomicJetpack( primarySite );
 
 	if (
-		shouldNotShowUpselDismissed ||
+		shouldNotShowUpsellDismissed ||
 		shouldNotShowProfileUpsell ||
 		isStagingSite( selectedSite )
 	) {
