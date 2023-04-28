@@ -13,7 +13,9 @@ jest.mock( 'react-redux', () => ( {
 } ) );
 
 jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+	recordTracksEvent: jest.fn( () => ( {
+		type: 'ANALYTICS_EVENT_RECORD',
+	} ) ),
 } ) );
 
 jest.mock( 'calypso/state/selectors/get-user-settings', () => jest.fn() );
