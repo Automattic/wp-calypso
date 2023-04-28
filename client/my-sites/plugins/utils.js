@@ -15,6 +15,7 @@ export function getVisibleSites( sites ) {
 
 export function useLocalizedPlugins() {
 	const isLoggedIn = useSelector( isUserLoggedIn );
+	// eslint-disable-next-line wpcalypso/i18n-translate-identifier
 	const { localeSlug } = useTranslate();
 
 	const localizePath = useCallback(
