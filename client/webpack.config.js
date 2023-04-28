@@ -114,18 +114,6 @@ function filterEntrypoints( entrypoints ) {
 	return allowed;
 }
 
-function addHotMiddlewareIfDev( entrypoints ) {
-	if ( ! isDevelopment ) {
-		return entrypoints;
-	}
-	return Object.fromEntries(
-		Object.entries( entrypoints ).map( ( [ key, value ] ) => [
-			key,
-			[ 'webpack-hot-middleware/client', ...value ],
-		] )
-	);
-}
-
 /**
  * Given a package name, finds the absolute path for it.
  *
@@ -189,16 +177,14 @@ const filePaths = {
 const webpackConfig = {
 	bail: ! isDevelopment,
 	context: __dirname,
-	entry: addHotMiddlewareIfDev(
-		filterEntrypoints( {
-			'entry-main': [ path.join( __dirname, 'boot', 'app' ) ],
-			'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
-			'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
-			'entry-stepper': [ path.join( __dirname, 'landing', 'stepper' ) ],
-			'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
-			'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
-		} )
-	),
+	entry: filterEntrypoints( {
+		'entry-main': [ path.join( __dirname, 'boot', 'app' ) ],
+		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
+		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
+		'entry-stepper': [ path.join( __dirname, 'landing', 'stepper' ) ],
+		'entry-browsehappy': [ path.join( __dirname, 'landing', 'browsehappy' ) ],
+		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
+	} ),
 	mode: isDevelopment ? 'development' : 'production',
 	devtool: sourceMapType,
 	output: {
