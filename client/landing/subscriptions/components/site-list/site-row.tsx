@@ -55,7 +55,7 @@ export default function SiteRow( {
 		SubscriptionManager.useSiteDeliveryFrequencyMutation();
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
-	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMyOfNewPosts } =
+	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
 		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
 
 	return (
@@ -81,7 +81,7 @@ export default function SiteRow( {
 					onNotifyMeOfNewPostsChange={ ( send_posts ) =>
 						updateNotifyMeOfNewPosts( { blog_id: blog_ID, send_posts } )
 					}
-					updatingNotifyMeOfNewPosts={ updatingNotifyMyOfNewPosts }
+					updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
 					deliveryFrequency={ deliveryFrequencyValue }
 					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
 						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
