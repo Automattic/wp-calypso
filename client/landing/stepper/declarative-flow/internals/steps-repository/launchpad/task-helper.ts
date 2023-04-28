@@ -1,15 +1,16 @@
 import {
 	FEATURE_VIDEO_UPLOADS,
+	getPlan,
 	planHasFeature,
 	PLAN_PREMIUM,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	Plan,
 } from '@automattic/calypso-products';
 import { isNewsletterFlow, isStartWritingFlow, START_WRITING_FLOW } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
-import { PLANS_LIST } from 'packages/calypso-products/src/plans-list';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
@@ -36,15 +37,19 @@ export function getEnhancedTasks(
 	isEmailVerified = false,
 	planCartProductSlug?: string | null
 ) {
+	if ( ! tasks ) {
+		return [];
+	}
+
 	const enhancedTaskList: Task[] = [];
 
 	const productSlug =
 		( isStartWritingFlow( flow ) ? planCartProductSlug : null ) ?? site?.plan?.product_slug;
 
-	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
+	const translatedPlanName = productSlug ? ( getPlan( productSlug ) as Plan ) : '';
 
 	const siteLaunchCompleted = Boolean(
-		tasks.find( ( task ) => task.id === 'site_launched' )?.completed
+		tasks?.find( ( task ) => task.id === 'site_launched' )?.completed
 	);
 
 	const planCompleted =
@@ -52,7 +57,7 @@ export function getEnhancedTasks(
 		! isStartWritingFlow( flow );
 
 	const videoPressUploadCompleted = Boolean(
-		tasks.find( ( task ) => task.id === 'video_uploaded' )?.completed
+		tasks?.find( ( task ) => task.id === 'video_uploaded' )?.completed
 	);
 
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
