@@ -4,7 +4,6 @@
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import siteSettings from 'calypso/state/site-settings/reducer';
 import { reducer as ui } from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
