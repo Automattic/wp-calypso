@@ -1,10 +1,11 @@
 import {
 	PLAN_ENTERPRISE_GRID_WPCOM,
-	TYPE_PREMIUM,
-	TYPE_BUSINESS,
-	TYPE_ECOMMERCE,
-	TYPE_PERSONAL,
-	TYPE_FREE,
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+	PLAN_PERSONAL,
+	PLAN_ECOMMERCE,
+	PLAN_FREE,
+	PlanSlug,
 } from '@automattic/calypso-products';
 import { usePlanUpgradeCredits } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits';
 import isAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
@@ -39,12 +40,12 @@ const mIsCurrentPlanPaid = isCurrentPlanPaid as jest.MockedFunction< typeof isCu
 const mIsJetpackSite = isJetpackSite as jest.MockedFunction< typeof isJetpackSite >;
 
 const siteId = 1;
-const plansList = [
-	TYPE_FREE,
-	TYPE_PERSONAL,
-	TYPE_PREMIUM,
-	TYPE_BUSINESS,
-	TYPE_ECOMMERCE,
+const plansList: PlanSlug[] = [
+	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 ];
 describe( 'usePlanUpgradeCreditsDisplay hook', () => {

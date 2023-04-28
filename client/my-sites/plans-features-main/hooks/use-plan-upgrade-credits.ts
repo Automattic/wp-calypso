@@ -6,10 +6,11 @@ import type { PlanSlug } from '@automattic/calypso-products';
 
 /**
  * Calculate available plan credits given a set of displayed plans
+ * This is the maximum possible credit value possible when comparing credits per plan
  *
  * @param {*} siteId the selected site id
- * @param {string[]}  plans Plans that are considered for the given calculation
- * @returns {number} The amount of credits available for the given plans
+ * @param {PlanSlug[]}  plans Plans that are considered for the given calculation
+ * @returns {number} The maximum amount of credits possible for a given set of plans
  */
 export function usePlanUpgradeCredits( siteId: number | undefined, plans: PlanSlug[] ): number {
 	const plansDetails = useSelector( ( state ) =>
