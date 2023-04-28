@@ -1,11 +1,9 @@
 /**
  * @jest-environment jsdom
  */
-
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { render } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
-import { useSelector } from 'react-redux';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import * as reactRedux from 'react-redux';
 import TrackResurrections from '../';
 
 jest.mock( 'react-redux', () => ( {
@@ -18,57 +16,63 @@ jest.mock( '@automattic/calypso-analytics', () => ( {
 	} ) ),
 } ) );
 
-jest.mock( 'calypso/state/selectors/get-user-settings', () => jest.fn() );
+const useSelectorMock = reactRedux.useSelector;
 
-jest.mock( 'calypso/state/user-settings/selectors', () => ( {
-	isFetchingUserSettings: jest.fn(),
-} ) );
+let mockStore = {};
 
 describe( 'TrackResurrections', () => {
-	const userSettings = {
-		last_admin_activity_timestamp: Date.now() - 2 * 365 * 24 * 60 * 60 * 1000,
-	};
-
 	beforeEach( () => {
-		useSelector.mockReturnValue( userSettings );
+		useSelectorMock.mockImplementation( ( selector ) => selector( mockStore ) );
 	} );
 
 	afterEach( () => {
-		useSelector.mockClear();
+		useSelectorMock.mockClear();
 		jest.clearAllMocks();
 	} );
 
-	it( 'should not call recordTracksEvent if isFetching is true', () => {
-		useSelector.mockReturnValueOnce( { ...userSettings, isFetchingUserSettings: true } );
+	it( 'should not call recordTracksEvent if fetching', () => {
+		mockStore = {
+			userSettings: {
+				fetching: true,
+			},
+		};
 
-		act( () => {
-			render( <TrackResurrections /> );
-		} );
+		render( <TrackResurrections /> );
 
-		expect( recordTracksEvent ).not.toHaveBeenCalled();
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 0 );
 	} );
 
-	it( 'should not call recordTracksEvent if lastSeen is within one year', () => {
-		act( () => {
-			render( <TrackResurrections /> );
-		} );
+	it( 'should not call recordTracksEvent if lastSeen is less than one year ago', () => {
+		const resurrectedDate = Date.now() / 1000 - 2 * 30 * 24 * 60 * 60; // 2 months-ish.
+		mockStore = {
+			userSettings: {
+				settings: {
+					last_admin_activity_timestamp: resurrectedDate,
+				},
+				fetching: false,
+			},
+		};
+
+		render( <TrackResurrections /> );
 
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'should call recordTracksEvent if lastSeen is more than one year ago', () => {
-		const last_admin_activity_timestamp = Date.now() - 3 * 365 * 24 * 60 * 60 * 1000;
-		useSelector.mockReturnValueOnce( {
-			...userSettings,
-			last_admin_activity_timestamp,
-		} );
+		const resurrectedDate = Date.now() / 1000 - 2 * 365 * 24 * 60 * 60; // 2 years in seconds.
+		mockStore = {
+			userSettings: {
+				settings: {
+					last_admin_activity_timestamp: resurrectedDate,
+				},
+				fetching: false,
+			},
+		};
 
-		act( () => {
-			render( <TrackResurrections /> );
-		} );
+		render( <TrackResurrections /> );
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_user_resurrected', {
-			last_seen: last_admin_activity_timestamp,
+			last_seen: resurrectedDate,
 		} );
 	} );
 } );
