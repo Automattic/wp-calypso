@@ -610,7 +610,7 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_CUSTOM_DOMAIN,
 		getTitle: ( domainName?: string ) => {
 			if ( domainName ) {
-				return i18n.translate( 'The domain %(domainName)s is free for the first year', {
+				return i18n.translate( '%(domainName)s is included', {
 					args: { domainName },
 				} );
 			}
