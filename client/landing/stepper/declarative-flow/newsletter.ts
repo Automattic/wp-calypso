@@ -11,7 +11,7 @@ import {
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { ONBOARD_STORE, USER_STORE } from '../stores';
+import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
@@ -58,6 +58,12 @@ const newsletter: Flow = {
 		);
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
+		const { setGoalsOnSite } = useDispatch( SITE_STORE );
+		const goals = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+			[]
+		);
+
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
 			flowName,
@@ -116,6 +122,11 @@ const newsletter: Flow = {
 								launchpadComplete: true,
 							} )
 						);
+					}
+
+					alert( 'paidSubscribers  ' + providedDependencies?.siteSlug + ' ' + goals );
+					if ( providedDependencies?.paidSubscribers && providedDependencies?.siteSlug ) {
+						setGoalsOnSite( providedDependencies?.siteSlug, goals );
 					}
 
 					if ( providedDependencies?.goToCheckout ) {
