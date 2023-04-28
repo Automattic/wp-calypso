@@ -67,7 +67,7 @@ describe( 'Likes: Comment', function () {
 		// The comment takes some time to settle. If we request the like
 		// immediately we might be getting the `unknown_comment` error. Let's do
 		// a few retries to make sure the like is getting through.
-		let likeRetryCount = 5;
+		let likeRetryCount = 10;
 		const likeRetryTimer = setInterval( async () => {
 			try {
 				await restAPIClient.commentAction(
