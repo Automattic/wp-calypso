@@ -564,7 +564,7 @@ export class SharingService extends Component {
 					<FoldableCard disabled header={ header } compact className={ classNames } />
 					<Notice isCompact status="is-error" className="sharing-service__unsupported">
 						{ this.props.translate(
-							'This service is no longer supported. {{a}}Learn more about this.{{/a}}',
+							'Twitter is no longer supported. {{a}}Learn more about this.{{/a}}',
 							{
 								components: {
 									a: (
@@ -572,7 +572,7 @@ export class SharingService extends Component {
 											href={ localizeUrl(
 												this.props.isJetpack
 													? 'https://jetpack.com/support/unsupported-service'
-													: 'https://wordpress.com/support/unsupported-service'
+													: 'https://wordpress.com/blog/2023/04/29/why-twitter-auto-sharing-is-coming-to-an-end/'
 											) }
 										/>
 									),
