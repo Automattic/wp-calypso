@@ -7,6 +7,7 @@ import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
+import ExternalLink from 'calypso/components/external-link';
 import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
 import SocialLogo from 'calypso/components/social-logo';
@@ -564,11 +565,14 @@ export class SharingService extends Component {
 					<FoldableCard disabled header={ header } compact className={ classNames } />
 					<Notice isCompact status="is-error" className="sharing-service__unsupported">
 						{ this.props.translate(
-							'Twitter is no longer supported. {{a}}Learn more about this.{{/a}}',
+							'Twitter is no longer supported. {{a}}Learn more about this{{/a}}',
 							{
 								components: {
 									a: (
-										<a
+										<ExternalLink
+											target="_blank"
+											icon={ true }
+											iconSize={ 14 }
 											href={ localizeUrl(
 												this.props.isJetpack
 													? 'https://jetpack.com/redirect/?source=publicize-connection-not-supported'
