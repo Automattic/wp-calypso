@@ -40,7 +40,7 @@ export default function PlanNotice( {
 
 	const handleDismissNotice = () => setIsNoticeDismissed( true );
 
-	if ( isNoticeDismissed ) {
+	if ( isNoticeDismissed || isInSignup ) {
 		return null;
 	} else if ( ! canUserPurchasePlan ) {
 		return (
@@ -73,7 +73,7 @@ export default function PlanNotice( {
 				{ activeDiscount.plansPageNoticeText }
 			</Notice>
 		);
-	} else if ( isPlanUpgradeCreditEligible && ! isInSignup ) {
+	} else if ( isPlanUpgradeCreditEligible ) {
 		return (
 			<Notice
 				className="plan-features__notice-credits"
