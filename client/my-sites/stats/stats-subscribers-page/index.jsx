@@ -15,9 +15,9 @@ import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
 import StatsPageHeader from '../stats-page-header';
 import Reach from '../stats-reach';
+import SubscribersOverview from '../stats-subscribers-overview';
 import SubscribersSection from '../subscribers-section';
 import SubscribersHighlightSection from './subscribers-highlight-section';
-import SubscribersOverview from './subscribers-overview';
 
 const StatsSubscribersPage = ( { period } ) => {
 	const translate = useTranslate();

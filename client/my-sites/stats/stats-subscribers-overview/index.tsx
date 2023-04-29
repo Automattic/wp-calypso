@@ -31,7 +31,7 @@ function SubscribersOverviewCards() {
 	const overviewCardStats = SubscribersOverviewCardStats();
 
 	return (
-		<div className="highlight-cards-list">
+		<div className="overview-cards-list">
 			{ overviewCardStats.map( ( overviewCardStat ) => (
 				<CountComparisonCard
 					key={ overviewCardStat.heading }
@@ -39,7 +39,7 @@ function SubscribersOverviewCards() {
 					count={ overviewCardStat.count }
 					previousCount={ overviewCardStat.previousCount }
 					showValueTooltip
-					icon
+					icon="False"
 				/>
 			) ) }
 		</div>
