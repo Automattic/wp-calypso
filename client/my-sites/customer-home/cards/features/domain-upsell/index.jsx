@@ -16,7 +16,6 @@ import { addQueryArgs } from 'calypso/lib/url';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isStagingSite } from 'calypso/sites-dashboard/utils';
-import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getDomainsBySite } from 'calypso/state/sites/domains/selectors';
@@ -26,8 +25,6 @@ import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors
 import './style.scss';
 
 export default function DomainUpsell() {
-	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
-
 	const selectedSite = useSelector( getSelectedSite );
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 
@@ -50,9 +47,7 @@ export default function DomainUpsell() {
 
 	const shouldNotShowUpselDismissed = ! hasPreferences || isDismissed;
 
-	const shouldNotShowMyHomeUpsell = siteDomainsLength || ! isEmailVerified;
-
-	if ( shouldNotShowUpselDismissed || shouldNotShowMyHomeUpsell || isStagingSite( selectedSite ) ) {
+	if ( shouldNotShowUpselDismissed || siteDomainsLength || isStagingSite( selectedSite ) ) {
 		return null;
 	}
 
