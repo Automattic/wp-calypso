@@ -19,7 +19,6 @@ import SubscribersChartSection, { PeriodType } from '../stats-subscribers-chart-
 import SubscribersOverview from '../stats-subscribers-overview';
 import SubscribersSection from '../subscribers-section';
 import SubscribersHighlightSection from './subscribers-highlight-section';
-import SubscribersOverview from './subscribers-overview';
 
 interface StatsSubscribersPageProps {
 	period: PeriodType;
