@@ -575,7 +575,7 @@ export class SharingService extends Component {
 											iconSize={ 14 }
 											href={ localizeUrl(
 												this.props.isJetpack
-													? 'https://jetpack.com/redirect/?source=publicize-connection-not-supported'
+													? 'https://jetpack.com/2023/04/29/the-end-of-twitter-auto-sharing/'
 													: 'https://wordpress.com/blog/2023/04/29/why-twitter-auto-sharing-is-coming-to-an-end/'
 											) }
 										/>
