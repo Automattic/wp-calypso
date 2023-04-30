@@ -91,7 +91,6 @@ import './style.scss';
 // @todo npm-migration
 // migrate *Logo to @automattic/components or behind a hook in a "logos" (or some other) data store
 // ^ preferred, but can also pass as props
-// pass canUserPurchasePlan as prop
 
 type PlanRowOptions = {
 	isMobile?: boolean;
@@ -910,6 +909,8 @@ const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures
 const ConnectedPlanFeatures2023Grid = connect(
 	( state: IAppState, ownProps: PlanFeatures2023GridProps ) => {
 		const { placeholder, plans, isLandingPage, visiblePlans, isInSignup, siteId } = ownProps;
+		// @todo npm-migration
+		// pass canUserPurchasePlan as prop
 		const canUserPurchasePlan =
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
 		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
