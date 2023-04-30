@@ -60,6 +60,11 @@ const DummyDisabledButton = styled.div`
 	text-align: center;
 `;
 
+// @todo npm-migration
+// billing period from plans data store
+// pass domainFromHomeUpsellFlow as prop
+// pass ExternalLinkWithTracking as prop
+
 const SignupFlowPlanFeatureActionButton = ( {
 	freePlan,
 	isPlaceholder,
@@ -343,6 +348,9 @@ const PlanFeaturesActionsButton: React.FC< PlanFeaturesActionsButtonProps > = ( 
 		if ( isPlaceholder ) {
 			return;
 		}
+
+		// @todo npm-migration
+		// pass onPlanUpgrade( isFreePlan, upgradingTo ) callback
 
 		if ( ! freePlan ) {
 			recordTracksEvent( 'calypso_plan_features_upgrade_click', {

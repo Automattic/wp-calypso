@@ -6,6 +6,10 @@ import type { PlanSlug } from '@automattic/calypso-products';
 
 const LARGE_CURRENCY_CHAR_THRESHOLD = 5;
 
+// @todo clk
+// move under grid 2023
+// pass sideId
+
 /**
  * Hook that returns true if the string representation of any price (discounted/undiscounted)
  * of any of the plan slugs exceeds 5 characters.

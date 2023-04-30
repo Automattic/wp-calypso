@@ -102,6 +102,10 @@ const HeaderPriceContainer = styled.div`
 	}
 `;
 
+// @todo npm-migration
+// migrate PlanPrice to @automattic/components
+// get currency code from plan
+
 const PlanFeatures2023GridHeaderPrice = ( {
 	planProperties,
 	is2023OnboardingPricingGrid,

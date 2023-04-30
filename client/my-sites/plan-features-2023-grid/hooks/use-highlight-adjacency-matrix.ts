@@ -12,6 +12,9 @@ interface HighlightAdjacencyMatrix {
 	};
 }
 
+// @todo npm-migration
+// pass currentPlanSlug as prop
+
 const useHighlightIndices = ( visiblePlans: PlanProperties[] ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );

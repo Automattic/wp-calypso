@@ -88,6 +88,11 @@ import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
 
+// @todo npm-migration
+// pass *Logo as props
+// pass canUserPurchasePlan as prop
+//
+
 type PlanRowOptions = {
 	isMobile?: boolean;
 	previousProductNameShort?: string;
@@ -247,6 +252,9 @@ export class PlanFeatures2023Grid extends Component<
 	plansComparisonGridContainerRef = createRef< HTMLDivElement >();
 
 	componentDidMount() {
+		// @todo npm-migration
+		// pass onLoad callback
+		// ^ removes depdency on recordTracksEvent and retargetViewPlans
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
 	}
@@ -984,13 +992,19 @@ const ConnectedPlanFeatures2023Grid = connect(
 				( planConstantObj.get2023PricingGridSignupStorageOptions &&
 					planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
 				[];
+			// @todo npm-migration
+			// pass usePlanAvailability( siteId, plan-slug ) as prop
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
+			// @todo npm-migration
+			// pass currentSitePlanSlug and compare with plan-slug
 			const isCurrentPlan = isCurrentSitePlan( state, siteId, planProductId ) ?? false;
 			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
 
 			return {
 				availableForPurchase,
 				cartItemForPlan: getCartItemForPlan( getPlanSlug( state, planProductId ) ?? '' ),
+				// @todo npm-migration
+				// get currency code from plan
 				currencyCode: getCurrentUserCurrencyCode( state ),
 				current: isCurrentPlan,
 				features: planFeaturesTransformed,
@@ -1013,6 +1027,12 @@ const ConnectedPlanFeatures2023Grid = connect(
 				showMonthlyPrice,
 			};
 		} );
+
+		// @todo npm-migration
+		// pass manageHref as prop
+		// ^ removes a couple of dependencies
+		// pass selectedSiteSlug as prop
+		// pass currentSitePlanSlug as prop (if different?)
 
 		const manageHref =
 			purchaseId && selectedSiteSlug

@@ -37,6 +37,11 @@ import PlanFeatures2023GridHeaderPrice from './header-price';
 import { Plans2023Tooltip } from './plans-2023-tooltip';
 import PopularBadge from './popular-badge';
 
+// @todo npm-migration
+// pass JetPackLogo as prop
+// pass PlanTypeSelector or migrate it to @automattic/components
+// (not for now) feature objects are to migrate to data store
+
 function DropdownIcon() {
 	return (
 		<svg xmlns="http://www.w3.org/2000/svg" width="26" height="24" fill="none" viewBox="0 -5 26 24">

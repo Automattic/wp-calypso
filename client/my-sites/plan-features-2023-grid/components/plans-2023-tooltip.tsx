@@ -22,6 +22,9 @@ const StyledTooltip = styled( Tooltip )`
 	}
 `;
 
+// @todo npm-migration
+// migrate Tooltip to @wordpress/components
+
 export const Plans2023Tooltip = ( props: PropsWithChildren< { text?: TranslateResult } > ) => {
 	const [ isVisible, setIsVisible ] = useState( false );
 	const tooltipRef = useRef< HTMLDivElement >( null );
