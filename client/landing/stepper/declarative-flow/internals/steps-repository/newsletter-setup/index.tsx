@@ -95,7 +95,7 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 
 		if ( paidSubscribers ) {
 			console.log( 'Setting paid subscriber status YES 💚' ); // eslint-disable-line no-console
-			setGoals( Onboard.SiteGoal.PaidSubscribers );
+			setGoals( [ Onboard.SiteGoal.PaidSubscribers ] );
 		} else {
 			console.log( 'Setting paid subscriber status NO 🍎' ); // eslint-disable-line no-console
 			resetGoals();

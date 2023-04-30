@@ -68,6 +68,13 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
+	const goals = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
+		[]
+	);
+
+	const hasGoalPaidSubscribers = goals?.includes( 'paid-subscribers' );
+
 	const { getPlanCartItem } = useSelect(
 		( select ) => ( {
 			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
@@ -78,7 +85,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const startWritingFlowTasks: Task[] | null = getArrayOfFilteredTasks(
 		tasks,
 		flow,
-		isEmailVerified
+		isEmailVerified,
+		hasGoalPaidSubscribers
 	);
 
 	const enhancedTasks: Task[] | null =

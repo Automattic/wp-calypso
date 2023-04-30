@@ -11,11 +11,11 @@ import {
 	setSignupCompleteFlowName,
 } from 'calypso/signup/storageUtils';
 import { useSiteSlug } from '../hooks/use-site-slug';
-import { ONBOARD_STORE, SITE_STORE, USER_STORE } from '../stores';
+import { ONBOARD_STORE, USER_STORE } from '../stores';
 import { recordSubmitStep } from './internals/analytics/record-submit-step';
 import { ProvidedDependencies } from './internals/types';
 import type { Flow } from './internals/types';
-import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
+import type { UserSelect } from '@automattic/data-stores';
 
 const newsletter: Flow = {
 	name: NEWSLETTER_FLOW,
@@ -58,12 +58,6 @@ const newsletter: Flow = {
 		);
 		const siteSlug = useSiteSlug();
 		const { setStepProgress } = useDispatch( ONBOARD_STORE );
-		const { setGoalsOnSite } = useDispatch( SITE_STORE );
-		const goals = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
-			[]
-		);
-
 		const flowProgress = useFlowProgress( {
 			stepName: _currentStep,
 			flowName,
@@ -122,16 +116,6 @@ const newsletter: Flow = {
 								launchpadComplete: true,
 							} )
 						);
-					}
-
-					// @TODO: REMOVE BEFORE MERGE
-					/* eslint-disable no-console */
-					console.log( 'newsletter.ts flow controller:', providedDependencies?.siteSlug, goals );
-					/* eslint-enable */
-
-					// Save an intention to set up paid subscribers as a "goal"
-					if ( providedDependencies?.paidSubscribers && providedDependencies?.siteSlug ) {
-						setGoalsOnSite( providedDependencies.siteSlug, goals );
 					}
 
 					if ( providedDependencies?.goToCheckout ) {
