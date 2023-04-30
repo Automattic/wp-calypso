@@ -61,7 +61,7 @@ const DummyDisabledButton = styled.div`
 `;
 
 // @todo npm-migration
-// billing period from plans data store
+// getPlanBillPeriod from plans data store
 // pass domainFromHomeUpsellFlow as prop
 // pass ExternalLinkWithTracking as prop
 
