@@ -135,7 +135,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 				<label>{ headingTitle }</label>
 			</div>
 			<div className="stats-widget-highlights__tabs">
-				<SegmentedControl primary className="test">
+				<SegmentedControl primary>
 					{ moduleTabs.map( ( tab ) => {
 						return (
 							<SegmentedControl.Item
