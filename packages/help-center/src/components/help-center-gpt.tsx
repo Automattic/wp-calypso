@@ -51,6 +51,8 @@ export function HelpCenterGPT() {
 
 	const { data } = useJetpackSearchAIQuery( '9619154', message ?? '', 'response' );
 
+	const allowedTags = [ 'a', 'p', 'ol', 'ul', 'li', 'br', 'b', 'strong', 'i', 'em' ];
+
 	return (
 		<div className="help-center-sibyl-articles__container">
 			<h3 id="help-center--contextual_help" className="help-center__section-title">
@@ -62,18 +64,7 @@ export function HelpCenterGPT() {
 					<span
 						// eslint-disable-next-line react/no-danger
 						dangerouslySetInnerHTML={ {
-							__html: stripTags( data.response, [
-								'a',
-								'p',
-								'ol',
-								'ul',
-								'li',
-								'br',
-								'b',
-								'strong',
-								'i',
-								'em',
-							] ),
+							__html: stripTags( data.response, allowedTags ),
 						} }
 					/>
 				) }
