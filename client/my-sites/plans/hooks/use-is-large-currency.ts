@@ -6,9 +6,9 @@ import type { PlanSlug } from '@automattic/calypso-products';
 
 const LARGE_CURRENCY_CHAR_THRESHOLD = 5;
 
-// @todo clk
+// @todo npm-migration
 // move under grid 2023
-// pass sideId
+// pass sideId as prop
 
 /**
  * Hook that returns true if the string representation of any price (discounted/undiscounted)
