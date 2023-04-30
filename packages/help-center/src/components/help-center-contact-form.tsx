@@ -15,6 +15,7 @@ import {
 	useSibylQuery,
 	SiteDetails,
 	HelpCenterSite,
+	useJetpackSearchAIQuery,
 } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { SitePickerDropDown, SitePickerSite } from '@automattic/site-picker';
@@ -155,7 +156,6 @@ export const HelpCenterContactForm = () => {
 	const overflow = params.get( 'overflow' ) === 'true';
 	const navigate = useNavigate();
 	const [ hideSiteInfo, setHideSiteInfo ] = useState( false );
-	const [ gptFetching, setGPTFetching ] = useState( 'loading' );
 	const [ hasSubmittingError, setHasSubmittingError ] = useState< boolean >( false );
 	const locale = useLocale();
 	const { isLoading: submittingTicket, mutateAsync: submitTicket } = useSubmitTicketMutation();
@@ -430,23 +430,23 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
+	const { isFetching } = useJetpackSearchAIQuery( '9619154', debouncedMessage, 'response' );
+
 	// TODO: Figure out in which environments this makes sense.
 	const showGPTResponse = true;
 	if ( showGPTResponse && showingSibylResults ) {
 		return (
 			<div className="help-center__sibyl-articles-page">
 				<BackButton />
-				<HelpCenterGPT message={ message } setLoadingState={ setGPTFetching } />
+				<HelpCenterGPT />
 				<section className="contact-form-submit">
 					<Button
-						disabled={ gptFetching || isCTADisabled() }
+						disabled={ isFetching }
 						onClick={ handleCTA }
-						primary
+						isPrimary
 						className="help-center-contact-form__site-picker-cta"
 					>
-						{ gptFetching
-							? __( 'Gathering quick response.', __i18n_text_domain__ )
-							: getCTALabel() }
+						{ isFetching ? __( 'Gathering quick response.', __i18n_text_domain__ ) : getCTALabel() }
 					</Button>
 					{ hasSubmittingError && (
 						<FormInputValidation
