@@ -1,10 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
-import wpcomRequest from 'wpcom-proxy-request';
+import apiFetch from '@wordpress/api-fetch';
+import wpcomRequest, { canAccessWpcomApis } from 'wpcom-proxy-request';
 
 type AIResponseURL = {
 	url: string;
 	title: string;
 };
+
+interface APIFetchOptions {
+	global: boolean;
+	path: string;
+}
 
 export type JetpackSearchAIResult = {
 	response: string;
@@ -17,12 +23,19 @@ export function useJetpackSearchAIQuery( siteId: number | string, query: string,
 	return useQuery< JetpackSearchAIResult >(
 		[ query ],
 		async () =>
-			await wpcomRequest( {
-				path: `sites/${ siteId }/jetpack-search/ai/search`,
-				apiNamespace: 'wpcom/v2/',
-				apiVersion: '2',
-				query: `query=${ encodeURIComponent( query ) }&stop_at=${ stopAt }`,
-			} ),
+			canAccessWpcomApis()
+				? await wpcomRequest( {
+						path: `sites/${ siteId }/jetpack-search/ai/search`,
+						apiNamespace: 'wpcom/v2/',
+						apiVersion: '2',
+						query: `query=${ encodeURIComponent( query ) }&stop_at=${ stopAt }`,
+				  } )
+				: apiFetch( {
+						global: true,
+						path: `/sites/${ siteId }/jetpack-search/ai/search?query=${ encodeURIComponent(
+							query
+						) }&stop_at=${ stopAt }`,
+				  } as APIFetchOptions ),
 		{
 			refetchOnWindowFocus: false,
 			keepPreviousData: false,
