@@ -124,7 +124,6 @@ declare module 'calypso/state/inline-help/selectors/get-admin-help-results' {
 
 declare module 'calypso/lib/formatting' {
 	export const decodeEntities: ( text: string | React.ReactChild ) => string;
-	export const stripHTML: ( text: string ) => string;
 	export const preventWidows: ( text: string, wordsToKeep?: number ) => string;
 }
 
