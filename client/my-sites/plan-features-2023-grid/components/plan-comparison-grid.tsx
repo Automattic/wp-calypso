@@ -38,7 +38,7 @@ import { Plans2023Tooltip } from './plans-2023-tooltip';
 import PopularBadge from './popular-badge';
 
 // @todo npm-migration
-// pass JetPackLogo as prop
+// pass JetPackLogo as prop (or grab from @automattic/components or hook in a data store)
 // pass PlanTypeSelector or migrate it to @automattic/components
 // (not for now) feature objects are to migrate to data store
 

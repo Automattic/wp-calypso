@@ -89,9 +89,9 @@ import type { IAppState } from 'calypso/state/types';
 import './style.scss';
 
 // @todo npm-migration
-// pass *Logo as props
+// migrate *Logo to @automattic/components or behind a hook in a "logos" (or some other) data store
+// ^ preferred, but can also pass as props
 // pass canUserPurchasePlan as prop
-//
 
 type PlanRowOptions = {
 	isMobile?: boolean;
@@ -253,7 +253,7 @@ export class PlanFeatures2023Grid extends Component<
 
 	componentDidMount() {
 		// @todo npm-migration
-		// pass onLoad callback
+		// pass onGridLoad callback as prop
 		// ^ removes depdency on recordTracksEvent and retargetViewPlans
 		this.props.recordTracksEvent( 'calypso_wp_plans_test_view' );
 		retargetViewPlans();
@@ -996,7 +996,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 			// pass usePlanAvailability( siteId, plan-slug ) as prop
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
 			// @todo npm-migration
-			// pass currentSitePlanSlug and compare with plan-slug
+			// pass currentSitePlanSlug as prop (and update to compare with plan-slug))
 			const isCurrentPlan = isCurrentSitePlan( state, siteId, planProductId ) ?? false;
 			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
 
