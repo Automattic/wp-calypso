@@ -32,14 +32,8 @@ function SubscribersOverviewCardStats( siteID: number ) {
 	return overviewCardStats;
 }
 
-<<<<<<< HEAD
-function SubscribersOverviewCards() {
-	const overviewCardStats = SubscribersOverviewCardStats();
-
-=======
 const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteID } ) => {
 	const overviewCardStats = SubscribersOverviewCardStats( siteID );
->>>>>>> 1b418f8163 (pass siteID to overview)
 	return (
 		<div className="overview-cards-list">
 			{ overviewCardStats.map( ( overviewCardStat ) => (
@@ -54,7 +48,7 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteID } )
 			) ) }
 		</div>
 	);
-}
+};
 
 function SubscribersOverview() {
 	return (
@@ -62,6 +56,6 @@ function SubscribersOverview() {
 			<SubscribersOverviewCards />
 		</div>
 	);
-};
+}
 
 export default SubscribersOverview;
