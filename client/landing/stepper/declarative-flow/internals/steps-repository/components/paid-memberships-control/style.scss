@@ -1,0 +1,16 @@
+@import "@automattic/typography/styles/variables";
+
+.setup-step__paid-subscribers {
+	margin: 15px 0;
+	font-size: $font-body;
+	flex-direction: row;
+
+	.form-checkbox {
+		margin-top: 5px;
+	}
+
+	.info-popover {
+		margin-left: 10px;
+			margin-top: -2px;
+	}
+}

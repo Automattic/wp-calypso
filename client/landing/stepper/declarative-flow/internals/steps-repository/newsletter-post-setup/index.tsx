@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	StepContainer,
 	base64ImageToBlob,
@@ -7,7 +8,7 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
-import { FormEvent, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
 import useAccentColor from 'calypso/landing/stepper/hooks/use-accent-color';
 import useSaveAccentColor from 'calypso/landing/stepper/hooks/use-save-accent-color';
@@ -15,6 +16,7 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import AccentColorControl, { AccentColor } from '../components/accent-color-control';
+import PaidMembershipsControl from '../components/paid-memberships-control';
 import SetupForm from '../components/setup-form';
 import useSetupFormInitialValues from '../components/setup-form/hooks/use-setup-form-initial-values';
 import { defaultAccentColor } from '../newsletter-setup';
@@ -46,7 +48,14 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 	const [ isSubmitError, setIsSubmitError ] = useState( false );
 	const { saveSiteSettings } = useDispatch( SITE_STORE );
 
-	const { siteTitle, setComponentSiteTitle, tagline, setTagline } = useSetupFormInitialValues();
+	const {
+		siteTitle,
+		setComponentSiteTitle,
+		tagline,
+		setTagline,
+		paidSubscribers,
+		setPaidSubscribers,
+	} = useSetupFormInitialValues();
 
 	useEffect( () => {
 		if ( fetchedAccentColor ) {
@@ -86,6 +95,11 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 						new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' )
 					);
 				}
+				if ( paidSubscribers ) {
+					// Set goals
+				} else {
+					// Reset goals
+				}
 				setIsLoading( false );
 				submit?.( { color: accentColor.hex.replace( '#', '' ) } );
 			}
@@ -93,6 +107,10 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 			setIsSubmitError( true );
 			setIsLoading( false );
 		}
+	};
+
+	const onPaidSubscribersChanged = ( event: ChangeEvent< HTMLInputElement > ) => {
+		setPaidSubscribers( !! event?.target.checked );
 	};
 
 	return (
@@ -127,11 +145,19 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 					isLoading={ isLoading }
 					isSubmitError={ isSubmitError }
 				>
-					<AccentColorControl
-						accentColor={ accentColor }
-						setAccentColor={ setAccentColor }
-						labelText={ newsletterFormText?.colorLabel }
-					/>
+					<>
+						<AccentColorControl
+							accentColor={ accentColor }
+							setAccentColor={ setAccentColor }
+							labelText={ newsletterFormText?.colorLabel }
+						/>
+						{ isEnabled( 'newsletter/paid-subscribers' ) && (
+							<PaidMembershipsControl
+								paidSubscribers={ paidSubscribers }
+								onChange={ onPaidSubscribersChanged }
+							/>
+						) }
+					</>
 				</SetupForm>
 			}
 			recordTracksEvent={ recordTracksEvent }

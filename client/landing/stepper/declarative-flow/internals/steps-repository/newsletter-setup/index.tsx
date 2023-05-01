@@ -5,14 +5,11 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import InfoPopover from 'calypso/components/info-popover';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useSite } from '../../../../hooks/use-site';
 import AccentColorControl, { AccentColor } from '../components/accent-color-control';
+import PaidMembershipsControl from '../components/paid-memberships-control';
 import SetupForm from '../components/setup-form';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -156,21 +153,10 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 							labelText={ newsletterFormText?.colorLabel }
 						/>
 						{ isEnabled( 'newsletter/paid-subscribers' ) && (
-							<FormFieldset className="newsletter-setup__paid-subscribers">
-								<FormLabel>
-									<FormInputCheckbox
-										name="paid_newsletters"
-										checked={ paidSubscribers }
-										onChange={ onPaidSubscribersChanged }
-									/>
-									<span>{ translate( 'I want to start a paid newsletter' ) }</span>
-								</FormLabel>
-								<InfoPopover position="bottom right">
-									{ translate(
-										'Let your audience support your work. Add paid subscriptions and gated content to your newsletter.'
-									) }
-								</InfoPopover>
-							</FormFieldset>
+							<PaidMembershipsControl
+								paidSubscribers={ paidSubscribers }
+								onChange={ onPaidSubscribersChanged }
+							/>
 						) }
 					</>
 				</SetupForm>
