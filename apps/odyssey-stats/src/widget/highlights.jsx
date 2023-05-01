@@ -11,6 +11,9 @@ import useTopPostsQuery from '../hooks/use-top-posts-query';
 import './hightlights.scss';
 
 const HIGHLIGHT_ITEMS_LIMIT = 5;
+const HIGHLIGHT_TAB_TOP_POSTS_PAGES = 'topPostsAndPages';
+const HIGHLIGHT_TAB_TOP_REFERRERS = 'topReferrers';
+
 const postAndPageLink = ( baseUrl, siteId, postId ) => {
 	return `${ baseUrl }#!/stats/post/${ postId }/${ siteId }`;
 };
@@ -93,23 +96,24 @@ function TopColumn( {
 
 export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } ) {
 	const translate = useTranslate();
+
 	const headingTitle = translate( '7 Day Highlights' );
 	const topPostsAndPagesTitle = translate( 'Top Posts & Pages' );
 	const topReferrersTitle = translate( 'Top Referrers' );
 
 	const moduleTabs = [
 		{
-			value: 'topPostsAndPages',
+			value: HIGHLIGHT_TAB_TOP_POSTS_PAGES,
 			label: topPostsAndPagesTitle,
 		},
 		{
-			value: 'topReferrers',
+			value: HIGHLIGHT_TAB_TOP_REFERRERS,
 			label: topReferrersTitle,
 		},
 	];
 
 	// Default to the first tab `topPostsAndPages`.
-	const [ selectedTab, setSelectedTab ] = useState( moduleTabs[ 0 ].value );
+	const [ selectedTab, setSelectedTab ] = useState( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
 
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
@@ -154,7 +158,8 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 			<div className="stats-widget-highlights__body">
 				<TopColumn
 					className={ classNames( 'stats-widget-highlights__column', {
-						'stats-widget-highlights__column--show-in-mobile': selectedTab === 'topPostsAndPages',
+						'stats-widget-highlights__column--show-in-mobile':
+							selectedTab === HIGHLIGHT_TAB_TOP_POSTS_PAGES,
 					} ) }
 					title={ topPostsAndPagesTitle }
 					viewAllUrl={ viewAllPostsStatsUrl }
@@ -167,7 +172,8 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 				/>
 				<TopColumn
 					className={ classNames( 'stats-widget-highlights__column', {
-						'stats-widget-highlights__column--show-in-mobile': selectedTab === 'topReferrers',
+						'stats-widget-highlights__column--show-in-mobile':
+							selectedTab === HIGHLIGHT_TAB_TOP_REFERRERS,
 					} ) }
 					title={ topReferrersTitle }
 					viewAllUrl={ viewAllReferrerStatsUrl }
