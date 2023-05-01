@@ -12,14 +12,22 @@ jest.setTimeout( TIMEOUT_1_HOUR );
 
 describe( DataHelper.createSuiteTitle( 'Theme Switch' ), () => {
 	// twentyeleven
-	// const FROM = 'hemingway-rewritten';
-	// const FROM = 'appleton';
-	const FROM = 'pendant';
 
+	// const FROM = 'ames';
+	// const FROM = 'appleton';
+	// const FROM = 'business';
+	// const FROM = 'hemingway-rewritten';
+	const FROM = 'pendant';
+	// const FROM = 'zoologist';
+
+	// const TO = 'ames';
+	// const TO = 'appleton';
+	// const TO = 'business';
 	// const TO = 'hemingway-rewritten';
 	// const TO = 'pendant';
-	const TO = 'business';
-	// const TO = 'appleton';
+	const TO = 'zoologist';
+
+	const preserveMyHomepageContent = false;
 
 	let page: Page;
 	let selectedDomain: string;
@@ -28,7 +36,7 @@ describe( DataHelper.createSuiteTitle( 'Theme Switch' ), () => {
 		page = await browser.newPage();
 	} );
 
-	describe( `Switch from the ${ FROM } theme to the ${ TO } theme (preserve)`, function () {
+	describe( `Switch from the ${ FROM } theme to the ${ TO } theme (preserve my homepage content ${ preserveMyHomepageContent })`, function () {
 		it( 'Login', async function () {
 			const testAccount = new TestAccount( 'defaultUser' );
 			await testAccount.authenticate( page );
@@ -88,7 +96,10 @@ describe( DataHelper.createSuiteTitle( 'Theme Switch' ), () => {
 
 			const themeSwitchModal = '.themes__auto-loading-homepage-modal';
 			if ( await page.locator( themeSwitchModal ).isVisible() ) {
-				await page.waitForTimeout( TIMEOUT_1_HOUR );
+				if ( ! preserveMyHomepageContent ) {
+					await page.getByText( /Replace my homepage content with/ ).click();
+				}
+
 				await page.waitForTimeout( 2 * 1000 );
 				await page.screenshot( { path: `results/from ${ FROM }/to ${ TO }/0-switch-modal.png` } );
 
