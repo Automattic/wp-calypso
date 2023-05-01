@@ -93,27 +93,6 @@ function TopColumn( {
 
 export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } ) {
 	const translate = useTranslate();
-	const [ selectedTab, setSelectedTab ] = useState( 'topPostsAndPages' );
-
-	const queryDate = moment()
-		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
-		.format( 'YYYY-MM-DD' );
-	const viewAllPostsStatsUrl = `${ odysseyStatsBaseUrl }#!/stats/day/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
-	const viewAllReferrerStatsUrl = `${ odysseyStatsBaseUrl }#!/stats/day/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
-
-	const { data: topPostsAndPages = [], isFetching: isFetchingPostsAndPages } = useTopPostsQuery(
-		siteId,
-		'day',
-		7,
-		queryDate
-	);
-	const { data: topReferrers = [], isFetching: isFetchingReferrers } = useReferrersQuery(
-		siteId,
-		'day',
-		7,
-		queryDate
-	);
-
 	const headingTitle = translate( '7 Day Highlights' );
 	const topPostsAndPagesTitle = translate( 'Top Posts & Pages' );
 	const topReferrersTitle = translate( 'Top Referrers' );
@@ -128,6 +107,29 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 			label: topReferrersTitle,
 		},
 	];
+
+	// Default to the first tab `topPostsAndPages`.
+	const [ selectedTab, setSelectedTab ] = useState( moduleTabs[ 0 ].value );
+
+	const queryDate = moment()
+		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
+		.format( 'YYYY-MM-DD' );
+	const viewAllPostsStatsUrl = `${ odysseyStatsBaseUrl }#!/stats/day/posts/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
+	const viewAllReferrerStatsUrl = `${ odysseyStatsBaseUrl }#!/stats/day/referrers/${ siteId }?startDate=${ queryDate }&summarize=1&num=7`;
+
+	const { data: topPostsAndPages = [], isFetching: isFetchingPostsAndPages } = useTopPostsQuery(
+		siteId,
+		'day',
+		7,
+		queryDate
+	);
+
+	const { data: topReferrers = [], isFetching: isFetchingReferrers } = useReferrersQuery(
+		siteId,
+		'day',
+		7,
+		queryDate
+	);
 
 	return (
 		<div className="stats-widget-highlights stats-widget-card" aria-label={ headingTitle }>
