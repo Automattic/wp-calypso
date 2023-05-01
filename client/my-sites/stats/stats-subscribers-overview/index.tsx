@@ -39,15 +39,7 @@ function SubscribersOverviewCards() {
 					count={ overviewCardStat.count }
 					previousCount={ overviewCardStat.previousCount }
 					showValueTooltip
-<<<<<<< HEAD
-<<<<<<< HEAD
 					icon={ false }
-=======
-					icon="False"
->>>>>>> 096c321e9e (udate location of component)
-=======
-					icon={ false }
->>>>>>> 6e154b017f (don't display icon)
 				/>
 			) ) }
 		</div>
