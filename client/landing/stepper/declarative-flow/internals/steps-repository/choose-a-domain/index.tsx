@@ -96,6 +96,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					suggestion={ getInitialSuggestion() }
 					domainsWithPlansOnly={ true }
 					onAddDomain={ submitWithDomain }
+					includeWordPressDotCom={ true }
 					offerUnavailableOption={ false } // change it later
 					showAlreadyOwnADomain={ true }
 					basePath=""

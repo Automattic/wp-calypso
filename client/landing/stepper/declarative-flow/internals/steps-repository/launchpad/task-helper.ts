@@ -397,6 +397,7 @@ export function getEnhancedTasks(
 										siteSlug,
 										flowToReturnTo: flow,
 										new: site?.name,
+										domainAndPlanPackage: true,
 									} )
 								);
 
