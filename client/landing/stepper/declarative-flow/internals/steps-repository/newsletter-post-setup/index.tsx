@@ -29,10 +29,11 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 	const fetchedAccentColor = useAccentColor();
 	const saveAccentColor = useSaveAccentColor();
 	const newsletterFormText = {
-		titlePlaceholder: translate( 'My newsletter' ),
-		titleMissing: translate( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
+		titlePlaceholder: translate( 'Open Me Carefully' ),
+		titleMissing: translate( `Oops. Looks like your newsletter doesn't have a name yet.` ),
 		taglinePlaceholder: translate( 'Describe your Newsletter in a line or two' ),
 		iconPlaceholder: translate( 'Add a site icon' ),
+		colorLabel: translate( 'Choose an accent color' ),
 	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
@@ -124,7 +125,11 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 					isLoading={ isLoading }
 					isSubmitError={ isSubmitError }
 				>
-					<AccentColorControl accentColor={ accentColor } setAccentColor={ setAccentColor } />
+					<AccentColorControl
+						accentColor={ accentColor }
+						setAccentColor={ setAccentColor }
+						labelText={ newsletterFormText?.colorLabel }
+					/>
 				</SetupForm>
 			}
 			recordTracksEvent={ recordTracksEvent }
