@@ -10,7 +10,7 @@ import type { ReactElement, ReactNode } from 'react';
 import './style.scss';
 
 interface Props {
-	selectedSite: SiteDetails;
+	selectedSite?: SiteDetails;
 	items: Array< any >;
 	isLoading: boolean;
 	columns: Columns;

@@ -15,8 +15,10 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 
 import { PLAN_FREE } from '@automattic/calypso-products';
 import { screen } from '@testing-library/react';
+import PlanTypeSelector, {
+	CustomerTypeToggle,
+} from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
-import PlanTypeSelector, { CustomerTypeToggle } from '../plan-type-selector';
 
 const render = ( el, options ) => renderWithProvider( el, { ...options } );
 
