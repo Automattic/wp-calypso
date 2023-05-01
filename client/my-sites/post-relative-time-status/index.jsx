@@ -199,7 +199,7 @@ class PostRelativeTime extends PureComponent {
 
 		if ( status === 'everybody' ) {
 			extraStatusClassName = 'is-everybody';
-			statusText = this.props.translate( 'Everbody' );
+			statusText = this.props.translate( 'Everybody' );
 		} else if ( status === 'subscribers' ) {
 			extraStatusClassName = 'is-subscribers';
 			statusText = this.props.translate( 'Subscribers' );
