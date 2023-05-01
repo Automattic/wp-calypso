@@ -20,7 +20,6 @@ import {
 	siteObjectsToSiteIds,
 } from '../../utils';
 import type { PluginComponentProps } from '../types';
-import type { Plugin } from 'calypso/state/plugins/installed/types';
 import type { ReactElement } from 'react';
 
 import '../style.scss';
@@ -52,7 +51,7 @@ export default function UpdatePlugins( { plugins, isWpCom }: Props ): ReactEleme
 
 	function recordEvent( eventAction: string ) {
 		eventAction += selectedSite ? '' : ' on Multisite';
-		const pluginSlugs = pluginsWithUpdates.map( ( plugin: Plugin ) => plugin.slug );
+		const pluginSlugs = pluginsWithUpdates.map( ( plugin ) => plugin.slug );
 		dispatch( recordGoogleEvent( 'Plugins', eventAction, 'Plugins', pluginSlugs ) );
 	}
 
