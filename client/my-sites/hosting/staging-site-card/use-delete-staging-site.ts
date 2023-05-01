@@ -14,7 +14,12 @@ interface UseDeleteStagingSiteOptions {
 	transferStatus: TransferStates | null;
 	onMutate?: () => void;
 	onSuccess?: () => void;
-	onError?: () => void;
+	onError?: ( error: MutationError ) => void;
+}
+
+interface MutationError {
+	code: string;
+	message: string;
 }
 
 export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => {
@@ -64,9 +69,9 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 					dispatch( fetchAutomatedTransferStatus( stagingSiteId ) );
 				}, 3000 );
 			},
-			onError: () => {
+			onError: ( error: MutationError ) => {
 				setIsDeletingInitiated( false );
-				onError?.();
+				onError?.( error );
 			},
 		}
 	);
