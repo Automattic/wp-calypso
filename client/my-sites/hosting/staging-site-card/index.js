@@ -27,7 +27,10 @@ import { DeleteStagingSite } from './delete-staging-site';
 import { useDeleteStagingSite } from './use-delete-staging-site';
 import { useHasSiteAccess } from './use-has-site-access';
 
+const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
+const stagingSiteDeleteSuccessNoticeId = 'staging-site-remove-success';
+const stagingSiteDeleteFailureNoticeId = 'staging-site-remove-failure';
 
 const StyledLoadingBar = styled( LoadingBar )( {
 	marginBottom: '1em',
@@ -54,12 +57,20 @@ const SiteInfo = styled.div( {
 	flexDirection: 'column',
 	marginLeft: 10,
 } );
+
 export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ loadingError, setLoadingError ] = useState( false );
 	const [ isErrorValidQuota, setIsErrorValidQuota ] = useState( false );
+
+	const removeAllNotices = () => {
+		dispatch( removeNotice( stagingSiteAddSuccessNoticeId ) );
+		dispatch( removeNotice( stagingSiteAddFailureNoticeId ) );
+		dispatch( removeNotice( stagingSiteDeleteSuccessNoticeId ) );
+		dispatch( removeNotice( stagingSiteDeleteFailureNoticeId ) );
+	};
 
 	const { data: hasValidQuota, isLoading: isLoadingQuotaValidation } = useHasValidQuotaQuery(
 		siteId,
@@ -100,8 +111,29 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		siteId,
 		stagingSiteId: stagingSite.id,
 		transferStatus,
+		onMutate: () => {
+			removeAllNotices();
+		},
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_failure', {
+					code: error.code,
+				} )
+			);
+			dispatch(
+				errorNotice(
+					// translators: "reason" is why deleting the staging site failed.
+					sprintf( __( 'Failed to delete staging site: %(reason)s' ), { reason: error.message } ),
+					{
+						id: stagingSiteDeleteFailureNoticeId,
+					}
+				)
+			);
+		},
 		onSuccess: useCallback( () => {
-			dispatch( successNotice( __( 'Staging site deleted.' ) ) );
+			dispatch(
+				successNotice( __( 'Staging site deleted.' ), { id: stagingSiteDeleteSuccessNoticeId } )
+			);
 		}, [ dispatch, __ ] ),
 	} );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
@@ -113,7 +145,9 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	useEffect( () => {
 		if ( wasCreating && isStagingSiteTransferComplete ) {
 			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
-			dispatch( successNotice( __( 'Staging site added.' ) ) );
+			dispatch(
+				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
+			);
 		}
 	}, [ dispatch, queryClient, __, isStagingSiteTransferComplete, wasCreating ] );
 
@@ -138,7 +172,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 
 	const { addStagingSite, isLoading: addingStagingSite } = useAddStagingSiteMutation( siteId, {
 		onMutate: () => {
-			dispatch( removeNotice( stagingSiteAddFailureNoticeId ) );
+			removeAllNotices();
 		},
 		onError: ( error ) => {
 			dispatch(
