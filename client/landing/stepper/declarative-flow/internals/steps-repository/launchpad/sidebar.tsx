@@ -70,6 +70,13 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		data: { checklist_statuses },
 	} = useLaunchpad( siteSlug );
 
+	const { getDomainCartItem } = useSelect(
+		( select ) => ( {
+			getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
+		} ),
+		[]
+	);
+
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
@@ -121,6 +128,21 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		showClipboardButton = isWPCOMDomain ? true : ! isDomainSSLProcessing && isPrimary;
 	}
 
+	function getDomainName() {
+		if ( getDomainCartItem() ) {
+			return (
+				<span className="launchpad__url-box-top-level-domain">{ getDomainCartItem()?.meta }</span>
+			);
+		}
+
+		return (
+			<>
+				<span>{ siteName }</span>
+				<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
+			</>
+		);
+	}
+
 	return (
 		<div className="launchpad__sidebar">
 			<div className="launchpad__sidebar-content-container">
@@ -140,10 +162,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 				<div className="launchpad__url-box">
 					{ /* Google Chrome is adding an extra space after highlighted text. This extra wrapping div prevents that */ }
 					<div className="launchpad__url-box-domain">
-						<div className="launchpad__url-box-domain-text">
-							<span>{ siteName }</span>
-							<span className="launchpad__url-box-top-level-domain">{ topLevelDomain }</span>
-						</div>
+						<div className="launchpad__url-box-domain-text">{ getDomainName() }</div>
 						{ showClipboardButton && (
 							<>
 								<ClipboardButton

@@ -95,15 +95,9 @@ const startWriting: Flow = {
 				}
 				case 'domains':
 					if ( siteSlug ) {
-						// await updateLaunchpadSettings( siteSlug, {
-						// 	checklist_statuses: { plan_selected: true },
-						// } );
-					}
-					if ( providedDependencies?.goToCheckout ) {
-						// const planCartItem = getPlanCartItem();
-						// if ( planCartItem ) {
-						// 	await addPlanToCart( siteSlug as string, flowName as string, true, '', planCartItem );
-						// }
+						await updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { domain_upsell_deferred: true },
+						} );
 					}
 					return navigate( 'launchpad' );
 				case 'plans':

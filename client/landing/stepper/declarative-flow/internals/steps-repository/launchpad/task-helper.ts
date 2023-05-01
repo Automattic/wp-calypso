@@ -389,13 +389,23 @@ export function getEnhancedTasks(
 						title: translate( 'Choose a domain' ),
 						completed: domainUpsellCompleted,
 						actionDispatch: () => {
-							const setupFlow = isStartWritingFlow( flow || null )
-								? 'start-writing'
-								: 'domain-upsell';
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
+
+							if ( isStartWritingFlow( flow || null ) ) {
+								window.location.assign(
+									addQueryArgs( `/setup/${ START_WRITING_FLOW }/domains`, {
+										siteSlug,
+										flowToReturnTo: flow,
+										new: site?.name,
+									} )
+								);
+
+								return;
+							}
+
 							const destinationUrl = domainUpsellCompleted
 								? `/domains/manage/${ siteSlug }`
-								: addQueryArgs( `/setup/${ setupFlow }/domains`, {
+								: addQueryArgs( `/setup/domain-upsell/domains`, {
 										siteSlug,
 										flowToReturnTo: flow,
 										new: site?.name,

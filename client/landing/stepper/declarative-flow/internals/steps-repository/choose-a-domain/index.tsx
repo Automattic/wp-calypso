@@ -1,7 +1,7 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { ProductsList } from '@automattic/data-stores';
 import { addProductsToCart } from '@automattic/onboarding';
-import { useSelect, useDispatch, dispatch } from '@wordpress/data';
+import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
@@ -22,6 +22,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const isVideoPressFlow = 'videopress' === flow;
+	const isStartWritingFlow = 'start-writing' === flow;
 	const { siteTitle, domain, productsList } = useSelect(
 		( select ) => ( {
 			siteTitle: ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedSiteTitle(),
@@ -93,13 +94,9 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			<CalypsoShoppingCartProvider>
 				<RegisterDomainStep
 					suggestion={ getInitialSuggestion() }
-					// domainAndPlanUpsellFlow={ this.props.domainAndPlanUpsellFlow }
 					domainsWithPlansOnly={ true }
-					// onDomainsAvailabilityChange={ this.handleDomainsAvailabilityChange }
 					onAddDomain={ submitWithDomain }
-					// onAddMapping={ this.handleAddMapping }
-					// onAddTransfer={ this.handleAddTransfer }
-					// isCartPendingUpdate={ this.props.shoppingCartManager.isPendingUpdate }
+					offerUnavailableOption={ false } // change it later
 					showAlreadyOwnADomain={ true }
 					basePath=""
 					products={ productsList }
@@ -206,7 +203,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			<QueryProductsList />
 			<StepContainer
 				stepName="chooseADomain"
-				shouldHideNavButtons={ isVideoPressFlow }
+				shouldHideNavButtons={ isVideoPressFlow || isStartWritingFlow }
 				goBack={ goBack }
 				goNext={ goNext }
 				isHorizontalLayout={ false }
