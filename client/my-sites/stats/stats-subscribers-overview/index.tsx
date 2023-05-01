@@ -39,7 +39,7 @@ function SubscribersOverviewCards() {
 					count={ overviewCardStat.count }
 					previousCount={ overviewCardStat.previousCount }
 					showValueTooltip
-					icon="False"
+					icon={ false }
 				/>
 			) ) }
 		</div>
