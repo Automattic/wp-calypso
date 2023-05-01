@@ -4,7 +4,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 $breakpoint-tablet: 1224px; //Large tablet size.
 $breakpoint-desktop: 1440px; //Desktop size.
 $search-icon: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"%3E%3Cpath d="M9.16667 15.8333C12.8486 15.8333 15.8333 12.8486 15.8333 9.16667C15.8333 5.48477 12.8486 2.5 9.16667 2.5C5.48477 2.5 2.5 5.48477 2.5 9.16667C2.5 12.8486 5.48477 15.8333 9.16667 15.8333Z" stroke="%238C8F94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/%3E%3Cpath d="M17.5 17.5L13.875 13.875" stroke="%238C8F94" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/%3E%3C/svg%3E';
-$recoleta-font-family: "Recoleta", sans-serif;
 $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI", "Roboto",
 	"Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", sans-serif;
 
@@ -75,8 +74,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 			overflow-wrap: break-word;
 			word-break: break-word;
 			border-bottom: 1px solid var(--studio-gray-5);
-			padding: 20px;
-			padding-left: 0;
+			padding: 32px 16px 32px 0;
 			font-size: 1.25rem;
 		}
 
@@ -91,19 +89,47 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 	.support-content-resource__title {
 		margin-top: 0;
-		font-family: var(--wp--preset--font-family--recoleta) !important;
+		font-family: var(--wp--preset--font-family--system-font) !important;
 	}
 
 	@media (max-width: $breakpoint-mobile) {
 		padding: 40px 24px !important;
 
+		h4 {
+			font-size: 1.25rem;
+			line-height: 26px;
+		}
+
+		p {
+			font-size: 0.875rem;
+			margin-top: 4px;
+			margin-bottom: 8px;
+			line-height: 20px;
+		}
+
+		.support-content-cta {
+			margin-bottom: 0;
+
+			.support-content-cta-left {
+				padding: 16px 48px 16px 0;
+			}
+
+			.support-content-cta-right {
+				display: none;
+			}
+		}
+
 		.support-content-resources {
-			flex-wrap: nowrap !important;
-			gap: 10px;
-			overflow: auto;
+			flex-direction: column;
+			gap: 8px;
 
 			.support-content-resource {
 				min-width: 317px;
+				padding: 16px 48px 16px 0;
+
+				.resource-link {
+					line-height: 20px;
+				}
 			}
 		}
 

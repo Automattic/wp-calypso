@@ -24,12 +24,9 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 				<?php esc_html_e( 'Our professional website-building service can create the site of your dreams, no matter the scope of your project - from small websites and personal blogs to large-scale custom development and migrations.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
-				<p>
-					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/webinars/' ) ); ?>">
-						<?php esc_html_e( 'Get Started', 'happy-blocks' ); ?>
-						<figure><img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
-					</a>
-				</p>
+				<a href="<?php echo esc_url( 'https://wordpress.com/built-by/?ref=banner-learn' ); ?>">
+					<?php esc_html_e( 'Get Started', 'happy-blocks' ); ?>
+				</a>
 			</div>
 		</div>
 
@@ -46,14 +43,9 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 			<?php esc_html_e( 'Unlock tools, expert help, and community for your brand\'s growth and success.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
-				<p>
-					<a href="https://www.youtube.com/wordpressdotcom">
-						<?php esc_html_e( 'Upgrade your plan', 'happy-blocks' ); ?>
-						<figure>
-							<img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/>
-						</figure>
-					</a>
-				</p>
+				<a href="https://www.youtube.com/wordpressdotcom">
+					<?php esc_html_e( 'Upgrade your plan', 'happy-blocks' ); ?>
+				</a>
 			</div>
 		</div>
 		<div class="support-content-resource">
@@ -64,12 +56,9 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 				<?php esc_html_e( 'Connect with other WordPress customers around the world.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
-				<p>
-					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/forums/' ) ); ?>">
-						<?php esc_html_e( 'Ask the Community', 'happy-blocks' ); ?>
-						<figure><img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
-					</a>
-				</p>
+				<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/forums/' ) ); ?>">
+					<?php esc_html_e( 'Ask the Community', 'happy-blocks' ); ?>
+				</a>
 			</div>
 		</div>
 		<div class="support-content-resource">
@@ -80,12 +69,9 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 				<?php esc_html_e( 'Find the answer to the questions you know you have about WordPress.com.', 'happy-blocks' ); ?>
 			</p>
 			<div class="resource-link">
-				<p>
-					<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
-						<?php esc_html_e( 'Subscribe now', 'happy-blocks' ); ?>
-						<figure><img src="<?php echo esc_url( $image_dir . ( is_rtl() ? '/arrow-left.svg' : '/arrow-right.svg' ) ); ?>" alt="" width="15" height="11"/></figure>
-					</a>
-				</p>
+				<a href="<?php echo esc_url( localized_wpcom_url( '//wordpress.com/support/' ) ); ?>">
+					<?php esc_html_e( 'Subscribe now', 'happy-blocks' ); ?>
+				</a>
 			</div>
 		</div>
 	</div>
