@@ -2,9 +2,6 @@ import {
 	FEATURE_PREMIUM_CONTENT_CONTAINER,
 	FEATURE_DONATIONS,
 	FEATURE_RECURRING_PAYMENTS,
-	FEATURE_SIMPLE_PAYMENTS,
-	PLAN_PERSONAL,
-	PLAN_JETPACK_PERSONAL,
 } from '@automattic/calypso-products';
 import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -15,7 +12,6 @@ import { orderBy } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import paymentsImage from 'calypso/assets/images/earn/payments-illustration.svg';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
