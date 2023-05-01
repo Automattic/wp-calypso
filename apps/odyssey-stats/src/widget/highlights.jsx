@@ -152,7 +152,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 			<div className="stats-widget-highlights__body">
 				<TopColumn
 					className={ classNames( 'stats-widget-highlights__column', {
-						'is-mobile-show': selectedTab === 'topPostsAndPages',
+						'stats-widget-highlights__column--show-in-mobile': selectedTab === 'topPostsAndPages',
 					} ) }
 					title={ topPostsAndPagesTitle }
 					viewAllUrl={ viewAllPostsStatsUrl }
@@ -165,7 +165,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 				/>
 				<TopColumn
 					className={ classNames( 'stats-widget-highlights__column', {
-						'is-mobile-show': selectedTab === 'topReferrers',
+						'stats-widget-highlights__column--show-in-mobile': selectedTab === 'topReferrers',
 					} ) }
 					title={ topReferrersTitle }
 					viewAllUrl={ viewAllReferrerStatsUrl }
