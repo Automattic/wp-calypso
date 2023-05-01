@@ -94,7 +94,7 @@ const ScaledBlockRendererContainer = ( {
 		// Load scripts and styles manually to avoid a flash of unstyled content.
 		Promise.all( [
 			loadStyles( bodyElement, styleAssets ),
-			loadScripts( bodyElement, scriptAssets ),
+			loadScripts( bodyElement, scriptAssets as HTMLScriptElement[] ),
 		] ).then( () => setIsLoaded( true ) );
 	}, [] );
 

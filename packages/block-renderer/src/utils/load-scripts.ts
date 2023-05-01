@@ -8,7 +8,7 @@ const loadScript = async ( element: HTMLElement, { id, src, textContent }: HTMLS
 			script.onerror = () => reject();
 		} else {
 			script.textContent = textContent;
-			resolve();
+			resolve( script );
 		}
 
 		element.appendChild( script );
