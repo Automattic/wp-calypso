@@ -19,7 +19,8 @@ $offset-padding-hovering: 8px;
 		display: none;
 		margin-top: 16px;
 
-		@media only screen and (max-width: $break-dashboard-mobile) {
+		/* stylelint-disable-next-line scss/at-rule-no-unknown */
+		@container (max-width: #{$break-dashboard-mobile}) {
 			display: block;
 		}
 	}
@@ -30,7 +31,8 @@ $offset-padding-hovering: 8px;
 		column-gap: 24px;
 		margin: 16px (-$offset-padding-hovering) 0;
 
-		@media only screen and (max-width: $break-dashboard-mobile) {
+		/* stylelint-disable-next-line scss/at-rule-no-unknown */
+		@container (max-width: #{$break-dashboard-mobile}) {
 			grid-template-columns: none;
 		}
 	}
@@ -39,12 +41,14 @@ $offset-padding-hovering: 8px;
 		// Make sure the highlight section doesn't overflow the container, which makes ellipsis work.
 		min-width: 0;
 
-		@media only screen and (max-width: $break-dashboard-mobile) {
+		/* stylelint-disable-next-line scss/at-rule-no-unknown */
+		@container (max-width: #{$break-dashboard-mobile}) {
 			display: none;
 		}
 
 		&.stats-widget-highlights__column--show-in-mobile {
-			@media only screen and (max-width: $break-dashboard-mobile) {
+			/* stylelint-disable-next-line scss/at-rule-no-unknown */
+			@container (max-width: #{$break-dashboard-mobile}) {
 				display: block;
 				width: 100%;
 

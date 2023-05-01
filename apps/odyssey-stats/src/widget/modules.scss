@@ -9,7 +9,8 @@ $modules-gap :24px;
 	grid-template-columns: repeat(2, 1fr);
 	column-gap: $modules-gap;
 
-	@media only screen and (max-width: $break-dashboard-mobile) {
+	/* stylelint-disable-next-line scss/at-rule-no-unknown */
+	@container (max-width: #{$break-dashboard-mobile}) {
 		grid-template-columns: auto;
 		grid-template-rows: repeat(2, 1fr);
 		row-gap: $modules-gap;

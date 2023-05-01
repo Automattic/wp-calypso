@@ -7,6 +7,7 @@
 $segmentedControlItemBorderRadius: 4px;
 
 .jp-stats-widget {
+	container-type: inline-size;
 	// Offset the margin and padding of the `.postbox .inside` container.
 	margin: -11px -12px -12px;
 }
