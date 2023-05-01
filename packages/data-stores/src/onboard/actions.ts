@@ -28,10 +28,6 @@ export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
 	featureId,
 } );
-export const setPatternContent = ( patternContent: string ) => ( {
-	type: 'SET_SITE_PATTERN_CONTENT' as const,
-	patternContent,
-} );
 
 export interface CreateSiteBaseActionParameters {
 	username: string;
@@ -498,7 +494,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedStyleVariation
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
-	| typeof setPatternContent
 	| typeof setSiteTitle
 	| typeof setAnchorPodcastId
 	| typeof setAnchorEpisodeId

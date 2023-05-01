@@ -112,9 +112,9 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id="newsletter-setup-header"
-					headerText={ translate( 'Make it yours.' ) }
+					headerText={ translate( 'It begins with a name.' ) }
 					subHeaderText={ translate(
-						'Personalize your newsletter with a name, description, and accent color that sets it apart.'
+						'A catchy name, description, and accent color can set a newsletter apart.'
 					) }
 					align="center"
 				/>

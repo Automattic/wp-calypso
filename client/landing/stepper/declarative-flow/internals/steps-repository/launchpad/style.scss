@@ -334,6 +334,26 @@
 	width: 100%;
 	margin: 0;
 	color: var(--color-text);
+
+	&.is-placeholder {
+		padding: 16px 0 16px 0;
+	}
+}
+
+.launchpad__checklist-item-content {
+	width: 100%;
+
+	.is-placeholder & {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		background-color: var(--color-neutral-light);
+		color: transparent;
+		min-height: 44px;
+	}
+	> div {
+		.is-placeholder & {
+			color: transparent;
+		}
+	}
 }
 
 .button.launchpad__checklist-item:hover:not([disabled]),

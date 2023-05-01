@@ -36,6 +36,7 @@
 	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0oHFYHpzmHGpuUAXZ6ygDAFxM4XkRArRsET0orrofmsynkd9DhFaOGEsDZ3RC4f8mgI0zhEyN000X8i0Mqx",
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"zendesk_presales_chat_key": false,
+	"zendesk_presales_chat_key_jp_agency_dashboard": false,
 	"upwork_support_locales": [
 		"de",
 		"de-at",

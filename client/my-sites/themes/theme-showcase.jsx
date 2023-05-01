@@ -506,7 +506,7 @@ class ThemeShowcase extends Component {
 									}
 							  )
 							: translate(
-									'Beautiful and responsive WordPress.com themes. Choose from free and premium options for all types of websites. Then, install the one that is right for you.'
+									'Beautiful and responsive WordPress.com themes. Choose from free and premium options for all types of websites. Then, activate the one that is right for you.'
 							  )
 					}
 				>

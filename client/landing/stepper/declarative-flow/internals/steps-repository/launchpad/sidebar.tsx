@@ -1,15 +1,15 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
-import { OnboardSelect } from '@automattic/data-stores';
+import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
+import { useLaunchpadChecklist } from 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import Tooltip from 'calypso/components/tooltip';
-import { useLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
@@ -19,7 +19,7 @@ import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors
 import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import Checklist from './checklist';
 import { getArrayOfFilteredTasks, getEnhancedTasks } from './task-helper';
-import { DOMAIN_UPSELL, tasks } from './tasks';
+import { tasks } from './tasks';
 import { getLaunchpadTranslations } from './translations';
 import { Task } from './types';
 
@@ -43,18 +43,6 @@ function getUrlInfo( url: string ) {
 	return [ siteName, topLevelDomain ];
 }
 
-function getTasksProgress( tasks: Task[] | null ) {
-	if ( ! tasks ) {
-		return null;
-	}
-
-	const completedTasks = tasks.reduce( ( total, currentTask ) => {
-		return currentTask.completed ? total + 1 : total;
-	}, 0 );
-
-	return completedTasks;
-}
-
 const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: SidebarProps ) => {
 	let siteName = '';
 	let topLevelDomain = '';
@@ -66,8 +54,9 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
+
 	const {
-		data: { checklist_statuses },
+		data: { site_intent: siteIntentOption },
 	} = useLaunchpad( siteSlug );
 
 	const { getDomainCartItem } = useSelect(
@@ -77,15 +66,14 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		[]
 	);
 
+	const {
+		data: { checklist: launchpadChecklist },
+		isFetchedAfterMount,
+	} = useLaunchpadChecklist( siteSlug, siteIntentOption );
+
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
-
-	const arrayOfFilteredTasks: Task[] | null = getArrayOfFilteredTasks(
-		tasks,
-		flow,
-		isEmailVerified
-	);
 
 	const { getPlanCartItem } = useSelect(
 		( select ) => ( {
@@ -94,10 +82,16 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		[]
 	);
 
+	const startWritingFlowTasks: Task[] | null = getArrayOfFilteredTasks(
+		tasks,
+		flow,
+		isEmailVerified
+	);
+
 	const enhancedTasks: Task[] | null =
 		site &&
 		getEnhancedTasks(
-			arrayOfFilteredTasks,
+			flow === 'start-writing' ? startWritingFlowTasks : launchpadChecklist,
 			siteSlug,
 			site,
 			submit,
@@ -105,11 +99,10 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			goToStep,
 			flow,
 			isEmailVerified,
-			checklist_statuses,
 			getPlanCartItem()?.product_slug ?? null
 		);
 
-	const currentTask = getTasksProgress( enhancedTasks );
+	const currentTask = enhancedTasks?.filter( ( task ) => task.completed ).length;
 	const launchTask = enhancedTasks?.find( ( task ) => task.isLaunchTask === true );
 
 	const showLaunchTitle = launchTask && ! launchTask.disabled;
@@ -117,7 +110,8 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		? `/domains/manage/${ siteSlug }`
 		: `/domains/add/${ siteSlug }?domainAndPlanPackage=true`;
 	const showDomainUpgradeBadge =
-		sidebarDomain?.isWPCOMDomain && ! enhancedTasks?.find( ( task ) => task.id === DOMAIN_UPSELL );
+		sidebarDomain?.isWPCOMDomain &&
+		! enhancedTasks?.find( ( task ) => task.id === 'domain_upsell' );
 
 	if ( sidebarDomain ) {
 		const { domain, isPrimary, isWPCOMDomain, sslStatus } = sidebarDomain;
@@ -150,7 +144,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 					<CircularProgressBar
 						size={ 40 }
 						enableDesktopScaling
-						currentStep={ currentTask }
+						currentStep={ currentTask || null }
 						numberOfSteps={ enhancedTasks?.length || null }
 					/>
 				</div>
@@ -208,7 +202,11 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 						</p>
 					</div>
 				) }
-				<Checklist tasks={ enhancedTasks } />
+				{ isFetchedAfterMount || flow === 'start-writing' ? (
+					<Checklist tasks={ enhancedTasks } />
+				) : (
+					<Checklist.Placeholder />
+				) }
 			</div>
 			<div className="launchpad__sidebar-admin-link">
 				<StepNavigationLink

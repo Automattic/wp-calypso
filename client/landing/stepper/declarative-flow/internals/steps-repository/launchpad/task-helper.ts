@@ -22,7 +22,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
+import { LaunchpadChecklist, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
@@ -42,7 +42,6 @@ export function getEnhancedTasks(
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
-	checklistStatuses: LaunchpadStatuses = {},
 	planCartProductSlug?: string | null
 ) {
 	const enhancedTaskList: Task[] = [];
@@ -52,22 +51,28 @@ export function getEnhancedTasks(
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	const linkInBioLinksEditCompleted = checklistStatuses?.links_edited || false;
+	const linkInBioLinksEditCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
 
-	const siteEditCompleted = checklistStatuses?.site_edited || false;
+	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
 
-	const siteLaunchCompleted = checklistStatuses?.site_launched || false;
+	const siteLaunchCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
 
-	const firstPostPublishedCompleted = checklistStatuses?.first_post_published || false;
+	const firstPostPublishedCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
 
-	const planCompleted = checklistStatuses?.plan_selected || ! isStartWritingFlow( flow );
+	const planCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.plan_selected ||
+		! isStartWritingFlow( flow );
 
-	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
+	const videoPressUploadCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
 
 	const allowUpdateDesign =
 		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
 
-	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
+	const domainUpsellCompleted = isDomainUpsellCompleted( site );
 
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
@@ -201,7 +206,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Write your first post' ),
 						completed: firstPostPublishedCompleted,
-						disabled: mustVerifyEmailBeforePosting || false,
+						disabled: mustVerifyEmailBeforePosting || isStartWritingFlow( flow || null ) || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/post/${ siteSlug }` );
@@ -428,11 +433,11 @@ export function getEnhancedTasks(
 	return enhancedTaskList;
 }
 
-function isDomainUpsellCompleted(
-	site: SiteDetails | null,
-	checklistStatuses: LaunchpadStatuses
-): boolean {
-	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
+function isDomainUpsellCompleted( site: SiteDetails | null ): boolean {
+	return (
+		! site?.plan?.is_free ||
+		site?.options?.launchpad_checklist_tasks_statuses?.domain_upsell_deferred === true
+	);
 }
 
 // Records a generic task click Tracks event

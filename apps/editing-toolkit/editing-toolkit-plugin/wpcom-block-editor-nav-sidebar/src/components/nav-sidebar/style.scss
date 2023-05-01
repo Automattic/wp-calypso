@@ -117,7 +117,7 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 	width: 100%;
 	border: none !important;
 	box-shadow: none !important;
-	color: $white;
+	color: $white !important;
 	flex-shrink: 0;
 	padding: 8px 11px !important;
 	margin: 12px 0;
@@ -164,7 +164,7 @@ $sidebar-button-text-color: #a2aab2; // former $light-gray-900
 	}
 
 	.is-selected {
-		color: $white;
+		color: $white !important;
 	}
 	/*
 	@TODO Work out how we're going to handle overflow
