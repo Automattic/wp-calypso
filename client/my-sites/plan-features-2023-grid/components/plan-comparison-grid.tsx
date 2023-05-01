@@ -294,6 +294,7 @@ type PlanComparisonGridProps = {
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;
 	onUpgradeClick: ( properties: PlanProperties ) => void;
+	siteId?: number;
 };
 
 type PlanComparisonGridHeaderProps = {
@@ -654,6 +655,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	canUserPurchasePlan,
 	selectedSiteSlug,
 	onUpgradeClick,
+	siteId,
 } ) => {
 	const translate = useTranslate();
 	// Check to see if we have at least one Woo Express plan we're comparing.
