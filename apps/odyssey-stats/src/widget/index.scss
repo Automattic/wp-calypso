@@ -47,7 +47,7 @@ $segmentedControlItemBorderRadius: 4px;
 				}
 			}
 
-			&.is-selected+.segmented-control__item .segmented-control__link {
+			&.is-selected + .segmented-control__item .segmented-control__link {
 				border-left-color: var(--studio-black);
 			}
 		}
@@ -96,10 +96,11 @@ $segmentedControlItemBorderRadius: 4px;
 	}
 }
 
+/* stylelint-disable-next-line scss/at-rule-no-unknown */
 @container (max-width: #{$break-small}) {
 	@include stats-widget-single-column-view;
 }
 
-@media only screen and (max-width: #{$break-dashboard-mobile}) {
+@media only screen and (max-width: #{$break-small}) {
 	@include stats-widget-single-column-view;
 }

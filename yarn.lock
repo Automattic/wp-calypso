@@ -1139,6 +1139,7 @@ __metadata:
     "@automattic/wp-babel-makepot": "workspace:^"
     "@babel/core": ^7.17.5
     "@tanstack/react-query": 4.29.1
+    "@wordpress/base-styles": ^4.13.0
     "@wordpress/data": ^7.6.0
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
     "@wordpress/icons": ^9.22.0
