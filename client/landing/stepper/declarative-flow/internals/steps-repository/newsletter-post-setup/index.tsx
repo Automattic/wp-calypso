@@ -29,9 +29,11 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 	const fetchedAccentColor = useAccentColor();
 	const saveAccentColor = useSaveAccentColor();
 	const newsletterFormText = {
+		titleLabel: translate( 'Give your newsletter a name' ),
 		titlePlaceholder: translate( 'Open Me Carefully' ),
 		titleMissing: translate( `Oops. Looks like your newsletter doesn't have a name yet.` ),
-		taglinePlaceholder: translate( 'Describe your Newsletter in a line or two' ),
+		taglineLabel: translate( 'Add a brief description' ),
+		taglinePlaceholder: translate( `Letters from Emily Dickinson's garden` ),
 		iconPlaceholder: translate( 'Add a site icon' ),
 		colorLabel: translate( 'Choose an accent color' ),
 	};
