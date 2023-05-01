@@ -1,6 +1,6 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { START_WRITING_FLOW, addPlanToCart } from '@automattic/onboarding';
+import { START_WRITING_FLOW, addPlanToCart, addProductsToCart } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelector } from 'react-redux';
@@ -108,8 +108,14 @@ const startWriting: Flow = {
 					}
 					if ( providedDependencies?.goToCheckout ) {
 						const planCartItem = getPlanCartItem();
+						const domainCartItem = getDomainCartItem();
+
 						if ( planCartItem ) {
 							await addPlanToCart( siteSlug as string, flowName as string, true, '', planCartItem );
+						}
+
+						if ( domainCartItem ) {
+							await addProductsToCart( siteSlug as string, flowName as string, [ domainCartItem ] );
 						}
 					}
 					return navigate( 'launchpad' );

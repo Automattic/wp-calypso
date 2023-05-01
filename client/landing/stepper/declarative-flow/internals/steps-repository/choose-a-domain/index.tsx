@@ -1,6 +1,5 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { ProductsList } from '@automattic/data-stores';
-import { addProductsToCart } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
@@ -53,37 +52,18 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		onAddDomain( null );
 	};
 
-	const submitWithDomain = async (
-		suggestion: DomainSuggestion | undefined,
-		shouldHideFreePlan = false
-	) => {
-		if ( suggestion ) {
-			const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
-
-			const domainCartItem = domainRegistration( {
-				domain: suggestion.domain_name,
-				productSlug: suggestion.product_slug || '',
-			} );
-			// dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
-
-			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
-			setDomainCartItem( domainCartItem );
-
-			const {
-				domain_name: domain,
-				product_slug: productSlug,
-				supports_privacy: supportsPrivacy,
-			} = suggestion;
-
-			const registration = domainRegistration( {
-				domain,
-				productSlug,
-				extra: { privacy_available: supportsPrivacy },
-			} );
-
-			addProductsToCart( siteSlug as string, flow as string, [ registration ] );
-		} else {
+	const submitWithDomain = async ( suggestion: DomainSuggestion | undefined ) => {
+		if ( suggestion?.is_free ) {
+			setHideFreePlan( false );
 			setDomainCartItem( undefined );
+		} else {
+			const domainCartItem = domainRegistration( {
+				domain: suggestion?.domain_name || '',
+				productSlug: suggestion?.product_slug || '',
+			} );
+
+			setHideFreePlan( true );
+			setDomainCartItem( domainCartItem );
 		}
 
 		submit?.();
@@ -97,7 +77,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					domainsWithPlansOnly={ true }
 					onAddDomain={ submitWithDomain }
 					includeWordPressDotCom={ true }
-					offerUnavailableOption={ false } // change it later
+					offerUnavailableOption={ false } // TODO
 					showAlreadyOwnADomain={ true }
 					basePath=""
 					products={ productsList }
