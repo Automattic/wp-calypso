@@ -2,8 +2,10 @@ import IsoloatedEditor, { FooterSlot } from '@automattic/isolated-block-editor';
 import { serialize } from '@wordpress/blocks';
 import { Button } from '@wordpress/components';
 import { select, useDispatch } from '@wordpress/data';
+import { useState } from '@wordpress/element';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
+import SitesDropdown from 'calypso/components/sites-dropdown';
 import useCreateNewPost from 'calypso/data/posts/use-create-new-post';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
@@ -23,6 +25,7 @@ function ReaderPostEditor() {
 	// Use global redux store for Calypso state and actions
 	const reduxDispatch = useReduxDispatch();
 	const primarySiteId = useSelector( getPrimarySiteId );
+	const [ siteId, setSiteId ] = useState( primarySiteId );
 
 	const { createNewPost, isLoading } = useCreateNewPost( {
 		onSuccess: () => {
@@ -51,7 +54,7 @@ function ReaderPostEditor() {
 		const blocks = select( 'core/block-editor' ).getBlocks();
 
 		if ( blocks && blocks.length > 0 ) {
-			createNewPost( primarySiteId, {
+			createNewPost( siteId, {
 				content: serialize( blocks ),
 			} );
 		}
@@ -59,6 +62,7 @@ function ReaderPostEditor() {
 
 	return (
 		<div className="reader-post-editor">
+			<SitesDropdown compact={ true } selectedSiteId={ siteId } onSiteSelect={ setSiteId } />
 			<div className="reader-post-editor__editor">
 				<IsoloatedEditor settings={ editorSettings }>
 					<FooterSlot>
