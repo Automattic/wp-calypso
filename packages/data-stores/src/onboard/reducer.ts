@@ -19,16 +19,6 @@ const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, 
 	return state;
 };
 
-const patternContent: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
-	if ( action.type === 'SET_SITE_PATTERN_CONTENT' ) {
-		return action.patternContent;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-	return state;
-};
-
 const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
 		return action.domainSearch;
@@ -525,7 +515,6 @@ const reducer = combineReducers( {
 	anchorSpotifyUrl,
 	domain,
 	domainCartItem,
-	patternContent,
 	domainSearch,
 	domainCategory,
 	domainForm,

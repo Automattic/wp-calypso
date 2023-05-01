@@ -50,6 +50,10 @@ import { getTld } from 'calypso/lib/domains';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import PlanFeatures from 'calypso/my-sites/plan-features';
 import PlanFeaturesComparison from 'calypso/my-sites/plan-features-comparison';
+import PlanFAQ from 'calypso/my-sites/plans-features-main/components/plan-faq';
+import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
+import TermExperimentPlanTypeSelector from 'calypso/my-sites/plans-features-main/components/term-experiment-plan-type-selector';
+import WpcomFAQ from 'calypso/my-sites/plans-features-main/components/wpcom-faq';
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import { selectSiteId as selectHappychatSiteId } from 'calypso/state/help/actions';
 import { getProductDisplayCost } from 'calypso/state/products-list/selectors';
@@ -65,9 +69,6 @@ import {
 	isJetpackSite,
 	isJetpackSiteMultiSite,
 } from 'calypso/state/sites/selectors';
-import PlanFAQ from './plansStepFaq';
-import TermExperimentPlanTypeSelector from './term-experiment-plan-type-selector';
-import WpcomFAQ from './wpcom-faq';
 
 import './style.scss';
 
@@ -609,7 +610,15 @@ export class PlansFeaturesMain extends Component {
 				<QuerySites siteId={ siteId } />
 				<QuerySitePlans siteId={ siteId } />
 				<HappychatConnection />
-				<div className="plans-features-main__notice" />
+				<PlanNotice
+					visiblePlans={ visiblePlans }
+					siteId={ siteId }
+					isInSignup={ this.props.isInSignup }
+					discountInformation={ {
+						withDiscount: this.props.withDiscount,
+						discountEndDate: this.props.discountEndDate,
+					} }
+				/>
 				{ ! hidePlanSelector && (
 					<TermExperimentPlanTypeSelector
 						isEligible={ is2023PricingGridVisible }

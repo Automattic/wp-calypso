@@ -1,6 +1,6 @@
 import activeDiscounts from './active-discounts';
 
-function getDiscountByName( discountName, endsAt = null ) {
+function getDiscountByName( discountName: string, endsAt: Date | null = null ) {
 	const activeDiscount = activeDiscounts.find( function ( discount ) {
 		if ( discountName !== discount.name ) {
 			return false;

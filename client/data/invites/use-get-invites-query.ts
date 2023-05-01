@@ -13,6 +13,7 @@ const useGetInvitesQuery = ( siteId: number ) => {
 		if ( siteId && ! requestingInProgress ) {
 			dispatch( requestSiteInvites( siteId ) );
 		}
+		return null;
 	} );
 };
 

@@ -12,14 +12,20 @@ interface UseDeleteStagingSiteOptions {
 	siteId: SiteId;
 	stagingSiteId: SiteId;
 	transferStatus: TransferStates | null;
+	onMutate?: () => void;
 	onSuccess?: () => void;
-	onError?: () => void;
+	onError?: ( error: MutationError ) => void;
+}
+
+interface MutationError {
+	code: string;
+	message: string;
 }
 
 export const DELETE_STAGING_SITE_MUTATION_KEY = 'delete-staging-site-mutation-key';
 
 export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => {
-	const { siteId, stagingSiteId, transferStatus, onSuccess, onError } = options;
+	const { siteId, stagingSiteId, transferStatus, onMutate, onSuccess, onError } = options;
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
 	const [ isDeletingInitiated, setIsDeletingInitiated ] = useState( false );
@@ -57,15 +63,18 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 		},
 		{
 			mutationKey: [ DELETE_STAGING_SITE_MUTATION_KEY, siteId ],
+			onMutate: () => {
+				onMutate?.();
+			},
 			onSuccess: async () => {
 				// Wait for the staging site async job to start
 				setTimeout( () => {
 					dispatch( fetchAutomatedTransferStatus( stagingSiteId ) );
 				}, 3000 );
 			},
-			onError: () => {
+			onError: ( error: MutationError ) => {
 				setIsDeletingInitiated( false );
-				onError?.();
+				onError?.( error );
 			},
 		}
 	);

@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import requestExternalAccess from '@automattic/request-external-access';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -6,6 +7,7 @@ import { isEqual, find, some, get } from 'lodash';
 import PropTypes from 'prop-types';
 import { Component, cloneElement } from 'react';
 import { connect } from 'react-redux';
+import ExternalLink from 'calypso/components/external-link';
 import FoldableCard from 'calypso/components/foldable-card';
 import Notice from 'calypso/components/notice';
 import SocialLogo from 'calypso/components/social-logo';
@@ -36,6 +38,7 @@ import {
 	isFetchingConnections,
 } from 'calypso/state/sharing/publicize/selectors';
 import { getAvailableExternalAccounts, isServiceExpanded } from 'calypso/state/sharing/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import AccountDialog from './account-dialog';
 import Connection from './connection';
@@ -77,6 +80,7 @@ export class SharingService extends Component {
 		updateSiteConnection: PropTypes.func,
 		warningNotice: PropTypes.func,
 		isP2HubSite: PropTypes.bool,
+		isJetpack: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -97,6 +101,7 @@ export class SharingService extends Component {
 		updateSiteConnection: () => {},
 		warningNotice: () => {},
 		isP2HubSite: false,
+		isJetpack: false,
 	};
 
 	/**
@@ -527,6 +532,7 @@ export class SharingService extends Component {
 		const accounts = this.state.isSelectingAccount ? this.props.availableExternalAccounts : [];
 		const showLinkedInNotice =
 			'linkedin' === this.props.service.ID && some( connections, { status: 'must_reauth' } );
+		const serviceStatus = this.props.service.status ?? 'ok';
 
 		const header = (
 			<div>
@@ -552,6 +558,35 @@ export class SharingService extends Component {
 				) }
 			</div>
 		);
+
+		if ( 'ok' !== serviceStatus ) {
+			return (
+				<li>
+					<FoldableCard disabled header={ header } compact className={ classNames } />
+					<Notice isCompact status="is-error" className="sharing-service__unsupported">
+						{ this.props.translate(
+							'Twitter is no longer supported. {{a}}Learn more about this{{/a}}',
+							{
+								components: {
+									a: (
+										<ExternalLink
+											target="_blank"
+											icon={ true }
+											iconSize={ 14 }
+											href={ localizeUrl(
+												this.props.isJetpack
+													? 'https://jetpack.com/2023/04/29/the-end-of-twitter-auto-sharing/'
+													: 'https://wordpress.com/blog/2023/04/29/why-twitter-auto-sharing-is-coming-to-an-end/'
+											) }
+										/>
+									),
+								},
+							}
+						) }
+					</Notice>
+				</li>
+			);
+		}
 
 		const action = (
 			<ServiceAction
@@ -668,6 +703,7 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				userId,
 				isExpanded: isServiceExpanded( state, service ),
 				isP2HubSite: isSiteP2Hub( state, siteId ),
+				isJetpack: isJetpackSite( state, siteId ),
 			};
 			return typeof mapStateToProps === 'function' ? mapStateToProps( state, props ) : props;
 		},

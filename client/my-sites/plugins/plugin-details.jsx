@@ -303,7 +303,7 @@ function PluginDetails( props ) {
 			<PageViewTracker
 				path={ analyticsPath }
 				title="Plugins > Plugin Details"
-				properties={ { is_logged_in: isLoggedIn } }
+				properties={ { is_logged_in: isLoggedIn, plugin_slug: props.pluginSlug } }
 			/>
 			<QueryPlugins siteId={ selectedSite?.ID } />
 			<QueryEligibility siteId={ selectedSite?.ID } />

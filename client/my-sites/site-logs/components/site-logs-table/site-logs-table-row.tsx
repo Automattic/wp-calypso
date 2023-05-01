@@ -1,7 +1,9 @@
 import { Button } from '@automattic/components';
 import { Icon, chevronDown, chevronRight } from '@wordpress/icons';
+import { useI18n } from '@wordpress/react-i18n';
 import moment from 'moment';
-import { Fragment, useState } from 'react';
+import { Fragment, useRef, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { SiteLogsData } from 'calypso/data/hosting/use-site-logs-query';
 import SiteLogsExpandedContent from './site-logs-expanded-content';
@@ -14,12 +16,22 @@ interface Props {
 }
 
 export default function SiteLogsTableRow( { columns, log, siteGmtOffset }: Props ) {
+	const { __ } = useI18n();
 	const [ isExpanded, setIsExpanded ] = useState( false );
+	const expandedId = useRef( uuidv4() ).current;
+
 	return (
 		<Fragment>
 			<tr>
 				<td>
-					<Button borderless onClick={ () => setIsExpanded( ! isExpanded ) } compact>
+					<Button
+						borderless
+						onClick={ () => setIsExpanded( ! isExpanded ) }
+						compact
+						aria-label={ __( 'Expand row' ) }
+						aria-expanded={ isExpanded }
+						aria-controls={ expandedId }
+					>
 						<Icon icon={ isExpanded ? chevronDown : chevronRight } />
 					</Button>
 				</td>
@@ -29,7 +41,7 @@ export default function SiteLogsTableRow( { columns, log, siteGmtOffset }: Props
 			</tr>
 
 			{ isExpanded && (
-				<tr className="site-logs-table__table-row-expanded">
+				<tr className="site-logs-table__table-row-expanded" id={ expandedId }>
 					<td colSpan={ Object.keys( log ).length + 1 }>
 						<SiteLogsExpandedContent log={ log } />
 					</td>

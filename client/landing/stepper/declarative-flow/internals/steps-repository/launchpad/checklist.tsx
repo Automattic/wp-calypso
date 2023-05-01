@@ -20,4 +20,15 @@ const Checklist = ( { tasks }: ChecklistProps ) => {
 	);
 };
 
+Checklist.Placeholder = () => {
+	return (
+		<ul className="launchpad__checklist" aria-label="Launchpad Checklist">
+			<ChecklistItem.Placeholder />
+			<ChecklistItem.Placeholder />
+			<ChecklistItem.Placeholder />
+			<ChecklistItem.Placeholder />
+		</ul>
+	);
+};
+
 export default Checklist;

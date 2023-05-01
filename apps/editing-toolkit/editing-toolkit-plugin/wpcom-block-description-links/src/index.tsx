@@ -2,7 +2,10 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { createInterpolateElement } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { JSXElementConstructor, ReactElement } from 'react';
-import blockLinks, { blockLinksWithVariations } from './block-links-map';
+import blockLinks, {
+	blockLinksWithVariations,
+	childrenBlockLinksWithDifferentUrl,
+} from './block-links-map';
 import DescriptionSupportLink from './inline-support-link';
 
 declare global {
@@ -17,7 +20,6 @@ const createLocalizedDescriptionWithLearnMore = (
 	url: string
 ) => {
 	const localizedUrl = localizeUrl( url, window.wpcomBlockDescriptionLinksLocale );
-
 	return createInterpolateElement( '<InlineSupportLink />', {
 		InlineSupportLink: (
 			<DescriptionSupportLink title={ String( title ) } url={ localizedUrl }>
@@ -56,11 +58,16 @@ const addBlockSupportLinks = (
 
 	processedBlocks[ name ] = true;
 
-	if ( blockLinks[ blockName ] ) {
+	const additonalDesc = childrenBlockLinksWithDifferentUrl[ name ] || blockLinks[ blockName ];
+
+	/**
+	 * Some elements are children, but have their own url for Learn More, and we want to show those.
+	 */
+	if ( additonalDesc ) {
 		settings.description = createLocalizedDescriptionWithLearnMore(
 			String( settings.title ),
 			settings.description,
-			blockLinks[ blockName ]
+			additonalDesc
 		);
 	}
 
