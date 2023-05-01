@@ -24,6 +24,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import TermExperimentPlanTypeSelector from 'calypso/my-sites/plans-features-main/components/term-experiment-plan-type-selector';
+import { usePlanUpgradeCreditsDisplay } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-display';
 import useIsLargeCurrency from '../../plans/hooks/use-is-large-currency';
 import useHighlightAdjacencyMatrix from '../hooks/use-highlight-adjacency-matrix';
 import useHighlightLabel from '../hooks/use-highlight-label';
@@ -308,6 +309,7 @@ type PlanComparisonGridHeaderProps = {
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;
 	onUpgradeClick: ( properties: PlanProperties ) => void;
+	siteId?: number;
 };
 
 type RestructuredFeatures = {
@@ -327,6 +329,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 		allVisible: boolean;
 		isLastInRow: boolean;
 		isLargeCurrency: boolean;
+		isPlanUpgradeCreditEligible: boolean;
 	}
 > = ( {
 	planProperties,
@@ -345,6 +348,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 	selectedSiteSlug,
 	isLargeCurrency,
 	onUpgradeClick,
+	isPlanUpgradeCreditEligible,
 } ) => {
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
@@ -401,6 +405,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				</h4>
 			</PlanSelector>
 			<PlanFeatures2023GridHeaderPrice
+				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 				planProperties={ planProperties }
 				is2023OnboardingPricingGrid={ true }
 				isLargeCurrency={ isLargeCurrency }
@@ -448,13 +453,17 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	canUserPurchasePlan,
 	selectedSiteSlug,
 	onUpgradeClick,
+	siteId,
 } ) => {
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 
 	const isLargeCurrency = useIsLargeCurrency(
 		displayedPlansProperties.map( ( properties ) => properties.planName as PlanSlug )
 	);
-
+	const { isPlanUpgradeCreditEligible } = usePlanUpgradeCreditsDisplay(
+		siteId ?? 0,
+		displayedPlansProperties.map( ( { planName } ) => planName )
+	);
 	return (
 		<PlanRow>
 			<RowTitleCell
@@ -463,6 +472,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 			/>
 			{ visiblePlansProperties.map( ( planProperties, index ) => (
 				<PlanComparisonGridHeaderCell
+					isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 					key={ planProperties.planName }
 					planProperties={ planProperties }
 					isLastInRow={ index === visiblePlansProperties.length - 1 }
@@ -851,6 +861,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 			/>
 			<Grid isInSignup={ isInSignup }>
 				<PlanComparisonGridHeader
+					siteId={ siteId }
 					displayedPlansProperties={ displayedPlansProperties }
 					visiblePlansProperties={ visiblePlansProperties }
 					isInSignup={ isInSignup }

@@ -11,7 +11,7 @@ interface PlanFeatures2023GridHeaderPriceProps {
 	planProperties: PlanProperties;
 	is2023OnboardingPricingGrid: boolean;
 	isLargeCurrency: boolean;
-	hideCreditNotice?: boolean;
+	isPlanUpgradeCreditEligible: boolean;
 }
 
 const PricesGroup = styled.div< { isLargeCurrency: boolean } >`
@@ -126,7 +126,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 	planProperties,
 	is2023OnboardingPricingGrid,
 	isLargeCurrency,
-	hideCreditNotice,
+	isPlanUpgradeCreditEligible,
 }: PlanFeatures2023GridHeaderPriceProps ) => {
 	const translate = useTranslate();
 	const { planName, showMonthlyPrice } = planProperties;
@@ -148,7 +148,7 @@ const PlanFeatures2023GridHeaderPrice = ( {
 			{ shouldShowDiscountedPrice && (
 				<>
 					<Badge className="plan-features-2023-grid__badge">
-						{ ! hideCreditNotice
+						{ isPlanUpgradeCreditEligible
 							? translate( 'Credit applied' )
 							: translate( 'One time discount' ) }
 					</Badge>

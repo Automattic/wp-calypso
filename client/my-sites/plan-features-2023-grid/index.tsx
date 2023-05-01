@@ -52,6 +52,7 @@ import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-ite
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
+import { usePlanUpgradeCreditsDisplay } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-display';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {
@@ -109,8 +110,8 @@ type PlanFeatures2023GridProps = {
 	isReskinned: boolean;
 	onUpgradeClick: ( cartItem: MinimalRequestCartProduct | null ) => void;
 	// either you specify the plans prop or isPlaceholder prop
-	plans: Array< string >;
-	visiblePlans: Array< string >;
+	plans: Array< PlanSlug >;
+	visiblePlans: Array< PlanSlug >;
 	flowName: string;
 	domainName: string;
 	placeholder?: string;
@@ -130,6 +131,7 @@ type PlanFeatures2023GridConnectedProps = {
 	planTypeSelectorProps: PlanTypeSelectorProps;
 	manageHref: string;
 	selectedSiteSlug: string | null;
+	isPlanUpgradeCreditEligible: boolean;
 };
 
 type PlanFeatures2023GridType = PlanFeatures2023GridProps &
@@ -227,10 +229,6 @@ const PlanLogo: React.FunctionComponent< {
 		</Container>
 	);
 };
-
-function getBannerContainer() {
-	return document.querySelector( '.plans-features-main__notice' );
-}
 
 export class PlanFeatures2023Grid extends Component<
 	PlanFeatures2023GridType,
@@ -472,7 +470,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanPrice( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isReskinned, isLargeCurrency, translate, hideCreditNotice } = this.props;
+		const { isReskinned, isLargeCurrency, translate, isPlanUpgradeCreditEligible } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -493,7 +491,7 @@ export class PlanFeatures2023Grid extends Component<
 					>
 						{ ! hasNoPrice && (
 							<PlanFeatures2023GridHeaderPrice
-								hideCreditNotice={ hideCreditNotice }
+								isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
 								planProperties={ properties }
 								is2023OnboardingPricingGrid={ true }
 								isLargeCurrency={ isLargeCurrency }
@@ -867,7 +865,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 		const selectedSiteSlug = getSiteSlug( state, siteId );
 		const currentSitePlan = getCurrentPlan( state, siteId );
 
-		const planProperties: PlanProperties[] = plans.map( ( plan: string ) => {
+		const planProperties: PlanProperties[] = plans.map( ( plan: PlanSlug ) => {
 			let isPlaceholder = false;
 			const planConstantObj = applyTestFiltersToPlansList( plan, undefined );
 			const planProductId = planConstantObj.getProductId();
@@ -993,13 +991,23 @@ const ConnectedPlanFeatures2023Grid = connect(
 /* eslint-enable wpcalypso/redux-no-bound-selectors */
 
 const WrappedPlanFeatures2023Grid = ( props: PlanFeatures2023GridType ) => {
+	const { isPlanUpgradeCreditEligible } = usePlanUpgradeCreditsDisplay( props.siteId, props.plans );
+
 	if ( props.isInSignup ) {
-		return <ConnectedPlanFeatures2023Grid { ...props } />;
+		return (
+			<ConnectedPlanFeatures2023Grid
+				{ ...props }
+				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+			/>
+		);
 	}
 
 	return (
 		<CalypsoShoppingCartProvider>
-			<ConnectedPlanFeatures2023Grid { ...props } />
+			<ConnectedPlanFeatures2023Grid
+				{ ...props }
+				isPlanUpgradeCreditEligible={ isPlanUpgradeCreditEligible }
+			/>
 		</CalypsoShoppingCartProvider>
 	);
 };
