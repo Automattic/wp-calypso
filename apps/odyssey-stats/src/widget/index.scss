@@ -3,6 +3,7 @@
 @import "../styles/wp-admin.scss";
 @import "../styles/typography.scss";
 @import "./variables.scss";
+@import "@wordpress/base-styles/breakpoints";
 
 $segmentedControlItemBorderRadius: 4px;
 
@@ -19,11 +20,6 @@ $segmentedControlItemBorderRadius: 4px;
 	.segmented-control {
 		height: 36px;
 		min-width: 259px;
-
-		/* stylelint-disable-next-line scss/at-rule-no-unknown */
-		@container (max-width: #{$break-dashboard-mobile}) {
-			width: 100%;
-		}
 
 		.segmented-control__item {
 			&:first-of-type .segmented-control__link {
@@ -42,6 +38,7 @@ $segmentedControlItemBorderRadius: 4px;
 			}
 
 			&.is-selected .segmented-control__link {
+
 				&,
 				&:hover,
 				&:focus {
@@ -50,7 +47,7 @@ $segmentedControlItemBorderRadius: 4px;
 				}
 			}
 
-			&.is-selected + .segmented-control__item .segmented-control__link {
+			&.is-selected+.segmented-control__item .segmented-control__link {
 				border-left-color: var(--studio-black);
 			}
 		}
@@ -65,11 +62,6 @@ $segmentedControlItemBorderRadius: 4px;
 .stats-widget-wrapper {
 	padding: 24px;
 	background: var(--jetpack-white-off);
-
-	/* stylelint-disable-next-line scss/at-rule-no-unknown */
-	@container (max-width: #{$break-dashboard-mobile}) {
-		padding: 24px 16px;
-	}
 
 	label {
 		cursor: auto;
@@ -102,4 +94,12 @@ $segmentedControlItemBorderRadius: 4px;
 		text-decoration-line: underline;
 		color: var(--studio-gray-100);
 	}
+}
+
+@container (max-width: #{$break-small}) {
+	@include stats-widget-single-column-view;
+}
+
+@media only screen and (max-width: #{$break-dashboard-mobile}) {
+	@include stats-widget-single-column-view;
 }

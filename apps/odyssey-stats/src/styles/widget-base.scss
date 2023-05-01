@@ -5,3 +5,46 @@
 
 // Color Schemes
 @import "@automattic/calypso-color-schemes/src/calypso-color-schemes";
+
+$modules-gap :24px;
+
+@mixin stats-widget-single-column-view {
+	.stats-widget-content .segmented-control {
+		width: 100%;
+	}
+
+	.stats-widget-wrapper {
+		padding: 24px 16px;
+	}
+
+	.stats-widget-highlights {
+		.stats-widget-highlights__tabs {
+			display: block;
+		}
+
+		.stats-widget-highlights__body {
+			grid-template-columns: none;
+		}
+
+		.stats-widget-highlights__column {
+			display: none;
+
+			&.stats-widget-highlights__column--show-in-mobile {
+				display: block;
+				width: 100%;
+
+				.stats-widget-highlights-card__title {
+					display: none;
+				}
+			}
+		}
+
+	}
+
+	.stats-widget-modules {
+		grid-template-columns: auto;
+		grid-template-rows: repeat(2, 1fr);
+		row-gap: $modules-gap;
+	}
+
+}

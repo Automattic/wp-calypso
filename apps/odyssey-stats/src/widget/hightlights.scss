@@ -18,11 +18,6 @@ $offset-padding-hovering: 8px;
 	.stats-widget-highlights__tabs {
 		display: none;
 		margin-top: 16px;
-
-		/* stylelint-disable-next-line scss/at-rule-no-unknown */
-		@container (max-width: #{$break-dashboard-mobile}) {
-			display: block;
-		}
 	}
 
 	.stats-widget-highlights__body {
@@ -30,33 +25,11 @@ $offset-padding-hovering: 8px;
 		grid-template-columns: repeat(2, 1fr);
 		column-gap: 24px;
 		margin: 16px (-$offset-padding-hovering) 0;
-
-		/* stylelint-disable-next-line scss/at-rule-no-unknown */
-		@container (max-width: #{$break-dashboard-mobile}) {
-			grid-template-columns: none;
-		}
 	}
 
 	.stats-widget-highlights__column {
 		// Make sure the highlight section doesn't overflow the container, which makes ellipsis work.
 		min-width: 0;
-
-		/* stylelint-disable-next-line scss/at-rule-no-unknown */
-		@container (max-width: #{$break-dashboard-mobile}) {
-			display: none;
-		}
-
-		&.stats-widget-highlights__column--show-in-mobile {
-			/* stylelint-disable-next-line scss/at-rule-no-unknown */
-			@container (max-width: #{$break-dashboard-mobile}) {
-				display: block;
-				width: 100%;
-
-				.stats-widget-highlights-card__title {
-					display: none;
-				}
-			}
-		}
 	}
 
 	.stats-widget-highlights-card__title {
