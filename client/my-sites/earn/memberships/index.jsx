@@ -670,22 +670,6 @@ class MembershipsSection extends Component {
 	}
 
 	render() {
-		if ( ! this.props.connectedAccountId && ! this.props.hasStripeFeature ) {
-			return this.renderOnboarding(
-				<UpsellNudge
-					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
-					shouldDisplay={ () => true }
-					feature={ FEATURE_SIMPLE_PAYMENTS }
-					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
-					description={ this.props.translate( 'Upgrade to enable Payment Blocks.' ) }
-					showIcon={ true }
-					event="calypso_memberships_upsell_nudge"
-					tracksImpressionName="calypso_upgrade_nudge_impression"
-					tracksClickName="calypso_upgrade_nudge_cta_click"
-				/>
-			);
-		}
-
 		if ( ! userCan( 'manage_options', this.props.site ) ) {
 			return this.renderOnboarding(
 				<Notice
