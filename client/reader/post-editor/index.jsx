@@ -9,6 +9,7 @@ import SitesDropdown from 'calypso/components/sites-dropdown';
 import useCreateNewPost from 'calypso/data/posts/use-create-new-post';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import PostFormatSelector from './post-format-selector';
 import '@automattic/isolated-block-editor/build-browser/core.css';
 import './style.scss';
 
@@ -66,13 +67,14 @@ function ReaderPostEditor() {
 			<div className="reader-post-editor__editor">
 				<IsoloatedEditor settings={ editorSettings }>
 					<FooterSlot>
+						<PostFormatSelector />
 						<Button
 							className="reader-post-editor__publish-button"
 							isPrimary
 							onClick={ publishPost }
 							disabled={ isLoading }
 						>
-							{ isLoading ? translate( 'Publishing…' ) : translate( 'Publish' ) }
+							{ isLoading ? translate( 'Posting…' ) : translate( 'Post' ) }
 						</Button>
 					</FooterSlot>
 				</IsoloatedEditor>
