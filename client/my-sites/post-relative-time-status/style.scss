@@ -23,9 +23,9 @@
 		color: var(--color-error);
 	}
 	.is-private,
-	.is-everybody,
-	.is-subscribers,
-	.is-paid-subcribers {
+	.is-newsletter-everybody,
+	.is-newsletter-subscribers,
+	.is-newsletter-paid-subcribers {
 		color: var(--color-primary-dark);
 	}
 }
