@@ -29,7 +29,6 @@ const startWriting: Flow = {
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
-			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
 				slug: 'domains',
 				asyncComponent: () => import( './internals/steps-repository/choose-a-domain' ),
@@ -109,9 +108,9 @@ const startWriting: Flow = {
 					return navigate( 'launchpad' );
 				case 'plans':
 					if ( siteSlug ) {
-						await updateLaunchpadSettings( siteSlug, {
-							checklist_statuses: { plan_selected: true },
-						} );
+						// await updateLaunchpadSettings( siteSlug, {
+						// 	checklist_statuses: { plan_selected: true },
+						// } );
 					}
 					if ( providedDependencies?.goToCheckout ) {
 						const planCartItem = getPlanCartItem();

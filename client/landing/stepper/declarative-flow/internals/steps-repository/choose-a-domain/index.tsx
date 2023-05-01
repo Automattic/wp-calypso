@@ -1,9 +1,9 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { ProductsList } from '@automattic/data-stores';
+import { addProductsToCart } from '@automattic/onboarding';
 import { useSelect, useDispatch, dispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArg } from '@wordpress/url';
-import { setDomainCartItem } from 'calypso/../packages/data-stores/src/onboard/actions';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
@@ -15,10 +15,10 @@ import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import type { Step } from '../../types';
 import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
-
 import './style.scss';
 
 const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
+	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const isVideoPressFlow = 'videopress' === flow;
@@ -52,19 +52,35 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		onAddDomain( null );
 	};
 
-	const submitWithDomain = (
+	const submitWithDomain = async (
 		suggestion: DomainSuggestion | undefined,
 		shouldHideFreePlan = false
 	) => {
 		if ( suggestion ) {
+			const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
+
 			const domainCartItem = domainRegistration( {
 				domain: suggestion.domain_name,
 				productSlug: suggestion.product_slug || '',
 			} );
 			// dispatch( submitDomainStepSelection( suggestion, getAnalyticsSection() ) );
 
-			// setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
+			setHideFreePlan( Boolean( suggestion.product_slug ) || shouldHideFreePlan );
 			setDomainCartItem( domainCartItem );
+
+			const {
+				domain_name: domain,
+				product_slug: productSlug,
+				supports_privacy: supportsPrivacy,
+			} = suggestion;
+
+			const registration = domainRegistration( {
+				domain,
+				productSlug,
+				extra: { privacy_available: supportsPrivacy },
+			} );
+
+			addProductsToCart( siteSlug as string, flow as string, [ registration ] );
 		} else {
 			setDomainCartItem( undefined );
 		}
