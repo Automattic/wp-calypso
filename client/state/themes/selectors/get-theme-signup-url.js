@@ -2,6 +2,7 @@ import { doesThemeBundleSoftwareSet } from 'calypso/state/themes/selectors/does-
 import { isExternallyManagedTheme } from 'calypso/state/themes/selectors/is-externally-managed-theme';
 import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 import 'calypso/state/themes/init';
+import { isWpcomTheme } from 'calypso/state/themes/selectors/is-wpcom-theme';
 import { isWporgTheme } from 'calypso/state/themes/selectors/is-wporg-theme';
 
 /**
@@ -57,6 +58,10 @@ function getThemeTypeUrlParameter( state, themeId ) {
 		return 'premium';
 	}
 
+	if ( isWpcomTheme( state, themeId ) && ! isThemePremium( state, themeId ) ) {
+		return 'free';
+	}
+
 	/**
 	 * Is .ORG theme.
 	 */
@@ -64,5 +69,8 @@ function getThemeTypeUrlParameter( state, themeId ) {
 		return 'dot-org';
 	}
 
+	/**
+	 * Unhandled type, fallback to free.
+	 */
 	return 'free';
 }
