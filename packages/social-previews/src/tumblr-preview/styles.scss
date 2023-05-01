@@ -4,7 +4,7 @@
 .tumblr-preview__section {
 	max-width: 100%;
 	width: calc(#{$tumblr-preview-width + $tumblr-preview-avatar-size} + #{$tumblr-preview-card-inline-padding});
-	margin: 0 auto;
+	margin-inline: auto;
 }
 
 .tumblr-preview__post {

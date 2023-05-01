@@ -13,6 +13,7 @@ const TumblrLinkPreview: React.FC< TumblrPreviewProps > = ( {
 	user,
 	url,
 	customText,
+	readOnly,
 } ) => {
 	const avatarUrl = user?.avatarUrl;
 
@@ -20,7 +21,7 @@ const TumblrLinkPreview: React.FC< TumblrPreviewProps > = ( {
 		<div className="tumblr-preview__post">
 			{ avatarUrl && <img className="tumblr-preview__avatar" src={ avatarUrl } alt="" /> }
 			<div className="tumblr-preview__card">
-				<TumblrPostHeader user={ user } />
+				<TumblrPostHeader user={ user } readOnly={ readOnly } />
 				<div className="tumblr-preview__body">
 					<div className="tumblr-preview__title">{ tumblrTitle( title ) }</div>
 					{ customText && <div className="tumblr-preview__custom-text">{ customText }</div> }
@@ -38,7 +39,7 @@ const TumblrLinkPreview: React.FC< TumblrPreviewProps > = ( {
 						{ __( 'View On WordPress', 'tumblr-preview' ) }
 					</a>
 				</div>
-				<TumblrPostActions />
+				<TumblrPostActions readOnly={ readOnly } />
 			</div>
 		</div>
 	);

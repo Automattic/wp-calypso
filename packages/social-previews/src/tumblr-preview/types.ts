@@ -7,4 +7,5 @@ export type TumblrUser = {
 
 export type TumblrPreviewProps = PreviewProps & {
 	user?: TumblrUser;
+	readOnly?: boolean;
 };
