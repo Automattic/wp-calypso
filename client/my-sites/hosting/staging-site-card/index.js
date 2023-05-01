@@ -8,6 +8,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import CardHeading from 'calypso/components/card-heading';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
@@ -174,7 +175,12 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 			<>
 				<p>
 					{ translate(
-						'A staging site is a test version of your website you can use to preview and troubleshoot changes before applying them to your production site.'
+						'A staging site is a test version of your website you can use to preview and troubleshoot changes before applying them to your production site. {{a}}Learn more{{/a}}.',
+						{
+							components: {
+								a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,
+							},
+						}
 					) }
 				</p>
 				<Button
