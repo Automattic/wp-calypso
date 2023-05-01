@@ -2,7 +2,13 @@
 	margin-bottom: 80px;
 
 	.block-editor-writing-flow {
+		// It's a small editor container--add a little space at the top.
 		padding-top: 16px;
+
+		// Hide the inline inserter to encourage use of a simple set of blocks (selected using the footer).
+		.block-editor-inserter {
+			display: none;
+		}
 	}
 
 	.components-menu-items__item-icon {
@@ -20,6 +26,11 @@
 			padding-left: 20px;
 			padding-right: 20px;
 		}
+
+		// Make sure placeholder content is aligned with actual blocks, to prevent layout shift.
+		.block-editor-block-list__layout:first-of-type .block-editor-default-block-appender__content {
+			margin-top: 0;
+		}
 	}
 
 	.has-footer .interface-interface-skeleton__body {
@@ -29,6 +40,7 @@
 	.interface-interface-skeleton__footer {
 		border-top: unset;
 		box-sizing: border-box;
+		// Unset flex layout on parent, to prevent issues with flex layout within child, .edit-post-layout__footer
 		display: block;
 		padding: 8px;
 	}
