@@ -9,6 +9,7 @@ import nock from 'nock';
 import React from 'react';
 import * as redux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
+import { useLaunchpadChecklist } from 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
 import initialReducer from 'calypso/state/reducer';
@@ -32,31 +33,15 @@ jest.mock( '@automattic/data-stores', () => ( {
 } ) );
 
 jest.mock( 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist', () => ( {
-	useLaunchpadChecklist: ( siteSlug, siteIntentOption ) => {
-		let checklist = [
-			{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
-			{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task' },
-		];
-
-		if ( siteIntentOption === 'free' ) {
-			checklist = [
+	useLaunchpadChecklist: jest.fn().mockReturnValue( {
+		data: {
+			checklist: [
 				{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
-				{
-					id: 'domain_upsell',
-					completed: false,
-					disabled: false,
-					title: 'Choose a domain',
-					badge_text: 'Upgrade plan',
-				},
-				{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
-			];
-		}
-
-		return {
-			data: { checklist },
-			isFetchedAfterMount: true,
-		};
-	},
+				{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task' },
+			],
+		},
+		isFetchedAfterMount: true,
+	} ),
 } ) );
 
 const siteName = 'testlinkinbio';
@@ -349,6 +334,23 @@ describe( 'Sidebar', () => {
 					},
 				} );
 
+				( useLaunchpadChecklist as jest.Mock ).mockReturnValueOnce( {
+					data: {
+						checklist: [
+							{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
+							{
+								id: 'domain_upsell',
+								completed: false,
+								disabled: false,
+								title: 'Choose a domain',
+								badge_text: 'Upgrade plan',
+							},
+							{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
+						],
+					},
+					isFetchedAfterMount: true,
+				} );
+
 				const siteDetails = buildSiteDetails( {
 					options: {
 						...defaultSiteDetails.options,
@@ -376,6 +378,23 @@ describe( 'Sidebar', () => {
 					data: {
 						site_intent: 'free',
 					},
+				} );
+
+				( useLaunchpadChecklist as jest.Mock ).mockReturnValueOnce( {
+					data: {
+						checklist: [
+							{ id: 'foo_task', completed: false, disabled: true, title: 'Foo Task' },
+							{
+								id: 'domain_upsell',
+								completed: false,
+								disabled: false,
+								title: 'Choose a domain',
+								badge_text: '',
+							},
+							{ id: 'foo_task_1', completed: true, disabled: true, title: 'Foo Task 1' },
+						],
+					},
+					isFetchedAfterMount: true,
 				} );
 
 				const siteDetails = buildSiteDetails( {
