@@ -102,9 +102,9 @@ const startWriting: Flow = {
 					return navigate( 'launchpad' );
 				case 'plans':
 					if ( siteSlug ) {
-						// await updateLaunchpadSettings( siteSlug, {
-						// 	checklist_statuses: { plan_selected: true },
-						// } );
+						await updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { plan_completed: true },
+						} );
 					}
 					if ( providedDependencies?.goToCheckout ) {
 						const planCartItem = getPlanCartItem();
