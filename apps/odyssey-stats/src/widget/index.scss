@@ -20,7 +20,8 @@ $segmentedControlItemBorderRadius: 4px;
 		height: 36px;
 		min-width: 259px;
 
-		@media only screen and (max-width: $break-dashboard-mobile) {
+		/* stylelint-disable-next-line scss/at-rule-no-unknown */
+		@container (max-width: #{$break-dashboard-mobile}) {
 			width: 100%;
 		}
 
@@ -65,7 +66,8 @@ $segmentedControlItemBorderRadius: 4px;
 	padding: 24px;
 	background: var(--jetpack-white-off);
 
-	@media only screen and (max-width: $break-dashboard-mobile) {
+	/* stylelint-disable-next-line scss/at-rule-no-unknown */
+	@container (max-width: #{$break-dashboard-mobile}) {
 		padding: 24px 16px;
 	}
 
