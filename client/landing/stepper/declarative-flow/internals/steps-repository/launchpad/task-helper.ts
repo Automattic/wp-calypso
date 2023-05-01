@@ -184,6 +184,7 @@ export function getEnhancedTasks(
 					break;
 				case 'first_post_published':
 					taskData = {
+						title: translate( 'Write your first post' ),
 						disabled: mustVerifyEmailBeforePosting || isStartWritingFlow( flow || null ) || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
