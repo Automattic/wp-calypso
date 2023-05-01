@@ -89,11 +89,11 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 	.support-content-resource__title {
 		margin-top: 0;
-		font-family: var(--wp--preset--font-family--system-font) !important;
+		font-family: var(--wp--preset--font-family--system-font);
 	}
 
 	@media (max-width: $breakpoint-mobile) {
-		padding: 40px 24px !important;
+		padding: 12px 24px !important;
 
 		h4 {
 			font-size: 1.25rem;
@@ -111,7 +111,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 			margin-bottom: 0;
 
 			.support-content-cta-left {
-				padding: 16px 48px 16px 0;
+				padding: 0 48px 16px 0;
 			}
 
 			.support-content-cta-right {

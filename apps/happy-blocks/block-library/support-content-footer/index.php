@@ -36,7 +36,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 	</div>
 	<div class="support-content-resources alignwide" style="border-radius:0px; margin-bottom:0px">
 		<div class="support-content-resource">
-			<h4 class="support-content-resource__title has-recoleta-font-family">
+			<h4 class="support-content-resource__title">
 				<?php esc_html_e( 'Upgrade now', 'happy-blocks' ); ?>
 			</h4>
 			<p>
@@ -49,7 +49,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 			</div>
 		</div>
 		<div class="support-content-resource">
-			<h4 class="support-content-resource__title has-recoleta-font-family">
+			<h4 class="support-content-resource__title">
 				<?php esc_html_e( 'Forums', 'happy-blocks' ); ?>
 			</h4>
 			<p>
@@ -62,7 +62,7 @@ $image_dir = 'https://wordpress.com/wp-content/a8c-plugins/happy-blocks/block-li
 			</div>
 		</div>
 		<div class="support-content-resource">
-			<h4 class="support-content-resource__title has-recoleta-font-family">
+			<h4 class="support-content-resource__title">
 				<?php esc_html_e( 'Support Guides', 'happy-blocks' ); ?>
 			</h4>
 			<p>
