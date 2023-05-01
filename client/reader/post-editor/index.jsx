@@ -1,4 +1,4 @@
-import IsoloatedEditor, { ToolbarSlot } from '@automattic/isolated-block-editor';
+import IsoloatedEditor, { FooterSlot } from '@automattic/isolated-block-editor';
 import { serialize } from '@wordpress/blocks';
 import { Button } from '@wordpress/components';
 import { select, useDispatch } from '@wordpress/data';
@@ -37,8 +37,9 @@ function ReaderPostEditor() {
 
 	const editorSettings = {
 		iso: {
-			moreMenu: false,
 			footer: true,
+			header: false,
+			moreMenu: false,
 		},
 		editor: {
 			bodyPlaceholder: translate( "What's on your mind?" ),
@@ -60,7 +61,7 @@ function ReaderPostEditor() {
 		<div className="reader-post-editor">
 			<div className="reader-post-editor__editor">
 				<IsoloatedEditor settings={ editorSettings }>
-					<ToolbarSlot>
+					<FooterSlot>
 						<Button
 							className="reader-post-editor__publish-button"
 							isPrimary
@@ -69,7 +70,7 @@ function ReaderPostEditor() {
 						>
 							{ isLoading ? translate( 'Publishing…' ) : translate( 'Publish' ) }
 						</Button>
-					</ToolbarSlot>
+					</FooterSlot>
 				</IsoloatedEditor>
 			</div>
 		</div>
