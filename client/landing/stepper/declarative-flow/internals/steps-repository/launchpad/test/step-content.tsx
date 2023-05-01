@@ -196,7 +196,7 @@ describe( 'StepContent', () => {
 			expect( choosePlanListItem ).toHaveClass( 'completed' );
 			expect( addSubscribersListItem ).toHaveClass( 'completed' );
 			expect( confirmEmailListItem ).toHaveClass( 'pending' );
-			expect( firstPostListItem ).toHaveClass( 'pending' );
+			expect( firstPostListItem ).toHaveClass( 'completed' );
 		} );
 
 		it( 'renders skip to dashboard link', () => {
