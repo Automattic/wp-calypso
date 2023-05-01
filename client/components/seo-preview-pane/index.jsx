@@ -1,6 +1,6 @@
 import { FEATURE_SEO_PREVIEW_TOOLS } from '@automattic/calypso-products';
 import {
-	FacebookPreview,
+	FacebookFullPreview,
 	TwitterPreview,
 	GoogleSearchPreview,
 	TYPE_WEBSITE,
@@ -128,7 +128,7 @@ const GooglePost = ( site, post, frontPageMetaDescription ) => (
 );
 
 const FacebookSite = ( site, frontPageMetaDescription ) => (
-	<FacebookPreview
+	<FacebookFullPreview
 		title={ site.name }
 		url={ site.URL }
 		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
@@ -138,7 +138,7 @@ const FacebookSite = ( site, frontPageMetaDescription ) => (
 );
 
 const FacebookPost = ( site, post, frontPageMetaDescription ) => (
-	<FacebookPreview
+	<FacebookFullPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
