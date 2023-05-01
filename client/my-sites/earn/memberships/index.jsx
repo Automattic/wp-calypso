@@ -2,9 +2,6 @@ import {
 	FEATURE_PREMIUM_CONTENT_CONTAINER,
 	FEATURE_DONATIONS,
 	FEATURE_RECURRING_PAYMENTS,
-	FEATURE_SIMPLE_PAYMENTS,
-	PLAN_PERSONAL,
-	PLAN_JETPACK_PERSONAL,
 } from '@automattic/calypso-products';
 import { Card, Button, Dialog, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
@@ -15,7 +12,6 @@ import { orderBy } from 'lodash';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import paymentsImage from 'calypso/assets/images/earn/payments-illustration.svg';
-import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QueryMembershipProducts from 'calypso/components/data/query-memberships';
 import QueryMembershipsEarnings from 'calypso/components/data/query-memberships-earnings';
 import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
@@ -670,22 +666,6 @@ class MembershipsSection extends Component {
 	}
 
 	render() {
-		if ( ! this.props.connectedAccountId && ! this.props.hasStripeFeature ) {
-			return this.renderOnboarding(
-				<UpsellNudge
-					plan={ this.props.isJetpack ? PLAN_JETPACK_PERSONAL : PLAN_PERSONAL }
-					shouldDisplay={ () => true }
-					feature={ FEATURE_SIMPLE_PAYMENTS }
-					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
-					description={ this.props.translate( 'Upgrade to enable Payment Blocks.' ) }
-					showIcon={ true }
-					event="calypso_memberships_upsell_nudge"
-					tracksImpressionName="calypso_upgrade_nudge_impression"
-					tracksClickName="calypso_upgrade_nudge_cta_click"
-				/>
-			);
-		}
-
 		if ( ! userCan( 'manage_options', this.props.site ) ) {
 			return this.renderOnboarding(
 				<Notice
