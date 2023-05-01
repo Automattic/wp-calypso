@@ -228,7 +228,7 @@ export default function PluginRowFormatter( {
 				</div>
 			) : null;
 		case 'last-updated':
-			return item?.update && item?.last_updated ? (
+			return selectedSite && item?.sites[ selectedSite.ID ]?.update && item?.last_updated ? (
 				<span className="plugin-row-formatter__last-updated">
 					{ translate( '{{span}}Updated{{/span}} %(ago)s', {
 						components: {
