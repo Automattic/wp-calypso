@@ -2,7 +2,11 @@ import { CountComparisonCard } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import React from 'react';
 
-function SubscribersOverviewCardStats() {
+interface SubscribersOverviewProps {
+	siteID: number;
+}
+
+function SubscribersOverviewCardStats( siteID: number ) {
 	const overviewCardStats = [
 		{
 			heading: translate( 'Today' ),
@@ -24,12 +28,18 @@ function SubscribersOverviewCardStats() {
 			previousCount: 1080,
 		},
 	];
+	// Use siteID to fetch or filter data if needed
 	return overviewCardStats;
 }
 
+<<<<<<< HEAD
 function SubscribersOverviewCards() {
 	const overviewCardStats = SubscribersOverviewCardStats();
 
+=======
+const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteID } ) => {
+	const overviewCardStats = SubscribersOverviewCardStats( siteID );
+>>>>>>> 1b418f8163 (pass siteID to overview)
 	return (
 		<div className="overview-cards-list">
 			{ overviewCardStats.map( ( overviewCardStat ) => (
@@ -52,6 +62,6 @@ function SubscribersOverview() {
 			<SubscribersOverviewCards />
 		</div>
 	);
-}
+};
 
 export default SubscribersOverview;
