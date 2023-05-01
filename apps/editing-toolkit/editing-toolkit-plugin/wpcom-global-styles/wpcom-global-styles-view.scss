@@ -6,7 +6,7 @@
 
 .launch-bar-global-styles-popover {
 	position: absolute;
-	width: 260px;
+	width: 300px;
 	top: 48px;
 	font-size: 14px;
 	left: 50%;
@@ -22,36 +22,49 @@
 	align-items: center;
 	box-sizing: border-box;
 
-	.launch-bar-global-styles-upgrade-button {
+	.launch-bar-global-styles-upgrade,
+	.launch-bar-global-styles-preview {
 		font-size: 14px;
 		margin-top: 16px;
-		background: #007cba;
 		min-height: 36px;
 		box-sizing: border-box;
 		border-radius: 2px;
 		width: 100%;
 		justify-content: center;
 		height: auto;
+	}
+
+	.launch-bar-global-styles-upgrade {
+		background: #007cba;
+		color: #fff;
 
 		&:hover {
 			background: #006ba1;
 		}
 	}
 
-	.launch-bar-global-styles-preview-link {
-		margin: 20px 0 0;
-		padding: 0;
-		min-height: auto;
-		color: #0675c4;
-		font-weight: 500;
-		font-size: 12px;
-		height: auto;
+	.launch-bar-global-styles-preview {
+		border: 1px solid #787c82;
+		color: #3c434a;
 
 		&:hover {
-			background: #fff;
-			color: #044b7a;
+			background: #f6f7f7;
 		}
 	}
+}
+
+.launch-banner-content .launch-bar-global-styles-popover .launch-bar-global-styles-message a {
+	display: inline;
+	color: inherit;
+	padding: 0;
+	font-weight: normal;
+	font-size: inherit;
+	text-decoration: underline !important;
+	background: none;
+}
+
+.launch-bar-global-styles-toggle svg {
+	margin-right: 4px;
 }
 
 @media screen and (max-width: 460px) {

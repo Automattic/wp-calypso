@@ -9,7 +9,7 @@ const useAccentColor = () => {
 	if ( ID ) {
 		wpcom.req
 			.get( {
-				path: `/sites/${ ID }/global-styles-variation/site-accent-color?preview-global-styles=true`,
+				path: `/sites/${ ID }/global-styles-variation/site-accent-color`,
 				apiNamespace: 'wpcom/v2',
 			} )
 			.then( ( color: string ) => {
