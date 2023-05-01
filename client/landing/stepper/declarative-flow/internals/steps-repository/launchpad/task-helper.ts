@@ -455,7 +455,7 @@ export function getArrayOfFilteredTasks(
 	tasks: Task[],
 	flow: string | null,
 	isEmailVerified: boolean,
-	hasGoalPaidSubscribers: boolean | null
+	hasGoalPaidSubscribers: boolean
 ) {
 	let currentFlowTasksIds = flow ? launchpadFlowTasks[ flow ] : null;
 
