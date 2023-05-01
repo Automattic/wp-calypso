@@ -67,6 +67,8 @@ export function getEnhancedTasks(
 		tasks?.find( ( task ) => task.id === 'video_uploaded' )?.completed
 	);
 
+	const domainUpsellCompleted = isDomainUpsellCompleted( site );
+
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
 	const homePageId = site?.options?.page_on_front;
