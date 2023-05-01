@@ -6,7 +6,7 @@
 // Color Schemes
 @import "@automattic/calypso-color-schemes/src/calypso-color-schemes";
 
-$modules-gap :24px;
+@import "./variables.scss";
 
 @mixin stats-widget-single-column-view {
 	.stats-widget-content .segmented-control {
