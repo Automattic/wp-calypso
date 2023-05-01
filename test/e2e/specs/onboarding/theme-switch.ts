@@ -12,13 +12,14 @@ jest.setTimeout( TIMEOUT_1_HOUR );
 
 describe( DataHelper.createSuiteTitle( 'Theme Switch' ), () => {
 	// twentyeleven
-	const FROM = 'hemingway-rewritten';
+	// const FROM = 'hemingway-rewritten';
 	// const FROM = 'appleton';
-	// const FROM = 'pendant';
+	const FROM = 'pendant';
 
 	// const TO = 'hemingway-rewritten';
 	// const TO = 'pendant';
-	const TO = 'appleton';
+	const TO = 'business';
+	// const TO = 'appleton';
 
 	let page: Page;
 	let selectedDomain: string;
@@ -82,15 +83,18 @@ describe( DataHelper.createSuiteTitle( 'Theme Switch' ), () => {
 		} );
 
 		it( 'Switch the theme', async function () {
-			await page.goto( DataHelper.getCalypsoURL( `/themes/${ TO }/${ selectedDomain }` ) );
+			await page.goto( DataHelper.getCalypsoURL( `/theme/${ TO }/${ selectedDomain }` ) );
 			await page.getByText( 'Activate this design' ).click();
 
 			const themeSwitchModal = '.themes__auto-loading-homepage-modal';
-			await page.locator( themeSwitchModal );
-			await page.waitForTimeout( 2 * 1000 );
-			await page.screenshot( { path: `results/from ${ FROM }/to ${ TO }/0-switch-modal.png` } );
+			if ( await page.locator( themeSwitchModal ).isVisible() ) {
+				await page.waitForTimeout( TIMEOUT_1_HOUR );
+				await page.waitForTimeout( 2 * 1000 );
+				await page.screenshot( { path: `results/from ${ FROM }/to ${ TO }/0-switch-modal.png` } );
 
-			await page.locator( `[data-e2e-button="activeTheme"]` ).click();
+				await page.locator( `[data-e2e-button="activeTheme"]` ).click();
+			}
+
 			await page.waitForTimeout( 1 * 1000 );
 			await page.screenshot( { path: `results/from ${ FROM }/to ${ TO }/1-activated.png` } );
 		} );
