@@ -1,5 +1,5 @@
 .reader-post-editor {
-	margin-bottom: 80px;
+	margin-top: 16px;
 
 	.block-editor-writing-flow {
 		// It's a small editor container--add a little space at the top.
@@ -52,6 +52,7 @@
 	}
 
 	.sites-dropdown {
+		margin-bottom: 6px;
 		&.is-open {
 			height: 44px;
 		}

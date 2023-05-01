@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { findLast, times } from 'lodash';
@@ -6,6 +7,7 @@ import { createRef, Component, Fragment } from 'react';
 import * as React from 'react';
 import ReactDom from 'react-dom';
 import { connect } from 'react-redux';
+import AsyncLoad from 'calypso/components/async-load';
 import InfiniteList from 'calypso/components/infinite-list';
 import ListEnd from 'calypso/components/list-end';
 import SectionNav from 'calypso/components/section-nav';
@@ -489,18 +491,22 @@ class ReaderStream extends Component {
 		} else {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			const bodyContent = (
-				<InfiniteList
-					ref={ this.listRef }
-					className="reader__content"
-					items={ items }
-					lastPage={ lastPage }
-					fetchingNextPage={ isRequesting }
-					guessedItemHeight={ GUESSED_POST_HEIGHT }
-					fetchNextPage={ this.fetchNextPage }
-					getItemRef={ this.getPostRef }
-					renderItem={ this.renderPost }
-					renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
-				/>
+				<div className="reader__content">
+					{ config.isEnabled( 'reader/editor' ) && (
+						<AsyncLoad require="calypso/reader/post-editor" />
+					) }
+					<InfiniteList
+						ref={ this.listRef }
+						items={ items }
+						lastPage={ lastPage }
+						fetchingNextPage={ isRequesting }
+						guessedItemHeight={ GUESSED_POST_HEIGHT }
+						fetchNextPage={ this.fetchNextPage }
+						getItemRef={ this.getPostRef }
+						renderItem={ this.renderPost }
+						renderLoadingPlaceholders={ this.renderLoadingPlaceholders }
+					/>
+				</div>
 			);
 
 			const sidebarContent = isTagPage ? (
