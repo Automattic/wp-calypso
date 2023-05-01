@@ -1,5 +1,6 @@
 import { PlanSlug } from '@automattic/calypso-products';
 import { formatCurrency } from '@automattic/format-currency';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -83,14 +84,21 @@ export default function PlanNotice( {
 				status="is-success"
 			>
 				{ translate(
-					'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
-						'Apply those credits towards an upgrade before they expire!',
+					'We’ve applied the {{b}}%(amountInCurrency)s{{/b}} {{a}}upgrade credit{{/a}} from your previous plan as a deduction to your new plan, below. Remember to use it before it expires!',
 					{
 						args: {
 							amountInCurrency: formatCurrency( creditsValue, currencyCode ?? '' ),
 						},
 						components: {
 							b: <strong />,
+							a: (
+								<a
+									href={ localizeUrl(
+										'https://wordpress.com/support/manage-purchases/#pro-rated-credits'
+									) }
+									className="get-apps__desktop-link"
+								/>
+							),
 						},
 					}
 				) }
