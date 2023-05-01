@@ -47,9 +47,10 @@ $offset-padding-hovering: 8px;
 			@media only screen and (max-width: $break-dashboard-mobile) {
 				display: block;
 				width: 100%;
-			}
-			.stats-widget-highlights-card__title {
-				display: none;
+
+				.stats-widget-highlights-card__title {
+					display: none;
+				}
 			}
 		}
 	}
