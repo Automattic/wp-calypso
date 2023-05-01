@@ -2,6 +2,8 @@
 @import "@wordpress/base-styles/mixins";
 
 .wpcom-block-editor-post-published-sharing-modal {
+	border-radius: 4px;
+
 	.components-modal__content {
 		margin-top: 0;
 		padding-bottom: 0;
@@ -9,11 +11,11 @@
 			display: flex;
 			.wpcom-block-editor-post-published-sharing-modal__left {
 				width: 50%;
-				padding: 52px 40px 52px 52px;
+				padding: 52px 40px 52px 20px;
 			}
 			.wpcom-block-editor-post-published-sharing-modal__right {
 				width: 50%;
-				padding: 52px 52px 52px 40px;
+				padding: 52px 20px 52px 40px;
 				border-left: 1px solid var(--studio-gray-5);
 				display: flex;
 				justify-content: center;
@@ -54,6 +56,11 @@
 	}
 }
 
+.wpcom-block-editor-post-published-buttons .link-button {
+	gap: 4px;
+	padding-left: 0;
+}
+
 .wpcom-block-editor-post-published-sharing-modal__sharing-button {
 	display: inline-block;
 	position: relative;
@@ -88,3 +95,6 @@
 
 @include sharing-button-service( "facebook", var( --color-facebook ) );
 @include sharing-button-service( "twitter", var( --color-twitter ) );
+@include sharing-button-service( "linkedin", var( --color-linkedin ) );
+@include sharing-button-service( "tumblr", var( --color-tumblr ) );
+@include sharing-button-service( "pinterest", var( --color-pinterest ) );

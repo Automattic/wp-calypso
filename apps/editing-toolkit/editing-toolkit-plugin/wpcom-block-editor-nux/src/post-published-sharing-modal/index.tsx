@@ -73,6 +73,43 @@ const PostPublishedSharingModal: React.FC = () => {
 
 		window.open( facebookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
 	};
+	const shareLinkedin = () => {
+		const baseUrl = new URL( 'https://www.linkedin.com/shareArticle' );
+		const params = new URLSearchParams( {
+			title,
+			url: link,
+		} );
+		baseUrl.search = params.toString();
+
+		const linkedinUrl = baseUrl.href;
+
+		window.open( linkedinUrl, 'linkedin', 'width=626,height=436,resizeable,scrollbars' );
+	};
+	const shareTumblr = () => {
+		const baseUrl = new URL( 'https://www.tumblr.com/widgets/share/tool' );
+		const params = new URLSearchParams( {
+			canonicalUrl: link,
+			title: title,
+		} );
+		baseUrl.search = params.toString();
+
+		const tumblrUrl = baseUrl.href;
+
+		window.open( tumblrUrl, 'tumblr', 'width=626,height=436,resizeable,scrollbars' );
+	};
+	const sharePinterest = () => {
+		const baseUrl = new URL( 'https://pinterest.com/pin/create/button/' );
+		const params = new URLSearchParams( {
+			url: link,
+			media: postPublishedImage,
+			description: title,
+		} );
+		baseUrl.search = params.toString();
+
+		const pinterestUrl = baseUrl.href;
+
+		window.open( pinterestUrl, 'pinterest', 'width=626,height=436,resizeable,scrollbars' );
+	};
 
 	useEffect( () => {
 		fetchShouldShowFirstPostPublishedModal();
@@ -116,17 +153,19 @@ const PostPublishedSharingModal: React.FC = () => {
 					<h1> { __( 'Congratulations!', 'full-site-editing' ) } </h1>
 					<p>
 						{ __(
-							'Your post is now live and was delivered successfully to subscribed readers',
+							'Your post is now live and was delivered successfully to all subscribers.',
 							'full-site-editing'
 						) }
 					</p>
-					<Button onClick={ handleViewPostClick } className="link-button">
-						{ ' ' }
-						<Icon icon={ globe } /> { __( 'View Post', 'full-site-editing' ) }
-					</Button>
-					<ClipboardButton text={ link } className="components-button link-button">
-						<Icon icon={ linkIcon } /> { __( 'Copy Link', 'full-site-editing' ) }
-					</ClipboardButton>
+					<div className="wpcom-block-editor-post-published-buttons">
+						<Button onClick={ handleViewPostClick } className="link-button">
+							{ ' ' }
+							<Icon icon={ globe } /> { __( 'View Post', 'full-site-editing' ) }
+						</Button>
+						<ClipboardButton text={ link } className="components-button link-button">
+							<Icon icon={ linkIcon } /> { __( 'Copy Link', 'full-site-editing' ) }
+						</ClipboardButton>
+					</div>
 					<hr />
 					<h2>{ __( 'Share with:', 'full-site-editing' ) }</h2>
 					<Button
@@ -145,7 +184,34 @@ const PostPublishedSharingModal: React.FC = () => {
 						) }
 						onClick={ shareTwitter }
 					>
-						<SocialLogo icon="twitter" size={ 18 } />
+						<SocialLogo icon="twitter-alt" size={ 18 } />
+					</Button>
+					<Button
+						className={ classnames(
+							'wpcom-block-editor-post-published-sharing-modal__sharing-button',
+							'share-linkedin'
+						) }
+						onClick={ shareLinkedin }
+					>
+						<SocialLogo icon="linkedin" size={ 18 } />
+					</Button>
+					<Button
+						className={ classnames(
+							'wpcom-block-editor-post-published-sharing-modal__sharing-button',
+							'share-tumblr'
+						) }
+						onClick={ shareTumblr }
+					>
+						<SocialLogo icon="tumblr-alt" size={ 18 } />
+					</Button>
+					<Button
+						className={ classnames(
+							'wpcom-block-editor-post-published-sharing-modal__sharing-button',
+							'share-pinterest'
+						) }
+						onClick={ sharePinterest }
+					>
+						<SocialLogo icon="pinterest-alt" size={ 18 } />
 					</Button>
 				</div>
 				<div className="wpcom-block-editor-post-published-sharing-modal__right">
