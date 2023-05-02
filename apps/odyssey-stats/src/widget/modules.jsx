@@ -61,7 +61,7 @@ function ModuleCard( {
 									Install
 								</button>
 							) }
-							{ ! [ 'not_active', 'not_installed' ].includes( error ) && (
+							{ error !== 'not_active' && error !== 'not_installed' && (
 								<p>{ translate( 'An error occurred.' ) }</p>
 							) }
 						</div>
