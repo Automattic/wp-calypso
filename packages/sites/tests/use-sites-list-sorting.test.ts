@@ -10,6 +10,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 1,
 			title: 'B',
+			slug: 'b.wordpress.com',
 			options: {
 				updated_at: '2022-05-27T07:19:20+00:00',
 			},
@@ -18,6 +19,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 2,
 			title: 'A',
+			slug: 'a.wordpress.com',
 			options: {
 				updated_at: '2022-07-13T17:17:12+00:00',
 			},
@@ -26,6 +28,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 3,
 			title: 'C',
+			slug: 'c.wordpress.com',
 			options: {
 				updated_at: '2022-06-14T13:32:34+00:00',
 			},
@@ -35,6 +38,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 1,
 			title: 'B',
+			slug: 'b.wordpress.com',
 			options: {
 				updated_at: '2022-05-27T07:19:20+00:00',
 			},
@@ -43,6 +47,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 2,
 			title: 'A',
+			slug: 'a.wordpress.com',
 			options: {
 				updated_at: '2022-07-13T17:17:12+00:00',
 			},
@@ -51,6 +56,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 3,
 			title: 'C',
+			slug: 'c.wordpress.com',
 			options: {
 				updated_at: '2022-06-14T13:32:34+00:00',
 			},
@@ -62,6 +68,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 1,
 			title: 'B',
+			slug: 'b.wordpress.com',
 			options: {
 				updated_at: '2022-05-27T07:19:20+00:00',
 			},
@@ -70,6 +77,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 2,
 			title: 'A',
+			slug: 'a.wordpress.com',
 			options: {
 				updated_at: '2022-07-13T17:17:12+00:00',
 				wpcom_staging_blog_ids: [ 3 ],
@@ -79,6 +87,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 3,
 			title: 'C',
+			slug: 'c.wordpress.com',
 			is_wpcom_staging_site: true,
 			options: {
 				updated_at: '2022-06-14T13:32:34+00:00',
@@ -89,6 +98,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 4,
 			title: 'E',
+			slug: 'e.wordpress.com',
 			options: {
 				updated_at: '2022-06-14T13:32:34+00:00',
 			},
@@ -100,6 +110,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 1,
 			title: 'B',
+			slug: 'b.wordpress.com',
 			options: {
 				updated_at: '2022-05-27T07:19:20+00:00',
 			},
@@ -108,6 +119,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 2,
 			title: 'A',
+			slug: 'a.wordpress.com',
 			options: {
 				updated_at: '2022-07-13T17:17:12+00:00',
 				wpcom_staging_blog_ids: [ 3 ],
@@ -117,6 +129,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 3,
 			title: 'C',
+			slug: 'c.wordpress.com',
 			is_wpcom_staging_site: true,
 			options: {
 				updated_at: '2022-06-14T13:32:34+00:00',
@@ -127,6 +140,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 4,
 			title: 'E',
+			slug: 'e.wordpress.com',
 			options: {
 				updated_at: '2022-06-14T13:32:34+00:00',
 			},
@@ -135,6 +149,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 5,
 			title: 'F',
+			slug: 'f.wordpress.com',
 			is_wpcom_staging_site: true,
 			options: {
 				wpcom_production_blog_id: 10,
@@ -148,6 +163,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 1,
 			title: 'B',
+			slug: 'b.wordpress.com',
 			options: {
 				updated_at: '2022-05-27T07:19:20+00:00',
 			},
@@ -156,6 +172,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 2,
 			title: 'A',
+			slug: 'a.wordpress.com',
 			options: {
 				updated_at: '2022-07-13T17:17:12+00:00',
 				wpcom_staging_blog_ids: [ 3, 11, 5 ],
@@ -165,6 +182,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 3,
 			title: 'C',
+			slug: 'c.wordpress.com',
 			is_wpcom_staging_site: true,
 			options: {
 				updated_at: '2022-06-14T13:32:34+00:00',
@@ -175,6 +193,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 4,
 			title: 'E',
+			slug: 'e.wordpress.com',
 			options: {
 				updated_at: '2022-06-14T13:32:34+00:00',
 			},
@@ -183,6 +202,7 @@ describe( 'useSitesSorting', () => {
 		{
 			ID: 5,
 			title: 'F',
+			slug: 'f.wordpress.com',
 			is_wpcom_staging_site: true,
 			options: {
 				updated_at: '2022-06-14T13:32:34+00:00',
@@ -333,6 +353,36 @@ describe( 'useSitesSorting', () => {
 		expect( result.current[ 0 ].title ).toBe( 'C' );
 		expect( result.current[ 1 ].title ).toBe( 'B' );
 		expect( result.current[ 2 ].title ).toBe( 'A' );
+	} );
+
+	test( 'should sort new site to top descending', () => {
+		const { result } = renderHook( () =>
+			useSitesListSorting( filteredSites, {
+				sortKey: 'lastInteractedWith',
+				sortOrder: 'desc',
+				newSiteSlug: 'c.wordpress.com',
+			} )
+		);
+
+		expect( result.current.length ).toBe( 3 );
+		expect( result.current[ 0 ].title ).toBe( 'C' );
+		expect( result.current[ 1 ].title ).toBe( 'A' );
+		expect( result.current[ 2 ].title ).toBe( 'B' );
+	} );
+
+	test( 'should sort new site to bottom ascending', () => {
+		const { result } = renderHook( () =>
+			useSitesListSorting( filteredSites, {
+				sortKey: 'lastInteractedWith',
+				sortOrder: 'asc',
+				newSiteSlug: 'c.wordpress.com',
+			} )
+		);
+
+		expect( result.current.length ).toBe( 3 );
+		expect( result.current[ 0 ].title ).toBe( 'B' );
+		expect( result.current[ 1 ].title ).toBe( 'A' );
+		expect( result.current[ 2 ].title ).toBe( 'C' );
 	} );
 
 	test( 'should sort sites by updatedAt descending', () => {
