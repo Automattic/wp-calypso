@@ -22,7 +22,7 @@ function ModuleCard( {
 } ) {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( false );
-	const activateAskismet = () => {
+	const onActivateProduct = () => {
 		setDisabled( true );
 		activateProduct().catch( () => setDisabled( false ) );
 	};
@@ -47,7 +47,7 @@ function ModuleCard( {
 								<button
 									className="jetpack-emerald-button"
 									disabled={ disabled }
-									onClick={ activateAskismet }
+									onClick={ onActivateProduct }
 								>
 									Activate
 								</button>
@@ -56,7 +56,7 @@ function ModuleCard( {
 								<button
 									className="jetpack-emerald-button is-secondary-jetpack-emerald"
 									disabled={ disabled }
-									onClick={ activateAskismet }
+									onClick={ onActivateProduct }
 								>
 									Install
 								</button>
