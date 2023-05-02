@@ -402,6 +402,7 @@ export function getEnhancedTasks(
 										flowToReturnTo: flow,
 										new: site?.name,
 										domainAndPlanPackage: true,
+										[ START_WRITING_FLOW ]: true,
 									} )
 								);
 
