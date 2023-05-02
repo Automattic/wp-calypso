@@ -20,29 +20,31 @@ main.annual-plan-upgrade-upsell.main {
 	&__header {
 		grid-area: header;
 		@extend .wp-brand-font;
-		font-size: $font-title-large;
 		font-weight: 400;
 		line-height: 40px;
 		color: var(--studio-blue-90);
-		margin-bottom: 24px;
+		font-size: $font-title-small;
+		margin-bottom: 0;
 
-		@include breakpoint-deprecated( "<960px" ) {
-			font-size: $font-title-small;
-			margin-bottom: 0;
+		@include break-large {
+			font-size: $font-title-large;
+			margin-bottom: 24px;
 		}
 	}
 
 	&__header-title {
 		@extend .wp-brand-font;
-		font-size: 2.75rem;
+		font-size: $font-headline-small;
 		line-height: 1.1;
 		font-weight: 400;
 		color: var(--studio-blue-90);
+		text-align: left;
+		padding: 0 0 20px;
 
-		@include breakpoint-deprecated( "<960px" ) {
-			font-size: $font-headline-small;
-			text-align: left;
-			padding: 0 0 20px;
+		@include break-large {
+			text-align: none;
+			font-size: 2.75rem;
+			padding-bottom: 0;
 		}
 	}
 
@@ -51,12 +53,13 @@ main.annual-plan-upgrade-upsell.main {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		@include breakpoint-deprecated( "<960px" ) {
-			padding: 20px 0;
+		padding: 20px 0;
+		@include break-large {
+			padding-top: 0;
 		}
 
 		img {
-			@include breakpoint-deprecated( ">660px" ) {
+			@include break-large {
 				margin: 0 0 0 30px;
 			}
 		}
@@ -76,39 +79,42 @@ main.annual-plan-upgrade-upsell.main {
 		max-width: 1034px;
 		margin: 0 auto;
 		display: grid;
-		grid-template-columns: fit-content(500px) auto;
+		grid-auto-rows: auto;
+		grid-template-columns: auto;
 		grid-template-areas:
-			"header images"
-			"body images"
-			"buttons images";
-		@include breakpoint-deprecated( "<960px" ) {
-			grid-auto-rows: auto;
-			grid-template-columns: auto;
+			"header"
+			"body"
+			"buttons"
+			"images";
+		@include break-large {
+			grid-template-columns: fit-content(500px) auto;
 			grid-template-areas:
-				"header"
-				"body"
-				"buttons"
-				"images";
+				"header images"
+				"body images"
+				"buttons images";
 		}
 	}
 
 	&__footer &__decline-offer-button {
 		color: var(--color-primary);
+		width: 100%;
+		margin-bottom: 20px;
 
-		@include breakpoint-deprecated( "<480px" ) {
-			width: 100%;
-			margin-bottom: 20px;
-		}
-
-		@include breakpoint-deprecated( ">480px" ) {
+		@include break-mobile {
+			width: auto;
+			margin-bottom: 0;
 			margin-left: 20px;
 		}
+
 	}
 
 	&__footer &__accept-offer-button {
-		@include breakpoint-deprecated( "<480px" ) {
-			width: 100%;
-			margin-bottom: 10px;
+		width: 100%;
+		margin-bottom: 10px;
+
+		@include break-mobile {
+			width: auto;
+			margin-bottom: 0;
 		}
 	}
 }
