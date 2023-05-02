@@ -35,7 +35,6 @@
 		"@automattic/components": "workspace:^",
 		"@tanstack/react-query": "4.29.1",
 		"@wordpress/data": "^7.6.0",
-		"@wordpress/icons": "^9.22.0",
 		"calypso": "workspace:^",
 		"classnames": "^2.3.1",
 		"debug": "^4.3.4",

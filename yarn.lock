@@ -1141,7 +1141,6 @@ __metadata:
     "@tanstack/react-query": 4.29.1
     "@wordpress/data": ^7.6.0
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
-    "@wordpress/icons": ^9.22.0
     "@wordpress/scripts": ^24.6.0
     autoprefixer: ^10.2.5
     babel-jest: ^27.5
