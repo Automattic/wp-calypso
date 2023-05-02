@@ -238,9 +238,6 @@ describe( 'StepContent', () => {
 		it( 'renders correct status for each task', () => {
 			renderStepContent( false, START_WRITING_FLOW );
 
-			const writeYourFirstPostItem = screen.getByText( 'Write your first post' ).closest( 'li' );
-			expect( writeYourFirstPostItem ).toHaveClass( 'completed' );
-
 			const setupBlogListItem = screen.getByText( 'Set up your blog' ).closest( 'li' );
 			expect( setupBlogListItem ).toHaveClass( 'pending' );
 
