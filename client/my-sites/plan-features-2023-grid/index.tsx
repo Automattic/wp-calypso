@@ -51,8 +51,8 @@ import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { usePlanUpgradeCreditsDisplay } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-plan-upgrade-credits-display';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
-import { usePlanUpgradeCreditsDisplay } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-display';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import {

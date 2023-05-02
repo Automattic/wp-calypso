@@ -7,8 +7,8 @@ import {
 	PLAN_FREE,
 	PlanSlug,
 } from '@automattic/calypso-products';
-import { usePlanUpgradeCredits } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits';
-import { usePlanUpgradeCreditsDisplay } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-display';
+import { usePlanUpgradeCredits } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-plan-upgrade-credits';
+import { usePlanUpgradeCreditsDisplay } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-plan-upgrade-credits-display';
 import isAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
@@ -21,7 +21,7 @@ jest.mock( 'calypso/state/sites/selectors', () => ( {
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getSitePlanSlug: jest.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits', () => ( {
+jest.mock( 'calypso/my-sites/plan-features-2023-grid/hooks/use-plan-upgrade-credits', () => ( {
 	usePlanUpgradeCredits: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {

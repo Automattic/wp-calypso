@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
 import { getDiscountByName } from 'calypso/lib/discounts';
-import { usePlanUpgradeCreditsDisplay } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-display';
+import { usePlanUpgradeCreditsDisplay } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-plan-upgrade-credits-display';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';

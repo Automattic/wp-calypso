@@ -896,7 +896,7 @@ export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
 
 /**
  * @deprecated Use the {@link usePlanUpgradeCredits} hook instead, to be cleaned up with Plan
- * @module calypso/my-sites/plans-features-main/hooks/usePlanUpgradeCredits
+ * @module calypso/my-sites/plan-features-2023-grid/hooks/usePlanUpgradeCredits
  */
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 	planProperties

@@ -12,8 +12,8 @@ import { screen } from '@testing-library/react';
 import React from 'react';
 import { useMarketingMessage } from 'calypso/components/marketing-message/use-marketing-message';
 import { getDiscountByName } from 'calypso/lib/discounts';
+import { usePlanUpgradeCreditsDisplay } from 'calypso/my-sites/plan-features-2023-grid/hooks/use-plan-upgrade-credits-display';
 import PlanNotice from 'calypso/my-sites/plans-features-main/components/plan-notice';
-import { usePlanUpgradeCreditsDisplay } from 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-display';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { isCurrentPlanPaid } from 'calypso/state/sites/selectors';
@@ -31,9 +31,12 @@ jest.mock( 'calypso/components/marketing-message/use-marketing-message', () => (
 jest.mock( 'calypso/lib/discounts', () => ( {
 	getDiscountByName: jest.fn(),
 } ) );
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plan-upgrade-credits-display', () => ( {
-	usePlanUpgradeCreditsDisplay: jest.fn(),
-} ) );
+jest.mock(
+	'calypso/my-sites/plan-features-2023-grid/hooks/use-plan-upgrade-credits-display',
+	() => ( {
+		usePlanUpgradeCreditsDisplay: jest.fn(),
+	} )
+);
 jest.mock( 'calypso/state/currency-code/selectors', () => ( {
 	getCurrentUserCurrencyCode: jest.fn(),
 } ) );
