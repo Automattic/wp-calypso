@@ -126,10 +126,15 @@ const videopress: Flow = {
 		};
 
 		const addVideoPressPendingAction = () => {
+			// if the supported plans haven't been received yet, wait for next rerender to try again.
+			if ( 0 === supportedPlans.length ) {
+				return;
+			}
 			// only allow one call to this action to occur
 			if ( isSiteCreationPending ) {
 				return;
 			}
+
 			setIsSiteCreationPending( true );
 
 			setPendingAction( async () => {
