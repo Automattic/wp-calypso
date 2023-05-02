@@ -42,7 +42,8 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	planName: string;
 	domainName: string;
 	hideUnavailableFeatures: boolean;
-} > = ( { features, planName, domainName, hideUnavailableFeatures } ) => {
+	selectedFeature?: string;
+} > = ( { features, planName, domainName, hideUnavailableFeatures, selectedFeature } ) => {
 	const translate = useTranslate();
 	return (
 		<>
@@ -68,6 +69,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 						currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN
 							? true
 							: ! currentFeature.availableForCurrentPlan,
+					'is-highlighted': currentFeature.getSlug() === selectedFeature,
 				} );
 
 				return (

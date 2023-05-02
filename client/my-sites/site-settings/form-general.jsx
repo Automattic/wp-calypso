@@ -4,7 +4,7 @@ import {
 	PLAN_PREMIUM,
 	WPCOM_FEATURES_NO_WPCOM_BRANDING,
 	WPCOM_FEATURES_SITE_PREVIEW_LINKS,
-	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
+	FEATURE_STYLE_CUSTOMIZATION,
 	PLAN_ECOMMERCE_MONTHLY,
 } from '@automattic/calypso-products';
 import { WPCOM_FEATURES_SUBSCRIPTION_GIFTING } from '@automattic/calypso-products/src';
@@ -858,7 +858,7 @@ export class SiteSettingsFormGeneral extends Component {
 
 	advancedCustomizationNotice() {
 		const { translate, selectedSite, siteSlug } = this.props;
-		const upgradeUrl = `/plans/${ siteSlug }?plan=${ PLAN_PREMIUM }&feature=${ FEATURE_ADVANCED_DESIGN_CUSTOMIZATION }`;
+		const upgradeUrl = `/plans/${ siteSlug }?plan=${ PLAN_PREMIUM }&feature=${ FEATURE_STYLE_CUSTOMIZATION }`;
 
 		return (
 			<>
