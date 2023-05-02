@@ -1,5 +1,5 @@
 import { Gridicon, CircularProgressBar } from '@automattic/components';
-import { Onboard, OnboardSelect, useLaunchpad } from '@automattic/data-stores';
+import { OnboardSelect, useLaunchpad } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
 import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
@@ -68,12 +68,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 
 	const { title, launchTitle, subtitle } = getLaunchpadTranslations( flow );
 
-	const hasGoalPaidSubscribers = useSelect(
-		( select ) =>
-			( select( ONBOARD_STORE ) as OnboardSelect ).hasGoal( Onboard.SiteGoal.PaidSubscribers ),
-		[]
-	);
-
 	const { getPlanCartItem } = useSelect(
 		( select ) => ( {
 			getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
@@ -84,8 +78,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const startWritingFlowTasks: Task[] | null = getArrayOfFilteredTasks(
 		tasks,
 		flow,
-		isEmailVerified,
-		hasGoalPaidSubscribers
+		isEmailVerified
 	);
 
 	const enhancedTasks: Task[] | null =

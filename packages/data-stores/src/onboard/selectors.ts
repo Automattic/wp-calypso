@@ -1,6 +1,4 @@
-import { SiteGoal } from './constants';
 import type { State } from './reducer';
-
 export const getAnchorPodcastId = ( state: State ) => state.anchorPodcastId;
 export const getAnchorEpisodeId = ( state: State ) => state.anchorEpisodeId;
 export const getAnchorSpotifyUrl = ( state: State ) => state.anchorSpotifyUrl;
@@ -47,10 +45,6 @@ export const hasPaidDomain = ( state: State ): boolean => {
 export const hasSiteTitle = ( state: State ) => state.siteTitle.trim().length > 1; // for valid domain results, we need at least 2 characters
 
 // Selectors dependent on other selectors (cannot be put in alphabetical order)
-
-export const hasGoal = ( state: State, goal: SiteGoal ): boolean => {
-	return state.goals?.includes( goal ) ?? false;
-};
 export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
 
 export const hasSelectedDesignWithoutFonts = ( state: State ) =>

@@ -213,17 +213,6 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
-				case 'setup_paid_subscribers':
-					taskData = {
-						title: translate( 'Setup Paid Subscribers' ),
-						completed: false, //todo add completed logic
-						disabled: false,
-						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.completed, task.id );
-							window.location.assign( `/earn/${ siteSlug }` );
-						},
-					};
-					break;
 				case 'first_post_published_newsletter':
 					taskData = {
 						title: translate( 'Start writing' ),
@@ -454,19 +443,12 @@ function recordTaskClickTracksEvent(
 export function getArrayOfFilteredTasks(
 	tasks: Task[],
 	flow: string | null,
-	isEmailVerified: boolean,
-	hasGoalPaidSubscribers: boolean
+	isEmailVerified: boolean
 ) {
 	let currentFlowTasksIds = flow ? launchpadFlowTasks[ flow ] : null;
 
 	if ( isEmailVerified && currentFlowTasksIds ) {
 		currentFlowTasksIds = currentFlowTasksIds.filter( ( task ) => task !== 'verify_email' );
-	}
-
-	if ( ! hasGoalPaidSubscribers && currentFlowTasksIds ) {
-		currentFlowTasksIds = currentFlowTasksIds.filter(
-			( task ) => task !== 'setup_paid_subscribers'
-		);
 	}
 
 	return (

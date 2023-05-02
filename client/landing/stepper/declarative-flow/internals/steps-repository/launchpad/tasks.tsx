@@ -10,11 +10,6 @@ export const tasks: Task[] = [
 		disabled: false,
 	},
 	{
-		id: 'setup_paid_subscribers',
-		completed: false,
-		disabled: false,
-	},
-	{
 		id: 'plan_selected',
 		completed: true,
 		disabled: false,
@@ -125,7 +120,6 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 		'plan_selected',
 		'subscribers_added',
 		'verify_email',
-		'setup_paid_subscribers',
 		'first_post_published_newsletter',
 	],
 	[ LINK_IN_BIO_FLOW ]: linkInBioTaskList,
