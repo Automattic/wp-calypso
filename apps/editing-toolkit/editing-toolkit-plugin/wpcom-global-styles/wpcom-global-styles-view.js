@@ -27,6 +27,12 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	const upgradeButton = container.querySelector( '.launch-bar-global-styles-upgrade' );
 	const previewButton = container.querySelector( '.launch-bar-global-styles-preview' );
 
+	if ( ! popover?.classList.contains( 'hidden' ) ) {
+		recordEvent( 'wpcom_global_styles_gating_notice', {
+			action: 'show',
+		} );
+	}
+
 	popoverToggle?.addEventListener( 'click', ( event ) => {
 		event.preventDefault();
 		recordEvent( 'wpcom_global_styles_gating_notice', {
