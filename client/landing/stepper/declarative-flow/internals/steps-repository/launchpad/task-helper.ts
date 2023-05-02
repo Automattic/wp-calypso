@@ -493,10 +493,10 @@ export function getArrayOfFilteredTasks(
  * @returns {boolean} - True if the final task for the given site checklist is completed
  */
 export function areLaunchpadTasksCompleted(
-	checklist: LaunchpadChecklist,
+	checklist: LaunchpadChecklist | null | undefined,
 	isSiteLaunched: boolean
 ) {
-	if ( ! Array.isArray( checklist ) ) {
+	if ( ! checklist || ! Array.isArray( checklist ) ) {
 		return false;
 	}
 
