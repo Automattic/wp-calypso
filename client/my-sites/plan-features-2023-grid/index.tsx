@@ -162,10 +162,23 @@ const PlanLogo: React.FunctionComponent< {
 	flowName: string;
 	isMobile?: boolean;
 	isInSignup: boolean;
-} > = ( { planPropertiesObj, planProperties, planIndex, isMobile, isInSignup, flowName } ) => {
+	currentSitePlanSlug?: string;
+} > = ( {
+	planPropertiesObj,
+	planProperties,
+	planIndex,
+	isMobile,
+	isInSignup,
+	flowName,
+	currentSitePlanSlug,
+} ) => {
 	const { planName, current } = planProperties;
 	const translate = useTranslate();
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( planPropertiesObj, flowName );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix(
+		planPropertiesObj,
+		flowName,
+		currentSitePlanSlug
+	);
 	const highlightLabel = useHighlightLabel( planName, flowName );
 	const headerClasses = classNames(
 		'plan-features-2023-grid__header-logo',
@@ -537,7 +550,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderPlanLogos( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
-		const { isInSignup, flowName } = this.props;
+		const { isInSignup, flowName, currentSitePlanSlug } = this.props;
 
 		return planPropertiesObj
 			.filter( ( { isVisible } ) => isVisible )
@@ -551,6 +564,7 @@ export class PlanFeatures2023Grid extends Component<
 						isMobile={ options?.isMobile }
 						isInSignup={ isInSignup }
 						flowName={ flowName }
+						currentSitePlanSlug={ currentSitePlanSlug }
 					/>
 				);
 			} );
