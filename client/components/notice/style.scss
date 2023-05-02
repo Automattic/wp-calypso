@@ -345,6 +345,11 @@ a.notice__action {
 			color: var(--studio-red-40);
 		}
 	}
+	&.is-plain {
+		.notice__icon-wrapper {
+			color: inherit;
+		}
+	}
 
 	// "X" for dismissing a notice
 	.notice__dismiss {
