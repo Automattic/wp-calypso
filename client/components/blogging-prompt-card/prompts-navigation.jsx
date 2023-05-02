@@ -126,9 +126,12 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 			</div>
 		);
 
+		const link = new URL( prompt.answered_link );
+		const relativeLink = link.toString().substring( link.origin.length );
+
 		const viewAllResponses = (
 			<a
-				href={ prompt.answered_link }
+				href={ relativeLink }
 				className="blogging-prompt__prompt-responses-link"
 				onClick={ trackClickViewAllResponses }
 			>
