@@ -17,4 +17,6 @@ export { default as isECommerceTrialExpired } from './is-ecommerce-trial-expired
 export { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors/is-requesting-site-plans';
 export { isSitePlanDiscounted } from 'calypso/state/sites/plans/selectors/is-site-plan-discounted';
 export { default as isSiteOnECommerceTrial } from 'calypso/state/sites/plans/selectors/is-site-on-ecommerce-trial';
+export { default as isSiteOnWooExpress } from 'calypso/state/sites/plans/selectors/is-site-on-woo-express';
+export { default as isSiteOnEcommerce } from 'calypso/state/sites/plans/selectors/is-site-on-ecommerce';
 export { isIntroductoryOfferAppliedToPlanPrice } from 'calypso/state/sites/plans/selectors/is-introductory-offer-applied-to-plan-price';
