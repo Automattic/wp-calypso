@@ -49,6 +49,7 @@ export default function PlanNotice( {
 				showDismiss={ true }
 				onDismissClick={ handleDismissNotice }
 				status="is-info"
+				isReskinned={ true }
 			>
 				{ translate(
 					'This plan was purchased by a different WordPress.com account. To manage this plan, log in to that account or contact the account owner.'
@@ -63,6 +64,7 @@ export default function PlanNotice( {
 				onDismissClick={ handleDismissNotice }
 				icon="info-outline"
 				status="is-success"
+				isReskinned={ true }
 			>
 				{ activeDiscount?.plansPageNoticeTextTitle && (
 					<strong>
@@ -81,6 +83,7 @@ export default function PlanNotice( {
 				onDismissClick={ handleDismissNotice }
 				icon="info-outline"
 				status="is-success"
+				isReskinned={ true }
 			>
 				{ translate(
 					'You have {{b}}%(amountInCurrency)s{{/b}} of pro-rated credits available from your current plan. ' +
