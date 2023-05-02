@@ -64,7 +64,7 @@ function ModuleCard( {
 							) }
 							{ error === 'invalid_key' && (
 								<a href={ manageUrl } target="_self">
-									Manage Akismet Key
+									Manage Akismet key
 								</a>
 							) }
 							{ ! [ 'not_active', 'not_installed', 'invalid_key' ].includes( error ) && (
