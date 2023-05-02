@@ -45,11 +45,13 @@ describe( DataHelper.createSuiteTitle( 'My Home: Domain upsell' ), function () {
 	} );
 
 	it( 'Get available domain', async function () {
-		selectedDomain = await myHomePage.suggestedDomainName();
+		const suggestedDomain = await myHomePage.suggestedDomainName();
+		expect( suggestedDomain ).toBeTruthy();
+		selectedDomain = suggestedDomain ?? '';
 	} );
 
 	it( 'Buy suggested domain', async function () {
-		await myHomePage.clickBuySuggestedDomain( 'Buy this domain' );
+		await myHomePage.clickBuySuggestedDomain( 'Get this domain' );
 	} );
 
 	it( 'View available plans', async function () {
