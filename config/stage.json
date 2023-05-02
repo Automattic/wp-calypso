@@ -44,6 +44,7 @@
 		"happychat": true,
 		"help": true,
 		"i18n/empathy-mode": true,
+		"importer/unified": true,
 		"inline-help": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/api-cache": true,

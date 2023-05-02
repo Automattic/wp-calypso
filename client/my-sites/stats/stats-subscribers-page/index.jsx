@@ -15,6 +15,7 @@ import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
 import StatsPageHeader from '../stats-page-header';
 import Reach from '../stats-reach';
+import SubscribersOverview from '../stats-subscribers-overview';
 import SubscribersSection from '../subscribers-section';
 import SubscribersHighlightSection from './subscribers-highlight-section';
 
@@ -62,6 +63,7 @@ const StatsSubscribersPage = ( { period } ) => {
 					/>
 				) }
 				<SubscribersSection siteId={ siteId } slug={ siteSlug } period={ period } />
+				<SubscribersOverview />
 				<div className={ statsModuleListClass }>
 					<Followers path="followers" />
 					<Reach />
