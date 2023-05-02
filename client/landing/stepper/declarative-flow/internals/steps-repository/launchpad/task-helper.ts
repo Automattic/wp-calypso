@@ -22,7 +22,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadChecklist, Task } from './types';
+import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
@@ -42,6 +42,7 @@ export function getEnhancedTasks(
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
+	checklistStatuses: LaunchpadStatuses = {},
 	planCartProductSlug?: string | null
 ) {
 	const enhancedTaskList: Task[] = [];
@@ -72,7 +73,7 @@ export function getEnhancedTasks(
 	const allowUpdateDesign =
 		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
 
-	const domainUpsellCompleted = isDomainUpsellCompleted( site );
+	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
@@ -433,11 +434,11 @@ export function getEnhancedTasks(
 	return enhancedTaskList;
 }
 
-function isDomainUpsellCompleted( site: SiteDetails | null ): boolean {
-	return (
-		! site?.plan?.is_free ||
-		site?.options?.launchpad_checklist_tasks_statuses?.domain_upsell_deferred === true
-	);
+function isDomainUpsellCompleted(
+	site: SiteDetails | null,
+	checklistStatuses: LaunchpadStatuses
+): boolean {
+	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
 }
 
 // Records a generic task click Tracks event
