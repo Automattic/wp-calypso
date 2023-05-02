@@ -1,7 +1,5 @@
 @import "../styles/typography.scss";
-@import "./variables.scss";
 
-$modules-gap :24px;
 $emerald-hover-color: #414141;
 $jp-gray: #dcdcde;
 
@@ -9,13 +7,7 @@ $jp-gray: #dcdcde;
 	margin-top: 24px;
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	column-gap: $modules-gap;
-
-	@media only screen and (max-width: $break-dashboard-mobile) {
-		grid-template-columns: auto;
-		grid-template-rows: repeat(2, 1fr);
-		row-gap: $modules-gap;
-	}
+	column-gap: 24px;
 }
 
 .stats-widget-module__icon {

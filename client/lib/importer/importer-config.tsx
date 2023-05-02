@@ -259,15 +259,14 @@ function getConfig(
 		weight: 0,
 	};
 
+	// TODO: remove the atomic once Jetpack 12.1 is deployed.
+	const hasUnifiedImporter = config.isEnabled( 'importer/unified' ) && !! args.isAtomic;
+
 	// For Jetpack sites, we don't support migration as destination,
 	// so we remove the override here.
-	if ( config.isEnabled( 'importer/unified' ) && args.isJetpack && ! args.isAtomic ) {
-		delete importerConfig.wordpress.overrideDestination;
-	}
-
-	// Filter out all importers except the WordPress ones for Atomic sites.
-	if ( ! config.isEnabled( 'importer/unified' ) && args.isAtomic ) {
+	if ( hasUnifiedImporter && args.isJetpack && ! args.isAtomic ) {
 		importerConfig = { wordpress: importerConfig.wordpress };
+		delete importerConfig.wordpress.overrideDestination;
 	}
 
 	return importerConfig;

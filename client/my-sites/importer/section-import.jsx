@@ -62,7 +62,7 @@ const getImporterTypeForEngine = ( engine ) => `importer-type-${ engine }`;
 /**
  * The minimum version of the Jetpack plugin required to use the Jetpack Importer API.
  */
-const JETPACK_IMPORT_MIN_PLUGIN_VERSION = '12.0';
+const JETPACK_IMPORT_MIN_PLUGIN_VERSION = '12.1';
 
 class SectionImport extends Component {
 	static propTypes = {
@@ -293,6 +293,9 @@ class SectionImport extends Component {
 		const jetpackVersionInCompatible =
 			this.props.siteJetpackVersion < JETPACK_IMPORT_MIN_PLUGIN_VERSION;
 
+		// TODO: remove the atomic once Jetpack 12.1 is deployed.
+		const hasUnifiedImporter = isEnabled( 'importer/unified' ) && isAtomic;
+
 		return (
 			<Main>
 				<ScreenOptionsTab wpAdminPath="import.php" />
@@ -313,7 +316,7 @@ class SectionImport extends Component {
 					hasScreenOptions
 				/>
 				<EmailVerificationGate allowUnlaunched>
-					{ isJetpack && ! isAtomic && ! isEnabled( 'importer/unified' ) ? (
+					{ isJetpack && ! isAtomic && ! hasUnifiedImporter ? (
 						<JetpackImporter />
 					) : (
 						<>
