@@ -97,10 +97,10 @@ $segmentedControlItemBorderRadius: 4px;
 }
 
 /* stylelint-disable-next-line scss/at-rule-no-unknown */
-@container (max-width: #{$break-small}) {
+@container (max-width: #{$break-mobile}) {
 	@include stats-widget-single-column-view;
 }
 
-@media only screen and (max-width: #{$break-small}) {
+@media only screen and (max-width: $break-small) {
 	@include stats-widget-single-column-view;
 }
