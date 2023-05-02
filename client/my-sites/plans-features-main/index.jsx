@@ -225,6 +225,7 @@ export class PlansFeaturesMain extends Component {
 				) }
 				data-e2e-plans="wpcom"
 			>
+				{ this.renderSecondaryFormattedHeader() }
 				{ asyncPlanFeatures2023Grid }
 			</div>
 		);
