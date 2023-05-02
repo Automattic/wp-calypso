@@ -139,7 +139,7 @@ export default function SiteRow( {
 						updateEmailMeNewComments( { blog_id: blog_ID, send_comments } )
 					}
 					updatingEmailMeNewComments={ updatingEmailMeNewComments }
-					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID } ) }
+					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID, url: url } ) }
 					unsubscribing={ unsubscribing }
 				/>
 			</span>

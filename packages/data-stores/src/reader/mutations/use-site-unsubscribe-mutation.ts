@@ -5,6 +5,7 @@ import { SiteSubscriptionsPages, SubscriptionManagerSubscriptionsCount } from '.
 
 type UnsubscribeParams = {
 	blog_id: number | string;
+	url?: string;
 };
 
 type UnsubscribeResponse = {
@@ -28,11 +29,22 @@ const useSiteUnsubscribeMutation = () => {
 				);
 			}
 
+			let path = `/read/site/${ params.blog_id }/post_email_subscriptions/delete`;
+			let apiVersion = '1.2';
+			let body = {};
+
+			if ( isLoggedIn ) {
+				path = `/read/following/mine/delete`;
+				apiVersion = '1.1';
+				body = { source: 'calypso', url: params.url };
+			}
+
 			const response = await callApi< UnsubscribeResponse >( {
-				path: `/read/site/${ params.blog_id }/post_email_subscriptions/delete`,
+				path,
 				method: 'POST',
 				isLoggedIn,
-				apiVersion: '1.2',
+				apiVersion,
+				body,
 			} );
 			if ( ! response.success ) {
 				throw new Error(
