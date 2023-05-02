@@ -8,8 +8,11 @@
 		font-family: $sans;
 		font-style: normal;
 		font-weight: bold;
-		line-height: 40px;
+		line-height: 24px;
 		color: var(--studio-gray-100);
+		@include break-small {
+			line-height: 40px;
+		}
 	}
 
 	p {
