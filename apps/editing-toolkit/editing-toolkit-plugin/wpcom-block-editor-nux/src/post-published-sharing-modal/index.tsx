@@ -45,7 +45,7 @@ const PostPublishedSharingModal: React.FC = () => {
 			 ).getShouldShowFirstPostPublishedModal(),
 		[]
 	);
-	const [ isOpen, setIsOpen ] = useState( true );
+	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
 	const { fetchShouldShowFirstPostPublishedModal } = useDispatch(
 		'automattic/wpcom-welcome-guide'
