@@ -3,6 +3,24 @@ $barDarkColor: var(--color-primary-60);
 .stats-widget-minichart {
 	border-bottom: 1px solid #c3c4c7;
 
+	// For empty chart placeholder
+	.chart.is-placeholder {
+		padding: 8px 16px;
+
+		.chart__y-axis-marker.is-hundred {
+			display: none;
+		}
+
+		.chart__bar {
+			&,
+			&:hover {
+				.chart__bar-section {
+					background-color: var(--studio-blue-0);
+				}
+			}
+		}
+	}
+
 	.stats-widget-minichart__chart-head {
 		display: flex;
 		flex-flow: row wrap;

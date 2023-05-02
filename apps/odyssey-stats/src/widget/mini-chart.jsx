@@ -68,6 +68,11 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 		return () => observer.disconnect();
 	} );
 
+	const isEmptyChart = ! chartData.some( ( bar ) => bar.value > 0 );
+	const placeholderChartData = Array.from( { length: 7 }, () => ( {
+		value: Math.random(),
+	} ) );
+
 	return (
 		<div
 			ref={ chartWrapperRef }
@@ -75,13 +80,20 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 			className="stats-widget-minichart"
 			aria-hidden="true"
 		>
-			<div className="stats-widget-minichart__chart-head">
-				<Intervals selected={ period } compact={ false } onChange={ setPeriod } />
-			</div>
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading={ true } /> }
 			{ ! isLoading && (
 				<>
-					<Chart barClick={ barClick } data={ chartData } minBarWidth={ 35 }>
+					{ ! isEmptyChart && (
+						<div className="stats-widget-minichart__chart-head">
+							<Intervals selected={ period } compact={ false } onChange={ setPeriod } />
+						</div>
+					) }
+					<Chart
+						barClick={ barClick }
+						data={ isEmptyChart ? placeholderChartData : chartData }
+						minBarWidth={ 35 }
+						isPlaceholder={ isEmptyChart }
+					>
 						<StatsEmptyState
 							headingText=""
 							infoText={ createInterpolateElement(
