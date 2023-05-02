@@ -31,9 +31,6 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		localStorage.getItem( 'showLimitedGlobalStylesNotice' ) === null;
 	if ( showLimitedGlobalStylesNotice ) {
 		popover?.classList.remove( 'hidden' );
-	}
-
-	if ( ! popover?.classList.contains( 'hidden' ) ) {
 		recordEvent( 'wpcom_global_styles_gating_notice', {
 			action: 'show',
 		} );
