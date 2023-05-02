@@ -153,7 +153,7 @@ function ProtectModule( { siteId } ) {
 	);
 }
 
-export default function Modules( { siteId, odysseyStatsBaseUrl = '' } ) {
+export default function Modules( { siteId, odysseyStatsBaseUrl } ) {
 	return (
 		<div className="stats-widget-modules">
 			<ProtectModule siteId={ siteId } />
