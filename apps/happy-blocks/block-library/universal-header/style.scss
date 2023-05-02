@@ -248,7 +248,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 .x-dropdown-link {
 	display: block;
-	padding: 6px 12px 6px 24px;
+	padding: 6px 9px 6px 24px;
 	font-size: 0.875rem;
 	font-weight: 600;
 	line-height: 19px;
@@ -617,19 +617,20 @@ body.logged-in .x-dropdown {
 
 .happy-blocks-global-header__tab {
 	display: block;
-	padding: 3px 2px;
+	padding: 3px 2px 12px 2px;
 	margin-right: 32px;
 	font-size: 1rem;
 	text-decoration: none !important;
-	color: var(--color-neutral-100);
+	color: var(--studio-blue-50);
 
 	&.active {
-		border-bottom: 2px solid #0675c4;
+		border-bottom: 2px solid var(--studio-gray-70);
+		color: var(--studio-gray-100);
 	}
 
 	&:hover,
 	&:active {
-		border-bottom: 2px solid #0675c4;
+		border-bottom: 2px solid var(--studio-gray-70);
 	}
 }
 
@@ -709,9 +710,9 @@ body.logged-in .x-dropdown {
 		}
 		form {
 			width: 100%;
-			// padding-right: 24px;
+			margin-top: 10px;
 			@media ( max-width: $breakpoint-mobile ) {
-				// padding-left: 24px;
+				margin-top: 0;
 			}
 		}
 
@@ -730,10 +731,10 @@ body.logged-in .x-dropdown {
 	h1 {
 		font-family: $recoleta-font-family;
 		font-size: 2.75rem;
-		margin-bottom: 5px;
+		line-height: 52px;
+		margin: 0;
 		@media ( max-width: $breakpoint-tablet ) {
 			font-size: 1.75rem;
-			line-height: 52px;
 		}
 	}
 
@@ -741,14 +742,21 @@ body.logged-in .x-dropdown {
 		color: var(--color-neutral-60);
 		font-family: $system-font-family;
 		font-size: 1rem;
+		margin-top: 4px;
+		margin-bottom: 0;
 
 		@media ( max-width: $breakpoint-tablet ) {
 			font-size: 0.875rem;
 			line-height: 20px;
+			margin-top: 0;
 		}
 	}
 
 	.happy-blocks-global-header-site__title__wrapper {
 		width: 100%;
+		margin-top: 24px;
+		@media ( max-width: $breakpoint-mobile ) {
+			margin: 16px 0 16px 0;
+		}
 	}
 }
