@@ -1,16 +1,15 @@
 import {
 	FEATURE_VIDEO_UPLOADS,
-	getPlan,
 	planHasFeature,
 	PLAN_PREMIUM,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
-	Plan,
 } from '@automattic/calypso-products';
 import { isNewsletterFlow, isStartWritingFlow, START_WRITING_FLOW } from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { translate } from 'i18n-calypso';
+import { PLANS_LIST } from 'calypso/../packages/calypso-products/src/plans-list';
 import { NavigationControls } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
@@ -48,7 +47,7 @@ export function getEnhancedTasks(
 	const productSlug =
 		( isStartWritingFlow( flow ) ? planCartProductSlug : null ) ?? site?.plan?.product_slug;
 
-	const translatedPlanName = productSlug ? ( getPlan( productSlug ) as Plan ) : '';
+	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
 	// Todo: setupBlogCompleted should be updated to use a new checklistStatus instead of site_edited.
 	//  Explorers will update Jetpack definitions to make this possible, meanwhile we are using site_edited.
@@ -66,8 +65,6 @@ export function getEnhancedTasks(
 	const videoPressUploadCompleted = Boolean(
 		tasks?.find( ( task ) => task.id === 'video_uploaded' )?.completed
 	);
-
-	const domainUpsellCompleted = isDomainUpsellCompleted( site );
 
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
