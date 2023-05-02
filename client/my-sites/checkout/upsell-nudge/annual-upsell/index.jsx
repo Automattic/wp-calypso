@@ -1,5 +1,5 @@
 import { Button } from '@automattic/components';
-import formatCurrency from 'calypso/../packages/format-currency/src';
+import formatCurrency from '@automattic/format-currency';
 import upsellImage from 'calypso/assets/images/checkout-upsell/upsell-annual.png';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
