@@ -22,7 +22,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadChecklist, Task } from './types';
+import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
@@ -42,6 +42,7 @@ export function getEnhancedTasks(
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
+	checklistStatuses: LaunchpadStatuses = {},
 	planCartProductSlug?: string | null
 ) {
 	const enhancedTaskList: Task[] = [];
@@ -57,8 +58,7 @@ export function getEnhancedTasks(
 	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
 
 	// This needs to be updated to use a new checklistStatus instead of site_edited.
-	const setupBlogCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
+	const setupBlogCompleted = checklistStatuses?.site_edited || false;
 
 	const siteLaunchCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
