@@ -19,7 +19,6 @@ function ModuleCard( {
 	isError = false,
 	canManageModule = false,
 	className = null,
-	info = null,
 } ) {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( false );
@@ -62,12 +61,7 @@ function ModuleCard( {
 									Install
 								</button>
 							) }
-							{ ! [ 'not_active', 'not_installed' ].includes( error ) && info && (
-								<a href={ info.link } target="__blank">
-									{ info.text }
-								</a>
-							) }
-							{ ! [ 'not_active', 'not_installed' ].includes( error ) && ! info && (
+							{ ! [ 'not_active', 'not_installed' ].includes( error ) && (
 								<p>{ translate( 'An error occurred.' ) }</p>
 							) }
 						</div>
@@ -109,10 +103,6 @@ function AkismetModule( { siteId } ) {
 			isLoading={ isAkismetLoading }
 			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
 			activateProduct={ activateProduct( 'anti-spam' ) }
-			info={ {
-				link: 'https://akismet.com/?utm_source=jetpack&utm_medium=link&utm_campaign=Jetpack%20Dashboard%20Widget%20Footer%20Link',
-				text: translate( 'Anti-spam can help to keep your blog safe from spam!' ),
-			} }
 		/>
 	);
 }
