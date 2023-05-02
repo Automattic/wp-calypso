@@ -1,6 +1,4 @@
 import { SubscriptionManager } from '@automattic/data-stores';
-import { useTranslate } from 'i18n-calypso';
-import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import Separator from 'calypso/components/popover-menu/separator';
 import SettingsPopover from '../settings-popover';
 import DeliveryFrequencyInput from './delivery-frequency-input';
@@ -30,7 +28,6 @@ const SiteSettings = ( {
 	unsubscribing,
 	updatingFrequency,
 }: SiteSettingsProps ) => {
-	const translate = useTranslate();
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 
 	return (
@@ -45,14 +42,11 @@ const SiteSettings = ( {
 					<EmailMeNewPostsToggle value={ false } onChange={ () => null } isUpdating={ false } />
 				</>
 			) }
-			<PopoverMenuItem itemComponent="div" className="settings-popover__delivery-frequency-item">
-				<p className="settings-popover__item-label">{ translate( 'Email me new posts' ) }</p>
-				<DeliveryFrequencyInput
-					value={ deliveryFrequency }
-					onChange={ onDeliveryFrequencyChange }
-					isUpdating={ updatingFrequency }
-				/>
-			</PopoverMenuItem>
+			<DeliveryFrequencyInput
+				value={ deliveryFrequency }
+				onChange={ onDeliveryFrequencyChange }
+				isUpdating={ updatingFrequency }
+			/>
 			<Separator />
 			<UnsubscribeSiteButton unsubscribing={ unsubscribing } onUnsubscribe={ onUnsubscribe } />
 		</SettingsPopover>
