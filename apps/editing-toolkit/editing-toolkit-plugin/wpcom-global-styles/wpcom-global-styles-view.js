@@ -2,10 +2,11 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import './wpcom-global-styles-view.scss';
 
-function recordEvent( button ) {
+function recordEvent( button, props = {} ) {
 	recordTracksEvent( 'wpcom_launchbar_button_click', {
 		button,
 		blog_id: launchBarUserData?.blogId,
+		...props,
 	} );
 }
 
@@ -28,7 +29,9 @@ document.addEventListener( 'DOMContentLoaded', () => {
 
 	popoverToggle?.addEventListener( 'click', ( event ) => {
 		event.preventDefault();
-		recordEvent( 'wpcom_global_styles_gating_notice' );
+		recordEvent( 'wpcom_global_styles_gating_notice', {
+			action: popover?.classList.contains( 'hidden' ) ? 'show' : 'hide',
+		} );
 		popover?.classList.toggle( 'hidden' );
 	} );
 
