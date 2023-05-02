@@ -29,7 +29,9 @@ export const parseSitesSorting = ( serializedSorting: SitesSorting | 'none' ) =>
 	return sorting;
 };
 
-export const stringifySitesSorting = ( sorting: Required< SitesSortOptions > ): SitesSorting => {
+export const stringifySitesSorting = (
+	sorting: Required< Omit< SitesSortOptions, 'newSiteSlug' > >
+): SitesSorting => {
 	return `${ sorting.sortKey }${ SEPARATOR }${ sorting.sortOrder }`;
 };
 
@@ -46,7 +48,7 @@ export const useSitesSorting = () => {
 	return {
 		hasSitesSortingPreferenceLoaded: sitesSorting !== 'none',
 		sitesSorting: parseSitesSorting( sitesSorting ),
-		onSitesSortingChange: ( newSorting: Required< SitesSortOptions > ) => {
+		onSitesSortingChange: ( newSorting: Required< Omit< SitesSortOptions, 'newSiteSlug' > > ) => {
 			onSitesSortingChange( stringifySitesSorting( newSorting ) );
 		},
 	};
