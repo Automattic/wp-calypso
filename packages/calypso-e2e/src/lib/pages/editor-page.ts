@@ -160,7 +160,7 @@ export class EditorPage {
 		// it is a fairly good stand-in.
 		await Promise.all( [
 			this.page.waitForURL( /(post|page|post-new.php)/ ),
-			this.page.waitForResponse( /(.*posts.*|pages)/, { timeout: timeout } ),
+			this.page.waitForResponse( /.*posts.*/, { timeout: timeout } ),
 		] );
 
 		// Dismiss the Welcome Tour.
