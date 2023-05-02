@@ -457,7 +457,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 					<?php
 					$message = sprintf(
 						/* translators: %s - documentation URL. */
-						__( 'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to a higher plan.', 'full-site-editing' ),
+						__( 'Your site includes <a href="%s" target="_blank">customized styles</a> that are only visible to visitors after upgrading to a Premium plan or higher.', 'full-site-editing' ),
 						'https://wordpress.com/support/using-styles/'
 					);
 					echo sprintf(
