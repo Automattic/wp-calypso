@@ -5,6 +5,7 @@ export const LINK_IN_BIO_FLOW = 'link-in-bio';
 export const LINK_IN_BIO_DOMAIN_FLOW = 'link-in-bio-domain';
 export const LINK_IN_BIO_TLD_FLOW = 'link-in-bio-tld';
 export const LINK_IN_BIO_POST_SETUP_FLOW = 'link-in-bio-post-setup';
+export const CONNECT_DOMAIN_FLOW = 'connect-domain';
 export const VIDEOPRESS_FLOW = 'videopress';
 export const IMPORT_FOCUSED_FLOW = 'import-focused';
 export const SENSEI_FLOW = 'sensei';
