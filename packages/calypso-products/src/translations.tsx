@@ -813,7 +813,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Twitter, Facebook, LinkedIn, and Tumblr' ),
+		translate( 'Share to Facebook, LinkedIn, and Tumblr' ),
 		translate( 'Recycle content' ),
 	];
 	const socialAdvancedIncludesInfo = [
@@ -821,7 +821,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Twitter, Facebook, LinkedIn, and Tumblr' ),
+		translate( 'Share to Facebook, LinkedIn, and Tumblr' ),
 		translate( 'Engagement Optimizer' ),
 		translate( 'Recycle content' ),
 		translate( 'Coming soon: Image generator' ),

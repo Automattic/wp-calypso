@@ -42,6 +42,13 @@ const DEFAULT_WOOEXPRESS_FLOW = 'pub/twentytwentytwo';
 const DEFAULT_NEWSLETTER_THEME = 'pub/lettre';
 const DEFAULT_START_WRITING_THEME = 'pub/livro';
 
+function hasSourceSlug( data: unknown ): data is { sourceSlug: string } {
+	if ( data && ( data as { sourceSlug: string } ).sourceSlug ) {
+		return true;
+	}
+	return false;
+}
+
 const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, data } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
@@ -121,8 +128,9 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			};
 		}
 
+		const sourceSlug = hasSourceSlug( data ) ? data.sourceSlug : undefined;
 		const site = await createSiteWithCart(
-			flow as string,
+			flow,
 			true,
 			isPaidDomainItem,
 			theme,
@@ -132,20 +140,20 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			true,
 			username,
 			domainCartItem,
-			data?.sourceSlug as string
+			sourceSlug
 		);
 
-		if ( planCartItem ) {
-			await addPlanToCart( site?.siteSlug as string, flow as string, true, theme, planCartItem );
+		if ( planCartItem && site?.siteSlug ) {
+			await addPlanToCart( site.siteSlug, flow, true, theme, planCartItem );
 		}
 
-		if ( productCartItems?.length ) {
-			await addProductsToCart( site?.siteSlug as string, flow as string, productCartItems );
+		if ( productCartItems?.length && site?.siteSlug ) {
+			await addProductsToCart( site.siteSlug, flow, productCartItems );
 		}
 
-		if ( isMigrationFlow( flow ) ) {
+		if ( isMigrationFlow( flow ) && site?.siteSlug && siteData?.ID ) {
 			// Store temporary target blog id to source site option
-			addTempSiteToSourceOption( site?.siteId as number, siteData?.ID as number );
+			addTempSiteToSourceOption( site.siteId, siteData.ID );
 		}
 
 		return {
