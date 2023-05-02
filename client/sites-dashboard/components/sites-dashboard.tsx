@@ -205,7 +205,7 @@ export function SitesDashboard( {
 				<SitesDashboardSitesList
 					sites={ allSites }
 					filtering={ { search } }
-					sorting={ sitesSorting }
+					sorting={ { ...sitesSorting, newSiteSlug } }
 					grouping={ { status, showHidden: true } }
 				>
 					{ ( { sites, statuses } ) => {

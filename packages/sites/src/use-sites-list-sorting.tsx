@@ -4,12 +4,12 @@ import { MinimumSite } from './site-type';
 
 type SiteDetailsForSortingWithOptionalUserInteractions = Pick<
 	MinimumSite,
-	'title' | 'user_interactions' | 'options' | 'is_wpcom_staging_site' | 'ID'
+	'title' | 'user_interactions' | 'options' | 'is_wpcom_staging_site' | 'ID' | 'slug'
 >;
 
 type SiteDetailsForSortingWithUserInteractions = Pick<
 	MinimumSite,
-	'title' | 'options' | 'is_wpcom_staging_site' | 'ID'
+	'title' | 'options' | 'is_wpcom_staging_site' | 'ID' | 'slug'
 > &
 	Required< Pick< MinimumSite, 'user_interactions' > >;
 
@@ -38,16 +38,19 @@ export const isValidSorting = ( input: {
 export interface SitesSortOptions {
 	sortKey?: SitesSortKey;
 	sortOrder?: SitesSortOrder;
+	newSiteSlug?: string;
 }
 
 export function useSitesListSorting< T extends SiteDetailsForSorting >(
 	allSites: T[],
-	{ sortKey, sortOrder = 'asc' }: SitesSortOptions
+	{ sortKey, sortOrder = 'asc', newSiteSlug }: SitesSortOptions
 ) {
 	return useMemo( () => {
 		switch ( sortKey ) {
 			case 'lastInteractedWith':
-				return sortSitesByStaging( sortSitesByLastInteractedWith( allSites, sortOrder ) );
+				return sortSitesByStaging(
+					sortSitesByLastInteractedWith( allSites, sortOrder, newSiteSlug )
+				);
 			case 'alphabetically':
 				return sortSitesAlphabetically( allSites, sortOrder );
 			case 'updatedAt':
@@ -141,15 +144,23 @@ const hasInteractions = (
 
 function sortSitesByLastInteractedWith< T extends SiteDetailsForSorting >(
 	sites: T[],
-	sortOrder: SitesSortOrder
+	sortOrder: SitesSortOrder,
+	newSiteSlug: string | undefined
 ) {
-	const interactedItems = ( sites as SiteDetailsForSorting[] ).filter( hasInteractions );
+	const newSite = sites.filter( ( s ) => s.slug === newSiteSlug );
+
+	const interactedItems = ( sites as SiteDetailsForSorting[] )
+		.filter( hasInteractions )
+		.filter( ( s ) => s.slug !== newSiteSlug );
 
 	const remainingItems = sites.filter(
-		( site ) => ! site.user_interactions || site.user_interactions.length === 0
+		( site ) =>
+			( ! site.user_interactions || site.user_interactions.length === 0 ) &&
+			site.slug !== newSiteSlug
 	);
 
 	const sortedItems = [
+		...newSite,
 		...( sortInteractedItems( interactedItems ) as T[] ),
 		...remainingItems.sort( ( a, b ) => sortByLastPublish( a, b, 'desc' ) ),
 	];
