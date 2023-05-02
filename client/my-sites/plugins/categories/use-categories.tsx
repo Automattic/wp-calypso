@@ -46,20 +46,19 @@ export const ALLOWED_CATEGORIES = [
 	'maps',
 	'tables',
 	'forums',
-	'commentsCommenting',
-	'donations',
-	'fAQ',
+	'comments',
+	'faq',
 	'testimonials',
-	'realEstate',
+	'realestate',
 	'survey',
 	'accessibility',
-	'projectManagement',
+	'projectmanagement',
 	'jobBoards',
 	'search',
 	'portfolio',
-	'rSS',
-	'knowledgeBase',
-	'storeLocator',
+	'rss',
+	'knowledgebase',
+	'storelocator',
 	'newsfeed',
 	'sliders',
 	'schema',
@@ -67,9 +66,9 @@ export const ALLOWED_CATEGORIES = [
 	'popups',
 	'calculators',
 	'advertising',
-	'restaurantMenu',
+	'restaurantmenu',
 	'recipes',
-	'leadGeneration',
+	// 'leadgeneration', // It does not return any results
 	'contest',
 	'accordion',
 	'javascript',
@@ -244,7 +243,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		description: __( 'Go deeper and learn faster with site visitor and performance insights.' ),
 		icon: 'grid',
 		slug: 'analytics',
-		tags: [ 'analytics' ],
+		tags: [ 'analytics', 'google analytics', 'ga', 'stats', 'statistics' ],
 		preview: [],
 	},
 	marketing: {
@@ -490,21 +489,14 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		tags: [ 'forum', 'forum plugin', 'community' ],
 		preview: [],
 	},
-	commentsCommenting: {
-		menu: __( 'Comments & Commenting' ),
+	comments: {
+		menu: __( 'Comment' ),
 		title: __( 'Comments & Commenting' ),
-		slug: 'comments-commenting',
+		slug: 'comments',
 		tags: [ 'comment', 'comments', 'comment fields', 'delete comments' ],
 		preview: [],
 	},
-	donations: {
-		menu: __( 'Donations' ),
-		title: __( 'Donations' ),
-		slug: 'donations',
-		tags: [ 'donations', 'crowdfunding', 'donate' ],
-		preview: [],
-	},
-	fAQ: {
+	faq: {
 		menu: __( 'FAQ' ),
 		title: __( 'FAQ' ),
 		slug: 'faq',
@@ -518,10 +510,10 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		tags: [ 'testimonials', 'testimonial', 'testimonial showcase' ],
 		preview: [],
 	},
-	realEstate: {
+	realestate: {
 		menu: __( 'Real Estate' ),
 		title: __( 'Real Estate' ),
-		slug: 'real-estate',
+		slug: 'realestate',
 		tags: [
 			'real estate',
 			'agency',
@@ -548,17 +540,17 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		tags: [ 'accessibility', 'accessible', 'navigation' ],
 		preview: [],
 	},
-	projectManagement: {
+	projectmanagement: {
 		menu: __( 'Project Management' ),
 		title: __( 'Project Management' ),
-		slug: 'project-management',
+		slug: 'projectmanagement',
 		tags: [ 'gantt charts', 'kanban', 'project', 'project management', 'tasks', 'task management' ],
 		preview: [],
 	},
-	jobBoards: {
+	jobboards: {
 		menu: __( 'Job Boards' ),
 		title: __( 'Job Boards' ),
-		slug: 'job-boards',
+		slug: 'jobboards',
 		tags: [ 'career', 'job board', 'job listing' ],
 		preview: [],
 	},
@@ -582,24 +574,24 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		],
 		preview: [],
 	},
-	rSS: {
+	rss: {
 		menu: __( 'RSS' ),
 		title: __( 'RSS' ),
 		slug: 'rss',
 		tags: [ 'feed', 'news', 'rss', 'rss feed' ],
 		preview: [],
 	},
-	knowledgeBase: {
+	knowledgebase: {
 		menu: __( 'Knowledge Base' ),
 		title: __( 'Knowledge Base' ),
-		slug: 'knowledge-base',
+		slug: 'knowledgebase',
 		tags: [ 'faq', 'faqs', 'frequently asked questions', 'knowledge base' ],
 		preview: [],
 	},
-	storeLocator: {
+	storelocator: {
 		menu: __( 'Store Locator' ),
 		title: __( 'Store Locator' ),
-		slug: 'store-locator',
+		slug: 'storelocator',
 		tags: [ 'business locations', 'geocoding', 'locators', 'dealer locator', 'directions' ],
 		preview: [],
 	},
@@ -685,10 +677,10 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		tags: [ 'ads', 'google', 'ad codes', 'advertising', 'advert', 'advertise', 'advertisement' ],
 		preview: [],
 	},
-	restaurantMenu: {
+	restaurantmenu: {
 		menu: __( 'Restaurant Menu' ),
 		title: __( 'Restaurant Menu' ),
-		slug: 'restaurant-menu',
+		slug: 'restaurantmenu',
 		tags: [
 			'food ordering',
 			'restaurant menu',
@@ -717,10 +709,10 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		],
 		preview: [],
 	},
-	leadGeneration: {
+	leadgeneration: {
 		menu: __( 'Lead Generation' ),
 		title: __( 'Lead Generation' ),
-		slug: 'lead-generation',
+		slug: 'leadgeneration',
 		tags: [ 'lead gen', 'lead generation' ],
 		preview: [],
 	},
