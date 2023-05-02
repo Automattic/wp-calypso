@@ -72,7 +72,7 @@ function SubscribersOverviewCardStats( subscribersData: number[] ) {
 				: translate( '%d days ago', { args: day } ) ) as string,
 			count: count,
 			...( index !== 0 && {
-				previousCount: todayCount - subscribersData[ index ],
+				previousCount: todayCount,
 			} ),
 		};
 
