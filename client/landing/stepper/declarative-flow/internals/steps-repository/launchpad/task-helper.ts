@@ -4,7 +4,14 @@ import {
 	PLAN_PREMIUM,
 	FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 } from '@automattic/calypso-products';
-import { isFreeFlow, isBuildFlow, isWriteFlow, isNewsletterFlow } from '@automattic/onboarding';
+import {
+	isFreeFlow,
+	isBuildFlow,
+	isWriteFlow,
+	isNewsletterFlow,
+	isStartWritingFlow,
+	START_WRITING_FLOW,
+} from '@automattic/onboarding';
 import { dispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
@@ -15,9 +22,17 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadFlowTaskList, LaunchpadStatuses, Task } from './types';
+import { LaunchpadChecklist, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
-
+/**
+ * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
+ * API, making said enhancements here unnecessary ( Ex. title, subtitle, completed,
+ * subtitle, badge text, etc. ). This will allow us to access checklist and task information
+ * outside of the Calypso client.
+ *
+ * Please ensure that the enhancements you are adding here are attributes that couldn't be
+ * generated in the REST API
+ */
 export function getEnhancedTasks(
 	tasks: Task[] | null,
 	siteSlug: string | null,
@@ -25,28 +40,39 @@ export function getEnhancedTasks(
 	submit: NavigationControls[ 'submit' ],
 	displayGlobalStylesWarning: boolean,
 	goToStep?: NavigationControls[ 'goToStep' ],
-	flow?: string | null,
+	flow: string | null = '',
 	isEmailVerified = false,
-	checklistStatuses: LaunchpadStatuses = {}
+	planCartProductSlug?: string | null
 ) {
 	const enhancedTaskList: Task[] = [];
-	const productSlug = site?.plan?.product_slug;
+
+	const productSlug =
+		( isStartWritingFlow( flow ) ? planCartProductSlug : null ) ?? site?.plan?.product_slug;
+
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	const linkInBioLinksEditCompleted = checklistStatuses?.links_edited || false;
+	const linkInBioLinksEditCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
 
-	const siteEditCompleted = checklistStatuses?.site_edited || false;
+	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
 
-	const siteLaunchCompleted = checklistStatuses?.site_launched || false;
+	const siteLaunchCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
 
-	const firstPostPublishedCompleted = checklistStatuses?.first_post_published || false;
+	const firstPostPublishedCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
 
-	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
+	const planCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.plan_selected ||
+		! isStartWritingFlow( flow );
+
+	const videoPressUploadCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
 
 	const allowUpdateDesign =
 		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
 
-	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
+	const domainUpsellCompleted = isDomainUpsellCompleted( site );
 
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
@@ -140,7 +166,7 @@ export function getEnhancedTasks(
 									'calypso_launchpad_global_styles_gating_plan_selected_task_clicked'
 								);
 							}
-							const plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
+							let plansUrl = addQueryArgs( `/plans/${ siteSlug }`, {
 								...( shouldDisplayWarning && {
 									plan: PLAN_PREMIUM,
 									feature: isVideoPressFlowWithUnsupportedPlan
@@ -148,10 +174,20 @@ export function getEnhancedTasks(
 										: FEATURE_ADVANCED_DESIGN_CUSTOMIZATION,
 								} ),
 							} );
+							if ( isStartWritingFlow( flow ) && site?.plan?.is_free ) {
+								plansUrl = addQueryArgs( `/setup/${ START_WRITING_FLOW }/plans`, {
+									...{ siteSlug: siteSlug, 'start-writing': true },
+								} );
+							}
+
 							window.location.assign( plansUrl );
 						},
-						badgeText: isVideoPressFlowWithUnsupportedPlan ? null : translatedPlanName,
-						completed: task.completed && ! shouldDisplayWarning,
+						badgeText:
+							isVideoPressFlowWithUnsupportedPlan ||
+							( isStartWritingFlow( flow ) && ! planCompleted )
+								? null
+								: translatedPlanName,
+						completed: ( planCompleted ?? task.completed ) && ! shouldDisplayWarning,
 						warning: shouldDisplayWarning,
 					};
 					break;
@@ -170,7 +206,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Write your first post' ),
 						completed: firstPostPublishedCompleted,
-						disabled: mustVerifyEmailBeforePosting || false,
+						disabled: mustVerifyEmailBeforePosting || isStartWritingFlow( flow || null ) || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							window.location.assign( `/post/${ siteSlug }` );
@@ -281,6 +317,31 @@ export function getEnhancedTasks(
 						},
 					};
 					break;
+				case 'blog_launched':
+					taskData = {
+						title: translate( 'Launch your blog' ),
+						completed: siteLaunchCompleted,
+						isLaunchTask: true,
+						actionDispatch: () => {
+							if ( site?.ID ) {
+								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
+								const { launchSite } = dispatch( SITE_STORE );
+
+								setPendingAction( async () => {
+									setProgressTitle( __( 'Launching blog' ) );
+									await launchSite( site.ID );
+
+									// Waits for half a second so that the loading screen doesn't flash away too quickly
+									await new Promise( ( res ) => setTimeout( res, 500 ) );
+									recordTaskClickTracksEvent( flow, siteLaunchCompleted, task.id );
+									return { blogLaunched: true, siteSlug };
+								} );
+
+								submit?.();
+							}
+						},
+					};
+					break;
 				case 'videopress_setup':
 					taskData = {
 						completed: true,
@@ -358,11 +419,11 @@ export function getEnhancedTasks(
 	return enhancedTaskList;
 }
 
-function isDomainUpsellCompleted(
-	site: SiteDetails | null,
-	checklistStatuses: LaunchpadStatuses
-): boolean {
-	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
+function isDomainUpsellCompleted( site: SiteDetails | null ): boolean {
+	return (
+		! site?.plan?.is_free ||
+		site?.options?.launchpad_checklist_tasks_statuses?.domain_upsell_deferred === true
+	);
 }
 
 // Records a generic task click Tracks event
@@ -408,28 +469,25 @@ export function getArrayOfFilteredTasks(
  * This is used to as a fallback check to determine if the full
  * screen launchpad should be shown or not.
  *
- * @param {string} siteIntent - The value of a site's site_intent option
- * @param {LaunchpadStatuses} checklist_statuses - The value of a site's checklist_statuses option
+ * @param {LaunchpadChecklist} checklist - The list of tasks for a site's launchpad
  * @param {boolean} isSiteLaunched - The value of a site's is_launched option
- * @param {LaunchpadFlowTaskList} launchpadFlowTasks - The list of tasks for each site_intent
- * @returns {boolean} - True if the final task for the given site_intent is completed
+ * @returns {boolean} - True if the final task for the given site checklist is completed
  */
 export function areLaunchpadTasksCompleted(
-	site_intent: string,
-	launchpadFlowTasks: LaunchpadFlowTaskList,
-	checklist_statuses: LaunchpadStatuses,
+	checklist: LaunchpadChecklist,
 	isSiteLaunched: boolean
 ) {
-	if ( ! site_intent ) {
+	if ( ! Array.isArray( checklist ) ) {
 		return false;
 	}
 
-	const lastTask =
-		launchpadFlowTasks[ site_intent ][ launchpadFlowTasks[ site_intent ].length - 1 ];
+	const lastTask = checklist[ checklist.length - 1 ];
 
-	// If last task is site_launched, return true if site is launched OR site_launch task is completed
-	// Else return the status of the last task (will be false if task is not in checklist_statuses)
-	return lastTask === 'site_launched'
-		? isSiteLaunched || Boolean( checklist_statuses[ lastTask ] )
-		: Boolean( checklist_statuses[ lastTask as keyof LaunchpadStatuses ] );
+	// If last task is site_launched and if site is launched, return true
+	// Else return the status of the last task
+	if ( lastTask?.id === 'site_launched' && isSiteLaunched ) {
+		return true;
+	}
+
+	return lastTask?.completed;
 }

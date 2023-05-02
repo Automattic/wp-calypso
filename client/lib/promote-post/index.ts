@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import request, { requestAllBlogsAccess } from 'wpcom-proxy-request';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
@@ -24,6 +25,7 @@ declare global {
 				onLoaded?: () => void;
 				onClose?: () => void;
 				translateFn?: ( value: string, options?: any ) => string;
+				localizeUrlFn?: ( fullUrl: string ) => string;
 				locale?: string;
 				showDialog?: boolean;
 				setShowCancelButton?: ( show: boolean ) => void;
@@ -59,6 +61,7 @@ export async function showDSP(
 	onClose: () => void,
 	source: string,
 	translateFn: ( value: string, options?: any ) => string,
+	localizeUrlFn: ( fullUrl: string ) => string,
 	domNodeOrId?: HTMLElement | string | null,
 	setShowCancelButton?: ( show: boolean ) => void,
 	setShowTopBar?: ( show: boolean ) => void,
@@ -80,6 +83,7 @@ export async function showDSP(
 				onLoaded: () => resolve( true ),
 				onClose: onClose,
 				translateFn: translateFn,
+				localizeUrlFn: localizeUrlFn,
 				locale,
 				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
 				setShowCancelButton: setShowCancelButton,
@@ -133,6 +137,11 @@ export enum PromoteWidgetStatus {
 	DISABLED = 'disabled',
 }
 
+export enum BlazeCreditStatus {
+	ENABLED = 'enabled',
+	DISABLED = 'disabled',
+}
+
 /**
  * Hook to verify if we should enable the promote widget.
  *
@@ -151,4 +160,16 @@ export const usePromoteWidget = (): PromoteWidgetStatus => {
 		default:
 			return PromoteWidgetStatus.FETCHING;
 	}
+};
+
+/**
+ * Hook to verify if we should enable blaze credits
+ *
+ * @returns bool
+ */
+export const useBlazeCredits = (): BlazeCreditStatus => {
+	return useSelector( ( state ) => {
+		const userData = getCurrentUser( state );
+		return userData?.blaze_credits_enabled ? BlazeCreditStatus.ENABLED : BlazeCreditStatus.DISABLED;
+	} );
 };

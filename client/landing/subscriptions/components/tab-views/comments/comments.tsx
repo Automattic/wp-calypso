@@ -1,24 +1,41 @@
 import config from '@automattic/calypso-config';
 import { SubscriptionManager } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 import SearchInput from '@automattic/search';
 import { useTranslate } from 'i18n-calypso';
+import { useState } from 'react';
 import { CommentList } from 'calypso/landing/subscriptions/components/comment-list';
 import { SearchIcon } from 'calypso/landing/subscriptions/components/icons';
 import { Notice } from 'calypso/landing/subscriptions/components/notice';
+import { SortControls, Option } from 'calypso/landing/subscriptions/components/sort-controls';
 import useSearch from 'calypso/landing/subscriptions/hooks/use-search';
 import TabView from '../tab-view';
 
-const isListControlsEnabled = config.isEnabled( 'subscription-management/comments-list-controls' );
+const SortBy = SubscriptionManager.PostSubscriptionsSortBy;
+
+const useSortOptions = (): Option[] => {
+	const translate = useTranslate();
+
+	return [
+		{ value: SortBy.RecentlySubscribed, label: translate( 'Recently subscribed' ) },
+		{ value: SortBy.PostName, label: translate( 'Post name' ) },
+	];
+};
 
 const Comments = () => {
 	const translate = useTranslate();
+	const [ sortTerm, setSortTerm ] = useState( SortBy.RecentlySubscribed );
 	const { searchTerm, handleSearch } = useSearch();
+	const sortOptions = useSortOptions();
+	const locale = useLocale();
+	const isListControlsEnabled =
+		config.isEnabled( 'subscription-management/comments-list-controls' ) && locale === 'en';
 
 	const {
 		data: { posts, totalCount },
 		isLoading,
 		error,
-	} = SubscriptionManager.usePostSubscriptionsQuery( { searchTerm } );
+	} = SubscriptionManager.usePostSubscriptionsQuery( { searchTerm, sortTerm } );
 
 	// todo: translate when we have agreed on the error message
 	const errorMessage = error ? 'An error occurred while fetching your subscriptions.' : '';
@@ -34,11 +51,11 @@ const Comments = () => {
 			{ isListControlsEnabled && (
 				<div className="subscriptions-manager__list-actions-bar">
 					<SearchInput
-						// todo: translate when we have agreed on the placeholder
-						placeholder="Search by post name…"
+						placeholder={ translate( 'Search by post, site title, or address…' ) }
 						searchIcon={ <SearchIcon size={ 18 } /> }
 						onSearch={ handleSearch }
 					/>
+					<SortControls options={ sortOptions } value={ sortTerm } onChange={ setSortTerm } />
 				</div>
 			) }
 

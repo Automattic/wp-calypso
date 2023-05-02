@@ -28,10 +28,6 @@ export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
 	featureId,
 } );
-export const setPatternContent = ( patternContent: string ) => ( {
-	type: 'SET_SITE_PATTERN_CONTENT' as const,
-	patternContent,
-} );
 
 export interface CreateSiteBaseActionParameters {
 	username: string;
@@ -470,6 +466,11 @@ export const setProfilerData = ( profilerData: ProfilerData ) => ( {
 	profilerData,
 } );
 
+export const setPaidSubscribers = ( paidSubscribers: boolean ) => ( {
+	type: 'SET_PAID_SUBSCRIBERS' as const,
+	paidSubscribers,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -493,7 +494,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedStyleVariation
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
-	| typeof setPatternContent
 	| typeof setSiteTitle
 	| typeof setAnchorPodcastId
 	| typeof setAnchorEpisodeId
@@ -525,4 +525,5 @@ export type OnboardAction = ReturnType<
 	| typeof setProductCartItems
 	| typeof setPlanCartItem
 	| typeof setIsMigrateFromWp
+	| typeof setPaidSubscribers
 >;

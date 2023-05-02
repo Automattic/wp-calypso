@@ -8,7 +8,7 @@ interface Props {
 	viewportHeight?: number;
 	minHeight?: number;
 	maxHeight?: 'none' | number;
-	maxHeightFor100vh?: number;
+	minHeightFor100vh?: number;
 	placeholder?: JSX.Element;
 }
 
@@ -18,7 +18,7 @@ const PatternRenderer = ( {
 	viewportHeight,
 	minHeight,
 	maxHeight,
-	maxHeightFor100vh,
+	minHeightFor100vh,
 }: Props ) => {
 	const renderedPatterns = usePatternsRendererContext();
 	const pattern = renderedPatterns[ patternId ];
@@ -26,12 +26,13 @@ const PatternRenderer = ( {
 	return (
 		<BlockRendererContainer
 			styles={ pattern?.styles ?? [] }
+			scripts={ pattern?.scripts ?? '' }
 			viewportWidth={ viewportWidth }
 			viewportHeight={ viewportHeight }
 			maxHeight={ maxHeight }
 			minHeight={ minHeight }
 			isMinHeight100vh={ pattern?.html?.includes( 'min-height:100vh' ) }
-			maxHeightFor100vh={ maxHeightFor100vh }
+			minHeightFor100vh={ minHeightFor100vh }
 		>
 			<div
 				// eslint-disable-next-line react/no-danger

@@ -24,6 +24,11 @@ import type {
 	PossiblyCompleteDomainContactDetails,
 } from '@automattic/wpcom-checkout';
 
+export const normalAllowedPaymentMethods = [
+	'WPCOM_Billing_PayPal_Express',
+	'WPCOM_Billing_Stripe_Payment_Method',
+];
+
 export const stripeConfiguration = {
 	processor_id: 'IE',
 	js_url: 'https://stripe-js-url',
@@ -383,8 +388,8 @@ export function mockSetCartEndpointWith( { currency, locale } ): SetCart {
 		}, taxInteger );
 
 		return {
-			allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
-			blog_id: '1234',
+			allowed_payment_methods: normalAllowedPaymentMethods,
+			blog_id: 1234,
 			cart_generated_at_timestamp: 12345,
 			cart_key: 1234,
 			coupon: requestCoupon,
@@ -1123,7 +1128,7 @@ export function getBasicCart(): ResponseCart {
 			display_taxes: true,
 			location: {},
 		},
-		allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
+		allowed_payment_methods: normalAllowedPaymentMethods,
 		total_tax_integer: 700,
 		total_cost_integer: 15600,
 		sub_total_integer: 15600,
@@ -1152,9 +1157,7 @@ export function mockGetCartEndpointWith( initialCart: ResponseCart ) {
 			initialCart.credits_integer >= initialCart.total_cost_integer;
 		return {
 			...initialCart,
-			allowed_payment_methods: isFree
-				? [ 'WPCOM_Billing_WPCOM' ]
-				: [ 'WPCOM_Billing_PayPal_Express' ],
+			allowed_payment_methods: isFree ? [ 'WPCOM_Billing_WPCOM' ] : normalAllowedPaymentMethods,
 		};
 	};
 }
@@ -1416,12 +1419,31 @@ export function createTestReduxStore() {
 	return createStore( rootReducer, applyMiddleware( thunk ) );
 }
 
+export function mockGetSupportedCountriesEndpoint( response ) {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( '/rest/v1.1/me/transactions/supported-countries' )
+		.reply( 200, response );
+}
+
 export function mockGetVatInfoEndpoint( response ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( '/rest/v1.1/me/vat-info' )
 		.optionally()
 		.reply( 200, response );
+}
+
+export function mockLogStashEndpoint() {
+	const endpoint = jest.fn();
+	endpoint.mockReturnValue( true );
+
+	nock( 'https://public-api.wordpress.com' )
+		.post( '/rest/v1.1/logstash', ( body ) => {
+			return endpoint( body );
+		} )
+		.reply( 200 );
+	return endpoint;
 }
 
 export function mockSetVatInfoEndpoint() {
@@ -1452,6 +1474,12 @@ export const mockPayPalRedirectResponse = () => [
 	200,
 	{ redirect_url: 'https://test-redirect-url' },
 ];
+
+export function mockGetPaymentMethodsEndpoint( endpointResponse ) {
+	nock( 'https://public-api.wordpress.com' )
+		.get( /\/rest\/v1\.2\/me\/payment-methods/ )
+		.reply( 200, endpointResponse );
+}
 
 export function mockCreateAccountEndpoint( endpointResponse ) {
 	const endpoint = jest.fn();

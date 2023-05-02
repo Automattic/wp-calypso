@@ -23,6 +23,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/billing-history/',
 		post_id: 40792,
 	},
+	blaze_credits: {
+		link: 'https://wordpress.com/support/blaze-credits/',
+		post_id: 240330,
+	},
 	cancel_purchase: {
 		link: 'https://wordpress.com/support/manage-purchases/#cancel-a-purchase',
 		post_id: 111349,
@@ -78,6 +82,10 @@ const contextLinks = {
 	'hosting-sftp': {
 		link: 'https://wordpress.com/support/sftp/',
 		post_id: 159771,
+	},
+	'hosting-staging-site': {
+		link: 'https://wordpress.com/support/how-to-create-a-staging-site/',
+		post_id: 239448,
 	},
 	'hosting-clear-cache': {
 		link: 'https://wordpress.com/support/clear-your-sites-cache/',

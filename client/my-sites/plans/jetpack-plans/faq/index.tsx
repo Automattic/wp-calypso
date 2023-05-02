@@ -2,7 +2,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FoldableFAQ from 'calypso/components/foldable-faq';
-import { getAgenciesLink, getHelpLink } from 'calypso/my-sites/plans-features-main/jetpack-faq';
+import {
+	getAgenciesLink,
+	getHelpLink,
+} from 'calypso/my-sites/plans-features-main/components/jetpack-faq';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import type { FC } from 'react';
@@ -146,8 +149,9 @@ const JetpackFAQ: FC = () => {
 							className="jetpack-faq__section"
 						>
 							{ translate(
-								'Anyone with at least five websites can join our licensing platform and enjoy a 25% discount across all Jetpack products! You can learn more about our {{agenciesLink}}licensing platform and agency program here{{/agenciesLink}}.',
+								'Anyone with at least five websites can join our licensing platform and enjoy up to %(discountRate)s%% discount across all Jetpack products! You can learn more about our {{agenciesLink}}licensing platform and agency program here{{/agenciesLink}}.',
 								{
+									args: { discountRate: 60 },
 									components: { agenciesLink: getAgenciesLink() },
 								}
 							) }

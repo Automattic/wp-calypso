@@ -7,6 +7,7 @@ import {
 	useCategorizationFromApi,
 	getDesignPreviewUrl,
 	isBlankCanvasDesign,
+	BLANK_CANVAS_DESIGN,
 } from '@automattic/design-picker';
 import { useLocale } from '@automattic/i18n-utils';
 import { StepContainer } from '@automattic/onboarding';
@@ -42,7 +43,6 @@ import {
 	getVirtualDesignProps,
 } from '../../analytics/record-design';
 import StepperLoader from '../../components/stepper-loader';
-import { PLACEHOLDER_SITE_ID } from '../pattern-assembler/constants';
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -66,6 +66,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const locale = useLocale();
 
 	const isMobile = ! useViewportMatch( 'small' );
+	const isDesktop = useViewportMatch( 'large' );
 
 	const intent = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getIntent(),
@@ -129,7 +130,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		{
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
-			include_pattern_virtual_designs: true,
 		},
 		{
 			enabled: true,
@@ -190,6 +190,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const queryParams = useQuery();
 	const themeFromQueryString = queryParams.get( 'theme' );
 	const styleFromQueryString = queryParams.get( 'style' );
+	const hideBackFromQueryString = queryParams.get( 'hideBack' );
 
 	useEffect( () => {
 		if ( ! themeFromQueryString || ! allDesigns ) {
@@ -433,19 +434,35 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 
 	function pickDesign( _selectedDesign: Design | undefined = selectedDesign ) {
+		const shouldGoToAssembler =
+			_selectedDesign?.is_virtual &&
+			_selectedDesign?.slug === BLANK_CANVAS_DESIGN.slug &&
+			isDesktop &&
+			isEnabled( 'pattern-assembler/dotcompatterns' );
+
+		if ( shouldGoToAssembler ) {
+			const assemblerDesign = {
+				..._selectedDesign,
+				design_type: BLANK_CANVAS_DESIGN.design_type,
+			} as Design;
+
+			setSelectedDesign( assemblerDesign );
+
+			handleSubmit( {
+				selectedDesign: assemblerDesign,
+				selectedSiteCategory: categorization.selection,
+			} );
+			return;
+		}
+
 		setSelectedDesign( _selectedDesign );
 		if ( siteSlugOrId && _selectedDesign ) {
 			const positionIndex = designs.findIndex( ( design ) => design.slug === _selectedDesign.slug );
 
 			setPendingAction( () => {
 				if ( _selectedDesign.is_virtual ) {
-					return applyThemeWithPatterns(
-						siteSlugOrId,
-						_selectedDesign,
-						null,
-						PLACEHOLDER_SITE_ID
-					).then( ( theme: ActiveTheme ) =>
-						reduxDispatch( setActiveTheme( site?.ID || -1, theme ) )
+					return applyThemeWithPatterns( siteSlugOrId, _selectedDesign ).then(
+						( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID || -1, theme ) )
 					);
 				}
 				return setDesignOnSite( siteSlugOrId, _selectedDesign, {
@@ -651,6 +668,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
+				hideBack={ !! hideBackFromQueryString }
 				className="design-setup__preview design-setup__preview__has-more-info"
 				goBack={ handleBackClick }
 				customizedActionButtons={ actionButtons }
@@ -661,6 +679,7 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 				stepName={ STEP_NAME }
 				stepContent={ stepContent }
 				hideSkip
+				hideBack={ !! hideBackFromQueryString }
 				className="design-setup__preview"
 				goBack={ handleBackClick }
 				goNext={ () => pickDesign() }

@@ -99,7 +99,6 @@
 		"signup/social": true,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": true,
-		"stats/horizontal-bars-everywhere": true,
 		"stats/new-video-summary": false,
 		"stats/subscribers-section": false,
 		"stepper-woocommerce-poc": true,
@@ -109,6 +108,7 @@
 		"upgrades/wpcom-monthly-plans": true,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
+		"yolo/staging-sites-i1": true,
 		"woa-logging": true,
 		"woa-logging-moved": true
 	}

@@ -8,7 +8,6 @@ import QueryPlans from 'calypso/components/data/query-plans';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
-import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getDomainName, getIntervalType } from 'calypso/signup/steps/plans/util';
@@ -23,8 +22,6 @@ export class PlansStepPM extends Component {
 		super( props );
 		this.state = {
 			isDesktop: isDesktop(),
-			experiment: null,
-			experimentIsLoading: true,
 		};
 	}
 	componentDidMount() {
@@ -32,13 +29,6 @@ export class PlansStepPM extends Component {
 			this.setState( { isDesktop: matchesDesktop } )
 		);
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
-
-		loadExperimentAssignment( 'paid_media_signup_2023_03_legacy_free_presentation' ).then(
-			( experimentName ) => {
-				this.setState( { experiment: experimentName } );
-				this.setState( { experimentIsLoading: false } );
-			}
-		);
 	}
 
 	componentWillUnmount() {
@@ -74,7 +64,6 @@ export class PlansStepPM extends Component {
 					isAllPaidPlansShown={ true }
 					isInSignup={ true }
 					shouldShowPlansFeatureComparison={ this.state.isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
-					showBiannualToggle={ this.state.experiment?.variationName === 'treatment' }
 				/>
 			</div>
 		);
@@ -100,7 +89,7 @@ export class PlansStepPM extends Component {
 			<Button onClick={ () => buildUpgradeFunction( this.props, null ) } borderless />
 		);
 
-		if ( this.state.experiment?.variationName === 'treatment' && this.props.hideFreePlan ) {
+		if ( this.props.hideFreePlan ) {
 			if ( this.state.isDesktop ) {
 				return translate( "Pick one that's right for you and unlock features that help you grow." );
 			}
@@ -172,9 +161,6 @@ export class PlansStepPM extends Component {
 			'is-wide-layout': true,
 		} );
 
-		if ( this.state.experimentIsLoading ) {
-			return this.renderLoading();
-		}
 		return (
 			<>
 				<QueryPlans />

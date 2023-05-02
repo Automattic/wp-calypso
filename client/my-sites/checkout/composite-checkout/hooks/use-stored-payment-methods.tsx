@@ -1,7 +1,6 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { isPaymentAgreement } from 'calypso/lib/checkout/payment-methods';
 import wp from 'calypso/lib/wp';
 import type { StoredPaymentMethod } from 'calypso/lib/checkout/payment-methods';
 import type { ComponentType } from 'react';
@@ -102,7 +101,7 @@ export function useStoredPaymentMethods( {
 		StoredPaymentMethod[ 'stored_details_id' ]
 	>( ( id ) => requestPaymentMethodDeletion( id ), {
 		onSuccess: () => {
-			queryClient.invalidateQueries( storedPaymentMethodsQueryKey );
+			queryClient.invalidateQueries( [ storedPaymentMethodsQueryKey ] );
 		},
 	} );
 
@@ -116,37 +115,6 @@ export function useStoredPaymentMethods( {
 			} );
 		},
 		[ mutation ]
-	);
-
-	const deletePaymentMethodAndSimilar = useCallback<
-		StoredPaymentMethodsState[ 'deletePaymentMethod' ]
-	>(
-		async ( id ) => {
-			const matchingPaymentMethod = data?.find( ( method ) => method.stored_details_id === id );
-			if ( ! matchingPaymentMethod ) {
-				return Promise.reject(
-					new Error(
-						translate( 'There was a problem deleting that payment method.', { textOnly: true } )
-					)
-				);
-			}
-
-			if ( isPaymentAgreement( matchingPaymentMethod ) ) {
-				const similarPaymentAgreements =
-					data?.filter(
-						( method ) =>
-							method.email === matchingPaymentMethod.email && isPaymentAgreement( method )
-					) ?? [];
-				return Promise.all(
-					similarPaymentAgreements.map( ( method ) =>
-						deletePaymentMethod( method.stored_details_id )
-					)
-				).then( () => Promise.resolve() );
-			}
-
-			return deletePaymentMethod( id );
-		},
-		[ translate, data, deletePaymentMethod ]
 	);
 
 	const errorMessage = ( () => {
@@ -166,9 +134,9 @@ export function useStoredPaymentMethods( {
 
 	return {
 		paymentMethods,
-		isLoading,
+		isLoading: isLoggedOut ? false : isLoading,
 		isDeleting: mutation.isLoading,
 		error: errorMessage,
-		deletePaymentMethod: deletePaymentMethodAndSimilar,
+		deletePaymentMethod,
 	};
 }

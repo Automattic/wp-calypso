@@ -27,6 +27,7 @@ import {
 	isSiteEligibleForManagedExternalThemes as getIsSiteEligibleForManagedExternalThemes,
 	isThemePremium as getIsThemePremium,
 	isThemePurchased,
+	isWpcomTheme as getIsWpcomTheme,
 	isWporgTheme as getIsWporgTheme,
 } from 'calypso/state/themes/selectors';
 import { setThemesBookmark } from 'calypso/state/themes/themes-ui/actions';
@@ -261,6 +262,8 @@ export class Theme extends Component {
 	goToCheckout = ( plan = 'premium' ) => {
 		const { siteSlug } = this.props;
 
+		this.props.recordTracksEvent( 'calypso_theme_tooltip_upgrade_nudge_click', { plan } );
+
 		if ( siteSlug ) {
 			const params = new URLSearchParams();
 			params.append( 'redirect_to', window.location.href.replace( window.location.origin, '' ) );
@@ -303,7 +306,7 @@ export class Theme extends Component {
 			isSiteEligibleForBundledSoftware,
 			isExternallyManagedTheme,
 			isSiteEligibleForManagedExternalThemes,
-			isWporgTheme,
+			isWporgOnlyTheme,
 			themeSubscriptionPrices,
 		} = this.props;
 
@@ -331,7 +334,7 @@ export class Theme extends Component {
 					'You have a subscription for this theme, but it will only be usable if you have the <link>Business plan</link> on your site.'
 				),
 				{
-					link: <LinkButton isLink onClic={ () => this.goToCheckout( 'business' ) } />,
+					link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
 				}
 			);
 		} else if ( isExternallyManagedTheme && ! isSiteEligibleForManagedExternalThemes ) {
@@ -374,7 +377,7 @@ export class Theme extends Component {
 					Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'business' ) } />,
 				}
 			);
-		} else if ( isWporgTheme ) {
+		} else if ( isWporgOnlyTheme ) {
 			return createInterpolateElement(
 				translate(
 					'This community theme can only be installed if you have the <Link>Business plan</Link> or higher on your site.'
@@ -396,16 +399,16 @@ export class Theme extends Component {
 				}
 			),
 			{
-				Link: <LinkButton isLink onClick={ this.goToCheckout } />,
+				Link: <LinkButton isLink onClick={ () => this.goToCheckout( 'premium' ) } />,
 			}
 		);
 	};
 
 	getUpsellHeader = () => {
-		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, isWporgTheme, translate } =
+		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, isWporgOnlyTheme, translate } =
 			this.props;
 
-		if ( isWporgTheme ) {
+		if ( isWporgOnlyTheme ) {
 			return translate( 'Community theme', {
 				context: 'This theme is developed and supported by a community',
 				textOnly: true,
@@ -443,7 +446,7 @@ export class Theme extends Component {
 	};
 
 	getPremiumThemeBadge = () => {
-		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, isWporgTheme, translate } =
+		const { doesThemeBundleSoftwareSet, isExternallyManagedTheme, isWporgOnlyTheme, translate } =
 			this.props;
 
 		const commonProps = {
@@ -453,7 +456,7 @@ export class Theme extends Component {
 			tooltipPosition: 'top',
 		};
 
-		if ( isWporgTheme ) {
+		if ( isWporgOnlyTheme ) {
 			return (
 				<PremiumBadge
 					{ ...commonProps }
@@ -502,13 +505,13 @@ export class Theme extends Component {
 	};
 
 	renderPricingBadge = () => {
-		const { active, isExternallyManagedTheme, isPremiumTheme, isWporgTheme, translate } =
+		const { active, isExternallyManagedTheme, isPremiumTheme, isWporgOnlyTheme, translate } =
 			this.props;
 		if ( active ) {
 			return null;
 		}
 
-		if ( isExternallyManagedTheme || isPremiumTheme || isWporgTheme ) {
+		if ( isExternallyManagedTheme || isPremiumTheme || isWporgOnlyTheme ) {
 			return this.renderUpsell();
 		}
 
@@ -588,7 +591,7 @@ export default connect(
 			isUpdating: themesUpdating && themesUpdating.indexOf( theme.id ) > -1,
 			isUpdated: themesUpdated && themesUpdated.indexOf( theme.id ) > -1,
 			isPremiumTheme: getIsThemePremium( state, theme.id ),
-			isWporgTheme: getIsWporgTheme( state, theme.id ),
+			isWporgOnlyTheme: ! getIsWpcomTheme( state, theme.id ) && getIsWporgTheme( state, theme.id ),
 			hasPremiumThemesFeature:
 				hasPremiumThemesFeature?.() ||
 				siteHasFeature( state, siteId, WPCOM_FEATURES_PREMIUM_THEMES ),

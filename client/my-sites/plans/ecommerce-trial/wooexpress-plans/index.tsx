@@ -9,13 +9,15 @@ import {
 	getPlans,
 	isWooExpressPlan,
 } from '@automattic/calypso-products';
+import { useIsEnglishLocale } from '@automattic/i18n-utils';
+import { hasTranslation } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
-import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/plan-interval-selector';
+import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/components/plan-interval-selector';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -46,6 +48,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		yearlyControlProps,
 	} = props;
 	const translate = useTranslate();
+	const isEnglishLocale = useIsEnglishLocale();
 
 	const mediumPlanAnnual = getPlans()[ PLAN_WOOEXPRESS_MEDIUM ];
 	const mediumPlanMonthly = getPlans()[ PLAN_WOOEXPRESS_MEDIUM_MONTHLY ];
@@ -54,7 +57,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 		monthlyPlanPrice: getPlanRawPrice( state, mediumPlanMonthly.getProductId() ) || 0,
 	} ) );
 
-	const percentageSavings = Math.round(
+	const percentageSavings = Math.floor(
 		( 1 - mediumPlanPrices.annualPlanMonthlyPrice / mediumPlanPrices.monthlyPlanPrice ) * 100
 	);
 
@@ -71,15 +74,28 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 				...yearlyControlProps,
 				content: (
 					<span>
-						{ translate( 'Pay Annually (Save %(percentageSavings)s%%)', {
-							args: { percentageSavings },
-						} ) }
+						{ isEnglishLocale ||
+						hasTranslation( 'Pay Annually {{span}}(Save %(percentageSavings)s%%){{/span}}' )
+							? translate( 'Pay Annually {{span}}(Save %(percentageSavings)s%%){{/span}}', {
+									args: { percentageSavings },
+									components: { span: <span className="wooexpress-plans__interval-savings" /> },
+							  } )
+							: translate( 'Pay Annually (Save %(percentageSavings)s%%)', {
+									args: { percentageSavings },
+							  } ) }
 					</span>
 				),
 				selected: interval === 'yearly',
 			},
 		];
-	}, [ interval, translate, monthlyControlProps, percentageSavings, yearlyControlProps ] );
+	}, [
+		interval,
+		translate,
+		monthlyControlProps,
+		percentageSavings,
+		yearlyControlProps,
+		isEnglishLocale,
+	] );
 
 	const smallPlan = interval === 'yearly' ? PLAN_WOOEXPRESS_SMALL : PLAN_WOOEXPRESS_SMALL_MONTHLY;
 	const mediumPlan =
@@ -105,6 +121,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 	const plansTableProps = {
 		plans: [ smallPlan, mediumPlan, PLAN_WOOEXPRESS_PLUS ],
 		hidePlansFeatureComparison: false,
+		hideUnavailableFeatures: true,
 		siteId,
 		onUpgradeClick,
 	};

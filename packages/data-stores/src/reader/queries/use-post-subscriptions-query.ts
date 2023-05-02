@@ -1,8 +1,14 @@
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
-import { useInfiniteQuery } from 'react-query';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn, useIsQueryEnabled } from '../hooks';
 import type { PostSubscription } from '../types';
+
+export enum PostSubscriptionsSortBy {
+	PostName = 'post_name',
+	RecentlyCommented = 'recently_commented',
+	RecentlySubscribed = 'recently_subscribed',
+}
 
 type SubscriptionManagerPostSubscriptions = {
 	comment_subscriptions: PostSubscription[];
@@ -12,17 +18,32 @@ type SubscriptionManagerPostSubscriptions = {
 type SubscriptionManagerPostSubscriptionsQueryProps = {
 	searchTerm?: string;
 	filter?: ( item?: PostSubscription ) => boolean;
-	sort?: ( a?: PostSubscription, b?: PostSubscription ) => number;
+	sortTerm?: PostSubscriptionsSortBy;
 	number?: number;
 };
 
+const sortByPostName = ( a: PostSubscription, b: PostSubscription ) =>
+	a.post_title.localeCompare( b.post_title );
+
+const sortByRecentlySubscribed = ( a: PostSubscription, b: PostSubscription ) =>
+	b.date_subscribed.getTime() - a.date_subscribed.getTime();
+
+const getSortFunction = ( sortTerm: PostSubscriptionsSortBy ) => {
+	switch ( sortTerm ) {
+		case PostSubscriptionsSortBy.PostName:
+			return sortByPostName;
+		default:
+		case PostSubscriptionsSortBy.RecentlySubscribed:
+			return sortByRecentlySubscribed;
+	}
+};
+
 const defaultFilter = () => true;
-const defaultSort = () => 0;
 
 const usePostSubscriptionsQuery = ( {
 	searchTerm = '',
 	filter = defaultFilter,
-	sort = defaultSort,
+	sortTerm = PostSubscriptionsSortBy.RecentlySubscribed,
 	number = 500,
 }: SubscriptionManagerPostSubscriptionsQueryProps = {} ) => {
 	const { isLoggedIn } = useIsLoggedIn();
@@ -62,7 +83,7 @@ const usePostSubscriptionsQuery = ( {
 		// Transform the dates into Date objects
 		const transformedData = flattenedData?.map( ( comment_subscription ) => ( {
 			...comment_subscription,
-			subscription_date: new Date( comment_subscription.subscription_date ),
+			date_subscribed: new Date( comment_subscription.date_subscribed ),
 		} ) );
 
 		const searchTermLowerCase = searchTerm.toLowerCase();
@@ -74,6 +95,7 @@ const usePostSubscriptionsQuery = ( {
 				  item.post_url.includes( searchTermLowerCase ) ||
 				  item.site_title.toLocaleLowerCase().includes( searchTermLowerCase )
 				: true;
+		const sort = getSortFunction( sortTerm );
 
 		return {
 			posts: transformedData
@@ -81,7 +103,7 @@ const usePostSubscriptionsQuery = ( {
 				.sort( sort ),
 			totalCount: data?.pages?.[ 0 ]?.total_comment_subscriptions_count ?? 0,
 		};
-	}, [ data?.pages, filter, searchTerm, sort ] );
+	}, [ data?.pages, filter, searchTerm, sortTerm ] );
 
 	return {
 		data: outputData,

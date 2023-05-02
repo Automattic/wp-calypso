@@ -29,7 +29,7 @@ export default function prepareRedirectTransaction(
 	const formattedTransactionData = createTransactionEndpointRequestPayload( {
 		...transactionData,
 		cart: createTransactionEndpointCartFromResponseCart( {
-			siteId: transactionOptions.siteId ? String( transactionOptions.siteId ) : undefined,
+			siteId: transactionOptions.siteId,
 			contactDetails: transactionData.domainDetails ?? null,
 			responseCart: transactionOptions.responseCart,
 		} ),

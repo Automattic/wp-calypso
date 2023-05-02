@@ -53,7 +53,7 @@ import { errorNotice } from 'calypso/state/notices/actions';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { isUserPaid } from 'calypso/state/purchases/selectors';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
-import productionSiteForWpcomStaging from 'calypso/state/selectors/get-production-site-for-wpcom-staging';
+import getProductionSiteForWpcomStaging from 'calypso/state/selectors/get-production-site-for-wpcom-staging';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
@@ -470,7 +470,12 @@ class ThemeSheet extends Component {
 	}
 
 	renderWebPreview = () => {
-		const { locale, stylesheet, themeId } = this.props;
+		const { locale, stylesheet, styleVariations, themeId } = this.props;
+		const baseStyleVariation = styleVariations.find(
+			( style ) => style.slug === DEFAULT_VARIATION_SLUG
+		);
+		const baseStyleVariationInlineCss = baseStyleVariation?.inline_css || '';
+		const selectedStyleVariationInlineCss = this.getSelectedStyleVariation()?.inline_css || '';
 		const url = getDesignPreviewUrl(
 			{ slug: themeId, recipe: { stylesheet } },
 			{ language: locale }
@@ -481,7 +486,7 @@ class ThemeSheet extends Component {
 				<div className="theme__sheet-web-preview">
 					<ThemeWebPreview
 						url={ url }
-						inlineCss={ this.getSelectedStyleVariation()?.inline_css }
+						inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
 						isShowFrameBorder={ false }
 						isShowDeviceSwitcher={ false }
 					/>
@@ -650,8 +655,8 @@ class ThemeSheet extends Component {
 				disableHref={ url === '' }
 				icon="notice"
 				href={ url }
-				title={ translate( 'Paid themes are not available' ) }
-				description={ translate( 'Paid themes are only available for production sites.' ) }
+				title={ translate( 'Paid themes cannot be purchased on staging sites' ) }
+				description={ translate( 'Subscribe to this premium theme on your production site.' ) }
 			/>
 		);
 	};
@@ -1327,7 +1332,11 @@ class ThemeSheet extends Component {
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
-				<QueryActiveTheme siteId={ siteId } />
+				{
+					siteId && (
+						<QueryActiveTheme siteId={ siteId } />
+					) /* TODO: Make QueryActiveTheme handle falsey siteId */
+				}
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<AutoLoadingHomepageModal source="details" />
 				<div className="theme__sheet-action-bar-container">
@@ -1471,7 +1480,7 @@ export default connect(
 
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );
 		const isWpcomStaging = isSiteWpcomStaging( state, siteId );
-		const productionSite = productionSiteForWpcomStaging( state, siteId );
+		const productionSite = getProductionSiteForWpcomStaging( state, siteId );
 		const productionSiteSlug = getSiteSlug( state, productionSite?.ID );
 		const isJetpack = isJetpackSite( state, siteId );
 		const isStandaloneJetpack = isJetpack && ! isAtomic;

@@ -19,16 +19,6 @@ const domain: Reducer< DomainSuggestion | undefined, OnboardAction > = ( state, 
 	return state;
 };
 
-const patternContent: Reducer< string | undefined, OnboardAction > = ( state, action ) => {
-	if ( action.type === 'SET_SITE_PATTERN_CONTENT' ) {
-		return action.patternContent;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return undefined;
-	}
-	return state;
-};
-
 const domainSearch: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_DOMAIN_SEARCH_TERM' ) {
 		return action.domainSearch;
@@ -509,13 +499,22 @@ export const profilerData: Reducer< ProfilerData | undefined, OnboardAction > = 
 	return state;
 };
 
+const paidSubscribers: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'SET_PAID_SUBSCRIBERS' ) {
+		return action.paidSubscribers;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	anchorPodcastId,
 	anchorEpisodeId,
 	anchorSpotifyUrl,
 	domain,
 	domainCartItem,
-	patternContent,
 	domainSearch,
 	domainCategory,
 	domainForm,
@@ -554,6 +553,7 @@ const reducer = combineReducers( {
 	isMigrateFromWp,
 	pluginsToVerify,
 	profilerData,
+	paidSubscribers,
 } );
 
 export type State = ReturnType< typeof reducer >;

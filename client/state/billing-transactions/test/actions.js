@@ -89,7 +89,7 @@ describe( 'actions', () => {
 			} );
 
 			test( 'should dispatch request failure action when request fails', () => {
-				return requestBillingTransactions( 87654321 )( spy ).then( () => {
+				return requestBillingTransactions()( spy ).then( () => {
 					expect( spy ).toBeCalledWith( {
 						type: BILLING_TRANSACTIONS_REQUEST_FAILURE,
 						error: expect.objectContaining( {

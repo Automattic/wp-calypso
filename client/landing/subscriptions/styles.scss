@@ -49,9 +49,27 @@ body {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
+			gap: 8px;
 
 			.subscription-manager__sort-controls {
 				margin-left: auto;
+			}
+		}
+
+		@media (max-width: $break-small) {
+			&__list-actions-bar {
+				margin-bottom: 38.5px;
+				flex-direction: column;
+				align-items: stretch;
+				gap: 0;
+
+				.subscription-manager-sort-controls {
+					margin-top: 30.5px;
+
+					&__button {
+						padding: 0;
+					}
+				}
 			}
 		}
 	}
@@ -64,10 +82,6 @@ body {
 		border: 1px solid $studio-gray-10;
 		border-radius: 2px;
 
-		@media (max-width: $break-small) {
-			display: none;
-		}
-
 		.subscriptions-manager__search-icon {
 			margin-left: 18.5px;
 			margin-right: 14px;
@@ -75,7 +89,6 @@ body {
 
 		input.search-component__input[type="search"]::placeholder {
 			color: $studio-gray-50;
-
 		}
 	}
 }

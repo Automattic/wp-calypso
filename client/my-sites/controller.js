@@ -304,8 +304,10 @@ function onSelectedSiteAvailable( context ) {
 				'/checkout/',
 				'/domains/',
 				'/email/',
+				'/export/',
 				'/plans/my-plan/trial-expired/',
 				'/purchases/',
+				'/settings/delete-site/',
 			];
 
 			if ( ! permittedPathPrefixes.some( ( prefix ) => context.pathname.startsWith( prefix ) ) ) {

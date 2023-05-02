@@ -1,8 +1,8 @@
-import { useSubscriberEmailAddress } from './hooks';
+import { useSubscriberEmailAddress, useIsLoggedIn } from './hooks';
 import {
-	usePostUnfollowMutation,
+	usePostUnsubscribeMutation,
 	useSiteDeliveryFrequencyMutation,
-	useSiteUnfollowMutation,
+	useSiteUnsubscribeMutation,
 	useUserSettingsMutation,
 	usePendingSiteConfirmMutation,
 	usePendingSiteDeleteMutation,
@@ -10,6 +10,7 @@ import {
 	usePendingPostDeleteMutation,
 } from './mutations';
 import {
+	PostSubscriptionsSortBy,
 	SiteSubscriptionsSortBy,
 	useSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
@@ -20,12 +21,13 @@ import {
 } from './queries';
 
 export const SubscriptionManager = {
+	PostSubscriptionsSortBy,
 	SiteSubscriptionsSortBy,
-	usePostUnfollowMutation,
+	usePostUnsubscribeMutation,
 	useSiteDeliveryFrequencyMutation,
 	useSiteSubscriptionsQuery,
 	usePostSubscriptionsQuery,
-	useSiteUnfollowMutation,
+	useSiteUnsubscribeMutation,
 	useSubscriptionsCountQuery,
 	useSubscriberEmailAddress,
 	useUserSettingsQuery,
@@ -36,6 +38,7 @@ export const SubscriptionManager = {
 	usePendingSiteDeleteMutation,
 	usePendingPostConfirmMutation,
 	usePendingPostDeleteMutation,
+	useIsLoggedIn,
 };
 
 // Types

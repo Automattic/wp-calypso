@@ -1,24 +1,20 @@
-import config from '@automattic/calypso-config';
 import { ComponentSwapper } from '@automattic/components';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { flowRight, find, get } from 'lodash';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import SectionNav from 'calypso/components/section-nav';
-import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import SegmentedControl from 'calypso/components/segmented-control';
 import SelectDropdown from 'calypso/components/select-dropdown';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DatePicker from '../stats-date-picker';
+
 import './summary-nav.scss';
 
 export const StatsModuleSummaryLinks = ( props ) => {
-	const { translate, path, siteSlug, query, period, children, hideNavigation, navigationSwap } =
-		props;
+	const { translate, path, siteSlug, query, period, hideNavigation, navigationSwap } = props;
 
 	const getSummaryPeriodLabel = () => {
 		switch ( period.period ) {
@@ -55,10 +51,6 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	const numberDays = get( query, 'num', '0' );
 	const selected = find( options, { value: numberDays } );
 
-	const isHorizontalBarComponentEnabledEverywhere = config.isEnabled(
-		'stats/horizontal-bars-everywhere'
-	);
-
 	const tabs = (
 		<SegmentedControl
 			primary
@@ -70,6 +62,9 @@ export const StatsModuleSummaryLinks = ( props ) => {
 					key={ i.value }
 					path={ i.path }
 					selected={ i.value === selected.value }
+					onClick={ () => {
+						recordStats( i );
+					} }
 				>
 					{ i.label }
 				</SegmentedControl.Item>
@@ -87,6 +82,9 @@ export const StatsModuleSummaryLinks = ( props ) => {
 					key={ 'navTabsDropdown-' + index }
 					path={ i.path }
 					selected={ i.value === selected.value }
+					onClick={ () => {
+						recordStats( i );
+					} }
 				>
 					{ i.label }
 				</SelectDropdown.Item>
@@ -99,61 +97,26 @@ export const StatsModuleSummaryLinks = ( props ) => {
 	} );
 
 	return (
-		<>
-			{ isHorizontalBarComponentEnabledEverywhere && (
-				<div className={ navClassName }>
-					{ ! hideNavigation && (
-						<ComponentSwapper
-							className={ classnames( 'stats-summary-nav__intervals-container' ) }
-							breakpoint="<660px"
-							breakpointActiveComponent={ select }
-							breakpointInactiveComponent={ tabs }
-						/>
-					) }
-					<div className="stats-summary-nav__header">
-						<DatePicker
-							period={ period.period }
-							date={ period.startOf }
-							path={ path }
-							query={ query }
-							summary={ false }
-						/>
-					</div>
-					{ hideNavigation && navigationSwap }
-				</div>
+		<div className={ navClassName }>
+			{ ! hideNavigation && (
+				<ComponentSwapper
+					className={ classnames( 'stats-summary-nav__intervals-container' ) }
+					breakpoint="<660px"
+					breakpointActiveComponent={ select }
+					breakpointInactiveComponent={ tabs }
+				/>
 			) }
-			{ ! isHorizontalBarComponentEnabledEverywhere && (
-				<div className="stats-module__all-time-nav">
-					<SectionNav selectedText={ selected.label }>
-						<NavTabs label={ translate( 'Summary' ) }>
-							{ options.map( ( item ) => {
-								const onClick = () => {
-									recordStats( item );
-								};
-								return (
-									<NavItem
-										path={ item.path }
-										selected={ item.value === selected.value }
-										key={ item.value }
-										onClick={ onClick }
-									>
-										{ item.label }
-									</NavItem>
-								);
-							} ) }
-						</NavTabs>
-						{ children }
-					</SectionNav>
-					<DatePicker
-						period={ period.period }
-						date={ period.startOf }
-						path={ path }
-						query={ query }
-						summary={ false }
-					/>
-				</div>
-			) }
-		</>
+			<div className="stats-summary-nav__header">
+				<DatePicker
+					period={ period.period }
+					date={ period.startOf }
+					path={ path }
+					query={ query }
+					summary={ false }
+				/>
+			</div>
+			{ hideNavigation && navigationSwap }
+		</div>
 	);
 };
 

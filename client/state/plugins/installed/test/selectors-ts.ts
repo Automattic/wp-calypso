@@ -14,6 +14,7 @@ import {
 	getPluginOnSite,
 	getPluginOnSites,
 	getPluginsOnSite,
+	getPluginsWithUpdates,
 	getSiteObjectsWithPlugin,
 	getSitesWithPlugin,
 	getSitesWithoutPlugin,
@@ -307,6 +308,18 @@ describe( 'getFilteredAndSortedPlugins', () => {
 	test( 'Should get a plugin list of length 1 if inactive plugins on site 1 is requested', () => {
 		const plugins = getFilteredAndSortedPlugins( state, [ siteOneId ], 'inactive' );
 		expect( plugins ).toHaveLength( 1 );
+	} );
+} );
+
+describe( 'getPluginsWithUpdates', () => {
+	test( 'Should get an empty array if the requested site is not in the current state', () => {
+		const plugins = getPluginsWithUpdates( state, [ nonExistingSiteId1 ] );
+		expect( plugins ).toHaveLength( 0 );
+	} );
+
+	test( 'Should get a plugin list with the Jetpack site with "type: plugin" on it', () => {
+		const plugins = getPluginsWithUpdates( state, [ siteOneId, siteTwoId ] );
+		expect( plugins ).toEqual( [ { ...jetpackWithSites, type: 'plugin' } ] );
 	} );
 } );
 

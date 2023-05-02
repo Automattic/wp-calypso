@@ -1,7 +1,9 @@
+import { translate } from 'i18n-calypso';
 import {
 	JETPACK_BACKUP_STAGING_UPDATE_REQUEST,
 	JETPACK_BACKUP_STAGING_UPDATE_REQUEST_FAILURE,
 	JETPACK_BACKUP_STAGING_UPDATE_REQUEST_SUCCESS,
+	JETPACK_BACKUP_STAGING_SET,
 } from 'calypso/state/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
@@ -20,15 +22,20 @@ const updateStagingFlag = ( action: UpdateStagingFlagRequestActionType ) =>
 		action
 	);
 
-const updateStagingFlagSuccess = ( { siteId }: UpdateStagingFlagRequestActionType ) => [
+const updateStagingFlagSuccess = ( { siteId, staging }: UpdateStagingFlagRequestActionType ) => [
 	{
 		type: JETPACK_BACKUP_STAGING_UPDATE_REQUEST_SUCCESS,
 		siteId,
 	},
-	successNotice( 'Site staging status has been successfully updated.', {
+	successNotice( translate( 'Site staging status has been successfully updated.' ), {
 		duration: 5000,
 		isPersistent: true,
 	} ),
+	{
+		type: JETPACK_BACKUP_STAGING_SET,
+		siteId,
+		staging,
+	},
 ];
 
 const updateStagingFlagError = (
@@ -40,7 +47,7 @@ const updateStagingFlagError = (
 		siteId,
 		error,
 	},
-	errorNotice( 'Updating site staging status failed.  Please, try again.', {
+	errorNotice( translate( 'Updating site staging status failed. Please, try again.' ), {
 		duration: 5000,
 		isPersistent: true,
 	} ),
