@@ -14,6 +14,7 @@ interface SitesTableProps {
 	className?: string;
 	sites: SiteExcerptData[];
 	isLoading?: boolean;
+	newSiteSlug?: string;
 }
 
 const Table = styled.table`
@@ -80,7 +81,12 @@ const StatsThInner = styled.div( {
 	gap: '6px',
 } );
 
-export function SitesTable( { className, sites, isLoading = false }: SitesTableProps ) {
+export function SitesTable( {
+	className,
+	sites,
+	isLoading = false,
+	newSiteSlug,
+}: SitesTableProps ) {
 	const { __ } = useI18n();
 
 	const headerRef = useRef< HTMLTableSectionElement >( null );
@@ -175,7 +181,11 @@ export function SitesTable( { className, sites, isLoading = false }: SitesTableP
 								/>
 							) ) }
 					{ sites.map( ( site ) => (
-						<SitesTableRow site={ site } key={ site.ID }></SitesTableRow>
+						<SitesTableRow
+							site={ site }
+							key={ site.ID }
+							isNewSite={ newSiteSlug === site.slug }
+						></SitesTableRow>
 					) ) }
 				</tbody>
 			</Table>

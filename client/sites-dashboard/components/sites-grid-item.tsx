@@ -1,4 +1,5 @@
 import { PLAN_ECOMMERCE_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { Ribbon } from '@automattic/components';
 import { useSiteLaunchStatusLabel, getSiteLaunchStatus } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
@@ -72,9 +73,10 @@ const ellipsis = css( {
 
 interface SitesGridItemProps {
 	site: SiteExcerptData;
+	isNewSite?: boolean;
 }
 
-export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
+export const SitesGridItem = memo( ( { site, isNewSite }: SitesGridItemProps ) => {
 	const { __ } = useI18n();
 
 	const isP2Site = site.options?.is_wpforteams_site;
@@ -100,6 +102,7 @@ export const SitesGridItem = memo( ( { site }: SitesGridItemProps ) => {
 			leading={
 				<>
 					<ThumbnailLink { ...siteDashboardUrlProps }>
+						{ isNewSite && <Ribbon>{ __( 'New' ) }</Ribbon> }
 						<SiteItemThumbnail
 							displayMode="tile"
 							className={ siteThumbnail }

@@ -1,4 +1,4 @@
-import { ListTile } from '@automattic/components';
+import { ListTile, Ribbon } from '@automattic/components';
 import { useSiteLaunchStatusLabel } from '@automattic/sites';
 import { css } from '@emotion/css';
 import styled from '@emotion/styled';
@@ -23,6 +23,7 @@ import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
 interface SiteTableRowProps {
 	site: SiteExcerptData;
+	isNewSite?: boolean;
 }
 
 const Row = styled.tr`
@@ -78,7 +79,7 @@ const ListTileSubtitle = styled.div`
 	align-items: center;
 `;
 
-export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
+export default memo( function SitesTableRow( { site, isNewSite }: SiteTableRowProps ) {
 	const { __ } = useI18n();
 	const translatedStatus = useSiteLaunchStatusLabel( site );
 	const { ref, inView } = useInView( { triggerOnce: true } );
@@ -104,6 +105,7 @@ export default memo( function SitesTableRow( { site }: SiteTableRowProps ) {
 							href={ getDashboardUrl( site.slug ) }
 							title={ __( 'Visit Dashboard' ) }
 						>
+							{ isNewSite && <Ribbon>{ __( 'New' ) }</Ribbon> }
 							<SiteItemThumbnail displayMode="list" showPlaceholder={ ! inView } site={ site } />
 						</ListTileLeading>
 					}

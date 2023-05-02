@@ -27,16 +27,19 @@ interface SitesGridProps {
 	className?: string;
 	isLoading: boolean;
 	sites: SiteExcerptData[];
+	newSiteSlug?: string;
 }
 
-export const SitesGrid = ( { sites, isLoading, className }: SitesGridProps ) => {
+export const SitesGrid = ( { sites, isLoading, className, newSiteSlug }: SitesGridProps ) => {
 	return (
 		<div className={ classnames( container, className ) }>
 			{ isLoading
 				? Array( N_LOADING_ROWS )
 						.fill( null )
 						.map( ( _, i ) => <SitesGridItemLoading key={ i } delayMS={ i * 150 } /> )
-				: sites.map( ( site ) => <SitesGridItem site={ site } key={ site.ID } /> ) }
+				: sites.map( ( site ) => (
+						<SitesGridItem site={ site } key={ site.ID } isNewSite={ site.slug === newSiteSlug } />
+				  ) ) }
 			<LinkInBioBanner displayMode="grid" />
 		</div>
 	);
