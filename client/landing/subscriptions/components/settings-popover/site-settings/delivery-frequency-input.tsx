@@ -1,3 +1,4 @@
+import { SubscriptionManager } from '@automattic/data-stores';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
@@ -39,6 +40,7 @@ const DeliveryFrequencyInput = ( {
 	value: selectedValue,
 	isUpdating,
 }: DeliveryFrequencyInputProps ) => {
+	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const translate = useTranslate();
 	const availableFrequencies = useMemo< DeliveryFrequencyKeyLabel[] >(
 		() => [
@@ -59,8 +61,15 @@ const DeliveryFrequencyInput = ( {
 	);
 
 	return (
-		<PopoverMenuItem itemComponent="div" className="settings-popover__delivery-frequency-item">
-			<p className="settings-popover__item-label">{ translate( 'Email me new posts' ) }</p>
+		<PopoverMenuItem
+			itemComponent="div"
+			className={ classNames( 'settings-popover__delivery-frequency-item', {
+				'is-logged-in': isLoggedIn,
+			} ) }
+		>
+			{ ! isLoggedIn && (
+				<p className="settings-popover__item-label">{ translate( 'Email me new posts' ) }</p>
+			) }
 			<SegmentedControl
 				className={ classNames( 'settings-popover__delivery-frequency-control', {
 					'is-loading': isUpdating,

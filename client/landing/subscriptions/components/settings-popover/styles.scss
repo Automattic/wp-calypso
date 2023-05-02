@@ -40,6 +40,12 @@
 		}
 	}
 
+	.settings-popover__delivery-frequency-item {
+		&.is-logged-in {
+			padding-top: 0;
+		}
+	}
+
 	.settings-popover__item-button {
 		display: flex;
 		align-items: center;
