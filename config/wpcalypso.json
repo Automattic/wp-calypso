@@ -126,6 +126,7 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"reader": true,
+		"reader/editor": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
 		"reader/public-tag-pages": true,
