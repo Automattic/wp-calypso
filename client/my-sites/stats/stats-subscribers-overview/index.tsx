@@ -33,8 +33,6 @@ function SubscribersOverviewCardStats( subscribersData: number[] ) {
 		previousCount?: number;
 	}[] = [];
 
-	const todayCount = subscribersData[ 0 ] || 0;
-
 	daysToDisplay.forEach( ( day, index ) => {
 		const count = subscribersData[ index ] || 0;
 
@@ -43,9 +41,6 @@ function SubscribersOverviewCardStats( subscribersData: number[] ) {
 				? translate( 'Today' )
 				: translate( '%d days ago', { args: day } ) ) as string,
 			count: count,
-			...( index !== 0 && {
-				previousCount: todayCount,
-			} ),
 		};
 
 		overviewCardStats.push( cardStat );
@@ -82,7 +77,6 @@ const SubscribersOverview: React.FC< SubscribersOverviewProps > = ( { siteId } )
 							key={ overviewCardStat.heading }
 							heading={ overviewCardStat.heading }
 							count={ overviewCardStat.count }
-							previousCount={ overviewCardStat.previousCount }
 							showValueTooltip
 							icon={ false }
 						/>
