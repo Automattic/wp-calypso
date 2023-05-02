@@ -1,3 +1,5 @@
+import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState, useEffect, useRef } from 'react';
@@ -81,8 +83,20 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 				<>
 					<Chart barClick={ barClick } data={ chartData } minBarWidth={ 35 }>
 						<StatsEmptyState
-							infoText={ translate(
-								'There was no data recorded during the selected time period.'
+							headingText=""
+							infoText={ createInterpolateElement(
+								__(
+									'Once stats become available, this chat will show you details about your views and visitors. <a>Learn more about stats</a>'
+								),
+								{
+									a: (
+										<a
+											href="https://jetpack.com/stats/"
+											target="_blank/>"
+											rel="noopener noreferrer"
+										></a>
+									),
+								}
 							) }
 						/>
 					</Chart>
