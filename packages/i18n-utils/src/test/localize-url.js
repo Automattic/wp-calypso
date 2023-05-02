@@ -91,33 +91,33 @@ describe( '#localizeUrl', () => {
 	} );
 
 	test( 'trailing slash variations', () => {
-		const loggedIn = false;
+		const isLoggedIn = false;
 
 		// Add trailing slashes everywhere (default).
-		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', loggedIn ) ).toEqual(
+		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', isLoggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/'
 		);
-		expect( localizeUrl( 'https://automattic.com/cookies', 'de', loggedIn ) ).toEqual(
+		expect( localizeUrl( 'https://automattic.com/cookies', 'de', isLoggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/'
 		);
-		expect( localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', loggedIn ) ).toEqual(
+		expect( localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', isLoggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/?foo=bar'
 		);
-		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', loggedIn ) ).toEqual(
+		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', isLoggedIn ) ).toEqual(
 			'https://automattic.com/de/cookies/#baz'
 		);
 
 		// Preserve trailing slash variation.
-		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', loggedIn, true ) ).toEqual(
+		expect( localizeUrl( 'https://automattic.com/cookies/', 'de', isLoggedIn, true ) ).toEqual(
 			'https://automattic.com/de/cookies/'
 		);
-		expect( localizeUrl( 'https://automattic.com/cookies', 'de', loggedIn, true ) ).toEqual(
+		expect( localizeUrl( 'https://automattic.com/cookies', 'de', isLoggedIn, true ) ).toEqual(
 			'https://automattic.com/de/cookies'
 		);
-		expect( localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', loggedIn, true ) ).toEqual(
-			'https://automattic.com/de/cookies?foo=bar'
-		);
-		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', loggedIn, true ) ).toEqual(
+		expect(
+			localizeUrl( 'https://automattic.com/cookies?foo=bar', 'de', isLoggedIn, true )
+		).toEqual( 'https://automattic.com/de/cookies?foo=bar' );
+		expect( localizeUrl( 'https://automattic.com/cookies#baz', 'de', isLoggedIn, true ) ).toEqual(
 			'https://automattic.com/de/cookies#baz'
 		);
 	} );
