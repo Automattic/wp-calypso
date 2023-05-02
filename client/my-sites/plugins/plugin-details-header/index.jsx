@@ -17,6 +17,16 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 
 	const selectedSite = useSelector( getSelectedSite );
 
+	// This gets the version of the plugin on the last site or
+	// the wporg version if that doesn't exist. This is preserving
+	// some pre-existing behavior during a refactor and doesn't
+	// necessarily have to remain this way in the future.
+	let version = plugin?.version;
+	if ( plugin.sites ) {
+		const sites = Object.values( plugin.sites );
+		version = sites.findLast( ( site ) => site.version ).version;
+	}
+
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
 	}
@@ -74,7 +84,7 @@ const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud } ) => {
 				</div>
 				<div className="plugin-details-header__info">
 					<div className="plugin-details-header__info-title">{ translate( 'Version' ) }</div>
-					<div className="plugin-details-header__info-value">{ plugin.version }</div>
+					<div className="plugin-details-header__info-value">{ version }</div>
 				</div>
 				{ Boolean( plugin.active_installs ) && (
 					<div className="plugin-details-header__info">
