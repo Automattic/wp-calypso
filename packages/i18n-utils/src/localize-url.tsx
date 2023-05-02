@@ -170,14 +170,12 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 };
 
 function hasTrailingSlash( urlString: string ) {
-	let url;
 	try {
-		url = new URL( String( urlString ), INVALID_URL );
+		const url = new URL( String( urlString ), INVALID_URL );
+		return url.pathname.endsWith( '/' );
 	} catch ( e ) {
 		return false;
 	}
-
-	return url.pathname.endsWith( '/' );
 }
 
 export function localizeUrl(
