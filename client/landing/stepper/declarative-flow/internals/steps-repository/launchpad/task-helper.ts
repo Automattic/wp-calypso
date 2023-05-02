@@ -63,9 +63,7 @@ export function getEnhancedTasks(
 	const firstPostPublishedCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
 
-	const planCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.plan_completed ||
-		! isStartWritingFlow( flow );
+	const planCompleted = checklistStatuses.plan_completed || ! isStartWritingFlow( flow );
 
 	const videoPressUploadCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
