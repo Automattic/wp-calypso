@@ -23,8 +23,8 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	}
 	const popoverToggle = container.querySelector( '.launch-bar-global-styles-toggle' );
 	const popover = container.querySelector( '.launch-bar-global-styles-popover' );
-	const upgradeButton = container.querySelector( '.launch-bar-global-styles-upgrade-button' );
-	const previewButton = container.querySelector( '.launch-bar-global-styles-preview-link' );
+	const upgradeButton = container.querySelector( '.launch-bar-global-styles-upgrade' );
+	const previewButton = container.querySelector( '.launch-bar-global-styles-preview' );
 
 	popoverToggle?.addEventListener( 'click', ( event ) => {
 		event.preventDefault();
