@@ -106,6 +106,13 @@ const startWriting: Flow = {
 						}
 					}
 					return navigate( 'launchpad' );
+				case 'setup-blog':
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { site_edited: true },
+						} );
+					}
+					return navigate( 'launchpad' );
 				case 'launchpad':
 					return navigate( 'processing' );
 			}

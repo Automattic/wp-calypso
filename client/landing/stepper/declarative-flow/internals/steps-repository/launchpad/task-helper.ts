@@ -56,6 +56,10 @@ export function getEnhancedTasks(
 
 	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
 
+	// This needs to be updated to use a new checklistStatus instead of site_edited.
+	const setupBlogCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
+
 	const siteLaunchCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
 
@@ -127,13 +131,14 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Set up your blog' ),
 						actionDispatch: () => {
-							recordTaskClickTracksEvent( flow, task.completed, task.id );
+							recordTaskClickTracksEvent( flow, setupBlogCompleted, task.id );
 							window.location.assign(
 								addQueryArgs( `/setup/${ START_WRITING_FLOW }/setup-blog`, {
-									siteSlug,
+									...{ siteSlug: siteSlug, 'start-writing': true },
 								} )
 							);
 						},
+						completed: setupBlogCompleted,
 					};
 					break;
 				case 'setup_newsletter':
