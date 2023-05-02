@@ -70,6 +70,11 @@ export const tasks: Task[] = [
 		disabled: false,
 	},
 	{
+		id: 'setup_blog',
+		completed: false,
+		disabled: false,
+	},
+	{
 		id: 'setup_general',
 		completed: true,
 		disabled: true,
@@ -143,7 +148,7 @@ export const launchpadFlowTasks: LaunchpadFlowTaskList = {
 	videopress: [ 'videopress_setup', 'plan_selected', 'videopress_upload', 'videopress_launched' ],
 	[ START_WRITING_FLOW ]: [
 		'first_post_published',
-		'setup_free',
+		'setup_blog',
 		DOMAIN_UPSELL,
 		'plan_selected',
 		'blog_launched',

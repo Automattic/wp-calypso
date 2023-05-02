@@ -22,7 +22,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { isVideoPressFlow } from 'calypso/signup/utils';
 import { ONBOARD_STORE, SITE_STORE } from '../../../../stores';
 import { launchpadFlowTasks } from './tasks';
-import { LaunchpadChecklist, Task } from './types';
+import { LaunchpadChecklist, LaunchpadStatuses, Task } from './types';
 import type { SiteDetails } from '@automattic/data-stores';
 /**
  * Some attributes of these enhanced tasks will soon be fetched through a WordPress REST
@@ -42,6 +42,7 @@ export function getEnhancedTasks(
 	goToStep?: NavigationControls[ 'goToStep' ],
 	flow: string | null = '',
 	isEmailVerified = false,
+	checklistStatuses: LaunchpadStatuses = {},
 	planCartProductSlug?: string | null
 ) {
 	const enhancedTaskList: Task[] = [];
@@ -55,6 +56,10 @@ export function getEnhancedTasks(
 		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
 
 	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
+
+	// Todo: setupBlogCompleted should be updated to use a new checklistStatus instead of site_edited.
+	//  Explorers will update Jetpack definitions to make this possible, meanwhile we are using site_edited.
+	const setupBlogCompleted = checklistStatuses?.site_edited || false;
 
 	const siteLaunchCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
@@ -121,6 +126,20 @@ export function getEnhancedTasks(
 								} )
 							);
 						},
+					};
+					break;
+				case 'setup_blog':
+					taskData = {
+						title: translate( 'Set up your blog' ),
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, setupBlogCompleted, task.id );
+							window.location.assign(
+								addQueryArgs( `/setup/${ START_WRITING_FLOW }/setup-blog`, {
+									...{ siteSlug: siteSlug, 'start-writing': true },
+								} )
+							);
+						},
+						completed: setupBlogCompleted,
 					};
 					break;
 				case 'setup_newsletter':
