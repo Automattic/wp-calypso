@@ -44,19 +44,29 @@ const site: SiteDetails = {
 	locale: '',
 	slug: 'test.wordpress.com',
 	is_multisite: false,
+	visible: true,
 };
 
 const plugin = {
 	id: pluginId,
 	last_updated: '2021-09-16 12:40am GMT',
-	sites: { [ `${ siteId }` ]: { ID: siteId, canUpdateFiles: true } },
+	sites: {
+		[ `${ siteId }` ]: {
+			ID: siteId,
+			canUpdateFiles: true,
+			update: { new_version: '11.5', canUpdateFiles: true },
+			version: '11.3',
+		},
+	},
+	version: '11.3',
+	autoupdate: false,
+	update: { new_version: '11.5', canUpdateFiles: true },
+	active: true,
 	icon: '',
 	name: 'Plugin 1',
 	pluginsOnSites: [],
 	slug: pluginId,
 	wporg: true,
-	version: '11.3',
-	update: { new_version: '11.5', canUpdateFiles: true },
 };
 
 const paidPlugin = {

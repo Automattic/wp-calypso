@@ -22,7 +22,7 @@ const props = {
 const initialState = {
 	sites: { items: { [ site.ID ]: site } },
 	currentUser: {
-		capabilities: {},
+		capabilities: { [ site.ID ]: { manage_options: true } },
 	},
 	plugins: {
 		installed: {
@@ -53,8 +53,13 @@ describe( '<RemovePlugin>', () => {
 	beforeAll( () => {
 		nock( 'https://public-api.wordpress.com:443' )
 			.persist()
+			.post( `/rest/v1.1/sites/${ site.ID }/plugins/${ plugin.id }`, { active: false } )
+			.reply( 200, plugin );
+
+		nock( 'https://public-api.wordpress.com:443' )
+			.persist()
 			.post( `/rest/v1.1/sites/${ site.ID }/plugins/${ plugin.id }/delete` )
-			.reply( 200 );
+			.reply( 200, plugin );
 	} );
 
 	afterAll( () => {
