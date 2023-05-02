@@ -45,7 +45,7 @@ export default function PlanNotice( {
 	} else if ( ! canUserPurchasePlan ) {
 		return (
 			<Notice
-				className="plan-features__notice"
+				className="plan-features-main__notice"
 				showDismiss={ true }
 				onDismissClick={ handleDismissNotice }
 				status="is-info"
@@ -59,7 +59,7 @@ export default function PlanNotice( {
 	} else if ( activeDiscount ) {
 		return (
 			<Notice
-				className="plan-features__notice-credits"
+				className="plan-features-main__notice"
 				showDismiss={ true }
 				onDismissClick={ handleDismissNotice }
 				icon="info-outline"
@@ -78,7 +78,7 @@ export default function PlanNotice( {
 	} else if ( isPlanUpgradeCreditEligible ) {
 		return (
 			<Notice
-				className="plan-features__notice-credits"
+				className="plan-features-main__notice"
 				showDismiss={ true }
 				onDismissClick={ handleDismissNotice }
 				icon="info-outline"
