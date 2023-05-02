@@ -21,16 +21,15 @@ import type { NoticeStatus, NoticeText, NoticeOptions } from 'calypso/state/noti
 export interface AutoRenewToggleProps {
 	purchase: Purchase;
 	siteDomain: string;
-	planName: string;
+	planName?: string;
 	shouldDisable?: boolean;
-	fetchingUserPurchases: boolean;
 	withTextStatus?: boolean;
 	toggleSource?: string;
 	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
-	paymentMethodUrl: string;
+	paymentMethodUrl?: string;
 	showLink?: boolean;
-	productSlug: string;
-	siteSlug: string | null;
+	productSlug?: string;
+	siteSlug?: string | null;
 }
 
 export interface AutoRenewToggleConnectedProps {
@@ -38,7 +37,7 @@ export interface AutoRenewToggleConnectedProps {
 	isEnabled: boolean;
 	currentUserId: number | null;
 	isAtomicSite: boolean;
-	siteSlug: string | null;
+	siteSlug?: string | null;
 	fetchUserPurchases: ( userId: number ) => Promise< Purchase[] >;
 	recordTracksEvent: (
 		name: string,
