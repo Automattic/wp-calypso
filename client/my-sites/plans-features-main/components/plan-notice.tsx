@@ -84,7 +84,7 @@ export default function PlanNotice( {
 				status="is-success"
 			>
 				{ translate(
-					'We’ve applied the {{b}}%(amountInCurrency)s{{/b}} {{a}}upgrade credit{{/a}} from your previous plan as a deduction to your new plan, below. Remember to use it before it expires!',
+					'We’ve applied the {{b}}%(amountInCurrency)s{{/b}} {{a}}upgrade credit{{/a}} from your current plan as a deduction to your new plan, below. This remaining credit will be applied at checkout if you upgrade today!',
 					{
 						args: {
 							amountInCurrency: formatCurrency( creditsValue, currencyCode ?? '' ),

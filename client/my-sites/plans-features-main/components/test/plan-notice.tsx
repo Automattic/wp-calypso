@@ -142,7 +142,7 @@ describe( '<PlanNotice /> Tests', () => {
 			/>
 		);
 		expect( screen.getByRole( 'status' ).textContent ).toBe(
-			'You have $100.00 of pro-rated credits available from your current plan. Apply those credits towards an upgrade before they expire!'
+			'We’ve applied the $100.00 upgrade credit from your current plan as a deduction to your new plan, below. This remaining credit will be applied at checkout if you upgrade today!'
 		);
 	} );
 
