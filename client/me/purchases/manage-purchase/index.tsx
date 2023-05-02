@@ -92,6 +92,10 @@ import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view
 import WordAdsEligibilityWarningDialog from 'calypso/me/purchases/wordads-eligibility-warning-dialog';
 import PlanPrice from 'calypso/my-sites/plan-price';
 import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
+import {
+	getCancelPurchaseUrlFor,
+	getAddNewPaymentMethodUrlFor,
+} from 'calypso/my-sites/purchases/paths';
 import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
 	currentUserHasFlag,
@@ -145,8 +149,8 @@ import './style.scss';
 
 export interface ManagePurchaseProps {
 	cardTitle?: string;
-	getAddNewPaymentMethodUrlFor?: () => string;
-	getCancelPurchaseUrlFor?: () => string;
+	getAddNewPaymentMethodUrlFor?: typeof getAddNewPaymentMethodUrlFor;
+	getCancelPurchaseUrlFor?: typeof getCancelPurchaseUrlFor;
 	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
 	getManagePurchaseUrlFor?: GetManagePurchaseUrlFor;
 	isSiteLevel?: boolean;
