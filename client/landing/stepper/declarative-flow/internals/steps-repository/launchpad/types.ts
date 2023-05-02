@@ -26,7 +26,6 @@ export interface TranslatedLaunchpadStrings {
 export interface LaunchpadStatuses {
 	links_edited?: boolean;
 	site_edited?: boolean;
-	blog_setup_completed?: boolean;
 	site_launched?: boolean;
 	first_post_published?: boolean;
 	video_uploaded?: boolean;

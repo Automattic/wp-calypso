@@ -57,7 +57,8 @@ export function getEnhancedTasks(
 
 	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
 
-	// This needs to be updated to use a new checklistStatus instead of site_edited.
+	// Todo: setupBlogCompleted should be updated to use a new checklistStatus instead of site_edited.
+	//  Explorers will update Jetpack definitions to make this possible, meanwhile we are using site_edited.
 	const setupBlogCompleted = checklistStatuses?.site_edited || false;
 
 	const siteLaunchCompleted =
