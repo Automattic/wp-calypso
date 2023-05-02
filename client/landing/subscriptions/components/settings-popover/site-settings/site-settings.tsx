@@ -48,11 +48,13 @@ const SiteSettings = ( {
 					/>
 				</>
 			) }
-			<DeliveryFrequencyInput
-				value={ deliveryFrequency }
-				onChange={ onDeliveryFrequencyChange }
-				isUpdating={ updatingFrequency }
-			/>
+			{ emailMeNewPosts && (
+				<DeliveryFrequencyInput
+					value={ deliveryFrequency }
+					onChange={ onDeliveryFrequencyChange }
+					isUpdating={ updatingFrequency }
+				/>
+			) }
 			<Separator />
 			<UnsubscribeSiteButton unsubscribing={ unsubscribing } onUnsubscribe={ onUnsubscribe } />
 		</SettingsPopover>
