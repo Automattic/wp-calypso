@@ -155,28 +155,47 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const getFormattedHeader = () => {
-		if ( ! isVideoPressFlow ) {
-			return undefined;
+		if ( isVideoPressFlow ) {
+			return (
+				<FormattedHeader
+					id="choose-a-domain-header"
+					headerText={ __( 'Choose a domain' ) }
+					subHeaderText={
+						<>
+							{ __( 'Make your video site shine with a custom domain. Not sure yet?' ) }
+							<button
+								className="button navigation-link step-container__navigation-link has-underline is-borderless"
+								onClick={ onSkip }
+							>
+								{ __( 'Decide later.' ) }
+							</button>
+						</>
+					}
+					align="center"
+				/>
+			);
 		}
 
-		return (
-			<FormattedHeader
-				id="choose-a-domain-header"
-				headerText={ __( 'Choose a domain' ) }
-				subHeaderText={
-					<>
-						{ __( 'Make your video site shine with a custom domain. Not sure yet?' ) }
-						<button
-							className="button navigation-link step-container__navigation-link has-underline is-borderless"
-							onClick={ onSkip }
-						>
-							{ __( 'Decide later.' ) }
-						</button>
-					</>
-				}
-				align="center"
-			/>
-		);
+		if ( isStartWritingFlow ) {
+			return (
+				<FormattedHeader
+					id="choose-a-domain-writer-header"
+					headerText={ __( 'Your domain. Your identity.' ) }
+					subHeaderText={
+						<>
+							{ __( 'Help your blog stand out with a custom domain. Not sure yet?' ) }
+							<button
+								className="button navigation-link step-container__navigation-link has-underline is-borderless"
+								onClick={ onSkip }
+							>
+								{ __( 'Decide later.' ) }
+							</button>
+						</>
+					}
+					align="center"
+				/>
+			);
+		}
 	};
 
 	return (

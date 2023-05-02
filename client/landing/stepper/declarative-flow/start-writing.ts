@@ -19,6 +19,7 @@ import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-u
 
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
+	title: 'Blog',
 	useSteps() {
 		return [
 			{
