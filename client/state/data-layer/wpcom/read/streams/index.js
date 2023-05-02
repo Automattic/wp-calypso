@@ -163,6 +163,7 @@ const streamApis = {
 				...extras,
 				seed,
 				alg_prefix: 'read:recommendations:sites',
+				posts_per_site: 1,
 			} ),
 	},
 	tag: {
