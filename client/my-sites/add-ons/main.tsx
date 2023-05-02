@@ -15,6 +15,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import AddOnsGrid from './components/add-ons-grid';
+import useAddOnCheckoutLink from './hooks/use-add-on-checkout-link';
 import useAddOnPurchaseStatus from './hooks/use-add-on-purchase-status';
 import useAddOns from './hooks/use-add-ons';
 import type { ReactElement } from 'react';
@@ -119,6 +120,7 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 	const translate = useTranslate();
 	const addOns = useAddOns();
 	const selectedSite = useSelector( getSelectedSite );
+	const checkoutLink = useAddOnCheckoutLink();
 
 	const canManageSite = useSelector( ( state ) => {
 		if ( ! selectedSite ) {
@@ -132,12 +134,8 @@ const AddOnsMain: React.FunctionComponent< Props > = () => {
 		return <NoAccess />;
 	}
 
-	const handleActionPrimary = ( addOnSlug: string ) => {
-		if ( 'no-adverts/no-adverts.php' === addOnSlug ) {
-			page.redirect( `/checkout/${ selectedSite?.slug }/no-ads` );
-			return;
-		}
-		page.redirect( `/checkout/${ selectedSite?.slug }/${ addOnSlug }` );
+	const handleActionPrimary = ( addOnSlug: string, quantity?: number ) => {
+		page.redirect( `${ checkoutLink( addOnSlug, quantity ) }` );
 	};
 
 	const handleActionSelected = () => {

@@ -15,6 +15,7 @@ import {
 	isJetpackProductSlug,
 	isTitanMail,
 	isDIFMProduct,
+	isTieredVolumeSpaceAddon,
 } from '@automattic/calypso-products';
 import {
 	CheckoutModal,
@@ -641,6 +642,17 @@ export function LineItemSublabelAndPrice( { product }: { product: ResponseCartPr
 				} ),
 			},
 		};
+
+		if ( isTieredVolumeSpaceAddon( product ) ) {
+			const spaceQuantity = product?.quantity ?? 1;
+			return (
+				<>
+					{ translate( '%(quantity)s GB extra space, %(price)s per year', {
+						args: { quantity: spaceQuantity, price: options.args.price },
+					} ) }
+				</>
+			);
+		}
 
 		if ( isMonthlyProduct( product ) ) {
 			return <>{ translate( '%(sublabel)s: %(price)s per month', options ) }</>;

@@ -179,6 +179,7 @@
 		"stats/new-video-summary": true,
 		"stats/subscribers-section": false,
 		"stepper-woocommerce-poc": true,
+		"storage-addon": false,
 		"subscriber-csv-upload": true,
 		"subscriber-importer": true,
 		"subscription-gifting": true,
