@@ -11,6 +11,7 @@ type SiteSettingsProps = {
 	notifyMeOfNewPosts: boolean;
 	onNotifyMeOfNewPostsChange: ( value: boolean ) => void;
 	updatingNotifyMeOfNewPosts: boolean;
+	emailMeNewPosts: boolean;
 	deliveryFrequency: SiteSubscriptionDeliveryFrequency;
 	onDeliveryFrequencyChange: ( value: SiteSubscriptionDeliveryFrequency ) => void;
 	onUnsubscribe: () => void;
@@ -22,6 +23,7 @@ const SiteSettings = ( {
 	notifyMeOfNewPosts,
 	onNotifyMeOfNewPostsChange,
 	updatingNotifyMeOfNewPosts,
+	emailMeNewPosts,
 	deliveryFrequency,
 	onDeliveryFrequencyChange,
 	onUnsubscribe,
@@ -39,7 +41,11 @@ const SiteSettings = ( {
 						onChange={ onNotifyMeOfNewPostsChange }
 						isUpdating={ updatingNotifyMeOfNewPosts }
 					/>
-					<EmailMeNewPostsToggle value={ false } onChange={ () => null } isUpdating={ false } />
+					<EmailMeNewPostsToggle
+						value={ emailMeNewPosts }
+						onChange={ () => null }
+						isUpdating={ false }
+					/>
 				</>
 			) }
 			<DeliveryFrequencyInput

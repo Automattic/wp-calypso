@@ -40,16 +40,21 @@ export default function SiteRow( {
 		return <Gridicon className="icon" icon="globe" size={ 48 } />;
 	}, [ site_icon, name ] );
 
+	const notifyMeOfNewPosts = useMemo(
+		() => delivery_methods?.notification?.send_posts,
+		[ delivery_methods?.notification?.send_posts ]
+	);
+
+	const emailMeNewPosts = useMemo(
+		() => delivery_methods?.email?.send_posts,
+		[ delivery_methods?.email?.send_posts ]
+	);
+
 	const deliveryFrequencyValue = useMemo(
 		() => delivery_methods?.email?.post_delivery_frequency as SiteSubscriptionDeliveryFrequency,
 		[ delivery_methods?.email?.post_delivery_frequency ]
 	);
 	const deliveryFrequencyLabel = useDeliveryFrequencyLabel( deliveryFrequencyValue );
-
-	const notifyMeOfNewPosts = useMemo(
-		() => delivery_methods?.notification?.send_posts,
-		[ delivery_methods?.notification?.send_posts ]
-	);
 
 	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
 		SubscriptionManager.useSiteDeliveryFrequencyMutation();
@@ -82,6 +87,7 @@ export default function SiteRow( {
 						updateNotifyMeOfNewPosts( { blog_id: blog_ID, send_posts } )
 					}
 					updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
+					emailMeNewPosts={ emailMeNewPosts }
 					deliveryFrequency={ deliveryFrequencyValue }
 					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
 						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
