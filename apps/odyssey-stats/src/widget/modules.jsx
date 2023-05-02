@@ -23,6 +23,10 @@ function ModuleCard( {
 } ) {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( false );
+	const activateAskismet = () => {
+		setDisabled( true );
+		activateProduct().catch( () => setDisabled( false ) );
+	};
 	return (
 		<div
 			className={ classNames( 'stats-widget-module stats-widget-card', className ) }
@@ -42,22 +46,30 @@ function ModuleCard( {
 						<div className="stats-widget-module__info">
 							{ error === 'not_active' && (
 								<button
+									className="jetpack-emerald-button"
 									disabled={ disabled }
-									onClick={ () => {
-										setDisabled( true );
-										activateProduct().catch( () => setDisabled( false ) );
-									} }
+									onClick={ activateAskismet }
 								>
 									Activate
 								</button>
 							) }
-							{ /* TODO: add button to install plugins. */ }
-							{ error !== 'not_active' && info && (
+							{ error === 'not_installed' && (
+								<button
+									className="jetpack-emerald-button is-secondary-jetpack-emerald"
+									disabled={ disabled }
+									onClick={ activateAskismet }
+								>
+									Install
+								</button>
+							) }
+							{ ! [ 'not_active', 'not_installed' ].includes( error ) && info && (
 								<a href={ info.link } target="__blank">
 									{ info.text }
 								</a>
 							) }
-							{ error !== 'not_active' && ! info && <p>{ translate( 'An error occurred.' ) }</p> }
+							{ ! [ 'not_active', 'not_installed' ].includes( error ) && ! info && (
+								<p>{ translate( 'An error occurred.' ) }</p>
+							) }
 						</div>
 					) }
 				</>
@@ -85,6 +97,7 @@ function AkismetModule( { siteId } ) {
 			} )
 			.then( refetchAkismetData );
 	};
+
 	return (
 		<ModuleCard
 			icon={ akismet }
@@ -94,9 +107,7 @@ function AkismetModule( { siteId } ) {
 			error={ akismetError?.message }
 			isLoading={ isAkismetLoading }
 			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
-			activateProduct={
-				canCurrentUser( siteId, 'manage_options' ) && activateProduct( 'anti-spam' )
-			}
+			activateProduct={ activateProduct( 'anti-spam' ) }
 			info={ {
 				link: 'https://akismet.com/?utm_source=jetpack&utm_medium=link&utm_campaign=Jetpack%20Dashboard%20Widget%20Footer%20Link',
 				text: translate( 'Anti-spam can help to keep your blog safe from spam!' ),
@@ -139,7 +150,7 @@ function ProtectModule( { siteId } ) {
 			error={ protectError?.message }
 			isLoading={ isProtectLoading }
 			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
-			activateProduct={ canCurrentUser( siteId, 'manage_options' ) && activateModule( 'protect' ) }
+			activateProduct={ activateModule( 'protect' ) }
 		/>
 	);
 }
