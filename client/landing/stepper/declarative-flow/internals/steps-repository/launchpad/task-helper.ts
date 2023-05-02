@@ -34,7 +34,7 @@ import type { SiteDetails } from '@automattic/data-stores';
  * generated in the REST API
  */
 export function getEnhancedTasks(
-	tasks: Task[] | null,
+	tasks: Task[] | null | undefined,
 	siteSlug: string | null,
 	site: SiteDetails | null,
 	submit: NavigationControls[ 'submit' ],
