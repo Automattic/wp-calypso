@@ -1,7 +1,6 @@
 import { Button, ToggleControl } from '@wordpress/components';
-import { localize } from 'i18n-calypso';
+import { localize, LocalizeProps } from 'i18n-calypso';
 import page from 'page';
-import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { disableAutoRenew, enableAutoRenew } from 'calypso/lib/purchases/actions';
@@ -16,32 +15,51 @@ import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/pu
 import { getChangePaymentMethodPath } from '../../utils';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
+import type { GetChangePaymentMethodUrlFor, Purchase } from 'calypso/lib/purchases/types';
+import type { NoticeStatus, NoticeText, NoticeOptions } from 'calypso/state/notices/types';
 
-class AutoRenewToggle extends Component {
-	static propTypes = {
-		purchase: PropTypes.object.isRequired,
-		siteDomain: PropTypes.string.isRequired,
-		planName: PropTypes.string.isRequired,
-		isEnabled: PropTypes.bool.isRequired,
-		shouldDisable: PropTypes.bool,
-		isAtomicSite: PropTypes.bool.isRequired,
-		fetchingUserPurchases: PropTypes.bool,
-		recordTracksEvent: PropTypes.func.isRequired,
-		withTextStatus: PropTypes.bool,
-		toggleSource: PropTypes.string,
-		siteSlug: PropTypes.string,
-		getChangePaymentMethodUrlFor: PropTypes.func,
-		paymentMethodUrl: PropTypes.string,
-		showLink: PropTypes.bool,
-	};
+export interface AutoRenewToggleProps {
+	purchase: Purchase;
+	siteDomain: string;
+	planName: string;
+	shouldDisable?: boolean;
+	fetchingUserPurchases: boolean;
+	withTextStatus?: boolean;
+	toggleSource?: string;
+	getChangePaymentMethodUrlFor?: GetChangePaymentMethodUrlFor;
+	paymentMethodUrl: string;
+	showLink?: boolean;
+	productSlug: string;
+	siteSlug: string | null;
+}
 
-	static defaultProps = {
-		shouldDisable: false,
-		fetchingUserPurchases: false,
-		getChangePaymentMethodUrlFor: getChangePaymentMethodPath,
-	};
+export interface AutoRenewToggleConnectedProps {
+	fetchingUserPurchases?: boolean;
+	isEnabled: boolean;
+	currentUserId: number | null;
+	isAtomicSite: boolean;
+	siteSlug: string | null;
+	fetchUserPurchases: ( userId: number ) => Promise< Purchase[] >;
+	recordTracksEvent: (
+		name: string,
+		properties: Record< string, string | number | boolean | undefined | null >
+	) => void;
+	createNotice: ( status: NoticeStatus, text: NoticeText, noticeOptions?: NoticeOptions ) => void;
+}
 
-	state = {
+interface AutoRenewToggleState {
+	pendingNotice?: [ NoticeStatus, NoticeText, NoticeOptions ] | null;
+	showAutoRenewDisablingDialog: boolean;
+	showPaymentMethodDialog: boolean;
+	isRequesting: boolean;
+}
+
+class AutoRenewToggle extends Component<
+	AutoRenewToggleProps & AutoRenewToggleConnectedProps & LocalizeProps,
+	AutoRenewToggleState
+> {
+	state: AutoRenewToggleState = {
+		pendingNotice: undefined,
 		showAutoRenewDisablingDialog: false,
 		showPaymentMethodDialog: false,
 		isRequesting: false,
@@ -88,7 +106,9 @@ class AutoRenewToggle extends Component {
 			toggle_source: toggleSource,
 		} );
 
-		page( getChangePaymentMethodUrlFor( siteSlug, purchase ) );
+		page(
+			( getChangePaymentMethodUrlFor ?? getChangePaymentMethodPath )( siteSlug ?? '', purchase )
+		);
 	};
 
 	onCloseAutoRenewPaymentMethodDialog = () => {
@@ -135,13 +155,13 @@ class AutoRenewToggle extends Component {
 			isRequesting: true,
 		} );
 
-		updateAutoRenew( purchaseId, ( success ) => {
+		updateAutoRenew( purchaseId, ( success: boolean ) => {
 			this.setState( {
 				isRequesting: false,
 			} );
 
 			if ( success ) {
-				this.props.fetchUserPurchases( currentUserId );
+				this.props.fetchUserPurchases( currentUserId ?? 0 );
 
 				if ( isTogglingToward === false ) {
 					this.setState( {
@@ -162,6 +182,7 @@ class AutoRenewToggle extends Component {
 					isTogglingToward
 						? translate( "We've failed to enable auto-renewal for you. Please try again." )
 						: translate( "We've failed to disable auto-renewal for you. Please try again." ),
+					{},
 				],
 			} );
 		} );
@@ -200,7 +221,7 @@ class AutoRenewToggle extends Component {
 		return isEnabled ? translate( 'Auto-renew on' ) : translate( 'Auto-renew off' );
 	}
 
-	shouldRender( purchase ) {
+	shouldRender( purchase: Purchase ) {
 		return ! isExpired( purchase ) && ! isOneTimePurchase( purchase );
 	}
 
@@ -260,7 +281,7 @@ class AutoRenewToggle extends Component {
 }
 
 export default connect(
-	( state, { purchase, siteSlug } ) => ( {
+	( state, { purchase, siteSlug }: AutoRenewToggleProps ) => ( {
 		fetchingUserPurchases: isFetchingUserPurchases( state ),
 		isEnabled: purchase.isAutoRenewEnabled,
 		currentUserId: getCurrentUserId( state ),
