@@ -288,7 +288,7 @@ type PlanComparisonGridProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean;
 	flowName: string;
-	currentSitePlanSlug: string;
+	currentSitePlanSlug?: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;
@@ -303,7 +303,7 @@ type PlanComparisonGridHeaderProps = {
 	isFooter?: boolean;
 	flowName: string;
 	onPlanChange: ( currentPlan: string, event: ChangeEvent ) => void;
-	currentSitePlanSlug: string;
+	currentSitePlanSlug?: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;

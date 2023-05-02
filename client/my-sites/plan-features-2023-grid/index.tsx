@@ -61,9 +61,9 @@ import {
 	getPlanSlug,
 } from 'calypso/state/plans/selectors';
 import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
-import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
+import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import isPlanAvailableForPurchase from 'calypso/state/sites/plans/selectors/is-plan-available-for-purchase';
-import { getSiteSlug, isCurrentPlanPaid, isCurrentSitePlan } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import CalypsoShoppingCartProvider from '../checkout/calypso-shopping-cart-provider';
 import useIsLargeCurrency from '../plans/hooks/use-is-large-currency';
 import { getManagePurchaseUrlFor } from '../purchases/paths';
@@ -116,7 +116,7 @@ type PlanFeatures2023GridProps = {
 	placeholder?: string;
 	isLandingPage?: boolean;
 	intervalType: string;
-	currentSitePlanSlug: string;
+	currentSitePlanSlug?: string;
 	hidePlansFeatureComparison: boolean;
 	hideUnavailableFeatures: boolean;
 };
@@ -656,12 +656,12 @@ export class PlanFeatures2023Grid extends Component<
 
 				if (
 					isWooExpressMediumPlan( planName ) &&
-					! isWooExpressMediumPlan( currentSitePlanSlug )
+					! isWooExpressMediumPlan( currentSitePlanSlug || '' )
 				) {
 					buttonText = translate( 'Get Performance', { textOnly: true } );
 				} else if (
 					isWooExpressSmallPlan( planName ) &&
-					! isWooExpressSmallPlan( currentSitePlanSlug )
+					! isWooExpressSmallPlan( currentSitePlanSlug || '' )
 				) {
 					buttonText = translate( 'Get Essential', { textOnly: true } );
 				}
@@ -878,13 +878,20 @@ const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures
 /* eslint-disable wpcalypso/redux-no-bound-selectors */
 const ConnectedPlanFeatures2023Grid = connect(
 	( state: IAppState, ownProps: PlanFeatures2023GridProps ) => {
-		const { placeholder, plans, isLandingPage, visiblePlans, isInSignup, siteId, flowName } =
-			ownProps;
+		const {
+			placeholder,
+			plans,
+			isLandingPage,
+			visiblePlans,
+			isInSignup,
+			siteId,
+			flowName,
+			currentSitePlanSlug,
+		} = ownProps;
 		const canUserPurchasePlan =
 			! isCurrentPlanPaid( state, siteId ) || isCurrentUserCurrentPlanOwner( state, siteId );
 		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
 		const selectedSiteSlug = getSiteSlug( state, siteId );
-		const currentSitePlan = getCurrentPlan( state, siteId );
 
 		const planProperties: PlanProperties[] = plans.map( ( plan: string ) => {
 			let isPlaceholder = false;
@@ -980,7 +987,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 					planConstantObj.get2023PricingGridSignupStorageOptions() ) ||
 				[];
 			const availableForPurchase = isInSignup || isPlanAvailableForPurchase( state, siteId, plan );
-			const isCurrentPlan = isCurrentSitePlan( state, siteId, planProductId ) ?? false;
+			const isCurrentPlan = currentSitePlanSlug === plan;
 			const isVisible = visiblePlans?.indexOf( plan ) !== -1;
 
 			return {
@@ -1015,7 +1022,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				: `/plans/my-plan/${ siteId }`;
 
 		return {
-			currentSitePlanSlug: currentSitePlan?.productSlug,
+			currentSitePlanSlug,
 			planProperties,
 			canUserPurchasePlan,
 			manageHref,
