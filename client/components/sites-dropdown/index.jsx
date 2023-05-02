@@ -16,6 +16,7 @@ const noop = () => {};
 
 export class SitesDropdown extends PureComponent {
 	static propTypes = {
+		compact: PropTypes.bool,
 		selectedSiteId: PropTypes.number,
 		showAllSites: PropTypes.bool,
 		onClose: PropTypes.func,
@@ -29,6 +30,7 @@ export class SitesDropdown extends PureComponent {
 	};
 
 	static defaultProps = {
+		compact: false,
 		showAllSites: false,
 		onClose: noop,
 		onSiteSelect: noop,
@@ -86,7 +88,11 @@ export class SitesDropdown extends PureComponent {
 						{ this.props.isPlaceholder ? (
 							<SitePlaceholder />
 						) : (
-							<Site siteId={ this.state.selectedSiteId } indicator={ false } />
+							<Site
+								siteId={ this.state.selectedSiteId }
+								indicator={ false }
+								compact={ this.props.compact }
+							/>
 						) }
 						{ this.props.hasMultipleSites && <Gridicon icon="chevron-down" /> }
 					</div>

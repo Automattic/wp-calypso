@@ -1,11 +1,140 @@
 .reader-post-editor {
-	margin-bottom: 80px;
+	margin-top: 16px;
+
+	.block-editor-writing-flow {
+		// It's a small editor container--add a little space at the top.
+		padding-top: 16px;
+
+		// Hide the inline inserter to encourage use of a simple set of blocks (selected using the footer).
+		.block-editor-inserter {
+			display: none;
+		}
+	}
 
 	.components-menu-items__item-icon {
 		// Make sure menu icons display at the intended size.
 		height: 24px;
 		width: 24px;
 	}
+
+	.iso-editor {
+		border-radius: 4px;
+		min-height: 180px;
+		overflow: hidden;
+
+		.block-editor-block-list__layout.is-root-container {
+			padding-left: 20px;
+			padding-right: 20px;
+		}
+
+		// Make sure placeholder content is aligned with actual blocks, to prevent layout shift.
+		.block-editor-block-list__layout:first-of-type .block-editor-default-block-appender__content {
+			margin-top: 0;
+		}
+	}
+
+	.has-footer .interface-interface-skeleton__body {
+		padding-bottom: 40px;
+	}
+
+	.interface-interface-skeleton__footer {
+		border-top: unset;
+		box-sizing: border-box;
+		// Unset flex layout on parent, to prevent issues with flex layout within child, .edit-post-layout__footer
+		display: block;
+		padding: 8px;
+	}
+
+	.edit-post-layout__footer {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.sites-dropdown {
+		margin-bottom: 6px;
+		&.is-open {
+			height: 44px;
+		}
+
+		&__wrapper {
+			border: unset;
+			display: inline-block;
+			width: auto;
+
+			&:hover {
+				box-shadow: none;
+			}
+		}
+
+		&__selected {
+			border: 1px solid var(--color-neutral-10);
+			border-radius: 100px; // stylelint-disable-line scales/radii
+			display: inline-flex;
+		}
+
+		.site-icon {
+			border-radius: 50%;
+		}
+
+		.site__info {
+			width: auto;
+		}
+
+		.site.is-compact {
+			.site__title {
+				line-height: 24px;
+			}
+
+			.site__content {
+				padding: 6px;
+			}
+		}
+
+		.site-selector {
+			border: 1px solid var(--color-neutral-10);
+			border-radius: 4px;
+			margin-top: 6px;
+
+			&.is-large .site-selector__sites {
+				border: unset;
+			}
+
+			&.is-large .search {
+				margin-bottom: 0;
+			}
+		}
+
+		.gridicons-chevron-down {
+			margin-right: 10px;
+		}
+	}
+
+	.segmented-control__link {
+		border: unset !important;
+	}
+
+	.segmented-control__text {
+		align-items: center;
+		color: var(--color-neutral-50);
+		display: flex;
+		fill: var(--color-neutral-50);
+		flex-direction: column;
+		font-size: 0.75rem;
+	}
+
+	.is-selected .segmented-control__text {
+		color: var(--color-neutral-100);
+		fill: var(--color-neutral-100);
+	}
+
+	.segmented-control__icon {
+		margin-bottom: 2px;
+	}
+}
+
+.notouch .reader-post-editor .segmented-control__link:hover {
+	background-color: unset;
 }
 
 .reader-post-editor__editor {
@@ -14,5 +143,6 @@
 }
 
 .reader-post-editor__publish-button {
-	float: right;
+	margin-left: auto;
+	margin-right: 12px;
 }
