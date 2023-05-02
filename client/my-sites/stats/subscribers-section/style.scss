@@ -56,3 +56,12 @@
 	margin: 3em auto;
 	text-align: center;
 }
+
+.subscribers-section-heading__chart-controls {
+	display: flex;
+}
+
+.subscribers-section-heading__chart-controls--arrows {
+	align-self: flex-start;
+	margin: 12px 6px;
+}

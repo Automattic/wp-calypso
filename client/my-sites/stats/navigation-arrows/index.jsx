@@ -4,13 +4,14 @@ import classNames from 'classnames';
 import './style.scss';
 
 function NavigationArrows( {
+	className,
 	disableNextArrow,
 	disablePreviousArrow,
 	onClickNext,
 	onClickPrevious,
 } ) {
 	return (
-		<div className="stats-navigation-arrows">
+		<div className={ classNames( 'stats-navigation-arrows', className ) }>
 			<button
 				className={ classNames( 'stats-navigation-arrows__previous', {
 					'is-disabled': disablePreviousArrow,
