@@ -452,7 +452,7 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 					?>
 				</script>
 			<?php endif; ?>
-			<div class="launch-bar-global-styles-popover <?php echo wpcom_is_previewing_global_styles() ? '' : 'hidden'; ?>">
+			<div class="launch-bar-global-styles-popover hidden">
 				<div class="launch-bar-global-styles-message">
 					<?php
 					$message = sprintf(
