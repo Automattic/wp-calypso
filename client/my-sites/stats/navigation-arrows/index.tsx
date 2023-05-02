@@ -3,13 +3,21 @@ import classNames from 'classnames';
 
 import './style.scss';
 
+interface NavigationArrowsProps {
+	className?: string;
+	disableNextArrow: boolean;
+	disablePreviousArrow: boolean;
+	onClickNext: () => void;
+	onClickPrevious: () => void;
+}
+
 function NavigationArrows( {
 	className,
 	disableNextArrow,
 	disablePreviousArrow,
 	onClickNext,
 	onClickPrevious,
-} ) {
+}: NavigationArrowsProps ) {
 	return (
 		<div className={ classNames( 'stats-navigation-arrows', className ) }>
 			<button
