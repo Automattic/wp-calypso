@@ -89,6 +89,7 @@ function AkismetModule( { siteId } ) {
 		error: akismetError,
 	} = useModuleDataQuery( 'akismet' );
 
+	// The function installs Akismet plugin if not exists.
 	const activateProduct = ( productSlug ) => () => {
 		return wpcom.req
 			.post( {
