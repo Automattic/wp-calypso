@@ -288,7 +288,7 @@ type PlanComparisonGridProps = {
 	isInSignup: boolean;
 	isLaunchPage?: boolean;
 	flowName: string;
-	currentSitePlanSlug: string;
+	currentSitePlanSlug?: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;
@@ -303,7 +303,7 @@ type PlanComparisonGridHeaderProps = {
 	isFooter?: boolean;
 	flowName: string;
 	onPlanChange: ( currentPlan: string, event: ChangeEvent ) => void;
-	currentSitePlanSlug: string;
+	currentSitePlanSlug?: string;
 	manageHref: string;
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;
@@ -348,8 +348,12 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 } ) => {
 	const { planName, planConstantObj, availableForPurchase, current, ...planPropertiesObj } =
 		planProperties;
-	const highlightLabel = useHighlightLabel( planName, flowName );
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties, flowName );
+	const highlightLabel = useHighlightLabel( { planName, flowName, currentSitePlanSlug } );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
+		visiblePlans: visiblePlansProperties,
+		flowName,
+		currentSitePlanSlug,
+	} );
 	const headerClasses = classNames( 'plan-comparison-grid__header-cell', getPlanClass( planName ), {
 		'popular-plan-parent-class': highlightLabel,
 		'is-last-in-row': isLastInRow,
@@ -371,6 +375,7 @@ const PlanComparisonGridHeaderCell: React.FunctionComponent<
 				planName={ planName }
 				additionalClassName={ popularBadgeClasses }
 				flowName={ flowName }
+				currentSitePlanSlug={ currentSitePlanSlug }
 			/>
 			<PlanSelector>
 				{ showPlanSelect && (
@@ -495,6 +500,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	planName: string;
 	isStorageFeature: boolean;
 	flowName: string;
+	currentSitePlanSlug?: string;
 } > = ( {
 	feature,
 	visiblePlansProperties,
@@ -502,10 +508,15 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 	planName,
 	isStorageFeature,
 	flowName,
+	currentSitePlanSlug,
 } ) => {
 	const translate = useTranslate();
-	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties, flowName );
-	const highlightLabel = useHighlightLabel( planName, flowName );
+	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( {
+		visiblePlans: visiblePlansProperties,
+		flowName,
+		currentSitePlanSlug,
+	} );
+	const highlightLabel = useHighlightLabel( { planName, flowName, currentSitePlanSlug } );
 	const featureSlug = feature?.getSlug();
 	const hasFeature =
 		isStorageFeature ||
@@ -582,6 +593,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	restructuredFootnotes: RestructuredFootnotes;
 	isStorageFeature: boolean;
 	flowName: string;
+	currentSitePlanSlug?: string;
 } > = ( {
 	feature,
 	isHiddenInMobile,
@@ -591,6 +603,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 	restructuredFootnotes,
 	isStorageFeature,
 	flowName,
+	currentSitePlanSlug,
 } ) => {
 	const translate = useTranslate();
 	const rowClasses = classNames( 'plan-comparison-grid__feature-group-row', {
@@ -638,6 +651,7 @@ const PlanComparisonGridFeatureGroupRow: React.FunctionComponent< {
 					planName={ planName }
 					isStorageFeature={ isStorageFeature }
 					flowName={ flowName }
+					currentSitePlanSlug={ currentSitePlanSlug }
 				/>
 			) ) }
 		</Row>
@@ -902,6 +916,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									restructuredFootnotes={ restructuredFootnotes }
 									isStorageFeature={ false }
 									flowName={ flowName }
+									currentSitePlanSlug={ currentSitePlanSlug }
 								/>
 							) ) }
 							{ featureGroup.slug === FEATURE_GROUP_ESSENTIAL_FEATURES ? (
@@ -914,6 +929,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 									restructuredFootnotes={ restructuredFootnotes }
 									isStorageFeature={ true }
 									flowName={ flowName }
+									currentSitePlanSlug={ currentSitePlanSlug }
 								/>
 							) : null }
 						</div>

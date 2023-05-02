@@ -29,7 +29,7 @@ type PlanFeaturesActionsButtonProps = {
 	availableForPurchase: boolean;
 	canUserPurchasePlan: boolean;
 	className: string;
-	currentSitePlanSlug: string;
+	currentSitePlanSlug?: string;
 	current: boolean;
 	forceDisplayButton?: boolean;
 	freePlan: boolean;
