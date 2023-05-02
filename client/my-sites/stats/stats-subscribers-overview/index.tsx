@@ -55,25 +55,25 @@ function extractCountsAtIndexes( subscribersData: SubscribersData[], indexes: nu
 // all comparisons are being compared to todays's count to show growth up to today
 function SubscribersOverviewCardStats( subscribersData: number[] ) {
 	const daysToDisplay = [ 0, 30, 60, 90 ];
-	const dataToDisplay = subscribersData;
 	const overviewCardStats: {
 		heading: string;
 		count: number;
 		previousCount?: number;
 	}[] = [];
 
-	const todayCount = dataToDisplay[ 0 ] || 0;
+	const todayCount = subscribersData[ 0 ] || 0;
 
 	daysToDisplay.forEach( ( day, index ) => {
-		const count = dataToDisplay[ index ] || 0;
-		const previousCount = index !== 0 ? todayCount - dataToDisplay[ index - 1 ] : undefined;
+		const count = subscribersData[ index ] || 0;
 
 		const cardStat = {
 			heading: ( index === 0
 				? translate( 'Today' )
 				: translate( '%d days ago', { args: day } ) ) as string,
 			count: count,
-			previousCount: previousCount,
+			...( index !== 0 && {
+				previousCount: todayCount - subscribersData[ index ],
+			} ),
 		};
 
 		overviewCardStats.push( cardStat );
