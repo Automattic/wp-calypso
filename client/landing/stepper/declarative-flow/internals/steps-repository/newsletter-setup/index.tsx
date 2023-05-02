@@ -91,13 +91,13 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		setSiteDescription( tagline );
 		setSiteTitle( siteTitle );
 		setSiteAccentColor( accentColor.hex );
-		setPaidSubscribers( paidSubscribers ); // @TODO delete this?
+		setPaidSubscribers( paidSubscribers );
 
 		if ( paidSubscribers ) {
-			console.log( 'Setting paid subscriber status YES 💚' ); // eslint-disable-line no-console
 			setGoals( [ Onboard.SiteGoal.PaidSubscribers ] );
 		} else {
-			console.log( 'Setting paid subscriber status NO 🍎' ); // eslint-disable-line no-console
+			// Clears goals entirely each time, regardless if they were set previously or not.
+			// We could instead just handle removing PaidSubscribers goal, and avoid doing anything if nothing wasn't set ever.
 			resetGoals();
 		}
 
