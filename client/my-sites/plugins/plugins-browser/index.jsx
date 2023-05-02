@@ -143,7 +143,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 			/>
 			<DocumentHead
 				title={
-					category
+					category && ! search
 						? translate( '%(categoryName)s Plugins', { args: { categoryName } } )
 						: translate( 'Plugins' )
 				}
