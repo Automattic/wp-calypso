@@ -1,8 +1,17 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/mixins";
 
+.components-modal__screen-overlay {
+	@media only screen and (max-width: 600px) {
+		top: 46px;
+
+	}
+}
 .wpcom-block-editor-post-published-sharing-modal {
 	border-radius: 4px;
+	@media only screen and (max-width: 600px) {
+		border-radius: 0;
+	}
 
 	.components-modal__content {
 		margin-top: 0;
@@ -56,6 +65,14 @@
 			border: none;
 			background: transparent;
 			color: var(--color-text);
+			padding: 0 14px 0 0;
+			line-height: 2.71428571;
+			min-height: 40px;
+			margin-bottom: 4px;
+			align-items: center;
+			text-decoration: none;
+			white-space: nowrap;
+
 			&:hover {
 				background: transparent;
 				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));

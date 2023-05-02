@@ -3,6 +3,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, globe, link as linkIcon } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import classnames from 'classnames';
 import React from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -10,6 +11,7 @@ import SocialLogo from 'calypso/components/social-logo';
 import { selectors as wpcomWelcomeGuideSelectors } from '../store';
 import postPublishedImage from './images/illo-share.svg';
 import type { SelectFromMap } from '@automattic/data-stores';
+
 import './style.scss';
 
 type WpcomWelcomeGuideSelectors = SelectFromMap< typeof wpcomWelcomeGuideSelectors >;
@@ -48,6 +50,7 @@ const PostPublishedSharingModal: React.FC = () => {
 	const { fetchShouldShowFirstPostPublishedModal } = useDispatch(
 		'automattic/wpcom-welcome-guide'
 	);
+	const { createNotice } = useDispatch( noticesStore );
 	// implementation coppied from ./client/blocks/reader-share/index.jsx
 	const shareTwitter = () => {
 		const baseUrl = new URL( 'https://twitter.com/intent/tweet' );
@@ -101,7 +104,6 @@ const PostPublishedSharingModal: React.FC = () => {
 		const baseUrl = new URL( 'https://pinterest.com/pin/create/button/' );
 		const params = new URLSearchParams( {
 			url: link,
-			media: postPublishedImage,
 			description: title,
 		} );
 		baseUrl.search = params.toString();
@@ -109,6 +111,11 @@ const PostPublishedSharingModal: React.FC = () => {
 		const pinterestUrl = baseUrl.href;
 
 		window.open( pinterestUrl, 'pinterest', 'width=626,height=436,resizeable,scrollbars' );
+	};
+	const copyLinkClick = () => {
+		createNotice( 'success', __( 'Link copied to clipboard.', 'full-site-editing' ), {
+			type: 'snackbar',
+		} );
 	};
 
 	useEffect( () => {
@@ -133,10 +140,6 @@ const PostPublishedSharingModal: React.FC = () => {
 		}
 	}, [ postType, shouldShowFirstPostPublishedModal, isCurrentPostPublished ] );
 
-	const handleViewPostClick = () => {
-		( window.top as Window ).location.href = link;
-	};
-
 	if ( ! isOpen ) {
 		return null;
 	}
@@ -158,11 +161,15 @@ const PostPublishedSharingModal: React.FC = () => {
 						) }
 					</p>
 					<div className="wpcom-block-editor-post-published-buttons">
-						<Button onClick={ handleViewPostClick } className="link-button">
+						<a href={ link } className="link-button" rel="external">
 							{ ' ' }
 							<Icon icon={ globe } /> { __( 'View Post', 'full-site-editing' ) }
-						</Button>
-						<ClipboardButton text={ link } className="components-button link-button">
+						</a>
+						<ClipboardButton
+							text={ link }
+							className="components-button link-button"
+							onCopy={ copyLinkClick }
+						>
 							<Icon icon={ linkIcon } /> { __( 'Copy Link', 'full-site-editing' ) }
 						</ClipboardButton>
 					</div>
