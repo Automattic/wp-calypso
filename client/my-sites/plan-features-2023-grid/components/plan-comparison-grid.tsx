@@ -293,6 +293,7 @@ type PlanComparisonGridProps = {
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;
 	onUpgradeClick: ( properties: PlanProperties ) => void;
+	siteId?: number | null;
 };
 
 type PlanComparisonGridHeaderProps = {
@@ -308,6 +309,7 @@ type PlanComparisonGridHeaderProps = {
 	canUserPurchasePlan: boolean;
 	selectedSiteSlug: string | null;
 	onUpgradeClick: ( properties: PlanProperties ) => void;
+	siteId?: number | null;
 };
 
 type RestructuredFeatures = {
@@ -454,12 +456,14 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 	canUserPurchasePlan,
 	selectedSiteSlug,
 	onUpgradeClick,
+	siteId,
 } ) => {
 	const allVisible = visiblePlansProperties.length === displayedPlansProperties.length;
 
-	const isLargeCurrency = useIsLargeCurrency(
-		displayedPlansProperties.map( ( properties ) => properties.planName as PlanSlug )
-	);
+	const isLargeCurrency = useIsLargeCurrency( {
+		planSlugs: displayedPlansProperties.map( ( properties ) => properties.planName as PlanSlug ),
+		siteId: siteId,
+	} );
 
 	return (
 		<PlanRow>
@@ -670,6 +674,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 	canUserPurchasePlan,
 	selectedSiteSlug,
 	onUpgradeClick,
+	siteId,
 } ) => {
 	const translate = useTranslate();
 	// Check to see if we have at least one Woo Express plan we're comparing.
@@ -888,6 +893,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					canUserPurchasePlan={ canUserPurchasePlan }
 					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ onUpgradeClick }
+					siteId={ siteId }
 				/>
 				{ Object.values( featureGroupMap ).map( ( featureGroup: FeatureGroup ) => {
 					const features = featureGroup.get2023PricingGridSignupWpcomFeatures();
@@ -948,6 +954,7 @@ export const PlanComparisonGrid: React.FC< PlanComparisonGridProps > = ( {
 					canUserPurchasePlan={ canUserPurchasePlan }
 					selectedSiteSlug={ selectedSiteSlug }
 					onUpgradeClick={ onUpgradeClick }
+					siteId={ siteId }
 				/>
 			</Grid>
 

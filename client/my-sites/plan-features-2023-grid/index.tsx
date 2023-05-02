@@ -295,6 +295,7 @@ export class PlanFeatures2023Grid extends Component<
 			translate,
 			selectedSiteSlug,
 			hidePlansFeatureComparison,
+			siteId,
 		} = this.props;
 		return (
 			<div className="plans-wrapper">
@@ -340,6 +341,7 @@ export class PlanFeatures2023Grid extends Component<
 							canUserPurchasePlan={ canUserPurchasePlan }
 							selectedSiteSlug={ selectedSiteSlug }
 							onUpgradeClick={ this.handleUpgradeClick }
+							siteId={ siteId }
 						/>
 						<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 							<Button onClick={ this.toggleShowPlansComparisonGrid }>
@@ -869,9 +871,12 @@ export class PlanFeatures2023Grid extends Component<
 
 const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures2023Grid > ) => {
 	return function ( props: PlanFeatures2023GridType ) {
-		const isLargeCurrency = useIsLargeCurrency(
-			( props.planProperties || [] ).map( ( properties ) => properties.planName as PlanSlug )
-		);
+		const isLargeCurrency = useIsLargeCurrency( {
+			planSlugs: ( props.planProperties || [] ).map(
+				( properties ) => properties.planName as PlanSlug
+			),
+			siteId: props.siteId,
+		} );
 		return <Component { ...props } isLargeCurrency={ isLargeCurrency } />;
 	};
 };
