@@ -24,7 +24,7 @@ const BloggingPromptCard = ( { siteId, viewContext, showMenu, index } ) => {
 	const { data: prompts } = useBloggingPrompts( siteId, maxNumberOfPrompts );
 	const { skipCard } = useSkipCurrentViewMutation( siteId );
 
-	if ( prompts === undefined ) {
+	if ( ! prompts ) {
 		return null;
 	}
 

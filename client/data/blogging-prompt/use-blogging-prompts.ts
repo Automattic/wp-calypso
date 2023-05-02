@@ -1,42 +1,40 @@
+import { Url } from 'url';
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import moment from 'moment';
 import wp from 'calypso/lib/wp';
+import { SiteId } from 'calypso/types';
 
 export interface BloggingPrompt {
-	id: string;
+	id: number;
+	label: string;
 	text: string;
-	title: string;
-	content: string;
 	attribution: string;
 	date: string;
 	answered: boolean;
 	answered_users_count: number;
-	answered_users_sample: Array< string >;
+	answered_users_sample: AnsweredUsersSample[];
+	answered_link: Url;
+	answered_link_text: string;
 }
 
-const selectPrompts = ( response: { prompts: BloggingPrompt[] } ): BloggingPrompt[] | null => {
-	const prompts = response && response.prompts;
-	if ( ! prompts ) {
-		return null;
-	}
-	return prompts;
-};
+interface AnsweredUsersSample {
+	avatar: Url;
+}
 
 export const useBloggingPrompts = (
-	siteId: string,
-	page: number
+	siteId: SiteId,
+	per_page: number
 ): UseQueryResult< BloggingPrompt[] | null > => {
-	const today = moment().format( 'YYYY-MM-DD' );
+	const today = moment().format( '--MM-DD' );
 
 	return useQuery( {
-		queryKey: [ 'blogging-prompts', today + '-' + page ],
+		queryKey: [ 'blogging-prompts', siteId, today, per_page ],
 		queryFn: () =>
 			wp.req.get( {
-				path: `/sites/${ siteId }/blogging-prompts?number=${ page }&from=${ today }`,
-				apiNamespace: 'wpcom/v2',
+				path: `/sites/${ siteId }/blogging-prompts?per_page=${ per_page }&after=${ today }`,
+				apiNamespace: 'wpcom/v3',
 			} ),
 		enabled: !! siteId,
 		staleTime: 86400000,
-		select: selectPrompts,
 	} );
 };

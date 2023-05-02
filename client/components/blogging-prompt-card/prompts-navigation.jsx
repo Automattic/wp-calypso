@@ -21,7 +21,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 	const [ promptIndex, setPromptIndex ] = useState( initialIndex );
 
 	const getPrompt = () => {
-		return prompts !== undefined ? prompts[ promptIndex ] : null;
+		return prompts ? prompts[ promptIndex ] : null;
 	};
 
 	// If no site ID set, go through site selector before rendering post editor
@@ -128,9 +128,7 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index } ) => {
 
 		const viewAllResponses = (
 			<a
-				href={
-					'/tag/dailyprompt' + ( prompt && prompt.id ? '-' + encodeURIComponent( prompt.id ) : '' )
-				}
+				href={ prompt.answered_link }
 				className="blogging-prompt__prompt-responses-link"
 				onClick={ trackClickViewAllResponses }
 			>
