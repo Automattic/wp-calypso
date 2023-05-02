@@ -19,6 +19,7 @@ function ModuleCard( {
 	isError = false,
 	canManageModule = false,
 	className = null,
+	manageUrl = null,
 } ) {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( false );
@@ -61,7 +62,12 @@ function ModuleCard( {
 									Install
 								</button>
 							) }
-							{ error !== 'not_active' && error !== 'not_installed' && (
+							{ error === 'invalid_key' && (
+								<a href={ manageUrl } target="_self">
+									Manage Akismet Key
+								</a>
+							) }
+							{ ! [ 'not_active', 'not_installed', 'invalid_key' ].includes( error ) && (
 								<p>{ translate( 'An error occurred.' ) }</p>
 							) }
 						</div>
@@ -72,7 +78,7 @@ function ModuleCard( {
 	);
 }
 
-function AkismetModule( { siteId } ) {
+function AkismetModule( { siteId, manageUrl } ) {
 	const translate = useTranslate();
 
 	const {
@@ -103,6 +109,7 @@ function AkismetModule( { siteId } ) {
 			isLoading={ isAkismetLoading }
 			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
 			activateProduct={ activateProduct( 'anti-spam' ) }
+			manageUrl={ manageUrl }
 		/>
 	);
 }
@@ -146,11 +153,18 @@ function ProtectModule( { siteId } ) {
 	);
 }
 
-export default function Modules( { siteId } ) {
+export default function Modules( { siteId, odysseyStatsBaseUrl = '' } ) {
 	return (
 		<div className="stats-widget-modules">
 			<ProtectModule siteId={ siteId } />
-			<AkismetModule siteId={ siteId } />
+			<AkismetModule
+				siteId={ siteId }
+				// The URL is used to redirect the user to the Akismet Key configuration page.
+				manageUrl={
+					odysseyStatsBaseUrl &&
+					odysseyStatsBaseUrl.replaceAll( /page=stats/g, 'page=akismet-key-config' )
+				}
+			/>
 		</div>
 	);
 }
