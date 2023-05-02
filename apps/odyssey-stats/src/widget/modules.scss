@@ -1,12 +1,10 @@
 @import "../styles/typography.scss";
-@import "./variables.scss";
-
 
 .stats-widget-modules {
 	margin-top: 24px;
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	column-gap: $modules-gap;
+	column-gap: 24px;
 }
 
 .stats-widget-module__icon {

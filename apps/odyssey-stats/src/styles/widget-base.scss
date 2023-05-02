@@ -21,7 +21,6 @@
 	}
 
 	.stats-widget-highlights {
-
 		// Show highlights tabs.
 		.stats-widget-highlights__tabs {
 			display: block;
@@ -52,7 +51,6 @@
 	.stats-widget-modules {
 		grid-template-columns: auto;
 		grid-template-rows: repeat(2, 1fr);
-		row-gap: $modules-gap;
+		row-gap: 24px;
 	}
-
 }
