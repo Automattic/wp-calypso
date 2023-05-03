@@ -1,5 +1,4 @@
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
 import { translate } from 'i18n-calypso';
 import moment from 'moment';
 import { useState, useEffect, useRef } from 'react';
@@ -97,7 +96,7 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 						<StatsEmptyState
 							headingText=""
 							infoText={ createInterpolateElement(
-								__(
+								translate(
 									'Once stats become available, this chart will show you details about your views and visitors. <a>Learn more about stats</a>'
 								),
 								{

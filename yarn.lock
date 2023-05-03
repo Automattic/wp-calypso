@@ -1142,7 +1142,6 @@ __metadata:
     "@wordpress/data": ^7.6.0
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
     "@wordpress/element": ^5.9.0
-    "@wordpress/i18n": ^4.32.0
     "@wordpress/icons": ^9.22.0
     "@wordpress/scripts": ^24.6.0
     autoprefixer: ^10.2.5
@@ -9097,7 +9096,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/i18n@npm:^4.13.0, @wordpress/i18n@npm:^4.2.4, @wordpress/i18n@npm:^4.22.0, @wordpress/i18n@npm:^4.27.0, @wordpress/i18n@npm:^4.32.0":
+"@wordpress/i18n@npm:^4.13.0, @wordpress/i18n@npm:^4.2.4, @wordpress/i18n@npm:^4.22.0, @wordpress/i18n@npm:^4.27.0":
   version: 4.32.0
   resolution: "@wordpress/i18n@npm:4.32.0"
   dependencies:
