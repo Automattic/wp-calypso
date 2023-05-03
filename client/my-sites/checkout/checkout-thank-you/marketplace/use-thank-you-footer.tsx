@@ -10,55 +10,32 @@ export function useThankYouFoooter(
 	pluginSlugs: Array< string >,
 	themeSlugs: Array< string >
 ): ThankYouSectionProps {
-	const translate = useTranslate();
-	const siteSlug = useSelector( getSelectedSiteSlug );
 	const [ hasPlugins, hasThemes ] = [ pluginSlugs, themeSlugs ].map(
 		( slugs ) => slugs.length !== 0
 	);
 
-	const footerSteps: FooterStep[] = [
-		...( hasPlugins
-			? [
-					{
-						key: 'thank_you_footer_explore',
-						title: translate( 'Keep growing' ),
-						description: translate(
-							'Take your site to the next level. We have all the solutions to help you.'
-						),
-						link: `/plugins/${ siteSlug }`,
-						linkText: translate( 'Explore plugins' ),
-						eventKey: 'calypso_plugin_thank_you_explore_plugins_click',
-						blankTarget: false,
-					},
-			  ]
-			: [] ),
-		...( hasPlugins
-			? [
-					{
-						key: 'thank_you_footer_support_guides',
-						title: translate( 'Learn More' ),
-						description: translate( 'Discover everything you need to know about Plugins.' ),
-						link: 'https://wordpress.com/support/plugins/',
-						linkText: translate( 'Plugin Support' ),
-						eventKey: 'calypso_plugin_thank_you_plugin_support_click',
-					},
-			  ]
-			: [] ),
-		...( hasThemes
-			? [
-					{
-						key: 'thank_you_footer_forum',
-						title: translate( 'WordPress community' ),
-						description: translate(
-							'Have a question about this theme? Get help from the community.'
-						),
-						link: 'https://wordpress.com/forums/',
-						linkText: translate( 'Visit Forum' ),
-						eventKey: 'calypso_plugin_thank_you_forum_click',
-					},
-			  ]
-			: [] ),
-	];
+	const [ pluginExploreStep, pluginSupportStep ] = usePluginSteps();
+	const [ themeSupportStep, WordPressForumStep ] = useThemeSteps();
+
+	/**
+	 * Base case: multiple product types
+	 */
+	let footerSteps: FooterStep[] = [ pluginExploreStep, pluginSupportStep, WordPressForumStep ];
+
+	/**
+	 * If only plugins are present
+	 */
+	if ( hasPlugins && ! hasThemes ) {
+		footerSteps = [ pluginExploreStep, pluginSupportStep, themeSupportStep ];
+	}
+
+	/**
+	 * If only themes are present
+	 */
+	if ( ! hasPlugins && hasThemes ) {
+		footerSteps = [ themeSupportStep, WordPressForumStep, pluginExploreStep ];
+	}
+
 	const steps = useNextSteps( footerSteps, pluginSlugs, themeSlugs );
 
 	return {
@@ -66,6 +43,56 @@ export function useThankYouFoooter(
 		nextStepsClassName: 'thank-you__footer',
 		nextSteps: steps.slice( 0, 3 ),
 	};
+}
+
+function usePluginSteps(): FooterStep[] {
+	const translate = useTranslate();
+	const siteSlug = useSelector( getSelectedSiteSlug );
+
+	return [
+		{
+			key: 'thank_you_footer_explore',
+			title: translate( 'Keep growing' ),
+			description: translate(
+				'Take your site to the next level. We have all the solutions to help you.'
+			),
+			link: `/plugins/${ siteSlug }`,
+			linkText: translate( 'Explore plugins' ),
+			eventKey: 'calypso_plugin_thank_you_explore_plugins_click',
+			blankTarget: false,
+		},
+		{
+			key: 'thank_you_footer_support_guides',
+			title: translate( 'Learn More' ),
+			description: translate( 'Discover everything you need to know about Plugins.' ),
+			link: 'https://wordpress.com/support/plugins/',
+			linkText: translate( 'Plugin Support' ),
+			eventKey: 'calypso_plugin_thank_you_plugin_support_click',
+		},
+	];
+}
+
+function useThemeSteps(): FooterStep[] {
+	const translate = useTranslate();
+
+	return [
+		{
+			key: 'thank_you_footer_support_guides_themes',
+			title: translate( 'Learn About Themes' ),
+			description: translate( 'Discover everything you need to know about Themes.' ),
+			link: 'https://wordpress.com/support/themes/',
+			linkText: translate( 'Theme Support' ),
+			eventKey: 'calypso_plugin_thank_you_theme_support_click',
+		},
+		{
+			key: 'thank_you_footer_forum',
+			title: translate( 'WordPress community' ),
+			description: translate( 'Have a question about this theme? Get help from the community.' ),
+			link: 'https://wordpress.com/forums/',
+			linkText: translate( 'Visit Forum' ),
+			eventKey: 'calypso_plugin_thank_you_forum_click',
+		},
+	];
 }
 
 function useNextSteps(

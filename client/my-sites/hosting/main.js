@@ -49,7 +49,6 @@ import SiteBackupCard from './site-backup-card';
 import StagingSiteCard from './staging-site-card';
 import StagingSiteProductionCard from './staging-site-card/staging-site-production-card';
 import SupportCard from './support-card';
-import WebServerLogsCard from './web-server-logs-card';
 import WebServerSettingsCard from './web-server-settings-card';
 import './style.scss';
 
@@ -179,9 +178,9 @@ class Hosting extends Component {
 		};
 
 		const getContent = () => {
-			const isGithubIntegrationEnabled = isAutomatticTeamMember( teams );
+			const isGithubIntegrationEnabled =
+				isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
 			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
-			const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 
 			return (
 				<>
@@ -196,7 +195,7 @@ class Hosting extends Component {
 							<Column type="main" className="hosting__main-layout-col">
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
-								{ isStagingSiteEnabled && ! isWpcomStagingSite && hasStagingSitesFeature && (
+								{ ! isWpcomStagingSite && hasStagingSitesFeature && (
 									<StagingSiteCard disabled={ isDisabled } />
 								) }
 								{ isWpcomStagingSite && siteId && (
@@ -206,9 +205,6 @@ class Hosting extends Component {
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
 								<CacheCard disabled={ isDisabled } />
-								{ ! isEnabled( 'woa-logging-moved' ) && (
-									<WebServerLogsCard disabled={ isDisabled } />
-								) }
 							</Column>
 							<Column type="sidebar">
 								<SiteBackupCard disabled={ isDisabled } />

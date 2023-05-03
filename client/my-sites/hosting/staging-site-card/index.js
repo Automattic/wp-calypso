@@ -18,6 +18,7 @@ import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
 import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
+import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -25,7 +26,6 @@ import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { DeleteStagingSite } from './delete-staging-site';
 import { useDeleteStagingSite } from './use-delete-staging-site';
-import { useHasSiteAccess } from './use-has-site-access';
 
 const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
@@ -56,6 +56,22 @@ const SiteInfo = styled.div( {
 	display: 'flex',
 	flexDirection: 'column',
 	marginLeft: 10,
+} );
+
+const SiteNameContainer = styled.div( {
+	display: 'flex',
+	alignItems: 'center',
+} );
+
+const SiteName = styled.a( {
+	fontWeight: 500,
+	marginInlineEnd: '8px',
+	'&:hover': {
+		textDecoration: 'underline',
+	},
+	'&, &:hover, &:visited': {
+		color: 'var( --studio-gray-100 )',
+	},
 } );
 
 export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
@@ -97,7 +113,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	const stagingSite = useMemo( () => {
 		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
 	}, [ stagingSites ] );
-	const hasSiteAccess = useHasSiteAccess( stagingSite.id );
+	const hasSiteAccess = ! stagingSite.id || Boolean( stagingSite?.user_has_permission );
 
 	const showAddStagingSite =
 		! isLoadingStagingSites && ! isLoadingQuotaValidation && stagingSites?.length === 0;
@@ -137,11 +153,6 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		}, [ dispatch, __ ] ),
 	} );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
-	const isTrasferInProgress =
-		showManageStagingSite &&
-		! isStagingSiteTransferComplete &&
-		( transferStatus !== null || wasCreating );
-
 	useEffect( () => {
 		if ( wasCreating && isStagingSiteTransferComplete ) {
 			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
@@ -192,6 +203,38 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		},
 	} );
 
+	const isTrasferInProgress =
+		addingStagingSite ||
+		( showManageStagingSite &&
+			! isStagingSiteTransferComplete &&
+			( transferStatus !== null || wasCreating ) );
+
+	useEffect( () => {
+		// We know that a user has been navigated to an other page and came back if
+		// The transfer status is not in a final state (complete or failure)
+		// the staging site exists
+		// the site is not reverting
+		// the user owns the staging site
+		// and wasCreating that is set up by the add staging site button is false
+		if (
+			! wasCreating &&
+			! isStagingSiteTransferComplete &&
+			stagingSite.id &&
+			transferStatus !== transferStates.REVERTED &&
+			hasSiteAccess &&
+			! isReverting
+		) {
+			setWasCreating( true );
+		}
+	}, [
+		wasCreating,
+		isStagingSiteTransferComplete,
+		transferStatus,
+		hasSiteAccess,
+		isReverting,
+		stagingSite,
+	] );
+
 	const getExceedQuotaErrorContent = () => {
 		return (
 			<ExceedQuotaErrorWrapper data-testid="quota-message">
@@ -237,11 +280,28 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	const getManageStagingSiteContent = () => {
 		return (
 			<>
-				<p>{ translate( 'Your staging site is available at:' ) }</p>
+				<p>
+					{ translate(
+						'Your staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}.',
+						{
+							components: {
+								a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,
+							},
+						}
+					) }
+				</p>
 				<SiteRow>
 					<SiteIcon siteId={ stagingSite.id } size={ 40 } />
 					<SiteInfo>
-						<div>{ stagingSite.name }</div>
+						<SiteNameContainer>
+							<SiteName
+								href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
+								title={ __( 'Visit Dashboard' ) }
+							>
+								{ stagingSite.name }
+							</SiteName>
+							<SitesStagingBadge>{ translate( 'Staging' ) }</SitesStagingBadge>
+						</SiteNameContainer>
 						<div>
 							<a href={ stagingSite.url }>{ stagingSite.url }</a>
 						</div>

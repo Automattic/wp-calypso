@@ -626,8 +626,8 @@
 		height: 100%;
 		background-color: #d0cce3;
 		background-image:
-			url(calypso/assets/images/onboarding/link-in-bio-processing-left.png),
-			url(calypso/assets/images/onboarding/link-in-bio-processing-right.png);
+			url(calypso/assets/images/onboarding/link-in-bio-processing-left.webp),
+			url(calypso/assets/images/onboarding/link-in-bio-processing-right.webp);
 		background-repeat: no-repeat, no-repeat;
 		background-attachment: fixed;
 		background-size: auto 30%, auto 30%;
@@ -637,8 +637,8 @@
 		@include break-huge {
 			background-size: auto 50%, auto 50%;
 			background-image:
-				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.png),
-				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.png);
+				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.webp),
+				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.webp);
 		}
 	}
 

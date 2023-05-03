@@ -45,6 +45,7 @@
 		"home/layout-dev": true,
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,
+		"importer/unified": true,
 		"inline-help": true,
 		"jetpack/api-cache": true,
 		"jetpack/backup-messaging-i3": true,
@@ -147,10 +148,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/staging-sites-i1": true,
-		"newsletter/stats": true,
-		"woa-logging": true,
-		"woa-logging-moved": true
+		"newsletter/stats": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",
