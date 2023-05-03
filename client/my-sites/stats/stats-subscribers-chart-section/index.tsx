@@ -35,7 +35,7 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 	return [ x, y ];
 }
 
-export default function SubscribersSection( {
+export default function SubscribersChartSection( {
 	siteId,
 	slug,
 	period = 'month',
