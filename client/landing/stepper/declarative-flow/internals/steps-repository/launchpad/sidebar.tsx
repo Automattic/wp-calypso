@@ -6,7 +6,6 @@ import { useRef, useState } from '@wordpress/element';
 import { Icon, copy } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
-import { useLaunchpadChecklist } from 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist';
 import { StepNavigationLink } from 'calypso/../packages/onboarding/src';
 import Badge from 'calypso/components/badge';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
@@ -51,14 +50,16 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	let isDomainSSLProcessing: boolean | null = false;
 	const translate = useTranslate();
 	const site = useSite();
+	const siteIntentOption = site?.options?.site_intent;
 	const clipboardButtonEl = useRef< HTMLButtonElement >( null );
 	const [ clipboardCopied, setClipboardCopied ] = useState( false );
 
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
 
 	const {
-		data: { site_intent: siteIntentOption, checklist_statuses: checklistStatuses },
-	} = useLaunchpad( siteSlug );
+		data: { checklist: launchpadChecklist, checklist_statuses: checklistStatuses },
+		isFetchedAfterMount,
+	} = useLaunchpad( siteSlug, siteIntentOption );
 
 	const selectedDomain = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
@@ -68,11 +69,6 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const showDomain =
 		! isStartWritingFlow( flow ) ||
 		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
-
-	const {
-		data: { checklist: launchpadChecklist },
-		isFetchedAfterMount,
-	} = useLaunchpadChecklist( siteSlug, siteIntentOption );
 
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
 
