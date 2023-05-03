@@ -1,6 +1,6 @@
-import { Modal, Button } from '@wordpress/components';
+import { Modal, Button, ExternalLink } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useEffect, useRef, useState, createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, globe, link as linkIcon } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
@@ -51,12 +51,15 @@ const PostPublishedSharingModal: React.FC = () => {
 		[]
 	);
 
-	const [ isOpen, setIsOpen ] = useState( false );
+	const [ isOpen, setIsOpen ] = useState( true );
 	const closeModal = () => setIsOpen( false );
 	const { fetchShouldShowFirstPostPublishedModal } = useDispatch(
 		'automattic/wpcom-welcome-guide'
 	);
 	const { createNotice } = useDispatch( noticesStore );
+
+	const siteSlug = window.location.hostname;
+	const subscribersUrl = `https://wordpress.com/people/subscribers/${ siteSlug }`;
 
 	const shareTwitter = () => {
 		const baseUrl = new URL( 'https://twitter.com/intent/tweet' );
@@ -161,9 +164,14 @@ const PostPublishedSharingModal: React.FC = () => {
 				<div className="wpcom-block-editor-post-published-sharing-modal__left">
 					<h1> { __( 'Congratulations!', 'full-site-editing' ) } </h1>
 					<p>
-						{ __(
-							'Your post is now live and was delivered successfully to all subscribers.',
-							'full-site-editing'
+						{ createInterpolateElement(
+							__(
+								'Your post is now live and was delivered to each of <a>your subscribers</a>.',
+								'full-site-editing'
+							),
+							{
+								a: <ExternalLink href={ subscribersUrl } target="_blank" />,
+							}
 						) }
 					</p>
 					<div className="wpcom-block-editor-post-published-buttons">
