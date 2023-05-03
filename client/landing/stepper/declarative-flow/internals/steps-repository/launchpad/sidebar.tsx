@@ -57,7 +57,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
 
 	const {
-		data: { checklist: launchpadChecklist, checklist_statuses: checklistStatuses },
+		data: { checklist_statuses: checklistStatuses, checklist: launchpadChecklist },
 		isFetchedAfterMount,
 	} = useLaunchpad( siteSlug, siteIntentOption );
 
