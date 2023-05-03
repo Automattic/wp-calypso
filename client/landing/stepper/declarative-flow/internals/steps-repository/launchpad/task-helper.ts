@@ -138,6 +138,7 @@ export function getEnhancedTasks(
 							);
 						},
 						completed: setupBlogCompleted,
+						disabled: setupBlogCompleted,
 					};
 					break;
 				case 'setup_newsletter':
@@ -205,6 +206,7 @@ export function getEnhancedTasks(
 								? null
 								: translatedPlanName,
 						completed: ( planCompleted ?? task.completed ) && ! shouldDisplayWarning,
+						disabled: isStartWritingFlow( flow ) && ( planCompleted || ! domainUpsellCompleted ),
 						warning: shouldDisplayWarning,
 					};
 					break;
@@ -338,6 +340,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Launch your blog' ),
 						completed: siteLaunchCompleted,
+						disabled: isStartWritingFlow( flow ) && ! planCompleted,
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -410,6 +413,8 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Choose a domain' ),
 						completed: domainUpsellCompleted,
+						disabled:
+							isStartWritingFlow( flow ) && ( domainUpsellCompleted || ! setupBlogCompleted ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
 
