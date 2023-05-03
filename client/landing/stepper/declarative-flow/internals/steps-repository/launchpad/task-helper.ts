@@ -138,6 +138,7 @@ export function getEnhancedTasks(
 					break;
 				case 'plan_selected':
 					taskData = {
+						title: translate( 'Choose a plan' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							if ( displayGlobalStylesWarning ) {
@@ -346,6 +347,7 @@ export function getEnhancedTasks(
 					break;
 				case 'domain_upsell':
 					taskData = {
+						title: translate( 'Choose a domain' ),
 						disabled:
 							isStartWritingFlow( flow ) && ( domainUpsellCompleted || ! setupBlogCompleted ),
 						actionDispatch: () => {
