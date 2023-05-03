@@ -16,7 +16,6 @@ const SubscribersNavigation = ( {
 	const isFuture = ( date: Date ): boolean => {
 		const incomingNextDate = new Date( date );
 		incomingNextDate.setDate( incomingNextDate.getDate() + 1 );
-		// const incomingNextDate = new Date( date + 24 * 60 * 60 * 1000 );
 		incomingNextDate.setHours( 0, 0, 0, 0 );
 
 		const today = new Date();
