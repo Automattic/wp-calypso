@@ -45,7 +45,7 @@ function getDescription( plan, translate ) {
 		// Translators: %(planName)s is the name of the plan, %(storageLimit)d is the storage limit in GB.
 		return translate(
 			'Enrich your posts and pages with video or audio. Upload plenty of media, ' +
-				'directly to your site — the Woo Express %(planName)s Plan has %(storageLimit)d GB storage.',
+				'directly to your site — the Woo Express: %(planName)s plan has %(storageLimit)d GB storage.',
 			{
 				args: {
 					planName: wooExpressPlan.getTitle(),
