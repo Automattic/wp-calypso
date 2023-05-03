@@ -27,6 +27,8 @@ import { connectOptions } from './theme-options';
 
 const DEFAULT_VARIATION_SLUG = 'default';
 const isDefaultVariationSlug = ( slug ) => ! slug || slug === DEFAULT_VARIATION_SLUG;
+const isUrlWpcomApi = ( url ) =>
+	url.indexOf( 'public-api.wordpress.com/wpcom/v2/block-previews/site' ) >= 0;
 
 class ThemePreview extends Component {
 	static displayName = 'ThemePreview';
@@ -237,6 +239,7 @@ class ThemePreview extends Component {
 						) }
 						externalUrl={ demoUrl }
 						belowToolbar={ this.props.belowToolbar }
+						skipWaitForIframeLoadedMessage={ ! isUrlWpcomApi( demoUrl ) }
 					>
 						{ showActionIndicator && <PulsingDot active={ true } /> }
 						{ ! showActionIndicator && this.renderSecondaryButton() }
