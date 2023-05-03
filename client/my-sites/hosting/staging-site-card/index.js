@@ -25,7 +25,6 @@ import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { DeleteStagingSite } from './delete-staging-site';
 import { useDeleteStagingSite } from './use-delete-staging-site';
-import { useHasSiteAccess } from './use-has-site-access';
 
 const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
@@ -97,7 +96,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	const stagingSite = useMemo( () => {
 		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
 	}, [ stagingSites ] );
-	const hasSiteAccess = useHasSiteAccess( stagingSite.id );
+	const hasSiteAccess = ! stagingSite.id || Boolean( stagingSite?.user_has_permission );
 
 	const showAddStagingSite =
 		! isLoadingStagingSites && ! isLoadingQuotaValidation && stagingSites?.length === 0;
@@ -137,11 +136,6 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		}, [ dispatch, __ ] ),
 	} );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
-	const isTrasferInProgress =
-		showManageStagingSite &&
-		! isStagingSiteTransferComplete &&
-		( transferStatus !== null || wasCreating );
-
 	useEffect( () => {
 		if ( wasCreating && isStagingSiteTransferComplete ) {
 			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
@@ -191,6 +185,38 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 			);
 		},
 	} );
+
+	const isTrasferInProgress =
+		addingStagingSite ||
+		( showManageStagingSite &&
+			! isStagingSiteTransferComplete &&
+			( transferStatus !== null || wasCreating ) );
+
+	useEffect( () => {
+		// We know that a user has been navigated to an other page and came back if
+		// The transfer status is not in a final state (complete or failure)
+		// the staging site exists
+		// the site is not reverting
+		// the user owns the staging site
+		// and wasCreating that is set up by the add staging site button is false
+		if (
+			! wasCreating &&
+			! isStagingSiteTransferComplete &&
+			stagingSite.id &&
+			transferStatus !== transferStates.REVERTED &&
+			hasSiteAccess &&
+			! isReverting
+		) {
+			setWasCreating( true );
+		}
+	}, [
+		wasCreating,
+		isStagingSiteTransferComplete,
+		transferStatus,
+		hasSiteAccess,
+		isReverting,
+		stagingSite,
+	] );
 
 	const getExceedQuotaErrorContent = () => {
 		return (
