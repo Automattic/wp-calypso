@@ -22,6 +22,19 @@
 				width: 50%;
 				padding: 52px 40px 52px 20px;
 
+				p a {
+					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+					text-decoration: none;
+
+					&:hover {
+						text-decoration: underline;
+					}
+
+					.components-external-link__icon {
+						margin-left: 4px;
+					}
+				}
+
 				.wpcom-block-editor-post-published-buttons {
 					display: flex;
 				}
@@ -64,7 +77,7 @@
 			display: inline-flex;
 			border: none;
 			background: transparent;
-			color: var(--color-text);
+			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
 			padding: 0 14px 0 0;
 			line-height: 2.71428571;
 			min-height: 40px;
@@ -75,7 +88,11 @@
 
 			&:hover {
 				background: transparent;
-				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+				text-decoration: underline;
+			}
+
+			svg {
+				fill: currentColor;
 			}
 		}
 		hr {
