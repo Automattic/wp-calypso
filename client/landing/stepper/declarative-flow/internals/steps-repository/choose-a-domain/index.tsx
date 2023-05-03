@@ -47,6 +47,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		return strippedHostname ?? String( siteSlug ).split( '.' )[ 0 ];
 	};
 
+<<<<<<< HEAD
 	const onSkip = async () => {
 		if ( isStartWritingFlow ) {
 			setDomain( null );
@@ -55,6 +56,14 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		} else {
 			onAddDomain( null );
 		}
+=======
+	const getSiteSlug = function () {
+		return getQueryArg( window.location.search, 'siteSlug' ) ?? null;
+	};
+
+	const onSkip = () => {
+		onAddDomain( null );
+>>>>>>> a1c93dc186 (Blog onboarding: Address "Already own a domain")
 	};
 
 	const submitWithDomain = async ( suggestion: DomainSuggestion | undefined ) => {
@@ -88,6 +97,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					showAlreadyOwnADomain={ true }
 					isSignupStep={ true }
 					basePath=""
+					siteSlug={ getSiteSlug() }
 					products={ productsList }
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,
