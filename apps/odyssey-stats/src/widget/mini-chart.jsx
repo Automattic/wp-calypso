@@ -98,13 +98,13 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 							headingText=""
 							infoText={ createInterpolateElement(
 								__(
-									'Once stats become available, this chat will show you details about your views and visitors. <a>Learn more about stats</a>'
+									'Once stats become available, this chart will show you details about your views and visitors. <a>Learn more about stats</a>'
 								),
 								{
 									a: (
 										<a
 											href="https://jetpack.com/stats/"
-											target="_blank/>"
+											target="_blank"
 											rel="noopener noreferrer"
 										></a>
 									),
