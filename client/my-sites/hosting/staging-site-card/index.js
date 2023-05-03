@@ -226,7 +226,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 			<>
 				<p>
 					{ translate(
-						'A staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}.',
+						'A staging site is a test version of your website you can use to preview and troubleshoot changes before applying them to your production site. {{a}}Learn more{{/a}}.',
 						{
 							components: {
 								a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,
