@@ -39,7 +39,6 @@ import {
 	isCustomDomain,
 	isNotAtomicJetpack,
 	isP2Site,
-	isStagingSite,
 } from '../utils';
 import type { SiteExcerptData } from 'calypso/data/sites/site-excerpt-types';
 
@@ -264,7 +263,6 @@ const SiteDropdownMenu = styled( DropdownMenu )( {
 function useSubmenuItems( site: SiteExcerptData ) {
 	const { __ } = useI18n();
 	const siteSlug = site.slug;
-	const isWpcomStagingSite = isStagingSite( site );
 	const hasStagingSitesFeature = useSafeSiteHasFeature( site.ID, FEATURE_SITE_STAGING_SITES );
 
 	useQueryReaderTeams();
@@ -283,7 +281,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'database_access',
 			},
 			{
-				condition: ! isWpcomStagingSite && hasStagingSitesFeature,
+				condition: hasStagingSitesFeature,
 				label: __( 'Staging site' ),
 				href: `/hosting-config/${ siteSlug }#staging-site`,
 				sectionName: 'staging_site',
@@ -311,7 +309,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'logs',
 			},
 		].filter( ( { condition } ) => condition ?? true );
-	}, [ __, siteSlug, isWpcomStagingSite, hasStagingSitesFeature, isA12n ] );
+	}, [ __, siteSlug, hasStagingSitesFeature, isA12n ] );
 }
 
 function HostingConfigurationSubmenu( { site, recordTracks }: SitesMenuItemProps ) {
