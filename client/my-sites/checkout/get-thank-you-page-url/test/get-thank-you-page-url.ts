@@ -14,6 +14,7 @@ import {
 	redirectCheckoutToWpAdmin,
 	TITAN_MAIL_MONTHLY_SLUG,
 	WPCOM_DIFM_LITE,
+	PLAN_PREMIUM_MONTHLY,
 } from '@automattic/calypso-products';
 import { LINK_IN_BIO_FLOW, NEWSLETTER_FLOW, VIDEOPRESS_FLOW } from '@automattic/onboarding';
 import {
@@ -24,6 +25,7 @@ import {
 } from '@automattic/shopping-cart';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/get-thank-you-page-url';
+import type { Purchase } from 'calypso/lib/purchases/types';
 
 jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud', () => jest.fn() );
 jest.mock( '@automattic/calypso-products', () => ( {
@@ -36,6 +38,17 @@ const samplePurchaseId = 12342424241;
 function getMockCart(): ResponseCart {
 	return { ...getEmptyResponseCart(), cart_key: 12345 };
 }
+
+const mockPurchases = () =>
+	[
+		{
+			id: 1,
+			currencyCode: 'USD',
+			renewDate: '',
+			productSlug: PLAN_PREMIUM_MONTHLY,
+			amount: 100,
+		},
+	] as Purchase[];
 
 const defaultArgs = {
 	getUrlFromCookie: jest.fn( () => undefined ),
@@ -1050,6 +1063,30 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			cart,
 			receiptId: samplePurchaseId,
+		} );
+		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
+	} );
+
+	// NOTE: as part of the calypso_postpurchase_upsell_monthly_to_annual_plan experiment
+	// we're disabling the yearly premium to monthly business plan upsell when coming from premium monthly
+	// https://github.com/Automattic/wp-calypso/pull/76524
+	it( 'redirects to thank you page premium yearly is in the cart and came from Annual upsell (premium monthly)', () => {
+		const cart = {
+			...getMockCart(),
+			products: [
+				{
+					...getEmptyResponseCartProduct(),
+					product_slug: PLAN_PREMIUM,
+					bill_period: '365',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			receiptId: samplePurchaseId,
+			purchases: mockPurchases(),
 		} );
 		expect( url ).toBe( `/checkout/thank-you/foo.bar/${ samplePurchaseId }` );
 	} );
