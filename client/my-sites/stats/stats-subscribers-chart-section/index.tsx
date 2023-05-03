@@ -40,8 +40,8 @@ export default function SubscribersSection( {
 	slug,
 	period = 'month',
 }: {
-	siteId: string;
-	slug?: string;
+	siteId: number | null;
+	slug?: string | null;
 	period?: string;
 } ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );

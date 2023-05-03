@@ -15,11 +15,15 @@ import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
 import StatsPageHeader from '../stats-page-header';
 import Reach from '../stats-reach';
+import SubscribersChartSection from '../stats-subscribers-chart-section';
 import SubscribersOverview from '../stats-subscribers-overview';
-import SubscribersSection from '../subscribers-section';
 import SubscribersHighlightSection from './subscribers-highlight-section';
 
-const StatsSubscribersPage = ( { period } ) => {
+interface StatsSubscribersPageProps {
+	period: string;
+}
+
+const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 	const translate = useTranslate();
 	// Use hooks for Redux pulls.
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
@@ -43,7 +47,6 @@ const StatsSubscribersPage = ( { period } ) => {
 	// sessionStorage.setItem( 'jp-stats-last-tab', 'subscribers' );
 
 	// TODO: should be refactored into separate components
-	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Main fullWidthLayout>
 			<DocumentHead title={ translate( 'Jetpack Stats' ) } />
@@ -62,7 +65,7 @@ const StatsSubscribersPage = ( { period } ) => {
 						vendor={ getSuggestionsVendor() }
 					/>
 				) }
-				<SubscribersSection siteId={ siteId } slug={ siteSlug } period={ period } />
+				<SubscribersChartSection siteId={ siteId } slug={ siteSlug } period={ period } />
 				<SubscribersOverview />
 				<div className={ statsModuleListClass }>
 					<Followers path="followers" />
@@ -73,7 +76,6 @@ const StatsSubscribersPage = ( { period } ) => {
 			</div>
 		</Main>
 	);
-	/* eslint-enable wpcalypso/jsx-classname-namespace */
 };
 
 export default StatsSubscribersPage;
