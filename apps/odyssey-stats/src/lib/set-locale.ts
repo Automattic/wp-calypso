@@ -8,14 +8,14 @@ const DEFAULT_LANGUAGE = 'en';
 const DEFAULT_MOMENT_LOCALE = 'en';
 const ALWAYS_LOAD_WITH_LOCALE = [ 'zh' ];
 
-const getLanguageCodeFromLocale = ( localeSlug ) => {
+const getLanguageCodeFromLocale = ( localeSlug: string ) => {
 	if ( localeSlug.indexOf( '-' ) > -1 ) {
 		return localeSlug.split( '-' )[ 0 ];
 	}
 	return localeSlug;
 };
 
-const loadMomentLocale = ( localeSlug, languageCode ) => {
+const loadMomentLocale = ( localeSlug: string, languageCode: string ) => {
 	return import( `moment/locale/${ localeSlug }` )
 		.catch( ( error ) => {
 			debug(
@@ -42,7 +42,7 @@ const loadMomentLocale = ( localeSlug, languageCode ) => {
 		.then( () => moment.locale( localeSlug ) );
 };
 
-const loadLanguageFile = ( languageFileName ) => {
+const loadLanguageFile = ( languageFileName: string ) => {
 	const url = `https://widgets.wp.com/odyssey-stats/v1/languages/${ languageFileName }-v1.1.json`;
 
 	return globalThis.fetch( url ).then( ( response ) => {
@@ -57,7 +57,7 @@ const loadLanguageFile = ( languageFileName ) => {
 	} );
 };
 
-export default ( localeSlug ) => {
+export default ( localeSlug: string ) => {
 	const languageCode = getLanguageCodeFromLocale( localeSlug );
 
 	// Load tranlation file if it's not English.

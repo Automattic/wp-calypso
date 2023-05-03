@@ -2,15 +2,24 @@ import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import { parseChartData } from 'calypso/state/stats/lists/utils';
 
-function queryStatsVisits( siteId, params ) {
+type Unit = 'day' | 'week' | 'month' | 'year';
+
+interface QueryStatsVisitsParams {
+	unit: Unit;
+	quantity: number;
+	date: string;
+	stat_fields: string;
+}
+
+function queryStatsVisits( siteId: number, params: QueryStatsVisitsParams ) {
 	return wpcom.req.get( `/sites/${ siteId }/stats/visits`, params );
 }
 
 export default function useVisitsQuery(
-	siteId,
-	unit,
-	quantity,
-	date,
+	siteId: number,
+	unit: Unit,
+	quantity: number,
+	date: string,
 	fields = [ 'views', 'visitors' ]
 ) {
 	return useQuery(
