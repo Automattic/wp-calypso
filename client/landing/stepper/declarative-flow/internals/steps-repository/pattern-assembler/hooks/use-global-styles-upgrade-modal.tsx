@@ -34,20 +34,25 @@ const useGlobalStylesUpgradeModal = ( {
 	const translate = useTranslate();
 	const { goToCheckout } = useCheckout();
 
-	const customizeDescription = ( description: JSX.Element ) => {
+	const customizeDescription = () => {
+		let description;
+
+		if ( hasSelectedColorVariation && hasSelectedFontVariation ) {
+			description = translate(
+				'Your font and color choices are exclusive to the Premium plan and above.'
+			);
+		} else if ( hasSelectedColorVariation ) {
+			description = translate( 'Your color choices are exclusive to the Premium plan and above.' );
+		} else if ( hasSelectedFontVariation ) {
+			description = translate( 'Your font choices are exclusive to the Premium plan and above.' );
+		}
+
 		return (
-			<>
-				<p>
-					{ translate( "You've selected a premium color or font for your site." ) }
-					&nbsp;
-					{ description }
-				</p>
-				<p>
-					{ translate(
-						'You can also continue with your selected color or font and upgrade later.'
-					) }
-				</p>
-			</>
+			<p>
+				{ description }
+				&nbsp;
+				{ translate( 'You can upgrade now to keep your current choices, or upgrade later.' ) }
+			</p>
 		);
 	};
 

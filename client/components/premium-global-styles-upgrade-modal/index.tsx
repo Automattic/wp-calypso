@@ -29,6 +29,14 @@ export default function PremiumGlobalStylesUpgradeModal( {
 	const translate = useTranslate();
 	const premiumPlanProduct = useSelector( ( state ) => getProductBySlug( state, PLAN_PREMIUM ) );
 	const isLoading = ! premiumPlanProduct;
+	const features = [
+		<strong>{ translate( 'Free domain for one year' ) }</strong>,
+		<strong>{ translate( 'Premium themes' ) }</strong>,
+		translate( 'Style customization' ),
+		translate( 'Live chat support' ),
+		translate( 'Ad-free experience' ),
+		translate( 'Earn with WordAds' ),
+	];
 
 	return (
 		<>
@@ -74,30 +82,12 @@ export default function PremiumGlobalStylesUpgradeModal( {
 							<div className="upgrade-modal__included">
 								<h2>{ translate( 'Included with your Premium plan' ) }</h2>
 								<ul>
-									<li className="upgrade-modal__included-item">
-										<Gridicon icon="checkmark" size={ 16 } />
-										<strong>{ translate( 'Access all theme styles' ) }</strong>
-									</li>
-									<li className="upgrade-modal__included-item">
-										<Gridicon icon="checkmark" size={ 16 } />
-										<strong>{ translate( 'Change fonts, colors, and more sitewide' ) }</strong>
-									</li>
-									<li className="upgrade-modal__included-item">
-										<Gridicon icon="checkmark" size={ 16 } />
-										{ translate( 'Unlimited customer support via email' ) }
-									</li>
-									<li className="upgrade-modal__included-item">
-										<Gridicon icon="checkmark" size={ 16 } />
-										{ translate( 'Remove WordPress.com Ads' ) }
-									</li>
-									<li className="upgrade-modal__included-item">
-										<Gridicon icon="checkmark" size={ 16 } />
-										{ translate( 'Collect payments' ) }
-									</li>
-									<li className="upgrade-modal__included-item">
-										<Gridicon icon="checkmark" size={ 16 } />
-										{ translate( 'Best-in-class hosting' ) }
-									</li>
+									{ features.map( ( feature, i ) => (
+										<li key={ i } className="upgrade-modal__included-item">
+											<Gridicon icon="checkmark" size={ 16 } />
+											{ feature }
+										</li>
+									) ) }
 								</ul>
 							</div>
 						</div>
