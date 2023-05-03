@@ -15,6 +15,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
 import { isMonthlyToAnnualPostPurchaseExperimentUser } from 'calypso/state/selectors/is-monthly-to-annual-post-purchase-experiment-user';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -102,6 +103,8 @@ export default function useCreatePaymentCompleteCallback( {
 		isMonthlyToAnnualPostPurchaseExperimentUser( state )
 	);
 
+	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+
 	return useCallback(
 		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
 			debug( 'payment completed successfully' );
@@ -137,6 +140,7 @@ export default function useCreatePaymentCompleteCallback( {
 				adminPageRedirect,
 				domains,
 				monthlyToAnnualPostPurchaseExperimentUser,
+				purchases,
 			};
 
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
