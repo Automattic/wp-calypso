@@ -441,7 +441,10 @@ export function getEnhancedTasks(
 								  } );
 							window.location.assign( destinationUrl );
 						},
-						badgeText: domainUpsellCompleted ? '' : translate( 'Upgrade plan' ),
+						badgeText:
+							domainUpsellCompleted || isStartWritingFlow( flow || null )
+								? ''
+								: translate( 'Upgrade plan' ),
 					};
 					break;
 				case 'verify_email':
