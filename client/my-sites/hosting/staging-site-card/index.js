@@ -96,8 +96,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	const stagingSite = useMemo( () => {
 		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
 	}, [ stagingSites ] );
-	const hasSiteAccess =
-		! stagingSite.id || Boolean( stagingSite?.user_has_permission );
+	const hasSiteAccess = ! stagingSite.id || Boolean( stagingSite?.user_has_permission );
 
 	const showAddStagingSite =
 		! isLoadingStagingSites && ! isLoadingQuotaValidation && stagingSites?.length === 0;
