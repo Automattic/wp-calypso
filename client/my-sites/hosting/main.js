@@ -180,7 +180,7 @@ class Hosting extends Component {
 
 		const getContent = () => {
 			const isGithubIntegrationEnabled =
-				isEnabled( 'quake/github-integration-i1' ) && isAutomatticTeamMember( teams );
+				isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
 			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
 			const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 

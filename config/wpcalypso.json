@@ -126,7 +126,7 @@
 		"pre-cancellation-modal": false,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
-		"quake/github-integration-i1": true,
+		"github-integration-i1": true,
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
