@@ -4,6 +4,7 @@ import { select, dispatch } from '@wordpress/data';
 import wpcomRequest from 'wpcom-proxy-request';
 import {
 	isLinkInBioFlow,
+	isNewsletterFlow,
 	isNewsletterOrLinkInBioFlow,
 	LINK_IN_BIO_FLOW,
 	FREE_FLOW,
@@ -43,6 +44,7 @@ interface SetupOnboardingSiteOptions {
 
 export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSiteOptions ) {
 	// const { resetOnboardStore } = dispatch( ONBOARD_STORE );
+	const goals = select( ONBOARD_STORE ).getGoals();
 	const selectedDesign = select( ONBOARD_STORE ).getSelectedDesign();
 	const siteTitle = select( ONBOARD_STORE ).getSelectedSiteTitle();
 	const siteDescription = select( ONBOARD_STORE ).getSelectedSiteDescription();
@@ -54,6 +56,7 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			blogname: string;
 			blogdescription: string;
 			launchpad_screen?: string;
+			site_goals?: Array< string >;
 			site_intent?: string;
 		} = {
 			blogname: siteTitle,
@@ -75,6 +78,11 @@ export function setupSiteAfterCreation( { siteId, flowName }: SetupOnboardingSit
 			}
 
 			settings.launchpad_screen = 'full';
+		}
+
+		// Newsletter flow sets "paid-newsletter" goal as an indication to setup paid newsletter later on
+		if ( isNewsletterFlow( flowName ) && goals && goals.length > 0 ) {
+			settings.site_goals = Array.from( goals );
 		}
 
 		formData.push( [ 'settings', JSON.stringify( settings ) ] );

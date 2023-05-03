@@ -1,0 +1,56 @@
+@import "../../variables";
+
+.tumblr-preview__post-icon {
+	display: flex;
+	align-items: center;
+
+	svg {
+		fill: $tumblr-preview-action-text-color;
+	}
+}
+
+.tumblr-preview__post-icon-blaze {
+	width: 23px;
+	height: 20px;
+}
+
+.tumblr-preview__post-icon-delete {
+	width: 17px;
+	height: 21px;
+}
+
+
+.tumblr-preview__post-icon-edit {
+	width: 21px;
+	height: 21px;
+}
+
+
+.tumblr-preview__post-icon-share {
+	width: 24px;
+	height: 24px;
+}
+
+
+.tumblr-preview__post-icon-reply {
+	width: 21px;
+	height: 21px;
+}
+
+
+.tumblr-preview__post-icon-reblog {
+	width: 21px;
+	height: 21px;
+}
+
+
+.tumblr-preview__post-icon-like {
+	width: 23px;
+	height: 21px;
+}
+
+
+.tumblr-preview__post-icon-ellipsis {
+	width: 18px;
+	height: 4px;
+}
