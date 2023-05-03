@@ -138,6 +138,7 @@ export function getEnhancedTasks(
 					break;
 				case 'plan_selected':
 					taskData = {
+						title: translate( 'Choose a plan' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							if ( displayGlobalStylesWarning ) {
