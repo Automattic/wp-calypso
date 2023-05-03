@@ -165,8 +165,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"newsletter/stats": false,
-		"woa-logging": true
+		"newsletter/stats": false
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",
