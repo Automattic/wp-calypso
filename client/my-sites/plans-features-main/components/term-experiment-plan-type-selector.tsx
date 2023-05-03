@@ -20,7 +20,6 @@ const TermExperimentPlanTypeSelector: React.FunctionComponent< {
 				return <PlanSelectorLoadingEllipsis />;
 			}
 
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const variationName = experimentData?.variationName;
 
 			const propsWithBiannualToggle = {

@@ -281,9 +281,6 @@ export class PlanFeatures2023Grid extends Component<
 			translate,
 			selectedSiteSlug,
 			hidePlansFeatureComparison,
-			domainName,
-			onUpgradeClick,
-			replacePaidDomainWithFreeDomain,
 			siteId,
 		} = this.props;
 		return (
