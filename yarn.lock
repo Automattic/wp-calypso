@@ -346,7 +346,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@automattic/onboarding": "workspace:^"
     i18n-calypso: "workspace:^"
     typescript: ^4.7.4
   peerDependencies:

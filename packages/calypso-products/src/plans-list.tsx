@@ -1,5 +1,4 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { isNewsletterFlow } from '@automattic/onboarding';
 import i18n, { getLocaleSlug, translate } from 'i18n-calypso';
 import {
 	FEATURE_13GB_STORAGE,
@@ -454,14 +453,10 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for students' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for students' ),
 	getStoreAudience: () => i18n.translate( 'Best for students' ),
-	getPlanTagline: ( flowName ) => {
-		if ( isNewsletterFlow( flowName ) ) {
-			return i18n.translate(
-				'Start fresh or make the switch, bringing your first 100 readers with you.'
-			);
-		}
-		return i18n.translate( 'Get a taste of the world’s most popular CMS & blogging software.' );
-	},
+	getPlanTagline: () =>
+		i18n.translate( 'Get a taste of the world’s most popular CMS & blogging software.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate( 'Start fresh or make the switch, bringing your first 100 readers with you.' ),
 	getDescription: () =>
 		i18n.translate(
 			'Get a free website and be on your way to publishing your ' +
@@ -665,12 +660,9 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for personal use' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
-	getPlanTagline: ( flowName ) => {
-		if ( isNewsletterFlow( flowName ) ) {
-			return i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' );
-		}
-		return i18n.translate( 'Create your home on the web with a custom domain name.' );
-	},
+	getPlanTagline: () => i18n.translate( 'Create your home on the web with a custom domain name.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
@@ -1137,14 +1129,9 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
-	getPlanTagline: ( flowName ) => {
-		if ( isNewsletterFlow( flowName ) ) {
-			return i18n.translate(
-				'Make it even more memorable with premium designs and style customization.'
-			);
-		}
-		return i18n.translate( 'Build a unique website with powerful design tools.' );
-	},
+	getPlanTagline: () => i18n.translate( 'Build a unique website with powerful design tools.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate( 'Make it even more memorable with premium designs and style customization.' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
@@ -1327,14 +1314,8 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 	getBlogAudience: () => i18n.translate( 'Best for small businesses' ),
 	getPortfolioAudience: () => i18n.translate( 'Best for small businesses' ),
 	getStoreAudience: () => i18n.translate( 'The plan for small businesses' ),
-	getPlanTagline: ( flowName ) => {
-		if ( isNewsletterFlow( flowName ) ) {
-			return i18n.translate(
-				'Reimagine what a newsletter can be with plugins and growth tools to help you scale.'
-			);
-		}
-		return i18n.translate( 'Unlock the power of WordPress with plugins and cloud tools.' );
-	},
+	getPlanTagline: () =>
+		i18n.translate( 'Unlock the power of WordPress with plugins and cloud tools.' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for small businesses:{{/strong}} Power your' +

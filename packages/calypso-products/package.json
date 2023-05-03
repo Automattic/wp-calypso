@@ -36,7 +36,6 @@
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-products#readme",
 	"dependencies": {
 		"@automattic/calypso-config": "workspace:^",
-		"@automattic/onboarding": "workspace:^",
 		"i18n-calypso": "workspace:^"
 	},
 	"devDependencies": {

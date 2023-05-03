@@ -938,12 +938,13 @@ const ConnectedPlanFeatures2023Grid = connect(
 
 			let planFeatures = [];
 			let jetpackFeatures: FeatureObject[] = [];
-			const tagline = planConstantObj.getPlanTagline?.( flowName ) ?? '';
+			let tagline = '';
 
 			if ( isNewsletterFlow( flowName ) ) {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getNewsletterSignupFeatures?.() ?? []
 				);
+				tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
 			} else {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []
@@ -952,6 +953,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				jetpackFeatures = getPlanFeaturesObject(
 					planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? []
 				);
+				tagline = planConstantObj.getPlanTagline?.() ?? '';
 			}
 
 			const rawPrice = getPlanRawPrice( state, planProductId, showMonthlyPrice );

@@ -40,7 +40,8 @@ export interface WPComPlan extends Plan {
 	getBlogAudience?: () => TranslateResult;
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
-	getPlanTagline?: ( flowName: string | null ) => string;
+	getPlanTagline?: () => string;
+	getNewsletterTagLine?: () => string;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
