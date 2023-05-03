@@ -10,7 +10,7 @@ import useStripProductsFromUrl from './use-strip-products-from-url';
 import type { RequestCartProduct, RequestCartProductExtra } from '@automattic/shopping-cart';
 import type { SitelessCheckoutType } from '@automattic/wpcom-checkout';
 
-const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
+const debug = debugFactory( 'calypso:use-prepare-products-for-cart' );
 
 interface PreparedProductsForCart {
 	addingRenewals: boolean;
@@ -312,7 +312,12 @@ function useAddRenewalItems( {
 		// Renewals cannot be purchased without a site.
 		const isThereASite = cartKey && typeof cartKey === 'number';
 		if ( ! isThereASite && ! isGiftPurchase && ! sitelessCheckoutType ) {
-			debug( 'creating renewal products failed because there is no site', productAlias );
+			debug(
+				'creating renewal products failed because there is no site. products:',
+				productAlias,
+				'cartKey:',
+				cartKey
+			);
 			dispatch( {
 				type: 'RENEWALS_ADD_ERROR',
 				message: translate(

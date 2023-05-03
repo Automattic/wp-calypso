@@ -8,9 +8,9 @@ import debugFactory from 'debug';
 import { useEffect, useRef, useState } from 'react';
 import useCartKey from '../../use-cart-key';
 
-const debug = debugFactory( 'calypso:composite-checkout:use-add-products-from-url' );
+const debug = debugFactory( 'calypso:use-add-products-from-url' );
 
-export type isPendingAddingProductsFromUrl = boolean;
+export type IsPendingAddingProductsFromUrl = boolean;
 
 /**
  * Product requests can be sent to checkout using various methods including URL
@@ -39,7 +39,7 @@ export default function useAddProductsFromUrl( {
 	applyCoupon: ApplyCouponToCart;
 	addProductsToCart: AddProductsToCart;
 	addingRenewals: boolean;
-} ): isPendingAddingProductsFromUrl {
+} ): IsPendingAddingProductsFromUrl {
 	const cartKey = useCartKey();
 	const { updateLocation, replaceProductsInCart } = useShoppingCart( cartKey );
 	const isMounted = useRef( true );
