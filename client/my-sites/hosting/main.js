@@ -49,7 +49,6 @@ import SiteBackupCard from './site-backup-card';
 import StagingSiteCard from './staging-site-card';
 import StagingSiteProductionCard from './staging-site-card/staging-site-production-card';
 import SupportCard from './support-card';
-import WebServerLogsCard from './web-server-logs-card';
 import WebServerSettingsCard from './web-server-settings-card';
 import './style.scss';
 
@@ -206,9 +205,6 @@ class Hosting extends Component {
 								<WebServerSettingsCard disabled={ isDisabled } />
 								<RestorePlanSoftwareCard disabled={ isDisabled } />
 								<CacheCard disabled={ isDisabled } />
-								{ ! isEnabled( 'woa-logging-moved' ) && (
-									<WebServerLogsCard disabled={ isDisabled } />
-								) }
 							</Column>
 							<Column type="sidebar">
 								<SiteBackupCard disabled={ isDisabled } />
