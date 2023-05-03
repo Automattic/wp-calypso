@@ -31,6 +31,10 @@ const startWriting: Flow = {
 			},
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
+				slug: 'setup-blog',
+				asyncComponent: () => import( './internals/steps-repository/setup-blog' ),
+			},
+			{
 				slug: 'launchpad',
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
 			},
@@ -100,6 +104,13 @@ const startWriting: Flow = {
 						if ( planCartItem ) {
 							await addPlanToCart( siteSlug as string, flowName as string, true, '', planCartItem );
 						}
+					}
+					return navigate( 'launchpad' );
+				case 'setup-blog':
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { site_edited: true },
+						} );
 					}
 					return navigate( 'launchpad' );
 				case 'launchpad':

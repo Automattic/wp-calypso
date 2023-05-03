@@ -2,7 +2,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FoldableFAQ from 'calypso/components/foldable-faq';
-import { getAgenciesLink, getHelpLink } from 'calypso/my-sites/plans-features-main/jetpack-faq';
+import {
+	getAgenciesLink,
+	getHelpLink,
+} from 'calypso/my-sites/plans-features-main/components/jetpack-faq';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import type { FC } from 'react';

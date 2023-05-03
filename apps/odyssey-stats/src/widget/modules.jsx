@@ -19,10 +19,14 @@ function ModuleCard( {
 	isError = false,
 	canManageModule = false,
 	className = null,
-	info = null,
+	manageUrl = null,
 } ) {
 	const translate = useTranslate();
 	const [ disabled, setDisabled ] = useState( false );
+	const onActivateProduct = () => {
+		setDisabled( true );
+		activateProduct().catch( () => setDisabled( false ) );
+	};
 	return (
 		<div
 			className={ classNames( 'stats-widget-module stats-widget-card', className ) }
@@ -42,22 +46,30 @@ function ModuleCard( {
 						<div className="stats-widget-module__info">
 							{ error === 'not_active' && (
 								<button
+									className="jetpack-emerald-button"
 									disabled={ disabled }
-									onClick={ () => {
-										setDisabled( true );
-										activateProduct().catch( () => setDisabled( false ) );
-									} }
+									onClick={ onActivateProduct }
 								>
 									Activate
 								</button>
 							) }
-							{ /* TODO: add button to install plugins. */ }
-							{ error !== 'not_active' && info && (
-								<a href={ info.link } target="__blank">
-									{ info.text }
+							{ error === 'not_installed' && (
+								<button
+									className="jetpack-emerald-button is-secondary-jetpack-emerald"
+									disabled={ disabled }
+									onClick={ onActivateProduct }
+								>
+									Install
+								</button>
+							) }
+							{ error === 'invalid_key' && (
+								<a href={ manageUrl } target="_self">
+									Manage Akismet key
 								</a>
 							) }
-							{ error !== 'not_active' && ! info && <p>{ translate( 'An error occurred.' ) }</p> }
+							{ ! [ 'not_active', 'not_installed', 'invalid_key' ].includes( error ) && (
+								<p>{ translate( 'An error occurred.' ) }</p>
+							) }
 						</div>
 					) }
 				</>
@@ -66,7 +78,7 @@ function ModuleCard( {
 	);
 }
 
-function AkismetModule( { siteId } ) {
+function AkismetModule( { siteId, manageUrl } ) {
 	const translate = useTranslate();
 
 	const {
@@ -77,6 +89,7 @@ function AkismetModule( { siteId } ) {
 		error: akismetError,
 	} = useModuleDataQuery( 'akismet' );
 
+	// The function installs Akismet plugin if not exists.
 	const activateProduct = ( productSlug ) => () => {
 		return wpcom.req
 			.post( {
@@ -85,6 +98,7 @@ function AkismetModule( { siteId } ) {
 			} )
 			.then( refetchAkismetData );
 	};
+
 	return (
 		<ModuleCard
 			icon={ akismet }
@@ -94,13 +108,8 @@ function AkismetModule( { siteId } ) {
 			error={ akismetError?.message }
 			isLoading={ isAkismetLoading }
 			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
-			activateProduct={
-				canCurrentUser( siteId, 'manage_options' ) && activateProduct( 'anti-spam' )
-			}
-			info={ {
-				link: 'https://akismet.com/?utm_source=jetpack&utm_medium=link&utm_campaign=Jetpack%20Dashboard%20Widget%20Footer%20Link',
-				text: translate( 'Anti-spam can help to keep your blog safe from spam!' ),
-			} }
+			activateProduct={ activateProduct( 'anti-spam' ) }
+			manageUrl={ manageUrl }
 		/>
 	);
 }
@@ -139,16 +148,23 @@ function ProtectModule( { siteId } ) {
 			error={ protectError?.message }
 			isLoading={ isProtectLoading }
 			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
-			activateProduct={ canCurrentUser( siteId, 'manage_options' ) && activateModule( 'protect' ) }
+			activateProduct={ activateModule( 'protect' ) }
 		/>
 	);
 }
 
-export default function Modules( { siteId } ) {
+export default function Modules( { siteId, odysseyStatsBaseUrl } ) {
 	return (
 		<div className="stats-widget-modules">
 			<ProtectModule siteId={ siteId } />
-			<AkismetModule siteId={ siteId } />
+			<AkismetModule
+				siteId={ siteId }
+				// The URL is used to redirect the user to the Akismet Key configuration page.
+				manageUrl={
+					odysseyStatsBaseUrl &&
+					odysseyStatsBaseUrl.replaceAll( /page=stats/g, 'page=akismet-key-config' )
+				}
+			/>
 		</div>
 	);
 }

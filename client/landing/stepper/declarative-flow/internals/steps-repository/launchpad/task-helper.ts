@@ -52,22 +52,32 @@ export function getEnhancedTasks(
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	const linkInBioLinksEditCompleted = checklistStatuses?.links_edited || false;
+	const linkInBioLinksEditCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
 
-	const siteEditCompleted = checklistStatuses?.site_edited || false;
+	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
 
-	const siteLaunchCompleted = checklistStatuses?.site_launched || false;
+	// Todo: setupBlogCompleted should be updated to use a new checklistStatus instead of site_edited.
+	//  Explorers will update Jetpack definitions to make this possible, meanwhile we are using site_edited.
+	const setupBlogCompleted = checklistStatuses?.site_edited || false;
 
-	const firstPostPublishedCompleted = checklistStatuses?.first_post_published || false;
+	const siteLaunchCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
 
-	const planCompleted = checklistStatuses?.plan_selected || ! isStartWritingFlow( flow );
+	const firstPostPublishedCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
 
-	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
+	const planCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.plan_selected ||
+		! isStartWritingFlow( flow );
+
+	const videoPressUploadCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
 
 	const allowUpdateDesign =
 		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
 
-	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
+	const domainUpsellCompleted = isDomainUpsellCompleted( site );
 
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
@@ -116,6 +126,20 @@ export function getEnhancedTasks(
 								} )
 							);
 						},
+					};
+					break;
+				case 'setup_blog':
+					taskData = {
+						title: translate( 'Set up your blog' ),
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, setupBlogCompleted, task.id );
+							window.location.assign(
+								addQueryArgs( `/setup/${ START_WRITING_FLOW }/setup-blog`, {
+									...{ siteSlug: siteSlug, 'start-writing': true },
+								} )
+							);
+						},
+						completed: setupBlogCompleted,
 					};
 					break;
 				case 'setup_newsletter':
@@ -414,11 +438,11 @@ export function getEnhancedTasks(
 	return enhancedTaskList;
 }
 
-function isDomainUpsellCompleted(
-	site: SiteDetails | null,
-	checklistStatuses: LaunchpadStatuses
-): boolean {
-	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
+function isDomainUpsellCompleted( site: SiteDetails | null ): boolean {
+	return (
+		! site?.plan?.is_free ||
+		site?.options?.launchpad_checklist_tasks_statuses?.domain_upsell_deferred === true
+	);
 }
 
 // Records a generic task click Tracks event

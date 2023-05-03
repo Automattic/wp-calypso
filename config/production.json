@@ -47,6 +47,7 @@
 		"help": true,
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,
+		"importer/unified": true,
 		"inline-help": true,
 		"jetpack/agency-dashboard": true,
 		"jetpack/api-cache": false,
@@ -169,6 +170,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
+		"yolo/staging-sites-i1": true,
 		"newsletter/stats": false,
 		"woa-logging": true,
 		"woa-logging-moved": true
