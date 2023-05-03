@@ -10,7 +10,7 @@ import { useJpPresalesAvailabilityQuery } from 'calypso/lib/jetpack/use-jp-presa
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import type { ConfigData } from '@automattic/create-calypso-config';
 
-export type KeyType = 'jpAgency' | 'jpCheckout' | 'jpAkismet' | 'jpGeneral';
+export type KeyType = 'jpAgency' | 'jpCheckout' | 'akismet' | 'jpGeneral';
 
 export interface ZendeskJetpackChatProps {
 	keyType: KeyType;
@@ -21,7 +21,7 @@ function get_config_chat_key( keyType: KeyType ): keyof ConfigData {
 	const chatWidgetKeyMap = {
 		jpAgency: 'zendesk_presales_chat_key_jp_agency_dashboard',
 		jpCheckout: 'zendesk_presales_chat_key_jp_checkout',
-		jpAkismet: 'zendesk_presales_chat_key_akismet',
+		akismet: 'zendesk_presales_chat_key_akismet',
 		jpGeneral: 'zendesk_presales_chat_key',
 	};
 
@@ -41,7 +41,7 @@ export const ZendeskJetpackChat: React.VFC< { keyType: KeyType } > = ( { keyType
 		);
 
 		const isCorrectContext =
-			( isAkismetCheckout() && keyType === 'jpAkismet' ) ||
+			( isAkismetCheckout() && keyType === 'akismet' ) ||
 			( isJetpackCheckout() && keyType === 'jpCheckout' ) ||
 			( isJetpackCloud() && ( keyType === 'jpAgency' || keyType === 'jpGeneral' ) );
 

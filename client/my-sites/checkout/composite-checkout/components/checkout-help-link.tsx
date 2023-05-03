@@ -200,7 +200,7 @@ export default function CheckoutHelpLink() {
 
 	const getZendeskChatWidget = () => {
 		if ( isAkismetCheckout() ) {
-			return <ZendeskJetpackChat keyType="jpAkismet" />;
+			return <ZendeskJetpackChat keyType="akismet" />;
 		}
 
 		if ( isJetpackCheckout() ) {
