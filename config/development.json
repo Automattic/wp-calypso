@@ -152,6 +152,7 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"push-notifications": true,
+		"github-integration-i1": true,
 		"reader": true,
 		"reader/comment-polling": false,
 		"reader/full-errors": true,

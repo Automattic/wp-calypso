@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Onboard } from '@automattic/data-stores';
 import { hexToRgb, StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -39,8 +40,14 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		buttonText: translate( 'Save and continue' ),
 	};
 
-	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
-		useDispatch( ONBOARD_STORE );
+	const {
+		setSiteTitle,
+		setSiteAccentColor,
+		setSiteDescription,
+		setSiteLogo,
+		setGoals,
+		resetGoals,
+	} = useDispatch( ONBOARD_STORE );
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
 	const [ paidSubscribers, setPaidSubscribers ] = useState( false );
@@ -85,6 +92,14 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		setSiteTitle( siteTitle );
 		setSiteAccentColor( accentColor.hex );
 		setPaidSubscribers( paidSubscribers );
+
+		if ( paidSubscribers ) {
+			setGoals( [ Onboard.SiteGoal.PaidSubscribers ] );
+		} else {
+			// Clears goals entirely each time, regardless if they were set previously or not.
+			// We could instead just handle removing PaidSubscribers goal, and avoid doing anything if nothing wasn't set ever.
+			resetGoals();
+		}
 
 		if ( selectedFile && base64Image ) {
 			try {

@@ -7,6 +7,7 @@ export enum SiteGoal {
 	DIFM = 'difm', // "Do It For Me"
 	Import = 'import',
 	Other = 'other',
+	PaidSubscribers = 'paid-subscribers',
 }
 
 export enum SiteIntent {
