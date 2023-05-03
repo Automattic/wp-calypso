@@ -22,7 +22,7 @@ import {
 	isWooExpressPlusPlan,
 	PLAN_PERSONAL,
 } from '@automattic/calypso-products';
-import { isHostingFlow } from '@automattic/onboarding';
+import { isHostingFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -52,7 +52,7 @@ import FoldableCard from 'calypso/components/foldable-card';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
 import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
-import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
+import { FeatureObject, getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { PlanTypeSelectorProps } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
