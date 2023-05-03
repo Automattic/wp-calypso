@@ -16,6 +16,7 @@ import {
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
+import { isMonthlyToAnnualPostPurchaseExperimentUser } from 'calypso/state/selectors/is-monthly-to-annual-post-purchase-experiment-user';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
@@ -97,6 +98,9 @@ export default function useCreatePaymentCompleteCallback( {
 	);
 
 	const domains = useSiteDomains( siteId ?? undefined );
+	const monthlyToAnnualPostPurchaseExperimentUser = useSelector( ( state ) =>
+		isMonthlyToAnnualPostPurchaseExperimentUser( state )
+	);
 
 	return useCallback(
 		( { paymentMethodId, transactionLastResponse }: PaymentEventCallbackArguments ): void => {
@@ -132,6 +136,7 @@ export default function useCreatePaymentCompleteCallback( {
 				jetpackTemporarySiteId,
 				adminPageRedirect,
 				domains,
+				monthlyToAnnualPostPurchaseExperimentUser,
 			};
 
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
