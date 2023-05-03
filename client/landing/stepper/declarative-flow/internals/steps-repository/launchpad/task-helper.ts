@@ -57,6 +57,10 @@ export function getEnhancedTasks(
 
 	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
 
+	// Todo: setupBlogCompleted should be updated to use a new checklistStatus instead of site_edited.
+	//  Explorers will update Jetpack definitions to make this possible, meanwhile we are using site_edited.
+	const setupBlogCompleted = checklistStatuses?.site_edited || false;
+
 	const siteLaunchCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
 
@@ -120,6 +124,20 @@ export function getEnhancedTasks(
 								} )
 							);
 						},
+					};
+					break;
+				case 'setup_blog':
+					taskData = {
+						title: translate( 'Set up your blog' ),
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, setupBlogCompleted, task.id );
+							window.location.assign(
+								addQueryArgs( `/setup/${ START_WRITING_FLOW }/setup-blog`, {
+									...{ siteSlug: siteSlug, 'start-writing': true },
+								} )
+							);
+						},
+						completed: setupBlogCompleted,
 					};
 					break;
 				case 'setup_newsletter':

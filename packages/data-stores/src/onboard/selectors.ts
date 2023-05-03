@@ -45,7 +45,6 @@ export const hasPaidDomain = ( state: State ): boolean => {
 export const hasSiteTitle = ( state: State ) => state.siteTitle.trim().length > 1; // for valid domain results, we need at least 2 characters
 
 // Selectors dependent on other selectors (cannot be put in alphabetical order)
-
 export const hasSelectedDesign = ( state: State ) => !! state.selectedDesign;
 
 export const hasSelectedDesignWithoutFonts = ( state: State ) =>
