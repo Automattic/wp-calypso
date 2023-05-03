@@ -289,7 +289,7 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				sectionName: 'staging_site',
 			},
 			{
-				condition: isA12n,
+				condition: isEnabled( 'github-integration-i1' ) && isA12n,
 				label: __( 'Deploy from GitHub' ),
 				href: `/hosting-config/${ siteSlug }#connect-github`,
 				sectionName: 'connect_github',
