@@ -162,7 +162,7 @@ const PostPublishedSharingModal: React.FC = () => {
 		>
 			<div className="wpcom-block-editor-post-published-sharing-modal__inner">
 				<div className="wpcom-block-editor-post-published-sharing-modal__left">
-					<h1> { __( 'Congratulations!', 'full-site-editing' ) } </h1>
+					<h1> { __( 'Post published!', 'full-site-editing' ) } </h1>
 					<p>
 						{ createInterpolateElement(
 							__(
