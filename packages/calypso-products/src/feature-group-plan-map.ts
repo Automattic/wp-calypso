@@ -59,6 +59,7 @@ import {
 	FEATURE_ES_SEARCH_JP,
 	FEATURE_SMART_REDIRECTS,
 	FEATURE_SITE_ACTIVITY_LOG_JP,
+	FEATURE_SITE_STAGING_SITES,
 	FEATURE_UPTIME_MONITOR_JP,
 	FEATURE_GROUP_YOUR_STORE,
 	FEATURE_WOOCOMMERCE_STORE,
@@ -152,6 +153,7 @@ export const featureGroups: Partial< FeatureGroupMap > = {
 		getTitle: () => i18n.translate( 'Developer tools' ),
 		get2023PricingGridSignupWpcomFeatures: () => [
 			FEATURE_DEV_TOOLS,
+			FEATURE_SITE_STAGING_SITES,
 			FEATURE_MULTI_SITE,
 			FEATURE_WP_UPDATES,
 		],
