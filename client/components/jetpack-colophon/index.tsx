@@ -1,10 +1,16 @@
 import classNames from 'classnames';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 
 import './style.scss';
 
-const JetpackColophon = ( { className, translate, grayscale = false } ) => {
+interface JetpackColophonProps {
+	className?: string;
+	grayscale?: boolean;
+}
+
+export default ( { className, grayscale = false }: JetpackColophonProps ) => {
+	const translate = useTranslate();
 	return (
 		<div className={ classNames( 'jetpack-colophon', className ) }>
 			<span
@@ -21,5 +27,3 @@ const JetpackColophon = ( { className, translate, grayscale = false } ) => {
 		</div>
 	);
 };
-
-export default localize( JetpackColophon );

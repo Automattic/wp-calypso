@@ -35,13 +35,13 @@ function transformData( data: SubscribersData[] ): uPlot.AlignedData {
 	return [ x, y ];
 }
 
-export default function SubscribersSection( {
+export default function SubscribersChartSection( {
 	siteId,
 	slug,
 	period = 'month',
 }: {
-	siteId: string;
-	slug?: string;
+	siteId: number | null;
+	slug?: string | null;
 	period?: string;
 } ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
