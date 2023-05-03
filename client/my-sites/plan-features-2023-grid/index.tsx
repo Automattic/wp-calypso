@@ -79,6 +79,8 @@ import useHighlightLabel from './hooks/use-highlight-label';
 import useIsLargeCurrency from './hooks/use-is-large-currency';
 import { PlanProperties, TransformedFeatureObject } from './types';
 import { getStorageStringFromFeature } from './util';
+import type { PlanActionOverrides } from './types';
+import type { DomainSuggestion } from '@automattic/data-stores';
 import type { IAppState } from 'calypso/state/types';
 
 import './style.scss';
@@ -119,6 +121,8 @@ type PlanFeatures2023GridProps = {
 	currentSitePlanSlug?: string;
 	hidePlansFeatureComparison: boolean;
 	hideUnavailableFeatures: boolean;
+	replacePaidDomainWithFreeDomain: ( freeDomainSuggestion: DomainSuggestion ) => void;
+	planActionOverrides?: PlanActionOverrides;
 };
 
 type PlanFeatures2023GridConnectedProps = {
@@ -642,6 +646,7 @@ export class PlanFeatures2023Grid extends Component<
 			currentSitePlanSlug,
 			selectedSiteSlug,
 			translate,
+			planActionOverrides,
 		} = this.props;
 
 		return planPropertiesObj
@@ -690,6 +695,7 @@ export class PlanFeatures2023Grid extends Component<
 							currentSitePlanSlug={ currentSitePlanSlug }
 							selectedSiteSlug={ selectedSiteSlug }
 							buttonText={ buttonText }
+							planActionOverrides={ planActionOverrides }
 						/>
 					</Container>
 				);
