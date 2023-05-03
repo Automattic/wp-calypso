@@ -140,6 +140,9 @@ window.AppBoot = async () => {
 							id="notices"
 						/>
 					</BrowserRouter>
+					{ 'development' === process.env.NODE_ENV && (
+						<AsyncLoad require="calypso/components/webpack-build-monitor" placeholder={ null } />
+					) }
 					{ config.isEnabled( 'signup/inline-help' ) && (
 						<AsyncLoad require="calypso/blocks/inline-help" placeholder={ null } />
 					) }
@@ -149,3 +152,7 @@ window.AppBoot = async () => {
 		document.getElementById( 'wpcom' )
 	);
 };
+
+if ( module.hot ) {
+	module.hot.accept();
+}
