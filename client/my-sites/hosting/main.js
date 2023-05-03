@@ -179,9 +179,9 @@ class Hosting extends Component {
 		};
 
 		const getContent = () => {
-			const isGithubIntegrationEnabled = isAutomatticTeamMember( teams );
+			const isGithubIntegrationEnabled =
+				isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
 			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
-			const isStagingSiteEnabled = isEnabled( 'yolo/staging-sites-i1' );
 
 			return (
 				<>
@@ -196,7 +196,7 @@ class Hosting extends Component {
 							<Column type="main" className="hosting__main-layout-col">
 								<SFTPCard disabled={ isDisabled } />
 								<PhpMyAdminCard disabled={ isDisabled } />
-								{ isStagingSiteEnabled && ! isWpcomStagingSite && hasStagingSitesFeature && (
+								{ ! isWpcomStagingSite && hasStagingSitesFeature && (
 									<StagingSiteCard disabled={ isDisabled } />
 								) }
 								{ isWpcomStagingSite && siteId && (

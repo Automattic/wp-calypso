@@ -67,9 +67,7 @@ export function getEnhancedTasks(
 	const firstPostPublishedCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
 
-	const planCompleted =
-		site?.options?.launchpad_checklist_tasks_statuses?.plan_selected ||
-		! isStartWritingFlow( flow );
+	const planCompleted = checklistStatuses.plan_completed || ! isStartWritingFlow( flow );
 
 	const videoPressUploadCompleted =
 		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
@@ -77,7 +75,7 @@ export function getEnhancedTasks(
 	const allowUpdateDesign =
 		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
 
-	const domainUpsellCompleted = isDomainUpsellCompleted( site );
+	const domainUpsellCompleted = isDomainUpsellCompleted( site, checklistStatuses );
 
 	const mustVerifyEmailBeforePosting = isNewsletterFlow( flow || null ) && ! isEmailVerified;
 
@@ -140,6 +138,7 @@ export function getEnhancedTasks(
 							);
 						},
 						completed: setupBlogCompleted,
+						disabled: setupBlogCompleted,
 					};
 					break;
 				case 'setup_newsletter':
@@ -207,6 +206,7 @@ export function getEnhancedTasks(
 								? null
 								: translatedPlanName,
 						completed: ( planCompleted ?? task.completed ) && ! shouldDisplayWarning,
+						disabled: isStartWritingFlow( flow ) && ( planCompleted || ! domainUpsellCompleted ),
 						warning: shouldDisplayWarning,
 					};
 					break;
@@ -340,6 +340,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Launch your blog' ),
 						completed: siteLaunchCompleted,
+						disabled: isStartWritingFlow( flow ) && ! planCompleted,
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -412,18 +413,38 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Choose a domain' ),
 						completed: domainUpsellCompleted,
+						disabled:
+							isStartWritingFlow( flow ) && ( domainUpsellCompleted || ! setupBlogCompleted ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
+
+							if ( isStartWritingFlow( flow || null ) ) {
+								window.location.assign(
+									addQueryArgs( `/setup/${ START_WRITING_FLOW }/domains`, {
+										siteSlug,
+										flowToReturnTo: flow,
+										new: site?.name,
+										domainAndPlanPackage: true,
+										[ START_WRITING_FLOW ]: true,
+									} )
+								);
+
+								return;
+							}
+
 							const destinationUrl = domainUpsellCompleted
 								? `/domains/manage/${ siteSlug }`
-								: addQueryArgs( '/setup/domain-upsell/domains', {
+								: addQueryArgs( `/setup/domain-upsell/domains`, {
 										siteSlug,
 										flowToReturnTo: flow,
 										new: site?.name,
 								  } );
 							window.location.assign( destinationUrl );
 						},
-						badgeText: domainUpsellCompleted ? '' : translate( 'Upgrade plan' ),
+						badgeText:
+							domainUpsellCompleted || isStartWritingFlow( flow || null )
+								? ''
+								: translate( 'Upgrade plan' ),
 					};
 					break;
 				case 'verify_email':
@@ -438,11 +459,11 @@ export function getEnhancedTasks(
 	return enhancedTaskList;
 }
 
-function isDomainUpsellCompleted( site: SiteDetails | null ): boolean {
-	return (
-		! site?.plan?.is_free ||
-		site?.options?.launchpad_checklist_tasks_statuses?.domain_upsell_deferred === true
-	);
+function isDomainUpsellCompleted(
+	site: SiteDetails | null,
+	checklistStatuses: LaunchpadStatuses
+): boolean {
+	return ! site?.plan?.is_free || checklistStatuses?.domain_upsell_deferred === true;
 }
 
 // Records a generic task click Tracks event

@@ -126,6 +126,7 @@
 		"pre-cancellation-modal": false,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
+		"github-integration-i1": true,
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
@@ -176,7 +177,6 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"yolo/staging-sites-i1": true,
 		"woa-logging": true,
 		"woa-logging-moved": true
 	},
