@@ -12,7 +12,7 @@
 	left: 50%;
 	transform: translateX(-50%);
 	background-color: #fff;
-	padding: 16px;
+	padding: 24px 16px 16px;
 	line-height: 20px;
 	color: #24282d;
 	box-shadow: 0 3px 10px rgb(0 0 0 / 20%);
@@ -65,6 +65,20 @@
 
 .launch-bar-global-styles-toggle svg {
 	margin-right: 4px;
+}
+
+.launch-bar-global-styles-close {
+	position: absolute;
+	top: 0;
+	right: 0;
+	cursor: pointer;
+	padding: 6px 4px;
+
+	svg {
+		fill: #24282d;
+		width: 20px;
+		height: 20px;
+	}
 }
 
 @media screen and (max-width: 460px) {

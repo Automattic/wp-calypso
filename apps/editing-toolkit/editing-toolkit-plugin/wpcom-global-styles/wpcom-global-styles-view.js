@@ -26,6 +26,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	const popover = container.querySelector( '.launch-bar-global-styles-popover' );
 	const upgradeButton = container.querySelector( '.launch-bar-global-styles-upgrade' );
 	const previewButton = container.querySelector( '.launch-bar-global-styles-preview' );
+	const closeButton = container.querySelector( '.launch-bar-global-styles-close' );
 
 	const limitedGlobalStylesNoticeAction =
 		localStorage.getItem( 'limitedGlobalStylesNoticeAction' ) ?? 'show';
@@ -40,6 +41,13 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		recordEvent( 'wpcom_global_styles_gating_notice', { action } );
 		localStorage.setItem( 'limitedGlobalStylesNoticeAction', action );
 		popover?.classList.toggle( 'hidden' );
+	} );
+
+	closeButton?.addEventListener( 'click', ( event ) => {
+		event.preventDefault();
+		recordEvent( 'wpcom_global_styles_gating_notice', { action: 'hide' } );
+		localStorage.setItem( 'limitedGlobalStylesNoticeAction', 'hide' );
+		popover?.classList.add( 'hidden' );
 	} );
 
 	upgradeButton?.addEventListener( 'click', ( event ) => {
