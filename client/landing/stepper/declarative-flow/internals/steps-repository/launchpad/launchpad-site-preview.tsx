@@ -14,6 +14,7 @@ import WebPreview from 'calypso/components/web-preview/component';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSitePreviewShareCode } from 'calypso/landing/stepper/hooks/use-site-preview-share-code';
 import { isVideoPressFlow } from 'calypso/signup/utils';
+import { usePremiumGlobalStyles } from 'calypso/state/sites/hooks/use-premium-global-styles';
 import PreviewToolbar from '../design-setup/preview-toolbar';
 import type { Device } from '@automattic/components';
 
@@ -26,6 +27,7 @@ const LaunchpadSitePreview = ( {
 } ) => {
 	const translate = useTranslate();
 	const site = useSite();
+	const { globalStylesInUse } = usePremiumGlobalStyles( site?.ID );
 	const isInVideoPressFlow = isVideoPressFlow( flow );
 	const enableEditOverlay = ! isNewsletterFlow( flow );
 
@@ -73,6 +75,7 @@ const LaunchpadSitePreview = ( {
 			// hide cookies popup
 			preview: true,
 			do_preview_no_interactions: ! isInVideoPressFlow,
+			...( globalStylesInUse && { 'preview-global-styles': true } ),
 		} );
 	}
 

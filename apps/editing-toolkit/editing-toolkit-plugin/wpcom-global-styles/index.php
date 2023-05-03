@@ -423,10 +423,10 @@ function wpcom_display_global_styles_launch_bar( $bar_controls ) {
 
 	if ( wpcom_is_previewing_global_styles() ) {
 		$preview_text     = __( 'Turn off preview', 'full-site-editing' );
-		$preview_location = add_query_arg( 'hide-global-styles', '' );
+		$preview_location = remove_query_arg( 'preview-global-styles' );
 	} else {
 		$preview_text     = __( 'Turn on preview', 'full-site-editing' );
-		$preview_location = remove_query_arg( 'hide-global-styles' );
+		$preview_location = add_query_arg( 'preview-global-styles', '' );
 	}
 
 	ob_start(); ?>
@@ -531,5 +531,5 @@ function wpcom_is_previewing_global_styles( ?int $user_id = null ) {
 	}
 
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-	return ! isset( $_GET['hide-global-styles'] ) && user_can( $user_id, 'administrator' );
+	return isset( $_GET['preview-global-styles'] ) && user_can( $user_id, 'administrator' );
 }
