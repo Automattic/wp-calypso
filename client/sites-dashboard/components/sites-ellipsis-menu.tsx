@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
 	FEATURE_SITE_STAGING_SITES,
