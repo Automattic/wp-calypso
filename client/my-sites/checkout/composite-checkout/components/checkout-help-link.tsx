@@ -12,6 +12,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import AsyncLoad from 'calypso/components/async-load';
 import HappychatButtonUnstyled from 'calypso/components/happychat/button';
+import { ZendeskJetpackChat } from 'calypso/components/jetpack/jetpack-presales-chat-widget';
+import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
+import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
+import { useJpPresalesAvailabilityQuery } from 'calypso/lib/jetpack/use-jp-presales-availability-query';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -143,6 +147,7 @@ export default function CheckoutHelpLink() {
 	const translate = useTranslate();
 	const { setShowHelpCenter } = useDataStoreDispatch( HELP_CENTER_STORE );
 	const isEnglishLocale = useIsEnglishLocale();
+	const { data: isJpPresalesStaffed } = useJpPresalesAvailabilityQuery();
 
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
@@ -193,36 +198,50 @@ export default function CheckoutHelpLink() {
 
 	const hasDirectSupport = supportVariation !== SUPPORT_FORUM;
 
+	const getZendeskChatWidget = () => {
+		if ( isAkismetCheckout() ) {
+			return <ZendeskJetpackChat keyType="jpAkismet" />;
+		}
+
+		if ( isJetpackCheckout() ) {
+			return <ZendeskJetpackChat keyType="jpCheckout" />;
+		}
+
+		if ( isPresalesZendeskChatEligible ) {
+			return (
+				<AsyncLoad
+					require="calypso/components/presales-zendesk-chat"
+					chatKey={ zendeskPresalesChatKey }
+				/>
+			);
+		}
+	};
+
 	// If pre-sales chat isn't available, use the inline help button instead.
 	return (
 		<CheckoutHelpLinkWrapper>
 			<QuerySupportTypes />
 			{ ! isPresalesZendeskChatEligible && ! supportVariationDetermined && <LoadingButton /> }
-			{ isPresalesZendeskChatEligible ? (
-				<AsyncLoad
-					require="calypso/components/presales-zendesk-chat"
-					chatKey={ zendeskPresalesChatKey }
-				/>
-			) : (
-				supportVariationDetermined && (
-					<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
-						{ hasDirectSupport
-							? translate( 'Questions? {{underline}}Ask a Happiness Engineer{{/underline}}', {
-									components: {
-										underline: <span />,
-									},
-							  } )
-							: translate(
-									'Questions? {{underline}}Read more about plans and purchases{{/underline}}',
-									{
+			{ isPresalesZendeskChatEligible || isJpPresalesStaffed
+				? getZendeskChatWidget()
+				: supportVariationDetermined && (
+						<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
+							{ hasDirectSupport
+								? translate( 'Questions? {{underline}}Ask a Happiness Engineer{{/underline}}', {
 										components: {
 											underline: <span />,
 										},
-									}
-							  ) }
-					</CheckoutSummaryHelpButton>
-				)
-			) }
+								  } )
+								: translate(
+										'Questions? {{underline}}Read more about plans and purchases{{/underline}}',
+										{
+											components: {
+												underline: <span />,
+											},
+										}
+								  ) }
+						</CheckoutSummaryHelpButton>
+				  ) }
 		</CheckoutHelpLinkWrapper>
 	);
 }
