@@ -1,9 +1,8 @@
-import { OnboardSelect } from '@automattic/data-stores';
+import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW, addPlanToCart, addProductsToCart } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
-import { updateLaunchpadSettings } from 'calypso/data/sites/use-launchpad';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
