@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_SFTP,
 	FEATURE_SITE_STAGING_SITES,
@@ -304,12 +303,6 @@ function useSubmenuItems( site: SiteExcerptData ) {
 				href: `/hosting-config/${ siteSlug }#cache`,
 				sectionName: 'cache',
 			},
-			{
-				condition: ! isEnabled( 'woa-logging-moved' ),
-				label: __( 'Web server logs' ),
-				href: `/hosting-config/${ siteSlug }#web-server-logs`,
-				sectionName: 'logs',
-			},
 		].filter( ( { condition } ) => condition ?? true );
 	}, [ __, siteSlug, isWpcomStagingSite, hasStagingSitesFeature, isA12n ] );
 }
@@ -421,7 +414,7 @@ export const SitesEllipsisMenu = ( {
 					{ ! isWpcomStagingSite && ! isLaunched && <LaunchItem { ...props } /> }
 					<SettingsItem { ...props } />
 					{ hasHostingFeatures && <HostingConfigurationSubmenu { ...props } /> }
-					{ hasHostingFeatures && isEnabled( 'woa-logging' ) && <SiteLogsItem { ...props } /> }
+					{ hasHostingFeatures && <SiteLogsItem { ...props } /> }
 					{ ! isP2Site( site ) && <ManagePluginsItem { ...props } /> }
 					{ site.is_coming_soon && <PreviewSiteModalItem { ...props } /> }
 					{ ! isWpcomStagingSite && shouldShowSiteCopyItem && (

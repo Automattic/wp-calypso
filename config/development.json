@@ -206,7 +206,6 @@
 		"wpcom-user-bootstrap": false,
 		"newsletter/stats": true,
 		"newsletter/paid-subscribers": true,
-		"woa-logging": true,
-		"woa-logging-moved": true
+		"woa-logging": true
 	}
 }
