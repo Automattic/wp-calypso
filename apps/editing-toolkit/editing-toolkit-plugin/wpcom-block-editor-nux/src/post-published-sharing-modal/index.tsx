@@ -10,10 +10,13 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import SocialLogo from 'calypso/components/social-logo';
+import { selectors as wpcomWelcomeGuideSelectors } from '../store';
 import postPublishedImage from './images/illo-share.svg';
 import useSharingModalDismissed from './use-sharing-modal-dismissed';
+import type { SelectFromMap } from '@automattic/data-stores';
 import './style.scss';
 
+type WpcomWelcomeGuideSelectors = SelectFromMap< typeof wpcomWelcomeGuideSelectors >;
 type CoreEditorPlaceholder = {
 	getCurrentPost: ( ...args: unknown[] ) => { link: string; title: string };
 	getCurrentPostType: ( ...args: unknown[] ) => string;
@@ -40,9 +43,19 @@ const PostPublishedSharingModal: React.FC = () => {
 		[]
 	);
 	const previousIsCurrentPostPublished = useRef( isCurrentPostPublished );
+	const shouldShowFirstPostPublishedModal = useSelect(
+		( select ) =>
+			(
+				select( 'automattic/wpcom-welcome-guide' ) as WpcomWelcomeGuideSelectors
+			 ).getShouldShowFirstPostPublishedModal(),
+		[]
+	);
 
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
+	const { fetchShouldShowFirstPostPublishedModal } = useDispatch(
+		'automattic/wpcom-welcome-guide'
+	);
 	const { createNotice } = useDispatch( noticesStore );
 
 	const shareTwitter = () => {
@@ -112,7 +125,12 @@ const PostPublishedSharingModal: React.FC = () => {
 	};
 
 	useEffect( () => {
+		fetchShouldShowFirstPostPublishedModal();
+	}, [ fetchShouldShowFirstPostPublishedModal ] );
+	useEffect( () => {
+		// The first post will show a different modal.
 		if (
+			! shouldShowFirstPostPublishedModal &&
 			! previousIsCurrentPostPublished.current &&
 			isCurrentPostPublished &&
 			postType === 'post'
@@ -123,14 +141,10 @@ const PostPublishedSharingModal: React.FC = () => {
 			// Thus, we need to delay open the modal so that the modal would not be close immediately
 			// because the outside of modal is focused
 			window.setTimeout( () => {
-				// If another model is showing, do not show this modal.
-				const otherModal = document.querySelector( '.components-modal__screen-overlay' );
-				if ( ! otherModal ) {
-					setIsOpen( true );
-				}
+				setIsOpen( true );
 			} );
 		}
-	}, [ postType, isCurrentPostPublished ] );
+	}, [ postType, shouldShowFirstPostPublishedModal, isCurrentPostPublished ] );
 
 	if ( ! isOpen || isDismissedDefault ) {
 		return null;
