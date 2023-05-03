@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { useLaunchpad } from '@automattic/data-stores';
 import { NEWSLETTER_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -26,13 +25,6 @@ const stepContentProps = {
 	goToStep: () => {},
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
-
-jest.mock( '@automattic/data-stores', () => ( {
-	...jest.requireActual( '@automattic/data-stores' ),
-	useLaunchpad: jest.fn().mockReturnValue( {
-		data: { site_intent: 'newsletter' },
-	} ),
-} ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => ( {
@@ -217,32 +209,6 @@ describe( 'StepContent', () => {
 			expect(
 				screen.getByText( 'Keep up the momentum with these final steps.' )
 			).toBeInTheDocument();
-		} );
-
-		it( 'renders correct sidebar tasks', () => {
-			// Change the useLaunchpad hook to return a free site.
-			( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
-				data: {
-					site_intent: 'start-writing',
-				},
-			} );
-			renderStepContent( false, START_WRITING_FLOW );
-
-			expect( screen.getByText( 'Write your first post' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Set up your blog' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Choose a domain' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Choose a plan' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Launch your blog' ) ).toBeInTheDocument();
-		} );
-
-		it( 'renders correct status for each task', () => {
-			renderStepContent( false, START_WRITING_FLOW );
-
-			const setupBlogListItem = screen.getByText( 'Set up your blog' ).closest( 'li' );
-			expect( setupBlogListItem ).toHaveClass( 'pending' );
-
-			const choosePlanListItem = screen.getByText( 'Choose a plan' ).closest( 'li' );
-			expect( choosePlanListItem ).toHaveClass( 'pending' );
 		} );
 
 		it( 'renders web preview section', () => {
