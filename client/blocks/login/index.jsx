@@ -273,6 +273,7 @@ class Login extends Component {
 			isWoo,
 			action,
 			currentQuery,
+			isGravatar,
 		} = this.props;
 
 		let headerText = translate( 'Log in to your account' );
@@ -400,6 +401,14 @@ class Login extends Component {
 
 			if ( isCrowdsignalOAuth2Client( oauth2Client ) ) {
 				headerText = translate( 'Sign in to %(clientTitle)s', {
+					args: {
+						clientTitle: oauth2Client.title,
+					},
+				} );
+			}
+
+			if ( isGravatar ) {
+				headerText = translate( 'Log in to %(clientTitle)s', {
 					args: {
 						clientTitle: oauth2Client.title,
 					},
