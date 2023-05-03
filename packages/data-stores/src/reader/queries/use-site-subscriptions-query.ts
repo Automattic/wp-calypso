@@ -76,6 +76,14 @@ const useSiteSubscriptionsQuery = ( {
 								...subscription,
 								last_updated: new Date( subscription.last_updated ),
 								date_subscribed: new Date( subscription.date_subscribed ),
+								delivery_methods: {
+									...subscription.delivery_methods,
+									email: {
+										...subscription.delivery_methods.email,
+										post_delivery_frequency:
+											subscription.delivery_methods.email?.post_delivery_frequency ?? 'instantly',
+									},
+								},
 						  } ) )
 						: [],
 				};
