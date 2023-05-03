@@ -23,11 +23,12 @@
 				padding: 52px 40px 52px 20px;
 
 				p a {
-					color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
-					text-decoration: none;
+					color: var(--color-text);
+					text-decoration: underline;
 
 					&:hover {
-						text-decoration: underline;
+						color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+						text-decoration: none;
 					}
 
 					.components-external-link__icon {
@@ -77,18 +78,19 @@
 			display: inline-flex;
 			border: none;
 			background: transparent;
-			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+			color: var(--color-text);
 			padding: 0 14px 0 0;
 			line-height: 2.71428571;
 			min-height: 40px;
 			margin-bottom: 4px;
 			align-items: center;
-			text-decoration: none;
+			text-decoration: underline;
 			white-space: nowrap;
 
 			&:hover {
 				background: transparent;
-				text-decoration: underline;
+				color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #007cba));
+				text-decoration: none;
 			}
 
 			svg {
