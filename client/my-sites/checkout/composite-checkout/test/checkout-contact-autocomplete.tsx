@@ -25,7 +25,6 @@ import {
 	mockLogStashEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	mockGetPaymentMethodsEndpoint,
-	mockStoredPaymentMethodsEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -67,7 +66,6 @@ describe( 'Checkout contact step', () => {
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
 		nock.cleanAll();
-		mockStoredPaymentMethodsEndpoint( [] );
 		mockGetVatInfoEndpoint( {} );
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();

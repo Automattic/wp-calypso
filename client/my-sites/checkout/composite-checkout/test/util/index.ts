@@ -10,7 +10,6 @@ import nock from 'nock';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import domainManagementReducer from 'calypso/state/domains/management/reducer';
-import type { StoredPaymentMethod } from '../../../../../lib/checkout/payment-methods';
 import type { PricedAPIPlan, StorePlanSlug } from '@automattic/data-stores';
 import type {
 	CartKey,
@@ -1602,16 +1601,6 @@ export const expectedCreateAccountRequest = {
 		viewport: '0x0',
 	},
 };
-
-export function mockStoredPaymentMethodsEndpoint( responseData: StoredPaymentMethod[] ): void {
-	const endpoint = jest.fn();
-	endpoint.mockReturnValue( true );
-	const mockResponse = () => [ 200, responseData ];
-	nock( 'https://public-api.wordpress.com' )
-		.persist()
-		.get( new RegExp( '^/rest/v1.2/me/payment-methods' ) )
-		.reply( mockResponse );
-}
 
 export function mockCachedContactDetailsEndpoint( responseData ): void {
 	const endpoint = jest.fn();
