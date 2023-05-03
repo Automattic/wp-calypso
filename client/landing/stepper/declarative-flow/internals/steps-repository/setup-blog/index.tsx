@@ -23,6 +23,7 @@ const SetupBlog: Step = ( { navigation } ) => {
 		titleMissing: translate( `A catchy name to make your blog memorable` ),
 		taglineLabel: translate( 'Add a brief description' ),
 		taglinePlaceholder: translate( "Let people know what your blog's about" ),
+		buttonText: translate( 'Save and continue' ),
 	};
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
