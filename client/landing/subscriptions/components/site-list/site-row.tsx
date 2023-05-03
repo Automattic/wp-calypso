@@ -46,10 +46,17 @@ export default function SiteRow( {
 	);
 	const deliveryFrequencyLabel = useDeliveryFrequencyLabel( deliveryFrequencyValue );
 
+	const notifyMeOfNewPosts = useMemo(
+		() => delivery_methods?.notification?.send_posts,
+		[ delivery_methods?.notification?.send_posts ]
+	);
+
 	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
 		SubscriptionManager.useSiteDeliveryFrequencyMutation();
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
+	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
+		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
 
 	return (
 		<li className="row" role="row">
@@ -70,6 +77,11 @@ export default function SiteRow( {
 			</span>
 			<span className="actions" role="cell">
 				<SiteSettings
+					notifyMeOfNewPosts={ notifyMeOfNewPosts }
+					onNotifyMeOfNewPostsChange={ ( send_posts ) =>
+						updateNotifyMeOfNewPosts( { blog_id: blog_ID, send_posts } )
+					}
+					updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
 					deliveryFrequency={ deliveryFrequencyValue }
 					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
 						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )

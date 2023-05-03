@@ -21,7 +21,7 @@ const ModernizedLayout: React.FunctionComponent< { dropShadowOnHeader?: boolean 
 	// from @automattic/components/src/highlight-cards/variables.scss:
 	// ----------------------------------------------
 	// If changed, also change @plans-section-custom-mobile-breakpoint in client/my-sites/plan-features-2023-grid/_media-queries.scss
-	const customBreakpointSmall = '660px';
+	const customBreakpointSmall = '780px';
 	const verticalMargin = '32px';
 	// ----------------------------------------------
 
