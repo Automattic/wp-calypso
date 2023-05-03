@@ -188,7 +188,7 @@ const PostPublishedSharingModal: React.FC = () => {
 						</ClipboardButton>
 					</div>
 					<hr />
-					<h2>{ __( 'Share with:', 'full-site-editing' ) }</h2>
+					<h2>{ __( 'Get more traffic to your post by sharing:', 'full-site-editing' ) }</h2>
 					<Button
 						className={ classnames(
 							'wpcom-block-editor-post-published-sharing-modal__sharing-button',
