@@ -56,7 +56,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	const { globalStylesInUse, shouldLimitGlobalStyles } = usePremiumGlobalStyles( site?.ID );
 
 	const {
-		data: { site_intent: siteIntentOption },
+		data: { site_intent: siteIntentOption, checklist_statuses: checklistStatuses },
 	} = useLaunchpad( siteSlug );
 
 	const {
@@ -92,6 +92,7 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 			goToStep,
 			flow,
 			isEmailVerified,
+			checklistStatuses,
 			getPlanCartItem()?.product_slug ?? null
 		);
 

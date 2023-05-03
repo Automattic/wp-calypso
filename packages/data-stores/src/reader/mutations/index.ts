@@ -6,3 +6,4 @@ export { default as usePendingSiteConfirmMutation } from './use-pending-site-con
 export { default as usePendingSiteDeleteMutation } from './use-pending-site-delete-mutation';
 export { default as usePendingPostConfirmMutation } from './use-pending-post-confirm-mutation';
 export { default as usePendingPostDeleteMutation } from './use-pending-post-delete-mutation';
+export { default as useSiteNotifyMeOfNewPostsMutation } from './use-site-notify-me-of-new-posts-mutation';

@@ -1,7 +1,7 @@
 import { isEcommerce } from '@automattic/calypso-products/src';
+import { fetchLaunchpad } from '@automattic/data-stores';
 import page from 'page';
 import { fetchLaunchpadChecklist } from 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist';
-import { fetchLaunchpad } from 'calypso/data/sites/use-launchpad';
 import { areLaunchpadTasksCompleted } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/launchpad/task-helper';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
