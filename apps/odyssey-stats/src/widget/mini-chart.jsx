@@ -82,11 +82,9 @@ const MiniChart = ( { siteId, quantity = 7, gmtOffset, odysseyStatsBaseUrl } ) =
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading={ true } /> }
 			{ ! isLoading && (
 				<>
-					{ ! isEmptyChart && (
-						<div className="stats-widget-minichart__chart-head">
-							<Intervals selected={ period } compact={ false } onChange={ setPeriod } />
-						</div>
-					) }
+					<div className="stats-widget-minichart__chart-head">
+						<Intervals selected={ period } compact={ false } onChange={ setPeriod } />
+					</div>
 					<Chart
 						barClick={ barClick }
 						data={ isEmptyChart ? placeholderChartData : chartData }
