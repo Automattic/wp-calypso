@@ -21,14 +21,13 @@ import {
 	isThemeActive,
 	isInstallingTheme,
 	isActivatingTheme,
+	isExternallyManagedTheme as getIsExternallyManagedTheme,
 } from 'calypso/state/themes/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { connectOptions } from './theme-options';
 
 const DEFAULT_VARIATION_SLUG = 'default';
 const isDefaultVariationSlug = ( slug ) => ! slug || slug === DEFAULT_VARIATION_SLUG;
-const isUrlWpcomApi = ( url ) =>
-	url.indexOf( 'public-api.wordpress.com/wpcom/v2/block-previews/site' ) >= 0;
 
 class ThemePreview extends Component {
 	static displayName = 'ThemePreview';
@@ -217,7 +216,8 @@ class ThemePreview extends Component {
 	};
 
 	render() {
-		const { themeId, siteId, demoUrl, children, isWPForTeamsSite } = this.props;
+		const { themeId, siteId, demoUrl, children, isExternallyManagedTheme, isWPForTeamsSite } =
+			this.props;
 		const { showActionIndicator, showUnlockStyleUpgradeModal } = this.state;
 
 		if ( ! themeId || isWPForTeamsSite ) {
@@ -239,7 +239,7 @@ class ThemePreview extends Component {
 						) }
 						externalUrl={ demoUrl }
 						belowToolbar={ this.props.belowToolbar }
-						skipWaitForIframeLoadedMessage={ ! isUrlWpcomApi( demoUrl ) }
+						skipWaitForIframeLoadedMessage={ isExternallyManagedTheme }
 					>
 						{ showActionIndicator && <PulsingDot active={ true } /> }
 						{ ! showActionIndicator && this.renderSecondaryButton() }
@@ -289,6 +289,7 @@ export default connect(
 			themeId,
 			siteId,
 			siteSlug,
+			isExternallyManagedTheme: getIsExternallyManagedTheme( state, themeId ),
 			isJetpack,
 			themeOptions,
 			isInstalling: isInstallingTheme( state, themeId, siteId ),
