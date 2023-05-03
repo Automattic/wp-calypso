@@ -27,22 +27,19 @@ document.addEventListener( 'DOMContentLoaded', () => {
 	const upgradeButton = container.querySelector( '.launch-bar-global-styles-upgrade' );
 	const previewButton = container.querySelector( '.launch-bar-global-styles-preview' );
 
-	const showLimitedGlobalStylesNotice =
-		localStorage.getItem( 'showLimitedGlobalStylesNotice' ) === null;
-	if ( showLimitedGlobalStylesNotice ) {
+	const limitedGlobalStylesNoticeAction =
+		localStorage.getItem( 'limitedGlobalStylesNoticeAction' ) ?? 'show';
+	if ( limitedGlobalStylesNoticeAction === 'show' ) {
 		popover?.classList.remove( 'hidden' );
-		recordEvent( 'wpcom_global_styles_gating_notice', {
-			action: 'show',
-		} );
+		recordEvent( 'wpcom_global_styles_gating_notice', { action: 'show' } );
 	}
 
 	popoverToggle?.addEventListener( 'click', ( event ) => {
 		event.preventDefault();
-		recordEvent( 'wpcom_global_styles_gating_notice', {
-			action: popover?.classList.contains( 'hidden' ) ? 'show' : 'hide',
-		} );
+		const action = popover?.classList.contains( 'hidden' ) ? 'show' : 'hide';
+		recordEvent( 'wpcom_global_styles_gating_notice', { action } );
+		localStorage.setItem( 'limitedGlobalStylesNoticeAction', action );
 		popover?.classList.toggle( 'hidden' );
-		localStorage.setItem( 'showLimitedGlobalStylesNotice', '0' );
 	} );
 
 	upgradeButton?.addEventListener( 'click', ( event ) => {
