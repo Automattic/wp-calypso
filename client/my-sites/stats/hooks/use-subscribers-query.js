@@ -2,7 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
 function querySubscribers( siteId, period, quantity, date ) {
-	const periodStart = date ? date : new Date();
+	const query = {
+		unit: period,
+		quantity,
+		http_envelope: 1,
+	};
+
+	if ( date ) {
+		query.date = date;
+	}
 
 	return wpcom.req.get(
 		{
@@ -10,12 +18,7 @@ function querySubscribers( siteId, period, quantity, date ) {
 			apiNamespace: 'rest/v1.1',
 			path: `/sites/${ siteId }/stats/subscribers`,
 		},
-		{
-			unit: period,
-			quantity,
-			http_envelope: 1,
-			date: periodStart.toISOString().slice( 0, 10 ), // returns UTC time
-		}
+		query
 	);
 }
 
