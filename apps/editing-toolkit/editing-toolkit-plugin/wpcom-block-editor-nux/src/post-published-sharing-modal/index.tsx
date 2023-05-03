@@ -7,11 +7,13 @@ import { store as noticesStore } from '@wordpress/notices';
 import classnames from 'classnames';
 import React from 'react';
 import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import SocialLogo from 'calypso/components/social-logo';
 import { selectors as wpcomWelcomeGuideSelectors } from '../store';
 import postPublishedImage from './images/illo-share.svg';
+import useSharingModalDismissed from './use-sharing-modal-dismissed';
 import type { SelectFromMap } from '@automattic/data-stores';
-
 import './style.scss';
 
 type WpcomWelcomeGuideSelectors = SelectFromMap< typeof wpcomWelcomeGuideSelectors >;
@@ -20,10 +22,13 @@ type CoreEditorPlaceholder = {
 	getCurrentPostType: ( ...args: unknown[] ) => string;
 	isCurrentPostPublished: ( ...args: unknown[] ) => boolean;
 };
-// todo: check this is correct
 const FB_APP_ID = '249643311490';
 
 const PostPublishedSharingModal: React.FC = () => {
+	const isDismissedDefault = window?.sharingModalOptions?.isDismissed || false;
+
+	const { isDismissed, updateIsDismissed } = useSharingModalDismissed( isDismissedDefault );
+
 	const { link, title } = useSelect(
 		( select ) => ( select( 'core/editor' ) as CoreEditorPlaceholder ).getCurrentPost(),
 		[]
@@ -45,13 +50,14 @@ const PostPublishedSharingModal: React.FC = () => {
 			 ).getShouldShowFirstPostPublishedModal(),
 		[]
 	);
-	const [ isOpen, setIsOpen ] = useState( false );
+
+	const [ isOpen, setIsOpen ] = useState( true );
 	const closeModal = () => setIsOpen( false );
 	const { fetchShouldShowFirstPostPublishedModal } = useDispatch(
 		'automattic/wpcom-welcome-guide'
 	);
 	const { createNotice } = useDispatch( noticesStore );
-	// implementation coppied from ./client/blocks/reader-share/index.jsx
+
 	const shareTwitter = () => {
 		const baseUrl = new URL( 'https://twitter.com/intent/tweet' );
 		const params = new URLSearchParams( {
@@ -140,7 +146,7 @@ const PostPublishedSharingModal: React.FC = () => {
 		}
 	}, [ postType, shouldShowFirstPostPublishedModal, isCurrentPostPublished ] );
 
-	if ( ! isOpen ) {
+	if ( ! isOpen || isDismissedDefault ) {
 		return null;
 	}
 
@@ -220,6 +226,17 @@ const PostPublishedSharingModal: React.FC = () => {
 					>
 						<SocialLogo icon="pinterest-alt" size={ 18 } />
 					</Button>
+					<div className="wpcom-block-editor-post-published-sharing-modal__checkbox-section">
+						<FormLabel htmlFor="toggle" className="is-checkbox">
+							<FormInputCheckbox
+								id="toggle"
+								onChange={ () => {
+									updateIsDismissed( ! isDismissed );
+								} }
+							/>
+							<span>{ __( "Don't show again", 'full-site-editing' ) }</span>
+						</FormLabel>
+					</div>
 				</div>
 				<div className="wpcom-block-editor-post-published-sharing-modal__right">
 					<img
