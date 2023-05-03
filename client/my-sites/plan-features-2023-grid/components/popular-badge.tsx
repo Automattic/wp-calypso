@@ -6,8 +6,8 @@ import useHighlightLabel from '../hooks/use-highlight-label';
 const PopularBadge: React.FunctionComponent< {
 	isInSignup: boolean;
 	planName: string;
+	flowName: string;
 	additionalClassName?: string;
-	flowName?: string;
 } > = ( { isInSignup, planName, additionalClassName, flowName } ) => {
 	const classes = classNames(
 		'plan-features-2023-grid__popular-badge',
