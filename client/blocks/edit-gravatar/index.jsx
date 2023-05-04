@@ -263,6 +263,7 @@ export class EditGravatar extends Component {
 			>
 				<QueryConnectedApplications />
 				<div
+					className="edit-gravatar__image-container-wrapper"
 					onClick={ () => this.handleUserClick( isEditImageOnGravatar, gravatarManagementLink ) }
 				>
 					<FilePicker accept="image/*" onPick={ this.onReceiveFile }>

@@ -160,12 +160,12 @@
 }
 
 .edit-gravatar.is-edit-image-on-gravatar {
-	.file-picker {
-		pointer-events: none;
+	.edit-gravatar__image-container-wrapper {
+		cursor: pointer;
 	}
 
-	> div {
-		cursor: pointer;
+	.file-picker {
+		pointer-events: none;
 	}
 }
 
