@@ -238,7 +238,6 @@ export function getEnhancedTasks(
 					break;
 				case 'link_in_bio_launched':
 					taskData = {
-						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
@@ -261,7 +260,6 @@ export function getEnhancedTasks(
 					break;
 				case 'site_launched':
 					taskData = {
-						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
