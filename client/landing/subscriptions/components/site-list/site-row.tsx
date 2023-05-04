@@ -21,7 +21,7 @@ const useDeliveryFrequencyLabel = ( deliveryFrequencyValue: SiteSubscriptionDeli
 		[ translate ]
 	);
 
-	return deliveryFrequencyLabels[ deliveryFrequencyValue ];
+	return deliveryFrequencyLabels[ deliveryFrequencyValue ] || translate( 'Paused' );
 };
 
 export default function SiteRow( {
