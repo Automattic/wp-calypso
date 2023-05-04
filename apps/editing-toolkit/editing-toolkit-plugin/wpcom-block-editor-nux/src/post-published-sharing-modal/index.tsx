@@ -28,7 +28,7 @@ const FB_APP_ID = '249643311490';
 
 const PostPublishedSharingModal: React.FC = () => {
 	const isDismissedDefault = window?.sharingModalOptions?.isDismissed || false;
-
+	const { launchpadScreenOption } = window?.launchpadOptions || {};
 	const { isDismissed, updateIsDismissed } = useSharingModalDismissed( isDismissedDefault );
 
 	const { link, title } = useSelect(
@@ -141,6 +141,7 @@ const PostPublishedSharingModal: React.FC = () => {
 			! shouldShowFirstPostPublishedModal &&
 			! shouldShowSellerCelebrationModal &&
 			! shouldShowVideoCelebrationModal &&
+			launchpadScreenOption !== 'full' &&
 			! previousIsCurrentPostPublished.current &&
 			isCurrentPostPublished &&
 			postType === 'post'
