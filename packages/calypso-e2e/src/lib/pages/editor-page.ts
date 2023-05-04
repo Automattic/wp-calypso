@@ -1,4 +1,4 @@
-import { Page, Frame, ElementHandle, Response, Locator } from 'playwright';
+import { Page, ElementHandle, Response, Locator } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
@@ -147,20 +147,25 @@ export class EditorPage {
 	}
 
 	/**
-	 * Initialization steps to ensure the page is fully loaded.
-	 *
-	 * @returns {Promise<Frame>} iframe holding the editor.
+	 * Initialization steps to ensure the editor is fully loaded prior to interaction.
 	 */
 	async waitUntilLoaded(): Promise< void > {
 		const timeout =
 			this.target === 'atomic' ? EXTENDED_EDITOR_WAIT_ATOMIC_TIMEOUT : EXTENDED_EDITOR_WAIT_TIMEOUT;
 
-		// In a typical loading scenario, this request is one of the last to fire.
-		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
-		// it is a fairly good stand-in.
+		// There isn't a good way to definitively state "the editor is finished loading"
+		// from requests alone.
+		// Waiting for an element in the editor is not viable, because the editor's framed
+		// status affecs the DOM structure.
+		// Given these constraints, a decent stand-in is to wait for the following factors.
 		await Promise.all( [
-			this.page.waitForURL( /(post|page|post-new.php)/ ),
-			this.page.waitForResponse( /((post-new.php)|(posts|pages)\/[\d]+)/, { timeout: timeout } ),
+			// Wait for the URL to include either a post/page (iframed) or post-new.php (un-iframed).
+			this.page.waitForURL( /(post|page|post-new.php)/, { timeout: timeout } ),
+			// Wait for response from the post-new.php endpoint (new post/page).
+			// Wait for response from `posts/id`, `pages/id` or `post.php` (existing post/page).
+			this.page.waitForResponse( /((post-new.php)|(posts|pages)\/[\d]+|(post.php))/, {
+				timeout: timeout,
+			} ),
 		] );
 
 		// Dismiss the Welcome Tour.
