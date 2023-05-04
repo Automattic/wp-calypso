@@ -40,6 +40,7 @@ interface Props {
 	flowName: string | null;
 	onSubmit: () => void;
 	plansLoaded: boolean;
+	is2023PricingGridVisible: boolean;
 }
 
 function getPlanTypes( flowName: string | null ) {
@@ -149,7 +150,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
-					is2023PricingGridVisible={ isStartWritingFlow( props?.flowName ) ? true : false }
+					is2023PricingGridVisible={ props.is2023PricingGridVisible }
 				/>
 			</div>
 		);
