@@ -12,7 +12,6 @@ import { encodePatternId } from '../utils';
 import PatternItem from './pattern-item';
 import PatternOverlay from './pattern-overlay';
 import useActionBarProps from './use-action-bar-props';
-import useOverlayScroll from './use-overlay-scroll';
 import type { Pattern } from '../types';
 import type { CSSProperties, MouseEvent } from 'react';
 import './style.scss';
@@ -70,7 +69,7 @@ const PatternLargePreview = ( {
 	const shouldShowSelectPatternHint =
 		! hasSelectedPattern && STYLES_PATHS.includes( navigator.location.path );
 	const listRef = useRef< HTMLDivElement | null >( null );
-	const frameRef = useOverlayScroll( listRef );
+	const frameRef = useRef< HTMLDivElement | null >( null );
 	const [ hoveredElement, setHoveredElement ] = useState< HTMLElement | null >( null );
 	const actionBarProps = useActionBarProps( {
 		element: hoveredElement,
@@ -155,7 +154,16 @@ const PatternLargePreview = ( {
 		if ( hoveredElement && ! hoveredElement?.ownerDocument?.getElementById( hoveredElement.id ) ) {
 			setHoveredElement( null );
 		}
-	}, [ patternIds.length ] );
+	}, [ patternIds.length, setHoveredElement ] );
+
+	// Unset the hovered element when the mouse is leaving the large preview
+	useEffect( () => {
+		const handleMouseLeave = () => setHoveredElement( null );
+		frameRef.current?.addEventListener( 'mouseleave', handleMouseLeave );
+		return () => {
+			frameRef.current?.removeEventListener( 'mouseleave', handleMouseLeave );
+		};
+	}, [ frameRef, setHoveredElement ] );
 
 	return (
 		<DeviceSwitcher
@@ -207,7 +215,6 @@ const PatternLargePreview = ( {
 								/>
 							)
 						}
-						onHover={ setHoveredElement }
 					>
 						<div className="pattern-large-preview__pattern-box-shadow" />
 					</PatternOverlay>
