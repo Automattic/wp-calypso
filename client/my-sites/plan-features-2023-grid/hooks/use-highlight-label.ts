@@ -26,9 +26,9 @@ const useHighlightLabel = ( planName: string, flowName: string | null, selectedP
 		return translate( 'Your plan' );
 	} else if ( isSuggestedPlan ) {
 		return translate( 'Suggested' );
-	} else if ( isBusinessPlan( planName ) ) {
+	} else if ( isBusinessPlan( planName ) && ! selectedPlan ) {
 		return translate( 'Best for devs' );
-	} else if ( isPopularPlan( planName ) ) {
+	} else if ( isPopularPlan( planName ) && ! selectedPlan ) {
 		return translate( 'Popular' );
 	}
 
