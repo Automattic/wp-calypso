@@ -40,6 +40,12 @@
 		}
 	}
 
+	.settings-popover__delivery-frequency-item {
+		&.is-logged-in {
+			padding-top: 0;
+		}
+	}
+
 	.settings-popover__item-button {
 		display: flex;
 		align-items: center;
@@ -83,7 +89,13 @@
 		margin-bottom: 16px;
 	}
 
-	.settings-popover__notify-me-of-new-posts-toggle {
+	.settings-popover__email-me-new-posts-item {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
+	.settings-popover__notify-me-of-new-posts-toggle,
+	.settings-popover__email-me-new-posts-toggle {
 		font-size: $font-body-small;
 		margin-bottom: 16px;
 

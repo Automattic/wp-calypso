@@ -8,12 +8,12 @@ beforeAll( () => {} );
 const mockUnSubscribe = jest.fn();
 const mockClosePublishSidebar = jest.fn();
 const mockCloseSidebar = jest.fn();
-let mockSubscribeFunction = null;
+const mockSubscribeFunction = [];
 let mockIsSaving = false;
 
 jest.mock( '@wordpress/data', () => ( {
 	subscribe: ( userFunction ) => {
-		mockSubscribeFunction = userFunction;
+		mockSubscribeFunction.push( userFunction );
 
 		return mockUnSubscribe;
 	},
@@ -23,6 +23,12 @@ jest.mock( '@wordpress/data', () => ( {
 				isSavingPost: () => mockIsSaving,
 				isCurrentPostPublished: () => true,
 				getCurrentPostRevisionsCount: () => 1,
+			};
+		}
+
+		if ( item === 'core/preferences' ) {
+			return {
+				get: () => true,
 			};
 		}
 	},
@@ -51,7 +57,7 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 		redirectOnboardingUserAfterPublishingPost();
 
 		expect( mockCloseSidebar ).toBeCalledTimes( 0 );
-		expect( mockSubscribeFunction ).toBe( null );
+		expect( mockSubscribeFunction[ 0 ] ).toBe( undefined );
 		expect( global.window.location.href ).toBe( undefined );
 	} );
 
@@ -67,10 +73,8 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 
 		redirectOnboardingUserAfterPublishingPost();
 
-		expect( mockCloseSidebar ).toBeCalledTimes( 1 );
-		expect( mockSubscribeFunction ).not.toBe( null );
-
-		mockSubscribeFunction();
+		expect( mockSubscribeFunction[ 0 ] ).not.toBe( undefined );
+		mockSubscribeFunction[ 1 ]();
 
 		expect( mockUnSubscribe ).toBeCalledTimes( 0 );
 		expect( global.window.location.href ).toBe( undefined );
@@ -88,14 +92,31 @@ describe( 'redirectOnboardingUserAfterPublishingPost', () => {
 		};
 
 		redirectOnboardingUserAfterPublishingPost();
-		mockSubscribeFunction();
+		mockSubscribeFunction[ 1 ]();
 
 		expect( mockSubscribeFunction ).not.toBe( null );
-		expect( mockCloseSidebar ).toBeCalledTimes( 1 );
 		expect( mockUnSubscribe ).toBeCalledTimes( 1 );
 		expect( mockClosePublishSidebar ).toBeCalledTimes( 1 );
 		expect( global.window.location.href ).toBe(
 			'https://calypso.localhost:3000/setup/start-writing/launchpad?siteSlug=wordpress.com&start-writing=true'
 		);
+	} );
+
+	it( 'should should close the sidebar once isComplementaryAreaVisible === true', () => {
+		jest.clearAllMocks();
+		mockIsSaving = false;
+		delete global.window;
+		global.window = {
+			location: {
+				search: '?start-writing=true&origin=https://calypso.localhost:3000',
+				hostname: 'wordpress.com',
+			},
+		};
+
+		redirectOnboardingUserAfterPublishingPost();
+		mockSubscribeFunction[ 0 ]();
+
+		expect( mockCloseSidebar ).toBeCalledTimes( 1 );
+		expect( mockSubscribeFunction ).not.toBe( null );
 	} );
 } );

@@ -27,9 +27,11 @@ import {
 	TERM_MONTHLY,
 	getJetpackProductWhatIsIncluded,
 	getJetpackProductBenefits,
+	getJetpackProductFAQs,
 	getJetpackProductRecommendedFor,
 	TERM_TRIENNIALLY,
 } from '@automattic/calypso-products';
+import { getHelpLink } from 'calypso/my-sites/plans-features-main/components/jetpack-faq';
 import buildCardFeaturesFromItem from './build-card-features-from-item';
 import {
 	EXTERNAL_PRODUCTS_LIST,
@@ -165,6 +167,7 @@ function itemToSelectorProduct(
 			buttonLabel: getJetpackProductCallToAction( item ),
 			whatIsIncluded: getJetpackProductWhatIsIncluded( item ),
 			benefits: getJetpackProductBenefits( item ),
+			faqs: getJetpackProductFAQs( item.product_slug, getHelpLink ),
 			recommendedFor: getJetpackProductRecommendedFor( item ),
 			monthlyProductSlug,
 			term: item.term,
@@ -207,6 +210,7 @@ function itemToSelectorProduct(
 				? getForCurrentCROIteration( item.getWhatIsIncluded )
 				: [],
 			benefits: item.getBenefits ? getForCurrentCROIteration( item.getBenefits ) : [],
+			faqs: getJetpackProductFAQs( productSlug, getHelpLink ),
 			recommendedFor: item.getRecommendedFor
 				? getForCurrentCROIteration( item.getRecommendedFor )
 				: [],

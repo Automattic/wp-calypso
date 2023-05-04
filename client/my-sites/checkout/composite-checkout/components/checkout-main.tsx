@@ -179,6 +179,7 @@ export default function CheckoutMain( {
 		productsForCart,
 		isLoading: areCartProductsPreparing,
 		error: cartProductPrepError,
+		addingRenewals,
 	} = usePrepareProductsForCart( {
 		productAliasFromUrl,
 		purchaseId,
@@ -218,6 +219,7 @@ export default function CheckoutMain( {
 		couponCodeFromUrl,
 		applyCoupon,
 		addProductsToCart,
+		addingRenewals,
 	} );
 
 	useRecordCartLoaded( {

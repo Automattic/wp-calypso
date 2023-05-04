@@ -156,7 +156,7 @@
 		"subscription-management/sites-list-controls": true,
 		"themes/atomic-homepage-replace": true,
 		"themes/display-thank-you-page": true,
-		"themes/display-thank-you-page-for-woo": false,
+		"themes/display-thank-you-page-for-woo": true,
 		"themes/premium": true,
 		"themes/subscription-purchases": false,
 		"themes/theme-switch-persist-template": false,
@@ -170,9 +170,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": true,
-		"newsletter/stats": false,
-		"woa-logging": true,
-		"woa-logging-moved": true
+		"newsletter/stats": false
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",

@@ -95,5 +95,9 @@ export const is2023PricingGridActivePage = (
 		return isPricingGridEnabled;
 	}
 
+	if ( currentRoutePath.startsWith( '/setup/start-writing' ) ) {
+		return isPricingGridEnabled;
+	}
+
 	return false;
 };
