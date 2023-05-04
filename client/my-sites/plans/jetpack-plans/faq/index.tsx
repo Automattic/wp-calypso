@@ -5,6 +5,7 @@ import FoldableFAQ from 'calypso/components/foldable-faq';
 import {
 	getAgenciesLink,
 	getHelpLink,
+	getSupportLink,
 } from 'calypso/my-sites/plans-features-main/components/jetpack-faq';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -94,6 +95,28 @@ const JetpackFAQ: FC = () => {
 								'Learn everything you need to know about getting started with Jetpack {{gettingStartedLink}}here{{/gettingStartedLink}}.',
 								{
 									components: { gettingStartedLink: jetpackGettingStartedLink() },
+								}
+							) }
+						</FoldableFAQ>
+					</li>
+					<li>
+						<FoldableFAQ
+							id="scan-infected-sites"
+							question={ translate(
+								'Can I use Jetpack Scan to fix a site that is already infected?'
+							) }
+							onToggle={ onFaqToggle }
+							className="jetpack-faq__section"
+						>
+							{ translate(
+								'Jetpack Protect (Scan) detects and prevents attacks, but is not designed to fully clean up sites infected before it was active. If your site has malware, take immediate action to clean it up and remove the malicious code. {{br/}} To clean up your site, we suggest using a malware removal tool, or if possible restore from a backup taken before the infection. We recommend using Jetpack VaultPress Backup in conjunction with Jetpack Scan to secure your website. {{br/}} {{JetpackScanLearnMoreLink}}Learn more about cleaning your site{{/JetpackScanLearnMoreLink}}.',
+								{
+									components: {
+										br: <br />,
+										JetpackScanLearnMoreLink: getSupportLink(
+											'how-to-clean-your-hacked-wordpress-site'
+										),
+									},
 								}
 							) }
 						</FoldableFAQ>
