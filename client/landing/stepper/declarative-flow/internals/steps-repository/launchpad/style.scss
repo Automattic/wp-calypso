@@ -141,7 +141,7 @@
 }
 
 // Launchpad - Sidebar heading text
-
+.start-writing,
 .newsletter,
 .link-in-bio.launchpad,
 .link-in-bio-tld:not(.domains),
@@ -262,6 +262,10 @@
 
 }
 
+.start-writing .launchpad__sidebar-admin-link {
+	display: none;
+}
+
 .launchpad__sidebar-admin-link {
 	padding-left: 20px;
 	display: none;
@@ -330,6 +334,26 @@
 	width: 100%;
 	margin: 0;
 	color: var(--color-text);
+
+	&.is-placeholder {
+		padding: 16px 0 16px 0;
+	}
+}
+
+.launchpad__checklist-item-content {
+	width: 100%;
+
+	.is-placeholder & {
+		animation: loading-fade 1.6s ease-in-out infinite;
+		background-color: var(--color-neutral-light);
+		color: transparent;
+		min-height: 44px;
+	}
+	> div {
+		.is-placeholder & {
+			color: transparent;
+		}
+	}
 }
 
 .button.launchpad__checklist-item:hover:not([disabled]),
@@ -602,8 +626,8 @@
 		height: 100%;
 		background-color: #d0cce3;
 		background-image:
-			url(calypso/assets/images/onboarding/link-in-bio-processing-left.png),
-			url(calypso/assets/images/onboarding/link-in-bio-processing-right.png);
+			url(calypso/assets/images/onboarding/link-in-bio-processing-left.webp),
+			url(calypso/assets/images/onboarding/link-in-bio-processing-right.webp);
 		background-repeat: no-repeat, no-repeat;
 		background-attachment: fixed;
 		background-size: auto 30%, auto 30%;
@@ -613,8 +637,8 @@
 		@include break-huge {
 			background-size: auto 50%, auto 50%;
 			background-image:
-				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.png),
-				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.png);
+				url(calypso/assets/images/onboarding/link-in-bio-processing-left-desktop.webp),
+				url(calypso/assets/images/onboarding/link-in-bio-processing-right-desktop.webp);
 		}
 	}
 

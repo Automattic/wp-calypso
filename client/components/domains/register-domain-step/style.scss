@@ -378,3 +378,11 @@ body.is-section-signup.is-white-signup {
 		}
 	}
 }
+
+.search-component .search-filters__dropdown-filters button {
+	background-color: transparent;
+	border-color: transparent;
+	border-radius: 0;
+	border-right: none;
+	border-left: none;
+}

@@ -1,14 +1,18 @@
 import { formattedNumber } from '@automattic/components';
-import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
+import { useState } from 'react';
+import SegmentedControl from 'calypso/components/segmented-control';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
 
 import './hightlights.scss';
 
 const HIGHLIGHT_ITEMS_LIMIT = 5;
+const HIGHLIGHT_TAB_TOP_POSTS_PAGES = 'topPostsAndPages';
+const HIGHLIGHT_TAB_TOP_REFERRERS = 'topReferrers';
+
 const postAndPageLink = ( baseUrl, siteId, postId ) => {
 	return `${ baseUrl }#!/stats/post/${ postId }/${ siteId }`;
 };
@@ -40,7 +44,6 @@ function ItemWrapper( { odysseyStatsBaseUrl, siteId, isItemLink, item } ) {
 			} ) }
 		>
 			{ renderedItem }
-			<Icon className="stats-icon" icon={ external } size={ 18 } />
 		</a>
 	) : (
 		renderedItem
@@ -91,6 +94,25 @@ function TopColumn( {
 
 export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } ) {
 	const translate = useTranslate();
+
+	const headingTitle = translate( '7 Day Highlights' );
+	const topPostsAndPagesTitle = translate( 'Top Posts & Pages' );
+	const topReferrersTitle = translate( 'Top Referrers' );
+
+	const moduleTabs = [
+		{
+			value: HIGHLIGHT_TAB_TOP_POSTS_PAGES,
+			label: topPostsAndPagesTitle,
+		},
+		{
+			value: HIGHLIGHT_TAB_TOP_REFERRERS,
+			label: topReferrersTitle,
+		},
+	];
+
+	// Default to the first tab `topPostsAndPages`.
+	const [ selectedTab, setSelectedTab ] = useState( HIGHLIGHT_TAB_TOP_POSTS_PAGES );
+
 	const queryDate = moment()
 		.utcOffset( Number.isFinite( gmtOffset ) ? gmtOffset : 0 )
 		.format( 'YYYY-MM-DD' );
@@ -103,6 +125,7 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 		7,
 		queryDate
 	);
+
 	const { data: topReferrers = [], isFetching: isFetchingReferrers } = useReferrersQuery(
 		siteId,
 		'day',
@@ -111,18 +134,32 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 	);
 
 	return (
-		<div
-			className="stats-widget-highlights stats-widget-card"
-			aria-label={ translate( '7 Day Highlights' ) }
-		>
+		<div className="stats-widget-highlights stats-widget-card" aria-label={ headingTitle }>
 			<div className="stats-widget-highlights__header">
-				<label>{ translate( '7 Day Highlights' ) }</label>
-				<a href={ odysseyStatsBaseUrl }>{ translate( 'View detailed stats' ) }</a>
+				<label>{ headingTitle }</label>
+			</div>
+			<div className="stats-widget-highlights__tabs">
+				<SegmentedControl primary>
+					{ moduleTabs.map( ( tab ) => {
+						return (
+							<SegmentedControl.Item
+								key={ tab.value }
+								selected={ tab.value === selectedTab }
+								onClick={ () => setSelectedTab( tab.value ) }
+							>
+								{ tab.label }
+							</SegmentedControl.Item>
+						);
+					} ) }
+				</SegmentedControl>
 			</div>
 			<div className="stats-widget-highlights__body">
 				<TopColumn
-					className="stats-widget-highlights__column"
-					title={ translate( 'Top Posts & Pages' ) }
+					className={ classNames( 'stats-widget-highlights__column', {
+						'stats-widget-highlights__column--show-in-mobile':
+							selectedTab === HIGHLIGHT_TAB_TOP_POSTS_PAGES,
+					} ) }
+					title={ topPostsAndPagesTitle }
 					viewAllUrl={ viewAllPostsStatsUrl }
 					viewAllText={ translate( 'View all posts & pages stats' ) }
 					items={ topPostsAndPages }
@@ -132,8 +169,11 @@ export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } )
 					isItemLink={ true }
 				/>
 				<TopColumn
-					className="stats-widget-highlights__column"
-					title={ translate( 'Top Referrers' ) }
+					className={ classNames( 'stats-widget-highlights__column', {
+						'stats-widget-highlights__column--show-in-mobile':
+							selectedTab === HIGHLIGHT_TAB_TOP_REFERRERS,
+					} ) }
+					title={ topReferrersTitle }
 					viewAllUrl={ viewAllReferrerStatsUrl }
 					viewAllText={ translate( 'View all referrer stats' ) }
 					items={ topReferrers }

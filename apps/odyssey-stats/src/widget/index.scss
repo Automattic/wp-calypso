@@ -2,14 +2,60 @@
 @import "../styles/theme.scss";
 @import "../styles/wp-admin.scss";
 @import "../styles/typography.scss";
+@import "@wordpress/base-styles/breakpoints";
+
+$segmentedControlItemBorderRadius: 4px;
 
 .jp-stats-widget {
+	container-type: inline-size;
 	// Offset the margin and padding of the `.postbox .inside` container.
 	margin: -11px -12px -12px;
 }
 
 .stats-widget-content {
 	font-family: $font-sf-pro-text;
+
+	// For both MiniChart and Highlights.
+	.segmented-control {
+		height: 36px;
+		min-width: 259px;
+
+		.segmented-control__item {
+			&:first-of-type .segmented-control__link {
+				border-top-left-radius: $segmentedControlItemBorderRadius;
+				border-bottom-left-radius: $segmentedControlItemBorderRadius;
+			}
+
+			&:last-of-type .segmented-control__link {
+				border-top-right-radius: $segmentedControlItemBorderRadius;
+				border-bottom-right-radius: $segmentedControlItemBorderRadius;
+			}
+
+			// Black segmented controls.
+			.segmented-control__link:hover {
+				background-color: var(--color-neutral-0);
+			}
+
+			&.is-selected .segmented-control__link {
+
+				&,
+				&:hover,
+				&:focus {
+					background-color: var(--studio-black);
+					border-color: var(--studio-black);
+				}
+			}
+
+			&.is-selected + .segmented-control__item .segmented-control__link {
+				border-left-color: var(--studio-black);
+			}
+		}
+
+		.segmented-control__link {
+			color: var(--studio-gray-70);
+			font-weight: 600;
+		}
+	}
 }
 
 .stats-widget-wrapper {
@@ -32,8 +78,28 @@
 }
 
 .stats-widget-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
 	margin-top: 24px;
+
 	a {
 		display: inline-block;
+		font-style: normal;
+		font-weight: 500;
+		font-size: $font-body-small;
+		line-height: 20px;
+		letter-spacing: -0.24px;
+		text-decoration-line: underline;
+		color: var(--studio-gray-100);
 	}
+}
+
+/* stylelint-disable-next-line scss/at-rule-no-unknown */
+@container (max-width: #{$break-mobile}) {
+	@include stats-widget-single-column-view;
+}
+
+@media only screen and (max-width: $break-small) {
+	@include stats-widget-single-column-view;
 }

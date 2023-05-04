@@ -14,8 +14,6 @@ import type {
 interface StarterDesignsQueryParams {
 	seed?: string;
 	_locale: string;
-	include_virtual_designs?: boolean;
-	include_pattern_virtual_designs?: boolean;
 }
 
 interface Options extends QueryOptions< StarterDesignsResponse, unknown > {
