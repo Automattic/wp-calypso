@@ -1,4 +1,6 @@
 import {
+	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
+	PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T2_YEARLY,
@@ -23,6 +25,18 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 
 	return useMemo( () => {
 		const INCLUDED_PRODUCT_DESCRIPTION_T1_MAP: Record< string, TranslateResult > = {
+			...setTranslation(
+				[ PRODUCT_JETPACK_BACKUP_T0_YEARLY, PRODUCT_JETPACK_BACKUP_T0_MONTHLY ],
+				translate(
+					'Real-time backups as you edit. 1GB of cloud storage. {{span}}30-day{{/span}} activity log archive. Unlimited one-click restores.',
+					{
+						components: {
+							span: <span />,
+						},
+					}
+				)
+			),
+
 			...setTranslation(
 				[ PRODUCT_JETPACK_BACKUP_T1_YEARLY, PRODUCT_JETPACK_BACKUP_T1_MONTHLY ],
 				translate(

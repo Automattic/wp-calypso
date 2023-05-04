@@ -22,13 +22,13 @@
 	list-style-type: none;
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-gap: 24px;
+	grid-gap: 30px;
 	margin: 0;
 
 	@media only screen and (min-width: 821px) {
-		grid-template-columns: 1fr 1fr;
+		grid-template-columns: 1fr 1fr 1fr;
 		margin: 32px auto 0;
-		gap: 24px;
+		gap: 30px;
 	}
 }
 

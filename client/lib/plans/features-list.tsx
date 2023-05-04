@@ -136,6 +136,7 @@ import {
 	FEATURE_WP_SUBDOMAIN,
 	FEATURE_WP_SUBDOMAIN_SIGNUP,
 	PREMIUM_DESIGN_FOR_STORES,
+	FEATURE_JETPACK_1GB_BACKUP_STORAGE,
 	FEATURE_JETPACK_10GB_BACKUP_STORAGE,
 	FEATURE_JETPACK_1TB_BACKUP_STORAGE,
 	FEATURE_JETPACK_1_YEAR_ARCHIVE_ACTIVITY_LOG,
@@ -1573,6 +1574,10 @@ export const FEATURES_LIST: FeatureList = {
 	},
 
 	/* START - Jetpack tiered product-specific features */
+	[ FEATURE_JETPACK_1GB_BACKUP_STORAGE ]: {
+		getSlug: () => FEATURE_JETPACK_1GB_BACKUP_STORAGE,
+		getTitle: () => i18n.translate( 'Starts with 1GB of storage' ),
+	},
 	[ FEATURE_JETPACK_10GB_BACKUP_STORAGE ]: {
 		getSlug: () => FEATURE_JETPACK_10GB_BACKUP_STORAGE,
 		getTitle: () => i18n.translate( 'Starts with 10GB of storage' ),
