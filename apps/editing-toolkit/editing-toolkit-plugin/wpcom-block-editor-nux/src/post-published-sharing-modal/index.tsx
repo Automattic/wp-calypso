@@ -10,6 +10,7 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import SocialLogo from 'calypso/components/social-logo';
+import useShouldShowSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-should-show-seller-celebration-modal';
 import { selectors as wpcomWelcomeGuideSelectors } from '../store';
 import postPublishedImage from './images/illo-share.svg';
 import useSharingModalDismissed from './use-sharing-modal-dismissed';
@@ -50,6 +51,7 @@ const PostPublishedSharingModal: React.FC = () => {
 			 ).getShouldShowFirstPostPublishedModal(),
 		[]
 	);
+	const shouldShowSellerCelebrationModal = useShouldShowSellerCelebrationModal();
 
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
@@ -134,6 +136,7 @@ const PostPublishedSharingModal: React.FC = () => {
 		// The first post will show a different modal.
 		if (
 			! shouldShowFirstPostPublishedModal &&
+			! shouldShowSellerCelebrationModal &&
 			! previousIsCurrentPostPublished.current &&
 			isCurrentPostPublished &&
 			postType === 'post'
