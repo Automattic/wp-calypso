@@ -4,6 +4,8 @@ import wpcomProxyRequest from 'wpcom-proxy-request';
 import { getFormattedPrice, normalizeDomainSuggestionQuery } from './utils';
 import type { DomainSuggestion, DomainSuggestionSelectorOptions } from './types';
 
+const STALE_TIME = 1000 * 60 * 5; // 5 minutes
+
 export function getDomainSuggestionsQueryKey(
 	search: string,
 	options: DomainSuggestionSelectorOptions = {}
@@ -48,7 +50,7 @@ export function useGetDomainSuggestions(
 			return processedSuggestions;
 		},
 		enabled: !! search,
-		staleTime: 1000 * 60 * 5, // 5 minutes
+		staleTime: STALE_TIME,
 		...queryOptions,
 	} );
 }
