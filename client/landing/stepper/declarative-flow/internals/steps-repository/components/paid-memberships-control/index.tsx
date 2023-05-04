@@ -15,7 +15,7 @@ const PaidMembershipsControl = ( { onChange, paidSubscribers }: PaidMembershipsC
 	const { __ } = useI18n();
 
 	return (
-		<FormFieldset className="setup-step__paid-subscribers">
+		<FormFieldset className="paid-memberships-control">
 			<FormLabel>
 				<FormInputCheckbox checked={ paidSubscribers } onChange={ onChange } />
 				<span>{ __( 'I want to start a paid newsletter' ) }</span>
