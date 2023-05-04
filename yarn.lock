@@ -1142,7 +1142,6 @@ __metadata:
     "@wordpress/base-styles": ^4.13.0
     "@wordpress/data": ^7.6.0
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
-    "@wordpress/element": ^5.9.0
     "@wordpress/scripts": ^24.6.0
     autoprefixer: ^10.2.5
     babel-jest: ^27.5
