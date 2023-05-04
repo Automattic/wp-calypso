@@ -111,6 +111,7 @@
 	}
 
 	.settings-popover__email-me-new-comments-toggle {
+		@extend %toggle-styles;
 		margin-bottom: 24px;
 	}
 
