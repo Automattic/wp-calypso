@@ -1,6 +1,6 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { START_WRITING_FLOW, addPlanToCart } from '@automattic/onboarding';
+import { START_WRITING_FLOW, addPlanToCart, addProductsToCart } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelector } from 'react-redux';
@@ -19,6 +19,7 @@ import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-u
 
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
+	title: 'Blog',
 	useSteps() {
 		return [
 			{
@@ -28,6 +29,10 @@ const startWriting: Flow = {
 			{
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
+			},
+			{
+				slug: 'domains',
+				asyncComponent: () => import( './internals/steps-repository/choose-a-domain' ),
 			},
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
@@ -93,16 +98,29 @@ const startWriting: Flow = {
 					}
 					return navigate( 'launchpad' );
 				}
+				case 'domains':
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { domain_upsell_deferred: true },
+						} );
+					}
+					return navigate( 'launchpad' );
 				case 'plans':
 					if ( siteSlug ) {
 						await updateLaunchpadSettings( siteSlug, {
-							checklist_statuses: { plan_selected: true },
+							checklist_statuses: { plan_completed: true },
 						} );
 					}
 					if ( providedDependencies?.goToCheckout ) {
 						const planCartItem = getPlanCartItem();
+						const domainCartItem = getDomainCartItem();
+
 						if ( planCartItem ) {
 							await addPlanToCart( siteSlug as string, flowName as string, true, '', planCartItem );
+						}
+
+						if ( domainCartItem ) {
+							await addProductsToCart( siteSlug as string, flowName as string, [ domainCartItem ] );
 						}
 					}
 					return navigate( 'launchpad' );

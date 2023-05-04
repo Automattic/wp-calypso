@@ -39,10 +39,23 @@ export default function SiteRow( {
 		}
 		return <Gridicon className="icon" icon="globe" size={ 48 } />;
 	}, [ site_icon, name ] );
+	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
+	const translate = useTranslate();
 
 	const deliveryFrequencyValue = useMemo(
 		() => delivery_methods?.email?.post_delivery_frequency as SiteSubscriptionDeliveryFrequency,
 		[ delivery_methods?.email?.post_delivery_frequency ]
+	);
+	const newPostDelivery = useMemo( () => {
+		const emailDelivery = delivery_methods?.email?.send_posts ? translate( 'Email' ) : null;
+		const notificationDelivery = delivery_methods?.notification?.send_posts
+			? translate( 'Notifications' )
+			: null;
+		return [ emailDelivery, notificationDelivery ].filter( Boolean ).join( ', ' );
+	}, [ delivery_methods?.email?.send_posts, delivery_methods?.notification?.send_posts ] );
+	const newCommentDelivery = useMemo(
+		() => delivery_methods?.email?.send_comments,
+		[ delivery_methods?.email?.send_comments ]
 	);
 	const deliveryFrequencyLabel = useDeliveryFrequencyLabel( deliveryFrequencyValue );
 
@@ -72,6 +85,20 @@ export default function SiteRow( {
 			<span className="date" role="cell">
 				<TimeSince date={ date_subscribed.toISOString?.() ?? date_subscribed } />
 			</span>
+			{ isLoggedIn && (
+				<span className="new-posts" role="cell">
+					{ newPostDelivery }
+				</span>
+			) }
+			{ isLoggedIn && (
+				<span className="new-comments" role="cell">
+					{ newCommentDelivery ? (
+						<Gridicon icon="checkmark" size={ 16 } className="green" />
+					) : (
+						<Gridicon icon="cross" size={ 16 } className="red" />
+					) }
+				</span>
+			) }
 			<span className="email-frequency" role="cell">
 				{ deliveryFrequencyLabel }
 			</span>

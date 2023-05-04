@@ -124,7 +124,13 @@ class SharingPreviewPane extends PureComponent {
 					/>
 				);
 			case 'tumblr':
-				return <TumblrSharePreview { ...previewProps } />;
+				return (
+					<TumblrSharePreview
+						{ ...previewProps }
+						articleContent={ post.content }
+						externalProfileURL={ connection.external_profile_URL }
+					/>
+				);
 			case 'linkedin':
 				return <LinkedinSharePreview { ...previewProps } />;
 			case 'twitter':
