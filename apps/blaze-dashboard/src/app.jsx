@@ -9,13 +9,13 @@ import '@automattic/calypso-polyfills';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { getAdvertisingDashboardPath } from 'calypso/my-sites/promote-post-i2/utils';
-import { getPathWithUpdatedQueryString } from 'calypso/my-sites/stats/utils';
 import consoleDispatcher from 'calypso/state/console-dispatch';
 import currentUser from 'calypso/state/current-user/reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
 import { setStore } from 'calypso/state/redux-store';
 import sites from 'calypso/state/sites/reducer';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
+import fixPath from './lib/fix-path';
 import setLocale from './lib/set-locale';
 import { setupContextMiddleware } from './page-middleware/setup-context';
 import registerBlazeDashboardPages from './routes';
@@ -61,20 +61,17 @@ async function AppBoot() {
 		// Redirect to the default advertising page.
 		window.location.hash = '#!' + getAdvertisingDashboardPath( `/${ siteId }` );
 	} else {
-		// The URL could already gets broken by page.js by the appended `?page=advertising`.
-		window.location.hash = `#!${ getPathWithUpdatedQueryString(
-			{},
-			window.location.hash.substring( 2 )
-		) }`;
+		// The URL could already gets broken by page.js by the appended `?page=jetpack-blaze`.
+		window.location.hash = fixPath( window.location.hash );
 	}
 
 	// Ensure locale files are loaded before rendering.
 	setLocale( localeSlug ).then( () => {
 		registerBlazeDashboardPages( window.location.pathname + window.location.search );
 
-		// HACK: getPathWithUpdatedQueryString filters duplicate query parameters added by `page.js`.
-		// It has to come after `registerBlazeDashboardPages` because the duplicate string added in the function.
-		page.show( `${ getPathWithUpdatedQueryString( {}, window.location.hash.substring( 2 ) ) }` );
+		// HACK: We need to remove the extra queryString that page adds when we configure it as hashbang
+		// To do this, we are showing the correct version of the path (after fixing it)
+		page.show( fixPath( window.location.hash ) );
 	} );
 }
 
