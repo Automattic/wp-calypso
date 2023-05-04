@@ -1920,7 +1920,8 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 					ul: <ul />,
 					li: <li />,
 				},
-				comment: '{{ul}}{{ul/}} represents an unorder list, and {{li}}{/li} represent a list item',
+				comment:
+					'{{ul}}{{ul/}} represents an unordered list, and {{li}}{/li} represents a list item',
 			}
 		),
 	getLightboxDescription: () =>
@@ -2107,7 +2108,8 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 					ul: <ul />,
 					li: <li />,
 				},
-				comment: '{{ul}}{{ul/}} represents an unorder list, and {{li}}{/li} represent a list item',
+				comment:
+					'{{ul}}{{ul/}} represents an unordered list, and {{li}}{/li} represents a list item',
 			}
 		),
 	getLightboxDescription: () =>
