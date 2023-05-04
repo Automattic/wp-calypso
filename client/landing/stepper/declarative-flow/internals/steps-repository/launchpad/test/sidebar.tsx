@@ -414,4 +414,15 @@ describe( 'Sidebar', () => {
 			} );
 		} );
 	} );
+
+	describe( 'when the list of tasks has a task related to site launch', () => {
+		describe( 'and the site launch task is not disabled', () => {
+			it( 'displays the launch title', () => {
+				renderSidebar( props );
+
+				const title = screen.getByRole( 'heading', { name: /You're ready to link and launch/i } );
+				expect( title ).toBeVisible();
+			} );
+		} );
+	} );
 } );

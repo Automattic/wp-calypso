@@ -20,20 +20,6 @@ describe( 'Task Helpers', () => {
 				).toEqual( fakeTasks );
 			} );
 		} );
-		describe( 'when it is link_in_bio_launched task', () => {
-			it( 'then it receives launchtask property = true', () => {
-				const fakeTasks = [ buildTask( { id: 'link_in_bio_launched' } ) ];
-				const enhancedTasks = getEnhancedTasks(
-					fakeTasks,
-					'fake.wordpress.com',
-					null,
-					// eslint-disable-next-line @typescript-eslint/no-empty-function
-					() => {},
-					false
-				);
-				expect( enhancedTasks[ 0 ].isLaunchTask ).toEqual( true );
-			} );
-		} );
 		describe( 'when it is plan_selected task', () => {
 			it( 'marks plan_selected as incomplete if styles used but not part of plan', () => {
 				const fakeTasks = [ buildTask( { id: 'plan_selected', completed: true } ) ];
