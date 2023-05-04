@@ -196,8 +196,19 @@ export default function CheckoutHelpLink() {
 		zendeskPresalesChatKey &&
 		! purchasesAreBlocked;
 
+	// Show loading button if we haven't determined whether or not to show the Zendesk chat button yet.
+	const shouldShowLoadingButton =
+		! supportVariationDetermined && ! isJpPresalesStaffed && ! isPresalesZendeskChatEligible;
+	const isSitelessCheckout = isAkismetCheckout() || isJetpackCheckout();
+	const shouldShowZendeskChatWidget =
+		( isPresalesZendeskChatEligible && ! isSitelessCheckout ) ||
+		( isSitelessCheckout && isJpPresalesStaffed );
+
 	const hasDirectSupport = supportVariation !== SUPPORT_FORUM;
 
+	// For the siteless checkouts, we do not need to specifically check if isJpPresalesStaffed is true
+	// because if this function is being called during a siteless checkout session, shouldShowZendeskChatWidget
+	// already ensures that isJpPresalesStaffed is true.
 	const getZendeskChatWidget = () => {
 		if ( isAkismetCheckout() ) {
 			return <ZendeskJetpackChat keyType="akismet" />;
@@ -207,22 +218,21 @@ export default function CheckoutHelpLink() {
 			return <ZendeskJetpackChat keyType="jpCheckout" />;
 		}
 
-		if ( isPresalesZendeskChatEligible ) {
-			return (
-				<AsyncLoad
-					require="calypso/components/presales-zendesk-chat"
-					chatKey={ zendeskPresalesChatKey }
-				/>
-			);
-		}
+		// If we're not in a siteless checkout, we can use the regular wordpress themed Zendesk chat widget.
+		return (
+			<AsyncLoad
+				require="calypso/components/presales-zendesk-chat"
+				chatKey={ zendeskPresalesChatKey }
+			/>
+		);
 	};
 
 	// If pre-sales chat isn't available, use the inline help button instead.
 	return (
 		<CheckoutHelpLinkWrapper>
 			<QuerySupportTypes />
-			{ ! isPresalesZendeskChatEligible && ! supportVariationDetermined && <LoadingButton /> }
-			{ isPresalesZendeskChatEligible || isJpPresalesStaffed
+			{ shouldShowLoadingButton && <LoadingButton /> }
+			{ shouldShowZendeskChatWidget
 				? getZendeskChatWidget()
 				: supportVariationDetermined && (
 						<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
