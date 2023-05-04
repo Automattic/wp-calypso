@@ -48,7 +48,7 @@ function getPlanTypes( flowName: string | null ) {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
-		case NEWSLETTER_FLOW: 
+		case NEWSLETTER_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 		default:
 			return undefined;
