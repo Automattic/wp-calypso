@@ -88,6 +88,19 @@ class Block_Patterns_From_API {
 
 			$pattern_categories = array_merge( $pattern_categories, $existing_categories );
 
+			// The category 'All' is created dinamically so all patterns are always added automatically.
+			$category_all = array(
+				'slug'        => 'all',
+				'title'       => 'All',
+				'description' => '',
+			);
+			// Add the category 'All' to $pattern_categories so its orderer and registered with the others.
+			$pattern_categories[ $category_all['slug'] ] = array(
+				'label'       => $category_all['title'],
+				'slug'        => $category_all['title'],
+				'description' => $category_all['description'],
+			);
+
 			// Order categories alphabetically by their label.
 			uasort(
 				$pattern_categories,
@@ -95,12 +108,6 @@ class Block_Patterns_From_API {
 					return strnatcasecmp( $a['label'], $b['label'] );
 				}
 			);
-
-			// Move the Featured category to be the first category.
-			if ( isset( $pattern_categories['featured'] ) ) {
-				$featured_category  = $pattern_categories['featured'];
-				$pattern_categories = array( 'featured' => $featured_category ) + $pattern_categories;
-			}
 
 			// Register categories (and re-register existing categories).
 			foreach ( (array) $pattern_categories as $slug => $category_properties ) {
@@ -117,6 +124,9 @@ class Block_Patterns_From_API {
 					$viewport_width = $viewport_width < 320 ? 320 : $viewport_width;
 					$pattern_name   = self::PATTERN_NAMESPACE . $pattern['name'];
 					$block_types    = $this->utils->maybe_get_pattern_block_types_from_pattern_meta( $pattern );
+
+					// Add the category 'All' to all patterns.
+					$pattern['categories'][ $category_all['slug'] ] = $category_all;
 
 					$results[ $pattern_name ] = register_block_pattern(
 						$pattern_name,
