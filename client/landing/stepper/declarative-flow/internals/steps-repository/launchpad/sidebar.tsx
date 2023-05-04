@@ -60,15 +60,14 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 		data: { site_intent: siteIntentOption, checklist_statuses: checklistStatuses },
 	} = useLaunchpad( siteSlug );
 
-	const showDomain =
-		! isStartWritingFlow( flow ) || checklistStatuses?.domain_upsell_deferred === true;
-
-	const { getDomainCartItem } = useSelect(
-		( select ) => ( {
-			getDomainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem,
-		} ),
+	const selectedDomain = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
 		[]
 	);
+
+	const showDomain =
+		! isStartWritingFlow( flow ) ||
+		( checklistStatuses?.domain_upsell_deferred === true && selectedDomain );
 
 	const {
 		data: { checklist: launchpadChecklist },
@@ -128,9 +127,9 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	}
 
 	function getDomainName() {
-		if ( getDomainCartItem() ) {
+		if ( selectedDomain ) {
 			return (
-				<span className="launchpad__url-box-top-level-domain">{ getDomainCartItem()?.meta }</span>
+				<span className="launchpad__url-box-top-level-domain">{ selectedDomain.domain_name }</span>
 			);
 		}
 
