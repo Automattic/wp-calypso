@@ -293,6 +293,7 @@ export const getJetpackProductsCallToAction = (): Record< string, TranslateResul
 		[ PRODUCT_JETPACK_BACKUP_REALTIME ]: backupRealtime,
 		[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: backupRealtime,
 		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: backup,
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: backup,
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backup,
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backup,
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backup,
