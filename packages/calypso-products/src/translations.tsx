@@ -52,7 +52,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
 } from './constants';
-import type { FAQ, SelectorProductFeaturesItem } from './types';
+import type { SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 // Translatable strings
@@ -734,7 +734,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		}
 	);
 
-	const backupIncludesInfoT1Log = translate( '30-day activity log archive*' );
+	const backupIncludesInfoT1Log = translate( '30-day activity log archive' );
 	const backupIncludesInfoT2Log = translate( '{{strong}}1 year{{/strong}} activity log archive', {
 		components: {
 			strong: <strong />,
@@ -952,44 +952,6 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
-	};
-};
-
-export const getJetpackProductsFAQs = (
-	getHelpLink: ( context: unknown ) => JSX.Element
-): Record< string, Array< FAQ > > => {
-	const backupFAQs: Array< FAQ > = [
-		{
-			id: 'backup-storage-limits',
-			question: translate( '*How do backup storage limits work?' ),
-			answer: translate(
-				'If your backup storage limit is reached, older backups will be deleted and, depending on your site’s size, the backup retention period (archive) might be reduced to %(monthlyDays)d days. This will affect how far back you can see backups in your activity log. Existing backups can still be restored, but new updates won’t be backed up until you upgrade or free up storage.',
-				{
-					args: { monthlyDays: 7 },
-				}
-			),
-		},
-		{
-			id: 'cancellation-policy',
-			question: translate( 'What is your cancellation policy?' ),
-			answer: translate(
-				'If you are dissatisfied for any reason, we offer full refunds within %(annualDays)d days for yearly plans, and within %(monthlyDays)d days for monthly plans. If you have a question about our paid plans, {{helpLink}}please let us know{{/helpLink}}!',
-				{
-					args: { annualDays: 14, monthlyDays: 7 },
-					components: { helpLink: getHelpLink( 'cancellation' ) },
-				}
-			),
-		},
-	];
-	return {
-		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupFAQs,
-		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupFAQs,
-		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupFAQs,
-		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupFAQs,
-		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupFAQs,
-		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: backupFAQs,
-		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupFAQs,
-		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: backupFAQs,
 	};
 };
 
