@@ -8,7 +8,7 @@ import { render } from '@testing-library/react';
 import {
 	FacebookPreview as Facebook,
 	TwitterPreview as Twitter,
-	SearchPreview as Search,
+	GoogleSearchPreview as Search,
 } from '../src';
 import { formatTweetDate } from '../src/helpers';
 
@@ -505,7 +505,7 @@ describe( 'Twitter previews', () => {
 	} );
 } );
 
-describe( 'Search previews', () => {
+describe( 'Google Search previews', () => {
 	describe( 'Title truncation', () => {
 		it( 'should display entire title if short enough', () => {
 			const { container } = render(
@@ -615,8 +615,6 @@ describe( 'Search previews', () => {
 	} );
 
 	it( 'should display truncated url', () => {
-		const downArrowChar = '▾';
-
 		const { container } = render(
 			<Search url="https://wordpress.com/alongpathnameheretoensuretruncationoccursbutitdoesneedtobequitelongtomakethathappen" />
 		);
@@ -625,13 +623,8 @@ describe( 'Search previews', () => {
 
 		expect( urlEl ).toBeVisible();
 		expect( urlEl ).toHaveTextContent(
-			'wordpress.com › alongpathnameheretoensuretruncationoccursbutitdoesne' +
-				'…' +
-				' ' +
-				downArrowChar
+			'https://wordpress.com › alongpathnameheretoensuretruncationoccursbut…'
 		);
-		expect(
-			urlEl.textContent.replace( '…', '' ).replace( downArrowChar, '' ).trimEnd()
-		).toHaveLength( 68 );
+		expect( urlEl.textContent.replace( '…', '' ).trimEnd() ).toHaveLength( 68 );
 	} );
 } );

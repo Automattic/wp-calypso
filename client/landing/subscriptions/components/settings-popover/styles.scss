@@ -40,6 +40,12 @@
 		}
 	}
 
+	.settings-popover__delivery-frequency-item {
+		&.is-logged-in {
+			padding-top: 0;
+		}
+	}
+
 	.settings-popover__item-button {
 		display: flex;
 		align-items: center;
@@ -76,6 +82,34 @@
 		padding-top: 10px;
 		padding-bottom: 10px;
 		line-height: $font-body;
+	}
+
+	.settings-popover__notify-me-of-new-posts-item {
+		padding-bottom: 0;
+		margin-bottom: 16px;
+	}
+
+	.settings-popover__email-me-new-posts-item {
+		padding-top: 0;
+		padding-bottom: 0;
+	}
+
+	.settings-popover__notify-me-of-new-posts-toggle,
+	.settings-popover__email-me-new-posts-toggle {
+		font-size: $font-body-small;
+		margin-bottom: 16px;
+
+		.components-form-toggle {
+			display: flex;
+			align-items: center;
+		}
+	}
+
+	.settings-popover__popout-hint {
+		color: $studio-gray-50;
+		font-size: $font-body-extra-small;
+		text-align: left;
+		width: 212px;
 	}
 }
 

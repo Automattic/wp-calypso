@@ -100,6 +100,13 @@ export interface JetpackTag {
 	tag: string;
 	label: TranslateResult;
 }
+
+export interface FAQ {
+	id: string;
+	question: TranslateResult;
+	answer: TranslateResult;
+}
+
 export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
 	getMonthlySlug?: () => JetpackPlanSlug;

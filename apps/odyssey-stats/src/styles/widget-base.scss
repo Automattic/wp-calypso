@@ -5,3 +5,52 @@
 
 // Color Schemes
 @import "@automattic/calypso-color-schemes/src/calypso-color-schemes";
+
+@import "./variables.scss";
+
+@mixin stats-widget-single-column-view {
+
+	// Full width Segmented Control.
+	.stats-widget-content .segmented-control {
+		width: 100%;
+	}
+
+	// Smaller padding.
+	.stats-widget-wrapper {
+		padding: 24px 16px;
+	}
+
+	.stats-widget-highlights {
+		// Show highlights tabs.
+		.stats-widget-highlights__tabs {
+			display: block;
+		}
+
+		// Single column layout.
+		.stats-widget-highlights__body {
+			grid-template-columns: none;
+		}
+
+		// Only show one of the chosen highlights.
+		.stats-widget-highlights__column {
+			display: none;
+
+			&.stats-widget-highlights__column--show-in-mobile {
+				display: block;
+				width: 100%;
+
+				.stats-widget-highlights-card__title {
+					display: none;
+				}
+			}
+		}
+
+	}
+
+	// Single column layout for module cards.
+	.stats-widget-modules {
+		grid-template-columns: auto;
+		grid-template-rows: repeat(2, 1fr);
+		row-gap: 24px;
+	}
+}
