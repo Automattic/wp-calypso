@@ -36,7 +36,7 @@ export function getLicenseState(
 	revokedAt: string | null
 ): LicenseState {
 	if ( ownerType === 'user' ) {
-		return LicenseState.Legacy;
+		return LicenseState.Standard;
 	}
 
 	if ( revokedAt ) {

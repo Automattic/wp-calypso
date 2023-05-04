@@ -45,7 +45,7 @@ export default function LicenseDetails( {
 		<Card className="license-details">
 			<ul className="license-details__list">
 				<li className="license-details__list-item license-details__list-item--wide">
-					{ licenseState === LicenseState.Legacy && (
+					{ licenseState === LicenseState.Standard && (
 						<div className="license-details__legacy-notice-text">
 							<Gridicon icon="info" />
 							{ translate(
@@ -130,7 +130,7 @@ export default function LicenseDetails( {
 				</li>
 			</ul>
 
-			{ licenseState !== LicenseState.Legacy && (
+			{ licenseState !== LicenseState.Standard && (
 				<LicenseDetailsActions
 					licenseKey={ licenseKey }
 					ownerType={ ownerType }

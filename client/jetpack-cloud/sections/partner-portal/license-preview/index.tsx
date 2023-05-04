@@ -58,8 +58,9 @@ export default function LicensePreview( {
 
 	const showDomain =
 		domain &&
-		[ LicenseState.Attached, LicenseState.Revoked, LicenseState.Legacy ].indexOf( licenseState ) !==
-			-1;
+		[ LicenseState.Attached, LicenseState.Revoked, LicenseState.Standard ].indexOf(
+			licenseState
+		) !== -1;
 
 	const oneMinuteAgo = moment.utc().subtract( 1, 'minute' );
 
@@ -124,12 +125,12 @@ export default function LicensePreview( {
 					'license-preview__card': true,
 					'license-preview__card--is-detached': licenseState === LicenseState.Detached,
 					'license-preview__card--is-revoked': licenseState === LicenseState.Revoked,
-					'license-preview__card--is-legacy': licenseState === LicenseState.Legacy,
+					'license-preview__card--is-legacy': licenseState === LicenseState.Standard,
 				} ) }
 			>
 				<div>
 					<h3 className="license-preview__domain">
-						{ LicenseState.Legacy === licenseState && (
+						{ LicenseState.Standard === licenseState && (
 							<span className="license-preview__tag license-preview__tag--is-legacy">
 								<Gridicon icon="info-outline" size={ 18 } />
 								{ translate( 'Legacy license' ) }
@@ -211,7 +212,7 @@ export default function LicensePreview( {
 							{ translate( 'Assign License' ) }
 						</Button>
 					) }
-					{ licenseState === LicenseState.Legacy && (
+					{ licenseState === LicenseState.Standard && (
 						// @todo implement
 						<Button compact onClick={ () => alert( 'TBD' ) }>
 							{ translate( 'Convert' ) }

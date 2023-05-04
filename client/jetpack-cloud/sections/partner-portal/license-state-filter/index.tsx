@@ -45,8 +45,8 @@ function LicenseStateFilter( { doSearch }: Props ) {
 			label: translate( 'Revoked' ),
 		},
 		{
-			key: LicenseFilter.Legacy,
-			label: translate( 'Legacy' ),
+			key: LicenseFilter.Standard,
+			label: translate( 'Standard' ),
 		},
 	].map( ( navItem ) => ( {
 		...navItem,
