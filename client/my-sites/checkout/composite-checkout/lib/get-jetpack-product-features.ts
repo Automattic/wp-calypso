@@ -8,6 +8,7 @@ import {
 	isJetpackSecurityT1Slug,
 	isJetpackSocialBasicSlug,
 	isJetpackSocialAdvancedSlug,
+	isJetpackStarterSlug,
 	isJetpackVideoPressSlug,
 } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
@@ -169,6 +170,19 @@ export default function getJetpackProductFeatures(
 			...getFeatureStrings( 'social-basic', translate ),
 			...getFeatureStrings( 'social-advanced', translate ),
 		];
+	}
+
+	if ( isJetpackStarterSlug( product.product_slug ) ) {
+		// Filter out these strings for Starter to avoid clutter
+		const securityExcludes = [ translate( '10GB of backup storage' ) ];
+
+		return [
+			...getFeatureStrings( 'anti-spam', translate ),
+			...getFeatureStrings( 'backup-t1', translate ),
+			...getFeatureStrings( 'support', translate ),
+		].filter( ( productFeature ) => {
+			return ! securityExcludes.includes( productFeature );
+		} );
 	}
 
 	if ( isJetpackVideoPressSlug( product.product_slug ) ) {
