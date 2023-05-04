@@ -505,7 +505,7 @@ const PlanComparisonGridFeatureGroupRowCell: React.FunctionComponent< {
 } ) => {
 	const translate = useTranslate();
 	const highlightAdjacencyMatrix = useHighlightAdjacencyMatrix( visiblePlansProperties, flowName );
-	const highlightLabel = useHighlightLabel( planName, null );
+	const highlightLabel = useHighlightLabel( planName, flowName );
 	const featureSlug = feature?.getSlug();
 	const hasFeature =
 		isStorageFeature ||
