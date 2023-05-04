@@ -261,15 +261,9 @@ export default class WebPreviewContent extends Component {
 				iframeUrl === 'about:blank'
 					? iframeUrl
 					: addQueryArgs( { calypso_token: this.previewId }, iframeUrl );
-
 			this.iframe.contentWindow.location.replace( newUrl );
-			this.setState( { iframeUrl } );
 
-			// Skip waiting for the iframe to send the partially-loaded message.
-			if ( this.props.skipWaitForIframeLoadedMessage ) {
-				this.setState( { loaded: true } );
-				return;
-			}
+			this.setState( { iframeUrl } );
 
 			const isHashChangeOnly =
 				iframeUrl.replace( /#.*$/, '' ) === this.state.iframeUrl.replace( /#.*$/, '' );
@@ -565,8 +559,6 @@ WebPreviewContent.propTypes = {
 	scrollToSelector: PropTypes.string,
 	// Edit overlay that redirects to the Site Editor
 	enableEditOverlay: PropTypes.bool,
-	// Skip waiting for the iframe page to send its load state via postMessage.
-	skipWaitForIframeLoadedMessage: PropTypes.bool,
 };
 
 WebPreviewContent.defaultProps = {
@@ -593,5 +585,4 @@ WebPreviewContent.defaultProps = {
 	inlineCss: null,
 	scrollToSelector: null,
 	enableEditOverlay: false,
-	skipWaitForIframeLoadedMessage: false,
 };

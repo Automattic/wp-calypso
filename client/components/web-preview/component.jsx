@@ -65,8 +65,6 @@ export class WebPreviewModal extends Component {
 		disableTabbing: PropTypes.bool,
 		// Edit overlay that redirects to the Site Editor
 		enableEditOverlay: PropTypes.bool,
-		// Skip waiting for the iframe page to send its load state via postMessage.
-		skipWaitForIframeLoadedMessage: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -86,7 +84,6 @@ export class WebPreviewModal extends Component {
 		overridePost: null,
 		autoHeight: false,
 		enableEditOverlay: false,
-		skipWaitForIframeLoadedMessage: false,
 	};
 
 	constructor( props ) {
