@@ -783,6 +783,8 @@ export default connect(
 			customerType: customerType,
 			hidePersonalPlan: props.hidePersonalPlan,
 			siteSlug,
+			selectedPlan: props.selectedPlan,
+			selectedFeature: props.selectedFeature,
 		};
 
 		return {

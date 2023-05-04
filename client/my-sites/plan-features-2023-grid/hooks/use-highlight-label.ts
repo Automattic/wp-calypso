@@ -1,4 +1,4 @@
-import { isBusinessPlan, isPersonalPlan } from '@automattic/calypso-products';
+import { isBusinessPlan, isPersonalPlan, planLevelsMatch } from '@automattic/calypso-products';
 import { isNewsletterFlow } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -15,7 +15,8 @@ const useHighlightLabel = ( planName: string, flowName: string | null, selectedP
 		( state ) => !! selectedSiteId && isPlanAvailableForPurchase( state, selectedSiteId, planName )
 	);
 	const isCurrentPlan = currentPlan?.productSlug === planName;
-	const isSuggestedPlan = planName === selectedPlan && isAvailableForPurchase;
+	const isSuggestedPlan =
+		selectedPlan && planLevelsMatch( planName, selectedPlan ) && isAvailableForPurchase;
 
 	if ( isNewsletterFlow( flowName ) ) {
 		if ( isPersonalPlan( planName ) ) {
