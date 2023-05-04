@@ -39,7 +39,11 @@ const StartWritingDone: Step = () => {
 							<div className="start-writing-done__top-content-description">{ siteSlug }</div>
 						</div>
 						<div className="start-writing-done__top-content-cta">
-							<Button className="start-writing-done__top-content-cta-social" primary>
+							<Button
+								className="start-writing-done__top-content-cta-social"
+								primary
+								href={ `/marketing/connections/${ siteSlug }` }
+							>
 								{ translate( 'Connect to social' ) }
 							</Button>
 							<Button
