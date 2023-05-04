@@ -17,6 +17,7 @@ type SiteSettingsProps = {
 	updatingEmailMeNewPosts: boolean;
 	deliveryFrequency: SiteSubscriptionDeliveryFrequency;
 	onDeliveryFrequencyChange: ( value: SiteSubscriptionDeliveryFrequency ) => void;
+	emailMeNewComments: boolean;
 	onUnsubscribe: () => void;
 	unsubscribing: boolean;
 	updatingFrequency: boolean;
@@ -31,6 +32,7 @@ const SiteSettings = ( {
 	updatingEmailMeNewPosts,
 	deliveryFrequency,
 	onDeliveryFrequencyChange,
+	emailMeNewComments,
 	onUnsubscribe,
 	unsubscribing,
 	updatingFrequency,
@@ -61,7 +63,11 @@ const SiteSettings = ( {
 				/>
 			) }
 			{ isLoggedIn && (
-				<EmailMeNewCommentsToggle value={ true } onChange={ () => null } isUpdating={ false } />
+				<EmailMeNewCommentsToggle
+					value={ emailMeNewComments }
+					onChange={ () => null }
+					isUpdating={ false }
+				/>
 			) }
 			<Separator />
 			<UnsubscribeSiteButton unsubscribing={ unsubscribing } onUnsubscribe={ onUnsubscribe } />
