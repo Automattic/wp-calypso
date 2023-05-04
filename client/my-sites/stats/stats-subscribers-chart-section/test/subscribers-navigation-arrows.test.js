@@ -25,47 +25,47 @@ describe( 'Stats: Subscribers calculateDate() function', () => {
 	} );
 
 	test( 'adds days correctly', () => {
-		const result = calculateDate( true, date, 'day', 5 );
+		const result = calculateDate( date, 'day', 5 );
 		expect( result ).toEqual( new Date( '2022-05-25' ) );
 	} );
 
 	test( 'subtracts days correctly', () => {
-		const result = calculateDate( false, date, 'day', 5 );
+		const result = calculateDate( date, 'day', -5 );
 		expect( result ).toEqual( new Date( '2022-05-15' ) );
 	} );
 
 	test( 'adds weeks correctly', () => {
-		const result = calculateDate( true, date, 'week', 2 );
+		const result = calculateDate( date, 'week', 2 );
 		expect( result ).toEqual( new Date( '2022-06-03' ) );
 	} );
 
 	test( 'subtracts weeks correctly', () => {
-		const result = calculateDate( false, date, 'week', 2 );
+		const result = calculateDate( date, 'week', -2 );
 		expect( result ).toEqual( new Date( '2022-05-06' ) );
 	} );
 
 	test( 'adds months correctly', () => {
-		const result = calculateDate( true, date, 'month', 3 );
+		const result = calculateDate( date, 'month', 3 );
 		expect( result ).toEqual( new Date( '2022-08-20' ) );
 	} );
 
 	test( 'subtracts months correctly', () => {
-		const result = calculateDate( false, date, 'month', 3 );
+		const result = calculateDate( date, 'month', -3 );
 		expect( result ).toEqual( new Date( '2022-02-20' ) );
 	} );
 
 	test( 'adds years correctly', () => {
-		const result = calculateDate( true, date, 'year', 1 );
+		const result = calculateDate( date, 'year', 1 );
 		expect( result ).toEqual( new Date( '2023-05-20' ) );
 	} );
 
 	test( 'subtracts years correctly', () => {
-		const result = calculateDate( false, date, 'year', 1 );
+		const result = calculateDate( date, 'year', -1 );
 		expect( result ).toEqual( new Date( '2021-05-20' ) );
 	} );
 
 	test( 'returns the same date when given an unsupported period', () => {
-		const result = calculateDate( true, date, 'hour', 5 );
+		const result = calculateDate( date, 'hour', 5 );
 		expect( result ).toEqual( date );
 	} );
 } );
