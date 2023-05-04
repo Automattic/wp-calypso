@@ -83,6 +83,11 @@ export default function SubscribersChartSection( {
 		[ setQueryDate ]
 	);
 
+	// reset the date when changing periods
+	useEffect( () => {
+		setQueryDate( new Date() );
+	}, [ period, setQueryDate ] );
+
 	useEffect( () => {
 		if ( isError ) {
 			setErrorMessage( 'There was an error!' ); //TODO: check if error has a `message` property and how to handle `error`'s type
