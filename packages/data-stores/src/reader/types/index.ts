@@ -67,6 +67,16 @@ export type SiteSubscription = {
 	meta: SiteSubscriptionMeta;
 };
 
+export type SiteSubscriptionPage = {
+	subscriptions: SiteSubscription[];
+	total_subscriptions: number;
+};
+
+export type SiteSubscriptionsPages = {
+	pageParams: [];
+	pages: SiteSubscriptionPage[];
+};
+
 export type SiteSubscriptionDeliveryFrequency = 'instantly' | 'daily' | 'weekly';
 
 export type PostSubscription = {

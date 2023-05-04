@@ -1,4 +1,6 @@
 import './style.scss';
+import { Button } from '@automattic/components';
+import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import moment from 'moment';
@@ -17,9 +19,9 @@ import useCampaignsStatsQuery from 'calypso/data/promote-post/use-promote-post-c
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import memoizeLast from 'calypso/lib/memoize-last';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
-import PostsListBanner from 'calypso/my-sites/promote-post/components/posts-list-banner';
 import CampaignsList from 'calypso/my-sites/promote-post-i2/components/campaigns-list';
 import PostsList from 'calypso/my-sites/promote-post-i2/components/posts-list';
+import PostsListBanner from 'calypso/my-sites/promote-post-i2/components/posts-list-banner';
 import PromotePostTabBar from 'calypso/my-sites/promote-post-i2/components/promoted-post-filter';
 import {
 	getSitePost,
@@ -194,15 +196,6 @@ export default function PromotedPosts( { tab }: Props ) {
 		isRequestingPostsForQuery( state, selectedSiteId, queryPageAndPostsByComments )
 	);
 
-	const subtitle = translate(
-		'Reach new readers and customers with WordPress Blaze. Promote a post or a page on our network of millions blogs and web sites. {{learnMoreLink}}Learn more.{{/learnMoreLink}}',
-		{
-			components: {
-				learnMoreLink: <InlineSupportLink supportContext="advertising" showIcon={ false } />,
-			},
-		}
-	);
-
 	const debouncedScrollToCampaign = debounce( ( campaignId ) => {
 		const element = document.querySelector( `.promote-post__campaigns_id_${ campaignId }` );
 		if ( element instanceof Element ) {
@@ -227,6 +220,10 @@ export default function PromotedPosts( { tab }: Props ) {
 			}
 		}
 	}, [ campaignsFull, alreadyScrolled ] );
+
+	useEffect( () => {
+		document.querySelector( 'body' )?.classList.add( 'is-section-promote-post-i2' );
+	}, [] );
 
 	if ( selectedSite?.is_coming_soon || selectedSite?.is_private ) {
 		return (
@@ -262,19 +259,41 @@ export default function PromotedPosts( { tab }: Props ) {
 		! hasTopPostsFinished ||
 		( ! isWpMobileApp() && isLoadingProducts );
 
+	const showBanner =
+		! campaignsIsLoading && ( ! campaignsData?.length || campaignsData.length < 3 );
+
+	const headerSubtitle = ! showBanner && (
+		<div className="promote-post__header-subtitle">
+			{ translate(
+				'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
+			) }
+		</div>
+	);
+
 	return (
-		<Main wideLayout className="promote-post">
+		<Main wideLayout className="promote-post-i2">
 			<DocumentHead title={ translate( 'Advertising - Redesign page!' ) } />
 
-			<FormattedHeader
-				brandFont
-				className="advertising__page-header"
-				headerText={ `${ translate( 'Advertising' ) } - Redesign page` }
-				subHeaderText={ campaignsData?.length ? subtitle : '' }
-				align="left"
-			/>
+			<div className="promote-post-i2__top-bar">
+				{ /* TODO: Do not forget to remove "Redesign page" part! */ }
+				<FormattedHeader
+					brandFont
+					className={ classNames( 'advertising__page-header', {
+						'advertising__page-header_has-banner': showBanner,
+					} ) }
+					children={ headerSubtitle }
+					headerText={ `${ translate( 'Advertising' ) } - Redesign page` }
+					align="left"
+				/>
 
-			{ ! campaignsIsLoading && ! campaignsData?.length && <PostsListBanner /> }
+				<div className="promote-post-i2__top-bar-buttons">
+					<Button compact className="posts-list-banner__learn-more">
+						<InlineSupportLink supportContext="advertising" showIcon={ false } />
+					</Button>
+				</div>
+			</div>
+
+			{ showBanner && <PostsListBanner /> }
 
 			<PromotePostTabBar tabs={ tabs } selectedTab={ selectedTab } />
 			{ selectedTab === 'campaigns' ? (

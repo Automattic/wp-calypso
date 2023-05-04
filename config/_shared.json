@@ -37,6 +37,7 @@
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"advertising_dashboard_path_prefix": "/advertising",
 	"zendesk_presales_chat_key": false,
+	"zendesk_presales_chat_key_jp_agency_dashboard": false,
 	"upwork_support_locales": [
 		"de",
 		"de-at",

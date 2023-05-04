@@ -33,7 +33,7 @@ export default function PostsList( { content, isLoading }: Props ) {
 			) }
 			{ ! isLoading && isEmpty && (
 				<EmptyContent
-					className="promote-post__empty-content"
+					className="promote-post-i2__empty-content"
 					title={ translate( 'You have no posts or pages.' ) }
 					line={ translate(
 						"Start by creating a post or a page and start promoting it once it's ready"
@@ -42,7 +42,7 @@ export default function PostsList( { content, isLoading }: Props ) {
 				/>
 			) }
 			{ ! isLoading && ! isEmpty && (
-				<table>
+				<table className="posts-list__table">
 					<PostsListHeader />
 					<tbody>
 						{ content.map( function ( post: Post ) {

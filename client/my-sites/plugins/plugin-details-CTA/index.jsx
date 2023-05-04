@@ -69,6 +69,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
 	const isWpcomStaging = useSelector( ( state ) => isSiteWpcomStaging( state, selectedSite?.ID ) );
+	const isDisabledForWpcomStaging = isWpcomStaging && isMarketplaceProduct;
 	const pluginFeature = isMarketplaceProduct
 		? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 		: FEATURE_INSTALL_PLUGINS;
@@ -326,7 +327,7 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						isWpcomStaging={ isWpcomStaging }
 					/>
 				</div>
-				{ isWpcomStaging && <StagingSiteNotice plugin={ plugin } /> }
+				{ isDisabledForWpcomStaging && <StagingSiteNotice plugin={ plugin } /> }
 				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 					<div className="plugin-details-cta__t-and-c">
 						{ translate(
@@ -387,6 +388,11 @@ function PrimaryButton( {
 	const dispatch = useDispatch();
 	const sectionName = useSelector( getSectionName );
 
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, plugin.slug )
+	);
+	const isDisabledForWpcomStaging = isWpcomStaging && isMarketplaceProduct;
+
 	const onClick = useCallback( () => {
 		dispatch(
 			recordTracksEvent( 'calypso_plugin_details_get_started_click', {
@@ -434,7 +440,7 @@ function PrimaryButton( {
 		<CTAButton
 			plugin={ plugin }
 			hasEligibilityMessages={ hasEligibilityMessages }
-			disabled={ incompatiblePlugin || userCantManageTheSite || isWpcomStaging }
+			disabled={ incompatiblePlugin || userCantManageTheSite || isDisabledForWpcomStaging }
 		/>
 	);
 }

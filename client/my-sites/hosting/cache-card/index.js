@@ -26,7 +26,7 @@ const CacheCard = ( {
 			<div>
 				<p>
 					{ translate(
-						'Be careful, clearing the cache may make your site unresponsive while it is being rebuilt. {{a}}Learn more about clearing your site’s cache{{/a}}.',
+						'Be careful, clearing the cache may make your site unresponsive while it is being rebuilt. {{a}}Learn more{{/a}}.',
 						{
 							components: {
 								a: <InlineSupportLink supportContext="hosting-clear-cache" showIcon={ false } />,

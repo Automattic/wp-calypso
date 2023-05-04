@@ -26,6 +26,7 @@ const noop = () => {};
 
 export function generateSteps( {
 	addPlanToCart = noop,
+	addWithThemePlanToCart = noop,
 	addAddOnsToCart = noop,
 	createAccount = noop,
 	createSite = noop,
@@ -239,6 +240,15 @@ export function generateSteps( {
 			stepName: 'plans',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug' ],
+			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
+			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
+			fulfilledStepCallback: isPlanFulfilled,
+		},
+
+		'plans-theme-preselected': {
+			stepName: 'plans-theme-preselected',
+			apiRequestFunction: addWithThemePlanToCart,
+			dependencies: [ 'siteSlug', 'theme' ],
 			optionalDependencies: [ 'emailItem', 'themeSlugWithRepo' ],
 			providesDependencies: [ 'cartItem', 'themeSlugWithRepo' ],
 			fulfilledStepCallback: isPlanFulfilled,

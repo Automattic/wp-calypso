@@ -25,6 +25,7 @@ declare global {
 				onLoaded?: () => void;
 				onClose?: () => void;
 				translateFn?: ( value: string, options?: any ) => string;
+				localizeUrlFn?: ( fullUrl: string ) => string;
 				locale?: string;
 				showDialog?: boolean;
 				setShowCancelButton?: ( show: boolean ) => void;
@@ -65,6 +66,7 @@ export async function showDSP(
 	onClose: () => void,
 	source: string,
 	translateFn: ( value: string, options?: any ) => string,
+	localizeUrlFn: ( fullUrl: string ) => string,
 	domNodeOrId?: HTMLElement | string | null,
 	setShowCancelButton?: ( show: boolean ) => void,
 	setShowTopBar?: ( show: boolean ) => void,
@@ -88,6 +90,7 @@ export async function showDSP(
 				onLoaded: () => resolve( true ),
 				onClose: onClose,
 				translateFn: translateFn,
+				localizeUrlFn: localizeUrlFn,
 				locale,
 				urn: `urn:wpcom:post:${ siteId }:${ postId || 0 }`,
 				setShowCancelButton: setShowCancelButton,

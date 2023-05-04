@@ -151,7 +151,8 @@ const UniversalNavbarHeader = ( {
 															urlValue={ localizeUrl(
 																'//wordpress.com/themes',
 																locale,
-																isLoggedIn
+																isLoggedIn,
+																true
 															) }
 															type="dropdown"
 														/>
@@ -161,7 +162,8 @@ const UniversalNavbarHeader = ( {
 															urlValue={ localizeUrl(
 																'//wordpress.com/plugins',
 																locale,
-																isLoggedIn
+																isLoggedIn,
+																true
 															) }
 															type="dropdown"
 														/>
@@ -258,7 +260,7 @@ const UniversalNavbarHeader = ( {
 											className="x-nav-item x-nav-item__wide"
 											titleValue={ __( 'Log In', __i18n_text_domain__ ) }
 											content={ __( 'Log In', __i18n_text_domain__ ) }
-											urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn ) }
+											urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true ) }
 											type="nav"
 										/>
 									) }
@@ -334,7 +336,7 @@ const UniversalNavbarHeader = ( {
 										<ClickableItem
 											titleValue={ __( 'Log In', __i18n_text_domain__ ) }
 											content={ __( 'Log In', __i18n_text_domain__ ) }
-											urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn ) }
+											urlValue={ localizeUrl( '//wordpress.com/log-in', locale, isLoggedIn, true ) }
 											type="menu"
 										/>
 									</ul>
@@ -412,13 +414,23 @@ const UniversalNavbarHeader = ( {
 											<ClickableItem
 												titleValue={ __( 'WordPress Themes', __i18n_text_domain__ ) }
 												content={ __( 'WordPress Themes', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl( '//wordpress.com/themes', locale, isLoggedIn ) }
+												urlValue={ localizeUrl(
+													'//wordpress.com/themes',
+													locale,
+													isLoggedIn,
+													true
+												) }
 												type="menu"
 											/>
 											<ClickableItem
 												titleValue={ __( 'WordPress Plugins', __i18n_text_domain__ ) }
 												content={ __( 'WordPress Plugins', __i18n_text_domain__ ) }
-												urlValue={ localizeUrl( '//wordpress.com/plugins', locale, isLoggedIn ) }
+												urlValue={ localizeUrl(
+													'//wordpress.com/plugins',
+													locale,
+													isLoggedIn,
+													true
+												) }
 												type="menu"
 											/>
 											<ClickableItem

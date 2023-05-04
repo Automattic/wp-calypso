@@ -24,6 +24,9 @@ import {
 	mockGetVatInfoEndpoint,
 	mockSetVatInfoEndpoint,
 	countryList,
+	mockGetPaymentMethodsEndpoint,
+	mockLogStashEndpoint,
+	mockGetSupportedCountriesEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -48,7 +51,6 @@ describe( 'Checkout contact step extra tax fields', () => {
 	const mainCartKey: CartKey = 'foo.com' as CartKey;
 	const initialCart = getBasicCart();
 	const defaultPropsForMockCheckout = {
-		mainCartKey,
 		initialCart,
 	};
 
@@ -59,7 +61,6 @@ describe( 'Checkout contact step extra tax fields', () => {
 	getDomainsBySiteId.mockImplementation( () => [] );
 	isMarketplaceProduct.mockImplementation( () => false );
 	isJetpackSite.mockImplementation( () => false );
-	useCartKey.mockImplementation( () => mainCartKey );
 	mockMatchMediaOnWindow();
 
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
@@ -69,11 +70,11 @@ describe( 'Checkout contact step extra tax fields', () => {
 
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
+		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
-		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/transactions/supported-countries' )
-			.reply( 200, countryList );
+		mockGetPaymentMethodsEndpoint( [] );
+		mockLogStashEndpoint();
+		mockGetSupportedCountriesEndpoint( countryList );
 		mockGetVatInfoEndpoint( {} );
 	} );
 

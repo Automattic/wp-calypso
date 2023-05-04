@@ -25,7 +25,7 @@ interface LaunchpadTasks {
 
 export const fetchLaunchpadChecklist = (
 	siteSlug: string | null,
-	siteIntent: string
+	siteIntent: string | null
 ): Promise< LaunchpadTasks > => {
 	const slug = encodeURIComponent( siteSlug as string );
 
@@ -41,13 +41,15 @@ export const fetchLaunchpadChecklist = (
 		  } as APIFetchOptions );
 };
 
-export const useLaunchpadChecklist = ( siteSlug: string | null, siteIntent: string ) => {
+export const useLaunchpadChecklist = (
+	siteSlug: string | null,
+	siteIntent: string | null = null
+) => {
 	const key = [ 'launchpad-checklist', siteSlug ];
 	const queryResult = useQuery( key, () => fetchLaunchpadChecklist( siteSlug, siteIntent ), {
 		retry: 3,
-		initialData: {
-			checklist: [],
-		},
+		placeholderData: { checklist: [] },
+		enabled: !! siteSlug && !! siteIntent,
 	} );
 
 	// Typescript is returning the type "T | undefined" for useQuery,
