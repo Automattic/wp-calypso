@@ -95,5 +95,14 @@ export const is2023PricingGridActivePage = (
 		return isPricingGridEnabled;
 	}
 
+	if ( currentRoutePath.startsWith( '/setup/start-writing' ) ) {
+		return isPricingGridEnabled;
+	}
+
+	// Is this the stepper Plan step on the newsletter flow?
+	if ( currentRoutePath.startsWith( '/setup/newsletter/plans' ) ) {
+		return isPricingGridEnabled;
+	}
+
 	return false;
 };

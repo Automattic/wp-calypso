@@ -16,6 +16,7 @@ import {
 	isLinkInBioFlow,
 	isNewsletterFlow,
 	isStartWritingFlow,
+	NEWSLETTER_FLOW,
 } from '@automattic/onboarding';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -40,22 +41,28 @@ interface Props {
 	flowName: string | null;
 	onSubmit: () => void;
 	plansLoaded: boolean;
+	is2023PricingGridVisible: boolean;
 }
 
 function getPlanTypes( flowName: string | null ) {
 	switch ( flowName ) {
 		case START_WRITING_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+		case NEWSLETTER_FLOW:
+			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 		default:
 			return undefined;
 	}
 }
 
 const PlansWrapper: React.FC< Props > = ( props ) => {
-	const { hideFreePlan, domainCartItem } = useSelect( ( select ) => {
+	const { hideFreePlan, domainCartItem, hidePlansFeatureComparison } = useSelect( ( select ) => {
 		return {
 			hideFreePlan: ( select( ONBOARD_STORE ) as OnboardSelect ).getHideFreePlan(),
 			domainCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			hidePlansFeatureComparison: (
+				select( ONBOARD_STORE ) as OnboardSelect
+			 ).getHidePlansFeatureComparison(),
 		};
 	}, [] );
 
@@ -149,7 +156,8 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
-					is2023PricingGridVisible={ isStartWritingFlow( props?.flowName ) ? true : false }
+					is2023PricingGridVisible={ props.is2023PricingGridVisible }
+					hidePlansFeatureComparison={ hidePlansFeatureComparison }
 				/>
 			</div>
 		);
@@ -184,12 +192,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( isNewsletterFlow( flowName ) ) {
-			return hideFreePlan
-				? __( 'Unlock a powerful bundle of features for your Newsletter.' )
-				: translate(
-						`Unlock a powerful bundle of features for your Newsletter. Or {{link}}start with a free plan{{/link}}.`,
-						{ components: { link: freePlanButton } }
-				  );
+			return;
 		}
 
 		if ( isLinkInBioFlow( flowName ) ) {

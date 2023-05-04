@@ -42,6 +42,16 @@ export default function SiteRow( {
 	const { isLoggedIn } = SubscriptionManager.useIsLoggedIn();
 	const translate = useTranslate();
 
+	const notifyMeOfNewPosts = useMemo(
+		() => delivery_methods?.notification?.send_posts,
+		[ delivery_methods?.notification?.send_posts ]
+	);
+
+	const emailMeNewPosts = useMemo(
+		() => delivery_methods?.email?.send_posts,
+		[ delivery_methods?.email?.send_posts ]
+	);
+
 	const deliveryFrequencyValue = useMemo(
 		() => delivery_methods?.email?.post_delivery_frequency as SiteSubscriptionDeliveryFrequency,
 		[ delivery_methods?.email?.post_delivery_frequency ]
@@ -59,17 +69,14 @@ export default function SiteRow( {
 	);
 	const deliveryFrequencyLabel = useDeliveryFrequencyLabel( deliveryFrequencyValue );
 
-	const notifyMeOfNewPosts = useMemo(
-		() => delivery_methods?.notification?.send_posts,
-		[ delivery_methods?.notification?.send_posts ]
-	);
-
+	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
+		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
+	const { mutate: updateEmailMeNewPosts, isLoading: updatingEmailMeNewPosts } =
+		SubscriptionManager.useSiteEmailMeNewPostsMutation();
 	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
 		SubscriptionManager.useSiteDeliveryFrequencyMutation();
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
-	const { mutate: updateNotifyMeOfNewPosts, isLoading: updatingNotifyMeOfNewPosts } =
-		SubscriptionManager.useSiteNotifyMeOfNewPostsMutation();
 
 	return (
 		<li className="row" role="row">
@@ -109,6 +116,11 @@ export default function SiteRow( {
 						updateNotifyMeOfNewPosts( { blog_id: blog_ID, send_posts } )
 					}
 					updatingNotifyMeOfNewPosts={ updatingNotifyMeOfNewPosts }
+					emailMeNewPosts={ emailMeNewPosts }
+					updatingEmailMeNewPosts={ updatingEmailMeNewPosts }
+					onEmailMeNewPostsChange={ ( send_posts ) =>
+						updateEmailMeNewPosts( { blog_id: blog_ID, send_posts } )
+					}
 					deliveryFrequency={ deliveryFrequencyValue }
 					onDeliveryFrequencyChange={ ( delivery_frequency ) =>
 						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
