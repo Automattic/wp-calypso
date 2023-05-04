@@ -1,9 +1,12 @@
 import { Button, ConfettiAnimation } from '@automattic/components';
 import { StepContainer } from '@automattic/onboarding';
+import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
+import { OnboardSelect } from 'calypso/../packages/data-stores/src';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import StartWritingDoneSitePreview from './site-preview';
 import type { Step } from '../../types';
@@ -14,6 +17,11 @@ const StartWritingDone: Step = () => {
 	const translate = useTranslate();
 	const siteSlug = useSiteSlugParam();
 	const site = useSite();
+
+	const selectedDomain = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
+		[]
+	);
 
 	if ( ! site ) {
 		return null;
@@ -40,7 +48,9 @@ const StartWritingDone: Step = () => {
 					<div className="start-writing-done__top-content">
 						<div className="start-writing-done__top-content-main">
 							<div className="start-writing-done__top-content-title">{ site?.name }</div>
-							<div className="start-writing-done__top-content-description">{ siteSlug }</div>
+							<div className="start-writing-done__top-content-description">
+								{ selectedDomain?.domain_name }
+							</div>
 						</div>
 						<div className="start-writing-done__top-content-cta">
 							<Button

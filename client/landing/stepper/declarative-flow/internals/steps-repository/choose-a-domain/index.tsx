@@ -17,7 +17,7 @@ import type { OnboardSelect, DomainSuggestion } from '@automattic/data-stores';
 import './style.scss';
 
 const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
-	const { setHideFreePlan, setDomainCartItem } = useDispatch( ONBOARD_STORE );
+	const { setHideFreePlan, setDomainCartItem, setDomain } = useDispatch( ONBOARD_STORE );
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const isVideoPressFlow = 'videopress' === flow;
@@ -30,7 +30,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		} ),
 		[]
 	);
-	const { setDomain } = useDispatch( ONBOARD_STORE );
+
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -53,6 +53,8 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const submitWithDomain = async ( suggestion: DomainSuggestion | undefined ) => {
+		setDomain( suggestion );
+
 		if ( suggestion?.is_free ) {
 			setHideFreePlan( false );
 			setDomainCartItem( undefined );
