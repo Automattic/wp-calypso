@@ -2116,7 +2116,7 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 		translate(
 			'Enhance your website with the starter Jetpack tools for security, growth, and performance.'
 		),
-	getPlanCardFeatures: () => [ FEATURE_JETPACK_PRODUCT_BACKUP, FEATURE_ANTISPAM_V2, FEATURE_WAF ],
+	getPlanCardFeatures: () => [ FEATURE_JETPACK_PRODUCT_BACKUP, FEATURE_ANTISPAM_V2 ],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T0_YEARLY,
 		FEATURE_JETPACK_BACKUP_T0_MONTHLY,
