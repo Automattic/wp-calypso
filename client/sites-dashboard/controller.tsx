@@ -74,6 +74,7 @@ export function sitesDashboard( context: PageJSContext, next: () => void ) {
 						: undefined,
 					search: context.query.search,
 					status: context.query.status,
+					newSiteSlug: context.query[ 'new-site' ] || undefined,
 				} }
 			/>
 		</>
