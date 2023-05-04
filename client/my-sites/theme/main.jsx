@@ -323,15 +323,21 @@ class ThemeSheet extends Component {
 	}
 
 	previewAction = ( event, type ) => {
+		const { demoUrl, isExternallyManagedTheme } = this.props;
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
-		event.preventDefault();
 
+		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', {
 			theme: this.props.themeId,
 			type,
 		} );
+
+		if ( isExternallyManagedTheme && demoUrl ) {
+			window.open( demoUrl, '_blank', 'noreferrer,noopener' );
+			return;
+		}
 
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions(
