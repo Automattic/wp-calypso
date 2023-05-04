@@ -1,5 +1,6 @@
 import { PlanSlug, getPlan } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
+import { DomainSuggestions } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -8,9 +9,8 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import usePlanPrices from '../plans/hooks/use-plan-prices';
-import { LoadingPlaceHolder } from './components/loading-placeholder';
-import { getQueryKey, useGetWordPressSubdomain } from './hooks/use-get-wordpress-subdomain';
+import usePlanPrices from '../../plans/hooks/use-plan-prices';
+import { LoadingPlaceHolder } from './loading-placeholder';
 import type { DomainSuggestion } from '@automattic/data-stores';
 
 const DialogContainer = styled.div`
@@ -121,13 +121,13 @@ const StyledButton = styled( Button )`
 
 export function FreePlanPaidDomainDialog( {
 	domainName,
-	planSlug,
+	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
 }: {
 	domainName: string;
-	planSlug: PlanSlug;
+	suggestedPlanSlug: PlanSlug;
 	onClose: () => void;
 	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
 	onPlanSelected: () => void;
@@ -135,14 +135,14 @@ export function FreePlanPaidDomainDialog( {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
 	const [ isBusy, setIsBusy ] = useState( false );
-	const planPrices = usePlanPrices( { planSlug, returnMonthly: true } );
+	const planPrices = usePlanPrices( { planSlug: suggestedPlanSlug, returnMonthly: true } );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const {
-		data: wordPressSubdomainSuggestion,
+		data: wordPressSubdomainSuggestions,
 		isInitialLoading,
 		isError,
-	} = useGetWordPressSubdomain( domainName );
-	const planTitle = getPlan( planSlug )?.getTitle();
+	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
+	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
@@ -152,9 +152,9 @@ export function FreePlanPaidDomainDialog( {
 	function handleFreeDomainClick() {
 		setIsBusy( true );
 		// Since this domain will not be available after it is selected, invalidate the cache.
-		queryClient.invalidateQueries( getQueryKey( domainName ) );
-		if ( wordPressSubdomainSuggestion ) {
-			onFreePlanSelected( wordPressSubdomainSuggestion );
+		queryClient.invalidateQueries( DomainSuggestions.getDomainSuggestionsQueryKey( domainName ) );
+		if ( wordPressSubdomainSuggestions && wordPressSubdomainSuggestions.length ) {
+			onFreePlanSelected( wordPressSubdomainSuggestions[ 0 ] );
 		}
 	}
 
@@ -207,10 +207,10 @@ export function FreePlanPaidDomainDialog( {
 					<Row>
 						<DomainName>
 							{ isInitialLoading && <LoadingPlaceHolder /> }
-							{ ! isError && <div>{ wordPressSubdomainSuggestion?.domain_name }</div> }
+							{ ! isError && <div>{ wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }</div> }
 						</DomainName>
 						<StyledButton
-							disabled={ isInitialLoading || ! wordPressSubdomainSuggestion }
+							disabled={ isInitialLoading || ! wordPressSubdomainSuggestions?.[ 0 ]?.domain_name }
 							busy={ isBusy }
 							onClick={ handleFreeDomainClick }
 						>

@@ -7,3 +7,4 @@ export { default as usePendingSiteDeleteMutation } from './use-pending-site-dele
 export { default as usePendingPostConfirmMutation } from './use-pending-post-confirm-mutation';
 export { default as usePendingPostDeleteMutation } from './use-pending-post-delete-mutation';
 export { default as useSiteNotifyMeOfNewPostsMutation } from './use-site-notify-me-of-new-posts-mutation';
+export { default as useSiteEmailMeNewPostsMutation } from './use-site-email-me-new-posts-mutation';
