@@ -109,7 +109,7 @@ type PlanFeatures2023GridProps = {
 	isReskinned: boolean;
 	onUpgradeClick: ( cartItem: MinimalRequestCartProduct | null ) => void;
 	// either you specify the plans prop or isPlaceholder prop
-	plans: Array< string >;
+	plans: PlanSlug[];
 	visiblePlans: Array< string >;
 	flowName: string;
 	domainName: string;
@@ -872,9 +872,7 @@ export class PlanFeatures2023Grid extends Component<
 const withIsLargeCurrency = ( Component: LocalizedComponent< typeof PlanFeatures2023Grid > ) => {
 	return function ( props: PlanFeatures2023GridType ) {
 		const isLargeCurrency = useIsLargeCurrency( {
-			planSlugs: ( props.planProperties || [] ).map(
-				( properties ) => properties.planName as PlanSlug
-			),
+			planSlugs: props.plans,
 			siteId: props.siteId,
 		} );
 		return <Component { ...props } isLargeCurrency={ isLargeCurrency } />;

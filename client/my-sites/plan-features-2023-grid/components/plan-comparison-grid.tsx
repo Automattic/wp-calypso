@@ -462,7 +462,7 @@ const PlanComparisonGridHeader: React.FC< PlanComparisonGridHeaderProps > = ( {
 
 	const isLargeCurrency = useIsLargeCurrency( {
 		planSlugs: displayedPlansProperties.map( ( properties ) => properties.planName as PlanSlug ),
-		siteId: siteId,
+		siteId,
 	} );
 
 	return (
