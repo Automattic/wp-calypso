@@ -23,6 +23,7 @@ import {
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_TRIENNIALLY,
+	getPlanPath,
 	GROUP_WPCOM,
 	PLAN_PERSONAL,
 	TITAN_MAIL_MONTHLY_SLUG,
@@ -36,6 +37,7 @@ import warn from '@wordpress/warning';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
+import page from 'page';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
@@ -113,14 +115,20 @@ export class PlansFeaturesMain extends Component {
 		} ) );
 	};
 
-	onUpgradeClick = ( plan ) => {
-		const { domainName, onUpgradeClick, flowName } = this.props;
-		// The `plan` var is null if the free plan is selected
-		if ( plan == null && 'onboarding' === flowName && domainName ) {
+	onUpgradeClick = ( cartItemForPlan ) => {
+		const { domainName, onUpgradeClick, siteSlug, flowName } = this.props;
+		// The `cartItemForPlan` var is null if the free plan is selected
+		if ( cartItemForPlan == null && 'onboarding' === flowName && domainName ) {
 			this.toggleIsFreePlanPaidDomainDialogOpen();
 			return;
 		}
-		onUpgradeClick( plan );
+		if ( onUpgradeClick ) {
+			onUpgradeClick( cartItemForPlan );
+			return;
+		}
+		const planPath = getPlanPath( cartItemForPlan?.product_slug ) || '';
+		const checkoutUrlWithArgs = `/checkout/${ siteSlug }/${ planPath }`;
+		page( checkoutUrlWithArgs );
 	};
 
 	renderFreePlanPaidDomainModal = () => {

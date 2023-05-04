@@ -12,7 +12,6 @@ import {
 	isMonthly,
 	TERM_MONTHLY,
 	isBusinessPlan,
-	getPlanPath,
 	PLAN_ENTERPRISE_GRID_WPCOM,
 	isPremiumPlan,
 	isWooExpressMediumPlan,
@@ -32,7 +31,6 @@ import {
 	TranslateResult,
 	useTranslate,
 } from 'i18n-calypso';
-import page from 'page';
 import { Component, createRef } from 'react';
 import { connect } from 'react-redux';
 import BloombergLogo from 'calypso/assets/images/onboarding/bloomberg-logo.svg';
@@ -594,7 +592,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	handleUpgradeClick = ( singlePlanProperties: PlanProperties ) => {
-		const { onUpgradeClick: ownPropsOnUpgradeClick, selectedSiteSlug } = this.props;
+		const { onUpgradeClick: ownPropsOnUpgradeClick } = this.props;
 		const { cartItemForPlan, planName } = singlePlanProperties;
 
 		if ( ownPropsOnUpgradeClick && cartItemForPlan ) {
@@ -606,10 +604,6 @@ export class PlanFeatures2023Grid extends Component<
 			ownPropsOnUpgradeClick( null );
 			return;
 		}
-
-		const planPath = getPlanPath( planName ) || '';
-		const checkoutUrlWithArgs = `/checkout/${ selectedSiteSlug }/${ planPath }`;
-		page( checkoutUrlWithArgs );
 	};
 
 	renderTopButtons( planPropertiesObj: PlanProperties[], options?: PlanRowOptions ) {
