@@ -159,6 +159,16 @@
 	}
 }
 
+.edit-gravatar.is-edit-image-on-gravatar {
+	.file-picker {
+		pointer-events: none;
+	}
+
+	> div {
+		cursor: pointer;
+	}
+}
+
 .edit-gravatar .drop-zone {
 	border-radius: 50%;
 	width: 150px;

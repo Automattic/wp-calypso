@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import ImageEditor from 'calypso/blocks/image-editor';
+import QueryConnectedApplications from 'calypso/components/data/query-connected-applications';
 import DropZone from 'calypso/components/drop-zone';
 import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
 import ExternalLink from 'calypso/components/external-link';
@@ -22,6 +23,7 @@ import { resetAllImageEditorState } from 'calypso/state/editor/image-editor/acti
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import { receiveGravatarImageFailed, uploadGravatar } from 'calypso/state/gravatar-status/actions';
 import { isCurrentUserUploadingGravatar } from 'calypso/state/gravatar-status/selectors';
+import getConnectedApplications from 'calypso/state/selectors/get-connected-applications';
 import getUserSetting from 'calypso/state/selectors/get-user-setting';
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { ALLOWED_FILE_EXTENSIONS } from './constants';
@@ -44,6 +46,8 @@ export class EditGravatar extends Component {
 		user: PropTypes.object,
 		recordClickButtonEvent: PropTypes.func,
 		recordReceiveImageEvent: PropTypes.func,
+		connectedApps: PropTypes.array,
+		editImageOnGravatar: PropTypes.bool,
 	};
 
 	onReceiveFile = ( files ) => {
@@ -136,16 +140,16 @@ export class EditGravatar extends Component {
 		}
 	}
 
-	handleUnverifiedUserClick = () => {
+	handleUserClick = ( isEditImageOnGravatar, gravatarManagementLink ) => {
 		this.props.recordClickButtonEvent( { isVerified: this.props.user.email_verified } );
 
-		if ( this.props.user.email_verified ) {
-			return;
+		if ( ! this.props.user.email_verified ) {
+			this.setState( {
+				showEmailVerificationNotice: true,
+			} );
+		} else if ( isEditImageOnGravatar ) {
+			window.open( gravatarManagementLink, '_blank' );
 		}
-
-		this.setState( {
-			showEmailVerificationNotice: true,
-		} );
 	};
 
 	closeVerifyEmailDialog = () => {
@@ -167,7 +171,7 @@ export class EditGravatar extends Component {
 		);
 	};
 
-	renderGravatarProfileHidden = ( { gravatarLink, translate } ) => {
+	renderGravatarProfileHidden = ( { gravatarProfileLink, translate } ) => {
 		return (
 			<div className="edit-gravatar">
 				<div className="edit-gravatar__image-container">
@@ -195,7 +199,7 @@ export class EditGravatar extends Component {
 								components: {
 									ExternalLink: (
 										<ExternalLink
-											href={ gravatarLink }
+											href={ gravatarProfileLink }
 											target="_blank"
 											rel="noopener noreferrer"
 											icon={ true }
@@ -212,36 +216,55 @@ export class EditGravatar extends Component {
 	};
 
 	render() {
-		const { isGravatarProfileHidden, isUploading, translate, user, additionalUploadHtml } =
-			this.props;
-		const gravatarLink = `https://gravatar.com/${ user.username || '' }`;
+		const {
+			isGravatarProfileHidden,
+			isUploading,
+			translate,
+			user,
+			additionalUploadHtml,
+			connectedApps,
+			editImageOnGravatar,
+		} = this.props;
+		const gravatarProfileLink = `https://gravatar.com/${ user.username || '' }`;
+		const gravatarManagementLink = 'https://gravatar.com/emails';
 		// use imgSize = 400 for caching
 		// it's the popular value for large Gravatars in Calypso
 		const GRAVATAR_IMG_SIZE = 400;
+		const hasConnectedToGravatar = connectedApps.find( ( { title } ) => title === 'Gravatar' );
+		const isEditImageOnGravatar = editImageOnGravatar && hasConnectedToGravatar;
 
 		if ( this.props.isFetchingUserSettings ) {
 			return this.renderEditGravatarIsLoading();
 		}
 
 		if ( isGravatarProfileHidden ) {
-			return this.renderGravatarProfileHidden( { gravatarLink, translate } );
+			return this.renderGravatarProfileHidden( { gravatarProfileLink, translate } );
 		}
 
-		const icon = user.email_verified ? 'cloud-upload' : 'notice';
-		const buttonText = user.email_verified
+		let icon = user.email_verified ? 'cloud-upload' : 'notice';
+		let buttonText = user.email_verified
 			? translate( 'Click to change photo' )
 			: translate( 'Verify your email' );
+
+		if ( user.email_verified && isEditImageOnGravatar ) {
+			icon = 'external';
+			buttonText = translate( 'Claim your Gravatar' );
+		}
+
 		/* eslint-disable jsx-a11y/click-events-have-key-events */
 		/* eslint-disable jsx-a11y/no-static-element-interactions */
 		return (
 			<div
-				className={ classnames(
-					'edit-gravatar',
-					{ 'is-unverified': ! user.email_verified },
-					{ 'is-uploading': isUploading }
-				) }
+				className={ classnames( 'edit-gravatar', {
+					'is-unverified': ! user.email_verified,
+					'is-uploading': isUploading,
+					'is-edit-image-on-gravatar': isEditImageOnGravatar,
+				} ) }
 			>
-				<div onClick={ this.handleUnverifiedUserClick }>
+				<QueryConnectedApplications />
+				<div
+					onClick={ () => this.handleUserClick( isEditImageOnGravatar, gravatarManagementLink ) }
+				>
 					<FilePicker accept="image/*" onPick={ this.onReceiveFile }>
 						<div
 							data-tip-target="edit-gravatar"
@@ -249,7 +272,7 @@ export class EditGravatar extends Component {
 								'is-uploading': isUploading,
 							} ) }
 						>
-							{ user.email_verified && (
+							{ user.email_verified && ! isEditImageOnGravatar && (
 								<DropZone
 									textLabel={ translate( 'Drop to upload profile photo' ) }
 									onFilesDrop={ this.onReceiveFile }
@@ -285,7 +308,7 @@ export class EditGravatar extends Component {
 								components: {
 									ExternalLink: (
 										<ExternalLink
-											href={ gravatarLink }
+											href={ gravatarProfileLink }
 											target="_blank"
 											rel="noopener noreferrer"
 											icon={ true }
@@ -326,6 +349,7 @@ export default connect(
 		isFetchingUserSettings: isFetchingUserSettings( state ),
 		isGravatarProfileHidden: getUserSetting( state, 'gravatar_profile_hidden' ),
 		isUploading: isCurrentUserUploadingGravatar( state ),
+		connectedApps: getConnectedApplications( state ) || [],
 	} ),
 	{
 		resetAllImageEditorState,

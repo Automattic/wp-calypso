@@ -66,7 +66,7 @@ class Profile extends Component {
 
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="profile__settings">
-					<EditGravatar />
+					<EditGravatar editImageOnGravatar />
 
 					<form onSubmit={ this.props.submitForm } onChange={ this.props.markChanged }>
 						<FormFieldset>
