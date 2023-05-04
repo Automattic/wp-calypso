@@ -46,7 +46,7 @@ const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, enabled
 	} );
 
 	return {
-		isLoading: isInitialLoading,
+		isInitialLoading,
 		deltas: getDeltaActivitiesByType( data ?? [] ),
 	};
 };
@@ -142,7 +142,9 @@ export const useDailyBackupStatus = ( siteId, selectedDate ) => {
 
 	return {
 		isLoading:
-			lastBackupBeforeDate.isLoading || lastAttemptOnDate.isLoading || backupDeltas.isLoading,
+			lastBackupBeforeDate.isLoading ||
+			lastAttemptOnDate.isLoading ||
+			backupDeltas.isInitialLoading,
 		lastBackupBeforeDate: lastBackupBeforeDate.backupAttempt,
 		lastBackupAttemptOnDate: lastAttemptOnDate.backupAttempt,
 		deltas: backupDeltas.deltas,
