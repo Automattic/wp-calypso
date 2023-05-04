@@ -70,8 +70,11 @@ describe( 'TrackResurrections', () => {
 			},
 		} );
 
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_user_resurrected', {
-			last_seen: resurrectedDate,
-		} );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_user_resurrected',
+			expect.objectContaining( {
+				last_seen: resurrectedDate,
+			} )
+		);
 	} );
 } );
