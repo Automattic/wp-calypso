@@ -31,7 +31,7 @@ import {
 	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { isNewsletterOrLinkInBioFlow } from '@automattic/onboarding';
+import { isLinkInBioFlow } from '@automattic/onboarding';
 import { hasTranslation } from '@wordpress/i18n';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
@@ -497,7 +497,7 @@ export class PlansFeaturesMain extends Component {
 
 		// TODO
 		// Remove this once we migrate them to the new pricing grid
-		if ( isNewsletterOrLinkInBioFlow( flowName ) ) {
+		if ( isLinkInBioFlow( flowName ) ) {
 			plans = plans.filter(
 				( planSlug ) => ! isBusinessPlan( planSlug ) && ! isEcommercePlan( planSlug )
 			);

@@ -41,6 +41,7 @@ export interface WPComPlan extends Plan {
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
 	getPlanTagline?: () => string;
+	getNewsletterTagLine?: () => string;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
@@ -255,6 +256,7 @@ export type Plan = BillingTerm & {
 	 * a feature for 20GB of storage space would be inferior to it.
 	 */
 	getInferiorFeatures?: () => Feature[];
+	getNewsletterSignupFeatures?: () => Feature[];
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };
