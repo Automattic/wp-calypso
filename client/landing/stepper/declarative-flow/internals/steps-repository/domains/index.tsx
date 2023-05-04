@@ -245,7 +245,9 @@ const DomainsStep: Step = function DomainsStep( { navigation, flow } ) {
 		}
 
 		if ( flow === DOMAIN_UPSELL_FLOW ) {
-			return exitFlow?.( `/setup/${ flowToReturnTo }/launchpad?siteSlug=${ siteSlug }` );
+			return submit?.( {
+				exitFlowTo: `/setup/${ flowToReturnTo }/launchpad?siteSlug=${ siteSlug }`,
+			} );
 		}
 		return exitFlow?.( '/sites' );
 	};

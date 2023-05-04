@@ -43,13 +43,13 @@ const domainUpsell: Flow = {
 		const returnUrl = `/setup/${ flowName ?? 'free' }/launchpad?siteSlug=${ siteSlug }`;
 		const encodedReturnUrl = encodeURIComponent( returnUrl );
 
-		const exitFlow = ( location = '/sites' ) => {
-			window.location.assign( location );
-		};
-
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			switch ( currentStep ) {
 				case 'domains':
+					if ( providedDependencies?.exitFlowTo ) {
+						const redirectionURL = providedDependencies.exitFlowTo?.toString();
+						return window.location.assign( redirectionURL );
+					}
 					if ( providedDependencies?.deferDomainSelection ) {
 						try {
 							await updateLaunchpadSettings( siteSlug, {
@@ -86,7 +86,7 @@ const domainUpsell: Flow = {
 			}
 		}
 
-		return { submit, exitFlow };
+		return { submit };
 	},
 };
 
