@@ -315,7 +315,7 @@ const PatternAssembler = ( {
 		selectedCategory?: string | null
 	) => {
 		if ( selectedPattern ) {
-			// Inject the selected pattern category or the first category
+			// Inject the selected pattern category (except for 'all') or the first category
 			// because it's used in tracks and as pattern name in the list
 			const [ firstCategory ] = Object.keys( selectedPattern.categories );
 			selectedPattern.category = categories.find(
@@ -330,6 +330,10 @@ const PatternAssembler = ( {
 			} );
 
 			if ( 'section' === type ) {
+				if ( 'all' === selectedCategory ) {
+					// The category All is used for tracks events only
+					selectedPattern.category = categories.find( ( { name } ) => name === firstCategory );
+				}
 				if ( sectionPosition !== null ) {
 					replaceSection( selectedPattern );
 				} else {
