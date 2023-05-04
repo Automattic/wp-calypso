@@ -7,6 +7,7 @@ export interface StagingSite {
 	id: number;
 	name: string;
 	url: string;
+	user_has_permission: boolean;
 }
 
 export const useStagingSite = ( siteId: number, options: UseQueryOptions ) => {

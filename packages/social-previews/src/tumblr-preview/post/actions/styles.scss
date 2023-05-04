@@ -1,0 +1,47 @@
+@import "../../variables";
+
+.tumblr-preview__post-actions {
+	margin-top: 0.25rem;
+	padding: 0 $tumblr-preview-card-inline-padding;
+
+	color: $tumblr-preview-action-text-color;
+
+	font-size: 1rem; // 16px
+	font-weight: 700;
+	line-height: 1.5;
+}
+
+.tumblr-preview__post-manage-actions,
+.tumblr-preview__post-social-actions {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	min-height: 3.5rem;
+
+	ul {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+
+		margin: 0;
+		padding: 0;
+
+		list-style-type: none;
+
+		> li {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+}
+
+.tumblr-preview__post-social-actions {
+	border-top: $tumblr-preview-border;
+}
+
+.tumblr-preview__post-actions-blaze {
+	display: flex;
+	align-items: center;
+}

@@ -50,7 +50,6 @@ describe( 'Checkout contact step VAT form', () => {
 	const mainCartKey: CartKey = 'foo.com' as CartKey;
 	const initialCart = getBasicCart();
 	const defaultPropsForMockCheckout = {
-		mainCartKey,
 		initialCart,
 	};
 
@@ -61,7 +60,6 @@ describe( 'Checkout contact step VAT form', () => {
 	getDomainsBySiteId.mockImplementation( () => [] );
 	isMarketplaceProduct.mockImplementation( () => false );
 	isJetpackSite.mockImplementation( () => false );
-	useCartKey.mockImplementation( () => mainCartKey );
 	mockMatchMediaOnWindow();
 
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
@@ -71,6 +69,7 @@ describe( 'Checkout contact step VAT form', () => {
 
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
+		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
 		mockGetPaymentMethodsEndpoint( [] );
 		mockLogStashEndpoint();

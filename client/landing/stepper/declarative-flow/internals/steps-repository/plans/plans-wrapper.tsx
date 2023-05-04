@@ -1,8 +1,22 @@
 // import { subscribeIsDesktop } from '@automattic/viewport';
-import { getPlan, PLAN_FREE, is2023PricingGridActivePage } from '@automattic/calypso-products';
+import {
+	getPlan,
+	PLAN_FREE,
+	is2023PricingGridActivePage,
+	TYPE_FREE,
+	TYPE_PERSONAL,
+	TYPE_PREMIUM,
+	TYPE_BUSINESS,
+} from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Button } from '@automattic/components';
-import { DOMAIN_UPSELL_FLOW, NEWSLETTER_FLOW } from '@automattic/onboarding';
+import {
+	DOMAIN_UPSELL_FLOW,
+	START_WRITING_FLOW,
+	isLinkInBioFlow,
+	isNewsletterFlow,
+	isStartWritingFlow,
+} from '@automattic/onboarding';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -26,6 +40,16 @@ interface Props {
 	flowName: string | null;
 	onSubmit: () => void;
 	plansLoaded: boolean;
+	is2023PricingGridVisible: boolean;
+}
+
+function getPlanTypes( flowName: string | null ) {
+	switch ( flowName ) {
+		case START_WRITING_FLOW:
+			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
+		default:
+			return undefined;
+	}
 }
 
 const PlansWrapper: React.FC< Props > = ( props ) => {
@@ -46,7 +70,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const isReskinned = true;
 	const customerType = 'personal';
 	const isInVerticalScrollingPlansExperiment = true;
-	const planTypes = undefined;
+	const planTypes = getPlanTypes( props?.flowName );
 	const headerText = __( 'Choose a plan' );
 	const isInSignup = props?.flowName === DOMAIN_UPSELL_FLOW ? false : true;
 
@@ -126,6 +150,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					isInVerticalScrollingPlansExperiment={ isInVerticalScrollingPlansExperiment }
 					shouldShowPlansFeatureComparison={ isDesktop } // Show feature comparison layout in signup flow and desktop resolutions
 					isReskinned={ isReskinned }
+					is2023PricingGridVisible={ props.is2023PricingGridVisible }
 				/>
 			</div>
 		);
@@ -137,7 +162,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return __( 'Choose your flavor of WordPress' );
 		}
 
-		if ( flowName === NEWSLETTER_FLOW ) {
+		if ( isNewsletterFlow( flowName ) || isStartWritingFlow( flowName ) ) {
 			return __( `There's a plan for you.` );
 		}
 
@@ -155,7 +180,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			<Button onClick={ handleFreePlanButtonClick } className="is-borderless" />
 		);
 
-		if ( flowName === NEWSLETTER_FLOW ) {
+		if ( isStartWritingFlow( flowName ) ) {
+			return;
+		}
+
+		if ( isNewsletterFlow( flowName ) ) {
 			return hideFreePlan
 				? __( 'Unlock a powerful bundle of features for your Newsletter.' )
 				: translate(
@@ -164,16 +193,27 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 				  );
 		}
 
+		if ( isLinkInBioFlow( flowName ) ) {
+			return hideFreePlan
+				? __( 'Unlock a powerful bundle of features for your Link in Bio.' )
+				: translate(
+						`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
+						{ components: { link: freePlanButton } }
+				  );
+		}
+
 		if ( flowName === DOMAIN_UPSELL_FLOW ) {
 			return;
 		}
 
-		return hideFreePlan
-			? __( 'Unlock a powerful bundle of features for your Link in Bio.' )
-			: translate(
-					`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
-					{ components: { link: freePlanButton } }
-			  );
+		if ( ! hideFreePlan ) {
+			return translate(
+				`Unlock a powerful bundle of features. Or {{link}}start with a free plan{{/link}}.`,
+				{ components: { link: freePlanButton } }
+			);
+		}
+
+		return;
 	};
 	const is2023PricingGridVisible = is2023PricingGridActivePage( window );
 

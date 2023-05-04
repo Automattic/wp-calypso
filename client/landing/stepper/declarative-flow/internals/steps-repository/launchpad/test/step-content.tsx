@@ -229,6 +229,7 @@ describe( 'StepContent', () => {
 			renderStepContent( false, START_WRITING_FLOW );
 
 			expect( screen.getByText( 'Write your first post' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Set up your blog' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Choose a domain' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Choose a plan' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'Launch your blog' ) ).toBeInTheDocument();
@@ -236,6 +237,9 @@ describe( 'StepContent', () => {
 
 		it( 'renders correct status for each task', () => {
 			renderStepContent( false, START_WRITING_FLOW );
+
+			const setupBlogListItem = screen.getByText( 'Set up your blog' ).closest( 'li' );
+			expect( setupBlogListItem ).toHaveClass( 'pending' );
 
 			const choosePlanListItem = screen.getByText( 'Choose a plan' ).closest( 'li' );
 			expect( choosePlanListItem ).toHaveClass( 'pending' );

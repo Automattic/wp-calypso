@@ -316,3 +316,22 @@ $videopress-background: #010101;
 		background-color: #646970;
 	}
 }
+
+#choose-a-domain-writer-header {
+	p {
+		text-align: center;
+	}
+
+	button {
+		margin-left: 5px;
+	}
+}
+
+.start-writing .register-domain-step {
+	box-shadow: none;
+	background: none;
+}
+
+.start-writing .register-domain-step__next-page-button {
+	padding-bottom: 8px !important;
+}
