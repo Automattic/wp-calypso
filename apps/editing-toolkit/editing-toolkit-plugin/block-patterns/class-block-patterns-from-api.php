@@ -48,12 +48,24 @@ class Block_Patterns_From_API {
 
 		$this->utils = empty( $utils ) ? new \A8C\FSE\Block_Patterns_Utils() : $utils;
 
+		$blog_category = array(
+			'blog' => __( 'Blog', 'full-site-editing' ),
+		);
+
 		// Add categories to this array using the core pattern name as the key for core patterns we wish to "recategorize".
 		$this->core_to_wpcom_categories_dictionary = array(
-			'core/quote' => array(
+			'core/quote'                                => array(
 				'quotes' => __( 'Quotes', 'full-site-editing' ),
 				'text'   => __( 'Text', 'full-site-editing' ),
 			),
+			// Move core query patterns from 'Posts' to 'Blog'.
+			'core/query-standard-posts'                 => $blog_category,
+			'core/query-medium-posts'                   => $blog_category,
+			'core/query-small-posts'                    => $blog_category,
+			'core/query-grid-posts'                     => $blog_category,
+			'core/query-large-title-posts'              => $blog_category,
+			'core/query-offset-posts'                   => $blog_category,
+			'core/social-links-shared-background-color' => $blog_category,
 		);
 	}
 
