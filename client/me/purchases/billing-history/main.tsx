@@ -43,7 +43,7 @@ function BillingHistory() {
 
 	const genericTaxName =
 		/* translators: This is a generic name for taxes to use when we do not know the user's country. */
-		i18n.hasTranslation( 'tax (VAT/GST/CT)' );
+		translate( 'tax (VAT/GST/CT)' );
 	const fallbackTaxName =
 		getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax (VAT/GST/CT)' )
 			? genericTaxName
