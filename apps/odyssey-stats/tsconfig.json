@@ -1,11 +1,12 @@
 {
-	"extends": "@automattic/calypso-build/tsconfig",
+	"extends": "@automattic/calypso-typescript-config/js-package.json",
 	"exclude": [ "node_modules" ],
 	"paths": {
 		"calypso/*": [ "../../client/*" ]
 	},
 	"compilerOptions": {
-		// Some type helpers from our webpack/
-		"typeRoots": [ "./typings", "./node_modules/@types", "../../node_modules/@types" ]
+		"rootDir": ".",
+		"allowJs": true,
+		"checkJs": false
 	}
 }
