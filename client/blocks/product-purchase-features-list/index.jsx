@@ -20,6 +20,8 @@ import {
 	getPlans,
 	TYPE_PRO,
 	WPCOM_FEATURES_WORDADS,
+	TYPE_WOOEXPRESS_MEDIUM,
+	TYPE_WOOEXPRESS_SMALL,
 } from '@automattic/calypso-products';
 import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
@@ -388,6 +390,8 @@ export class ProductPurchaseFeaturesList extends Component {
 		const lookup = {
 			[ GROUP_WPCOM ]: {
 				[ TYPE_ECOMMERCE ]: () => this.getEcommerceFeatures(),
+				[ TYPE_WOOEXPRESS_MEDIUM ]: () => this.getEcommerceFeatures(),
+				[ TYPE_WOOEXPRESS_SMALL ]: () => this.getEcommerceFeatures(),
 				[ TYPE_BUSINESS ]: () => this.getBusinessFeatures(),
 				[ TYPE_PREMIUM ]: () => this.getPremiumFeatures(),
 				[ TYPE_PERSONAL ]: () => this.getPersonalFeatures(),
