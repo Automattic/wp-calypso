@@ -161,9 +161,8 @@ const streamApis = {
 		query: ( extras ) =>
 			getQueryString( {
 				...extras,
-				seed,
-				alg_prefix: 'read:recommendations:sites',
-				posts_per_site: 1,
+				algorithm: 'read:recommendations:sites/es/2',
+				number: 10,
 			} ),
 	},
 	tag: {
