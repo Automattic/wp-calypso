@@ -13,7 +13,7 @@ import type uPlot from 'uplot';
 import './style.scss';
 
 interface SubscribersData {
-	period: string;
+	period: PeriodType;
 	subscribers: number;
 	subscribers_change: number;
 }
@@ -30,6 +30,8 @@ interface QuantityDefaultType {
 	month: number;
 	year: number;
 }
+
+type PeriodType = 'day' | 'week' | 'month' | 'year';
 
 // New Subscriber Stats
 function transformData( data: SubscribersData[] ): uPlot.AlignedData {
@@ -50,7 +52,7 @@ export default function SubscribersChartSection( {
 }: {
 	siteId: number | null;
 	slug?: string | null;
-	period?: string;
+	period?: PeriodType;
 } ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
 	const quantityDefault: QuantityDefaultType = {
