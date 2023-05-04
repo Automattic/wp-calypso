@@ -117,7 +117,6 @@ import {
 	FEATURE_SIMPLE_PAYMENTS,
 	FEATURE_SITE_BACKUPS_AND_RESTORE,
 	FEATURE_SITE_STAGING_SITES,
-	FEATURE_SITE_STAGING_SITES_ECOMMERCE,
 	FEATURE_SITE_STATS,
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_SPAM_BLOCK_V2,
@@ -1887,11 +1886,6 @@ export const FEATURES_LIST: FeatureList = {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
 		getTitle: () => i18n.translate( 'Free staging sites' ),
 		getDescription: () => i18n.translate( 'Test product and design changes in staging sites.' ),
-	},
-	[ FEATURE_SITE_STAGING_SITES_ECOMMERCE ]: {
-		getSlug: () => FEATURE_SITE_STAGING_SITES_ECOMMERCE,
-		getTitle: () => i18n.translate( 'Test product and design changes in staging sites' ),
-		getDescription: () => i18n.translate( 'Test any change in staging sites.' ),
 	},
 	[ FEATURE_WP_UPDATES ]: {
 		getSlug: () => FEATURE_WP_UPDATES,
