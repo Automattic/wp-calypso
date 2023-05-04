@@ -1,5 +1,6 @@
 import { AKISMET_PRODUCTS_LIST, isAkismetProduct } from '@automattic/calypso-products';
 import { Button, Card } from '@automattic/components';
+import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf, __ } from '@wordpress/i18n';
 import classNames from 'classnames';
@@ -13,6 +14,7 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import Main from 'calypso/components/main';
 import useAkismetKeyQuery from 'calypso/data/akismet/use-akismet-key-query';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { isAkismetTemporarySitePurchase } from 'calypso/me/purchases/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isProductsListFetching, getProductName } from 'calypso/state/products-list/selectors';
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
@@ -49,7 +51,7 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 	const { overlapMessage, thanksHeadline, thanksMessage } = useMemo( () => {
 		const akismetProducts = AKISMET_PRODUCTS_LIST as ReadonlyArray< string >;
 		const akismetPurchases = userActivePurchases.filter(
-			( purchase ) => isAkismetProduct( purchase ) && 'siteless.akismet.com' === purchase.domain
+			( purchase ) => isAkismetProduct( purchase ) && isAkismetTemporarySitePurchase( purchase )
 		);
 		const purchaseHasAPILimit =
 			akismetProducts.indexOf( productSlug ) >= akismetProducts.indexOf( 'ak_plus_monthly_1' );
@@ -102,7 +104,7 @@ const AkismetCheckoutThankYou: FunctionComponent< AkismetCheckoutThankYouProps >
 						'You’ve supercharged your spam protection by increasing your API limit! Make sure to cancel any existing plans that you don’t need on your <a>account page</a>.',
 						'akismet-thank-you'
 					),
-					{ a: <a href="https://akismet.com/account/" /> }
+					{ a: <ExternalLink href="https://akismet.com/account/" /> }
 				);
 			}
 		}
