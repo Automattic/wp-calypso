@@ -3,7 +3,11 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { getPluginPurchased } from 'calypso/lib/plugins/utils';
-import { AUTOMOMANAGED_PLUGINS, PREINSTALLED_PLUGINS } from 'calypso/my-sites/plugins/constants';
+import {
+	AUTOMOMANAGED_PLUGINS,
+	BUNDLED_PLUGINS_BY_PLAN,
+	PREINSTALLED_PLUGINS,
+} from 'calypso/my-sites/plugins/constants';
 import {
 	getSitePurchases,
 	hasLoadedSitePurchasesFromServer,
@@ -14,6 +18,9 @@ const PluginDetailsNotices = ( { selectedSite, plugin, translate } ) => {
 	const isFullPluginAndPurchasesFetched = hasLoadedSitePurchases && plugin?.fetched;
 	const isWpcomPreinstalled =
 		PREINSTALLED_PLUGINS.includes( plugin.slug ) || AUTOMOMANAGED_PLUGINS.includes( plugin.slug );
+	const isBundledPlugin = BUNDLED_PLUGINS_BY_PLAN[ selectedSite?.plan?.product_slug ]?.includes(
+		plugin.slug
+	);
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 	const marketplacePluginHasSubscription = !! (
 		plugin.isMarketplaceProduct && getPluginPurchased( plugin, purchases )?.active
@@ -23,7 +30,8 @@ const PluginDetailsNotices = ( { selectedSite, plugin, translate } ) => {
 		! isFullPluginAndPurchasesFetched ||
 		! plugin?.active ||
 		marketplacePluginHasSubscription ||
-		isWpcomPreinstalled
+		isWpcomPreinstalled ||
+		isBundledPlugin
 	) {
 		return null;
 	}
