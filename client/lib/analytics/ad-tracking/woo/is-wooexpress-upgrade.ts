@@ -14,7 +14,7 @@ import { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
  * @param product ResponseCartProduct
  * @returns { boolean }
  */
-const isValidWooExpressUpsell = ( product: ResponseCartProduct ): boolean => {
+export const isValidWooExpressUpsell = ( product: ResponseCartProduct ): boolean => {
 	return isEcommerce( product ) || isWooExpressPlan( camelOrSnakeSlug( product ) );
 };
 
