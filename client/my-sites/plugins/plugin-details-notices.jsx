@@ -19,7 +19,7 @@ const PluginDetailsNotices = ( { selectedSite, plugin, translate } ) => {
 	const isWpcomPreinstalled =
 		PREINSTALLED_PLUGINS.includes( plugin.slug ) || AUTOMOMANAGED_PLUGINS.includes( plugin.slug );
 	const isBundledPlugin = BUNDLED_PLUGINS_BY_PLAN[ selectedSite?.plan?.product_slug ]?.includes(
-		plugin.slug
+		plugin.software_slug
 	);
 	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSite?.ID ) );
 	const marketplacePluginHasSubscription = !! (
