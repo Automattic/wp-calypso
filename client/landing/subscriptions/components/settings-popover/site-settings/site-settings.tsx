@@ -2,6 +2,7 @@ import { SubscriptionManager } from '@automattic/data-stores';
 import Separator from 'calypso/components/popover-menu/separator';
 import SettingsPopover from '../settings-popover';
 import DeliveryFrequencyInput from './delivery-frequency-input';
+import EmailMeNewCommentsToggle from './email-me-new-comments-toggle';
 import EmailMeNewPostsToggle from './email-me-new-posts-toggle';
 import NotifyMeOfNewPostsToggle from './notify-me-of-new-posts-toggle';
 import UnsubscribeSiteButton from './unsubscribe-site-button';
@@ -58,6 +59,9 @@ const SiteSettings = ( {
 					onChange={ onDeliveryFrequencyChange }
 					isUpdating={ updatingFrequency }
 				/>
+			) }
+			{ isLoggedIn && (
+				<EmailMeNewCommentsToggle value={ true } onChange={ () => null } isUpdating={ false } />
 			) }
 			<Separator />
 			<UnsubscribeSiteButton unsubscribing={ unsubscribing } onUnsubscribe={ onUnsubscribe } />
