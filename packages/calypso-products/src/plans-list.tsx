@@ -237,6 +237,8 @@ import {
 	JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
 	JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
 	JETPACK_TAG_FOR_MEMBERSHIP_SITES,
+	JETPACK_TAG_FOR_SMALL_SITES,
+	JETPACK_TAG_FOR_BLOGS,
 	FEATURE_CANCELLATION_ACCEPT_PAYMENTS,
 	FEATURE_CANCELLATION_AD_FREE_SITE,
 	FEATURE_CANCELLATION_BACKUPS_AND_RESTORE,
@@ -2112,6 +2114,10 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 					'{{ul}}{{ul/}} represents an unordered list, and {{li}}{/li} represents a list item',
 			}
 		),
+	getRecommendedFor: () => [
+		{ tag: JETPACK_TAG_FOR_SMALL_SITES, label: translate( 'Small sites' ) },
+		{ tag: JETPACK_TAG_FOR_BLOGS, label: translate( 'Blogs' ) },
+	],
 	getLightboxDescription: () =>
 		translate(
 			'Enhance your website with the starter Jetpack tools for security, growth, and performance.'

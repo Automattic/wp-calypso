@@ -490,6 +490,7 @@ export const JETPACK_TAG_FOR_VIDEOGRAPHERS = 'jetpack_tag_for_videographers';
 export const JETPACK_TAG_FOR_EDUCATORS = 'jetpack_tag_for_educators';
 export const JETPACK_TAG_FOR_BLOGGERS = 'jetpack_tag_for_bloggers';
 export const JETPACK_TAG_FOR_ALL_SITES = 'jetpack_tag_for_all_sites';
+export const JETPACK_TAG_FOR_SMALL_SITES = 'jetpack_tag_for_small_sites';
 
 // Maps products to 'Recommended for' tags
 export const JETPACK_PRODUCT_RECCOMENDATION_MAP: Record< string, string[] > = {
