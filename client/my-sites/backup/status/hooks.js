@@ -40,13 +40,13 @@ const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, enabled
 
 	const isValidRequest = filter.before && filter.after;
 
-	const { data, isLoading } = useRewindableActivityLogQuery( siteId, filter, {
+	const { data, isInitialLoading } = useRewindableActivityLogQuery( siteId, filter, {
 		enabled: isValidRequest && enabled,
 		refetchOnWindowFocus: false,
 	} );
 
 	return {
-		isLoading,
+		isLoading: isInitialLoading,
 		deltas: getDeltaActivitiesByType( data ?? [] ),
 	};
 };
