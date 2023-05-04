@@ -1,4 +1,9 @@
-import { PLAN_ECOMMERCE_TRIAL_MONTHLY, isEcommerce } from '@automattic/calypso-products';
+import {
+	PLAN_ECOMMERCE_TRIAL_MONTHLY,
+	camelOrSnakeSlug,
+	isEcommerce,
+	isWooExpressPlan,
+} from '@automattic/calypso-products';
 import { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
@@ -10,7 +15,7 @@ import { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
  * @returns { boolean }
  */
 const isValidWooExpressUpsell = ( product: ResponseCartProduct ): boolean => {
-	return isEcommerce( product );
+	return isEcommerce( product ) || isWooExpressPlan( camelOrSnakeSlug( product ) );
 };
 
 /**
