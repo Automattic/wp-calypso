@@ -2,7 +2,7 @@ import NavigationArrows from '../navigation-arrows';
 
 type SubscribersNavigationProps = {
 	date: Date;
-	period: keyof typeof periodFunctions;
+	period: keyof typeof addQuantityToDate;
 	quantity: number;
 	onDateChange: ( newDate: Date ) => void;
 };
@@ -18,22 +18,20 @@ const isPast = ( date: Date ): boolean => {
 	return incomingNextDate.getTime() < today.getTime();
 };
 
-const periodFunctions = {
-	day: ( date: Date, quantity: number ) => date.setDate( date.getDate() + quantity ),
-	week: ( date: Date, quantity: number ) => date.setDate( date.getDate() + quantity * 7 ),
-	month: ( date: Date, quantity: number ) => date.setMonth( date.getMonth() + quantity ),
-	year: ( date: Date, quantity: number ) => date.setFullYear( date.getFullYear() + quantity ),
+const addQuantityToDate = {
+	day: ( date: Date, daysToBeAdded: number ) => date.setDate( date.getDate() + daysToBeAdded ),
+	week: ( date: Date, daysToBeAdded: number ) => date.setDate( date.getDate() + daysToBeAdded * 7 ),
+	month: ( date: Date, daysToBeAdded: number ) => date.setMonth( date.getMonth() + daysToBeAdded ),
+	year: ( date: Date, daysToBeAdded: number ) =>
+		date.setFullYear( date.getFullYear() + daysToBeAdded ),
 };
 
 const calculateDate = (
-	add: boolean,
 	date: Date,
-	period: keyof typeof periodFunctions,
+	period: keyof typeof addQuantityToDate,
 	quantity: number
 ): Date => {
-	const operation = add ? 1 : -1;
-	periodFunctions[ period ]?.( date, quantity * operation );
-
+	addQuantityToDate[ period ]?.( date, quantity );
 	return date;
 };
 
@@ -46,7 +44,7 @@ const SubscribersNavigation = ( {
 	const handleArrowNext = () => {
 		let newDate = date;
 
-		newDate = calculateDate( true, date, period, quantity );
+		newDate = calculateDate( date, period, quantity );
 
 		// if the calculated date is future date due to swapping periods - cut off with today
 		onDateChange( isPast( newDate ) ? newDate : new Date() );
@@ -55,7 +53,7 @@ const SubscribersNavigation = ( {
 	const handleArrowPrevious = () => {
 		let newDate = date;
 
-		newDate = calculateDate( false, date, period, quantity );
+		newDate = calculateDate( date, period, -quantity );
 
 		onDateChange( newDate );
 	};
