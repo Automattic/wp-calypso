@@ -18,6 +18,10 @@
 	min-height: 175px;
 	position: relative;
 	width: 100%;
+
+	@media only screen and (min-width: 821px) and (max-width: 960px) {
+		min-height: 135px;
+	}
 }
 
 .featured-item-card--body {
