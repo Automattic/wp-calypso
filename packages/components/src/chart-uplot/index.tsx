@@ -197,7 +197,7 @@ export default function UplotChart( {
 						space: 40,
 						size: 50,
 						grid: {
-							stroke: '#DCDCDE',
+							stroke: 'rgba(220, 220, 222, 0.5)', // #DCDCDE with 0.5 opacity
 							width: 1,
 						},
 						ticks: {
