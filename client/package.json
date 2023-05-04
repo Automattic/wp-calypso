@@ -70,7 +70,7 @@
 		"@emotion/jest": "^11.5.0",
 		"@emotion/react": "^11.4.1",
 		"@emotion/styled": "^11.3.0",
-		"@github/webauthn-json": "^0.4.1",
+		"@github/webauthn-json": "^2.1.1",
 		"@sentry/react": "^7.33.0",
 		"@stripe/react-stripe-js": "^1.4.1",
 		"@stripe/stripe-js": "1.17.1",
