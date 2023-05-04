@@ -55,7 +55,6 @@ export const FEATURE_GOOGLE_MY_BUSINESS = 'google-my-business';
 export const FEATURE_SFTP = 'sftp';
 export const FEATURE_SSH = 'ssh';
 export const FEATURE_SITE_STAGING_SITES = 'staging-sites';
-export const FEATURE_SITE_STAGING_SITES_ECOMMERCE = 'staging-sites-ecommerce';
 export const FEATURE_LIVE_CHAT_SUPPORT = 'live-chat-support';
 export const FEATURE_NO_ADS = 'no-adverts';
 export const FEATURE_VIDEO_UPLOADS = 'video-upload';
