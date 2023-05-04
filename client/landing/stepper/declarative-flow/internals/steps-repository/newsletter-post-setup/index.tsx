@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Onboard } from '@automattic/data-stores';
 import {
 	StepContainer,
 	base64ImageToBlob,
@@ -46,7 +47,7 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 	const [ selectedFile, setSelectedFile ] = useState< File | undefined >();
 	const [ isLoading, setIsLoading ] = useState( false );
 	const [ isSubmitError, setIsSubmitError ] = useState( false );
-	const { saveSiteSettings } = useDispatch( SITE_STORE );
+	const { setGoalsOnSite, saveSiteSettings } = useDispatch( SITE_STORE );
 
 	const {
 		siteTitle,
@@ -95,11 +96,10 @@ const NewsletterPostSetup: Step = ( { navigation } ) => {
 						new File( [ base64ImageToBlob( base64Image ) ], 'site-logo.png' )
 					);
 				}
-				if ( paidSubscribers ) {
-					// Set goals
-				} else {
-					// Reset goals
-				}
+
+				const goals = paidSubscribers ? [ Onboard.SiteGoal.PaidSubscribers ] : [];
+				setGoalsOnSite( site.ID, goals );
+
 				setIsLoading( false );
 				submit?.( { color: accentColor.hex.replace( '#', '' ) } );
 			}
