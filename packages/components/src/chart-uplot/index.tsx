@@ -61,7 +61,8 @@ export default function UplotChart( {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
-	const defaultFillColor = 'rgba(48, 87, 220, 0.075)';
+	const defaultFillColor = 'rgba(48, 87, 220, 0.4)';
+	const { spline } = uPlot.paths;
 
 	const can = document.createElement( 'canvas' );
 	const ctx = can.getContext( '2d' );
@@ -256,12 +257,15 @@ export default function UplotChart( {
 
 									return scaleGradient( u, s.scale || 'y', 1, [
 										[ min + range * 0.0, 'rgba(48, 87, 220, 0)' ],
-										[ min + range * 1.0, 'rgba(48, 87, 220, 0.7)' ],
+										[ min + range * 1.0, 'rgba(48, 87, 220, 0.4)' ],
 									] );
 							  },
 						label: translate( 'Subscribers' ),
 						stroke: '#3057DC',
 						width: 2,
+						paths: ( u, seriesIdx, idx0, idx1 ) => {
+							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
+						},
 						points: {
 							show: false,
 						},
