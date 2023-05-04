@@ -160,7 +160,7 @@ export class EditorPage {
 		// Given these constraints, a decent stand-in is to wait for the following factors.
 		await Promise.all( [
 			// Wait for the URL to include either a post/page (iframed) or post-new.php (un-iframed).
-			this.page.waitForURL( /(post-new\.php|post|page)/, { timeout: timeout } ),
+			this.page.waitForURL( /\/(post-new\.php|post|page)/, { timeout: timeout } ),
 			// Wait for response from the post-new.php endpoint (new post/page).
 			// Wait for response from `posts/post_id`, `pages/post_id` for existing post/page
 			// on Simple sites.
