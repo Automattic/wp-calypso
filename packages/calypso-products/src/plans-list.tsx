@@ -2134,7 +2134,6 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 	],
 	getBenefits: () => [
 		translate( 'Protect your revenue stream and content' ),
-		translate( 'Learn about issues before your customers are impacted' ),
 		translate( 'Restore your site in one click from desktop or mobile' ),
 		translate( 'Fix your site without a developer' ),
 		translate( 'Protect Woo order and customer data' ),
