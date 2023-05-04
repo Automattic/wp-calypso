@@ -6,36 +6,49 @@
 
 .launch-bar-global-styles-popover {
 	position: absolute;
-	width: 300px;
+	width: 320px;
 	top: 48px;
 	font-size: 14px;
 	left: 50%;
 	transform: translateX(-50%);
 	background-color: #fff;
-	padding: 24px 16px 16px;
+	padding: 24px;
 	line-height: 20px;
-	color: #24282d;
-	box-shadow: 0 3px 10px rgb(0 0 0 / 20%);
-	font-weight: 400;
+	color: #2c3338;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	border: 1px solid #c3c4c7;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	box-sizing: border-box;
+	align-items: flex-start;
+	gap: 12px;
+
+	&::before {
+		content: "";
+		width: 0;
+		height: 0;
+		border-left: 8px solid transparent;
+		border-right: 8px solid transparent;
+		border-bottom: 8px solid #fff;
+		position: absolute;
+		top: -8px;
+		left: 50%;
+		transform: translateX(-50%);
+	}
 
 	.launch-bar-global-styles-upgrade,
 	.launch-bar-global-styles-preview {
-		font-size: 14px;
-		margin-top: 16px;
-		min-height: 36px;
+		min-height: 28px;
 		box-sizing: border-box;
 		border-radius: 2px;
 		width: 100%;
 		justify-content: center;
 		height: auto;
+		border: 1px solid;
 	}
 
 	.launch-bar-global-styles-upgrade {
-		background: #007cba;
+		background: #0675c4;
+		border-color: #0675c4;
 		color: #fff;
 
 		&:hover {
@@ -44,7 +57,7 @@
 	}
 
 	.launch-bar-global-styles-preview {
-		border: 1px solid #787c82;
+		border-color: #c3c4c7;
 		color: #3c434a;
 
 		&:hover {
@@ -69,15 +82,19 @@
 
 .launch-bar-global-styles-close {
 	position: absolute;
-	top: 0;
-	right: 0;
+	top: 4px;
+	right: 4px;
+	width: 24px;
+	height: 24px;
 	cursor: pointer;
-	padding: 6px 4px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 
 	svg {
-		fill: #24282d;
-		width: 20px;
-		height: 20px;
+		fill: #1e1e1e;
+		width: 18px;
+		height: 18px;
 	}
 }
 
