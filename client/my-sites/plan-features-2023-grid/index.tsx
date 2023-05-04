@@ -293,6 +293,8 @@ export class PlanFeatures2023Grid extends Component<
 			translate,
 			selectedSiteSlug,
 			hidePlansFeatureComparison,
+			selectedPlan,
+			selectedFeature,
 		} = this.props;
 		return (
 			<div className="plans-wrapper">
@@ -338,6 +340,8 @@ export class PlanFeatures2023Grid extends Component<
 							canUserPurchasePlan={ canUserPurchasePlan }
 							selectedSiteSlug={ selectedSiteSlug }
 							onUpgradeClick={ this.handleUpgradeClick }
+							selectedPlan={ selectedPlan }
+							selectedFeature={ selectedFeature }
 						/>
 						<div className="plan-features-2023-grid__toggle-plan-comparison-button-container">
 							<Button onClick={ this.toggleShowPlansComparisonGrid }>
