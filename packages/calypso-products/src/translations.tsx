@@ -52,7 +52,7 @@ import {
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_3TB_YEARLY,
 	PRODUCT_JETPACK_BACKUP_ADDON_STORAGE_5TB_YEARLY,
 } from './constants';
-import type { SelectorProductFeaturesItem } from './types';
+import type { FAQ, SelectorProductFeaturesItem } from './types';
 import type { TranslateResult } from 'i18n-calypso';
 
 // Translatable strings
@@ -734,7 +734,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		}
 	);
 
-	const backupIncludesInfoT1Log = translate( '30-day activity log archive' );
+	const backupIncludesInfoT1Log = translate( '30-day activity log archive*' );
 	const backupIncludesInfoT2Log = translate( '{{strong}}1 year{{/strong}} activity log archive', {
 		components: {
 			strong: <strong />,
@@ -813,7 +813,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Twitter, Facebook, LinkedIn, and Tumblr' ),
+		translate( 'Share to Facebook, LinkedIn, and Tumblr' ),
 		translate( 'Recycle content' ),
 	];
 	const socialAdvancedIncludesInfo = [
@@ -821,7 +821,7 @@ export const getJetpackProductsWhatIsIncluded = (): Record< string, Array< Trans
 		translate( 'Post to multiple channels at once' ),
 		translate( 'Manage all of your channels from a single hub' ),
 		translate( 'Scheduled posts' ),
-		translate( 'Share to Twitter, Facebook, LinkedIn, and Tumblr' ),
+		translate( 'Share to Facebook, LinkedIn, and Tumblr' ),
 		translate( 'Engagement Optimizer' ),
 		translate( 'Recycle content' ),
 		translate( 'Coming soon: Image generator' ),
@@ -952,6 +952,67 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		[ PRODUCT_JETPACK_SOCIAL_BASIC_MONTHLY ]: socialBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED ]: socialAdvancedBenefits,
 		[ PRODUCT_JETPACK_SOCIAL_ADVANCED_MONTHLY ]: socialAdvancedBenefits,
+	};
+};
+
+export const getJetpackProductsFAQs = (
+	getHelpLink: ( context: unknown ) => JSX.Element,
+	getSupportLink: ( context: unknown ) => JSX.Element
+): Record< string, Array< FAQ > > => {
+	const cancellationPolicyFAQ = {
+		id: 'cancellation-policy',
+		question: translate( 'What is your cancellation policy?' ),
+		answer: translate(
+			'If you are dissatisfied for any reason, we offer full refunds within %(annualDays)d days for yearly plans, and within %(monthlyDays)d days for monthly plans. If you have a question about our paid plans, {{helpLink}}please let us know{{/helpLink}}!',
+			{
+				args: { annualDays: 14, monthlyDays: 7 },
+				components: { helpLink: getHelpLink( 'cancellation' ) },
+			}
+		),
+	};
+
+	const backupFAQs: Array< FAQ > = [
+		{
+			id: 'backup-storage-limits',
+			question: translate( '*How do backup storage limits work?' ),
+			answer: translate(
+				'If your backup storage limit is reached, older backups will be deleted and, depending on your site’s size, the backup retention period (archive) might be reduced to %(monthlyDays)d days. This will affect how far back you can see backups in your activity log. Existing backups can still be restored, but new updates won’t be backed up until you upgrade or free up storage.',
+				{
+					args: { monthlyDays: 7 },
+				}
+			),
+		},
+		cancellationPolicyFAQ,
+	];
+
+	const scanFAQs: Array< FAQ > = [
+		{
+			id: 'scan-infected-sites',
+			question: translate( 'Can I use Jetpack Scan to fix a site that is already infected?' ),
+			answer: translate(
+				'Jetpack Protect (Scan) detects and prevents attacks, but is not designed to fully clean up sites infected before it was active. If your site has malware, take immediate action to clean it up and remove the malicious code. {{br/}} To clean up your site, we suggest using a malware removal tool, or if possible restore from a backup taken before the infection. We recommend using Jetpack VaultPress Backup in conjunction with Jetpack Scan to secure your website. {{br/}} {{JetpackScanLearnMoreLink}}Learn more about cleaning your site{{/JetpackScanLearnMoreLink}}.',
+				{
+					components: {
+						br: <br />,
+						JetpackScanLearnMoreLink: getSupportLink( 'how-to-clean-your-hacked-wordpress-site' ),
+					},
+				}
+			),
+		},
+		cancellationPolicyFAQ,
+	];
+
+	return {
+		[ PLAN_JETPACK_SECURITY_T1_MONTHLY ]: backupFAQs,
+		[ PLAN_JETPACK_SECURITY_T1_YEARLY ]: backupFAQs,
+		[ PLAN_JETPACK_SECURITY_T2_MONTHLY ]: backupFAQs,
+		[ PLAN_JETPACK_SECURITY_T2_YEARLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_BACKUP_T2_MONTHLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: backupFAQs,
+		[ PRODUCT_JETPACK_SCAN ]: scanFAQs,
+		[ PRODUCT_JETPACK_SCAN_MONTHLY ]: scanFAQs,
 	};
 };
 

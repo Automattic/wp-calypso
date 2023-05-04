@@ -8,9 +8,9 @@ import debugFactory from 'debug';
 import { useEffect, useRef, useState } from 'react';
 import useCartKey from '../../use-cart-key';
 
-const debug = debugFactory( 'calypso:composite-checkout:use-add-products-from-url' );
+const debug = debugFactory( 'calypso:use-add-products-from-url' );
 
-export type isPendingAddingProductsFromUrl = boolean;
+export type IsPendingAddingProductsFromUrl = boolean;
 
 /**
  * Product requests can be sent to checkout using various methods including URL
@@ -29,6 +29,7 @@ export default function useAddProductsFromUrl( {
 	couponCodeFromUrl,
 	applyCoupon,
 	addProductsToCart,
+	addingRenewals,
 }: {
 	isLoadingCart: boolean;
 	isCartPendingUpdate: boolean;
@@ -37,9 +38,10 @@ export default function useAddProductsFromUrl( {
 	couponCodeFromUrl: string | null | undefined;
 	applyCoupon: ApplyCouponToCart;
 	addProductsToCart: AddProductsToCart;
-} ): isPendingAddingProductsFromUrl {
+	addingRenewals: boolean;
+} ): IsPendingAddingProductsFromUrl {
 	const cartKey = useCartKey();
-	const { updateLocation } = useShoppingCart( cartKey );
+	const { updateLocation, replaceProductsInCart } = useShoppingCart( cartKey );
 	const isMounted = useRef( true );
 	useEffect( () => {
 		isMounted.current = true;
@@ -88,6 +90,14 @@ export default function useAddProductsFromUrl( {
 		}
 		debug( 'adding initial products to cart', productsForCart );
 		const cartPromises = [];
+		if ( addingRenewals && productsForCart.length === 0 ) {
+			// Clear the cart if a renewal was requested but there are no valid
+			// renewals prepared. This is because if a renewal was requested by URL
+			// and was invalid, we don't want them to see what may have been in their
+			// cart previously to avoid the appearance that the URL succeeded.
+			debug( 'clearing the cart due to a renewal request with no products' );
+			cartPromises.push( replaceProductsInCart( [] ) );
+		}
 		if ( productsForCart.length > 0 ) {
 			// When this hook adds products to the cart, we have just loaded checkout
 			// and we haven't yet confirmed the user's tax details. The cart may
@@ -116,6 +126,8 @@ export default function useAddProductsFromUrl( {
 			} );
 		hasRequestedInitialProducts.current = true;
 	}, [
+		replaceProductsInCart,
+		addingRenewals,
 		updateLocation,
 		isLoading,
 		areCartProductsPreparing,

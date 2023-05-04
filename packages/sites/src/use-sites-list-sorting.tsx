@@ -214,7 +214,7 @@ export function sortSitesByStaging< T extends SiteDetailsForSorting >( sites: T[
 		// So instead, we first sort them, and the list becomes:
 		// [3, 2, 1, 4]
 		site.options?.wpcom_staging_blog_ids
-			?.sort( ( a, b ) => {
+			?.sort?.( ( a, b ) => {
 				// If one of the two staging sites is filtered out, we should
 				// maintain the order of the remaining sites by moving it down
 				// in the list

@@ -52,17 +52,25 @@ export function getEnhancedTasks(
 
 	const translatedPlanName = productSlug ? PLANS_LIST[ productSlug ].getTitle() : '';
 
-	const linkInBioLinksEditCompleted = checklistStatuses?.links_edited || false;
+	const linkInBioLinksEditCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.links_edited || false;
 
-	const siteEditCompleted = checklistStatuses?.site_edited || false;
+	const siteEditCompleted = site?.options?.launchpad_checklist_tasks_statuses?.site_edited || false;
 
-	const siteLaunchCompleted = checklistStatuses?.site_launched || false;
+	// Todo: setupBlogCompleted should be updated to use a new checklistStatus instead of site_edited.
+	//  Explorers will update Jetpack definitions to make this possible, meanwhile we are using site_edited.
+	const setupBlogCompleted = checklistStatuses?.site_edited || false;
 
-	const firstPostPublishedCompleted = checklistStatuses?.first_post_published || false;
+	const siteLaunchCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.site_launched || false;
 
-	const planCompleted = checklistStatuses?.plan_selected || ! isStartWritingFlow( flow );
+	const firstPostPublishedCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.first_post_published || false;
 
-	const videoPressUploadCompleted = checklistStatuses?.video_uploaded || false;
+	const planCompleted = checklistStatuses.plan_completed || ! isStartWritingFlow( flow );
+
+	const videoPressUploadCompleted =
+		site?.options?.launchpad_checklist_tasks_statuses?.video_uploaded || false;
 
 	const allowUpdateDesign =
 		flow && ( isFreeFlow( flow ) || isBuildFlow( flow ) || isWriteFlow( flow ) );
@@ -116,6 +124,21 @@ export function getEnhancedTasks(
 								} )
 							);
 						},
+					};
+					break;
+				case 'setup_blog':
+					taskData = {
+						title: translate( 'Set up your blog' ),
+						actionDispatch: () => {
+							recordTaskClickTracksEvent( flow, setupBlogCompleted, task.id );
+							window.location.assign(
+								addQueryArgs( `/setup/${ START_WRITING_FLOW }/setup-blog`, {
+									...{ siteSlug: siteSlug, 'start-writing': true },
+								} )
+							);
+						},
+						completed: setupBlogCompleted,
+						disabled: setupBlogCompleted,
 					};
 					break;
 				case 'setup_newsletter':
@@ -183,6 +206,7 @@ export function getEnhancedTasks(
 								? null
 								: translatedPlanName,
 						completed: ( planCompleted ?? task.completed ) && ! shouldDisplayWarning,
+						disabled: isStartWritingFlow( flow ) && ( planCompleted || ! domainUpsellCompleted ),
 						warning: shouldDisplayWarning,
 					};
 					break;
@@ -316,6 +340,7 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Launch your blog' ),
 						completed: siteLaunchCompleted,
+						disabled: isStartWritingFlow( flow ) && ! planCompleted,
 						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
@@ -388,18 +413,38 @@ export function getEnhancedTasks(
 					taskData = {
 						title: translate( 'Choose a domain' ),
 						completed: domainUpsellCompleted,
+						disabled:
+							isStartWritingFlow( flow ) && ( domainUpsellCompleted || ! setupBlogCompleted ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, domainUpsellCompleted, task.id );
+
+							if ( isStartWritingFlow( flow || null ) ) {
+								window.location.assign(
+									addQueryArgs( `/setup/${ START_WRITING_FLOW }/domains`, {
+										siteSlug,
+										flowToReturnTo: flow,
+										new: site?.name,
+										domainAndPlanPackage: true,
+										[ START_WRITING_FLOW ]: true,
+									} )
+								);
+
+								return;
+							}
+
 							const destinationUrl = domainUpsellCompleted
 								? `/domains/manage/${ siteSlug }`
-								: addQueryArgs( '/setup/domain-upsell/domains', {
+								: addQueryArgs( `/setup/domain-upsell/domains`, {
 										siteSlug,
 										flowToReturnTo: flow,
 										new: site?.name,
 								  } );
 							window.location.assign( destinationUrl );
 						},
-						badgeText: domainUpsellCompleted ? '' : translate( 'Upgrade plan' ),
+						badgeText:
+							domainUpsellCompleted || isStartWritingFlow( flow || null )
+								? ''
+								: translate( 'Upgrade plan' ),
 					};
 					break;
 				case 'verify_email':

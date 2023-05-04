@@ -12,6 +12,7 @@ export { getJetpackProductShortName } from './get-jetpack-product-short-name';
 export { getJetpackProductTagline } from './get-jetpack-product-tagline';
 export { getJetpackProductWhatIsIncluded } from './get-jetpack-product-what-is-included';
 export { getJetpackProductBenefits } from './get-jetpack-product-benefits';
+export { getJetpackProductFAQs } from './get-jetpack-product-faqs';
 export { getJetpackProductRecommendedFor } from './get-jetpack-product-recommended-for';
 export { getProductClass } from './get-product-class';
 export { getProductTermVariants } from './get-product-term-variants';

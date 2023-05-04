@@ -126,6 +126,7 @@
 		"pre-cancellation-modal": false,
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
+		"github-integration-i1": true,
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
@@ -175,10 +176,7 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": true,
-		"yolo/staging-sites-i1": true,
-		"woa-logging": true,
-		"woa-logging-moved": true
+		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "e00e878351",
 	"oauth_client_id": "39911",

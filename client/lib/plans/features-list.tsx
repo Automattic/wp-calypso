@@ -264,6 +264,10 @@ import {
 	FEATURE_LIVE_SHIPPING_RATES,
 	FEATURE_DISCOUNTED_SHIPPING,
 	FEATURE_PRINT_SHIPPING_LABELS,
+	FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+	FEATURE_PAYMENT_TRANSACTION_FEES_8,
+	FEATURE_PAYMENT_TRANSACTION_FEES_4,
+	FEATURE_PAYMENT_TRANSACTION_FEES_2,
 	isPersonalPlan,
 	isPremiumPlan,
 	isEcommercePlan,
@@ -1644,7 +1648,7 @@ export const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_UNLIMITED_SUBSCRIBERS ]: {
 		getSlug: () => FEATURE_UNLIMITED_SUBSCRIBERS,
-		getTitle: () => i18n.translate( 'Unlimited subscribers' ),
+		getTitle: () => i18n.translate( 'Import unlimited subscribers' ),
 	},
 	[ FEATURE_IMPORT_SUBSCRIBERS ]: {
 		getSlug: () => FEATURE_IMPORT_SUBSCRIBERS,
@@ -1698,6 +1702,22 @@ export const FEATURES_LIST: FeatureList = {
 	[ FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION ]: {
 		getSlug: () => FEATURE_LINK_IN_BIO_THEMES_CUSTOMIZATION,
 		getTitle: () => i18n.translate( 'Advanced link in bio themes and customization' ),
+	},
+	[ FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE ]: {
+		getSlug: () => FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+		getTitle: () => i18n.translate( 'Import up to 100 subscribers' ),
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_8 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_8,
+		getTitle: () => i18n.translate( '8% transaction fee for payments + Stripe fees' ),
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_4 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_4,
+		getTitle: () => i18n.translate( '4% transaction fee for payments + Stripe fees' ),
+	},
+	[ FEATURE_PAYMENT_TRANSACTION_FEES_2 ]: {
+		getSlug: () => FEATURE_PAYMENT_TRANSACTION_FEES_2,
+		getTitle: () => i18n.translate( '2% transaction fee for payments + Stripe fees' ),
 	},
 	[ FEATURE_UNLIMITED_TRAFFIC ]: {
 		getSlug: () => FEATURE_UNLIMITED_TRAFFIC,
@@ -2083,16 +2103,14 @@ export const FEATURES_LIST: FeatureList = {
 		getTitle: () => i18n.translate( 'Limited automatic shares in social media' ),
 		getDescription: () =>
 			i18n.translate(
-				'Get 30 social shares per month to promote your posts on Facebook, Twitter, Tumblr, and more.'
+				'Get 30 social shares per month to promote your posts on Facebook, Tumblr, and more.'
 			),
 	},
 	[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: {
 		getSlug: () => FEATURE_SHARES_SOCIAL_MEDIA_JP,
 		getTitle: () => i18n.translate( 'Shares on social media' ),
 		getDescription: () =>
-			i18n.translate(
-				'Automatically share your latest post on Facebook, Twitter, Tumblr, and more.'
-			),
+			i18n.translate( 'Automatically share your latest post on Facebook, Tumblr, and more.' ),
 		getConditionalTitle: ( planSlug ) => {
 			if ( ! planSlug ) {
 				return '';
