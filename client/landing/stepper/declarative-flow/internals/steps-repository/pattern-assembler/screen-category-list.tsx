@@ -74,7 +74,7 @@ const ScreenCategoryList = ( {
 		// Instead, the current window will blur and that iframe will be focused.
 		const handleBlur = () => {
 			const target = document.activeElement;
-			if ( target?.closest( '.pattern-large-preview__frame' ) ) {
+			if ( ! target?.closest( '.pattern-assembler__sidebar' ) ) {
 				handleFocusOutside();
 			}
 		};

@@ -7,7 +7,6 @@ interface Props {
 	referenceElement?: HTMLElement;
 	children?: JSX.Element | null;
 	stickyContent?: JSX.Element | null;
-	onHover: ( element: HTMLElement | null ) => void;
 }
 
 const STICKY_MARGIN = 72;
@@ -64,7 +63,7 @@ const useOverlayRect = ( referenceElement?: HTMLElement ) => {
 };
 
 const PatternOverlay = (
-	{ referenceElement, children, stickyContent, onHover }: Props,
+	{ referenceElement, children, stickyContent }: Props,
 	ref: ForwardedRef< any >
 ) => {
 	const overlayRect = useOverlayRect( referenceElement );
@@ -81,21 +80,12 @@ const PatternOverlay = (
 				: 'none',
 	};
 
-	const handleMouseLeave = () => {
-		onHover( null );
-	};
-
 	if ( ! overlayRect ) {
 		return null;
 	}
 
 	return (
-		<div
-			ref={ ref }
-			className="pattern-overlay"
-			style={ overlayStyle }
-			onMouseLeave={ handleMouseLeave }
-		>
+		<div ref={ ref } className="pattern-overlay" style={ overlayStyle }>
 			{ children }
 			{ stickyContent && (
 				<div className="pattern-overlay__sticky-content" style={ stickyContentStyle }>
