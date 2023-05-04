@@ -91,13 +91,12 @@ class Block_Patterns_From_API {
 			// The category 'All' is created dinamically so all patterns are always added automatically.
 			$category_all = array(
 				'slug'        => 'all',
-				'title'       => 'All',
+				'label'       => 'All',
 				'description' => '',
 			);
 			// Add the category 'All' to $pattern_categories so its orderer and registered with the others.
 			$pattern_categories[ $category_all['slug'] ] = array(
-				'label'       => $category_all['title'],
-				'slug'        => $category_all['title'],
+				'label'       => $category_all['label'],
 				'description' => $category_all['description'],
 			);
 
@@ -108,6 +107,12 @@ class Block_Patterns_From_API {
 					return strnatcasecmp( $a['label'], $b['label'] );
 				}
 			);
+
+			// Move the Featured category to be the first category.
+			if ( isset( $pattern_categories['featured'] ) ) {
+				$featured_category  = $pattern_categories['featured'];
+				$pattern_categories = array( 'featured' => $featured_category ) + $pattern_categories;
+			}
 
 			// Register categories (and re-register existing categories).
 			foreach ( (array) $pattern_categories as $slug => $category_properties ) {
