@@ -1,5 +1,5 @@
 import { getPlanClass, FEATURE_CUSTOM_DOMAIN, isFreePlan } from '@automattic/calypso-products';
-import { useGetWordPressSubdomain } from '@automattic/data-stores/src/domain-suggestions';
+import { DomainSuggestions } from '@automattic/data-stores';
 import styled from '@emotion/styled';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
@@ -26,7 +26,7 @@ const FreePlanCustomDomainFeature: React.FC< { domainName: string } > = ( { doma
 		data: wordPressSubdomainSuggestions,
 		isInitialLoading,
 		isError,
-	} = useGetWordPressSubdomain( domainName );
+	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
 
 	return (
 		<SubdomainSuggestion>

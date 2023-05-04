@@ -1,9 +1,6 @@
 import { PlanSlug, getPlan } from '@automattic/calypso-products';
 import { Button, Dialog } from '@automattic/components';
-import {
-	getDomainSuggestionsQueryKey,
-	useGetWordPressSubdomain,
-} from '@automattic/data-stores/src/domain-suggestions';
+import { DomainSuggestions } from '@automattic/data-stores';
 import { formatCurrency } from '@automattic/format-currency';
 import { Global, css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -144,7 +141,7 @@ export function FreePlanPaidDomainDialog( {
 		data: wordPressSubdomainSuggestions,
 		isInitialLoading,
 		isError,
-	} = useGetWordPressSubdomain( domainName );
+	} = DomainSuggestions.useGetWordPressSubdomain( domainName );
 	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
 
 	function handlePaidPlanClick() {
@@ -155,7 +152,7 @@ export function FreePlanPaidDomainDialog( {
 	function handleFreeDomainClick() {
 		setIsBusy( true );
 		// Since this domain will not be available after it is selected, invalidate the cache.
-		queryClient.invalidateQueries( getDomainSuggestionsQueryKey( domainName ) );
+		queryClient.invalidateQueries( DomainSuggestions.getDomainSuggestionsQueryKey( domainName ) );
 		if ( wordPressSubdomainSuggestions && wordPressSubdomainSuggestions.length ) {
 			onFreePlanSelected( wordPressSubdomainSuggestions[ 0 ] );
 		}
