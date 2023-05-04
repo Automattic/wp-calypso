@@ -31,7 +31,7 @@ interface QuantityDefaultType {
 	year: number;
 }
 
-type PeriodType = 'day' | 'week' | 'month' | 'year';
+export type PeriodType = 'day' | 'week' | 'month' | 'year';
 
 // New Subscriber Stats
 function transformData( data: SubscribersData[] ): uPlot.AlignedData {
