@@ -119,6 +119,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 	const search = window.location.search;
 	const sourceSiteSlug = new URLSearchParams( search ).get( 'from' ) || '';
 	const { data: siteData } = useSiteQuery( sourceSiteSlug, isCopySiteFlow( flow ) );
+	const useThemeHeadstart = ! isStartWritingFlow( flow );
 
 	async function createSite() {
 		if ( isManageSiteFlow ) {
@@ -137,7 +138,7 @@ const SiteCreationStep: Step = function SiteCreationStep( { navigation, flow, da
 			siteVisibility,
 			blogTitle,
 			siteAccentColor,
-			true,
+			useThemeHeadstart,
 			username,
 			domainCartItem,
 			sourceSlug
