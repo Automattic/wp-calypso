@@ -81,6 +81,8 @@ export default function SiteRow( {
 		SubscriptionManager.useSiteEmailMeNewPostsMutation();
 	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
 		SubscriptionManager.useSiteDeliveryFrequencyMutation();
+	const { mutate: updateEmailMeNewComments, isLoading: updatingEmailMeNewComments } =
+		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
 
@@ -133,6 +135,10 @@ export default function SiteRow( {
 					}
 					updatingFrequency={ updatingFrequency }
 					emailMeNewComments={ emailMeNewComments }
+					onEmailMeNewCommentsChange={ ( send_comments ) =>
+						updateEmailMeNewComments( { blog_id: blog_ID, send_comments } )
+					}
+					updatingEmailMeNewComments={ updatingEmailMeNewComments }
 					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID } ) }
 					unsubscribing={ unsubscribing }
 				/>
