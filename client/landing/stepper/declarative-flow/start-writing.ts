@@ -33,6 +33,10 @@ const startWriting: Flow = {
 				slug: 'domains',
 				asyncComponent: () => import( './internals/steps-repository/choose-a-domain' ),
 			},
+			{
+				slug: 'use-my-domain',
+				asyncComponent: () => import( './internals/steps-repository/use-my-domain' ),
+			},
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
 			{
 				slug: 'setup-blog',

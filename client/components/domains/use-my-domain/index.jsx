@@ -40,6 +40,7 @@ function UseMyDomain( props ) {
 		transferDomainUrl,
 		initialMode,
 		onNextStep,
+		hideHeader = false,
 	} = props;
 
 	const { __ } = useI18n();
@@ -377,7 +378,7 @@ function UseMyDomain( props ) {
 
 	return (
 		<>
-			{ renderHeader() }
+			{ ! hideHeader && renderHeader() }
 			{ renderContent() }
 		</>
 	);
@@ -388,6 +389,7 @@ UseMyDomain.propTypes = {
 	initialQuery: PropTypes.string,
 	isSignupStep: PropTypes.bool,
 	showHeader: PropTypes.bool,
+	hideHeader: PropTypes.bool,
 	onConnect: PropTypes.func,
 	onTransfer: PropTypes.func,
 	onNextStep: PropTypes.func,

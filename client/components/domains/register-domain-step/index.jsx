@@ -136,7 +136,6 @@ class RegisterDomainStep extends Component {
 		 */
 		otherManagedSubdomainsCountOverride: PropTypes.number,
 		handleClickUseYourDomain: PropTypes.func,
-		siteSlug: PropTypes.string,
 	};
 
 	static defaultProps = {
@@ -155,7 +154,6 @@ class RegisterDomainStep extends Component {
 		showSkipButton: false,
 		useProvidedProductsList: false,
 		otherManagedSubdomains: null,
-		siteSlug: null,
 	};
 
 	constructor( props ) {
@@ -466,7 +464,11 @@ class RegisterDomainStep extends Component {
 					{ this.renderSideContent() }
 					<QueryContactDetailsCache />
 				</div>
-				{ showAlreadyOwnADomain && <AlreadyOwnADomain onClick={ this.useYourDomainFunction() } /> }
+				{ showAlreadyOwnADomain && (
+					<AlreadyOwnADomain
+						onClick={ this.props.handleClickUseYourDomain ?? this.useYourDomainFunction() }
+					/>
+				) }
 			</>
 		);
 	}
@@ -1518,9 +1520,11 @@ class RegisterDomainStep extends Component {
 			useYourDomainUrl = this.props.useYourDomainUrl;
 		} else {
 			useYourDomainUrl = `${ this.props.basePath }/use-your-domain`;
-			const siteSlug = this.props.selectedSite?.slug ?? this.props.siteSlug;
-			if ( siteSlug ) {
-				useYourDomainUrl = domainUseMyDomain( siteSlug, this.state.lastQuery.trim() );
+			if ( this.props.selectedSite ) {
+				useYourDomainUrl = domainUseMyDomain(
+					this.props.selectedSite.slug,
+					this.state.lastQuery.trim()
+				);
 			}
 		}
 

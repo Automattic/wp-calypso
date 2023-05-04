@@ -1,11 +1,13 @@
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 import { ProductsList } from '@automattic/data-stores';
+import { START_WRITING_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { getQueryArg } from '@wordpress/url';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { StepContainer } from 'calypso/../packages/onboarding/src';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domains/register-domain-step/analytics';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -47,7 +49,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		return strippedHostname ?? String( siteSlug ).split( '.' )[ 0 ];
 	};
 
-<<<<<<< HEAD
 	const onSkip = async () => {
 		if ( isStartWritingFlow ) {
 			setDomain( null );
@@ -56,14 +57,19 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		} else {
 			onAddDomain( null );
 		}
-=======
-	const getSiteSlug = function () {
-		return getQueryArg( window.location.search, 'siteSlug' ) ?? null;
 	};
 
-	const onSkip = () => {
-		onAddDomain( null );
->>>>>>> a1c93dc186 (Blog onboarding: Address "Already own a domain")
+	const onClickUseYourDomain = function () {
+		recordUseYourDomainButtonClick( flow );
+		const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
+		window.location.assign(
+			addQueryArgs( `/setup/${ START_WRITING_FLOW }/use-my-domain`, {
+				siteSlug,
+				flowToReturnTo: flow,
+				domainAndPlanPackage: true,
+				[ START_WRITING_FLOW ]: true,
+			} )
+		);
 	};
 
 	const submitWithDomain = async ( suggestion: DomainSuggestion | undefined ) => {
@@ -97,13 +103,13 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					showAlreadyOwnADomain={ true }
 					isSignupStep={ true }
 					basePath=""
-					siteSlug={ getSiteSlug() }
 					products={ productsList }
 					vendor={ getSuggestionsVendor( {
 						isSignup: true,
 						isDomainOnly: false,
 						flowName: flow || undefined,
 					} ) }
+					handleClickUseYourDomain={ onClickUseYourDomain }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
