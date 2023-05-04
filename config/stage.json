@@ -97,6 +97,7 @@
 		"onboarding/2023-pricing-grid": true,
 		"p2/p2-plus": true,
 		"page/export": true,
+		"pattern-assembler/all-patterns-category": false,
 		"pattern-assembler/color-and-fonts": true,
 		"pattern-assembler/dotcompatterns": true,
 		"pattern-assembler/logged-out-showcase": true,
