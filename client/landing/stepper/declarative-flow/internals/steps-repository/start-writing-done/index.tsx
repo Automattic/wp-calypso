@@ -15,6 +15,10 @@ const StartWritingDone: Step = () => {
 	const siteSlug = useSiteSlugParam();
 	const site = useSite();
 
+	if ( ! site ) {
+		return null;
+	}
+
 	return (
 		<StepContainer
 			stepName="start-writing-done"
