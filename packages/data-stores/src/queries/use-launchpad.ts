@@ -87,7 +87,7 @@ export const updateLaunchpadSettings = (
 				path: requestUrl,
 				apiNamespace: 'wpcom/v2',
 				method: 'PUT',
-				body: { settings },
+				body: settings,
 		  } )
 		: apiFetch( {
 				global: true,
