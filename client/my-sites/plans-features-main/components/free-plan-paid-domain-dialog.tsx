@@ -8,9 +8,12 @@ import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
-import usePlanPrices from '../plans/hooks/use-plan-prices';
-import { LoadingPlaceHolder } from './components/loading-placeholder';
-import { getQueryKey, useGetWordPressSubdomain } from './hooks/use-get-wordpress-subdomain';
+import {
+	getQueryKey,
+	useGetWordPressSubdomain,
+} from '../../plan-features-2023-grid/hooks/use-get-wordpress-subdomain';
+import usePlanPrices from '../../plans/hooks/use-plan-prices';
+import { LoadingPlaceHolder } from './loading-placeholder';
 import type { DomainSuggestion } from '@automattic/data-stores';
 
 const DialogContainer = styled.div`
@@ -121,13 +124,13 @@ const StyledButton = styled( Button )`
 
 export function FreePlanPaidDomainDialog( {
 	domainName,
-	planSlug,
+	suggestedPlanSlug,
 	onFreePlanSelected,
 	onPlanSelected,
 	onClose,
 }: {
 	domainName: string;
-	planSlug: PlanSlug;
+	suggestedPlanSlug: PlanSlug;
 	onClose: () => void;
 	onFreePlanSelected: ( domainSuggestion: DomainSuggestion ) => void;
 	onPlanSelected: () => void;
@@ -135,14 +138,14 @@ export function FreePlanPaidDomainDialog( {
 	const translate = useTranslate();
 	const queryClient = useQueryClient();
 	const [ isBusy, setIsBusy ] = useState( false );
-	const planPrices = usePlanPrices( { planSlug, returnMonthly: true } );
+	const planPrices = usePlanPrices( { planSlug: suggestedPlanSlug, returnMonthly: true } );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const {
 		data: wordPressSubdomainSuggestion,
 		isInitialLoading,
 		isError,
 	} = useGetWordPressSubdomain( domainName );
-	const planTitle = getPlan( planSlug )?.getTitle();
+	const planTitle = getPlan( suggestedPlanSlug )?.getTitle();
 
 	function handlePaidPlanClick() {
 		setIsBusy( true );
