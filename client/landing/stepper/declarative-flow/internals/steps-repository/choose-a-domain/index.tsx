@@ -79,6 +79,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 					includeWordPressDotCom={ true }
 					offerUnavailableOption={ false } // TODO
 					showAlreadyOwnADomain={ true }
+					isSignupStep={ true }
 					basePath=""
 					products={ productsList }
 					vendor={ getSuggestionsVendor( {
