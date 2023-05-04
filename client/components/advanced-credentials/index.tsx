@@ -292,9 +292,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( {
 					disabled={ disableForm }
 					href={ goBackPath }
 					onClick={ () => {
-						dispatch(
-							recordTracksEvent( 'calypso_jetpack_advanced_credentials_go_back', { host } )
-						);
+						dispatch( recordTracksEvent( 'calypso_jetpack_advanced_credentials_go_back' ) );
 					} }
 				>
 					{ translate( 'Go back' ) }
