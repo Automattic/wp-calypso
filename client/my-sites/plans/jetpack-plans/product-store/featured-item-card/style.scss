@@ -31,22 +31,23 @@
 }
 
 .featured-item-card--title {
+	color: var(--gray-100);
 	font-size: $font-title-medium;
 	font-weight: 700;
 	line-height: 1;
-
-	@include break-medium {
-		font-size: $font-title-large;
-	}
 }
 
 .featured-item-card--price {
-	margin-top: 4px;
-	margin-bottom: 8px;
+	margin-top: 0.5rem;
+	margin-bottom: 0.5rem;
+
+	.item-price .display-price:not(.is-placeholder) .plan-price.is-original {
+		color: var(--gray-30);
+	}
 }
 
 .featured-item-card--desc {
-	color: var(--gray-70);
+	color: var(--gray-80);
 	line-height: 1.5;
 
 	p {
