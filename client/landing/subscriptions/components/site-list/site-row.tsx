@@ -41,7 +41,7 @@ export default function SiteRow( {
 	URL: url,
 	date_subscribed,
 	delivery_methods,
-	organization_id,
+	is_wpforteams_site,
 }: SiteSubscription ) {
 	const hostname = useMemo( () => {
 		try {
@@ -81,7 +81,7 @@ export default function SiteRow( {
 					<span className="title-column">
 						<span className="name">
 							{ name }
-							{ !! organization_id && <span className="p2-label">P2</span> }
+							{ !! is_wpforteams_site && <span className="p2-label">P2</span> }
 						</span>
 						<span className="url">{ hostname }</span>
 					</span>
