@@ -2978,7 +2978,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 
 	[ PLAN_JETPACK_STARTER_MONTHLY ]: {
 		...getPlanJetpackStarterDetails(),
-		...getAnnualTimeframe(),
+		...getMonthlyTimeframe(),
 		getStoreSlug: () => PLAN_JETPACK_STARTER_MONTHLY,
 		getPathSlug: () => 'starter-monthly',
 		getProductId: () => 2031,
