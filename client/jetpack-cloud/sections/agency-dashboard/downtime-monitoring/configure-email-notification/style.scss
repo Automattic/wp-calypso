@@ -1,0 +1,42 @@
+.configure-email-address__card {
+	margin: 16px 0 0;
+	height: 60px;
+	display: flex;
+	align-items: center;
+	padding: 16px !important;
+}
+
+.configure-email-address__checkbox-content {
+	display: inline-block;
+}
+
+.configure-email-address__checkbox {
+	.components-checkbox-control__input:checked {
+		background: var(--studio-gray-80);
+		border-color: var(--studio-gray-80);
+	}
+
+	.components-checkbox-control__label {
+		font-weight: 500;
+	}
+
+	.components-base-control__field {
+		margin-bottom: 0;
+		display: flex;
+		align-items: center;
+	}
+}
+
+.configure-email-address__checkbox-heading {
+	font-weight: 500;
+	font-size: 0.875rem;
+	line-height: 18px;
+	color: var(--studio-gray-100);
+}
+
+.configure-email-address__checkbox-sub-heading {
+	font-weight: 400;
+	font-size: 0.75rem;
+	line-height: 18px;
+	color: var(--studio-gray-50);
+}
