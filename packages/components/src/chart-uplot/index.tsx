@@ -49,16 +49,127 @@ interface UplotChartProps {
 	data: uPlot.AlignedData;
 	options?: Partial< uPlot.Options >;
 	legendContainer?: React.RefObject< HTMLDivElement >;
+	solidFill?: boolean;
 }
 
 export default function UplotChart( {
 	data,
 	options: propOptions,
 	legendContainer,
+	solidFill = false,
 }: UplotChartProps ) {
 	const translate = useTranslate();
 	const uplot = useRef< uPlot | null >( null );
 	const uplotContainer = useRef( null );
+	const defaultFillColor = 'rgba(48, 87, 220, 0.4)';
+	const { spline } = uPlot.paths;
+
+	const can = document.createElement( 'canvas' );
+	const ctx = can.getContext( '2d' );
+
+	const scaleGradient = (
+		u: uPlot,
+		scaleKey: string,
+		ori: number,
+		scaleStops: [ number, string ][],
+		discrete = false
+	): string | CanvasGradient => {
+		const scale = u.scales[ scaleKey ];
+		// we want the stop below or at the scaleMax
+		// and the stop below or at the scaleMin, else the stop above scaleMin
+		let minStopIdx;
+		let maxStopIdx;
+
+		if ( scale.min === undefined ) {
+			scale.min = 0;
+		}
+
+		if ( scale.max === undefined ) {
+			scale.max = 0;
+		}
+
+		for ( let i = 0; i < scaleStops.length; i++ ) {
+			const stopVal = scaleStops[ i ][ 0 ];
+
+			if ( stopVal <= scale.min || minStopIdx == null ) {
+				minStopIdx = i;
+			}
+
+			maxStopIdx = i;
+
+			if ( stopVal >= scale.max ) {
+				break;
+			}
+		}
+
+		if ( minStopIdx === undefined ) {
+			minStopIdx = 0;
+		}
+
+		if ( maxStopIdx === undefined ) {
+			maxStopIdx = 0;
+		}
+
+		if ( minStopIdx === maxStopIdx ) {
+			return scaleStops[ minStopIdx ][ 1 ];
+		}
+
+		let minStopVal = scaleStops[ minStopIdx ][ 0 ];
+		let maxStopVal = scaleStops[ maxStopIdx ][ 0 ];
+
+		if ( minStopVal === -Infinity ) {
+			minStopVal = scale.min;
+		}
+
+		if ( maxStopVal === Infinity ) {
+			maxStopVal = scale.max;
+		}
+
+		const minStopPos = u.valToPos( minStopVal, scaleKey, true );
+		const maxStopPos = u.valToPos( maxStopVal, scaleKey, true );
+
+		const range = minStopPos - maxStopPos;
+
+		let x0;
+		let y0;
+		let x1;
+		let y1;
+
+		if ( ori === 1 ) {
+			x0 = x1 = 0;
+			y0 = minStopPos;
+			y1 = maxStopPos;
+		} else {
+			y0 = y1 = 0;
+			x0 = minStopPos;
+			x1 = maxStopPos;
+		}
+
+		const grd = ctx?.createLinearGradient( x0, y0, x1, y1 );
+
+		let prevColor;
+
+		for ( let i = minStopIdx || 0; i <= maxStopIdx; i++ ) {
+			const s = scaleStops[ i ];
+			let stopPos;
+
+			if ( i === minStopIdx ) {
+				stopPos = minStopPos;
+			} else {
+				stopPos = i === maxStopIdx ? maxStopPos : u.valToPos( s[ 0 ], scaleKey, true );
+			}
+
+			const pct = ( minStopPos - stopPos ) / range; // % of max value
+
+			if ( discrete && i > minStopIdx ) {
+				grd?.addColorStop( pct, prevColor || 'rgba(0, 0, 0, 0)' );
+			}
+
+			grd?.addColorStop( pct, ( prevColor = s[ 1 ] ) );
+		}
+
+		return grd || defaultFillColor;
+	};
 
 	const [ options ] = useState< uPlot.Options >(
 		useMemo( () => {
@@ -86,7 +197,7 @@ export default function UplotChart( {
 						space: 40,
 						size: 50,
 						grid: {
-							stroke: '#DCDCDE',
+							stroke: 'rgba(220, 220, 222, 0.5)', // #DCDCDE with 0.5 opacity
 							width: 1,
 						},
 						ticks: {
@@ -113,10 +224,48 @@ export default function UplotChart( {
 						},
 					},
 					{
-						fill: 'rgba(48, 87, 220, 0.075)',
+						fill: solidFill
+							? defaultFillColor
+							: ( u, seriesIdx ) => {
+									// Find min and max values for the visible parts of all y axis' and map it to color values to draw a gradient.
+									const s = u.series[ seriesIdx ]; // data set
+									const sc = u.scales[ s.scale || 1 ]; // y axis values
+
+									// if values are not initialised default to a solid color
+									if ( s.min === Infinity || s.max === -Infinity ) {
+										return defaultFillColor;
+									}
+
+									let min = Infinity;
+									let max = -Infinity;
+
+									// get in-view y range for this scale
+									u.series.forEach( ( ser ) => {
+										if ( ser.show && ser.scale === s.scale ) {
+											min = Math.min( min, ser.min || 0 );
+											max = Math.max( max, ser.max || 0 );
+										}
+									} );
+
+									let range = max - min;
+
+									// if `range` from data is 0, apply axis range
+									if ( range === 0 ) {
+										range = sc?.max !== undefined && sc?.min !== undefined ? sc.max - sc.min : 0;
+										min = sc?.min || 0;
+									}
+
+									return scaleGradient( u, s.scale || 'y', 1, [
+										[ min + range * 0.0, 'rgba(48, 87, 220, 0)' ],
+										[ min + range * 1.0, 'rgba(48, 87, 220, 0.4)' ],
+									] );
+							  },
 						label: translate( 'Subscribers' ),
 						stroke: '#3057DC',
 						width: 2,
+						paths: ( u, seriesIdx, idx0, idx1 ) => {
+							return spline?.()( u, seriesIdx, idx0, idx1 ) || null;
+						},
 						points: {
 							show: false,
 						},

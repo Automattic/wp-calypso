@@ -67,7 +67,7 @@
 			display: flex;
 			flex-direction: column;
 			flex-wrap: wrap;
-			min-width: 280px;
+			min-width: 260px;
 			border-top: none;
 
 			@media ( max-width: 740px ) {
@@ -92,6 +92,7 @@
 				font-size: $font-body-small;
 				color: var(--studio-gray-60);
 				margin-bottom: 16px;
+				padding-right: 0;
 			}
 		}
 

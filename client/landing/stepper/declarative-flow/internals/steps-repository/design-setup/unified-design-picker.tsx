@@ -43,7 +43,6 @@ import {
 	getVirtualDesignProps,
 } from '../../analytics/record-design';
 import StepperLoader from '../../components/stepper-loader';
-import { PLACEHOLDER_SITE_ID } from '../pattern-assembler/constants';
 import { getCategorizationOptions } from './categories';
 import { DEFAULT_VARIATION_SLUG, RETIRING_DESIGN_SLUGS, STEP_NAME } from './constants';
 import DesignPickerDesignTitle from './design-picker-design-title';
@@ -131,7 +130,6 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 		{
 			seed: siteSlugOrId || undefined,
 			_locale: locale,
-			include_pattern_virtual_designs: true,
 		},
 		{
 			enabled: true,
@@ -463,13 +461,8 @@ const UnifiedDesignPickerStep: Step = ( { navigation, flow, stepName } ) => {
 
 			setPendingAction( () => {
 				if ( _selectedDesign.is_virtual ) {
-					return applyThemeWithPatterns(
-						siteSlugOrId,
-						_selectedDesign,
-						null,
-						PLACEHOLDER_SITE_ID
-					).then( ( theme: ActiveTheme ) =>
-						reduxDispatch( setActiveTheme( site?.ID || -1, theme ) )
+					return applyThemeWithPatterns( siteSlugOrId, _selectedDesign ).then(
+						( theme: ActiveTheme ) => reduxDispatch( setActiveTheme( site?.ID || -1, theme ) )
 					);
 				}
 				return setDesignOnSite( siteSlugOrId, _selectedDesign, {

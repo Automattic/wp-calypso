@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
-import { SiteSubscription, SubscriptionManagerSubscriptionsCount } from '../types';
+import { SiteSubscriptionsPages, SubscriptionManagerSubscriptionsCount } from '../types';
 
 type UnsubscribeParams = {
 	blog_id: number | string;
@@ -11,16 +11,6 @@ type UnsubscribeResponse = {
 	success: boolean;
 	subscribed: boolean;
 	subscription: null;
-};
-
-type SiteSubscriptionPage = {
-	subscriptions: SiteSubscription[];
-	total_subscriptions: number;
-};
-
-type SiteSubscriptionsPages = {
-	pageParams: [];
-	pages: SiteSubscriptionPage[];
 };
 
 const useSiteUnsubscribeMutation = () => {

@@ -8,6 +8,8 @@ import {
 	usePendingSiteDeleteMutation,
 	usePendingPostConfirmMutation,
 	usePendingPostDeleteMutation,
+	useSiteNotifyMeOfNewPostsMutation,
+	useSiteEmailMeNewPostsMutation,
 } from './mutations';
 import {
 	PostSubscriptionsSortBy,
@@ -38,6 +40,8 @@ export const SubscriptionManager = {
 	usePendingSiteDeleteMutation,
 	usePendingPostConfirmMutation,
 	usePendingPostDeleteMutation,
+	useSiteNotifyMeOfNewPostsMutation,
+	useSiteEmailMeNewPostsMutation,
 	useIsLoggedIn,
 };
 

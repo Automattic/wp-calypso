@@ -1,6 +1,7 @@
 import '@automattic/calypso-polyfills';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { translate } from 'i18n-calypso';
 import { render } from 'react-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import config from '../lib/config-api';
 import setLocale from '../lib/set-locale';
@@ -35,15 +36,16 @@ export function init() {
 							gmtOffset={ config( 'gmt_offset' ) }
 							odysseyStatsBaseUrl={ odysseyStatsBaseUrl }
 						/>
-						<Modules siteId={ currentSiteId } />
+						<Modules siteId={ currentSiteId } odysseyStatsBaseUrl={ odysseyStatsBaseUrl } />
 						<div className="stats-widget-footer">
 							<a
 								href="https://jetpack.com/redirect/?source=jetpack-stats-widget-logo-link"
 								target="__blank"
 								aria-label="Jetpack Stats Website"
 							>
-								<JetpackLogo size={ 25 } full />
+								<JetpackLogo size={ 20 } monochrome full />
 							</a>
+							<a href={ odysseyStatsBaseUrl }>{ translate( 'View all stats' ) }</a>
 						</div>
 					</div>
 				</div>

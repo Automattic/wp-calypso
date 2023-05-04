@@ -1,4 +1,4 @@
-@import "../styles/variables.scss";
+$offset-padding-hovering: 8px;
 
 .stats-widget-highlights {
 	.stats-widget-highlights__header {
@@ -10,18 +10,18 @@
 			font-size: $font-body-large;
 			line-height: 26px;
 		}
+	}
 
-		a {
-			@include emerald-button-style;
-		}
-
+	.stats-widget-highlights__tabs {
+		display: none;
+		margin-top: 16px;
 	}
 
 	.stats-widget-highlights__body {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		column-gap: 24px;
-		margin: 26px -8px 0;
+		margin: 16px (-$offset-padding-hovering) 0;
 	}
 
 	.stats-widget-highlights__column {
@@ -30,22 +30,23 @@
 	}
 
 	.stats-widget-highlights-card__title {
+		display: block;
 		font-weight: 500;
 		font-size: $font-body;
 		line-height: 26px;
-		margin-left: 8px;
+		margin: 0 0 16px $offset-padding-hovering;
 	}
 
 	.stats-widget-highlights-card__empty {
 		min-height: 40px;
-		margin: 20px 0 0 8px;
+		margin: 0 0 0 $offset-padding-hovering;
 		color: var(--studio-gray-40);
 	}
 
 	.stats-widget-highlights-card__list {
 		list-style: none;
 		padding: 0;
-		margin: 12px 0 0;
+		margin: 0;
 
 		li {
 			&:not(:last-child) {
@@ -65,7 +66,7 @@
 
 			// For the wrapper padding
 			& > * {
-				padding: 4px 8px;
+				padding: 4px $offset-padding-hovering;
 			}
 
 			& > a {
@@ -117,7 +118,7 @@
 	}
 
 	.stats-widget-highlights-card__view-all {
-		margin: 16px 0 0 8px;
+		margin: 16px 0 0 $offset-padding-hovering;
 		font-weight: 600;
 		font-size: $font-body-small;
 		line-height: 20px;

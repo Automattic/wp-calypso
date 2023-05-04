@@ -23,6 +23,9 @@ import {
 	mockGetVatInfoEndpoint,
 	mockSetVatInfoEndpoint,
 	countryList,
+	mockGetPaymentMethodsEndpoint,
+	mockLogStashEndpoint,
+	mockGetSupportedCountriesEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey } from '@automattic/shopping-cart';
@@ -47,7 +50,6 @@ describe( 'Checkout contact step VAT form', () => {
 	const mainCartKey: CartKey = 'foo.com' as CartKey;
 	const initialCart = getBasicCart();
 	const defaultPropsForMockCheckout = {
-		mainCartKey,
 		initialCart,
 	};
 
@@ -58,7 +60,6 @@ describe( 'Checkout contact step VAT form', () => {
 	getDomainsBySiteId.mockImplementation( () => [] );
 	isMarketplaceProduct.mockImplementation( () => false );
 	isJetpackSite.mockImplementation( () => false );
-	useCartKey.mockImplementation( () => mainCartKey );
 	mockMatchMediaOnWindow();
 
 	const mockSetCartEndpoint = mockSetCartEndpointWith( {
@@ -68,11 +69,12 @@ describe( 'Checkout contact step VAT form', () => {
 
 	beforeEach( () => {
 		dispatch( CHECKOUT_STORE ).reset();
+		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 		nock.cleanAll();
-		nock( 'https://public-api.wordpress.com' ).persist().post( '/rest/v1.1/logstash' ).reply( 200 );
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/me/transactions/supported-countries' )
-			.reply( 200, countryList );
+		mockGetPaymentMethodsEndpoint( [] );
+		mockLogStashEndpoint();
+		mockGetSupportedCountriesEndpoint( countryList );
+		mockMatchMediaOnWindow();
 		mockGetVatInfoEndpoint( {} );
 	} );
 
@@ -142,6 +144,7 @@ describe( 'Checkout contact step VAT form', () => {
 
 	it( 'renders the VAT fields and checks the box on load if the VAT endpoint returns data', async () => {
 		nock.cleanAll();
+		mockGetPaymentMethodsEndpoint( [] );
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
 			postal_code: '',
@@ -167,6 +170,7 @@ describe( 'Checkout contact step VAT form', () => {
 
 	it( 'renders the VAT fields pre-filled if the VAT endpoint returns data', async () => {
 		nock.cleanAll();
+		mockGetPaymentMethodsEndpoint( [] );
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
 			postal_code: '',
@@ -193,6 +197,7 @@ describe( 'Checkout contact step VAT form', () => {
 
 	it( 'renders the Northern Ireland checkbox pre-filled if the VAT endpoint returns XI', async () => {
 		nock.cleanAll();
+		mockGetPaymentMethodsEndpoint( [] );
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
 			postal_code: '',
@@ -217,6 +222,7 @@ describe( 'Checkout contact step VAT form', () => {
 
 	it( 'does not allow unchecking the VAT details checkbox if the VAT fields are pre-filled', async () => {
 		nock.cleanAll();
+		mockGetPaymentMethodsEndpoint( [] );
 		mockCachedContactDetailsEndpoint( {
 			country_code: 'GB',
 			postal_code: '',
@@ -393,6 +399,7 @@ describe( 'Checkout contact step VAT form', () => {
 
 	it( 'when there is a cached contact country that differs from the cached VAT country, the contact country is sent to the VAT endpoint', async () => {
 		nock.cleanAll();
+		mockGetPaymentMethodsEndpoint( [] );
 		const cachedContactCountry = 'ES';
 		mockCachedContactDetailsEndpoint( {
 			country_code: cachedContactCountry,
