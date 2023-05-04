@@ -138,7 +138,6 @@ export function getEnhancedTasks(
 					break;
 				case 'plan_selected':
 					taskData = {
-						title: translate( 'Choose a plan' ),
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
 							if ( displayGlobalStylesWarning ) {
@@ -184,7 +183,6 @@ export function getEnhancedTasks(
 					break;
 				case 'first_post_published':
 					taskData = {
-						title: translate( 'Write your first post' ),
 						disabled: mustVerifyEmailBeforePosting || isStartWritingFlow( flow || null ) || false,
 						actionDispatch: () => {
 							recordTaskClickTracksEvent( flow, task.completed, task.id );
@@ -240,7 +238,6 @@ export function getEnhancedTasks(
 					break;
 				case 'link_in_bio_launched':
 					taskData = {
-						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
@@ -263,7 +260,6 @@ export function getEnhancedTasks(
 					break;
 				case 'site_launched':
 					taskData = {
-						isLaunchTask: true,
 						actionDispatch: () => {
 							if ( site?.ID ) {
 								const { setPendingAction, setProgressTitle } = dispatch( ONBOARD_STORE );
