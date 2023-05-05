@@ -3,7 +3,14 @@ import request from 'wpcom-proxy-request';
 import useSiteIntent from '../site-intent/use-site-intent';
 import useHasSeenVideoCelbrationModal from './use-has-seen-video-celebration-modal';
 
-const useShouldShowVideoCelebrationModal = ( isEditorSaving ) => {
+interface Site {
+	options?: {
+		launchpad_checklist_tasks_statuses?: {
+			video_uploaded: boolean;
+		};
+	};
+}
+const useShouldShowVideoCelebrationModal = ( isEditorSaving: boolean ) => {
 	const { siteIntent: intent } = useSiteIntent();
 
 	const [ shouldShowVideoCelebrationModal, setShouldShowVideoCelebrationModal ] = useState( false );
@@ -15,7 +22,7 @@ const useShouldShowVideoCelebrationModal = ( isEditorSaving ) => {
 			const siteObj = await request( {
 				path: `/sites/${ window._currentSiteId }?http_envelope=1`,
 				apiVersion: '1.1',
-			} );
+			} ) as Site;
 
 			if ( siteObj?.options?.launchpad_checklist_tasks_statuses?.video_uploaded ) {
 				setShouldShowVideoCelebrationModal( true );
