@@ -48,24 +48,12 @@ class Block_Patterns_From_API {
 
 		$this->utils = empty( $utils ) ? new \A8C\FSE\Block_Patterns_Utils() : $utils;
 
-		$blog_category = array(
-			'blog' => __( 'Blog', 'full-site-editing' ),
-		);
-
 		// Add categories to this array using the core pattern name as the key for core patterns we wish to "recategorize".
 		$this->core_to_wpcom_categories_dictionary = array(
-			'core/quote'                                => array(
+			'core/quote' => array(
 				'quotes' => __( 'Quotes', 'full-site-editing' ),
 				'text'   => __( 'Text', 'full-site-editing' ),
 			),
-			// Move core query patterns from 'Posts' to 'Blog'.
-			'core/query-standard-posts'                 => $blog_category,
-			'core/query-medium-posts'                   => $blog_category,
-			'core/query-small-posts'                    => $blog_category,
-			'core/query-grid-posts'                     => $blog_category,
-			'core/query-large-title-posts'              => $blog_category,
-			'core/query-offset-posts'                   => $blog_category,
-			'core/social-links-shared-background-color' => $blog_category,
 		);
 	}
 
@@ -151,6 +139,8 @@ class Block_Patterns_From_API {
 		$this->update_core_patterns_with_wpcom_categories();
 
 		$this->update_pattern_post_types();
+
+		$this->update_query_patterns_with_blog_category();
 
 		return $results;
 	}
@@ -287,6 +277,26 @@ class Block_Patterns_From_API {
 				$pattern_name         = $pattern['name'];
 				unset( $pattern['name'] );
 				register_block_pattern( $pattern_name, $pattern );
+			}
+		}
+	}
+
+	/**
+	 * Ensure that all query or posts patterns use the category blog instead.
+	 */
+	private function update_query_patterns_with_blog_category() {
+		foreach ( \WP_Block_Patterns_Registry::get_instance()->get_all_registered() as $pattern ) {
+			if ( ! isset( $pattern['categories'] ) ) {
+				continue;
+			}
+			if ( in_array( 'query', $pattern['categories'], true ) || in_array( 'posts', $pattern['categories'], true ) ) {
+				foreach ( $pattern['categories'] as &$category ) {
+					if ( in_array( $category, array( 'query', 'posts' ), true ) ) {
+						$category = 'blog';
+					}
+				}
+				unregister_block_pattern( $pattern['name'] );
+				register_block_pattern( $pattern['name'], $pattern );
 			}
 		}
 	}
