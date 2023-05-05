@@ -19,10 +19,10 @@ const useShouldShowVideoCelebrationModal = ( isEditorSaving: boolean ) => {
 	useEffect( () => {
 		const maybeRenderVideoCelebrationModal = async () => {
 			// Get latest site options since the video may have just been uploaded.
-			const siteObj = await request( {
+			const siteObj = ( await request( {
 				path: `/sites/${ window._currentSiteId }?http_envelope=1`,
 				apiVersion: '1.1',
-			} ) as Site;
+			} ) ) as Site;
 
 			if ( siteObj?.options?.launchpad_checklist_tasks_statuses?.video_uploaded ) {
 				setShouldShowVideoCelebrationModal( true );
