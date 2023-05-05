@@ -64,6 +64,8 @@ import {
 	FEATURE_JETPACK_BACKUP_DAILY_MONTHLY,
 	FEATURE_JETPACK_BACKUP_REALTIME,
 	FEATURE_JETPACK_BACKUP_REALTIME_MONTHLY,
+	FEATURE_JETPACK_BACKUP_T0_MONTHLY,
+	FEATURE_JETPACK_BACKUP_T0_YEARLY,
 	FEATURE_JETPACK_BACKUP_T1_MONTHLY,
 	FEATURE_JETPACK_BACKUP_T1_YEARLY,
 	FEATURE_JETPACK_BACKUP_T2_MONTHLY,
@@ -144,6 +146,7 @@ import {
 	GROUP_WPCOM,
 	JETPACK_LEGACY_PLANS,
 	JETPACK_SECURITY_PLANS,
+	JETPACK_STARTER_PLANS,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
 	PLAN_BUSINESS,
@@ -175,6 +178,8 @@ import {
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PLAN_JETPACK_SECURITY_T2_MONTHLY,
 	PLAN_JETPACK_SECURITY_T2_YEARLY,
+	PLAN_JETPACK_STARTER_MONTHLY,
+	PLAN_JETPACK_STARTER_YEARLY,
 	PLAN_P2_FREE,
 	PLAN_P2_PLUS,
 	PLAN_PERSONAL,
@@ -208,6 +213,7 @@ import {
 	TYPE_SECURITY_REALTIME,
 	TYPE_SECURITY_T1,
 	TYPE_SECURITY_T2,
+	TYPE_JETPACK_STARTER,
 	TYPE_FLEXIBLE,
 	TYPE_PRO,
 	TYPE_STARTER,
@@ -250,9 +256,11 @@ import {
 	FEATURE_CANCELLATION_SEO_AND_SOCIAL,
 	FEATURE_CANCELLATION_SFTP_AND_DATABASE,
 	FEATURE_CANCELLATION_SHIPPING_CARRIERS,
+	PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_T1_MONTHLY,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+	PRODUCT_JETPACK_BACKUP_T0_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_ANTI_SPAM,
@@ -1898,7 +1906,8 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 	group: GROUP_JETPACK,
 	type: TYPE_SECURITY_T1,
 	getTitle: () => translate( 'Security', { context: 'Jetpack product name' } ),
-	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	availableFor: ( plan ) =>
+		[ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS, ...JETPACK_STARTER_PLANS ].includes( plan ),
 	getDescription: () =>
 		translate(
 			'Easy-to-use, comprehensive WordPress site security including backups, malware scanning, and spam protection.'
@@ -1911,7 +1920,8 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 					ul: <ul />,
 					li: <li />,
 				},
-				comment: '{{ul}}{{ul/}} represents an unorder list, and {{li}}{/li} represent a list item',
+				comment:
+					'{{ul}}{{ul/}} represents an unordered list, and {{li}}{/li} represents a list item',
 			}
 		),
 	getLightboxDescription: () =>
@@ -2078,6 +2088,61 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		translate( 'Grow your business with video, social, and CRM tools' ),
 		translate( 'Best-in-class support from WordPress experts' ),
 	],
+} );
+
+const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
+	...getJetpackCommonPlanDetails(),
+	group: GROUP_JETPACK,
+	type: TYPE_JETPACK_STARTER,
+	getTitle: () => translate( 'Starter', { context: 'Jetpack product name' } ),
+	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	getDescription: () =>
+		translate(
+			'Enhance your website with the starter Jetpack tools for security, growth, and performance.'
+		),
+	getFeaturedDescription: () =>
+		translate(
+			'This bundle includes:{{ul}}{{li}}VaultPress Backup{{/li}}{{li}}Akismet Anti-spam{{/li}}{{/ul}}',
+			{
+				components: {
+					ul: <ul />,
+					li: <li />,
+				},
+				comment:
+					'{{ul}}{{ul/}} represents an unordered list, and {{li}}{/li} represents a list item',
+			}
+		),
+	getLightboxDescription: () =>
+		translate(
+			'Enhance your website with the starter Jetpack tools for security, growth, and performance.'
+		),
+	getPlanCardFeatures: () => [ FEATURE_JETPACK_PRODUCT_BACKUP, FEATURE_ANTISPAM_V2 ],
+	getIncludedFeatures: () => [
+		FEATURE_JETPACK_BACKUP_T0_YEARLY,
+		FEATURE_JETPACK_BACKUP_T0_MONTHLY,
+		FEATURE_JETPACK_ANTI_SPAM,
+		FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
+		FEATURE_BACKUP_ARCHIVE_UNLIMITED,
+		FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+		FEATURE_REPUBLICIZE,
+		FEATURE_ADVANCED_SEO,
+		FEATURE_SEO_PREVIEW_TOOLS,
+		FEATURE_SIMPLE_PAYMENTS,
+		FEATURE_WORDADS_INSTANT,
+		FEATURE_GOOGLE_ANALYTICS,
+		FEATURE_PREMIUM_SUPPORT,
+		WPCOM_FEATURES_ANTISPAM,
+		WPCOM_FEATURES_BACKUPS,
+	],
+	getBenefits: () => [
+		translate( 'Protect your revenue stream and content' ),
+		translate( 'Restore your site in one click from desktop or mobile' ),
+		translate( 'Fix your site without a developer' ),
+		translate( 'Protect Woo order and customer data' ),
+		translate( 'Save time manually reviewing spam' ),
+		translate( 'Best-in-class support from WordPress experts' ),
+	],
+	getInferiorFeatures: () => [ FEATURE_JETPACK_BACKUP_DAILY, FEATURE_JETPACK_BACKUP_DAILY_MONTHLY ],
 } );
 
 const getPlanJetpackGoldenTokenDetails = (): IncompleteJetpackPlan => ( {
@@ -2893,6 +2958,41 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 				},
 			} ),
 			translate( 'Scan: Real-time malware scanning and one-click fixes' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
+		],
+	},
+
+	[ PLAN_JETPACK_STARTER_YEARLY ]: {
+		...getPlanJetpackStarterDetails(),
+		...getAnnualTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_STARTER_YEARLY,
+		getPathSlug: () => 'starter-yearly',
+		getProductId: () => 2030,
+		getProductsIncluded: () => [ PRODUCT_JETPACK_BACKUP_T0_YEARLY, PRODUCT_JETPACK_ANTI_SPAM ],
+		getWhatIsIncluded: () => [
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
+			translate( '1GB of cloud storage' ),
+			translate( '30-day activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 30 days' ),
+			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
+		],
+	},
+
+	[ PLAN_JETPACK_STARTER_MONTHLY ]: {
+		...getPlanJetpackStarterDetails(),
+		...getMonthlyTimeframe(),
+		getStoreSlug: () => PLAN_JETPACK_STARTER_MONTHLY,
+		getPathSlug: () => 'starter-monthly',
+		getProductId: () => 2031,
+		getProductsIncluded: () => [
+			PRODUCT_JETPACK_BACKUP_T0_MONTHLY,
+			PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+		],
+		getWhatIsIncluded: () => [
+			translate( 'VaultPress Backup: Real-time backups as you edit' ),
+			translate( '1GB of cloud storage' ),
+			translate( '30-day activity log archive' ),
+			translate( 'Unlimited one-click restores from the last 30 days' ),
 			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
 		],
 	},
