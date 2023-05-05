@@ -594,7 +594,7 @@
 	}
 
 	.reader-sidebar-site_link {
-		align-items: center;
+		align-items: flex-start;
 		display: flex;
 		flex-wrap: nowrap;
 		gap: 11px;
@@ -742,7 +742,7 @@
 			line-height: 18px;
 			overflow: hidden;
 			width: auto;
-			-webkit-line-clamp: 2;
+			-webkit-line-clamp: 1;
 			-webkit-box-orient: vertical;
 		}
 	}
