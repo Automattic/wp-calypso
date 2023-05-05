@@ -13,7 +13,7 @@ interface HighlightAdjacencyMatrix {
 	};
 }
 
-const useHighlightIndices = ( visiblePlans: PlanProperties[], flowName: string ) => {
+const useHighlightIndices = ( visiblePlans: PlanProperties[], flowName?: string | null ) => {
 	const selectedSiteId = useSelector( getSelectedSiteId );
 	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, selectedSiteId ) );
 
