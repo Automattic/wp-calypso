@@ -2,8 +2,8 @@
 import { ProductsList } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { addQueryArgs, getQueryArg } from '@wordpress/url';
-import { START_WRITING_FLOW, StepContainer } from 'calypso/../packages/onboarding/src';
+import { getQueryArg } from '@wordpress/url';
+import { StepContainer } from 'calypso/../packages/onboarding/src';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -47,8 +47,14 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		return strippedHostname ?? String( siteSlug ).split( '.' )[ 0 ];
 	};
 
-	const onSkip = () => {
-		onAddDomain( null );
+	const onSkip = async () => {
+		if ( isStartWritingFlow ) {
+			setDomain( null );
+			setHideFreePlan( false );
+			submit?.( { freeDomain: true } );
+		} else {
+			onAddDomain( null );
+		}
 	};
 
 	const submitWithDomain = async ( suggestion: DomainSuggestion | undefined ) => {
@@ -57,7 +63,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		if ( suggestion?.is_free ) {
 			setHideFreePlan( false );
 			setDomainCartItem( undefined );
-			submit?.();
 		} else {
 			const domainCartItem = domainRegistration( {
 				domain: suggestion?.domain_name || '',
@@ -66,14 +71,9 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 
 			setHideFreePlan( true );
 			setDomainCartItem( domainCartItem );
-
-			window.location.assign(
-				addQueryArgs( `/setup/${ START_WRITING_FLOW }/plans`, {
-					siteSlug,
-					[ START_WRITING_FLOW ]: true,
-				} )
-			);
 		}
+
+		submit?.( { freeDomain: suggestion?.is_free } );
 	};
 
 	const getStartWritingFlowStepContent = () => {

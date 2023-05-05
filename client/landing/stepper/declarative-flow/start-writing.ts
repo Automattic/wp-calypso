@@ -104,11 +104,17 @@ const startWriting: Flow = {
 							checklist_statuses: { domain_upsell_deferred: true },
 						} );
 					}
-					return navigate( 'launchpad' );
+
+					if ( providedDependencies?.freeDomain ) {
+						return navigate( 'launchpad' );
+					}
+
+					return navigate( 'plans' );
+
 				case 'plans':
 					if ( siteSlug ) {
 						await updateLaunchpadSettings( siteSlug, {
-							checklist_statuses: { plan_completed: true, domain_upsell_deferred: true },
+							checklist_statuses: { plan_completed: true },
 						} );
 					}
 					if ( providedDependencies?.goToCheckout ) {
