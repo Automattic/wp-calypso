@@ -118,12 +118,16 @@ export class EditorPage {
 		await this.editorWelcomeTourComponent.forceDismissWelcomeTour();
 	}
 
-	/** */
+	/**
+	 * Resolves with the Editor parent element locator.
+	 */
 	async getEditorParent() {
 		return await this.editor.parent();
 	}
 
-	/** */
+	/**
+	 * Resolves with the Editor canvas element locator.
+	 */
 	async getEditorCanvas() {
 		return await this.editor.canvas();
 	}

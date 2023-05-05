@@ -10,7 +10,11 @@ export class EditorComponent {
 	private parentLocator: Locator | null;
 	private canvasLocator: Locator | null;
 
-	/** */
+	/**
+	 * Constructs an instance of the component.
+	 *
+	 * @param {Page} page The underlying page.
+	 */
 	constructor( page: Page ) {
 		this.page = page;
 		this.parentLocator = null;
@@ -59,7 +63,11 @@ export class EditorComponent {
 		return this.canvasLocator;
 	}
 
-	/** */
+	/**
+	 * If the Editor is gutenframed, it will resolve with the parent element
+	 * locator inside the Gutenframe once it's ready. Otherwise, it will time
+	 * out.
+	 */
 	private async waitForFramedEditor() {
 		const parentLocator = this.page
 			.frameLocator( 'iframe[src*="calypsoify"]' )
@@ -69,7 +77,10 @@ export class EditorComponent {
 		return parentLocator;
 	}
 
-	/** */
+	/**
+	 * If the Editor is NOT gutenframed, it will resolve with the parent element
+	 * locator inside the main frame. Otherwise, it will time out.
+	 */
 	private async waitForUnframedEditor() {
 		const parentLocator = this.page.locator( 'body.block-editor-page' );
 
@@ -77,7 +88,10 @@ export class EditorComponent {
 		return parentLocator;
 	}
 
-	/** */
+	/**
+	 * If the Editor canvas is iframed, it will resolve with the parent element
+	 * locator inside that iframe once it's ready. Otherwise, it will time out.
+	 */
 	private async waitForFramedCanvas() {
 		const parentLocator = await this.parent();
 		const canvasLocator = parentLocator
@@ -88,7 +102,11 @@ export class EditorComponent {
 		return canvasLocator;
 	}
 
-	/** */
+	/**
+	 * If the Editor canvas is NOT iframed, it will resolve with the canvas
+	 * element locator inside the current Editor parent once it's ready.
+	 * Otherwise, it will time out.
+	 */
 	private async waitForUnframedCanvas() {
 		const parentLocator = await this.parent();
 		const canvasWrapper = parentLocator.locator( '.editor-styles-wrapper' );
