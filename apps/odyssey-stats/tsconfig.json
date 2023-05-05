@@ -7,13 +7,25 @@
 		}
 	},
 	"include": [
-		"**/*",
+		"./**/*",
 		"./package.json",
 		"./app.tsx",
 		"./widget-loader.ts",
 		"./routes.ts",
-		"../../client/**/*"
+		"../../client/**/*",
+		"../../client/lib/domains/tlds/wpcom-multi-level-tlds.json",
+		"../../client/__mocks__/lib/json-schema-draft-04.json",
+		"../../client/package.json",
+		"../../client/state/data-layer/wpcom/sites/jitm/schema.json"
 	],
-	"exclude": [ "./**/node_modules/**/*", "./**/test/**/*" ],
+	"exclude": [
+		"./**/node_modules/**/*",
+		"./**/test/**/*",
+		"./**/.stories.tsx",
+		"../../client/**/node_modules/**/*",
+		"../../client/**/test/**/*",
+		"../../client/**/.stories.tsx",
+		"../../client/server/devdocs/search-index.js"
+	],
 	"references": [ { "path": "../../packages" } ]
 }
