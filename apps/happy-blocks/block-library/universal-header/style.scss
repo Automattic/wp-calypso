@@ -701,12 +701,13 @@ body.logged-in .x-dropdown {
 		max-width: var(--wp--style--global--wide-size, 1224px);
 
 		hr {
+			border-bottom-width: 0;
 			margin: 0;
 			position: absolute;
 			width: 100%;
 			left: 0;
 			height: 0;
-			border-top: solid 1px #dcdcde;
+			border-top: solid 1px $studio-gray-5;
 		}
 		form {
 			width: 100%;
