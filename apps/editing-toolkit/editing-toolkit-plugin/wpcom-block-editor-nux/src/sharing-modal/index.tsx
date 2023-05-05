@@ -26,7 +26,7 @@ type CoreEditorPlaceholder = {
 };
 const FB_APP_ID = '249643311490';
 
-const PostPublishedSharingModal: React.FC = () => {
+const SharingModal: React.FC = () => {
 	const isDismissedDefault = window?.sharingModalOptions?.isDismissed || false;
 	const { launchpadScreenOption } = window?.launchpadOptions || {};
 	const { isDismissed, updateIsDismissed } = useSharingModalDismissed( isDismissedDefault );
@@ -155,7 +155,14 @@ const PostPublishedSharingModal: React.FC = () => {
 				setIsOpen( true );
 			} );
 		}
-	}, [ postType, shouldShowFirstPostPublishedModal, isCurrentPostPublished ] );
+	}, [
+		postType,
+		shouldShowFirstPostPublishedModal,
+		shouldShowSellerCelebrationModal,
+		shouldShowVideoCelebrationModal,
+		isCurrentPostPublished,
+		launchpadScreenOption
+	 ] );
 
 	if ( ! isOpen || isDismissedDefault ) {
 		return null;
@@ -266,4 +273,4 @@ const PostPublishedSharingModal: React.FC = () => {
 	);
 };
 
-export default PostPublishedSharingModal;
+export default SharingModal;
