@@ -2101,9 +2101,7 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 	getTagline: () =>
 		translate( 'Essential security tools: real-time backups and comment spam protection.' ),
 	getDescription: () =>
-		translate(
-			'Enhance your website with the starter Jetpack tools for security, growth, and performance.'
-		),
+		translate( 'Essential security tools: real-time backups and comment spam protection.' ),
 	getFeaturedDescription: () =>
 		translate(
 			'This bundle includes:{{ul}}{{li}}VaultPress Backup{{/li}}{{li}}Akismet Anti-spam{{/li}}{{/ul}}',
@@ -2121,9 +2119,7 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 		{ tag: JETPACK_TAG_FOR_BLOGS, label: translate( 'Blogs' ) },
 	],
 	getLightboxDescription: () =>
-		translate(
-			'Enhance your website with the starter Jetpack tools for security, growth, and performance.'
-		),
+		translate( 'Essential security tools: real-time backups and comment spam protection.' ),
 	getPlanCardFeatures: () => [ FEATURE_JETPACK_PRODUCT_BACKUP, FEATURE_ANTISPAM_V2 ],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T0_YEARLY,
