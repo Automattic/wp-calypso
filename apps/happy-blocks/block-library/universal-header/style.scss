@@ -1,4 +1,5 @@
 @import "@automattic/calypso-color-schemes";
+@import "~@automattic/color-studio/dist/color-variables";
 
 $breakpoint-mobile: 782px; //Mobile size.
 $breakpoint-tablet: 1224px; //Large tablet size.
@@ -672,6 +673,8 @@ body.logged-in .x-dropdown {
 			border-width: 0;
 			border-style: none;
 			border-radius: 4px;
+			width: 366px;
+			height: 56px;
 
 			&,
 			&::placeholder {
