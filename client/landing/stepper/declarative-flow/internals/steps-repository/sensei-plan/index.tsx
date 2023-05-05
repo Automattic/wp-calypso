@@ -2,7 +2,7 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useSelect } from '@wordpress/data';
 import { useCallback, useState } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import classnames from 'classnames';
 import formatCurrency from 'calypso/../packages/format-currency/src';
@@ -16,11 +16,12 @@ import { SenseiStepContainer } from '../components/sensei-step-container';
 import { SenseiStepError } from '../components/sensei-step-error';
 import { SenseiStepProgress } from '../components/sensei-step-progress';
 import { PlansIntervalToggle } from './components';
-import { features, Status } from './constants';
+import { useFeatures, Status } from './constants';
 import { useCreateSenseiSite } from './create-sensei-site';
 import { useBusinessPlanPricing, useSenseiProPricing } from './sensei-plan-products';
 import type { Step } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
+import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { PlanBillingPeriod } from 'calypso/../packages/data-stores';
 
 import 'calypso/../packages/plans-grid/src/plans-table/style.scss';
@@ -30,7 +31,8 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 	const [ billingPeriod, setBillingPeriod ] = useState< PlanBillingPeriod >( 'ANNUALLY' );
 	const [ status, setStatus ] = useState< Status >( Status.Initial );
 	const locale = useLocale();
-	const { hasTranslation } = useI18n();
+	const { __, hasTranslation } = useI18n();
+	const features = useFeatures();
 
 	const domain = useSelect(
 		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDomain(),
@@ -48,10 +50,9 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 
 	const createCheckoutCart = useCallback(
 		async ( site ) => {
-			const cartKey = await cartManagerClient.getCartKeyForSiteSlug( site?.site_slug as string );
+			const cartKey = await cartManagerClient.getCartKeyForSiteSlug( site?.site_slug );
 
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const productsToAdd: any[] = [
+			const productsToAdd: MinimalRequestCartProduct[] = [
 				{
 					product_slug: businessPlan.productSlug,
 					extra: {
@@ -69,7 +70,7 @@ const SenseiPlan: Step = ( { flow, navigation: { submit } } ) => {
 			if ( domain && domain.product_slug ) {
 				const registration = domainRegistration( {
 					domain: domain.domain_name,
-					productSlug: domain.product_slug as string,
+					productSlug: domain.product_slug,
 					extra: { privacy_available: domain.supports_privacy },
 				} );
 

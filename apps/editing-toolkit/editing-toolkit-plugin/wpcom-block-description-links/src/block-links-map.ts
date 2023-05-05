@@ -195,4 +195,11 @@ export const blockLinksWithVariations: {
 	},
 };
 
+export const childrenBlockLinksWithDifferentUrl: { [ key: string ]: string } = {
+	/**
+	 * Core Blocks
+	 */
+	'core/nextpage': 'https://wordpress.com/support/wordpress-editor/blocks/page-break-block/',
+};
+
 export default blockLinks;

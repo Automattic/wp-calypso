@@ -1,8 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { getArrayOfFilteredTasks, getEnhancedTasks } from '../task-helper';
-import { tasks, launchpadFlowTasks } from '../tasks';
+import { getEnhancedTasks } from '../task-helper';
 import { buildTask } from './lib/fixtures';
 
 describe( 'Task Helpers', () => {
@@ -82,100 +81,23 @@ describe( 'Task Helpers', () => {
 				} );
 			} );
 		} );
-	} );
-
-	describe( 'getArrayOfFilteredTasks', () => {
-		describe( 'when the user has not verified their email address', () => {
-			const isEmailVerified = false;
-
-			describe( 'and no flow is provided', () => {
-				it( 'then no tasks are found', () => {
-					expect( getArrayOfFilteredTasks( tasks, null, isEmailVerified ) ).toBe( null );
-				} );
-			} );
-
-			describe( 'and a non-existing flow is provided', () => {
-				it( 'then no tasks are found', () => {
-					expect( getArrayOfFilteredTasks( tasks, 'custom-flow', isEmailVerified ) ).toBe(
-						undefined
+		describe( 'when checking if the first post is published', () => {
+			describe( 'and the flow is start-writing', () => {
+				it( 'disable the click link so the user will not get distracted going back to the post', () => {
+					const fakeTasks = [ buildTask( { id: 'first_post_published', completed: false } ) ];
+					const enhancedTasks = getEnhancedTasks(
+						fakeTasks,
+						'fake.wordpress.com',
+						null,
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						() => {},
+						false,
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						() => {},
+						'start-writing'
 					);
+					expect( enhancedTasks[ 0 ].disabled ).toEqual( true );
 				} );
-			} );
-
-			describe( 'and an existing flow is provided', () => {
-				it( 'then it returns found tasks', () => {
-					expect(
-						getArrayOfFilteredTasks( tasks, 'newsletter', isEmailVerified )?.sort( ( a, b ) =>
-							a.id < b.id ? -1 : 1
-						)
-					).toEqual(
-						tasks
-							.sort( ( a, b ) => ( a.id < b.id ? -1 : 1 ) )
-							.filter( ( task ) => launchpadFlowTasks[ 'newsletter' ].includes( task.id ) )
-					);
-				} );
-			} );
-		} );
-
-		describe( 'when the user has verified their email address', () => {
-			const isEmailVerified = true;
-
-			describe( 'and an existing flow is provided', () => {
-				it( 'then it returns tasks without an email verified task', () => {
-					expect(
-						getArrayOfFilteredTasks( tasks, 'newsletter', isEmailVerified )?.sort( ( a, b ) =>
-							a.id < b.id ? -1 : 1
-						)
-					).toEqual(
-						tasks
-							.sort( ( a, b ) => ( a.id < b.id ? -1 : 1 ) )
-							.filter( ( task ) => {
-								if ( task.id === 'verify_email' ) {
-									return false;
-								}
-
-								return launchpadFlowTasks[ 'newsletter' ].includes( task.id );
-							} )
-					);
-				} );
-			} );
-		} );
-	} );
-
-	describe( 'domain upsell task', () => {
-		describe( 'when flow is newsletter', () => {
-			it( 'does not include upsell task', () => {
-				expect(
-					launchpadFlowTasks[ 'newsletter' ].filter( ( task ) => task === 'domain_upsell' ).length
-				).toBe( 0 );
-			} );
-		} );
-		describe( 'when flow is link-in-bio', () => {
-			it( 'does not include upsell task', () => {
-				expect(
-					launchpadFlowTasks[ 'link-in-bio' ].filter( ( task ) => task === 'domain_upsell' ).length
-				).toBe( 0 );
-			} );
-		} );
-		describe( 'when flow is write', () => {
-			it( 'does not include upsell task', () => {
-				expect(
-					launchpadFlowTasks[ 'write' ].filter( ( task ) => task === 'domain_upsell' ).length
-				).toBe( 0 );
-			} );
-		} );
-		describe( 'when flow is build', () => {
-			it( 'does not include upsell task', () => {
-				expect(
-					launchpadFlowTasks[ 'build' ].filter( ( task ) => task === 'domain_upsell' ).length
-				).toBe( 0 );
-			} );
-		} );
-		describe( 'when flow is free', () => {
-			it( 'does include upsell task', () => {
-				expect(
-					launchpadFlowTasks[ 'free' ].filter( ( task ) => task === 'domain_upsell' ).length
-				).toBe( 1 );
 			} );
 		} );
 	} );

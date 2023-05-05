@@ -1,5 +1,5 @@
+import { useQuery, UseQueryResult, QueryOptions } from '@tanstack/react-query';
 import { stringify } from 'qs';
-import { useQuery, UseQueryResult, QueryOptions } from 'react-query';
 import wpcomRequest from 'wpcom-proxy-request';
 import type { StarterDesigns } from './types';
 import type {
@@ -14,8 +14,6 @@ import type {
 interface StarterDesignsQueryParams {
 	seed?: string;
 	_locale: string;
-	include_virtual_designs?: boolean;
-	include_pattern_virtual_designs?: boolean;
 }
 
 interface Options extends QueryOptions< StarterDesignsResponse, unknown > {

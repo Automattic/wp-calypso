@@ -25,6 +25,8 @@
 	"dsp_stripe_pub_key": "pk_live_51LYYzQF53KN4RFN0oHFYHpzmHGpuUAXZ6ygDAFxM4XkRArRsET0orrofmsynkd9DhFaOGEsDZ3RC4f8mgI0zhEyN000X8i0Mqx",
 	"dsp_widget_js_src": "https://widgets.wp.com/promote/widget.js",
 	"zendesk_presales_chat_key": "216bf91d-f10f-4f66-bf65-a0cba220cd38",
+	"zendesk_presales_chat_key_akismet": "7ce13115-7b34-4069-9d64-228d90f148d1",
+	"zendesk_presales_chat_key_jp_checkout": "7c42153f-f579-49ba-a33e-246b2d27fb93",
 	"features": {
 		"ad-tracking": false,
 		"akismet/siteless-checkout": true,
@@ -94,6 +96,7 @@
 		"jetpack/simplify-pricing-structure": false,
 		"jetpack/standalone-plugin-onboarding-update-v1": true,
 		"jetpack/offer-complete-after-activation": false,
+		"jetpack/zendesk-chat-for-logged-in-users": true,
 		"jitms": true,
 		"lasagna": true,
 		"layout/app-banner": true,
@@ -152,6 +155,7 @@
 		"publicize-preview": true,
 		"purchases/new-payment-methods": true,
 		"push-notifications": true,
+		"github-integration-i1": true,
 		"reader": true,
 		"reader/comment-polling": false,
 		"reader/full-errors": true,
@@ -176,7 +180,6 @@
 		"signup/woo-verify-email": false,
 		"site-indicator": true,
 		"ssr/prefetch-timebox": false,
-		"stats/horizontal-bars-everywhere": true,
 		"stats/new-video-summary": true,
 		"stats/subscribers-section": false,
 		"stepper-woocommerce-poc": true,
@@ -204,9 +207,7 @@
 		"woop": false,
 		"wordpress-action-search": false,
 		"wpcom-user-bootstrap": false,
-		"yolo/staging-sites-i1": true,
 		"newsletter/stats": true,
-		"woa-logging": true,
-		"woa-logging-moved": true
+		"newsletter/paid-subscribers": true
 	}
 }

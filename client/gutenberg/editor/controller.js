@@ -1,9 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { makeLayout, render } from 'calypso/controller';
-import { addQueryArgs } from 'calypso/lib/route';
+import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { getAdminMenu, getIsRequestingAdminMenu } from 'calypso/state/admin-menu/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { stopEditingPost } from 'calypso/state/editor/actions';
 import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
@@ -278,16 +279,39 @@ export const exitPost = ( context, next ) => {
 export const redirectSiteEditor = async ( context ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
-
-	const queryArgs = context.query || {};
-	// Only add the origin if it's not wordpress.com.
-	if ( location.origin !== 'https://wordpress.com' ) {
-		queryArgs.calypso_origin = location.origin;
-	}
-
-	// We aren't using `getSiteEditorUrl` because it still thinks we should gutenframe the Site Editor.
-	const siteAdminUrl = getSiteAdminUrl( state, siteId );
-	const siteEditorUrl = addQueryArgs( queryArgs, `${ siteAdminUrl }site-editor.php` );
+	const siteEditorUrl = getSiteEditorUrl( state, siteId );
 	// Calling replace to avoid adding an entry to the browser history upon redirect.
 	return location.replace( siteEditorUrl );
 };
+/**
+ * Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
+ *
+ * @param {Object} context Shared context in the route.
+ * @param {Function} next  Next registered callback for the route.
+ * @returns undefined      Whatever the next callback returns.
+ */
+export function redirectToPermalinkIfLoggedOut( context, next ) {
+	if ( isUserLoggedIn( context.store.getState() ) ) {
+		return next();
+	}
+	const siteFragment = context.params.site || getSiteFragment( context.path );
+	const CONFIGURABLE_TYPES = [ 'jetpack-portfolio', 'jetpack-testimonial' ];
+
+	// The context.path in this case could be one of the following:
+	// - /page/{site}/{id}
+	// - /post/{site}/{id}
+	// - /edit/jetpack-portfolio/{site}/{id}
+	// - /edit/jetpack-testimonial/{site}/{id}
+	const explodedPath = context.path.split( '/' );
+	if (
+		context.path &&
+		explodedPath[ 1 ] === 'edit' &&
+		! CONFIGURABLE_TYPES.includes( explodedPath[ 2 ] )
+	) {
+		return next();
+	}
+	// Redirect the logged user to the permalink of the post, page, custom post type if the post is published.
+	// else the endpoint will redirect the user to the login page.
+	window.location = `https://public-api.wordpress.com/wpcom/v2/sites/${ siteFragment }/editor/redirect?path=${ context.path }`;
+	return;
+}

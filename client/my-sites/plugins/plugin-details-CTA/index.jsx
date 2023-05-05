@@ -16,6 +16,7 @@ import BillingIntervalSwitcher from 'calypso/my-sites/marketplace/components/bil
 import { ManageSitePluginsDialog } from 'calypso/my-sites/plugins/manage-site-plugins-dialog';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import StagingSiteNotice from 'calypso/my-sites/plugins/plugin-details-CTA/staging-site-notice';
 import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
@@ -31,6 +32,7 @@ import { isMarketplaceProduct as isMarketplaceProductSelector } from 'calypso/st
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomStaging from 'calypso/state/selectors/is-site-wpcom-staging';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSectionName } from 'calypso/state/ui/selectors';
@@ -66,6 +68,8 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, selectedSite?.ID ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, selectedSite?.ID ) );
 	const isJetpackSelfHosted = selectedSite && isJetpack && ! isAtomic;
+	const isWpcomStaging = useSelector( ( state ) => isSiteWpcomStaging( state, selectedSite?.ID ) );
+	const isDisabledForWpcomStaging = isWpcomStaging && isMarketplaceProduct;
 	const pluginFeature = isMarketplaceProduct
 		? WPCOM_FEATURES_INSTALL_PURCHASED_PLUGINS
 		: FEATURE_INSTALL_PLUGINS;
@@ -320,8 +324,10 @@ const PluginDetailsCTA = ( { plugin, isPlaceholder } ) => {
 						translate={ translate }
 						plugin={ plugin }
 						saasRedirectHRef={ saasRedirectHRef }
+						isWpcomStaging={ isWpcomStaging }
 					/>
 				</div>
+				{ isDisabledForWpcomStaging && <StagingSiteNotice plugin={ plugin } /> }
 				{ ! isJetpackSelfHosted && ! isMarketplaceProduct && (
 					<div className="plugin-details-cta__t-and-c">
 						{ translate(
@@ -377,9 +383,15 @@ function PrimaryButton( {
 	translate,
 	plugin,
 	saasRedirectHRef,
+	isWpcomStaging,
 } ) {
 	const dispatch = useDispatch();
 	const sectionName = useSelector( getSectionName );
+
+	const isMarketplaceProduct = useSelector( ( state ) =>
+		isMarketplaceProductSelector( state, plugin.slug )
+	);
+	const isDisabledForWpcomStaging = isWpcomStaging && isMarketplaceProduct;
 
 	const onClick = useCallback( () => {
 		dispatch(
@@ -428,7 +440,7 @@ function PrimaryButton( {
 		<CTAButton
 			plugin={ plugin }
 			hasEligibilityMessages={ hasEligibilityMessages }
-			disabled={ incompatiblePlugin || userCantManageTheSite }
+			disabled={ incompatiblePlugin || userCantManageTheSite || isDisabledForWpcomStaging }
 		/>
 	);
 }

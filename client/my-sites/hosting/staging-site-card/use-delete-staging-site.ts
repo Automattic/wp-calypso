@@ -1,5 +1,5 @@
+import { useIsMutating, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch } from 'react-redux';
 import wpcom from 'calypso/lib/wp';
 import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
@@ -12,12 +12,20 @@ interface UseDeleteStagingSiteOptions {
 	siteId: SiteId;
 	stagingSiteId: SiteId;
 	transferStatus: TransferStates | null;
+	onMutate?: () => void;
 	onSuccess?: () => void;
-	onError?: () => void;
+	onError?: ( error: MutationError ) => void;
 }
 
+interface MutationError {
+	code: string;
+	message: string;
+}
+
+export const DELETE_STAGING_SITE_MUTATION_KEY = 'delete-staging-site-mutation-key';
+
 export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => {
-	const { siteId, stagingSiteId, transferStatus, onSuccess, onError } = options;
+	const { siteId, stagingSiteId, transferStatus, onMutate, onSuccess, onError } = options;
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
 	const [ isDeletingInitiated, setIsDeletingInitiated ] = useState( false );
@@ -54,19 +62,29 @@ export const useDeleteStagingSite = ( options: UseDeleteStagingSiteOptions ) => 
 			} );
 		},
 		{
+			mutationKey: [ DELETE_STAGING_SITE_MUTATION_KEY, siteId ],
+			onMutate: () => {
+				onMutate?.();
+			},
 			onSuccess: async () => {
 				// Wait for the staging site async job to start
 				setTimeout( () => {
 					dispatch( fetchAutomatedTransferStatus( stagingSiteId ) );
 				}, 3000 );
 			},
-			onError: () => {
+			onError: ( error: MutationError ) => {
 				setIsDeletingInitiated( false );
-				onError?.();
+				onError?.( error );
 			},
 		}
 	);
-	const { mutate, isLoading } = mutation;
+
+	// isMutating is returning a number. Greater than 0 means we have some pending mutations for
+	// the provided key. This is preserved across different pages, while isLoading it's not.
+	// TODO: Remove that when react-query v5 is out. They seem to have added isPending variable for this.
+	const isLoading =
+		useIsMutating( { mutationKey: [ DELETE_STAGING_SITE_MUTATION_KEY, siteId ] } ) > 0;
+	const { mutate } = mutation;
 
 	useEffect( () => {
 		if ( isLoading ) {

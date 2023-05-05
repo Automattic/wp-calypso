@@ -1,13 +1,14 @@
 import { Button, Card, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import { useQueryClient } from '@tanstack/react-query';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { localize } from 'i18n-calypso';
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useQueryClient } from 'react-query';
 import { connect, useDispatch } from 'react-redux';
 import SiteIcon from 'calypso/blocks/site-icon';
 import CardHeading from 'calypso/components/card-heading';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 import { LoadingBar } from 'calypso/components/loading-bar';
 import Notice from 'calypso/components/notice';
 import { USE_SITE_EXCERPTS_QUERY_KEY } from 'calypso/data/sites/use-site-excerpts-query';
@@ -17,6 +18,7 @@ import { useAddStagingSiteMutation } from 'calypso/my-sites/hosting/staging-site
 import { useCheckStagingSiteStatus } from 'calypso/my-sites/hosting/staging-site-card/use-check-staging-site-status';
 import { useHasValidQuotaQuery } from 'calypso/my-sites/hosting/staging-site-card/use-has-valid-quota';
 import { useStagingSite } from 'calypso/my-sites/hosting/staging-site-card/use-staging-site';
+import SitesStagingBadge from 'calypso/sites-dashboard/components/sites-staging-badge';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -24,9 +26,11 @@ import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/
 import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import { DeleteStagingSite } from './delete-staging-site';
 import { useDeleteStagingSite } from './use-delete-staging-site';
-import { useHasSiteAccess } from './use-has-site-access';
 
+const stagingSiteAddSuccessNoticeId = 'staging-site-add-success';
 const stagingSiteAddFailureNoticeId = 'staging-site-add-failure';
+const stagingSiteDeleteSuccessNoticeId = 'staging-site-remove-success';
+const stagingSiteDeleteFailureNoticeId = 'staging-site-remove-failure';
 
 const StyledLoadingBar = styled( LoadingBar )( {
 	marginBottom: '1em',
@@ -53,12 +57,36 @@ const SiteInfo = styled.div( {
 	flexDirection: 'column',
 	marginLeft: 10,
 } );
+
+const SiteNameContainer = styled.div( {
+	display: 'flex',
+	alignItems: 'center',
+} );
+
+const SiteName = styled.a( {
+	fontWeight: 500,
+	marginInlineEnd: '8px',
+	'&:hover': {
+		textDecoration: 'underline',
+	},
+	'&, &:hover, &:visited': {
+		color: 'var( --studio-gray-100 )',
+	},
+} );
+
 export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId, translate } ) => {
 	const { __ } = useI18n();
 	const dispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const [ loadingError, setLoadingError ] = useState( false );
 	const [ isErrorValidQuota, setIsErrorValidQuota ] = useState( false );
+
+	const removeAllNotices = () => {
+		dispatch( removeNotice( stagingSiteAddSuccessNoticeId ) );
+		dispatch( removeNotice( stagingSiteAddFailureNoticeId ) );
+		dispatch( removeNotice( stagingSiteDeleteSuccessNoticeId ) );
+		dispatch( removeNotice( stagingSiteDeleteFailureNoticeId ) );
+	};
 
 	const { data: hasValidQuota, isLoading: isLoadingQuotaValidation } = useHasValidQuotaQuery(
 		siteId,
@@ -85,7 +113,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	const stagingSite = useMemo( () => {
 		return stagingSites && stagingSites.length ? stagingSites[ 0 ] : [];
 	}, [ stagingSites ] );
-	const hasSiteAccess = useHasSiteAccess( stagingSite.id );
+	const hasSiteAccess = ! stagingSite.id || Boolean( stagingSite?.user_has_permission );
 
 	const showAddStagingSite =
 		! isLoadingStagingSites && ! isLoadingQuotaValidation && stagingSites?.length === 0;
@@ -99,20 +127,38 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		siteId,
 		stagingSiteId: stagingSite.id,
 		transferStatus,
+		onMutate: () => {
+			removeAllNotices();
+		},
+		onError: ( error ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_hosting_configuration_staging_site_delete_failure', {
+					code: error.code,
+				} )
+			);
+			dispatch(
+				errorNotice(
+					// translators: "reason" is why deleting the staging site failed.
+					sprintf( __( 'Failed to delete staging site: %(reason)s' ), { reason: error.message } ),
+					{
+						id: stagingSiteDeleteFailureNoticeId,
+					}
+				)
+			);
+		},
 		onSuccess: useCallback( () => {
-			dispatch( successNotice( __( 'Staging site deleted.' ) ) );
+			dispatch(
+				successNotice( __( 'Staging site deleted.' ), { id: stagingSiteDeleteSuccessNoticeId } )
+			);
 		}, [ dispatch, __ ] ),
 	} );
 	const isStagingSiteTransferComplete = transferStatus === transferStates.COMPLETE;
-	const isTrasferInProgress =
-		showManageStagingSite &&
-		! isStagingSiteTransferComplete &&
-		( transferStatus !== null || wasCreating );
-
 	useEffect( () => {
 		if ( wasCreating && isStagingSiteTransferComplete ) {
 			queryClient.invalidateQueries( [ USE_SITE_EXCERPTS_QUERY_KEY ] );
-			dispatch( successNotice( __( 'Staging site added.' ) ) );
+			dispatch(
+				successNotice( __( 'Staging site added.' ), { id: stagingSiteAddSuccessNoticeId } )
+			);
 		}
 	}, [ dispatch, queryClient, __, isStagingSiteTransferComplete, wasCreating ] );
 
@@ -137,7 +183,7 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 
 	const { addStagingSite, isLoading: addingStagingSite } = useAddStagingSiteMutation( siteId, {
 		onMutate: () => {
-			dispatch( removeNotice( stagingSiteAddFailureNoticeId ) );
+			removeAllNotices();
 		},
 		onError: ( error ) => {
 			dispatch(
@@ -157,6 +203,38 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 		},
 	} );
 
+	const isTrasferInProgress =
+		addingStagingSite ||
+		( showManageStagingSite &&
+			! isStagingSiteTransferComplete &&
+			( transferStatus !== null || wasCreating ) );
+
+	useEffect( () => {
+		// We know that a user has been navigated to an other page and came back if
+		// The transfer status is not in a final state (complete or failure)
+		// the staging site exists
+		// the site is not reverting
+		// the user owns the staging site
+		// and wasCreating that is set up by the add staging site button is false
+		if (
+			! wasCreating &&
+			! isStagingSiteTransferComplete &&
+			stagingSite.id &&
+			transferStatus !== transferStates.REVERTED &&
+			hasSiteAccess &&
+			! isReverting
+		) {
+			setWasCreating( true );
+		}
+	}, [
+		wasCreating,
+		isStagingSiteTransferComplete,
+		transferStatus,
+		hasSiteAccess,
+		isReverting,
+		stagingSite,
+	] );
+
 	const getExceedQuotaErrorContent = () => {
 		return (
 			<ExceedQuotaErrorWrapper data-testid="quota-message">
@@ -174,7 +252,12 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 			<>
 				<p>
 					{ translate(
-						'A staging site is a test version of your website you can use to preview and troubleshoot changes before applying them to your production site.'
+						'A staging site is a test version of your website you can use to preview and troubleshoot changes before applying them to your production site. {{a}}Learn more{{/a}}.',
+						{
+							components: {
+								a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,
+							},
+						}
 					) }
 				</p>
 				<Button
@@ -197,11 +280,28 @@ export const StagingSiteCard = ( { currentUserId, disabled, siteId, siteOwnerId,
 	const getManageStagingSiteContent = () => {
 		return (
 			<>
-				<p>{ translate( 'Your staging site is available at:' ) }</p>
+				<p>
+					{ translate(
+						'Your staging site lets you preview and troubleshoot changes before updating the production site. {{a}}Learn more{{/a}}.',
+						{
+							components: {
+								a: <InlineSupportLink supportContext="hosting-staging-site" showIcon={ false } />,
+							},
+						}
+					) }
+				</p>
 				<SiteRow>
 					<SiteIcon siteId={ stagingSite.id } size={ 40 } />
 					<SiteInfo>
-						<div>{ stagingSite.name }</div>
+						<SiteNameContainer>
+							<SiteName
+								href={ `/hosting-config/${ urlToSlug( stagingSite.url ) }` }
+								title={ __( 'Visit Dashboard' ) }
+							>
+								{ stagingSite.name }
+							</SiteName>
+							<SitesStagingBadge>{ translate( 'Staging' ) }</SitesStagingBadge>
+						</SiteNameContainer>
 						<div>
 							<a href={ stagingSite.url }>{ stagingSite.url }</a>
 						</div>

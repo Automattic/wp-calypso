@@ -32,7 +32,9 @@ const MarketplaceThankYou = ( {
 } ) => {
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
-	const isRequestingPlugins = useSelector( ( state ) => isRequesting( state, siteId ) );
+	const isRequestingPlugins = useSelector( ( state ) =>
+		siteId ? isRequesting( state, siteId ) : false
+	);
 
 	const defaultThankYouFooter = useThankYouFoooter( pluginSlugs, themeSlugs );
 

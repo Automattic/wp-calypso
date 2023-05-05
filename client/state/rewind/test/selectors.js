@@ -189,9 +189,11 @@ describe( 'Backup staging sites selectors', () => {
 			rewind: {
 				[ TEST_SITE_ID ]: {
 					staging: {
-						isFetchingStagingSitesList: true,
-						hasFetchedStagingSitesList: false,
-						sites: [],
+						stagingSitesList: {
+							isFetchingStagingSitesList: true,
+							hasFetchedStagingSitesList: false,
+							sites: [],
+						},
 					},
 				},
 			},
@@ -200,9 +202,11 @@ describe( 'Backup staging sites selectors', () => {
 			rewind: {
 				[ TEST_SITE_ID ]: {
 					staging: {
-						isFetchingStagingSitesList: false,
-						hasFetchedStagingSitesList: true,
-						sites: stagingSites,
+						stagingSitesList: {
+							isFetchingStagingSitesList: false,
+							hasFetchedStagingSitesList: true,
+							sites: stagingSites,
+						},
 					},
 				},
 			},
@@ -283,7 +287,9 @@ describe( 'getBackupStagingUpdateRequestStatus()', () => {
 		const state = {
 			rewind: {
 				[ TEST_SITE_ID ]: {
-					updateStagingFlagRequestStatus: BACKUP_STAGING_UPDATE_REQUEST.PENDING,
+					staging: {
+						updateStagingFlagRequestStatus: BACKUP_STAGING_UPDATE_REQUEST.PENDING,
+					},
 				},
 			},
 		};

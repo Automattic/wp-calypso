@@ -5,7 +5,7 @@ import {
 	QueryKey,
 	QueryFunction,
 	useQueries,
-} from 'react-query';
+} from '@tanstack/react-query';
 import {
 	extractSearchInformation,
 	normalizePluginsList,
@@ -70,7 +70,11 @@ export const useWPCOMPluginsList = (
 	type: Type,
 	searchTerm?: string,
 	tag?: string,
-	{ enabled = true, staleTime = BASE_STALE_TIME, refetchOnMount = true }: UseQueryOptions = {}
+	{
+		enabled = true,
+		staleTime = BASE_STALE_TIME,
+		refetchOnMount = true,
+	}: UseQueryOptions< any > = {}
 ): UseQueryResult => {
 	return useQuery( ...getWPCOMPluginsQueryParams( type, searchTerm, tag ), {
 		enabled: enabled,
@@ -114,19 +118,19 @@ export const useWPCOMPlugin = (
 };
 
 export const useWPCOMPlugins = ( slugs: Array< string > ): Array< UseQueryResult< any > > => {
-	return useQueries(
-		slugs.map( ( slug ) => {
+	return useQueries( {
+		queries: slugs.map( ( slug ) => {
 			const [ cacheKey, fetchFn ] = getWPCOMPluginQueryParams( slug );
 
 			return {
 				queryKey: cacheKey,
 				queryFn: fetchFn,
 			};
-		} )
-	);
+		} ),
+	} );
 };
 
-export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction< any[] > ] => {
+export const getWPCOMFeaturedPluginsQueryParams = (): [ QueryKey, QueryFunction ] => {
 	const cacheKey = [ 'plugins-featured-list-normalized' ];
 	const fetchFn = () =>
 		wpcom.req

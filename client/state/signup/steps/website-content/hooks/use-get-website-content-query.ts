@@ -1,5 +1,5 @@
 import { mapRecordKeysRecursively, snakeToCamelCase } from '@automattic/js-utils';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import type { WebsiteContentResponseDTO, WebsiteContentServerState } from '../types';
 import type { SiteSlug } from 'calypso/types';

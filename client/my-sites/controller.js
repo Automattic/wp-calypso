@@ -304,8 +304,10 @@ function onSelectedSiteAvailable( context ) {
 				'/checkout/',
 				'/domains/',
 				'/email/',
+				'/export/',
 				'/plans/my-plan/trial-expired/',
 				'/purchases/',
+				'/settings/delete-site/',
 			];
 
 			if ( ! permittedPathPrefixes.some( ( prefix ) => context.pathname.startsWith( prefix ) ) ) {
@@ -452,12 +454,16 @@ export function noSite( context, next ) {
 	const isJetpackCheckoutFlow = context.pathname.includes( '/checkout/jetpack' );
 	const isAkismetCheckoutFlow = context.pathname.includes( '/checkout/akismet' );
 	const isGiftCheckoutFlow = context.pathname.includes( '/gift/' );
+	const isRenewal = context.pathname.includes( '/renew/' );
 
 	if (
 		! isDomainOnlyFlow &&
 		! isJetpackCheckoutFlow &&
 		! isAkismetCheckoutFlow &&
 		! isGiftCheckoutFlow &&
+		// We allow renewals without a site through because we want to show these
+		// users an error message on the checkout page.
+		! isRenewal &&
 		hasSite
 	) {
 		siteSelection( context, next );

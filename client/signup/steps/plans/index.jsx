@@ -21,7 +21,7 @@ import PlansComparison, {
 	isStarterPlanEnabled,
 } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import { ExperimentalIntervalTypeToggle } from 'calypso/my-sites/plans-features-main/plan-type-selector';
+import { ExperimentalIntervalTypeToggle } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
@@ -79,6 +79,25 @@ export class PlansStep extends Component {
 		return customerType;
 	}
 
+	replacePaidDomainWithFreeDomain = ( freeDomainSuggestion ) => {
+		if ( freeDomainSuggestion?.product_slug ) {
+			return;
+		}
+		const domainItem = undefined;
+		const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
+
+		this.props.submitSignupStep(
+			{
+				stepName: 'domains',
+				domainItem,
+				isPurchasingItem: false,
+				siteUrl,
+				stepSectionName: undefined,
+			},
+			{ domainItem }
+		);
+	};
+
 	plansFeaturesList() {
 		const {
 			disableBloggerPlanWithNonBlogDomain,
@@ -93,6 +112,7 @@ export class PlansStep extends Component {
 			eligibleForProPlan,
 		} = this.props;
 
+		const intervalType = getIntervalType( this.props.path );
 		let errorDisplay;
 		if ( 'invalid' === this.props.step?.status ) {
 			errorDisplay = (
@@ -111,7 +131,6 @@ export class PlansStep extends Component {
 		if ( eligibleForProPlan ) {
 			const selectedDomainConnection =
 				this.props.progress?.domains?.domainItem?.product_slug === 'domain_map';
-			const intervalType = getIntervalType();
 			return (
 				<div>
 					{ errorDisplay }
@@ -142,7 +161,7 @@ export class PlansStep extends Component {
 					hideEcommercePlan={ this.shouldHideEcommercePlan() }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
-					intervalType={ getIntervalType() }
+					intervalType={ intervalType }
 					onUpgradeClick={ ( cartItem ) => this.onSelectPlan( cartItem ) }
 					domainName={ getDomainName( this.props.signupDependencies.domainItem ) }
 					customerType={ this.getCustomerType() }
@@ -158,6 +177,7 @@ export class PlansStep extends Component {
 					hidePremiumPlan={ this.props.hidePremiumPlan }
 					hidePersonalPlan={ this.props.hidePersonalPlan }
 					hideEnterprisePlan={ this.props.hideEnterprisePlan }
+					replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
 				/>
 			</div>
 		);

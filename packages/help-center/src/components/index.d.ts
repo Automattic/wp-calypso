@@ -46,7 +46,7 @@ declare module 'calypso/data/support-article-alternates/use-support-article-alte
 	const useSupportArticleAlternatesQuery: (
 		blogId: number,
 		postId: number
-	) => { isLoading: boolean; data?: { blog_id: number; page_id: number } };
+	) => { isInitialLoading: boolean; data?: { blog_id: number; page_id: number } };
 	export default useSupportArticleAlternatesQuery;
 }
 

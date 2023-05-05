@@ -1,0 +1,16 @@
+@import "../../variables";
+
+.tumblr-preview__post-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	margin: 1rem 0;
+	padding: 0 $tumblr-preview-card-inline-padding;
+}
+
+.tumblr-preview__post-header-username {
+	font-size: 0.875rem; // 14px
+	font-weight: 700;
+	line-height: 1.5;
+}

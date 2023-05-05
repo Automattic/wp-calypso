@@ -1,11 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import { NEWSLETTER_FLOW } from '@automattic/onboarding';
+import { useLaunchpad } from '@automattic/data-stores';
+import { NEWSLETTER_FLOW, START_WRITING_FLOW } from '@automattic/onboarding';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import nock from 'nock';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider } from 'react-redux';
 import { createReduxStore } from 'calypso/state';
 import { getInitialState, getStateFromCache } from 'calypso/state/initial-state';
@@ -26,6 +27,13 @@ const stepContentProps = {
 	/* eslint-enable @typescript-eslint/no-empty-function */
 };
 
+jest.mock( '@automattic/data-stores', () => ( {
+	...jest.requireActual( '@automattic/data-stores' ),
+	useLaunchpad: jest.fn().mockReturnValue( {
+		data: { site_intent: 'newsletter' },
+	} ),
+} ) );
+
 jest.mock( 'calypso/landing/stepper/hooks/use-site', () => ( {
 	useSite: () => ( {
 		site: mockSite,
@@ -40,6 +48,63 @@ jest.mock( 'react-router-dom', () => ( {
 		hash: '',
 		state: undefined,
 	} ) ),
+} ) );
+
+jest.mock( 'calypso/../packages/help-center/src/hooks/use-launchpad-checklist', () => ( {
+	useLaunchpadChecklist: ( siteSlug, siteIntentOption ) => {
+		let checklist = [
+			{
+				id: 'setup_newsletter',
+				completed: true,
+				disabled: false,
+				title: 'Personalize newsletter',
+			},
+			{ id: 'plan_selected', completed: true, disabled: false, title: 'Choose a plan' },
+			{ id: 'subscribers_added', completed: true, disabled: true, title: 'Add subscribers' },
+			{
+				id: 'verify_email',
+				completed: true,
+				disabled: true,
+				title: 'Confirm email (check your inbox)',
+			},
+			{
+				id: 'first_post_published_newsletter',
+				completed: true,
+				disabled: true,
+				title: 'Start writing',
+			},
+		];
+
+		if ( siteIntentOption === 'start-writing' ) {
+			checklist = [
+				{
+					id: 'first_post_published',
+					completed: true,
+					disabled: false,
+					title: 'Write your first post',
+				},
+				{ id: 'setup_free', completed: true, disabled: false, title: 'Choose a plan' },
+				{ id: 'domain_upsell', completed: false, disabled: false, title: 'Choose a domain' },
+				{
+					id: 'plan_selected',
+					completed: false,
+					disabled: false,
+					title: 'Choose a plan',
+				},
+				{
+					id: 'blog_launched',
+					completed: false,
+					disabled: false,
+					title: 'Launch your blog',
+				},
+			];
+		}
+
+		return {
+			data: { checklist },
+			isFetchedAfterMount: true,
+		};
+	},
 } ) );
 
 const user = {
@@ -139,6 +204,49 @@ describe( 'StepContent', () => {
 
 		it( 'renders web preview section', () => {
 			renderStepContent( false, NEWSLETTER_FLOW );
+
+			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'when flow is Start writing', () => {
+		it( 'renders correct sidebar header content', () => {
+			renderStepContent( false, START_WRITING_FLOW );
+
+			expect( screen.getByText( "Your blog's almost ready!" ) ).toBeInTheDocument();
+			expect(
+				screen.getByText( 'Keep up the momentum with these final steps.' )
+			).toBeInTheDocument();
+		} );
+
+		it( 'renders correct sidebar tasks', () => {
+			// Change the useLaunchpad hook to return a free site.
+			( useLaunchpad as jest.Mock ).mockReturnValueOnce( {
+				data: {
+					site_intent: 'start-writing',
+				},
+			} );
+			renderStepContent( false, START_WRITING_FLOW );
+
+			expect( screen.getByText( 'Write your first post' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Set up your blog' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Choose a domain' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Choose a plan' ) ).toBeInTheDocument();
+			expect( screen.getByText( 'Launch your blog' ) ).toBeInTheDocument();
+		} );
+
+		it( 'renders correct status for each task', () => {
+			renderStepContent( false, START_WRITING_FLOW );
+
+			const setupBlogListItem = screen.getByText( 'Set up your blog' ).closest( 'li' );
+			expect( setupBlogListItem ).toHaveClass( 'pending' );
+
+			const choosePlanListItem = screen.getByText( 'Choose a plan' ).closest( 'li' );
+			expect( choosePlanListItem ).toHaveClass( 'pending' );
+		} );
+
+		it( 'renders web preview section', () => {
+			renderStepContent( false, START_WRITING_FLOW );
 
 			expect( screen.getByTitle( 'Preview' ) ).toBeInTheDocument();
 		} );

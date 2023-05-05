@@ -103,6 +103,10 @@
 				margin-top: 16px;
 				line-height: 24px;
 
+				&.is-center-align {
+					text-align: center;
+				}
+
 				@include break-small {
 					margin-top: 8px;
 				}

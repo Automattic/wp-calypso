@@ -1,11 +1,7 @@
-import { useMutation, useQueryClient } from 'react-query';
-import { applyCallbackToPages, callApi } from '../helpers';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { callApi } from '../helpers';
 import { useCacheKey, useIsLoggedIn } from '../hooks';
-import {
-	PagedQueryResult,
-	SiteSubscription,
-	SubscriptionManagerSubscriptionsCount,
-} from '../types';
+import { SiteSubscriptionsPages, SubscriptionManagerSubscriptionsCount } from '../types';
 
 type UnsubscribeParams = {
 	blog_id: number | string;
@@ -53,23 +49,21 @@ const useSiteUnsubscribeMutation = () => {
 				await queryClient.cancelQueries( subscriptionsCountCacheKey );
 
 				const previousSiteSubscriptions =
-					queryClient.getQueryData< PagedQueryResult< SiteSubscription, 'subscriptions' > >(
-						siteSubscriptionsCacheKey
-					);
+					queryClient.getQueryData< SiteSubscriptionsPages >( siteSubscriptionsCacheKey );
 				// remove blog from site subscriptions
 				if ( previousSiteSubscriptions ) {
-					const mutatedSiteSubscriptions = applyCallbackToPages<
-						'subscriptions',
-						SiteSubscription
-					>( previousSiteSubscriptions, ( page ) => {
-						return {
-							...page,
-							subscriptions: page.subscriptions.filter(
-								( siteSubscription ) => siteSubscription.blog_ID !== params.blog_id
-							),
-						};
+					queryClient.setQueryData( siteSubscriptionsCacheKey, {
+						...previousSiteSubscriptions,
+						pages: previousSiteSubscriptions.pages.map( ( page ) => {
+							return {
+								...page,
+								subscriptions: page.subscriptions.filter(
+									( siteSubscription ) => siteSubscription.blog_ID !== params.blog_id
+								),
+								total_subscriptions: page.total_subscriptions - 1,
+							};
+						} ),
 					} );
-					queryClient.setQueryData( siteSubscriptionsCacheKey, mutatedSiteSubscriptions );
 				}
 
 				const previousSubscriptionsCount =

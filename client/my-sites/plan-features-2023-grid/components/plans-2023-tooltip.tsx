@@ -18,6 +18,7 @@ const StyledTooltip = styled( Tooltip )`
 		font-size: 1em;
 		padding: 8px 10px;
 		top: -8px;
+		overflow-wrap: break-word;
 	}
 `;
 

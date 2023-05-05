@@ -28,10 +28,6 @@ export const addFeature = ( featureId: FeatureId ) => ( {
 	type: 'ADD_FEATURE' as const,
 	featureId,
 } );
-export const setPatternContent = ( patternContent: string ) => ( {
-	type: 'SET_SITE_PATTERN_CONTENT' as const,
-	patternContent,
-} );
 
 export interface CreateSiteBaseActionParameters {
 	username: string;
@@ -455,6 +451,11 @@ export const setHideFreePlan = ( hideFreePlan: boolean ) => ( {
 	hideFreePlan,
 } );
 
+export const setHidePlansFeatureComparison = ( hidePlansFeatureComparison: boolean ) => ( {
+	type: 'SET_HIDE_PLANS_FEATURE_COMPARISON' as const,
+	hidePlansFeatureComparison,
+} );
+
 export const setIsMigrateFromWp = ( isMigrateFromWp: boolean ) => ( {
 	type: 'SET_IS_MIGRATE_FROM_WP' as const,
 	isMigrateFromWp,
@@ -468,6 +469,11 @@ export const setPluginsToVerify = ( pluginSlugs: string[] ) => ( {
 export const setProfilerData = ( profilerData: ProfilerData ) => ( {
 	type: 'SET_PROFILER_DATA' as const,
 	profilerData,
+} );
+
+export const setPaidSubscribers = ( paidSubscribers: boolean ) => ( {
+	type: 'SET_PAID_SUBSCRIBERS' as const,
+	paidSubscribers,
 } );
 
 export type OnboardAction = ReturnType<
@@ -493,7 +499,6 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedStyleVariation
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
-	| typeof setPatternContent
 	| typeof setSiteTitle
 	| typeof setAnchorPodcastId
 	| typeof setAnchorEpisodeId
@@ -522,7 +527,9 @@ export type OnboardAction = ReturnType<
 	| typeof setStoreLocationCountryCode
 	| typeof setEcommerceFlowRecurType
 	| typeof setHideFreePlan
+	| typeof setHidePlansFeatureComparison
 	| typeof setProductCartItems
 	| typeof setPlanCartItem
 	| typeof setIsMigrateFromWp
+	| typeof setPaidSubscribers
 >;

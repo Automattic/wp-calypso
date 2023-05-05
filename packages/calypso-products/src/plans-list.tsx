@@ -220,8 +220,6 @@ import {
 	FEATURE_UNLIMITED_EMAILS,
 	FEATURE_UNLIMITED_SUBSCRIBERS,
 	FEATURE_AD_FREE_EXPERIENCE,
-	FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
-	FEATURE_COLLECT_PAYMENTS_NEWSLETTER,
 	FEATURE_POST_BY_EMAIL,
 	FEATURE_GOOGLE_ANALYTICS_V2,
 	FEATURE_ADD_UNLIMITED_LINKS,
@@ -378,6 +376,9 @@ import {
 	FEATURE_PRINT_SHIPPING_LABELS,
 	PLAN_WOOEXPRESS_PLUS,
 	TYPE_WOO_EXPRESS_PLUS,
+	FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+	FEATURE_PAYMENT_TRANSACTION_FEES_8,
+	FEATURE_PAYMENT_TRANSACTION_FEES_4,
 } from './constants';
 import { is2023PricingGridEnabled } from './plans-utilities';
 import type {
@@ -454,6 +455,8 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 	getStoreAudience: () => i18n.translate( 'Best for students' ),
 	getPlanTagline: () =>
 		i18n.translate( 'Get a taste of the world’s most popular CMS & blogging software.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate( 'Start fresh or make the switch, bringing your first 100 readers with you.' ),
 	getDescription: () =>
 		i18n.translate(
 			'Get a free website and be on your way to publishing your ' +
@@ -483,6 +486,7 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_FREE_THEMES_SIGNUP,
 	],
 	get2023PricingGridSignupWpcomFeatures: () => [
+		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_BEAUTIFUL_THEMES,
 		FEATURE_PAGES,
 		FEATURE_USERS,
@@ -525,9 +529,16 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SITE_ACTIVITY_LOG_JP,
 		FEATURE_SHARES_SOCIAL_MEDIA_JP,
 	],
-
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_1GB_STORAGE ],
 	get2023PlanComparisonConditionalFeatures: () => [ FEATURE_SHARES_SOCIAL_MEDIA_JP ],
+	getNewsletterSignupFeatures: () => [
+		FEATURE_NEWSLETTER_IMPORT_SUBSCRIBERS_FREE,
+		FEATURE_NEWSLETTERS_RSS,
+		FEATURE_UNLIMITED_EMAILS,
+		FEATURE_STATS_JP,
+		FEATURE_BANDWIDTH,
+		FEATURE_LTD_SOCIAL_MEDIA_JP,
+	],
 	getIncludedFeatures: () => [],
 	getInferiorFeatures: () => [],
 	getCancellationFeatureList: (): CancellationFeatureLists => ( {
@@ -650,6 +661,8 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for personal use' ),
 	getStoreAudience: () => i18n.translate( 'Best for personal use' ),
 	getPlanTagline: () => i18n.translate( 'Create your home on the web with a custom domain name.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
@@ -715,20 +728,16 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_UNLIMITED_EMAILS,
 		FEATURE_UNLIMITED_SUBSCRIBERS,
-		// we don't offer this one yet
-		// FEATURE_IMPORT_SUBSCRIBERS,
+		FEATURE_PREMIUM_CONTENT_JP,
+		FEATURE_PAID_SUBSCRIBERS_JP,
+		FEATURE_SUPPORT_EMAIL,
 		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
-		FEATURE_COLLECT_PAYMENTS_NEWSLETTER,
-		FEATURE_POST_BY_EMAIL,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
+		FEATURE_PAYMENT_TRANSACTION_FEES_8,
 	],
 	getNewsletterHighlightedFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_EMAILS,
-		FEATURE_UNLIMITED_SUBSCRIBERS,
 		FEATURE_AD_FREE_EXPERIENCE,
 	],
 	getLinkInBioDescription: () =>
@@ -1121,6 +1130,8 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getPortfolioAudience: () => i18n.translate( 'Best for freelancers' ),
 	getStoreAudience: () => i18n.translate( 'Best for freelancers' ),
 	getPlanTagline: () => i18n.translate( 'Build a unique website with powerful design tools.' ),
+	getNewsletterTagLine: () =>
+		i18n.translate( 'Make it even more memorable with premium designs and style customization.' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +
@@ -1171,24 +1182,16 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 		),
 	getNewsletterSignupFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
-		FEATURE_UNLIMITED_EMAILS,
-		FEATURE_UNLIMITED_SUBSCRIBERS,
 		FEATURE_LIVE_CHAT_SUPPORT,
-		FEATURE_REAL_TIME_ANALYTICS,
-		FEATURE_AD_FREE_EXPERIENCE,
-		FEATURE_ADD_MULTIPLE_PAGES_NEWSLETTER,
-		FEATURE_COLLECT_PAYMENTS_NEWSLETTER,
-		FEATURE_POST_BY_EMAIL,
-		FEATURE_EMAIL_SUPPORT_SIGNUP,
-		// For context, see: https://github.com/Automattic/wp-calypso/issues/68150
-		// FEATURE_IMPORT_SUBSCRIBERS,
-		// FEATURE_GOOGLE_ANALYTICS_V2,
-		// FEATURE_PREMIUM_THEMES,
+		FEATURE_STYLE_CUSTOMIZATION,
+		FEATURE_PREMIUM_THEMES_V2,
+		FEATURE_UNLTD_SOCIAL_MEDIA_JP,
+		FEATURE_VIDEOPRESS_JP,
+		FEATURE_PAYMENT_TRANSACTION_FEES_4,
 	],
 	getNewsletterHighlightedFeatures: () => [
 		FEATURE_CUSTOM_DOMAIN,
 		FEATURE_UNLIMITED_EMAILS,
-		FEATURE_UNLIMITED_SUBSCRIBERS,
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_LIVE_CHAT_SUPPORT,
 		FEATURE_REAL_TIME_ANALYTICS,

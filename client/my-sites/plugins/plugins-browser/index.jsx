@@ -1,5 +1,6 @@
 import { useLocale } from '@automattic/i18n-utils';
 import { useI18n } from '@wordpress/react-i18n';
+import { useTranslate } from 'i18n-calypso';
 import { useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -33,6 +34,8 @@ import PluginsNavigationHeader from '../plugins-navigation-header';
 import PluginsSearchResultPage from '../plugins-search-results-page';
 
 import './style.scss';
+
+const searchTerms = [ 'woocommerce', 'seo', 'file manager', 'jetpack', 'ecommerce', 'form' ];
 
 const PageViewTrackerWrapper = ( { category, selectedSiteId, trackPageViews, isLoggedIn } ) => {
 	const analyticsPageTitle = 'Plugin Browser' + category ? ` > ${ category }` : '';
@@ -86,6 +89,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const { __, hasTranslation } = useI18n();
+	const translate = useTranslate();
 	const locale = useLocale();
 
 	const categories = useCategories();
@@ -137,7 +141,13 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 				trackPageViews={ trackPageViews }
 				isLoggedIn={ isLoggedIn }
 			/>
-			<DocumentHead title={ __( 'Plugins' ) } />
+			<DocumentHead
+				title={
+					category && ! search
+						? translate( '%(categoryName)s Plugins', { args: { categoryName } } )
+						: translate( 'Plugins' )
+				}
+			/>
 
 			<PluginsAnnouncementModal />
 			{ ! hideHeader && (
@@ -169,7 +179,7 @@ const PluginsBrowser = ( { trackPageViews = true, category, search, hideHeader }
 						) ) &&
 					__( 'Add new functionality and integrations to your site with thousands of plugins.' )
 				}
-				searchTerms={ [ 'seo', 'pay', 'booking', 'ecommerce', 'newsletter' ] }
+				searchTerms={ searchTerms }
 				renderTitleInH1={ ! category }
 			/>
 

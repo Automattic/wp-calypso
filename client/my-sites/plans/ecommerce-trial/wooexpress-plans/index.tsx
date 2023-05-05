@@ -17,7 +17,7 @@ import { useCallback, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import { getECommerceTrialCheckoutUrl } from 'calypso/lib/ecommerce-trial/get-ecommerce-trial-checkout-url';
-import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/plan-interval-selector';
+import PlanIntervalSelector from 'calypso/my-sites/plans-features-main/components/plan-interval-selector';
 import { getPlanRawPrice } from 'calypso/state/plans/selectors';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -121,6 +121,7 @@ export function WooExpressPlans( props: WooExpressPlansProps ) {
 	const plansTableProps = {
 		plans: [ smallPlan, mediumPlan, PLAN_WOOEXPRESS_PLUS ],
 		hidePlansFeatureComparison: false,
+		hideUnavailableFeatures: true,
 		siteId,
 		onUpgradeClick,
 	};

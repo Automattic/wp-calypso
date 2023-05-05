@@ -1,7 +1,9 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-function querySubscribers( siteId, period, quantity ) {
+function querySubscribers( siteId, period, quantity, date ) {
+	const periodStart = date ? date : new Date();
+
 	return wpcom.req.get(
 		{
 			method: 'GET',
@@ -12,6 +14,7 @@ function querySubscribers( siteId, period, quantity ) {
 			unit: period,
 			quantity,
 			http_envelope: 1,
+			date: periodStart.toISOString().slice( 0, 10 ), // returns UTC time
 		}
 	);
 }
@@ -34,11 +37,11 @@ function selectSubscribers( payload ) {
 	};
 }
 
-export default function useSubscribersQuery( siteId, period, quantity ) {
+export default function useSubscribersQuery( siteId, period, quantity, date ) {
 	// TODO: Account for other query parameters before release.
 	return useQuery(
-		[ 'stats', 'subscribers', siteId, period, quantity ],
-		() => querySubscribers( siteId, period, quantity ),
+		[ 'stats', 'subscribers', siteId, period, quantity, date ],
+		() => querySubscribers( siteId, period, quantity, date ),
 		{
 			select: selectSubscribers,
 			staleTime: 1000 * 60 * 5, // 5 minutes

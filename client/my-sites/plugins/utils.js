@@ -15,16 +15,17 @@ export function getVisibleSites( sites ) {
 
 export function useLocalizedPlugins() {
 	const isLoggedIn = useSelector( isUserLoggedIn );
-	const { localeSlug: locale } = useTranslate();
+	// eslint-disable-next-line wpcalypso/i18n-translate-identifier
+	const { localeSlug } = useTranslate();
 
 	const localizePath = useCallback(
 		( path ) => {
 			const shouldPrefix =
-				! isLoggedIn && isMagnificentLocale( locale ) && path.startsWith( '/plugins' );
+				! isLoggedIn && isMagnificentLocale( localeSlug ) && path.startsWith( '/plugins' );
 
-			return shouldPrefix ? `/${ locale }${ path }` : path;
+			return shouldPrefix ? `/${ localeSlug }${ path }` : path;
 		},
-		[ isLoggedIn, locale ]
+		[ isLoggedIn, localeSlug ]
 	);
 
 	return { localizePath };
@@ -43,7 +44,7 @@ const getConfirmationText = ( sites, selectedPlugins, actionText ) => {
 
 		Object.keys( plugin.sites ).forEach( ( siteId ) => {
 			const site = sites.find( ( s ) => s.ID === parseInt( siteId ) );
-			if ( site.canUpdateFiles ) {
+			if ( site && site.canUpdateFiles ) {
 				sitesList[ site.ID ] = true;
 				siteName = site.title;
 			}

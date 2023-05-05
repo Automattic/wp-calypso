@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { Button } from '@automattic/components';
 import { Modal, ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
@@ -10,6 +11,7 @@ import {
 	getSiteCountText,
 	mobileAppLink,
 } from '../../sites-overview/utils';
+import ConfigureEmailNotification from '../configure-email-notification';
 import type { MonitorSettings, Site } from '../../sites-overview/types';
 
 import './style.scss';
@@ -99,6 +101,10 @@ export default function NotificationSettings( {
 		}
 	}, [ isComplete, onClose ] );
 
+	const isMultipleEmailEnabled = isEnabled(
+		'jetpack/pro-dashboard-monitor-multiple-email-recipients'
+	);
+
 	return (
 		<Modal
 			open={ true }
@@ -186,11 +192,22 @@ export default function NotificationSettings( {
 						</div>
 						<div className="notification-settings__toggle-content">
 							<div className="notification-settings__content-heading">{ translate( 'Email' ) }</div>
-							<div className="notification-settings__content-sub-heading">
-								{ translate( 'Receive email notifications with your account email address %s.', {
-									args: addedEmailAddresses,
-								} ) }
-							</div>
+							{ isMultipleEmailEnabled ? (
+								<>
+									<div className="notification-settings__content-sub-heading">
+										{ translate( 'Receive email notifications with one or more recipients.' ) }
+									</div>
+									{ enableEmailNotification && (
+										<ConfigureEmailNotification defaultEmailAddresses={ addedEmailAddresses } />
+									) }
+								</>
+							) : (
+								<div className="notification-settings__content-sub-heading">
+									{ translate( 'Receive email notifications with your account email address %s.', {
+										args: addedEmailAddresses,
+									} ) }
+								</div>
+							) }
 						</div>
 					</div>
 				</div>
