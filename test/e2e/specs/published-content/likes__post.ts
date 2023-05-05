@@ -45,7 +45,7 @@ describe( DataHelper.createSuiteTitle( 'Likes (Post)' ), function () {
 
 		beforeAll( async () => {
 			page = await browser.newPage();
-			editorPage = new EditorPage( page, { target: features.siteType } );
+			editorPage = new EditorPage( page );
 			await postingUser.authenticate( page );
 		} );
 
