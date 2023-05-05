@@ -337,7 +337,7 @@ export default function WPCheckout( {
 								onChangePlanLength={ changePlanLength }
 								nextDomainIsFree={ responseCart?.next_domain_is_free }
 							/>
-							{ ! isWcMobile && ! isDIFMInCart && showUpsellMonthly && (
+							{ ! isWcMobile && ! isDIFMInCart && ! showUpsellMonthly && (
 								<CheckoutSidebarPlanUpsell />
 							) }
 							<SecondaryCartPromotions
