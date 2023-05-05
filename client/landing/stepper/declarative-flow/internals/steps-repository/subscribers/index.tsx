@@ -52,9 +52,9 @@ const Subscribers: Step = function ( { navigation } ) {
 							) }
 							showSubtitle={ true }
 							emailPlaceholders={ [
-								'sue@email.com',
-								'thomaswhigginson@email.com',
-								'ed.dickinson@email.com',
+								translate( 'bestie@email.com' ),
+								translate( 'chrisfromwork@email.com' ),
+								translate( 'mom@email.com' ),
 							] }
 						/>
 					) }
