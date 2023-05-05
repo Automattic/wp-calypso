@@ -82,7 +82,7 @@ export default function LicenseListHeader() {
 
 	return (
 		<LicenseListItem header className="license-list__header">
-			<h2>{ translate( 'License state' ) }</h2>
+			<h2>{ translate( 'Product' ) }</h2>
 
 			<h2>{ translate( 'Site' ) }</h2>
 
