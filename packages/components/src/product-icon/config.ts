@@ -13,6 +13,7 @@ import jetpackScan from './images/jetpack-scan.svg';
 import jetpackSearch from './images/jetpack-search.svg';
 import jetpackSecurity from './images/jetpack-security.svg';
 import jetpackSocial from './images/jetpack-social.svg';
+import jetpackStarter from './images/jetpack-starter.svg';
 import jetpackVideoPress from './images/jetpack-videopress.svg';
 import wpcomBlogger from './images/wpcom-blogger.svg';
 import wpcomBusiness from './images/wpcom-business.svg';
@@ -35,6 +36,7 @@ export const paths = {
 	'jetpack-search': jetpackSearch,
 	'jetpack-security': jetpackSecurity,
 	'jetpack-social': jetpackSocial,
+	'jetpack-starter': jetpackStarter,
 	'jetpack-videopress': jetpackVideoPress,
 	'wpcom-blogger': wpcomBlogger,
 	'wpcom-business': wpcomBusiness,
@@ -128,6 +130,8 @@ export type SupportedSlugs =
 	| 'jetpack_security_t1_monthly'
 	| 'jetpack_security_t2_yearly'
 	| 'jetpack_security_t2_monthly'
+	| 'jetpack_starter_yearly'
+	| 'jetpack_starter_monthly'
 	| 'jetpack_videopress'
 	| 'jetpack_videopress_monthly'
 	| 'jetpack_backup_addon_storage_10gb_monthly'
@@ -236,5 +240,6 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 	],
 	'jetpack-social': [ 'jetpack_social', 'jetpack_social_monthly' ],
 	'jetpack-videopress': [ 'jetpack_videopress', 'jetpack_videopress_monthly' ],
+	'jetpack-starter': [ 'jetpack_starter_yearly', 'jetpack_starter_monthly' ],
 	'jetpack-golden-token-lifetime': [ 'jetpack_golden_token_lifetime' ],
 } as const;

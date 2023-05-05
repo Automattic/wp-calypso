@@ -2096,8 +2096,10 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 	...getJetpackCommonPlanDetails(),
 	group: GROUP_JETPACK,
 	type: TYPE_JETPACK_STARTER,
-	getTitle: () => translate( 'Starter', { context: 'Jetpack product name' } ),
+	getTitle: () => translate( 'Jetpack Starter', { context: 'Jetpack product name' } ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	getTagline: () =>
+		translate( 'Essential security tools: real-time backups and comment spam protection.' ),
 	getDescription: () =>
 		translate(
 			'Enhance your website with the starter Jetpack tools for security, growth, and performance.'
