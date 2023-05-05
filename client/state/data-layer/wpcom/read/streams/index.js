@@ -35,17 +35,17 @@ function streamKeySuffix( streamKey ) {
 }
 
 const analyticsAlgoMap = new Map();
-function analyticsForStream( { streamKey, algorithm, posts } ) {
-	if ( ! streamKey || ! algorithm || ! posts ) {
+function analyticsForStream( { streamKey, algorithm, items } ) {
+	if ( ! streamKey || ! algorithm || ! items ) {
 		return [];
 	}
 
 	analyticsAlgoMap.set( streamKey, algorithm );
 
 	const eventName = 'calypso_traintracks_render';
-	const analyticsActions = posts
-		.filter( ( post ) => !! post.railcar )
-		.map( ( post ) => recordTracksEvent( eventName, post.railcar ) );
+	const analyticsActions = items
+		.filter( ( item ) => !! item.railcar )
+		.map( ( item ) => recordTracksEvent( eventName, item.railcar ) );
 	return analyticsActions;
 }
 const getAlgorithmForStream = ( streamKey ) => analyticsAlgoMap.get( streamKey );
@@ -155,6 +155,16 @@ const streamApis = {
 				alg_prefix: 'read:recommendations:posts',
 			} ),
 	},
+	custom_recs_sites_with_images: {
+		path: () => '/read/recommendations/sites',
+		dateProperty: 'date',
+		query: ( extras ) =>
+			getQueryString( {
+				...extras,
+				algorithm: 'read:recommendations:sites/es/2',
+				number: 10,
+			} ),
+	},
 	tag: {
 		path: ( { streamKey } ) => `/read/tags/${ streamKeySuffix( streamKey ) }/posts`,
 		dateProperty: 'date',
@@ -213,7 +223,7 @@ export function requestPage( action ) {
 }
 
 export function handlePage( action, data ) {
-	const { posts, date_range, meta, next_page } = data;
+	const { posts, date_range, meta, next_page, sites } = data;
 	const { streamKey, query, isPoll, gap, streamType } = action.payload;
 	const { dateProperty } = streamApis[ streamType ];
 	let pageHandle = {};
@@ -232,20 +242,56 @@ export function handlePage( action, data ) {
 		pageHandle = { before: after };
 	}
 
-	const actions = analyticsForStream( { streamKey, algorithm: data.algorithm, posts } );
+	if ( streamType === 'custom_recs_sites_with_images' ) {
+		pageHandle = { page_handle: next_page || meta.next_page };
+	}
 
-	const streamItems = posts.map( ( post ) => ( {
-		...keyForPost( post ),
-		date: post[ dateProperty ],
-		...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
-		url: post.URL,
-		xPostMetadata: XPostHelper.getXPostMetadata( post ),
-	} ) );
+	const actions = analyticsForStream( {
+		streamKey,
+		algorithm: data.algorithm,
+		items: posts || sites,
+	} );
+
+	let streamItems = [];
+	let streamPosts = posts;
+
+	if ( posts ) {
+		streamItems = posts.map( ( post ) => ( {
+			...keyForPost( post ),
+			date: post[ dateProperty ],
+			...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
+			url: post.URL,
+			site_icon: post.site_icon?.ico,
+			site_description: post.description,
+			site_name: post.site_name,
+			feed_URL: post.feed_URL,
+			feed_ID: post.feed_ID,
+			xPostMetadata: XPostHelper.getXPostMetadata( post ),
+		} ) );
+	} else if ( sites ) {
+		streamItems = sites.map( ( site ) => {
+			const post = site.posts[ 0 ];
+			return {
+				...keyForPost( post ),
+				date: post[ dateProperty ],
+				...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
+				url: post.URL,
+				site_icon: site.icon?.ico,
+				site_description: site.description,
+				site_name: site.name,
+				feed_URL: post.feed_URL,
+				feed_ID: post.feed_ID,
+				xPostMetadata: XPostHelper.getXPostMetadata( post ),
+			};
+		} );
+		// get array of posts from sites object
+		streamPosts = sites.map( ( site ) => site.posts[ 0 ] );
+	}
 
 	if ( isPoll ) {
 		actions.push( receiveUpdates( { streamKey, streamItems, query } ) );
 	} else {
-		actions.push( receivePosts( posts ) );
+		actions.push( receivePosts( streamPosts ) );
 		actions.push( receivePage( { streamKey, query, streamItems, pageHandle, gap } ) );
 	}
 
