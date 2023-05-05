@@ -10,15 +10,13 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import SocialLogo from 'calypso/components/social-logo';
+import useShouldShowFirstPostPublishedModal from '../../../dotcom-fse/lib/first-post-published-modal/use-should-show-first-post-published-modal';
 import useShouldShowSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-should-show-seller-celebration-modal';
 import useShouldShowVideoCelebrationModal from '../../../dotcom-fse/lib/video-celebration-modal/use-should-show-video-celebration-modal';
-import { selectors as wpcomWelcomeGuideSelectors } from '../store';
 import postPublishedImage from './images/illo-share.svg';
 import useSharingModalDismissed from './use-sharing-modal-dismissed';
-import type { SelectFromMap } from '@automattic/data-stores';
 import './style.scss';
 
-type WpcomWelcomeGuideSelectors = SelectFromMap< typeof wpcomWelcomeGuideSelectors >;
 type CoreEditorPlaceholder = {
 	getCurrentPost: ( ...args: unknown[] ) => { link: string; title: string };
 	getCurrentPostType: ( ...args: unknown[] ) => string;
@@ -45,26 +43,46 @@ const SharingModal: React.FC = () => {
 		[]
 	);
 	const previousIsCurrentPostPublished = useRef( isCurrentPostPublished );
-	const shouldShowFirstPostPublishedModal = useSelect(
-		( select ) =>
-			(
-				select( 'automattic/wpcom-welcome-guide' ) as WpcomWelcomeGuideSelectors
-			 ).getShouldShowFirstPostPublishedModal(),
-		[]
-	);
+	const shouldShowFirstPostPublishedModal = useShouldShowFirstPostPublishedModal();
 	const shouldShowSellerCelebrationModal = useShouldShowSellerCelebrationModal();
 	const shouldShowVideoCelebrationModal =
 		useShouldShowVideoCelebrationModal( isCurrentPostPublished );
 
 	const [ isOpen, setIsOpen ] = useState( false );
 	const closeModal = () => setIsOpen( false );
-	const { fetchShouldShowFirstPostPublishedModal } = useDispatch(
-		'automattic/wpcom-welcome-guide'
-	);
 	const { createNotice } = useDispatch( noticesStore );
 
 	const siteSlug = window.location.hostname;
 	const subscribersUrl = `https://wordpress.com/people/subscribers/${ siteSlug }`;
+
+	useEffect( () => {
+		// The first post will show a different modal.
+		if (
+			! shouldShowFirstPostPublishedModal &&
+			! shouldShowSellerCelebrationModal &&
+			! shouldShowVideoCelebrationModal &&
+			launchpadScreenOption !== 'full' &&
+			! previousIsCurrentPostPublished.current &&
+			isCurrentPostPublished &&
+			postType === 'post'
+		) {
+			previousIsCurrentPostPublished.current = isCurrentPostPublished;
+
+			// When the post published panel shows, it is focused automatically.
+			// Thus, we need to delay open the modal so that the modal would not be close immediately
+			// because the outside of modal is focused
+			window.setTimeout( () => {
+				setIsOpen( true );
+			} );
+		}
+	}, [
+		postType,
+		shouldShowFirstPostPublishedModal,
+		shouldShowSellerCelebrationModal,
+		shouldShowVideoCelebrationModal,
+		isCurrentPostPublished,
+		launchpadScreenOption,
+	] );
 
 	const shareTwitter = () => {
 		const baseUrl = new URL( 'https://twitter.com/intent/tweet' );
@@ -131,38 +149,6 @@ const SharingModal: React.FC = () => {
 			type: 'snackbar',
 		} );
 	};
-
-	useEffect( () => {
-		fetchShouldShowFirstPostPublishedModal();
-	}, [ fetchShouldShowFirstPostPublishedModal ] );
-	useEffect( () => {
-		// The first post will show a different modal.
-		if (
-			! shouldShowFirstPostPublishedModal &&
-			! shouldShowSellerCelebrationModal &&
-			! shouldShowVideoCelebrationModal &&
-			launchpadScreenOption !== 'full' &&
-			! previousIsCurrentPostPublished.current &&
-			isCurrentPostPublished &&
-			postType === 'post'
-		) {
-			previousIsCurrentPostPublished.current = isCurrentPostPublished;
-
-			// When the post published panel shows, it is focused automatically.
-			// Thus, we need to delay open the modal so that the modal would not be close immediately
-			// because the outside of modal is focused
-			window.setTimeout( () => {
-				setIsOpen( true );
-			} );
-		}
-	}, [
-		postType,
-		shouldShowFirstPostPublishedModal,
-		shouldShowSellerCelebrationModal,
-		shouldShowVideoCelebrationModal,
-		isCurrentPostPublished,
-		launchpadScreenOption
-	 ] );
 
 	if ( ! isOpen || isDismissedDefault ) {
 		return null;
