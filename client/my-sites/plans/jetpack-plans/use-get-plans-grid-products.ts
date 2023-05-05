@@ -68,7 +68,7 @@ const useSelectorPageProducts = ( siteId: number | null ): PlanGridProducts => {
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_YEARLY ) ||
 		ownedProducts.includes( PRODUCT_JETPACK_BACKUP_T2_MONTHLY );
 
-	// If neither T1 or T2 backups are owned, then show T1 backups.
+	// If neither T0 or T1 or T2 backups are owned, then show T1 backups.
 	// Otherwise the one owned will be displayed via purchasedProducts.
 	if ( ! ownsBackupT0 && ! ownsBackupT1 && ! ownsBackupT2 ) {
 		backupProductsToShow.push(
