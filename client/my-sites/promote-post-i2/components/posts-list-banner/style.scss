@@ -1,50 +1,28 @@
 @import "@automattic/components/src/styles/typography";
+@import "@wordpress/base-styles/breakpoints";
 
 .promote-post-i2 {
-	&__top-bar {
-		align-items: center;
-		display: flex;
-		font-family: $font-sf-pro-text;
-		justify-content: space-between;
-		margin: 0 64px 16px 64px;
-
-		@media (min-width: 661px) {
-			.formatted-header.is-left-align,
-			.formatted-header.is-right-align,
-			.formatted-header__title {
-				margin: 0;
-			}
-		}
-
-		.posts-list-banner__learn-more {
-			border: 1px solid var(--studio-gray-10);
-			padding: 13px 16px;
-
-			.inline-support-link__nowrap {
-				color: var(--studio-gray-80);
-			}
-		}
-	}
-
-	.posts-list-banner__learn-more {
-		margin-top: 0;
-	}
-
 	.posts-list-banner__container {
-		align-items: center;
-		border: none;
-		border-radius: 0;
-		background-color: #ecf3f9;
-		color: var(--color-text);
-		display: flex;
-		font-family: $font-sf-pro-text;
-		font-style: normal;
-		font-weight: 500;
-		height: 396px;
-		justify-content: space-between;
-		letter-spacing: -0.01em;
-		margin-bottom: 0;
-		padding: 0;
+		display: none;
+
+		@media screen and ( min-width: $break-mobile ) {
+			& {
+				align-items: center;
+				border: none;
+				border-radius: 0;
+				background-color: #ecf3f9;
+				color: var(--color-text);
+				display: flex;
+				font-family: $font-sf-pro-text;
+				font-style: normal;
+				font-weight: 500;
+				height: 396px;
+				justify-content: space-between;
+				letter-spacing: -0.01em;
+				margin-bottom: 0;
+				padding: 0;
+			}
+		}
 
 		.posts-list-banner__title {
 			margin-bottom: 1rem;

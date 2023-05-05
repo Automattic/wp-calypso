@@ -262,27 +262,39 @@ export default function PromotedPosts( { tab }: Props ) {
 	const showBanner =
 		! campaignsIsLoading && ( ! campaignsData?.length || campaignsData.length < 3 );
 
-	const headerSubtitle = ! showBanner && (
-		<div className="promote-post__header-subtitle">
-			{ translate(
-				'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
-			) }
-		</div>
-	);
+	const headerSubtitle = ( isMobile: boolean ) => {
+		if ( ! isMobile && showBanner ) {
+			// Do not show subtitle for desktops where banner should be shown
+			return null;
+		}
+
+		const baseClassName = 'promote-post-i2__header-subtitle';
+		return (
+			<div
+				className={ classNames(
+					baseClassName,
+					`${ baseClassName }_${ isMobile ? 'mobile' : 'desktop' }`
+				) }
+			>
+				{ translate(
+					'Use Blaze to grow your audience by promoting your content across Tumblr and WordPress.com.'
+				) }
+			</div>
+		);
+	};
 
 	return (
 		<Main wideLayout className="promote-post-i2">
-			<DocumentHead title={ translate( 'Advertising - Redesign page!' ) } />
+			<DocumentHead title={ translate( 'Advertising' ) } />
 
 			<div className="promote-post-i2__top-bar">
-				{ /* TODO: Do not forget to remove "Redesign page" part! */ }
 				<FormattedHeader
 					brandFont
 					className={ classNames( 'advertising__page-header', {
 						'advertising__page-header_has-banner': showBanner,
 					} ) }
-					children={ headerSubtitle }
-					headerText={ `${ translate( 'Advertising' ) } - Redesign page` }
+					children={ headerSubtitle( false ) /* for desktop */ }
+					headerText={ translate( 'Advertising' ) }
 					align="left"
 				/>
 
@@ -292,6 +304,7 @@ export default function PromotedPosts( { tab }: Props ) {
 					</Button>
 				</div>
 			</div>
+			{ headerSubtitle( true ) /* for mobile */ }
 
 			{ showBanner && <PostsListBanner /> }
 
