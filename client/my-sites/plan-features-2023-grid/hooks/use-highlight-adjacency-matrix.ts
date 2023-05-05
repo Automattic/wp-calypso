@@ -1,4 +1,4 @@
-import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
+import { isBusinessPlan, isPersonalPlan, isPremiumPlan } from '@automattic/calypso-products';
 import { isNewsletterFlow } from '@automattic/onboarding';
 import { useSelector } from 'react-redux';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -21,7 +21,7 @@ const useHighlightIndices = ( visiblePlans: PlanProperties[], flowName: string )
 		let isHighlight = false;
 
 		if ( isNewsletterFlow( flowName ) ) {
-			isHighlight = isPremiumPlan( planName ) || currentPlan?.productSlug === planName;
+			isHighlight = isPersonalPlan( planName ) || currentPlan?.productSlug === planName;
 		} else {
 			isHighlight =
 				isBusinessPlan( planName ) ||

@@ -1,4 +1,4 @@
-import { isBusinessPlan, isPremiumPlan } from '@automattic/calypso-products';
+import { isBusinessPlan, isPersonalPlan } from '@automattic/calypso-products';
 import { isNewsletterFlow } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
@@ -13,7 +13,7 @@ const useHighlightLabel = ( planName: string, flowName: string | null ) => {
 	const isCurrentPlan = currentPlan?.productSlug === planName;
 
 	if ( isNewsletterFlow( flowName ) ) {
-		if ( isPremiumPlan( planName ) ) {
+		if ( isPersonalPlan( planName ) ) {
 			return translate( 'Best for Newsletter' );
 		}
 	} else if ( isCurrentPlan ) {
