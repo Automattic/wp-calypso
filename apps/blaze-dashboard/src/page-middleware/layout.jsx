@@ -30,7 +30,7 @@ export const ProviderWrappedLayout = ( {
 							primary={ primary }
 							secondary={ secondary }
 							redirectUri={ redirectUri }
-							sectionName="stats"
+							sectionName="promote-post-i2"
 							groupName="sites"
 						/>
 					</ReduxProvider>

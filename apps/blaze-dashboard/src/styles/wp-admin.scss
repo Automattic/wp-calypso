@@ -1,41 +1,3 @@
-// Override spinner styles
-.stats-module__placeholder {
-	.spinner {
-		visibility: initial;
-		background-image: none;
-	}
-}
-
-// Override notice styles
-#wpbody-content > .notice {
-	display: block;
-	width: auto;
-	background: var(--studio-white);
-	color: var(--color-text);
-	font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-	margin-bottom: 2px;
-
-	h2,
-	h3 {
-		color: var(--studio-gray-90);
-		font-size: 1.3em; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		margin: 1em 0;
-		font-weight: 600;
-	}
-
-	p {
-		font-size: 13px; /* stylelint-disable-line declaration-property-unit-allowed-list */
-		line-height: 1.5;
-		margin: 0.5em 0;
-		padding: 2px;
-		color: var(--studio-gray-70);
-	}
-
-	code {
-		padding: 3px 5px 2px;
-		margin: 0 1px;
-	}
-}
 
 // Overrides layout for WP Admin.
 .wp-admin {
@@ -43,32 +5,25 @@
 	--sidebar-width-max: 160px;
 	--sidebar-width-min: 36px;
 
-	& .layout__content,
+	& #wpcom .layout__content,
 	&.theme-default .focus-content .layout__content {
 		padding-top: 32px;
 		padding-left: 1px;
 	}
-	// Fixed header doesn't work well for WP-Admin, as the masterbar isn't fixed.
-	& .is-section-stats .has-fixed-nav .fixed-navigation-header__header {
-		@media (max-width: 600px) {
-			position: absolute;
-			width: 100%;
-			left: 0;
-		}
-	}
-	& .is-section-stats .has-fixed-nav {
-		padding-top: 64px;
-	}
-	& .highlight-cards.has-odyssey-stats-bg-color,
-	& .inner-notice-container.has-odyssey-stats-bg-color {
-		background-color: var(--jetpack-white-off);
-	}
-	#wpcontent {
-		padding-left: 1px;
-	}
+
 	// Offset margin of menu items set in Calypso.
 	ul.wp-submenu,
 	ul.wp-submenu-wrap {
 		margin-left: 0;
 	}
+
+	#wpbody-content {
+		padding-bottom: 0;
+	}
+}
+
+.card {
+	background: var(--studio-white);
+	box-shadow: 0 4px 40px rgba(0, 0, 0, 0.08);
+	box-sizing: border-box;
 }

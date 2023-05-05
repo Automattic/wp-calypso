@@ -6,6 +6,8 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { makeLayout, render as clientRender } from './page-middleware/layout';
 
 import 'calypso/my-sites/promote-post-i2/style.scss';
+// Needed because the placeholder component that we use doesn't import the css, webpack excludes it from the final build
+import 'calypso/blocks/site/style.scss';
 
 const siteSelection = ( context, next ) => {
 	context.store.dispatch( setSelectedSiteId( config( 'blog_id' ) ) );
@@ -17,15 +19,11 @@ const blazePage = ( url, controller ) => {
 };
 
 const redirectToReadyToPromote = () => {
-	page.redirect( getAdvertisingDashboardPath( `/${ config( 'blog_id' ) }` ) );
+	page.redirect( getAdvertisingDashboardPath( `/${ config( 'hostname' ) }` ) );
 };
 
 export default function ( pageBase = '/' ) {
 	page.base( pageBase );
-
-	// Redirect this to default /advertising/:site view in order to keep
-	// the paths and page view reporting consistent.
-	page( '/', getAdvertisingDashboardPath( '/:site' ) );
 
 	blazePage( getAdvertisingDashboardPath( '/:site' ), promotedPosts );
 
