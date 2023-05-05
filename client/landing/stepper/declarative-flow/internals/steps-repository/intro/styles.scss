@@ -7,7 +7,7 @@
 		background-color: rgb(162 218 254);
 
 		.step-container {
-			background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-mobile.png);
+			background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom-mobile.webp);
 			background-repeat: no-repeat;
 			background-attachment: fixed;
 			background-position-x: center;
@@ -15,7 +15,7 @@
 			background-size: contain;
 
 			@include break-medium {
-				background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom.png);
+				background-image: url(calypso/assets/images/onboarding/newsletter-intro-bottom.webp);
 			}
 
 			@media screen and ( max-height: 512px ) and ( orientation: landscape ) {
@@ -39,8 +39,8 @@
 
 		.step-container {
 			background-image:
-				url(calypso/assets/images/onboarding/link-in-bio-intro-left.png),
-				url(calypso/assets/images/onboarding/link-in-bio-intro-right.png);
+				url(calypso/assets/images/onboarding/link-in-bio-intro-left.webp),
+				url(calypso/assets/images/onboarding/link-in-bio-intro-right.webp);
 			background-position-y: 85%, 15%;
 			/*!rtl:ignore*/
 			background-position-x: 0, 100%;
@@ -52,8 +52,8 @@
 				background-size: auto 25%, auto 25%;
 				background-position-y: 85%, 10%;
 				background-image:
-					url(calypso/assets/images/onboarding/link-in-bio-intro-left-desktop.png),
-					url(calypso/assets/images/onboarding/link-in-bio-intro-right-desktop.png);
+					url(calypso/assets/images/onboarding/link-in-bio-intro-left-desktop.webp),
+					url(calypso/assets/images/onboarding/link-in-bio-intro-right-desktop.webp);
 			}
 		}
 	}

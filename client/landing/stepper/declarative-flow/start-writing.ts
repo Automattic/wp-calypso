@@ -1,8 +1,7 @@
 import { OnboardSelect } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { START_WRITING_FLOW, addPlanToCart } from '@automattic/onboarding';
+import { START_WRITING_FLOW, addPlanToCart, addProductsToCart } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
 import { useSelector } from 'react-redux';
 import { updateLaunchpadSettings } from 'calypso/data/sites/use-launchpad';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
@@ -19,6 +18,7 @@ import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-u
 
 const startWriting: Flow = {
 	name: START_WRITING_FLOW,
+	title: 'Blog',
 	useSteps() {
 		return [
 			{
@@ -29,10 +29,22 @@ const startWriting: Flow = {
 				slug: 'processing',
 				asyncComponent: () => import( './internals/steps-repository/processing-step' ),
 			},
+			{
+				slug: 'domains',
+				asyncComponent: () => import( './internals/steps-repository/choose-a-domain' ),
+			},
 			{ slug: 'plans', asyncComponent: () => import( './internals/steps-repository/plans' ) },
+			{
+				slug: 'setup-blog',
+				asyncComponent: () => import( './internals/steps-repository/setup-blog' ),
+			},
 			{
 				slug: 'launchpad',
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
+			},
+			{
+				slug: 'start-writing-done',
+				asyncComponent: () => import( './internals/steps-repository/start-writing-done' ),
 			},
 		];
 	},
@@ -50,10 +62,7 @@ const startWriting: Flow = {
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
-			const returnUrl = addQueryArgs( `/home/${ siteSlug }`, {
-				celebrateLaunch: true,
-				launchpadComplete: true,
-			} );
+			const returnUrl = `/setup/start-writing/start-writing-done?siteSlug=${ siteSlug }`;
 
 			switch ( currentStep ) {
 				case 'site-creation-step':
@@ -89,17 +98,37 @@ const startWriting: Flow = {
 					}
 					return navigate( 'launchpad' );
 				}
+				case 'domains':
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { domain_upsell_deferred: true },
+						} );
+					}
+					return navigate( 'launchpad' );
 				case 'plans':
 					if ( siteSlug ) {
 						await updateLaunchpadSettings( siteSlug, {
-							checklist_statuses: { plan_selected: true },
+							checklist_statuses: { plan_completed: true },
 						} );
 					}
 					if ( providedDependencies?.goToCheckout ) {
 						const planCartItem = getPlanCartItem();
+						const domainCartItem = getDomainCartItem();
+
 						if ( planCartItem ) {
 							await addPlanToCart( siteSlug as string, flowName as string, true, '', planCartItem );
 						}
+
+						if ( domainCartItem ) {
+							await addProductsToCart( siteSlug as string, flowName as string, [ domainCartItem ] );
+						}
+					}
+					return navigate( 'launchpad' );
+				case 'setup-blog':
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { site_edited: true },
+						} );
 					}
 					return navigate( 'launchpad' );
 				case 'launchpad':

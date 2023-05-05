@@ -21,7 +21,7 @@ import PlansComparison, {
 	isStarterPlanEnabled,
 } from 'calypso/my-sites/plans-comparison';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
-import { ExperimentalIntervalTypeToggle } from 'calypso/my-sites/plans-features-main/plan-type-selector';
+import { ExperimentalIntervalTypeToggle } from 'calypso/my-sites/plans-features-main/components/plan-type-selector';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
@@ -78,6 +78,25 @@ export class PlansStep extends Component {
 
 		return customerType;
 	}
+
+	replacePaidDomainWithFreeDomain = ( freeDomainSuggestion ) => {
+		if ( freeDomainSuggestion?.product_slug ) {
+			return;
+		}
+		const domainItem = undefined;
+		const siteUrl = freeDomainSuggestion.domain_name.replace( '.wordpress.com', '' );
+
+		this.props.submitSignupStep(
+			{
+				stepName: 'domains',
+				domainItem,
+				isPurchasingItem: false,
+				siteUrl,
+				stepSectionName: undefined,
+			},
+			{ domainItem }
+		);
+	};
 
 	plansFeaturesList() {
 		const {
@@ -158,6 +177,7 @@ export class PlansStep extends Component {
 					hidePremiumPlan={ this.props.hidePremiumPlan }
 					hidePersonalPlan={ this.props.hidePersonalPlan }
 					hideEnterprisePlan={ this.props.hideEnterprisePlan }
+					replacePaidDomainWithFreeDomain={ this.replacePaidDomainWithFreeDomain }
 				/>
 			</div>
 		);

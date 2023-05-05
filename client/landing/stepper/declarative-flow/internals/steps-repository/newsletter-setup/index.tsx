@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { Onboard } from '@automattic/data-stores';
 import { hexToRgb, StepContainer, base64ImageToBlob } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
@@ -29,18 +30,24 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 	const site = useSite();
 
 	const newsletterFormText = {
-		titleLabel: translate( 'Give your blog a name' ),
+		titleLabel: translate( 'Give your newsletter a name' ),
 		titlePlaceholder: translate( 'Open Me Carefully' ),
-		titleMissing: translate( `Oops. Looks like your Newsletter doesn't have a name yet.` ),
+		titleMissing: translate( `Oops. Looks like your newsletter doesn't have a name yet.` ),
 		taglineLabel: translate( 'Add a brief description' ),
 		taglinePlaceholder: translate( `Letters from Emily Dickinson's garden` ),
 		iconPlaceholder: translate( 'Add a site icon' ),
-		colorLabel: translate( 'Favorite color' ),
+		colorLabel: translate( 'Choose an accent color' ),
 		buttonText: translate( 'Save and continue' ),
 	};
 
-	const { setSiteTitle, setSiteAccentColor, setSiteDescription, setSiteLogo } =
-		useDispatch( ONBOARD_STORE );
+	const {
+		setSiteTitle,
+		setSiteAccentColor,
+		setSiteDescription,
+		setSiteLogo,
+		setGoals,
+		resetGoals,
+	} = useDispatch( ONBOARD_STORE );
 
 	const [ invalidSiteTitle, setInvalidSiteTitle ] = useState( false );
 	const [ paidSubscribers, setPaidSubscribers ] = useState( false );
@@ -86,6 +93,14 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 		setSiteAccentColor( accentColor.hex );
 		setPaidSubscribers( paidSubscribers );
 
+		if ( paidSubscribers ) {
+			setGoals( [ Onboard.SiteGoal.PaidSubscribers ] );
+		} else {
+			// Clears goals entirely each time, regardless if they were set previously or not.
+			// We could instead just handle removing PaidSubscribers goal, and avoid doing anything if nothing wasn't set ever.
+			resetGoals();
+		}
+
 		if ( selectedFile && base64Image ) {
 			try {
 				setSiteLogo( base64Image );
@@ -112,9 +127,9 @@ const NewsletterSetup: Step = ( { navigation } ) => {
 			formattedHeader={
 				<FormattedHeader
 					id="newsletter-setup-header"
-					headerText={ translate( 'Make it yours.' ) }
+					headerText={ translate( 'It begins with a name.' ) }
 					subHeaderText={ translate(
-						'Personalize your newsletter with a name, description, and accent color that sets it apart.'
+						'A catchy name, description, and accent color can set a newsletter apart.'
 					) }
 					align="center"
 				/>

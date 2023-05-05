@@ -35,7 +35,9 @@ body.is-section-promote-post-i2 {
 
 				.promote-post-i2__search-bar-wrapper,
 				.posts-list__table,
-				.campaigns-list__table {
+				.campaigns-list__table,
+				.posts-list__loading-container,
+				.campaigns-list__loading-container {
 					margin: 0 64px;
 					max-width: 1040px;
 					width: calc(100% - 128px);

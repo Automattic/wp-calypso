@@ -1,4 +1,4 @@
-import { Page, Frame, ElementHandle, Response, Locator } from 'playwright';
+import { Page, ElementHandle, Response, Locator } from 'playwright';
 import { getCalypsoURL } from '../../data-helper';
 import { reloadAndRetry } from '../../element-helper';
 import envVariables from '../../env-variables';
@@ -147,20 +147,27 @@ export class EditorPage {
 	}
 
 	/**
-	 * Initialization steps to ensure the page is fully loaded.
-	 *
-	 * @returns {Promise<Frame>} iframe holding the editor.
+	 * Initialization steps to ensure the editor is fully loaded prior to interaction.
 	 */
 	async waitUntilLoaded(): Promise< void > {
 		const timeout =
 			this.target === 'atomic' ? EXTENDED_EDITOR_WAIT_ATOMIC_TIMEOUT : EXTENDED_EDITOR_WAIT_TIMEOUT;
 
-		// In a typical loading scenario, this request is one of the last to fire.
-		// Lacking a perfect cross-site type (Simple/Atomic) way to check the loading state,
-		// it is a fairly good stand-in.
+		// There isn't a good way to definitively state "the editor is finished loading"
+		// from requests alone.
+		// Waiting for an element in the editor is not viable, because the editor's framed
+		// status affecs the DOM structure.
+		// Given these constraints, a decent stand-in is to wait for the following factors.
 		await Promise.all( [
-			this.page.waitForURL( /(post|page|post-new.php)/ ),
-			this.page.waitForResponse( /.*posts.*/, { timeout: timeout } ),
+			// Wait for the URL to include either a post/page (iframed) or post-new.php (un-iframed).
+			this.page.waitForURL( /\/(post-new\.php|post|page)/, { timeout: timeout } ),
+			// Wait for response from the post-new.php endpoint (new post/page).
+			// Wait for response from `posts/post_id`, `pages/post_id` for existing post/page
+			// on Simple sites.
+			// Wait for response from `post.php` endpoint for existing post/page on Atomic.
+			this.page.waitForResponse( /((post-new\.php)|(post\.php)|(posts|pages)\/[\d]+)/, {
+				timeout: timeout,
+			} ),
 		] );
 
 		// Dismiss the Welcome Tour.
@@ -647,21 +654,24 @@ export class EditorPage {
 		const [ response ] = await Promise.all( [
 			// First URL matches Atomic requests while the second matches Simple requests.
 			Promise.race( [
-				this.page.waitForResponse( /v2\/(posts|pages)\/[\d]+/ ),
-				this.page.waitForResponse( /.*v2\/sites\/[\d]+\/(posts|pages)\/[\d]+.*/ ),
+				this.page.waitForResponse(
+					async ( response ) =>
+						/v2\/(posts|pages)\/[\d]+/.test( response.url() ) &&
+						response.request().method() === 'POST'
+				),
+				this.page.waitForResponse(
+					async ( response ) =>
+						/.*v2\/sites\/[\d]+\/(posts|pages)\/[\d]+.*/.test( response.url() ) &&
+						response.request().method() === 'PUT'
+				),
 			] ),
 			...actionsArray,
 		] );
 
 		const json = await response.json();
-
 		// AT and Simple sites have slightly differing response from the API.
-		let publishedURL: string;
-		if ( json.link ) {
-			publishedURL = json.link;
-		} else if ( json.body.link ) {
-			publishedURL = json.body.link;
-		} else {
+		const publishedURL = json.link || json.body?.link;
+		if ( ! publishedURL ) {
 			throw new Error( 'No published article URL found in response.' );
 		}
 

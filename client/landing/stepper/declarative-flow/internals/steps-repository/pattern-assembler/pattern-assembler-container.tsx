@@ -1,7 +1,7 @@
 import { BlockRendererProvider, PatternsRendererProvider } from '@automattic/block-renderer';
 import { isEnabled } from '@automattic/calypso-config';
+import { PLACEHOLDER_SITE_ID } from '@automattic/data-stores/src/site/constants';
 import StepperLoader from '../../components/stepper-loader';
-import { PLACEHOLDER_SITE_ID } from './constants';
 import type { SiteInfo } from '@automattic/block-renderer';
 
 interface Props {

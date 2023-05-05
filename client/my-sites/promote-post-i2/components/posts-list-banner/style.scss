@@ -50,11 +50,18 @@
 			margin-bottom: 1rem;
 		}
 
-		.posts-list-banner__footer {
-			margin-top: 1rem;
+		.posts-list-banner__header {
+			align-items: center;
+			color: var(--studio-red-40);
+			display: flex;
+			font-size: 0.75rem;
+			font-style: normal;
+			font-weight: 600;
+			line-height: 1.67;
+			margin-bottom: 1rem;
 
 			svg {
-				margin-right: 10px;
+				margin-right: 0.5rem;
 			}
 		}
 

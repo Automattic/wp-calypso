@@ -37,7 +37,6 @@ import SectionHeader from 'calypso/components/section-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import StickyPanel from 'calypso/components/sticky-panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -323,15 +322,21 @@ class ThemeSheet extends Component {
 	}
 
 	previewAction = ( event, type ) => {
+		const { demoUrl, isExternallyManagedTheme } = this.props;
 		if ( event.altKey || event.ctrlKey || event.metaKey || event.shiftKey ) {
 			return;
 		}
-		event.preventDefault();
 
+		event.preventDefault();
 		this.props.recordTracksEvent( 'calypso_theme_live_demo_preview_click', {
 			theme: this.props.themeId,
 			type,
 		} );
+
+		if ( isExternallyManagedTheme && demoUrl ) {
+			window.open( demoUrl, '_blank', 'noreferrer,noopener' );
+			return;
+		}
 
 		const { preview } = this.props.options;
 		this.props.setThemePreviewOptions(
@@ -482,16 +487,14 @@ class ThemeSheet extends Component {
 		);
 
 		return (
-			<StickyPanel>
-				<div className="theme__sheet-web-preview">
-					<ThemeWebPreview
-						url={ url }
-						inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
-						isShowFrameBorder={ false }
-						isShowDeviceSwitcher={ false }
-					/>
-				</div>
-			</StickyPanel>
+			<div className="theme__sheet-web-preview">
+				<ThemeWebPreview
+					url={ url }
+					inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
+					isShowFrameBorder={ false }
+					isShowDeviceSwitcher={ false }
+				/>
+			</div>
 		);
 	};
 
@@ -1332,7 +1335,11 @@ class ThemeSheet extends Component {
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
 				<AsyncLoad require="calypso/components/global-notices" placeholder={ null } id="notices" />
-				<QueryActiveTheme siteId={ siteId } />
+				{
+					siteId && (
+						<QueryActiveTheme siteId={ siteId } />
+					) /* TODO: Make QueryActiveTheme handle falsey siteId */
+				}
 				<ThanksModal source="details" themeId={ this.props.themeId } />
 				<AutoLoadingHomepageModal source="details" />
 				<div className="theme__sheet-action-bar-container">
