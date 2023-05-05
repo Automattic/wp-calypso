@@ -30,18 +30,18 @@ const ReaderSearchSidebar = ( { items } ) => {
 		.map( ( item ) => getSiteFromItem( item ) )
 		.filter( ( site ) => site !== null );
 
-	const recommendedSitesLinks = sites.map( ( site ) => (
+	const popularSitesLinks = sites.map( ( site ) => (
 		<ReaderListFollowingItem key={ site.feed_ID } site={ site } path="/" />
 	) );
 
-	if ( ! recommendedSitesLinks.length ) {
+	if ( ! popularSitesLinks.length ) {
 		return null;
 	}
 
 	return (
 		<div className="reader-tag-sidebar-recommended-sites">
-			<h2>{ translate( 'Recommended Sites' ) }</h2>
-			{ recommendedSitesLinks }
+			<h2>{ translate( 'Popular Sites' ) }</h2>
+			{ popularSitesLinks }
 		</div>
 	);
 };
