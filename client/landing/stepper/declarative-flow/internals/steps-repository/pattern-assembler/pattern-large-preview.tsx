@@ -68,6 +68,37 @@ const PatternLargePreview = ( {
 		goToSelectHeaderPattern();
 	};
 
+	const getTitle = () => {
+		if ( ! shouldShowSelectPatternHint ) {
+			return translate( 'Welcome to your blank canvas.' );
+		}
+
+		return translate( 'Ready to start designing?' );
+	};
+
+	const getDescription = () => {
+		if ( ! shouldShowSelectPatternHint ) {
+			return translate( "It's time to get creative. Add your first pattern to get started." );
+		}
+
+		return translate(
+			'You can view your color and font selections after you select a pattern. Get started by {{link}}adding a header pattern{{/link}}',
+			{
+				components: {
+					link: (
+						// eslint-disable-next-line jsx-a11y/anchor-is-valid
+						<a
+							href="#"
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ handleAddHeaderClick }
+						/>
+					),
+				},
+			}
+		);
+	};
+
 	const renderPattern = ( type: string, pattern: Pattern, position = -1 ) => {
 		const key = type === 'section' ? pattern.key : type;
 		const getActionBarProps = () => {
@@ -189,27 +220,8 @@ const PatternLargePreview = ( {
 			) : (
 				<div className="pattern-large-preview__placeholder">
 					<Icon className="pattern-large-preview__placeholder-icon" icon={ layout } size={ 72 } />
-					<h2>{ translate( 'Ready to start designing? Add some elements from the sidebar.' ) }</h2>
-					{ shouldShowSelectPatternHint && (
-						<span>
-							{ translate(
-								'You can view your color and font selections after you select a pattern. Get started by {{link}}adding a header pattern{{/link}}',
-								{
-									components: {
-										link: (
-											// eslint-disable-next-line jsx-a11y/anchor-is-valid
-											<a
-												href="#"
-												target="_blank"
-												rel="noopener noreferrer"
-												onClick={ handleAddHeaderClick }
-											/>
-										),
-									},
-								}
-							) }
-						</span>
-					) }
+					<h2>{ getTitle() }</h2>
+					<span>{ getDescription() }</span>
 				</div>
 			) }
 		</DeviceSwitcher>

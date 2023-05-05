@@ -98,6 +98,7 @@ const useGlobalStylesUpgradeModal = ( {
 			( hasSelectedColorVariation || hasSelectedFontVariation ) && shouldLimitGlobalStyles,
 		globalStylesUpgradeModalProps: {
 			isOpen,
+			title: translate( 'Unlock custom styles' ),
 			tryItOutText: translate( 'Upgrade later' ),
 			customizeDescription,
 			closeModal,

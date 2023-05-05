@@ -10,6 +10,7 @@ import { getProductBySlug } from 'calypso/state/products-list/selectors';
 import './style.scss';
 
 export interface PremiumGlobalStylesUpgradeModalProps {
+	title?: string;
 	customizeDescription?: ( description: React.ReactChild ) => JSX.Element;
 	tryItOutText?: string;
 	checkout: () => void;
@@ -19,6 +20,7 @@ export interface PremiumGlobalStylesUpgradeModalProps {
 }
 
 export default function PremiumGlobalStylesUpgradeModal( {
+	title,
 	tryItOutText,
 	customizeDescription = ( description ) => <p>{ description }</p>,
 	checkout,
@@ -51,7 +53,9 @@ export default function PremiumGlobalStylesUpgradeModal( {
 				{ ! isLoading && (
 					<>
 						<div className="upgrade-modal__col">
-							<h1 className="upgrade-modal__heading">{ translate( 'Unlock this style' ) }</h1>
+							<h1 className="upgrade-modal__heading">
+								{ title ?? translate( 'Unlock this style' ) }
+							</h1>
 							{ customizeDescription(
 								translate(
 									'Get access to all theme styles, fonts, colors, and tons of other features by upgrading to {{strong}}%s{{/strong}}.',
