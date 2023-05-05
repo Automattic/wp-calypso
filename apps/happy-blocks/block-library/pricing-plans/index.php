@@ -13,13 +13,15 @@
  * @return void
  */
 function happyblocks_pricing_plans_enqueue_config_data() {
-	wp_register_script( 'a8c-happyblocks-pricing-plans', '', array(), '20221212', true );
-	wp_enqueue_script( 'a8c-happyblocks-pricing-plans' );
 	wp_add_inline_script(
-		'a8c-happyblocks-pricing-plans',
+		'happy-blocks-pricing-plans-editor-script',
 		sprintf(
 			'window.A8C_HAPPY_BLOCKS_CONFIG = %s;
-			window.configData ||= {};',
+			window.configData ||= {
+				features: {
+					"onboarding/2023-pricing-grid": true,
+				}
+			} ;',
 			wp_json_encode( happyblocks_pricing_plans_get_config() )
 		),
 		'before'

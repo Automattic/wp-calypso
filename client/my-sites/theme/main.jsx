@@ -37,7 +37,6 @@ import SectionHeader from 'calypso/components/section-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import StickyPanel from 'calypso/components/sticky-panel';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
@@ -488,16 +487,14 @@ class ThemeSheet extends Component {
 		);
 
 		return (
-			<StickyPanel>
-				<div className="theme__sheet-web-preview">
-					<ThemeWebPreview
-						url={ url }
-						inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
-						isShowFrameBorder={ false }
-						isShowDeviceSwitcher={ false }
-					/>
-				</div>
-			</StickyPanel>
+			<div className="theme__sheet-web-preview">
+				<ThemeWebPreview
+					url={ url }
+					inlineCss={ baseStyleVariationInlineCss + selectedStyleVariationInlineCss }
+					isShowFrameBorder={ false }
+					isShowDeviceSwitcher={ false }
+				/>
+			</div>
 		);
 	};
 

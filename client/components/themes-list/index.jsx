@@ -13,6 +13,7 @@ import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { upsellCardDisplayed as upsellCardDisplayedAction } from 'calypso/state/themes/actions';
@@ -221,6 +222,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 	);
 	const isAtomic = useSelector( ( state ) => isAtomicSite( state, selectedSite?.ID ) );
 	const sitePlan = selectedSite?.plan?.product_slug;
+	const siteEditorUrl = useSelector( ( state ) => getSiteEditorUrl( state, selectedSite?.ID ) );
 
 	const options = [];
 
@@ -246,7 +248,7 @@ function Options( { isFSEActive, recordTracksEvent, searchTerm, translate, upsel
 						search_term: searchTerm,
 						destination: 'site-editor',
 					} ),
-				url: `/site-editor/${ selectedSite.slug }`,
+				url: siteEditorUrl,
 				buttonText: translate( 'Open the editor' ),
 			} );
 		}
