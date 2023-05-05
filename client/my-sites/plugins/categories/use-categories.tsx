@@ -38,7 +38,7 @@ export const ALLOWED_CATEGORIES = [
 	// Additional categories to improve SEO
 	'affiliate',
 	'quiz',
-	'landingPage',
+	'landingpage',
 	'forms',
 	'reviews',
 	'translation',
@@ -433,11 +433,11 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		tags: [ 'quiz', 'questionnaire', 'exam', 'personality quizzes' ],
 		preview: [],
 	},
-	landingPage: {
+	landingpage: {
 		menu: __( 'Landing Page' ),
 		title: __( 'Landing Page' ),
-		slug: 'landing-page',
-		tags: [ 'landing page', 'page builder' ],
+		slug: 'landingpage',
+		tags: [ 'landing page', 'page builder', 'landing-page' ],
 		preview: [],
 	},
 	forms: {
