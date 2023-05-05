@@ -12,6 +12,7 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_SOCIAL_PRODUCTS,
 	JETPACK_CRM_PRODUCTS,
+	JETPACK_STARTER_PLANS,
 	JETPACK_COMPLETE_PLANS,
 } from '@automattic/calypso-products';
 import { TranslateResult, useTranslate } from 'i18n-calypso';
@@ -24,7 +25,7 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 	const translate = useTranslate();
 
 	return useMemo( () => {
-		const INCLUDED_PRODUCT_DESCRIPTION_T1_MAP: Record< string, TranslateResult > = {
+		const INCLUDED_PRODUCT_DESCRIPTION_T0_MAP: Record< string, string > = {
 			...setTranslation(
 				[ PRODUCT_JETPACK_BACKUP_T0_YEARLY, PRODUCT_JETPACK_BACKUP_T0_MONTHLY ],
 				translate(
@@ -37,6 +38,15 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 				)
 			),
 
+			...setTranslation(
+				JETPACK_ANTI_SPAM_PRODUCTS,
+				translate(
+					'Save time manually reviewing spam. Comment and form spam protection (1k API calls/mo).'
+				)
+			),
+		};
+
+		const INCLUDED_PRODUCT_DESCRIPTION_T1_MAP: Record< string, TranslateResult > = {
 			...setTranslation(
 				[ PRODUCT_JETPACK_BACKUP_T1_YEARLY, PRODUCT_JETPACK_BACKUP_T1_MONTHLY ],
 				translate(
@@ -108,12 +118,25 @@ export const useIncludedProductDescriptionMap = ( productSlug: string ) => {
 			),
 		};
 
-		const isJetpackCompletePlan = ( JETPACK_COMPLETE_PLANS as ReadonlyArray< string > ).includes(
-			productSlug
-		);
+		const productMap = ( () => {
+			const isJetpackStarterPlan = ( JETPACK_STARTER_PLANS as ReadonlyArray< string > ).includes(
+				productSlug
+			);
+			const isJetpackCompletePlan = ( JETPACK_COMPLETE_PLANS as ReadonlyArray< string > ).includes(
+				productSlug
+			);
 
-		return isJetpackCompletePlan
-			? INCLUDED_PRODUCT_DESCRIPTION_T2_MAP
-			: INCLUDED_PRODUCT_DESCRIPTION_T1_MAP;
+			if ( isJetpackStarterPlan ) {
+				return INCLUDED_PRODUCT_DESCRIPTION_T0_MAP;
+			}
+
+			if ( isJetpackCompletePlan ) {
+				return INCLUDED_PRODUCT_DESCRIPTION_T2_MAP;
+			}
+
+			return INCLUDED_PRODUCT_DESCRIPTION_T1_MAP;
+		} )();
+
+		return productMap;
 	}, [ translate, productSlug ] );
 };
