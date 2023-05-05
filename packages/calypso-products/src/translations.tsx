@@ -85,6 +85,8 @@ export const getJetpackProductsShortNames = (): Record< string, TranslateResult 
 				},
 			}
 		),
+		[ PRODUCT_JETPACK_BACKUP_T0_YEARLY ]: translate( 'VaultPress Backup' ),
+		[ PRODUCT_JETPACK_BACKUP_T0_MONTHLY ]: translate( 'VaultPress Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T1_YEARLY ]: translate( 'VaultPress Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T1_MONTHLY ]: translate( 'VaultPress Backup' ),
 		[ PRODUCT_JETPACK_BACKUP_T2_YEARLY ]: translate( 'VaultPress Backup' ),

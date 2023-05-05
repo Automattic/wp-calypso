@@ -24,7 +24,8 @@ type featureString =
 	| 'social-advanced'
 	| 'support'
 	| 'videopress'
-	| 'complete';
+	| 'complete'
+	| 'jetpack-starter';
 
 function getFeatureStrings(
 	feature: featureString,
@@ -65,6 +66,8 @@ function getFeatureStrings(
 				translate( 'Boost' ),
 				translate( 'CRM Entrepreneur' ),
 			];
+		case 'jetpack-starter':
+			return [ translate( '1K API calls per month' ), translate( '1GB of backup storage' ) ];
 		case 'scan':
 			return [
 				translate( 'Website firewall (WAF beta)' ),
@@ -174,14 +177,18 @@ export default function getJetpackProductFeatures(
 
 	if ( isJetpackStarterSlug( product.product_slug ) ) {
 		// Filter out these strings for Starter to avoid clutter
-		const securityExcludes = [ translate( '10GB of backup storage' ) ];
+		const starterExcludes = [
+			translate( '10GB of backup storage' ),
+			translate( '10K API calls per month' ),
+		];
 
 		return [
+			...getFeatureStrings( 'jetpack-starter', translate ),
 			...getFeatureStrings( 'anti-spam', translate ),
 			...getFeatureStrings( 'backup-t1', translate ),
 			...getFeatureStrings( 'support', translate ),
 		].filter( ( productFeature ) => {
-			return ! securityExcludes.includes( productFeature );
+			return ! starterExcludes.includes( productFeature );
 		} );
 	}
 

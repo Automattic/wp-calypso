@@ -237,6 +237,8 @@ import {
 	JETPACK_TAG_FOR_WOOCOMMERCE_STORES,
 	JETPACK_TAG_FOR_NEWS_ORGANISATIONS,
 	JETPACK_TAG_FOR_MEMBERSHIP_SITES,
+	JETPACK_TAG_FOR_SMALL_SITES,
+	JETPACK_TAG_FOR_BLOGS,
 	FEATURE_CANCELLATION_ACCEPT_PAYMENTS,
 	FEATURE_CANCELLATION_AD_FREE_SITE,
 	FEATURE_CANCELLATION_BACKUPS_AND_RESTORE,
@@ -2018,13 +2020,7 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		),
 	getFeaturedDescription: () =>
 		translate(
-			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.{{br/}}{{br/}}',
-			{
-				components: {
-					br: <br />,
-				},
-				comment: '{{br/}} represents a line break',
-			}
+			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.'
 		),
 	getLightboxDescription: () =>
 		translate(
@@ -2094,12 +2090,12 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 	...getJetpackCommonPlanDetails(),
 	group: GROUP_JETPACK,
 	type: TYPE_JETPACK_STARTER,
-	getTitle: () => translate( 'Starter', { context: 'Jetpack product name' } ),
+	getTitle: () => translate( 'Jetpack Starter', { context: 'Jetpack product name' } ),
 	availableFor: ( plan ) => [ PLAN_JETPACK_FREE, ...JETPACK_LEGACY_PLANS ].includes( plan ),
+	getTagline: () =>
+		translate( 'Essential security tools: real-time backups and comment spam protection.' ),
 	getDescription: () =>
-		translate(
-			'Enhance your website with the starter Jetpack tools for security, growth, and performance.'
-		),
+		translate( 'Essential security tools: real-time backups and comment spam protection.' ),
 	getFeaturedDescription: () =>
 		translate(
 			'This bundle includes:{{ul}}{{li}}VaultPress Backup{{/li}}{{li}}Akismet Anti-spam{{/li}}{{/ul}}',
@@ -2112,10 +2108,12 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 					'{{ul}}{{ul/}} represents an unordered list, and {{li}}{/li} represents a list item',
 			}
 		),
+	getRecommendedFor: () => [
+		{ tag: JETPACK_TAG_FOR_SMALL_SITES, label: translate( 'Small sites' ) },
+		{ tag: JETPACK_TAG_FOR_BLOGS, label: translate( 'Blogs' ) },
+	],
 	getLightboxDescription: () =>
-		translate(
-			'Enhance your website with the starter Jetpack tools for security, growth, and performance.'
-		),
+		translate( 'Essential security tools: real-time backups and comment spam protection.' ),
 	getPlanCardFeatures: () => [ FEATURE_JETPACK_PRODUCT_BACKUP, FEATURE_ANTISPAM_V2 ],
 	getIncludedFeatures: () => [
 		FEATURE_JETPACK_BACKUP_T0_YEARLY,
@@ -2974,7 +2972,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( '1GB of cloud storage' ),
 			translate( '30-day activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 30 days' ),
-			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Akismet: Comment and form spam protection (1k API calls/mo)' ),
 		],
 	},
 
@@ -2993,7 +2991,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( '1GB of cloud storage' ),
 			translate( '30-day activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 30 days' ),
-			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Akismet: Comment and form spam protection (1k API calls/mo)' ),
 		],
 	},
 
