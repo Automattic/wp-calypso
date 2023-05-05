@@ -9,9 +9,26 @@ type UnsubscribeParams = {
 };
 
 type UnsubscribeResponse = {
-	success: boolean;
-	subscribed: boolean;
-	subscription: null;
+	success?: boolean;
+	subscribed?: boolean;
+	subscription?: null;
+};
+
+// Helper function to determine which API endpoint to call based on whether the user is logged in or not.
+const getApiParams = ( isLoggedIn: boolean, blogId: number | string, url?: string ) => {
+	if ( isLoggedIn ) {
+		return {
+			path: '/read/following/mine/delete',
+			apiVersion: '1.1',
+			body: { source: 'calypso', url: url },
+		};
+	}
+
+	return {
+		path: `/read/site/${ blogId }/post_email_subscriptions/delete`,
+		apiVersion: '1.2',
+		body: {},
+	};
 };
 
 const useSiteUnsubscribeMutation = () => {
@@ -29,15 +46,7 @@ const useSiteUnsubscribeMutation = () => {
 				);
 			}
 
-			let path = `/read/site/${ params.blog_id }/post_email_subscriptions/delete`;
-			let apiVersion = '1.2';
-			let body = {};
-
-			if ( isLoggedIn ) {
-				path = `/read/following/mine/delete`;
-				apiVersion = '1.1';
-				body = { source: 'calypso', url: params.url };
-			}
+			const { path, apiVersion, body } = getApiParams( isLoggedIn, params.blog_id, params.url );
 
 			const response = await callApi< UnsubscribeResponse >( {
 				path,
@@ -46,7 +55,12 @@ const useSiteUnsubscribeMutation = () => {
 				apiVersion,
 				body,
 			} );
-			if ( ! response.success ) {
+			if (
+				'success' in response &&
+				response.success === false &&
+				'subscribed' in response &&
+				response.subscribed === true
+			) {
 				throw new Error(
 					// reminder: translate this string when we add it to the UI
 					'Something went wrong while unsubscribing.'
