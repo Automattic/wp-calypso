@@ -2,7 +2,6 @@ import config from '@automattic/calypso-config';
 import { Icon, plugins } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
-import { ZendeskJetpackChat } from 'calypso/components/jetpack/jetpack-presales-chat-widget';
 import JetpackIcons from 'calypso/components/jetpack/sidebar/menu-items/jetpack-icons';
 import SiteSelector from 'calypso/components/site-selector';
 import Sidebar from 'calypso/layout/sidebar';
@@ -81,7 +80,6 @@ const DashboardSidebar: FunctionComponent< Props > = ( { path } ) => {
 							onNavigate={ onNavigate( 'Jetpack Cloud / Support' ) }
 						/>
 					</SidebarMenu>
-					<ZendeskJetpackChat keyType="jpAgency" />
 				</SidebarFooter>
 			</Sidebar>
 		</div>
