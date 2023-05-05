@@ -105,11 +105,7 @@ export function validateVertical( context, next ) {
  */
 export function sortFilterTerms( context, terms ) {
 	return terms
-		.map( ( term ) =>
-			// getThemeFilterStringFromTerm() attempts to recreate the full filter string "taxonomy:term".
-			// Thus, if the term is already the full string, we can simply return it.
-			! term.includes( ':' ) ? getThemeFilterStringFromTerm( context.store.getState(), term ) : term
-		)
+		.map( ( term ) => getThemeFilterStringFromTerm( context.store.getState(), term ) )
 		.sort()
 		.map( ( filter ) => getThemeFilterTermFromString( context.store.getState(), filter ) );
 }
