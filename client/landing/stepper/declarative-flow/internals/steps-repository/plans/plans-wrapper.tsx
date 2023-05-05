@@ -17,6 +17,7 @@ import {
 	isNewsletterFlow,
 	isStartWritingFlow,
 	NEWSLETTER_FLOW,
+	LINK_IN_BIO_FLOW,
 } from '@automattic/onboarding';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -49,6 +50,8 @@ function getPlanTypes( flowName: string | null ) {
 		case START_WRITING_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
 		case NEWSLETTER_FLOW:
+			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
+		case LINK_IN_BIO_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 		default:
 			return undefined;
