@@ -1,12 +1,11 @@
 {
-	"extends": "@automattic/calypso-typescript-config/js-package.json",
-	"exclude": [ "node_modules" ],
-	"paths": {
-		"calypso/*": [ "../../client/*" ]
-	},
+	"extends": "@automattic/calypso-typescript-config/mixed-package.json",
 	"compilerOptions": {
-		"rootDir": ".",
-		"allowJs": true,
-		"checkJs": false
-	}
+		"paths": {
+			"calypso/*": [ "../../client/*" ]
+		}
+	},
+	"include": [ "**/*", "./package.json" ],
+	"exclude": [ "./**/node_modules/**/*", "./**/test/**/*" ],
+	"references": [ { "path": "../../packages" } ]
 }
