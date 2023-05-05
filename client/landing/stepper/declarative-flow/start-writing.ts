@@ -1,6 +1,11 @@
 import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { START_WRITING_FLOW, addPlanToCart, addProductsToCart } from '@automattic/onboarding';
+import {
+	START_WRITING_FLOW,
+	addPlanToCart,
+	addProductsToCart,
+	replaceProductsInCart,
+} from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
@@ -58,6 +63,7 @@ const startWriting: Flow = {
 			} ),
 			[]
 		);
+		const planCartItem = getPlanCartItem();
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
@@ -105,11 +111,15 @@ const startWriting: Flow = {
 					}
 
 					if ( providedDependencies?.freeDomain ) {
+						await replaceProductsInCart( siteSlug as string, [] );
+
+						if ( planCartItem ) {
+							await addPlanToCart( siteSlug as string, flowName as string, true, '', planCartItem );
+						}
 						return navigate( 'launchpad' );
 					}
 
 					return navigate( 'plans' );
-
 				case 'plans':
 					if ( siteSlug ) {
 						await updateLaunchpadSettings( siteSlug, {
@@ -117,8 +127,10 @@ const startWriting: Flow = {
 						} );
 					}
 					if ( providedDependencies?.goToCheckout ) {
-						const planCartItem = getPlanCartItem();
 						const domainCartItem = getDomainCartItem();
+
+						// Always clear the cart before adding the plan and domain to the cart.
+						await replaceProductsInCart( siteSlug as string, [] );
 
 						if ( planCartItem ) {
 							await addPlanToCart( siteSlug as string, flowName as string, true, '', planCartItem );
