@@ -452,6 +452,10 @@ const getPlanFreeDetails = (): IncompleteWPcomPlan => ( {
 		i18n.translate( 'Get a taste of the world’s most popular CMS & blogging software.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Start fresh or make the switch, bringing your first 100 readers with you.' ),
+	getLinkInBioTagLine: () =>
+		i18n.translate(
+			'Get started for free with unlimited links and keep track of how many visits you get.'
+		),
 	getDescription: () =>
 		i18n.translate(
 			'Get a free website and be on your way to publishing your ' +
@@ -667,6 +671,10 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 	getPlanTagline: () => i18n.translate( 'Create your home on the web with a custom domain name.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Monetize your writing, go ad-free, and expand your media content.' ),
+	getLinkInBioTagLine: () =>
+		i18n.translate(
+			'Take Link In Bio to the next level with gated content, paid subscribers, and an ad-free site.'
+		),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for personal use:{{/strong}} Boost your' +
@@ -1129,6 +1137,8 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 	getPlanTagline: () => i18n.translate( 'Build a unique website with powerful design tools.' ),
 	getNewsletterTagLine: () =>
 		i18n.translate( 'Make it even more memorable with premium designs and style customization.' ),
+	getLinkInBioTagLine: () =>
+		i18n.translate( 'Make a great first impression with premium designs and style customization.' ),
 	getDescription: () =>
 		i18n.translate(
 			'{{strong}}Best for freelancers:{{/strong}} Build a unique website with advanced design tools, CSS editing, lots of space for audio and video,' +

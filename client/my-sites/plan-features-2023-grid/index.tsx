@@ -903,6 +903,7 @@ const ConnectedPlanFeatures2023Grid = connect(
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
 				);
+				tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
 			} else {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []

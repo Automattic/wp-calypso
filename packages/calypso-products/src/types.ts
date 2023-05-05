@@ -42,6 +42,7 @@ export interface WPComPlan extends Plan {
 	getStoreAudience?: () => TranslateResult;
 	getPlanTagline?: () => string;
 	getNewsletterTagLine?: () => string;
+	getLinkInBioTagLine?: () => string;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
