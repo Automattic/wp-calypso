@@ -1,10 +1,11 @@
 import { __, _x } from '@wordpress/i18n';
 import { useCallback, useState } from 'react';
 import FacebookPostIcon from '../icons';
-import defaultAvatar from './default-avatar.png';
 import type { FacebookUser } from '../../types';
 
 import './styles.scss';
+
+const defaultAvatar = '//s1.wp.com/i/social/fb-default-avatar.png';
 
 type Props = {
 	user?: FacebookUser;
