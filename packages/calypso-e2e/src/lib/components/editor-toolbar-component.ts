@@ -1,6 +1,7 @@
-import { Page, Locator } from 'playwright';
+import { Page } from 'playwright';
 import envVariables from '../../env-variables';
 import { translateFromPage } from '../utils';
+import { EditorComponent } from './editor-component';
 import type { EditorPreviewOptions } from './types';
 
 const panel = '.interface-navigable-region[class*="header"]';
@@ -62,15 +63,15 @@ const selectors = {
  */
 export class EditorToolbarComponent {
 	private page: Page;
-	private editor: Locator;
+	private editor: EditorComponent;
 
 	/**
 	 * Constructs an instance of the component.
 	 *
 	 * @param {Page} page The underlying page.
-	 * @param {Locator} editor Locator or FrameLocator to the editor.
+	 * @param {EditorComponent} editor The EditorComponent instance.
 	 */
-	constructor( page: Page, editor: Locator ) {
+	constructor( page: Page, editor: EditorComponent ) {
 		this.page = page;
 		this.editor = editor;
 	}
@@ -79,7 +80,8 @@ export class EditorToolbarComponent {
 	 * Translate string.
 	 */
 	private async translateFromPage( string: string ): Promise< string > {
-		return translateFromPage( this.editor, string );
+		const editorParent = await this.editor.parent();
+		return translateFromPage( editorParent, string );
 	}
 
 	/* General helper */
@@ -95,7 +97,9 @@ export class EditorToolbarComponent {
 	 * @returns {Promise<boolean>} True if target is in an expanded state. False otherwise.
 	 */
 	private async targetIsOpen( selector: string ): Promise< boolean > {
-		const locator = this.editor.locator( selector );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selector );
+		// await this.page.pause();
 		const pressed = await locator.getAttribute( 'aria-pressed' );
 		const expanded = await locator.getAttribute( 'aria-expanded' );
 		return pressed === 'true' || expanded === 'true';
@@ -108,7 +112,8 @@ export class EditorToolbarComponent {
 	 */
 	async openBlockInserter(): Promise< void > {
 		if ( ! ( await this.targetIsOpen( selectors.blockInserterButton ) ) ) {
-			const locator = this.editor.locator( selectors.blockInserterButton );
+			const editorParent = await this.editor.parent();
+			const locator = editorParent.locator( selectors.blockInserterButton );
 			await locator.click();
 		}
 	}
@@ -121,7 +126,8 @@ export class EditorToolbarComponent {
 			// We click on the panel instead of on the block inserter button as a workaround for an issue
 			// that disables the block inserter button after inserting a block using the block API V2.
 			// See https://github.com/WordPress/gutenberg/issues/43090.
-			const locator = this.editor.locator( panel );
+			const editorParent = await this.editor.parent();
+			const locator = editorParent.locator( panel );
 			await locator.click();
 		}
 	}
@@ -134,7 +140,8 @@ export class EditorToolbarComponent {
 	 * If the button cannot be clicked, the method short-circuits.
 	 */
 	async saveDraft(): Promise< void > {
-		const saveButtonLocator = this.editor.locator( selectors.saveDraftButton );
+		const editorParent = await this.editor.parent();
+		const saveButtonLocator = editorParent.locator( selectors.saveDraftButton );
 
 		try {
 			await saveButtonLocator.waitFor( { timeout: 5 * 1000 } );
@@ -142,7 +149,7 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		const savedButtonLocator = this.editor.locator( `${ selectors.saveDraftButton }.is-saved` );
+		const savedButtonLocator = editorParent.locator( `${ selectors.saveDraftButton }.is-saved` );
 
 		await saveButtonLocator.click();
 
@@ -157,7 +164,8 @@ export class EditorToolbarComponent {
 	 * @returns {Page} Handler for the new page object.
 	 */
 	async openMobilePreview(): Promise< Page > {
-		const mobilePreviewButtonLocator = this.editor.locator( selectors.previewButton );
+		const editorParent = await this.editor.parent();
+		const mobilePreviewButtonLocator = editorParent.locator( selectors.previewButton );
 
 		const [ popup ] = await Promise.all( [
 			this.page.waitForEvent( 'popup' ),
@@ -175,13 +183,14 @@ export class EditorToolbarComponent {
 		await this.openDesktopPreviewMenu();
 
 		// Locate and click on the intended preview target.
-		const desktopPreviewMenuItemLocator = this.editor.locator(
+		const editorParent = await this.editor.parent();
+		const desktopPreviewMenuItemLocator = editorParent.locator(
 			selectors.desktopPreviewMenuItem( target )
 		);
 		await desktopPreviewMenuItemLocator.click();
 
 		// Verify the editor panel is resized and stable.
-		const desktopPreviewPaneLocator = this.editor.locator( selectors.previewPane( target ) );
+		const desktopPreviewPaneLocator = editorParent.locator( selectors.previewPane( target ) );
 		await desktopPreviewPaneLocator.waitFor();
 		const elementHandle = await desktopPreviewPaneLocator.elementHandle();
 		await elementHandle?.waitForElementState( 'stable' );
@@ -195,7 +204,8 @@ export class EditorToolbarComponent {
 	 */
 	async openDesktopPreviewMenu(): Promise< void > {
 		if ( ! ( await this.targetIsOpen( selectors.previewButton ) ) ) {
-			const desktopPreviewButtonLocator = this.editor.locator( selectors.previewButton );
+			const editorParent = await this.editor.parent();
+			const desktopPreviewButtonLocator = editorParent.locator( selectors.previewButton );
 			await desktopPreviewButtonLocator.click();
 		}
 	}
@@ -205,7 +215,8 @@ export class EditorToolbarComponent {
 	 */
 	async closeDesktopPreviewMenu(): Promise< void > {
 		if ( await this.targetIsOpen( selectors.previewButton ) ) {
-			const desktopPreviewButtonLocator = this.editor.locator( selectors.previewButton );
+			const editorParent = await this.editor.parent();
+			const desktopPreviewButtonLocator = editorParent.locator( selectors.previewButton );
 			await desktopPreviewButtonLocator.click();
 		}
 	}
@@ -218,7 +229,8 @@ export class EditorToolbarComponent {
 	 * @returns {Promise<string>} String found on the button.
 	 */
 	async getPublishButtonText(): Promise< string > {
-		const publishButtonLocator = this.editor.locator( selectors.publishButton( 'enabled' ) );
+		const editorParent = await this.editor.parent();
+		const publishButtonLocator = editorParent.locator( selectors.publishButton( 'enabled' ) );
 
 		return await publishButtonLocator.innerText();
 	}
@@ -232,7 +244,8 @@ export class EditorToolbarComponent {
 	 * 	- schedule a post (Schedule)
 	 */
 	async clickPublish(): Promise< void > {
-		const publishButtonLocator = this.editor.locator( selectors.publishButton( 'enabled' ) );
+		const editorParent = await this.editor.parent();
+		const publishButtonLocator = editorParent.locator( selectors.publishButton( 'enabled' ) );
 		await publishButtonLocator.click();
 	}
 
@@ -241,7 +254,8 @@ export class EditorToolbarComponent {
 	 * the article.
 	 */
 	async switchToDraft(): Promise< void > {
-		const swithcToDraftLocator = this.editor.locator( selectors.switchToDraftButton );
+		const editorParent = await this.editor.parent();
+		const swithcToDraftLocator = editorParent.locator( selectors.switchToDraftButton );
 		await swithcToDraftLocator.click();
 	}
 
@@ -257,7 +271,8 @@ export class EditorToolbarComponent {
 		if ( await this.targetIsOpen( selector ) ) {
 			return;
 		}
-		const locator = this.editor.locator( selector );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selector );
 		await locator.click();
 	}
 
@@ -271,7 +286,8 @@ export class EditorToolbarComponent {
 		if ( ! ( await this.targetIsOpen( selector ) ) ) {
 			return;
 		}
-		const locator = this.editor.locator( selector );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selector );
 		await locator.click();
 	}
 
@@ -285,7 +301,8 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		const locator = this.editor.locator( selectors.navSidebarButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.navSidebarButton );
 		await locator.click();
 	}
 
@@ -297,7 +314,8 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		const locator = this.editor.locator( selectors.navSidebarButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.navSidebarButton );
 		await locator.click();
 	}
 
@@ -316,7 +334,8 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		const locator = this.editor.locator( selectors.documentOverviewButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.documentOverviewButton );
 		await locator.click();
 	}
 
@@ -333,7 +352,8 @@ export class EditorToolbarComponent {
 			return;
 		}
 
-		const locator = this.editor.locator( selectors.documentOverviewButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.documentOverviewButton );
 		await locator.click();
 	}
 
@@ -343,7 +363,8 @@ export class EditorToolbarComponent {
 	 * @throws If the undo button is not enabled.
 	 */
 	async undo(): Promise< void > {
-		const locator = this.editor.locator( selectors.undoButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.undoButton );
 		await locator.click();
 	}
 
@@ -353,7 +374,8 @@ export class EditorToolbarComponent {
 	 * @throws If the redo button is not enabled.
 	 */
 	async redo(): Promise< void > {
-		const locator = this.editor.locator( selectors.redoButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.redoButton );
 		await locator.click();
 	}
 
@@ -365,7 +387,8 @@ export class EditorToolbarComponent {
 		const selector = selectors.moreOptionsButton( label );
 
 		if ( ! ( await this.targetIsOpen( selector ) ) ) {
-			const locator = this.editor.locator( selector );
+			const editorParent = await this.editor.parent();
+			const locator = editorParent.locator( selector );
 			await locator.click();
 		}
 	}
@@ -376,7 +399,8 @@ export class EditorToolbarComponent {
 	 * Click the save button (publish equivalent) for the full site editor.
 	 */
 	async saveSiteEditor(): Promise< void > {
-		const locator = this.editor.locator( selectors.saveSiteEditorButton );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.saveSiteEditorButton );
 		await locator.click();
 	}
 
@@ -384,7 +408,8 @@ export class EditorToolbarComponent {
 	 * Click the document actions icon for the full site editor.
 	 */
 	async clickDocumentActionsIcon(): Promise< void > {
-		const locator = this.editor.locator( selectors.documentActionsDropdown );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.documentActionsDropdown );
 		await locator.click();
 	}
 
@@ -392,7 +417,8 @@ export class EditorToolbarComponent {
 	 * Click the document actions icon for the full site editor.
 	 */
 	async clickDocumentActionsDropdownItem( itemName: string ): Promise< void > {
-		const locator = this.editor.locator( selectors.documentActionsDropdownItem( itemName ) );
+		const editorParent = await this.editor.parent();
+		const locator = editorParent.locator( selectors.documentActionsDropdownItem( itemName ) );
 		await locator.click();
 	}
 }

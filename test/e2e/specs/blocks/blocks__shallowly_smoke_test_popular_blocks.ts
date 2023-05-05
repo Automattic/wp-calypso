@@ -61,7 +61,7 @@ describe( `Gutenberg Upgrade: Sanity-Check Most Popular Blocks on (${ siteType }
 	skipItIf( ! envVariables.GUTENBERG_EDGE )(
 		`Block warnings are not obeserved for ${ siteType } editor`,
 		async () => {
-			editorPage = new EditorPage( page, { target: siteType } );
+			editorPage = new EditorPage( page );
 			await editorPage.waitUntilLoaded();
 
 			expect( await editorPage.editorHasBlockWarnings() ).toBe( false );

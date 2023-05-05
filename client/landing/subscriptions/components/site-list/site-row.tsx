@@ -21,7 +21,7 @@ const useDeliveryFrequencyLabel = ( deliveryFrequencyValue: SiteSubscriptionDeli
 		[ translate ]
 	);
 
-	return deliveryFrequencyLabels[ deliveryFrequencyValue ];
+	return deliveryFrequencyLabels[ deliveryFrequencyValue ] || translate( 'Paused' );
 };
 
 export default function SiteRow( {
@@ -56,6 +56,12 @@ export default function SiteRow( {
 		() => delivery_methods?.email?.post_delivery_frequency as SiteSubscriptionDeliveryFrequency,
 		[ delivery_methods?.email?.post_delivery_frequency ]
 	);
+
+	const emailMeNewComments = useMemo(
+		() => delivery_methods?.email?.send_comments,
+		[ delivery_methods?.email?.send_comments ]
+	);
+
 	const newPostDelivery = useMemo( () => {
 		const emailDelivery = delivery_methods?.email?.send_posts ? translate( 'Email' ) : null;
 		const notificationDelivery = delivery_methods?.notification?.send_posts
@@ -75,6 +81,8 @@ export default function SiteRow( {
 		SubscriptionManager.useSiteEmailMeNewPostsMutation();
 	const { mutate: updateDeliveryFrequency, isLoading: updatingFrequency } =
 		SubscriptionManager.useSiteDeliveryFrequencyMutation();
+	const { mutate: updateEmailMeNewComments, isLoading: updatingEmailMeNewComments } =
+		SubscriptionManager.useSiteEmailMeNewCommentsMutation();
 	const { mutate: unsubscribe, isLoading: unsubscribing } =
 		SubscriptionManager.useSiteUnsubscribeMutation();
 
@@ -126,7 +134,12 @@ export default function SiteRow( {
 						updateDeliveryFrequency( { blog_id: blog_ID, delivery_frequency } )
 					}
 					updatingFrequency={ updatingFrequency }
-					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID } ) }
+					emailMeNewComments={ emailMeNewComments }
+					onEmailMeNewCommentsChange={ ( send_comments ) =>
+						updateEmailMeNewComments( { blog_id: blog_ID, send_comments } )
+					}
+					updatingEmailMeNewComments={ updatingEmailMeNewComments }
+					onUnsubscribe={ () => unsubscribe( { blog_id: blog_ID, url: url } ) }
 					unsubscribing={ unsubscribing }
 				/>
 			</span>

@@ -13,6 +13,11 @@ import { siteColumns } from '../../utils';
 import SiteTableRow from '../index';
 import type { SiteData } from '../../types';
 
+jest.mock(
+	'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-backup-staging',
+	() => 'span'
+);
+
 describe( '<SiteTableRow>', () => {
 	beforeAll( () => {
 		window.matchMedia = jest.fn().mockImplementation( ( query ) => {
