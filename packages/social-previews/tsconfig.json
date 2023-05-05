@@ -2,8 +2,8 @@
 	"extends": "@automattic/calypso-typescript-config/ts-package.json",
 	"include": [ "src", "types.d.ts" ],
 	"compilerOptions": {
-		"allowJs": true,
 		"outDir": "dist/esm",
+		"declarationDir": "dist/types",
 		"rootDir": "src"
 	}
 }
