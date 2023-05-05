@@ -43,7 +43,6 @@ interface Props {
 	onChangeIsImportValid?: ( isValid: boolean ) => void;
 	titleText?: string;
 	subtitleText?: string;
-	emailPlaceholders?: string[];
 }
 
 export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
@@ -69,7 +68,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		onChangeIsImportValid,
 		titleText,
 		subtitleText,
-		emailPlaceholders,
 	} = props;
 
 	const {
@@ -83,10 +81,10 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 	 * ↓ Fields
 	 */
 	const emailControlMaxNum = 6;
-	const emailControlPlaceholder = emailPlaceholders ?? [
-		translate( 'sibling@example.com' ),
-		translate( 'parents@example.com' ),
-		translate( 'friend@example.com' ),
+	const emailControlPlaceholder = [
+		translate( 'bestie@email.com' ),
+		translate( 'chrisfromwork@email.com' ),
+		translate( 'mom@email.com' ),
 	];
 	const inProgress = useInProgressState();
 	const prevInProgress = useRef( inProgress );
