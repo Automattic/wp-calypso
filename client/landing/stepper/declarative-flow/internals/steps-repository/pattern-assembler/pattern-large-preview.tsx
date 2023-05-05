@@ -82,7 +82,7 @@ const PatternLargePreview = ( {
 		}
 
 		return translate(
-			'You can view your color and font selections after you select a pattern. Get started by {{link}}adding a header pattern{{/link}}',
+			'You can view your color and font selections after you select a pattern. Get started by {{link}}adding a header pattern{{/link}}.',
 			{
 				components: {
 					link: (
