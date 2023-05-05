@@ -2,8 +2,8 @@
 import { ProductsList } from '@automattic/data-stores';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
-import { getQueryArg } from '@wordpress/url';
-import { StepContainer } from 'calypso/../packages/onboarding/src';
+import { addQueryArgs, getQueryArg } from '@wordpress/url';
+import { START_WRITING_FLOW, StepContainer } from 'calypso/../packages/onboarding/src';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -30,6 +30,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		} ),
 		[]
 	);
+	const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
 
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
@@ -40,8 +41,6 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const getInitialSuggestion = function () {
-		const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
-
 		const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
 		const [ , strippedHostname ] =
 			String( siteSlug ).match( wpcomSubdomainWithRandomNumberSuffix ) || [];
@@ -58,6 +57,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		if ( suggestion?.is_free ) {
 			setHideFreePlan( false );
 			setDomainCartItem( undefined );
+			submit?.();
 		} else {
 			const domainCartItem = domainRegistration( {
 				domain: suggestion?.domain_name || '',
@@ -66,9 +66,14 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 
 			setHideFreePlan( true );
 			setDomainCartItem( domainCartItem );
-		}
 
-		submit?.();
+			window.location.assign(
+				addQueryArgs( `/setup/${ START_WRITING_FLOW }/plans`, {
+					siteSlug,
+					[ START_WRITING_FLOW ]: true,
+				} )
+			);
+		}
 	};
 
 	const getStartWritingFlowStepContent = () => {
