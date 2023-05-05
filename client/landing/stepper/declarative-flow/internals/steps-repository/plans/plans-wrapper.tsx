@@ -169,7 +169,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return __( 'Choose your flavor of WordPress' );
 		}
 
-		if ( isNewsletterFlow( flowName ) || isStartWritingFlow( flowName ) ) {
+		if (
+			isNewsletterFlow( flowName ) ||
+			isStartWritingFlow( flowName ) ||
+			isLinkInBioFlow( flowName )
+		) {
 			return __( `There's a plan for you.` );
 		}
 
@@ -196,12 +200,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( isLinkInBioFlow( flowName ) ) {
-			return hideFreePlan
-				? __( 'Unlock a powerful bundle of features for your Link in Bio.' )
-				: translate(
-						`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
-						{ components: { link: freePlanButton } }
-				  );
+			return;
 		}
 
 		if ( flowName === DOMAIN_UPSELL_FLOW ) {
