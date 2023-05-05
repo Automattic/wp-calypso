@@ -2980,7 +2980,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( '1GB of cloud storage' ),
 			translate( '30-day activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 30 days' ),
-			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Akismet: Comment and form spam protection (1k API calls/mo)' ),
 		],
 	},
 
@@ -2999,7 +2999,7 @@ export const PLANS_LIST: Record< string, Plan | JetpackPlan | WPComPlan > = {
 			translate( '1GB of cloud storage' ),
 			translate( '30-day activity log archive' ),
 			translate( 'Unlimited one-click restores from the last 30 days' ),
-			translate( 'Akismet: Comment and form spam protection (10k API calls/mo)' ),
+			translate( 'Akismet: Comment and form spam protection (1k API calls/mo)' ),
 		],
 	},
 
