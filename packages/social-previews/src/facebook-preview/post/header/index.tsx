@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import { useCallback, useState } from 'react';
 import FacebookPostIcon from '../icons';
 import defaultAvatar from './default-avatar.png';
@@ -38,10 +38,17 @@ const FacebookPostHeader: React.FC< Props > = ( { user, timeElapsed, hideOptions
 					<div className="facebook-preview__post-header-share">
 						<span className="facebook-preview__post-header-time">
 							{ timeElapsed
-								? // translators: short version of `1 hour`
-								  __( '1h', 'facebook-preview' )
-								: // translators: temporal indication of when a post was published
-								  __( 'Just now', 'facebook-preview' ) }
+								? __(
+										// translators: short version of `1 hour`
+										'1h',
+										'facebook-preview'
+								  )
+								: _x(
+										// translators: temporal indication of when a post was published
+										'Just now',
+										'',
+										'facebook-preview'
+								  ) }
 						</span>
 						<span className="facebook-preview__post-header-dot" aria-hidden="true">
 							·
