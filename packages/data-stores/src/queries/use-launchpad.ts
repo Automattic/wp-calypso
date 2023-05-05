@@ -93,6 +93,6 @@ export const updateLaunchpadSettings = (
 				global: true,
 				path: `/wpcom/v2${ requestUrl }`,
 				method: 'PUT',
-				data: { settings },
+				data: settings,
 		  } as APIFetchOptions );
 };
