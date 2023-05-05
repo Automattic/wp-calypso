@@ -244,7 +244,11 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/akismet%2Fakismet', { active: true } )
-				.reply( 200, { ...akismet, active: true, log: [ 'Plugin activated.' ] } )
+				.reply( 200, {
+					...akismet,
+					sites: { [ 2916284 ]: { active: true } },
+					log: [ 'Plugin activated.' ],
+				} )
 				.post( '/rest/v1.1/sites/2916284/plugins/fake%2Ffake' )
 				.reply( 400, {
 					error: 'activation_error',
@@ -468,7 +472,7 @@ describe( 'actions', () => {
 					message: 'Plugin file does not exist.',
 				} )
 				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack', { autoupdate: true } )
-				.reply( 200, { ...jetpack, autoupdate: true } )
+				.reply( 200, { ...jetpack, sites: { [ 2916284 ]: { update: {}, autoupdate: true } } } )
 				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack/update' )
 				.reply( 200, jetpackUpdated );
 		} );
@@ -623,11 +627,14 @@ describe( 'actions', () => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack', { autoupdate: true } )
-				.reply( 200, { ...jetpackUpdated, autoupdate: true } );
+				.reply( 200, { ...jetpackUpdated } );
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
 				.post( '/rest/v1.1/sites/2916284/plugins/jetpack%2Fjetpack', { active: true } )
-				.reply( 200, { ...jetpackUpdated, active: true, log: [ 'Plugin activated.' ] } );
+				.reply( 200, {
+					...jetpackUpdated,
+					log: [ 'Plugin activated.' ],
+				} );
 		} );
 
 		afterAll( () => {
