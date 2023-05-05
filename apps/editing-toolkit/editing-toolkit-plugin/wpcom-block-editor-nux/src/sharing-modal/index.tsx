@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Modal, Button, ExternalLink } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect, useRef, useState, createInterpolateElement } from '@wordpress/element';
@@ -67,6 +68,7 @@ const SharingModal: React.FC = () => {
 			postType === 'post'
 		) {
 			previousIsCurrentPostPublished.current = isCurrentPostPublished;
+			recordTracksEvent( 'calypso_editor_sharing_dialog_show' );
 
 			// When the post published panel shows, it is focused automatically.
 			// Thus, we need to delay open the modal so that the modal would not be close immediately
@@ -91,9 +93,9 @@ const SharingModal: React.FC = () => {
 			url: link,
 		} );
 		baseUrl.search = params.toString();
-
 		const twitterUrl = baseUrl.href;
 
+		recordTracksEvent( 'calypso_editor_sharing_twitter' );
 		window.open( twitterUrl, 'twitter', 'width=550,height=420,resizeable,scrollbars' );
 	};
 	const shareFb = () => {
@@ -103,9 +105,9 @@ const SharingModal: React.FC = () => {
 			app_id: FB_APP_ID,
 		} );
 		baseUrl.search = params.toString();
-
 		const facebookUrl = baseUrl.href;
 
+		recordTracksEvent( 'calypso_editor_sharing_facebook' );
 		window.open( facebookUrl, 'facebook', 'width=626,height=436,resizeable,scrollbars' );
 	};
 	const shareLinkedin = () => {
@@ -115,9 +117,9 @@ const SharingModal: React.FC = () => {
 			url: link,
 		} );
 		baseUrl.search = params.toString();
-
 		const linkedinUrl = baseUrl.href;
 
+		recordTracksEvent( 'calypso_editor_sharing_linkedin' );
 		window.open( linkedinUrl, 'linkedin', 'width=626,height=436,resizeable,scrollbars' );
 	};
 	const shareTumblr = () => {
@@ -127,9 +129,9 @@ const SharingModal: React.FC = () => {
 			title: title,
 		} );
 		baseUrl.search = params.toString();
-
 		const tumblrUrl = baseUrl.href;
 
+		recordTracksEvent( 'calypso_editor_sharing_tumblr' );
 		window.open( tumblrUrl, 'tumblr', 'width=626,height=436,resizeable,scrollbars' );
 	};
 	const sharePinterest = () => {
@@ -139,15 +141,19 @@ const SharingModal: React.FC = () => {
 			description: title,
 		} );
 		baseUrl.search = params.toString();
-
 		const pinterestUrl = baseUrl.href;
 
+		recordTracksEvent( 'calypso_editor_sharing_pinterest' );
 		window.open( pinterestUrl, 'pinterest', 'width=626,height=436,resizeable,scrollbars' );
 	};
 	const copyLinkClick = () => {
+		recordTracksEvent( 'calypso_editor_sharing_link_copy' );
 		createNotice( 'success', __( 'Link copied to clipboard.', 'full-site-editing' ), {
 			type: 'snackbar',
 		} );
+	};
+	const trackSubscribersClick = () => {
+		recordTracksEvent( 'calypso_editor_sharing_view_subscribers' );
 	};
 
 	if ( ! isOpen || isDismissedDefault ) {
@@ -171,7 +177,13 @@ const SharingModal: React.FC = () => {
 								'full-site-editing'
 							),
 							{
-								a: <ExternalLink href={ subscribersUrl } target="_blank" />,
+								a: (
+									<ExternalLink
+										href={ subscribersUrl }
+										onClick={ trackSubscribersClick }
+										target="_blank"
+									/>
+								),
 							}
 						) }
 					</p>
