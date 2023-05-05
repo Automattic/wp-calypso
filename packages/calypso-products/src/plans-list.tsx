@@ -2020,13 +2020,7 @@ const getPlanJetpackCompleteDetails = (): IncompleteJetpackPlan => ( {
 		),
 	getFeaturedDescription: () =>
 		translate(
-			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.{{br/}}{{br/}}',
-			{
-				components: {
-					br: <br />,
-				},
-				comment: '{{br/}} represents a line break',
-			}
+			'Get the full Jetpack suite with real-time security tools, improved site performance, and tools to grow your business.'
 		),
 	getLightboxDescription: () =>
 		translate(
