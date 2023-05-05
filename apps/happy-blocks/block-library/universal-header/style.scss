@@ -636,14 +636,15 @@ body.logged-in .x-dropdown {
 }
 
 .happy-blocks-mini-search {
+	margin-top: 42px;
+	@media only screen and ( max-width: $breakpoint-mobile ) {
+		margin-top: 24px;
+		margin-bottom: 0;
+	}
 	.screen-reader-text {
 		clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
 		clip: rect(1px, 1px, 1px, 1px);
 		position: absolute !important;
-	}
-	margin-top: 34px;
-	@media only screen and ( max-width: $breakpoint-mobile ) {
-		margin: 22px 0 16px 0;
 	}
 	// This applies to all search bars
 	.happy-blocks-search__inside-wrapper {
@@ -659,7 +660,6 @@ body.logged-in .x-dropdown {
 		@media only screen and ( max-width: $breakpoint-mobile ) {
 			margin-left: 0;
 			width: 100%;
-			margin-bottom: 20px;
 		}
 
 		input {
@@ -731,6 +731,7 @@ body.logged-in .x-dropdown {
 	margin-top: 24px;
 	@media ( max-width: $breakpoint-mobile ) {
 		flex-direction: column;
+		margin-top: 0;
 	}
 	h1 {
 		font-family: $recoleta-font-family;
