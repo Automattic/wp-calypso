@@ -118,6 +118,13 @@ const startWriting: Flow = {
 					}
 
 					return navigate( 'plans' );
+				case 'use-my-domain':
+					if ( siteSlug ) {
+						await updateLaunchpadSettings( siteSlug, {
+							checklist_statuses: { domain_upsell_deferred: true },
+						} );
+					}
+					return navigate( 'plans' );
 				case 'plans':
 					if ( siteSlug ) {
 						await updateLaunchpadSettings( siteSlug, {

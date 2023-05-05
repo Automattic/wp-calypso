@@ -124,9 +124,12 @@ const Sidebar = ( { sidebarDomain, siteSlug, submit, goNext, goToStep, flow }: S
 	}
 
 	function getDomainName() {
-		if ( getDomainCartItem() ) {
+		const domainInCart = getDomainCartItem();
+		if ( domainInCart ) {
 			return (
-				<span className="launchpad__url-box-top-level-domain">{ getDomainCartItem()?.meta }</span>
+				<span className="launchpad__url-box-top-level-domain">
+					{ domainInCart?.is_domain_registration ? domainInCart?.meta : domainInCart?.meta.domain }
+				</span>
 			);
 		}
 

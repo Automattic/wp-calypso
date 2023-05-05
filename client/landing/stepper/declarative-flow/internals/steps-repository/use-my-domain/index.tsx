@@ -9,10 +9,9 @@ import UseMyDomainComponent from 'calypso/components/domains/use-my-domain';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import { domainMapping, domainTransfer } from 'calypso/lib/cart-values/cart-items';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import type { Step } from '../../types';
-import type { DomainSuggestion } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -34,19 +33,24 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 		onAddDomain( null );
 	};
 
-	const submitWithDomain = async ( suggestion: DomainSuggestion | undefined ) => {
-		if ( suggestion?.is_free ) {
-			setHideFreePlan( false );
-			setDomainCartItem( undefined );
-		} else {
-			const domainCartItem = domainRegistration( {
-				domain: suggestion?.domain_name || '',
-				productSlug: suggestion?.product_slug || '',
-			} );
+	const handleOnTransfer = async ( domain: string, authCode: string ) => {
+		const domainCartItem = domainTransfer( {
+			domain,
+			extra: {
+				auth_code: authCode,
+				signup: true,
+			},
+		} );
+		setHideFreePlan( true );
+		setDomainCartItem( domainCartItem );
 
-			setHideFreePlan( true );
-			setDomainCartItem( domainCartItem );
-		}
+		submit?.();
+	};
+
+	const handleOnConnect = async ( domain: string ) => {
+		const domainCartItem = domainMapping( { domain } );
+		setHideFreePlan( true );
+		setDomainCartItem( domainCartItem );
 
 		submit?.();
 	};
@@ -63,12 +67,11 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 					basePath=""
 					initialQuery={ getInitialQuery() }
 					initialMode={ inputMode.domainInput }
-					onNextStep={ submitWithDomain }
 					isSignupStep={ true }
 					showHeader={ false }
-					onTransfer={ submitWithDomain }
-					onConnect={ submitWithDomain }
 					hideHeader={ true }
+					onTransfer={ handleOnTransfer }
+					onConnect={ handleOnConnect }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
