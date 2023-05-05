@@ -30,6 +30,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 		} ),
 		[]
 	);
+	const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
 
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
 
@@ -40,16 +41,20 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 	};
 
 	const getInitialSuggestion = function () {
-		const siteSlug = getQueryArg( window.location.search, 'siteSlug' );
-
 		const wpcomSubdomainWithRandomNumberSuffix = /^(.+?)([0-9]{5,})\.wordpress\.com$/i;
 		const [ , strippedHostname ] =
 			String( siteSlug ).match( wpcomSubdomainWithRandomNumberSuffix ) || [];
 		return strippedHostname ?? String( siteSlug ).split( '.' )[ 0 ];
 	};
 
-	const onSkip = () => {
-		onAddDomain( null );
+	const onSkip = async () => {
+		if ( isStartWritingFlow ) {
+			setDomain( null );
+			setHideFreePlan( false );
+			submit?.( { freeDomain: true } );
+		} else {
+			onAddDomain( null );
+		}
 	};
 
 	const submitWithDomain = async ( suggestion: DomainSuggestion | undefined ) => {
@@ -68,7 +73,7 @@ const ChooseADomain: Step = function ChooseADomain( { navigation, flow } ) {
 			setDomainCartItem( domainCartItem );
 		}
 
-		submit?.();
+		submit?.( { freeDomain: suggestion?.is_free } );
 	};
 
 	const getStartWritingFlowStepContent = () => {
