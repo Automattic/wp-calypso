@@ -113,7 +113,7 @@ const startWriting: Flow = {
 				case 'plans':
 					if ( siteSlug ) {
 						await updateLaunchpadSettings( siteSlug, {
-							checklist_statuses: { plan_completed: true },
+							checklist_statuses: { plan_completed: true, domain_upsell_deferred: true },
 						} );
 					}
 					if ( providedDependencies?.goToCheckout ) {
