@@ -36,6 +36,7 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 	const siteUrl = site?.value?.url;
 	const siteUrlWithScheme = site?.value?.url_with_scheme;
 	const siteId = site?.value?.blog_id;
+	const siteHasBackup = site?.value?.has_backup;
 
 	const handleClickMenuItem = ( actionType: AllowedActionTypes ) => {
 		const eventName = getActionEventName( actionType, isLargeScreen );
@@ -78,6 +79,24 @@ export default function SiteActions( { isLargeScreen = false, site, siteError }:
 							className="site-actions__menu-item"
 						>
 							{ translate( 'View activity' ) }
+						</PopoverMenuItem>
+					</>
+				) }
+				{ siteHasBackup && (
+					<>
+						<PopoverMenuItem
+							onClick={ () => handleClickMenuItem( 'clone_site' ) }
+							href={ `/backup/${ siteUrl }/clone` }
+							className="site-actions__menu-item"
+						>
+							{ translate( 'Copy this site' ) }
+						</PopoverMenuItem>
+						<PopoverMenuItem
+							onClick={ () => handleClickMenuItem( 'site_settings' ) }
+							href={ `/settings/${ siteUrl }` }
+							className="site-actions__menu-item"
+						>
+							{ translate( 'Site settings' ) }
 						</PopoverMenuItem>
 					</>
 				) }
