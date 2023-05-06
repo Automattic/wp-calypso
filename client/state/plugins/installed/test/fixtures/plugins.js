@@ -16,6 +16,24 @@ const placeSitePropsOnSiteObject = ( pluginObject ) => {
 	};
 };
 
+const placeSitePropsOnSiteObject = ( pluginObject ) => {
+	const { active, version, autoupdate, update, ...rest } = pluginObject;
+
+	const siteObject = {};
+	[ 'active', 'version', 'autoupdate', 'update' ].forEach( ( propName ) => {
+		if ( pluginObject[ propName ] ) {
+			siteObject[ propName ] = pluginObject[ propName ];
+		}
+	} );
+
+	return {
+		sites: {
+			[ 2916284 ]: siteObject,
+		},
+		...rest,
+	};
+};
+
 export const akismet = {
 	id: 'akismet/akismet',
 	slug: 'akismet',
@@ -26,13 +44,9 @@ export const akismet = {
 	author: 'Automattic',
 	author_url: 'https://automattic.com/wordpress-plugins/',
 	network: false,
-	sites: {
-		[ 2916284 ]: {
-			active: true,
-			version: '3.1.11',
-			autoupdate: true,
-		},
-	},
+	active: true,
+	version: '3.1.11',
+	autoupdate: true,
 };
 export const akismetWithSites = placeSitePropsOnSiteObject( akismet );
 
@@ -46,13 +60,9 @@ export const helloDolly = {
 	author: 'Matt Mullenweg',
 	author_url: 'http://ma.tt/',
 	network: false,
-	sites: {
-		[ 2916284 ]: {
-			active: false,
-			version: '1.6',
-			autoupdate: true,
-		},
-	},
+	active: false,
+	version: '1.6',
+	autoupdate: true,
 };
 
 export const jetpack = {
@@ -65,24 +75,20 @@ export const jetpack = {
 	author: 'Automattic',
 	author_url: 'http://jetpack.com',
 	network: false,
-	sites: {
-		[ 2916284 ]: {
-			active: true,
-			version: '4.1.1',
-			autoupdate: true,
-			update: {
-				id: '20101',
-				slug: 'jetpack',
-				plugin: 'jetpack/jetpack.php',
-				new_version: '4.2.2',
-				url: 'https://wordpress.org/plugins/jetpack/',
-				package: 'https://downloads.wordpress.org/plugin/jetpack.4.2.2.zip',
-				tested: '4.6',
-				compatibility: {
-					scalar: {
-						scalar: false,
-					},
-				},
+	active: true,
+	version: '4.1.1',
+	autoupdate: true,
+	update: {
+		id: '20101',
+		slug: 'jetpack',
+		plugin: 'jetpack/jetpack.php',
+		new_version: '4.2.2',
+		url: 'https://wordpress.org/plugins/jetpack/',
+		package: 'https://downloads.wordpress.org/plugin/jetpack.4.2.2.zip',
+		tested: '4.6',
+		compatibility: {
+			scalar: {
+				scalar: false,
 			},
 		},
 	},
@@ -100,13 +106,9 @@ export const jetpackUpdated = {
 	author_url: 'http://jetpack.com',
 	network: false,
 	log: [ 'Array' ],
-	sites: {
-		[ 2916284 ]: {
-			active: true,
-			version: '4.2.2',
-			autoupdate: true,
-		},
-	},
+	active: true,
+	version: '4.2.2',
+	autoupdate: true,
 };
 
 export const healthCheck = {
