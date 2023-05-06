@@ -20,18 +20,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 	const { goNext, goBack, submit } = navigation;
 	const { __ } = useI18n();
 	const isStartWritingFlow = 'start-writing' === flow;
-	const { setDomain } = useDispatch( ONBOARD_STORE );
 	const getDefaultStepContent = () => <h1>Choose a domain step</h1>;
-
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const onAddDomain = ( selectedDomain: any ) => {
-		setDomain( selectedDomain );
-		submit?.( { domain: selectedDomain } );
-	};
-
-	const onSkip = () => {
-		onAddDomain( null );
-	};
 
 	const handleOnTransfer = async ( domain: string, authCode: string ) => {
 		const domainCartItem = domainTransfer( {
@@ -71,7 +60,7 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 					showHeader={ false }
 					hideHeader={ true }
 					onTransfer={ handleOnTransfer }
-					onConnect={ handleOnConnect }
+					onConnect={ ( { domain } ) => handleOnConnect( domain ) }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -92,17 +81,6 @@ const UseMyDomain: Step = function UseMyDomain( { navigation, flow } ) {
 				<FormattedHeader
 					id="choose-a-domain-writer-header"
 					headerText={ __( 'Use a domain I own' ) }
-					subHeaderText={
-						<>
-							{ __( 'Help your blog stand out with a custom domain. Not sure yet?' ) }
-							<button
-								className="button navigation-link step-container__navigation-link has-underline is-borderless"
-								onClick={ onSkip }
-							>
-								{ __( 'Decide later.' ) }
-							</button>
-						</>
-					}
 					align="center"
 				/>
 			);
