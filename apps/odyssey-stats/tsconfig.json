@@ -7,11 +7,8 @@
 		}
 	},
 	"include": [
-		"./**/*",
+		"./src/**/*",
 		"./package.json",
-		"./app.tsx",
-		"./widget-loader.ts",
-		"./routes.ts",
 		"../../client/**/*",
 		"../../client/lib/domains/tlds/wpcom-multi-level-tlds.json",
 		"../../client/__mocks__/lib/json-schema-draft-04.json",
