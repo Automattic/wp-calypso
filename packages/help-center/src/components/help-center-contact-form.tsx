@@ -249,9 +249,18 @@ export const HelpCenterContactForm = () => {
 		Boolean( supportSite?.is_wpcom_atomic )
 	);
 
+	const enableGPTResponse = config.isEnabled( 'help/gpt-response' );
+
 	const showingSibylResults = params.get( 'show-results' ) === 'true';
+	const showingGPTResponse = params.get( 'show-gpt' ) === 'true';
+
 	function handleCTA() {
-		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+		if (
+			! enableGPTResponse &&
+			! showingSibylResults &&
+			sibylArticles &&
+			sibylArticles.length > 0
+		) {
 			params.set( 'show-results', 'true' );
 			navigate( {
 				pathname: '/contact-form',
@@ -259,6 +268,16 @@ export const HelpCenterContactForm = () => {
 			} );
 			return;
 		}
+
+		if ( ! showingGPTResponse && enableGPTResponse ) {
+			params.set( 'show-gpt', 'true' );
+			navigate( {
+				pathname: '/contact-form',
+				search: params.toString(),
+			} );
+			return;
+		}
+
 		const productSlug = ( supportSite as HelpCenterSite )?.plan.product_slug;
 		const plan = getPlan( productSlug );
 		const productId = plan?.getProductId();
@@ -411,15 +430,20 @@ export const HelpCenterContactForm = () => {
 	};
 
 	const getCTALabel = () => {
-		if ( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 ) {
+		const showingSibylOrGPTResults = showingSibylResults || showingGPTResponse;
+
+		if (
+			( enableGPTResponse && ! showingGPTResponse ) ||
+			( ! showingSibylResults && sibylArticles && sibylArticles.length > 0 )
+		) {
 			return __( 'Continue', __i18n_text_domain__ );
 		}
 
-		if ( mode === 'CHAT' && showingSibylResults ) {
+		if ( mode === 'CHAT' && showingSibylOrGPTResults ) {
 			return __( 'Still chat with us', __i18n_text_domain__ );
 		}
 
-		if ( mode === 'EMAIL' && showingSibylResults ) {
+		if ( mode === 'EMAIL' && showingSibylOrGPTResults ) {
 			return __( 'Still email us', __i18n_text_domain__ );
 		}
 
@@ -440,23 +464,24 @@ export const HelpCenterContactForm = () => {
 		debouncedMessage,
 		'response'
 	);
-	const isFetching = isFetchingUrls || isFetchingResponse;
+	const isFetchingGPTResponse = isFetchingUrls || isFetchingResponse;
 
-	// TODO: Figure out in which environments this makes sense.
-	const showGPTResponse = true;
-	if ( showGPTResponse && showingSibylResults ) {
+	// TODO: A/B test
+	if ( enableGPTResponse && showingGPTResponse ) {
 		return (
 			<div className="help-center__sibyl-articles-page">
 				<BackButton />
 				<HelpCenterGPT />
 				<section className="contact-form-submit">
 					<Button
-						disabled={ isFetching }
+						disabled={ isFetchingGPTResponse }
 						onClick={ handleCTA }
 						isPrimary
 						className="help-center-contact-form__site-picker-cta"
 					>
-						{ isFetching ? __( 'Gathering quick response.', __i18n_text_domain__ ) : getCTALabel() }
+						{ isFetchingGPTResponse
+							? __( 'Gathering quick response.', __i18n_text_domain__ )
+							: getCTALabel() }
 					</Button>
 					{ hasSubmittingError && (
 						<FormInputValidation
@@ -468,6 +493,7 @@ export const HelpCenterContactForm = () => {
 			</div>
 		);
 	}
+
 	return showingSibylResults ? (
 		<div className="help-center__sibyl-articles-page">
 			<BackButton />
