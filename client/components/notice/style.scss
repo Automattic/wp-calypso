@@ -333,21 +333,37 @@ a.notice__action {
 	&.is-success {
 		.notice__icon-wrapper {
 			color: var(--studio-green-40);
+			background: var(--studio-gray-0);
+			.notice__icon-wrapper-drop {
+				background: var(--color-text-inverted);
+			}
 		}
 	}
 	&.is-warning {
 		.notice__icon-wrapper {
 			color: var(--studio-orange-40);
+			background: var(--studio-gray-0);
+			.notice__icon-wrapper-drop {
+				background: var(--color-text-inverted);
+			}
 		}
 	}
 	&.is-error {
 		.notice__icon-wrapper {
 			color: var(--studio-red-40);
+			background: var(--studio-gray-0);
+			.notice__icon-wrapper-drop {
+				background: var(--color-text-inverted);
+			}
 		}
 	}
 	&.is-plain {
 		.notice__icon-wrapper {
 			color: inherit;
+			background: var(--studio-gray-0);
+			.notice__icon-wrapper-drop {
+				background: var(--color-text-inverted);
+			}
 		}
 	}
 

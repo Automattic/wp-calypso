@@ -48,7 +48,7 @@ export default function PlanNotice( {
 				className="plan-features-main__notice"
 				showDismiss={ true }
 				onDismissClick={ handleDismissNotice }
-				status="is-info"
+				icon="info-outline"
 				isReskinned={ true }
 			>
 				{ translate(
