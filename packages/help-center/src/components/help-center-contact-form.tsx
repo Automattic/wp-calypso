@@ -579,7 +579,6 @@ export const HelpCenterContactForm = () => {
 					disabled={ isCTADisabled() }
 					onClick={ handleCTA }
 					isPrimary
-					isLarge
 					className="help-center-contact-form__site-picker-cta"
 				>
 					{ getCTALabel() }
