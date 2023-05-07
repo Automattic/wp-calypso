@@ -49,6 +49,7 @@ export default function PlanNotice( {
 				showDismiss={ true }
 				onDismissClick={ handleDismissNotice }
 				icon="info-outline"
+				status="is-success"
 				isReskinned={ true }
 			>
 				{ translate(
