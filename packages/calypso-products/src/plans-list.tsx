@@ -1916,7 +1916,7 @@ const getPlanJetpackSecurityT1Details = (): IncompleteJetpackPlan => ( {
 		),
 	getFeaturedDescription: () =>
 		translate(
-			'This bundle includes:{{ul}}{{li}}VaultPress Backup{{/li}}{{li}}Scan{{/li}}{{li}}Akismet Anti-spam{{/li}}{{/ul}}',
+			'This bundle includes:{{ul}}{{li}}VaultPress Backup (10GB){{/li}}{{li}}Scan{{/li}}{{li}}Akismet Anti-spam (10k API calls/mo){{/li}}{{/ul}}',
 			{
 				components: {
 					ul: <ul />,
@@ -2098,7 +2098,7 @@ const getPlanJetpackStarterDetails = (): IncompleteJetpackPlan => ( {
 		translate( 'Essential security tools: real-time backups and comment spam protection.' ),
 	getFeaturedDescription: () =>
 		translate(
-			'This bundle includes:{{ul}}{{li}}VaultPress Backup{{/li}}{{li}}Akismet Anti-spam{{/li}}{{/ul}}',
+			'This bundle includes:{{ul}}{{li}}VaultPress Backup (1GB){{/li}}{{li}}Akismet Anti-spam (1k API calls/mo){{/li}}{{/ul}}',
 			{
 				components: {
 					ul: <ul />,
