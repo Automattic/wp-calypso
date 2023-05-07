@@ -430,7 +430,17 @@ export const HelpCenterContactForm = () => {
 		return isSubmitting ? formTitles.buttonSubmittingLabel : formTitles.buttonLabel;
 	};
 
-	const { isFetching } = useJetpackSearchAIQuery( '9619154', debouncedMessage, 'response' );
+	const { isFetching: isFetchingUrls } = useJetpackSearchAIQuery(
+		'9619154',
+		debouncedMessage,
+		'urls'
+	);
+	const { isFetching: isFetchingResponse } = useJetpackSearchAIQuery(
+		'9619154',
+		debouncedMessage,
+		'response'
+	);
+	const isFetching = isFetchingUrls || isFetchingResponse;
 
 	// TODO: Figure out in which environments this makes sense.
 	const showGPTResponse = true;
