@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-imports */
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { LoadingPlaceholder } from '@automattic/components';
 import { HelpCenterSelect, useJetpackSearchAIQuery } from '@automattic/data-stores';
 import styled from '@emotion/styled';
@@ -49,7 +50,7 @@ const getLoadingMessageIndex = ( () => {
 	return ( messagesLength: number ): number => {
 		currentIndex = currentIndex + 1;
 
-		if ( currentIndex > messagesLength ) {
+		if ( currentIndex >= messagesLength ) {
 			return messagesLength;
 		}
 
@@ -117,6 +118,14 @@ export function HelpCenterGPT() {
 			}
 		};
 	}, [ isFetchingLinks, isFetchingResponse ] );
+
+	useEffect( () => {
+		if ( data?.response ) {
+			recordTracksEvent( 'calypso_helpcenter_show_gpt_response', {
+				location: 'help-center',
+			} );
+		}
+	}, [ data ] );
 
 	return (
 		<div className="help-center-gpt__container">
