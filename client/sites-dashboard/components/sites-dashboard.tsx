@@ -14,6 +14,7 @@ import Pagination from 'calypso/components/pagination';
 import PopoverMenuItem from 'calypso/components/popover-menu/item';
 import SplitButton from 'calypso/components/split-button';
 import { useSiteExcerptsQuery } from 'calypso/data/sites/use-site-excerpts-query';
+import { withoutHttp } from 'calypso/lib/url';
 import { successNotice } from 'calypso/state/notices/actions';
 import { useSitesSorting } from 'calypso/state/sites/hooks/use-sites-sorting';
 import { MEDIA_QUERIES } from '../utils';
@@ -334,9 +335,9 @@ function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteSlug: st
 		dispatch(
 			successNotice(
 				createInterpolateElement(
-					/* translators: siteName is the display name of a newly created site */
-					sprintf( __( 'New site <strong>%(siteName)s</strong> created.' ), {
-						siteName: site.name,
+					/* translators: siteURL is the URL name of a newly created site, excluding the "http://" */
+					sprintf( __( 'New site <strong>%(siteURL)s</strong> created.' ), {
+						siteURL: withoutHttp( site.URL ),
 					} ),
 					{ strong: <strong /> }
 				),
