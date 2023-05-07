@@ -344,5 +344,10 @@ function useShowSiteCreationNotice( allSites: SiteExcerptData[], newSiteSlug: st
 				{ duration: 8000 }
 			)
 		);
+
+		// Remove query param without triggering a re-render
+		const newUrl = new URL( window.location.href );
+		newUrl.searchParams.delete( 'new-site' );
+		window.history.replaceState( null, '', newUrl.toString() );
 	}, [ __, allSites, dispatch, newSiteSlug ] );
 }
