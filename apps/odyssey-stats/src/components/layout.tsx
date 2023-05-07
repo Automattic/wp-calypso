@@ -1,5 +1,4 @@
 import classnames from 'classnames';
-import DocumentHead from 'calypso/components/data/document-head';
 
 interface LayoutProps {
 	sectionGroup: string;
@@ -16,7 +15,6 @@ export default function Layout( { sectionGroup, sectionName, primary, secondary 
 
 	return (
 		<div className={ sectionClass }>
-			<DocumentHead />
 			<div id="content" className="layout__content">
 				<div id="secondary" className="layout__secondary" role="navigation">
 					{ secondary }
