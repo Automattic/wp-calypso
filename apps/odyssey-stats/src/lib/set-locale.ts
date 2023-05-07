@@ -17,7 +17,7 @@ const getLanguageCodeFromLocale = ( localeSlug: string ) => {
 
 const loadMomentLocale = ( localeSlug: string, languageCode: string ) => {
 	return import( `moment/locale/${ localeSlug }` )
-		.catch( ( error ) => {
+		.catch( ( error: Error ) => {
 			debug(
 				`Encountered an error loading moment locale file for ${ localeSlug }. Falling back to language datetime format.`,
 				error
@@ -30,7 +30,7 @@ const loadMomentLocale = ( localeSlug: string, languageCode: string ) => {
 			// Pass it to the next catch block if the language code is the same as the locale slug.
 			return Promise.reject( error );
 		} )
-		.catch( ( error ) => {
+		.catch( ( error: Error ) => {
 			debug(
 				`Encountered an error loading moment locale file for ${ localeSlug }. Falling back to US datetime format.`,
 				error
