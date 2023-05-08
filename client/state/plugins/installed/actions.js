@@ -59,9 +59,9 @@ import 'calypso/state/plugins/init';
  * @returns {boolean} True if any of the site specific properties are on the plugin, false otherwise.
  */
 const isSiteDataOnPluginObject = ( plugin ) => {
-	return [ 'active', 'autoupdate', 'update', 'version' ]
-		.map( ( prop ) => plugin.hasOwnProperty( prop ) )
-		.includes( true );
+	return [ 'active', 'autoupdate', 'update', 'version' ].some( ( prop ) =>
+		plugin.hasOwnProperty( prop )
+	);
 };
 
 /**
