@@ -119,7 +119,9 @@ type PlanFeatures2023GridProps = {
 	currentSitePlanSlug: string;
 	hidePlansFeatureComparison: boolean;
 	hideUnavailableFeatures: boolean;
+	// Value of the `?plan=` query param, so we can highlight a given plan.
 	selectedPlan?: string;
+	// Value of the `?feature` query param, so we can hide plans that don't have a given feature.
 	selectedFeature?: string;
 };
 
