@@ -77,10 +77,19 @@
 // Post recommendations in Search
 .is-reader-page .search-stream .reader__content {
 	display: flex;
-	flex-flow: column wrap;
+	flex-flow: row wrap;
+
+	@include breakpoint-deprecated( "<960px" ) {
+		flex-flow: column wrap;
+	}
 
 	@include breakpoint-deprecated( "<660px" ) {
+		flex-flow: row wrap;
 		padding: 15px 5px 15px 15px;
+	}
+
+	@include breakpoint-deprecated( "<480px" ) {
+		flex-flow: column wrap;
 	}
 }
 
@@ -102,6 +111,7 @@
 	display: flex;
 	margin: 0 0 0 15px;
 	padding: 20px 0;
+	width: 100%;
 
 	@include breakpoint-deprecated( "<960px" ) {
 		margin: 0;
