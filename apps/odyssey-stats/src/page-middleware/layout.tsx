@@ -32,6 +32,7 @@ export const ProviderWrappedLayout: FunctionComponent< ProviderWrappedLayoutProp
 } ) => {
 	return (
 		<CalypsoI18nProvider>
+			{ /* Editor might show errors here, but it's fine as `RouteProvider` is in JavaScript. */ }
 			<RouteProvider
 				currentSection={ currentSection }
 				currentRoute={ currentRoute }
@@ -53,9 +54,7 @@ export const ProviderWrappedLayout: FunctionComponent< ProviderWrappedLayoutProp
 	);
 };
 
-export function makeLayoutMiddleware(
-	LayoutComponent: FunctionComponent< ProviderWrappedLayoutProps >
-) {
+export function makeLayoutMiddleware( LayoutComponent: typeof ProviderWrappedLayout ) {
 	return ( context: Context, next: () => void ) => {
 		const { store, queryClient, section, pathname, query, primary, secondary } = context;
 
