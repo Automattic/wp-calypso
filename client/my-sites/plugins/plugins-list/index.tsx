@@ -30,7 +30,7 @@ import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors
 import PluginManagementV2 from '../plugin-management-v2';
 import { getPluginActionDailogMessage, getSitePlugin, handleUpdatePlugins } from '../utils';
 import type { SiteDetails } from '@automattic/data-stores';
-import type { Plugin, PluginStatus } from 'calypso/state/plugins/installed/types';
+import type { Plugin, PluginFilter, PluginStatus } from 'calypso/state/plugins/installed/types';
 
 import './style.scss';
 
@@ -60,6 +60,7 @@ interface Props {
 	isJetpackCloud: boolean;
 	isLoading: boolean;
 	requestPluginsError: boolean;
+	filter: PluginFilter;
 }
 
 interface State {
