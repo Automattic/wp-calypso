@@ -4,12 +4,7 @@
 
 import flows from 'calypso/signup/config/flows';
 import { useNock } from 'calypso/test-helpers/use-nock';
-import {
-	createSiteWithCart,
-	isDomainFulfilled,
-	isPlanFulfilled,
-	isSiteTypeFulfilled,
-} from '../step-actions';
+import { createSiteWithCart, isDomainFulfilled, isPlanFulfilled } from '../step-actions';
 
 jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
 jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );
@@ -254,53 +249,5 @@ describe( 'isPlanFulfilled()', () => {
 
 		expect( flows.excludeStep ).not.toHaveBeenCalled();
 		expect( submitSignupStep ).not.toHaveBeenCalled();
-	} );
-} );
-
-describe( 'isSiteTypeFulfilled()', () => {
-	const submitSiteType = jest.fn();
-
-	beforeEach( () => {
-		flows.excludeStep.mockClear();
-		submitSiteType.mockClear();
-	} );
-
-	test( 'should remove a fulfilled step', () => {
-		const stepName = 'site-type';
-		const initialContext = { query: { site_type: 'blog' } };
-		const nextProps = { initialContext, submitSiteType };
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-		expect( submitSiteType ).not.toHaveBeenCalled();
-
-		isSiteTypeFulfilled( stepName, undefined, nextProps );
-
-		expect( submitSiteType ).toHaveBeenCalledWith( 'blog' );
-		expect( flows.excludeStep ).toHaveBeenCalledWith( 'site-type' );
-	} );
-
-	test( 'should not remove unfulfilled step', () => {
-		const stepName = 'site-type';
-		const initialContext = {};
-		const nextProps = { initialContext, submitSiteType };
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-
-		isSiteTypeFulfilled( stepName, undefined, nextProps );
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-	} );
-
-	test( 'should not remove step given an invalid site type', () => {
-		const stepName = 'site-type';
-		const initialContext = { query: { site_type: 'an-invalid-site-type-slug' } };
-		const nextProps = { initialContext, submitSiteType };
-
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
-
-		isSiteTypeFulfilled( stepName, undefined, nextProps );
-
-		expect( submitSiteType ).not.toHaveBeenCalled();
-		expect( flows.excludeStep ).not.toHaveBeenCalled();
 	} );
 } );
