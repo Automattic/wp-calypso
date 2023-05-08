@@ -240,7 +240,7 @@ export const unifyCampaigns = ( campaigns: Campaign[], campaignsStats: CampaignS
 };
 
 /**
- * Update query for current page or passed in URL
+ * Update the path by adding the advertising section URL prefix
  *
  * @param {string} path partial URL
  * @returns pathname concatenated with the advertising configured path prefix
