@@ -415,7 +415,7 @@ export class PlanFeatures2023Grid extends Component<
 	}
 
 	renderMobileView() {
-		const { planProperties, translate } = this.props;
+		const { planProperties, translate, selectedFeature } = this.props;
 		const CardContainer = (
 			props: React.ComponentProps< typeof FoldableCard > & { planName: string }
 		) => {
@@ -451,6 +451,10 @@ export class PlanFeatures2023Grid extends Component<
 							header={ translate( 'Show all features' ) }
 							planName={ properties.planName }
 							key={ `${ properties.planName }-${ index }` }
+							expanded={
+								selectedFeature &&
+								properties.features.some( ( feature ) => feature.getSlug() === selectedFeature )
+							}
 						>
 							{ this.renderPreviousFeaturesIncludedTitle( [ properties ], {
 								isMobile: true,
