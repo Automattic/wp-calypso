@@ -4,7 +4,6 @@ import {
 	TestAccount,
 	envVariables,
 	PublishedPostPage,
-	PageTemplateModalComponent,
 	getTestAccountByFeature,
 	envToFeatureKey,
 } from '@automattic/calypso-e2e';
@@ -48,21 +47,13 @@ export function createPrivacyTests( { visibility }: { visibility: ArticlePrivacy
 			} );
 
 			it( 'Start new page', async function () {
-				// @TODO Consider moving this to EditorPage.
-				editorPage = new EditorPage( page, { target: features.siteType } );
+				editorPage = new EditorPage( page );
 				await editorPage.visit( 'page' );
-				await editorPage.waitUntilLoaded();
-
-				const editorWindowLocator = editorPage.getEditorWindowLocator();
-				const pageTemplateModalComponent = new PageTemplateModalComponent(
-					page,
-					editorWindowLocator
-				);
-				await pageTemplateModalComponent.selectBlankPage();
+				await editorPage.selectBlankPageTemplate();
 			} );
 
 			it( 'Enter page title', async function () {
-				editorPage = new EditorPage( page, { target: features.siteType } );
+				editorPage = new EditorPage( page );
 				await editorPage.enterTitle( `Privacy: ${ visibility } - ${ DataHelper.getTimestamp() }` );
 			} );
 

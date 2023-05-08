@@ -9,7 +9,7 @@ import type { FacebookPreviewProps } from './types';
 
 import './style.scss';
 
-const FacebookPreview: React.FC< FacebookPreviewProps > = ( props ) => {
+export const FacebookPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 	const { customImage } = props;
 	const isPostPreview = !! customImage;
 
@@ -58,4 +58,8 @@ const FacebookPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 	);
 };
 
-export default FacebookPreview;
+export { default as FacebookDefaultLinkPreview } from './default-link-preview';
+export { default as FacebookDefaultPostPreview } from './default-post-preview';
+export { default as FacebookFullPreview } from './full-preview';
+export { default as FacebookLinkPreview } from './link-preview';
+export { default as FacebookPostPreview } from './post-preview';

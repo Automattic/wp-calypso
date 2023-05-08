@@ -15,12 +15,12 @@ import Followers from '../stats-followers';
 import StatsModuleEmails from '../stats-module-emails';
 import StatsPageHeader from '../stats-page-header';
 import Reach from '../stats-reach';
-import SubscribersChartSection from '../stats-subscribers-chart-section';
+import SubscribersChartSection, { PeriodType } from '../stats-subscribers-chart-section';
 import SubscribersOverview from '../stats-subscribers-overview';
 import SubscribersHighlightSection from './subscribers-highlight-section';
 
 interface StatsSubscribersPageProps {
-	period: string;
+	period: PeriodType;
 }
 
 const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {

@@ -6,7 +6,7 @@
 import '@testing-library/jest-dom';
 import { render } from '@testing-library/react';
 import {
-	FacebookPreview as Facebook,
+	FacebookLinkPreview as Facebook,
 	TwitterPreview as Twitter,
 	GoogleSearchPreview as Search,
 } from '../src';

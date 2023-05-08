@@ -179,8 +179,8 @@ function getDIFMSiteContentCollectionDestination( { siteSlug } ) {
 	return `/home/${ siteSlug }`;
 }
 
-function getHomeDestination( { siteSlug } ) {
-	return `/home/${ siteSlug }`;
+function getSitesDestination( { siteSlug } ) {
+	return addQueryArgs( { 'new-site': siteSlug }, '/sites' );
 }
 
 const flows = generateFlows( {
@@ -196,7 +196,7 @@ const flows = generateFlows( {
 	getDestinationFromIntent,
 	getDIFMSignupDestination,
 	getDIFMSiteContentCollectionDestination,
-	getHomeDestination,
+	getSitesDestination,
 } );
 
 function removeUserStepFromFlow( flow ) {

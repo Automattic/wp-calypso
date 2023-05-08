@@ -2,17 +2,18 @@ import config from '@automattic/calypso-config';
 import UplotChart from '@automattic/components/src/chart-uplot';
 import { UseQueryResult } from '@tanstack/react-query';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Intervals from 'calypso/blocks/stats-navigation/intervals';
 import useSubscribersQuery from 'calypso/my-sites/stats/hooks/use-subscribers-query';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsPeriodHeader from '../stats-period-header';
+import SubscribersNavigationArrows from './subscribers-navigation-arrows';
 import type uPlot from 'uplot';
 
 import './style.scss';
 
 interface SubscribersData {
-	period: string;
+	period: PeriodType;
 	subscribers: number;
 	subscribers_change: number;
 }
@@ -22,6 +23,15 @@ interface SubscribersDataResult {
 	unit: string;
 	date: string;
 }
+
+interface QuantityDefaultType {
+	day: number;
+	week: number;
+	month: number;
+	year: number;
+}
+
+export type PeriodType = 'day' | 'week' | 'month' | 'year';
 
 // New Subscriber Stats
 function transformData( data: SubscribersData[] ): uPlot.AlignedData {
@@ -42,20 +52,43 @@ export default function SubscribersChartSection( {
 }: {
 	siteId: number | null;
 	slug?: string | null;
-	period?: string;
+	period?: PeriodType;
 } ) {
 	const isOdysseyStats = config.isEnabled( 'is_running_in_jetpack_site' );
-	const quantity = 30;
+	const quantityDefault: QuantityDefaultType = {
+		day: 30,
+		week: 12,
+		month: 6,
+		year: 3,
+	};
+	const quantity = quantityDefault[ period as keyof QuantityDefaultType ];
+	const [ queryDate, setQueryDate ] = useState( new Date() );
+	const [ errorMessage, setErrorMessage ] = useState( '' );
+	const legendRef = useRef< HTMLDivElement >( null );
+	const translate = useTranslate();
+
 	const {
 		isLoading,
 		isError,
 		data,
 		// error,
 		status,
-	} = useSubscribersQuery( siteId, period, quantity ) as UseQueryResult< SubscribersDataResult >;
-	const [ errorMessage, setErrorMessage ] = useState( '' );
-	const legendRef = useRef< HTMLDivElement >( null );
-	const translate = useTranslate();
+	} = useSubscribersQuery(
+		siteId,
+		period,
+		quantity,
+		queryDate
+	) as UseQueryResult< SubscribersDataResult >;
+
+	const handleDateChange = useCallback(
+		( newDate: Date ) => setQueryDate( new Date( newDate.getTime() ) ), // unless new Date is created, the component won't rerender
+		[ setQueryDate ]
+	);
+
+	// reset the date when changing periods
+	useEffect( () => {
+		setQueryDate( new Date() );
+	}, [ period, setQueryDate ] );
 
 	useEffect( () => {
 		if ( isError ) {
@@ -87,11 +120,19 @@ export default function SubscribersChartSection( {
 						</small>
 					) }
 				</h1>
-				<div className="subscribers-section-duration-control-with-legend">
-					<StatsPeriodHeader>
-						<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
-					</StatsPeriodHeader>
-					<div className="subscribers-section-legend" ref={ legendRef }></div>
+				<div className="subscribers-section-heading__chart-controls">
+					<SubscribersNavigationArrows
+						date={ queryDate }
+						period={ period }
+						quantity={ quantity }
+						onDateChange={ handleDateChange }
+					/>
+					<div className="subscribers-section-duration-control-with-legend">
+						<StatsPeriodHeader>
+							<Intervals selected={ period } pathTemplate={ pathTemplate } compact={ true } />
+						</StatsPeriodHeader>
+						<div className="subscribers-section-legend" ref={ legendRef }></div>
+					</div>
 				</div>
 			</div>
 			{ isLoading && <StatsModulePlaceholder className="is-chart" isLoading /> }

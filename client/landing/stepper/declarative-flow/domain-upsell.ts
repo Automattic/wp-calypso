@@ -1,12 +1,11 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
-import { OnboardSelect } from 'calypso/../packages/data-stores/src';
+import { OnboardSelect, updateLaunchpadSettings } from 'calypso/../packages/data-stores/src';
 import {
 	addPlanToCart,
 	addProductsToCart,
 	DOMAIN_UPSELL_FLOW,
 } from 'calypso/../packages/onboarding/src';
-import { updateLaunchpadSettings } from 'calypso/data/sites/use-launchpad';
 import { useQuery } from '../hooks/use-query';
 import { useSiteSlug } from '../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../stores';
