@@ -59,10 +59,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	transition-property: background, color, opacity;
 }
 
-.x-nav-item--wide.login-link {
-	margin-top: 8px;
-}
-
 .x-link:hover {
 	opacity: 0.85;
 }
@@ -292,6 +288,14 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 .x-nav-list--right {
 	margin-left: auto;
 	position: initial;
+	gap: 4px;
+	.x-nav-link--primary {
+		border: 1px solid var(--studio-gray-5);
+		background-color: transparent;
+		padding: 9px 12px 10px;
+		border-radius: 4px;
+		font-weight: 400;
+	}
 }
 
 .x-nav-item {
@@ -306,17 +310,10 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	display: block;
 	padding: 0 12px 0;
 	font-size: 0.875rem;
-	font-weight: 600;
+	font-weight: 500;
 	line-height: 16px;
 	white-space: nowrap;
 	cursor: pointer;
-}
-
-.x-nav-link--primary {
-	background-color: #0675c4;
-	margin-top: 0;
-	padding: 9px 12px 10px;
-	border-radius: 4px;
 }
 
 .x-nav-link-chevron {
@@ -550,10 +547,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 
 .x-nav .x-nav-link.x-nav-link--logo {
 	color: #0675c4;
-}
-
-.x-nav .x-nav-link.x-nav-link--primary {
-	color: #fff;
 }
 
 button.x-link:hover {
