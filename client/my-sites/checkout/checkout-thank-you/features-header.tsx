@@ -8,8 +8,19 @@ import {
 import classNames from 'classnames';
 import i18n from 'i18n-calypso';
 import PropTypes from 'prop-types';
+import type { ReceiptPurchase } from 'calypso/state/receipts/types';
 
-const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases } ) => {
+const FeaturesHeader = ( {
+	isDataLoaded,
+	isGenericReceipt,
+	purchases,
+	hasFailedPurchases,
+}: {
+	isDataLoaded?: boolean;
+	isGenericReceipt?: boolean;
+	purchases?: ReceiptPurchase[];
+	hasFailedPurchases?: boolean;
+} ) => {
 	const classes = classNames( 'checkout-thank-you__features-header', {
 		'is-placeholder': ! isDataLoaded,
 	} );
@@ -24,11 +35,11 @@ const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedP
 
 	const shouldHideFeaturesHeading =
 		hasFailedPurchases ||
-		purchases.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ||
-		purchases.some( isDomainRegistration ) ||
-		purchases.some( isDomainMapping ) ||
-		purchases.some( isDomainTransfer ) ||
-		purchases.some( isTitanMail );
+		purchases?.some( isGSuiteOrExtraLicenseOrGoogleWorkspace ) ||
+		purchases?.some( isDomainRegistration ) ||
+		purchases?.some( isDomainMapping ) ||
+		purchases?.some( isDomainTransfer ) ||
+		purchases?.some( isTitanMail );
 
 	if ( shouldHideFeaturesHeading ) {
 		return <div />;
