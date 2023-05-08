@@ -45,7 +45,9 @@ export default function NotificationSettings( {
 	const [ selectedDuration, setSelectedDuration ] = useState< Duration | undefined >(
 		defaultDuration
 	);
-	const [ addedEmailAddresses, setAddedEmailAddresses ] = useState< string[] | [] >( [] );
+	const [ defaultUserEmailAddresses, setDefaultUserEmailAddresses ] = useState< string[] | [] >(
+		[]
+	);
 
 	const [ validationError, setValidationError ] = useState< string >( '' );
 	const [ isAddEmailModalOpen, setIsAddEmailModalOpen ] = useState< boolean >( false );
@@ -84,7 +86,7 @@ export default function NotificationSettings( {
 
 	useEffect( () => {
 		if ( settings ) {
-			setAddedEmailAddresses( settings.monitor_user_emails || [] );
+			setDefaultUserEmailAddresses( settings.monitor_user_emails || [] );
 			setEnableEmailNotification( !! settings.monitor_user_email_notifications );
 			setEnableMobileNotification( !! settings.monitor_user_wp_note_notifications );
 		}
@@ -92,7 +94,7 @@ export default function NotificationSettings( {
 
 	useEffect( () => {
 		if ( monitorUserEmails ) {
-			setAddedEmailAddresses( monitorUserEmails );
+			setDefaultUserEmailAddresses( monitorUserEmails );
 		}
 	}, [ monitorUserEmails ] );
 
@@ -210,7 +212,7 @@ export default function NotificationSettings( {
 									</div>
 									{ enableEmailNotification && (
 										<ConfigureEmailNotification
-											defaultEmailAddresses={ addedEmailAddresses }
+											defaultEmailAddresses={ defaultUserEmailAddresses }
 											toggleModal={ toggleAddEmailModal }
 										/>
 									) }
@@ -218,7 +220,7 @@ export default function NotificationSettings( {
 							) : (
 								<div className="notification-settings__content-sub-heading">
 									{ translate( 'Receive email notifications with your account email address %s.', {
-										args: addedEmailAddresses,
+										args: defaultUserEmailAddresses,
 									} ) }
 								</div>
 							) }

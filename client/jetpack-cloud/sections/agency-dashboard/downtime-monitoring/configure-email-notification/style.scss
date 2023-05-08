@@ -12,11 +12,37 @@ $help-text-color: #757575;
 	padding: 16px !important;
 }
 
+.configure-email-address__checkbox-content-container {
+	display: flex;
+	align-items: center;
+}
+
 .configure-email-address__checkbox-content {
-	display: inline-block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	flex: 1;
+	max-width: calc(100% - 30px);
+}
+
+.configure-email-address__verification-status {
+	margin-right: 42px;
+
+	.badge {
+		line-height: 14px;
+		font-size: 0.75rem;
+	}
+}
+
+.configure-email-address__edit-icon {
+	position: absolute;
+	right: 16px;
+	display: flex;
 }
 
 .configure-email-address__checkbox {
+	width: 100%;
+
 	.components-checkbox-control__input:checked {
 		background: var(--studio-gray-80);
 		border-color: var(--studio-gray-80);
@@ -24,6 +50,7 @@ $help-text-color: #757575;
 
 	.components-checkbox-control__label {
 		font-weight: 500;
+		min-width: 95%;
 	}
 
 	.components-base-control__field {
@@ -33,7 +60,14 @@ $help-text-color: #757575;
 	}
 }
 
+.handle-overflow {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
 .configure-email-address__checkbox-heading {
+	@extend .handle-overflow;
 	font-weight: 500;
 	font-size: 0.875rem;
 	line-height: 18px;
@@ -41,6 +75,7 @@ $help-text-color: #757575;
 }
 
 .configure-email-address__checkbox-sub-heading {
+	@extend .handle-overflow;
 	font-weight: 400;
 	font-size: 0.75rem;
 	line-height: 18px;
