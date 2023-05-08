@@ -404,9 +404,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		return (
 			isSelectedFileValid &&
 			! selectedFile && (
-				<p aria-label={ ariaLabelMsg } className="add-subscriber__form--disclaimer">
+				<div aria-label={ ariaLabelMsg } className="add-subscriber__form--disclaimer">
 					{ labelText }
-				</p>
+				</div>
 			)
 		);
 	}
