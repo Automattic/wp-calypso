@@ -71,6 +71,7 @@
 		"happychat": true,
 		"help": true,
 		"home/layout-dev": true,
+		"hosting-onboarding-i2": true,
 		"hosting/datacenter-picker": true,
 		"i18n/community-translator": false,
 		"i18n/empathy-mode": true,
