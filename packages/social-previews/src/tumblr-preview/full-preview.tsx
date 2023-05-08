@@ -10,11 +10,11 @@ const TumblrFullPreview: React.FC< TumblrPreviewProps > = ( props ) => {
 				<SectionHeading level={ props.headingsLevel }>
 					{
 						// translators: refers to a social post on Tumblr
-						__( 'Your post', 'tumblr-preview' )
+						__( 'Your post', 'social-previews' )
 					}
 				</SectionHeading>
 				<p className="social-preview__section-desc">
-					{ __( 'This is what your social post will look like on Tumblr:', 'tumblr-preview' ) }
+					{ __( 'This is what your social post will look like on Tumblr:', 'social-previews' ) }
 				</p>
 				<TumblrLinkPreview { ...props } />
 			</section>

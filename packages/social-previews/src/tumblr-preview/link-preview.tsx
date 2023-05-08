@@ -31,11 +31,11 @@ const TumblrLinkPreview: React.FC< TumblrPreviewProps > = ( {
 						<img
 							className="tumblr-preview__image"
 							src={ image }
-							alt={ __( 'Tumblr preview thumbnail', 'tumblr-preview' ) }
+							alt={ __( 'Tumblr preview thumbnail', 'social-previews' ) }
 						/>
 					) }
 					<a className="tumblr-preview__url" href={ url } target="_blank" rel="noreferrer">
-						{ __( 'View On WordPress', 'tumblr-preview' ) }
+						{ __( 'View On WordPress', 'social-previews' ) }
 					</a>
 				</div>
 				<TumblrPostActions />
