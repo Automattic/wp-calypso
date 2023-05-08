@@ -3,8 +3,10 @@ import {
 	FEATURE_SFTP,
 	FEATURE_SFTP_DATABASE,
 	FEATURE_SITE_STAGING_SITES,
+	WPCOM_FEATURES_ATOMIC,
 } from '@automattic/calypso-products';
-import { localize } from 'i18n-calypso';
+import { englishLocales } from '@automattic/i18n-utils';
+import i18n, { localize } from 'i18n-calypso';
 import { Component, Fragment } from 'react';
 import wrapWithClickOutside from 'react-click-outside';
 import { connect } from 'react-redux';
@@ -81,17 +83,19 @@ class Hosting extends Component {
 		const {
 			teams,
 			clickActivate,
-			hasSftpFeature,
-			isDisabled,
+			isAdvancedHostingDisabled,
+			isBasicHostingDisabled,
 			isECommerceTrial,
 			isWpcomStagingSite,
 			isTransferring,
+			locale,
 			requestSiteById,
 			siteId,
 			siteSlug,
 			translate,
 			transferState,
 			isLoadingSftpData,
+			hasAtomicFeature,
 			hasStagingSitesFeature,
 		} = this.props;
 
@@ -109,14 +113,13 @@ class Hosting extends Component {
 			return <HostingUpsellNudge siteId={ siteId } targetPlan={ targetPlan } />;
 		};
 
-		const getAtomicActivationNotice = () => {
-			const { COMPLETE, FAILURE } = transferStates;
+		const { COMPLETE, FAILURE } = transferStates;
 
+		const isTransferInProgress = () => isTransferring && COMPLETE !== transferState;
+
+		const getAtomicActivationNotice = () => {
 			// Transfer in progress
-			if (
-				( isTransferring && COMPLETE !== transferState ) ||
-				( isDisabled && COMPLETE === transferState )
-			) {
+			if ( isTransferInProgress() || ( isBasicHostingDisabled && COMPLETE === transferState ) ) {
 				if ( COMPLETE === transferState ) {
 					requestSiteById( siteId );
 				}
@@ -148,18 +151,19 @@ class Hosting extends Component {
 				/>
 			);
 
-			if ( isDisabled && ! isTransferring ) {
+			if ( isBasicHostingDisabled && ! isTransferring ) {
+				// Don't imply additional access if site doesn't have the SFTP feature.
+				const noticeText =
+					isBasicHostingDisabled &&
+					( englishLocales.includes( locale ) ||
+						i18n.hasTranslation( 'Please activate your hosting access.' ) )
+						? translate( 'Please activate your hosting access.' )
+						: translate( 'Please activate the hosting access to begin using these features.' );
+
 				return (
 					<>
 						{ failureNotice }
-						<Notice
-							status="is-info"
-							showDismiss={ false }
-							text={ translate(
-								'Please activate the hosting access to begin using these features.'
-							) }
-							icon="globe"
-						>
+						<Notice status="is-info" showDismiss={ false } text={ noticeText } icon="globe">
 							<TrackComponentView eventName="calypso_hosting_configuration_activate_impression" />
 							<NoticeAction
 								onClick={ clickActivate }
@@ -175,8 +179,15 @@ class Hosting extends Component {
 
 		const getContent = () => {
 			const isGithubIntegrationEnabled =
-				isEnabled( 'github-integration-i1' ) && isAutomatticTeamMember( teams );
-			const WrapperComponent = isDisabled || isTransferring ? FeatureExample : Fragment;
+				isEnabled( 'github-integration-i1' ) &&
+				isAutomatticTeamMember( teams ) &&
+				! isAdvancedHostingDisabled;
+			const shouldUseExampleWrapperForAllFeatures = isBasicHostingDisabled || isTransferring;
+			const WrapperComponent = shouldUseExampleWrapperForAllFeatures ? FeatureExample : Fragment;
+			const AdvancedFeatureWrapper =
+				isAdvancedHostingDisabled && ! shouldUseExampleWrapperForAllFeatures
+					? FeatureExample
+					: Fragment;
 
 			return (
 				<>
@@ -189,21 +200,38 @@ class Hosting extends Component {
 					<WrapperComponent>
 						<Layout className="hosting__layout">
 							<Column type="main" className="hosting__main-layout-col">
-								<SFTPCard disabled={ isDisabled } />
-								<PhpMyAdminCard disabled={ isDisabled } />
+								<AdvancedFeatureWrapper>
+									<SFTPCard disabled={ isAdvancedHostingDisabled } />
+								</AdvancedFeatureWrapper>
+								<AdvancedFeatureWrapper>
+									<PhpMyAdminCard disabled={ isAdvancedHostingDisabled } />
+								</AdvancedFeatureWrapper>
 								{ ! isWpcomStagingSite && hasStagingSitesFeature && (
-									<StagingSiteCard disabled={ isDisabled } />
+									<AdvancedFeatureWrapper>
+										<StagingSiteCard disabled={ isAdvancedHostingDisabled } />
+									</AdvancedFeatureWrapper>
 								) }
 								{ isWpcomStagingSite && siteId && (
-									<StagingSiteProductionCard siteId={ siteId } disabled={ isDisabled } />
+									<AdvancedFeatureWrapper>
+										<StagingSiteProductionCard
+											siteId={ siteId }
+											disabled={ isAdvancedHostingDisabled }
+										/>
+									</AdvancedFeatureWrapper>
 								) }
-								{ isGithubIntegrationEnabled && <GitHubCard /> }
-								<WebServerSettingsCard disabled={ isDisabled } />
-								<RestorePlanSoftwareCard disabled={ isDisabled } />
-								<CacheCard disabled={ isDisabled } />
+								{ isGithubIntegrationEnabled && (
+									<AdvancedFeatureWrapper>
+										<GitHubCard />
+									</AdvancedFeatureWrapper>
+								) }
+								<AdvancedFeatureWrapper>
+									<WebServerSettingsCard disabled={ isAdvancedHostingDisabled } />
+								</AdvancedFeatureWrapper>
+								<RestorePlanSoftwareCard disabled={ isBasicHostingDisabled } />
+								<CacheCard disabled={ isBasicHostingDisabled } />
 							</Column>
 							<Column type="sidebar">
-								<SiteBackupCard disabled={ isDisabled } />
+								<SiteBackupCard disabled={ isAdvancedHostingDisabled } />
 								<SupportCard />
 							</Column>
 						</Layout>
@@ -211,6 +239,11 @@ class Hosting extends Component {
 				</>
 			);
 		};
+
+		const banner =
+			hasAtomicFeature && ( isTransferInProgress() || ! isAdvancedHostingDisabled )
+				? getAtomicActivationNotice()
+				: getUpgradeBanner();
 
 		return (
 			<Main wideLayout className="hosting">
@@ -225,7 +258,7 @@ class Hosting extends Component {
 					) }
 					align="left"
 				/>
-				{ hasSftpFeature ? getAtomicActivationNotice() : getUpgradeBanner() }
+				{ banner }
 				{ getContent() }
 				<QueryReaderTeams />
 			</Main>
@@ -239,6 +272,7 @@ export const clickActivate = () =>
 export default connect(
 	( state ) => {
 		const siteId = getSelectedSiteId( state );
+		const hasAtomicFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 		const hasStagingSitesFeature = siteHasFeature( state, siteId, FEATURE_SITE_STAGING_SITES );
 
@@ -247,9 +281,10 @@ export default connect(
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isDisabled: ! hasSftpFeature || ! isSiteAutomatedTransfer( state, siteId ),
+			isBasicHostingDisabled: ! hasAtomicFeature || ! isSiteAutomatedTransfer( state, siteId ),
+			isAdvancedHostingDisabled: ! hasSftpFeature || ! isSiteAutomatedTransfer( state, siteId ),
 			isLoadingSftpData: getAtomicHostingIsLoadingSftpData( state, siteId ),
-			hasSftpFeature,
+			hasAtomicFeature,
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
 			isWpcomStagingSite: isSiteWpcomStaging( state, siteId ),
