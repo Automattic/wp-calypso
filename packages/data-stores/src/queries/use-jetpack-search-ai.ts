@@ -21,7 +21,7 @@ export type JetpackSearchAIResult = {
 
 export function useJetpackSearchAIQuery( siteId: number | string, query: string, stopAt: string ) {
 	return useQuery< JetpackSearchAIResult >(
-		[ 'aiQuery', query ],
+		[ 'aiQuery', query, stopAt ],
 		async () =>
 			canAccessWpcomApis()
 				? await wpcomRequest( {
