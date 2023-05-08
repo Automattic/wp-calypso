@@ -53,6 +53,10 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const isFreePlanAndCustomDomainFeature =
 					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN && isFreePlan( planName );
 
+				if ( isFreePlanAndCustomDomainFeature && ! domainName ) {
+					return null;
+				}
+
 				const divClasses = classNames( '', getPlanClass( planName ), {
 					'is-last-feature': featureIndex + 1 === features.length,
 				} );
@@ -73,7 +77,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 						<PlanFeaturesItem>
 							<span className={ spanClasses } key={ key }>
 								<span className={ itemTitleClasses }>
-									{ isFreePlanAndCustomDomainFeature && domainName ? (
+									{ isFreePlanAndCustomDomainFeature ? (
 										<Plans2023Tooltip
 											text={ translate( '%s is not included', {
 												args: [ domainName ],
