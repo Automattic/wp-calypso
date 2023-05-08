@@ -52,6 +52,19 @@ import { getSite } from 'calypso/state/sites/selectors';
 import 'calypso/state/plugins/init';
 
 /**
+ * Determines if site specific data is on the plugin object.
+ * If it is not, then it can be assumed it is on the sites property.
+ *
+ * @param {Object} plugin - plugin object
+ * @returns {boolean} True if any of the site specific properties are on the plugin, false otherwise.
+ */
+const isSiteDataOnPluginObject = ( plugin ) => {
+	return [ 'active', 'autoupdate', 'update', 'version' ]
+		.map( ( prop ) => plugin.hasOwnProperty( prop ) )
+		.includes( true );
+};
+
+/**
  * Return a SitePlugin instance used to handle the plugin
  *
  * @param {Object} siteId - site ID
@@ -131,7 +144,11 @@ export function activatePlugin( siteId, plugin ) {
 			pluginId,
 		};
 
-		if ( plugin.active ) {
+		if (
+			isSiteDataOnPluginObject( plugin )
+				? plugin.active
+				: siteId && plugin.sites?.[ siteId ]?.active
+		) {
 			return dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_SUCCESS, data: plugin } );
 		}
 
@@ -198,7 +215,11 @@ export function deactivatePlugin( siteId, plugin ) {
 			pluginId,
 		};
 
-		if ( ! plugin.active ) {
+		if (
+			isSiteDataOnPluginObject( plugin )
+				? ! plugin.active
+				: siteId && ! plugin.sites?.[ siteId ]?.active
+		) {
 			return dispatch( {
 				...defaultAction,
 				type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS,
@@ -261,7 +282,9 @@ export function togglePluginActivation( siteId, plugin ) {
 			return;
 		}
 
-		if ( ! plugin.active ) {
+		if (
+			isSiteDataOnPluginObject ? ! plugin.active : siteId && ! plugin.sites?.[ siteId ]?.active
+		) {
 			dispatch( activatePlugin( siteId, plugin ) );
 		} else {
 			dispatch( deactivatePlugin( siteId, plugin ) );
@@ -278,7 +301,14 @@ export function updatePlugin( siteId, plugin ) {
 			pluginId,
 		};
 
-		if ( ! plugin?.update || plugin?.update?.recentlyUpdated ) {
+		if (
+			isSiteDataOnPluginObject( plugin )
+				? ! plugin?.update || plugin?.update?.recentlyUpdated
+				: plugin.sites &&
+				  siteId &&
+				  ( ! plugin.sites?.[ siteId ]?.update ||
+						plugin.sites?.[ siteId ]?.update?.recentlyUpdated )
+		) {
 			return dispatch( { ...defaultAction, type: PLUGIN_ALREADY_UP_TO_DATE, data: plugin } );
 		}
 
@@ -316,7 +346,11 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 			pluginId,
 		};
 
-		if ( plugin.autoupdate ) {
+		if (
+			isSiteDataOnPluginObject( plugin )
+				? plugin.autoupdate
+				: siteId && plugin.sites?.[ siteId ]?.autoupdate
+		) {
 			return dispatch( {
 				...defaultAction,
 				type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS,
@@ -333,7 +367,9 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } );
 			afterEnableAutoupdateCallback( undefined );
-			if ( data.update ) {
+			if (
+				isSiteDataOnPluginObject( data ) ? data.update : siteId && data.sites?.[ siteId ].update
+			) {
 				updatePlugin( siteId, data )( dispatch );
 			}
 		};
@@ -359,7 +395,11 @@ export function disableAutoupdatePlugin( siteId, plugin ) {
 			pluginId,
 		};
 
-		if ( ! plugin.autoupdate ) {
+		if (
+			isSiteDataOnPluginObject( plugin )
+				? ! plugin.autoupdate
+				: siteId && ! plugin.sites?.[ siteId ]?.autoupdate
+		) {
 			return dispatch( {
 				...defaultAction,
 				type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
@@ -400,7 +440,11 @@ export function togglePluginAutoUpdate( siteId, plugin ) {
 			return;
 		}
 
-		if ( ! plugin.autoupdate ) {
+		if (
+			isSiteDataOnPluginObject( plugin )
+				? ! plugin.autoupdate
+				: siteId && ! plugin.sites?.[ siteId ]?.autoupdate
+		) {
 			dispatch( enableAutoupdatePlugin( siteId, plugin ) );
 		} else {
 			dispatch( disableAutoupdatePlugin( siteId, plugin ) );
@@ -586,7 +630,11 @@ export function fetchSitePlugins( siteId ) {
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS } );
 
 			data.plugins.map( ( plugin ) => {
-				if ( plugin.update && plugin.autoupdate ) {
+				if (
+					isSiteDataOnPluginObject( plugin )
+						? plugin.update && plugin.autoupdate
+						: siteId && plugin.sites?.[ siteId ]?.update && plugin.sites?.[ siteId ]?.autoupdate
+				) {
 					updatePlugin( siteId, plugin )( dispatch );
 				}
 			} );
@@ -622,7 +670,11 @@ export function fetchAllPlugins() {
 				siteId = Number( siteId );
 
 				plugins.forEach( ( plugin ) => {
-					if ( plugin.update && plugin.autoupdate ) {
+					if (
+						isSiteDataOnPluginObject( plugin )
+							? plugin.update && plugin.autoupdate
+							: siteId && plugin.sites?.[ siteId ]?.update && plugin.sites?.[ siteId ]?.autoupdate
+					) {
 						updatePlugin( siteId, plugin )( dispatch );
 					}
 				} );
