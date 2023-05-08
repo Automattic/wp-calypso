@@ -111,6 +111,7 @@
 	display: flex;
 	margin: 0 0 0 15px;
 	padding: 20px 0;
+	width: 100%;
 
 	@include breakpoint-deprecated( "<960px" ) {
 		margin: 0;
