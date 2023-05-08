@@ -162,7 +162,7 @@ const streamApis = {
 			getQueryString( {
 				...extras,
 				algorithm: 'read:recommendations:sites/es/2',
-				number: 10,
+				posts_per_site: 1,
 			} ),
 	},
 	tag: {
@@ -242,10 +242,6 @@ export function handlePage( action, data ) {
 		pageHandle = { before: after };
 	}
 
-	if ( streamType === 'custom_recs_sites_with_images' ) {
-		pageHandle = { page_handle: next_page || meta.next_page };
-	}
-
 	const actions = analyticsForStream( {
 		streamKey,
 		algorithm: data.algorithm,
@@ -270,8 +266,11 @@ export function handlePage( action, data ) {
 		} ) );
 	} else if ( sites ) {
 		streamItems = sites.map( ( site ) => {
-			const post = site.posts[ 0 ];
-			return {
+			const post = site.posts[ 0 ] ?? null;
+			if ( ! post ) {
+				return null;
+			}
+			const r = {
 				...keyForPost( post ),
 				date: post[ dateProperty ],
 				...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
@@ -283,9 +282,16 @@ export function handlePage( action, data ) {
 				feed_ID: post.feed_ID,
 				xPostMetadata: XPostHelper.getXPostMetadata( post ),
 			};
+			return r;
 		} );
+
+		// Filter out nulls
+		streamItems = streamItems.filter( ( item ) => item !== null );
+
 		// get array of posts from sites object
-		streamPosts = sites.map( ( site ) => site.posts[ 0 ] );
+		streamPosts = sites.map( ( site ) => {
+			return site.posts[ 0 ];
+		} );
 	}
 
 	if ( isPoll ) {
