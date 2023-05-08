@@ -62,8 +62,6 @@ import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-r
 import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
 import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
-import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import {
 	getSiteId,
@@ -131,7 +129,6 @@ class Signup extends Component {
 		isLoggedIn: PropTypes.bool,
 		isEmailVerified: PropTypes.bool,
 		loadTrackingTool: PropTypes.func.isRequired,
-		submitSiteType: PropTypes.func.isRequired,
 		submitSignupStep: PropTypes.func.isRequired,
 		signupDependencies: PropTypes.object,
 		siteDomains: PropTypes.array,
@@ -141,7 +138,6 @@ class Signup extends Component {
 		flowName: PropTypes.string,
 		stepName: PropTypes.string,
 		pageTitle: PropTypes.string,
-		siteType: PropTypes.string,
 		stepSectionName: PropTypes.string,
 	};
 
@@ -252,7 +248,6 @@ class Signup extends Component {
 	componentDidMount() {
 		debug( 'Signup component mounted' );
 		this.props.flowName === 'onboarding' && ! this.props.isLoggedIn && addHotJarScript();
-		this.startTrackingForBusinessSite();
 
 		recordSignupStart( this.props.flowName, this.props.refParameter, this.getRecordProps() );
 
@@ -263,19 +258,13 @@ class Signup extends Component {
 	}
 
 	componentDidUpdate( prevProps ) {
-		const { flowName, stepName, signupDependencies, sitePlanName, sitePlanSlug } = this.props;
+		const { flowName, stepName, sitePlanName, sitePlanSlug } = this.props;
 
 		if (
 			( flowName !== prevProps.flowName || stepName !== prevProps.stepName ) &&
 			! this.state.shouldShowLoadingScreen
 		) {
 			recordSignupStep( flowName, stepName, this.getRecordProps() );
-		}
-
-		if (
-			get( signupDependencies, 'siteType' ) !== get( prevProps.signupDependencies, 'siteType' )
-		) {
-			this.startTrackingForBusinessSite();
 		}
 
 		if ( stepName !== prevProps.stepName ) {
@@ -404,14 +393,6 @@ class Signup extends Component {
 
 		this.handleDestination( dependencies, filteredDestination );
 	};
-
-	startTrackingForBusinessSite() {
-		const siteType = get( this.props.signupDependencies, 'siteType' );
-
-		if ( siteType === 'business' ) {
-			this.props.loadTrackingTool( 'HotJar' );
-		}
-	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
 		if (
@@ -964,14 +945,12 @@ export default connect(
 			sitePlanSlug: getSitePlanSlug( state, siteId ),
 			siteDomains,
 			siteId,
-			siteType: getSiteType( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
 			oauth2Client,
 			isGravatar: isGravatarOAuth2Client( oauth2Client ),
 		};
 	},
 	{
-		submitSiteType,
 		submitSignupStep,
 		removeStep,
 		loadTrackingTool,

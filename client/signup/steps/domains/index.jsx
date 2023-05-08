@@ -26,7 +26,7 @@ import {
 	getFixedDomainSearch,
 } from 'calypso/lib/domains';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
-import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { getSitePropertyDefaults } from 'calypso/lib/signup/site-properties';
 import { maybeExcludeEmailsStep } from 'calypso/lib/signup/step-actions';
 import wpcom from 'calypso/lib/wp';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -57,7 +57,6 @@ import {
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
-import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getExternalBackUrl } from './utils';
 import './style.scss';
@@ -398,7 +397,7 @@ class DomainsStep extends Component {
 	};
 
 	shouldIncludeDotBlogSubdomain() {
-		const { flowName, isDomainOnly, siteType, signupDependencies } = this.props;
+		const { flowName, isDomainOnly } = this.props;
 
 		// 'subdomain' flow coming from .blog landing pages
 		if ( flowName === 'subdomain' ) {
@@ -413,15 +412,6 @@ class DomainsStep extends Component {
 		// No .blog subdomains for domain only sites
 		if ( isDomainOnly ) {
 			return false;
-		}
-
-		// If we detect a 'blog' site type from Signup data
-		if (
-			// Users choose `Blog` as their site type
-			'blog' === get( signupDependencies, 'siteType' ) ||
-			'blog' === siteType
-		) {
-			return true;
 		}
 
 		const lastQuery = get( this.props.step, 'domainForm.lastQuery' );
@@ -627,8 +617,7 @@ class DomainsStep extends Component {
 	isHostingFlow = () => isHostingFlow( this.props.flowName );
 
 	getSubHeaderText() {
-		const { flowName, isAllDomains, siteType, stepSectionName, isReskinned, translate } =
-			this.props;
+		const { flowName, isAllDomains, stepSectionName, isReskinned, translate } = this.props;
 
 		if ( isAllDomains ) {
 			return translate( 'Find the domain that defines you' );
@@ -673,24 +662,13 @@ class DomainsStep extends Component {
 			return ! stepSectionName && translate( 'Enter some descriptive keywords to get started' );
 		}
 
-		const subHeaderPropertyName = 'signUpFlowDomainsStepSubheader';
-		const onboardingSubHeaderCopy =
-			siteType &&
-			flowName === 'onboarding' &&
-			getSiteTypePropertyValue( 'slug', siteType, subHeaderPropertyName );
-
-		if ( onboardingSubHeaderCopy ) {
-			return onboardingSubHeaderCopy;
-		}
-
 		return 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName
 			? translate( 'Use a domain you already own with your new WordPress.com site.' )
 			: translate( "Enter your site's name or some keywords that describe it to get started." );
 	}
 
 	getHeaderText() {
-		const { headerText, isAllDomains, siteType, isReskinned, stepSectionName, translate } =
-			this.props;
+		const { headerText, isAllDomains, isReskinned, stepSectionName, translate } = this.props;
 
 		if ( stepSectionName === 'use-your-domain' ) {
 			return '';
@@ -708,9 +686,7 @@ class DomainsStep extends Component {
 			return ! stepSectionName && translate( 'Choose a domain' );
 		}
 
-		const headerPropertyName = 'signUpFlowDomainsStepHeader';
-
-		return getSiteTypePropertyValue( 'slug', siteType, headerPropertyName );
+		return getSitePropertyDefaults( 'signUpFlowDomainsStepHeader' );
 	}
 
 	getAnalyticsSection() {
@@ -929,7 +905,6 @@ export default connect(
 			designType: getDesignType( state ),
 			productsList,
 			productsLoaded,
-			siteType: getSiteType( state ),
 			selectedSite,
 			sites: getSitesItems( state ),
 			userSiteCount: getCurrentUserSiteCount( state ),

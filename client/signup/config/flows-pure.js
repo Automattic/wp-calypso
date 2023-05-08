@@ -106,20 +106,6 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 		{
-			name: 'design-first',
-			steps: [
-				'template-first-themes',
-				'user',
-				'site-type-with-theme',
-				'site-title',
-				'domains',
-				'plans',
-			],
-			destination: getChecklistThemeDestination,
-			description: 'Start with one of our template-first (Gutenberg) themes.',
-			lastModified: '2019-10-16',
-		},
-		{
 			name: 'onboarding',
 			steps: isEnabled( 'signup/professional-email-step' )
 				? [ 'user', 'domains', 'emails', 'plans' ]
@@ -255,20 +241,6 @@ export function generateFlows( {
 			description: 'Signup flow for creating an online store with an Atomic site',
 			lastModified: '2020-08-11',
 			showRecaptcha: true,
-		},
-		{
-			name: 'ecommerce-design-first',
-			steps: [
-				'template-first-themes',
-				'user',
-				'site-type-with-theme',
-				'domains',
-				'plans-ecommerce',
-			],
-			destination: getSignupDestination,
-			description:
-				'Signup flow for creating an online store with an Atomic site, forked from the design-first flow',
-			lastModified: '2019-11-27',
 		},
 		{
 			name: 'ecommerce-monthly',
