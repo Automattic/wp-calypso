@@ -3,10 +3,10 @@ import { Button, Gridicon } from '@automattic/components';
 import { getQueryArg, removeQueryArgs } from '@wordpress/url';
 import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
-import moment from 'moment';
 import page from 'page';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Badge from 'calypso/components/badge';
 import FormattedDate from 'calypso/components/formatted-date';
 import LicenseDetails from 'calypso/jetpack-cloud/sections/partner-portal/license-details';
 import LicenseListItem from 'calypso/jetpack-cloud/sections/partner-portal/license-list-item';
@@ -20,7 +20,6 @@ import { addQueryArgs } from 'calypso/lib/url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, errorNotice } from 'calypso/state/notices/actions';
 import { doesPartnerRequireAPaymentMethod } from 'calypso/state/partner-portal/partner/selectors';
-import Badge from 'calypso/components/badge';
 import './style.scss';
 
 interface Props {
@@ -55,14 +54,6 @@ export default function LicensePreview( {
 	const paymentMethodRequired = useSelector( doesPartnerRequireAPaymentMethod );
 	const licenseState = getLicenseState( attachedAt, revokedAt );
 	const domain = siteUrl ? getUrlParts( siteUrl ).hostname || siteUrl : '';
-	const showDomain =
-		domain && [ LicenseState.Attached, LicenseState.Revoked ].indexOf( licenseState ) !== -1;
-
-	const oneMinuteAgo = moment.utc().subtract( 1, 'minute' );
-
-	const justIssued = moment.utc( issuedAt, 'YYYY-MM-DD HH:mm:ss' ) > oneMinuteAgo;
-
-	const justAssigned = moment.utc( attachedAt, 'YYYY-MM-DD HH:mm:ss' ) > oneMinuteAgo;
 
 	const open = useCallback( () => {
 		setOpen( ! isOpen );
@@ -128,6 +119,7 @@ export default function LicensePreview( {
 				</div>
 
 				<div>
+					<div className="license-preview__product-small">{ product }</div>
 					{ domain }
 					{ ! domain && licenseState === LicenseState.Detached && (
 						<span>

@@ -21,13 +21,20 @@
 		}
 	}
 
-	&__list-item {
+	&__list-item,
+	&__list-item-small {
 		font-size: 1rem;
 
 		&--wide {
 			@include break-xlarge() {
 				grid-column-start: span 2;
 			}
+		}
+	}
+
+	&__list-item-small {
+		@include break-xlarge() {
+			display: none;
 		}
 	}
 

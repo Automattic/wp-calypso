@@ -21,6 +21,7 @@ interface Props {
 }
 
 const DETAILS_DATE_FORMAT = 'YYYY-MM-DD h:mm:ss A';
+const DETAILS_DATE_FORMAT_SHORT = 'YYYY-MM-DD';
 
 export default function LicenseDetails( {
 	licenseKey,
@@ -57,6 +58,18 @@ export default function LicenseDetails( {
 						</ClipboardButton>
 					</div>
 				</li>
+
+				<li className="license-details__list-item-small">
+					<h4 className="license-details__label">{ translate( 'Issued on' ) }</h4>
+					<FormattedDate date={ issuedAt } format={ DETAILS_DATE_FORMAT_SHORT } />
+				</li>
+
+				{ licenseState === LicenseState.Attached && (
+					<li className="license-details__list-item-small">
+						<h4 className="license-details__label">{ translate( 'Assigned on' ) }</h4>
+						<FormattedDate date={ attachedAt } format={ DETAILS_DATE_FORMAT_SHORT } />
+					</li>
+				) }
 
 				<li className="license-details__list-item">
 					<h4 className="license-details__label">{ translate( "Owner's User ID" ) }</h4>
