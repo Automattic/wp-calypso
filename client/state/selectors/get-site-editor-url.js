@@ -12,8 +12,8 @@ export const getSiteEditorUrl = ( state, siteId ) => {
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
 	const queryArgs = {};
 	// Only add the origin if it's not wordpress.com.
-	if ( location.origin !== 'https://wordpress.com' ) {
-		queryArgs.calypso_origin = location.origin;
+	if ( typeof window !== 'undefined' && window.location.origin !== 'https://wordpress.com' ) {
+		queryArgs.calypso_origin = window.location.origin;
 	}
 	return addQueryArgs( queryArgs, `${ siteAdminUrl }site-editor.php` );
 };

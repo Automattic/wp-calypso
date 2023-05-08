@@ -74,20 +74,14 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 						/>
 					);
 
-					const description = (
-						<p>
-							<span>{ item.featuredDescription }</span>
-							<br />
-
-							{ ! hideMoreInfoLink && (
-								<MoreInfoLink
-									item={ item }
-									isExternal={ isExternal }
-									onClick={ onClickMoreInfoFactory( item ) }
-								/>
-							) }
-						</p>
-					);
+					const description = <span>{ item.featuredDescription }</span>;
+					const moreInfoLink = ! hideMoreInfoLink ? (
+						<MoreInfoLink
+							item={ item }
+							isExternal={ isExternal }
+							onClick={ onClickMoreInfoFactory( item ) }
+						/>
+					) : null;
 
 					const ctaAsPrimary = ! (
 						isProductInCart ||
@@ -115,6 +109,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 								ctaAriaLabel={ ctaAriaLabel }
 								description={ description }
 								hero={ <HeroImage item={ item } /> }
+								moreInfoLink={ moreInfoLink }
 								isCtaDisabled={ isCtaDisabled }
 								isCtaExternal={ isExternal }
 								isProductInCart={ isProductInCart }

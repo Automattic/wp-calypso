@@ -34,7 +34,6 @@ class PostResults extends Component {
 			! query || query === ''
 				? ( postKey ) => ( { ...postKey, isRecommendation: true } )
 				: defaultTransform;
-
 		return (
 			<Stream
 				{ ...this.props }

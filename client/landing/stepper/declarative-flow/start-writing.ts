@@ -1,10 +1,8 @@
-import { OnboardSelect } from '@automattic/data-stores';
+import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
 import { START_WRITING_FLOW, addPlanToCart, addProductsToCart } from '@automattic/onboarding';
 import { useSelect } from '@wordpress/data';
-import { addQueryArgs } from '@wordpress/url';
 import { useSelector } from 'react-redux';
-import { updateLaunchpadSettings } from 'calypso/data/sites/use-launchpad';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
 import { redirect } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/util';
 import {
@@ -43,6 +41,10 @@ const startWriting: Flow = {
 				slug: 'launchpad',
 				asyncComponent: () => import( './internals/steps-repository/launchpad' ),
 			},
+			{
+				slug: 'start-writing-done',
+				asyncComponent: () => import( './internals/steps-repository/start-writing-done' ),
+			},
 		];
 	},
 
@@ -59,10 +61,7 @@ const startWriting: Flow = {
 
 		async function submit( providedDependencies: ProvidedDependencies = {} ) {
 			recordSubmitStep( providedDependencies, '', flowName, currentStep );
-			const returnUrl = addQueryArgs( `/home/${ siteSlug }`, {
-				celebrateLaunch: true,
-				launchpadComplete: true,
-			} );
+			const returnUrl = `/setup/start-writing/start-writing-done?siteSlug=${ siteSlug }`;
 
 			switch ( currentStep ) {
 				case 'site-creation-step':
@@ -104,7 +103,13 @@ const startWriting: Flow = {
 							checklist_statuses: { domain_upsell_deferred: true },
 						} );
 					}
-					return navigate( 'launchpad' );
+
+					if ( providedDependencies?.freeDomain ) {
+						return navigate( 'launchpad' );
+					}
+
+					return navigate( 'plans' );
+
 				case 'plans':
 					if ( siteSlug ) {
 						await updateLaunchpadSettings( siteSlug, {

@@ -47,23 +47,23 @@ export class StarRatingBlock implements BlockFlow {
 			return;
 		}
 
+		const editorParent = await context.editorPage.getEditorParent();
+
 		if ( rating === 0.5 ) {
-			const oneStarLocator = context.editorLocator.locator( selectors.starButton( 1 ) );
+			const oneStarLocator = editorParent.locator( selectors.starButton( 1 ) );
 			await oneStarLocator.click();
 			return;
 		}
 
 		if ( wholeRatings.includes( rating as WholeRating ) ) {
-			const starButtonLocator = context.editorLocator.locator( selectors.starButton( rating ) );
+			const starButtonLocator = editorParent.locator( selectors.starButton( rating ) );
 			await starButtonLocator.click();
 			return;
 		}
 
 		if ( halfRatings.includes( rating as HalfRating ) ) {
 			const starNthIndex = Math.ceil( rating );
-			const starButtonLocator = context.editorLocator.locator(
-				selectors.starButton( starNthIndex )
-			);
+			const starButtonLocator = editorParent.locator( selectors.starButton( starNthIndex ) );
 			// Two clicks creates a half star rating.
 			await starButtonLocator.click();
 			await starButtonLocator.click();

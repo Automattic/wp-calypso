@@ -438,16 +438,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		);
 	}
 
-	function renderFollowerNoticeLabel() {
-		return (
-			<p className="add-subscriber__form--disclaimer">
-				{ translate(
-					"If you enter an email address that has a WordPress.com account, they'll become a follower."
-				) }
-			</p>
-		);
-	}
-
 	return (
 		<div className="add-subscriber">
 			{ ( showTitle || showSubtitle ) && (
@@ -504,7 +494,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 					{ ! includesHandledError() && renderImportCsvSelectedFileLabel() }
 					{ showCsvUpload && ! includesHandledError() && renderImportCsvLabel() }
-					{ ! includesHandledError() && renderFollowerNoticeLabel() }
 
 					{ renderEmptyFormValidationMsg() }
 
