@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import SectionHeading from '../shared/section-heading';
+import { SectionHeading } from '../shared/section-heading';
 import TumblrLinkPreview from './link-preview';
 import { TumblrPreviewProps } from './types';
 
