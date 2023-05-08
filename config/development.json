@@ -71,6 +71,7 @@
 		"happychat": true,
 		"help": true,
 		"home/layout-dev": true,
+		"hosting-onboarding-i2": true,
 		"hosting/datacenter-picker": true,
 		"i18n/community-translator": false,
 		"i18n/empathy-mode": true,
@@ -122,6 +123,8 @@
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
 		"network-connection": true,
+		"newsletter/paid-subscribers": true,
+		"newsletter/stats": true,
 		"oauth": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
@@ -206,8 +209,6 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": false,
-		"newsletter/stats": true,
-		"newsletter/paid-subscribers": true
+		"wpcom-user-bootstrap": false
 	}
 }
