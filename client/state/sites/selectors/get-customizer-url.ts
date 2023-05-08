@@ -1,5 +1,7 @@
+import { isValueTruthy } from '@automattic/wpcom-checkout';
 import { addQueryArgs } from 'calypso/lib/url';
 import { getCustomizerFocus } from 'calypso/my-sites/customize/panels';
+import { AppState } from 'calypso/types';
 import getSiteAdminUrl from './get-site-admin-url';
 import getSiteSlug from './get-site-slug';
 import isJetpackSite from './is-jetpack-site';
@@ -15,10 +17,18 @@ import isJetpackSite from './is-jetpack-site';
  *                                 'add-menu' and 'social-media' show custom guides, any other value shows the default guide
  * @returns {string}               Customizer URL
  */
-export default function getCustomizerUrl( state, siteId, panel, returnUrl, guide ) {
+export default function getCustomizerUrl(
+	state: AppState,
+	siteId: number | undefined | null,
+	panel?: string | undefined | null,
+	returnUrl?: string | undefined | null,
+	guide?: string | undefined | null
+): string | null {
 	if ( ! isJetpackSite( state, siteId ) ) {
 		const siteSlug = getSiteSlug( state, siteId );
-		const url = [ '' ].concat( [ 'customize', panel, siteSlug ].filter( Boolean ) ).join( '/' );
+		const url = [ '' ]
+			.concat( [ 'customize', panel, siteSlug ].filter( isValueTruthy ) )
+			.join( '/' );
 		return addQueryArgs(
 			{
 				return: returnUrl,
@@ -41,7 +51,7 @@ export default function getCustomizerUrl( state, siteId, panel, returnUrl, guide
 	return addQueryArgs(
 		{
 			return: returnUrl,
-			...getCustomizerFocus( panel ),
+			...( panel ? getCustomizerFocus( panel ) : {} ),
 			guide,
 		},
 		adminUrl
