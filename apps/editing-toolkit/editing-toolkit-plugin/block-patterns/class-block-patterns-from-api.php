@@ -66,6 +66,13 @@ class Block_Patterns_From_API {
 		// Used to track which patterns we successfully register.
 		$results = array();
 
+		// The category 'All' is created dynamically so all patterns are always added automatically.
+		$category_all = array(
+			'slug'        => 'all',
+			'label'       => __( 'All', 'full-site-editing' ),
+			'description' => __( 'Explore all patterns.', 'full-site-editing' ),
+		);
+
 		// For every pattern source site, fetch the patterns.
 		foreach ( $this->patterns_sources as $patterns_source ) {
 			$patterns_cache_key = $this->utils->get_patterns_cache_key( $patterns_source );
@@ -88,13 +95,7 @@ class Block_Patterns_From_API {
 
 			$pattern_categories = array_merge( $pattern_categories, $existing_categories );
 
-			// The category 'All' is created dinamically so all patterns are always added automatically.
-			$category_all = array(
-				'slug'        => 'all',
-				'label'       => __( 'All', 'full-site-editing' ),
-				'description' => __( 'Explore all patterns.', 'full-site-editing' ),
-			);
-			// Add the category 'All' to $pattern_categories so its orderer and registered with the others.
+			// Add the category 'All' to $pattern_categories so its ordered and registered with the others.
 			$pattern_categories[ $category_all['slug'] ] = array(
 				'label'       => $category_all['label'],
 				'description' => $category_all['description'],
