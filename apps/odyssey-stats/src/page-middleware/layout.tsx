@@ -13,7 +13,6 @@ export { render, hydrate } from 'calypso/controller/web-util';
 interface ProviderWrappedLayoutProps {
 	store: Store;
 	queryClient: QueryClient;
-	currentSection: string;
 	currentRoute: string;
 	currentQuery: string;
 	primary: React.ReactNode;
@@ -24,7 +23,6 @@ interface ProviderWrappedLayoutProps {
 export const ProviderWrappedLayout: FunctionComponent< ProviderWrappedLayoutProps > = ( {
 	store,
 	queryClient,
-	currentSection,
 	currentRoute,
 	currentQuery,
 	primary,
@@ -33,11 +31,7 @@ export const ProviderWrappedLayout: FunctionComponent< ProviderWrappedLayoutProp
 	return (
 		<CalypsoI18nProvider>
 			{ /* Editor might show errors here, but it's fine as `RouteProvider` is in JavaScript. */ }
-			<RouteProvider
-				currentSection={ currentSection }
-				currentRoute={ currentRoute }
-				currentQuery={ currentQuery }
-			>
+			<RouteProvider currentRoute={ currentRoute } currentQuery={ currentQuery }>
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>
 						<Layout
@@ -56,14 +50,13 @@ export const ProviderWrappedLayout: FunctionComponent< ProviderWrappedLayoutProp
 
 export function makeLayoutMiddleware( LayoutComponent: typeof ProviderWrappedLayout ) {
 	return ( context: Context, next: () => void ) => {
-		const { store, queryClient, section, pathname, query, primary, secondary } = context;
+		const { store, queryClient, pathname, query, primary, secondary } = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
 		context.layout = (
 			<LayoutComponent
 				store={ store }
 				queryClient={ queryClient }
-				currentSection={ section }
 				currentRoute={ pathname }
 				currentQuery={ query }
 				primary={ primary }
