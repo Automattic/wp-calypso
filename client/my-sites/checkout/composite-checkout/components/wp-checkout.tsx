@@ -314,6 +314,7 @@ export default function WPCheckout( {
 	}
 
 	const isDIFMInCart = hasDIFMProduct( responseCart );
+	const hasMonthlyProduct = responseCart?.products?.some( isMonthlyProduct );
 
 	return (
 		<CheckoutStepGroup
@@ -340,7 +341,9 @@ export default function WPCheckout( {
 								onChangePlanLength={ changePlanLength }
 								nextDomainIsFree={ responseCart?.next_domain_is_free }
 							/>
-							{ ! isWcMobile && ! isDIFMInCart && <CheckoutSidebarPlanUpsell /> }
+							{ ! isWcMobile && ! isDIFMInCart && ! hasMonthlyProduct && (
+								<CheckoutSidebarPlanUpsell />
+							) }
 							<SecondaryCartPromotions
 								responseCart={ responseCart }
 								addItemToCart={ addItemToCart }
