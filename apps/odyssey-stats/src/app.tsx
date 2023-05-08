@@ -7,9 +7,10 @@ import './lib/init-app-config';
 import { QueryClient } from '@tanstack/react-query';
 import page from 'page';
 import '@automattic/calypso-polyfills';
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, compose, Store } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { getPathWithUpdatedQueryString } from 'calypso/my-sites/stats/utils';
+import { WithAddReducer } from 'calypso/state/add-reducer';
 import consoleDispatcher from 'calypso/state/console-dispatch';
 import currentUser from 'calypso/state/current-user/reducer';
 import wpcomApiMiddleware from 'calypso/state/data-layer/wpcom-api-middleware';
@@ -33,8 +34,8 @@ async function AppBoot() {
 		sites,
 	} );
 
-	// Be compatible with the old `intial_state` typo.
-	let initialState = config( 'initial_state' ) || config( 'intial_state' );
+	// TODO: fix `intial_state` typo.
+	let initialState = config( 'intial_state' );
 	// Fix missing user.localeSlug in `initial_state`.
 	initialState = {
 		...initialState,
@@ -56,7 +57,7 @@ async function AppBoot() {
 		)
 	);
 
-	setStore( store );
+	setStore( store as Store & WithAddReducer );
 	setupContextMiddleware( store, queryClient );
 
 	if ( ! window.location?.hash ) {
