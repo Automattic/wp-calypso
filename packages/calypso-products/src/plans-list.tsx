@@ -896,7 +896,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_SALES_REPORTS,
 		FEATURE_SHIPPING_CARRIERS,
 		FEATURE_EXTENSIONS,
-		FEATURE_SITE_STAGING_SITES,
 	],
 	get2023PricingGridSignupJetpackFeatures: () => [],
 	get2023PricingGridSignupStorageOptions: () => [ FEATURE_200GB_STORAGE ],
