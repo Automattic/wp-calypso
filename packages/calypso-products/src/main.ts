@@ -623,6 +623,7 @@ export function applyTestFiltersToPlansList(
 		| 'getAnnualPlansOnlyFeatures'
 		| 'getPlanTagline'
 		| 'getNewsletterTagLine'
+		| 'getLinkInBioTagLine'
 	> {
 	const plan = getPlan( planName );
 	if ( ! plan ) {

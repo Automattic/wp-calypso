@@ -31,7 +31,6 @@ import {
 	is2023PricingGridActivePage,
 } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import { isLinkInBioFlow } from '@automattic/onboarding';
 import { hasTranslation } from '@wordpress/i18n';
 import warn from '@wordpress/warning';
 import classNames from 'classnames';
@@ -449,7 +448,6 @@ export class PlansFeaturesMain extends Component {
 	getVisiblePlansForPlanFeatures( availablePlans ) {
 		const {
 			customerType,
-			flowName,
 			selectedPlan,
 			plansWithScroll,
 			isAllPaidPlansShown,
@@ -493,14 +491,6 @@ export class PlansFeaturesMain extends Component {
 
 		if ( hideEcommercePlan ) {
 			plans = plans.filter( ( planSlug ) => ! isEcommercePlan( planSlug ) );
-		}
-
-		// TODO
-		// Remove this once we migrate them to the new pricing grid
-		if ( isLinkInBioFlow( flowName ) ) {
-			plans = plans.filter(
-				( planSlug ) => ! isBusinessPlan( planSlug ) && ! isEcommercePlan( planSlug )
-			);
 		}
 
 		if ( is2023PricingGridVisible ) {
