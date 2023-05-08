@@ -1,14 +1,21 @@
-import { LANDSCAPE_MODE, PORTRAIT_MODE } from './constants';
-
-export type ImageMode = typeof LANDSCAPE_MODE | typeof PORTRAIT_MODE;
-
-export type PreviewProps = {
+export interface SocialPreviewBaseProps {
+	/**
+	 * The URL of the post/page to preview.
+	 */
 	url: string;
+
+	/**
+	 * The title of the post/page to preview.
+	 */
 	title: string;
-	description?: string;
-	customText?: string;
+
+	/**
+	 * The description of the post/page to preview.
+	 */
+	description: string;
+
+	/**
+	 * The URL of the image to use in the post/page preview.
+	 */
 	image?: string;
-	customImage?: string;
-	headingsLevel?: number;
-	imageMode?: ImageMode;
-};
+}

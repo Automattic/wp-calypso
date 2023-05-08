@@ -34,7 +34,7 @@ export class LinkedinSharePreview extends PureComponent {
 					name={ externalDisplay }
 					profileImage={ externalProfilePicture }
 					title={ decodeEntities( seoTitle ) }
-					text={ decodeEntities( articleSummary ) }
+					description={ decodeEntities( articleSummary ) }
 					url={ articleUrl }
 				/>
 			</div>

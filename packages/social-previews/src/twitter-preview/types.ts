@@ -1,3 +1,5 @@
+import { SocialPreviewBaseProps } from '../types';
+
 export type TwitterPreviewProps = TwitterCardProps & {
 	tweets: Array< TweetProps >;
 };
@@ -8,12 +10,8 @@ export type TwitterMedia = {
 	url: string;
 };
 
-export type TwitterCardProps = {
-	description: string;
-	image: string;
-	title: string;
+export type TwitterCardProps = SocialPreviewBaseProps & {
 	type: string;
-	url: string;
 };
 
 export type SidebarProps = {

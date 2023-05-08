@@ -1,18 +1,15 @@
 import { __ } from '@wordpress/i18n';
 import { baseDomain, preparePreviewText } from '../helpers';
 import './style.scss';
+import { SocialPreviewBaseProps } from '../types';
 
 export const FEED_TEXT_MAX_LENGTH = 212;
 export const FEED_TEXT_MAX_LINES = 3;
 
-export type LinkedInPreviewProps = {
-	image: string;
+export type LinkedInPreviewProps = SocialPreviewBaseProps & {
 	jobTitle?: string;
 	name: string;
 	profileImage: string;
-	text?: string;
-	title: string;
-	url?: string;
 };
 
 export function LinkedInPreview( {
@@ -20,7 +17,7 @@ export function LinkedInPreview( {
 	jobTitle,
 	name,
 	profileImage,
-	text,
+	description,
 	title,
 	url,
 }: LinkedInPreviewProps ) {
@@ -60,13 +57,13 @@ export function LinkedInPreview( {
 				</div>
 			</div>
 			<div className="linkedin-preview__content">
-				{ text ? (
+				{ description ? (
 					<div
 						className="linkedin-preview__caption"
 						// TODO: Replace `dangerouslySetInnerHTML` with `createInterpolateElement` inside `preparePreviewText`
 						// eslint-disable-next-line react/no-danger
 						dangerouslySetInnerHTML={ {
-							__html: preparePreviewText( text, {
+							__html: preparePreviewText( description, {
 								platform: 'linkedin',
 								maxChars: FEED_TEXT_MAX_LENGTH,
 								maxLines: FEED_TEXT_MAX_LINES,
