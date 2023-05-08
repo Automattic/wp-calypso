@@ -1,4 +1,4 @@
-import page from 'page';
+import page, { Callback, Context } from 'page';
 import {
 	follows,
 	insights,
@@ -17,12 +17,12 @@ import { makeLayout, render as clientRender } from './page-middleware/layout';
 
 import 'calypso/my-sites/stats/style.scss';
 
-const siteSelection = ( context, next ) => {
+const siteSelection = ( context: Context, next: () => void ) => {
 	context.store.dispatch( setSelectedSiteId( config( 'blog_id' ) ) );
-	next( context, next );
+	next();
 };
 
-const statsPage = ( url, controller ) => {
+const statsPage = ( url: string, controller: Callback ) => {
 	page( url, controller, siteSelection, makeLayout, clientRender );
 };
 
