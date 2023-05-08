@@ -20,7 +20,7 @@ import {
 	PlanSlug,
 	isWooExpressPlusPlan,
 } from '@automattic/calypso-products';
-import { isHostingFlow, isNewsletterFlow } from '@automattic/onboarding';
+import { isHostingFlow, isLinkInBioFlow, isNewsletterFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import classNames from 'classnames';
@@ -923,6 +923,11 @@ const ConnectedPlanFeatures2023Grid = connect(
 					planConstantObj?.getNewsletterSignupFeatures?.() ?? []
 				);
 				tagline = planConstantObj.getNewsletterTagLine?.() ?? '';
+			} else if ( isLinkInBioFlow( flowName ) ) {
+				planFeatures = getPlanFeaturesObject(
+					planConstantObj?.getLinkInBioSignupFeatures?.() ?? []
+				);
+				tagline = planConstantObj.getLinkInBioTagLine?.() ?? '';
 			} else {
 				planFeatures = getPlanFeaturesObject(
 					planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ?? []

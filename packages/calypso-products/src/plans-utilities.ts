@@ -104,5 +104,10 @@ export const is2023PricingGridActivePage = (
 		return isPricingGridEnabled;
 	}
 
+	// Is this the stepper Plan step on the link-in-bio flow?
+	if ( currentRoutePath.startsWith( '/setup/link-in-bio/plans' ) ) {
+		return isPricingGridEnabled;
+	}
+
 	return false;
 };

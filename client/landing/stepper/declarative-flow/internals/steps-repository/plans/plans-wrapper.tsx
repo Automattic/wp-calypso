@@ -17,6 +17,7 @@ import {
 	isNewsletterFlow,
 	isStartWritingFlow,
 	NEWSLETTER_FLOW,
+	LINK_IN_BIO_FLOW,
 } from '@automattic/onboarding';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -49,6 +50,8 @@ function getPlanTypes( flowName: string | null ) {
 		case START_WRITING_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM, TYPE_BUSINESS ];
 		case NEWSLETTER_FLOW:
+			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
+		case LINK_IN_BIO_FLOW:
 			return [ TYPE_FREE, TYPE_PERSONAL, TYPE_PREMIUM ];
 		default:
 			return undefined;
@@ -169,7 +172,11 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 			return __( 'Choose your flavor of WordPress' );
 		}
 
-		if ( isNewsletterFlow( flowName ) || isStartWritingFlow( flowName ) ) {
+		if (
+			isNewsletterFlow( flowName ) ||
+			isStartWritingFlow( flowName ) ||
+			isLinkInBioFlow( flowName )
+		) {
 			return __( `There's a plan for you.` );
 		}
 
@@ -196,12 +203,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 		}
 
 		if ( isLinkInBioFlow( flowName ) ) {
-			return hideFreePlan
-				? __( 'Unlock a powerful bundle of features for your Link in Bio.' )
-				: translate(
-						`Unlock a powerful bundle of features for your Link in Bio. Or {{link}}start with a free plan{{/link}}.`,
-						{ components: { link: freePlanButton } }
-				  );
+			return;
 		}
 
 		if ( flowName === DOMAIN_UPSELL_FLOW ) {
