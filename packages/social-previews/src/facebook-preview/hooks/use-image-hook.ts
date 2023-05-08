@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { useCallback, useState } from 'react';
 import { LANDSCAPE_MODE, PORTRAIT_MODE } from '../../constants';
-import type { ImageMode } from '../../types';
+import type { ImageMode } from '../types';
 
 type ImageEventHandler = ( event: React.SyntheticEvent< HTMLImageElement > ) => void;
 type ImgProps = {
