@@ -97,7 +97,7 @@ import { LinkedInPreview } from '@automattic/social-previews';
 <LinkedInPreview
 	jobTitle="Job Title (Company Name)"
 	image="https://url.for.the/image.png"
-	name="Linked Account Name"
+	name="LinkedIn Account Name"
 	profileImage="https://static.licdn.com/sc/h/1c5u578iilxfi4m4dvc4q810q"
 	title="Post title goes here"
 	text="The text of the post goes here."
