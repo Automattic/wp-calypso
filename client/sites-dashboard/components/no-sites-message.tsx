@@ -1,8 +1,10 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import EmptyContent from 'calypso/components/empty-content';
+import { CreateSiteIcon, ImportSiteIcon } from './no-sites-message-icons';
 
 const NoSitesLayout = styled( EmptyContent )`
 	display: flex;
@@ -31,6 +33,33 @@ const Title = styled.div`
 	font-size: 32px;
 	margin-block-end: 20px;
 `;
+
+const SetupLink = styled.a( {
+	boxSizing: 'border-box',
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'center',
+	padding: '40px 32px 16px 32px',
+	gap: '12px',
+	background: '#FFFFFF',
+	border: '1px solid #DCDCDE',
+	borderRadius: '4px',
+	transition: '0.25s',
+
+	fontWeight: 500,
+	fontSize: '14px',
+	lineHeight: '20px',
+	color: 'var(--studio-gray-100)',
+
+	'&:hover, &:visited': {
+		color: 'var(--studio-gray-100)',
+	},
+
+	'&:hover, &:focus': {
+		border: '1px solid #A7AAAD',
+		boxShadow: '0px 3px 8px rgba(0, 0, 0, 0.12), 0px 3px 1px rgba(0, 0, 0, 0.04)',
+	},
+} );
 
 type SitesContainerProps = {
 	status: string;
@@ -157,6 +186,31 @@ export const NoSitesMessage = ( { status, statusSiteCount }: SitesContainerProps
 				}
 				illustration=""
 			/>
+		);
+	}
+
+	if ( isEnabled( 'hosting-onboarding-i2' ) ) {
+		return (
+			<NoSitesLayout
+				title={ <Title css={ { marginBlockEnd: 0 } }> { __( 'Add a site to start' ) } </Title> }
+				line={
+					<SecondaryText>
+						{ __( 'Create a brand new site or import an existing one' ) }
+					</SecondaryText>
+				}
+				illustration=""
+			>
+				<div css={ { display: 'flex', gap: 16 } }>
+					<SetupLink href="/setup/new-hosted-site">
+						<CreateSiteIcon />
+						{ __( 'Create a site' ) }
+					</SetupLink>
+					<SetupLink href="/setup/import-focused">
+						<ImportSiteIcon />
+						{ __( 'Import a site' ) }
+					</SetupLink>
+				</div>
+			</NoSitesLayout>
 		);
 	}
 
