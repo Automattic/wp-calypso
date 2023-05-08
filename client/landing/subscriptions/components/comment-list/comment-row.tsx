@@ -11,20 +11,21 @@ type CommentRowProps = PostSubscription & {
 	style: React.CSSProperties;
 };
 
-const CommentRow = ( {
-	id,
-	post_id,
-	post_title,
-	post_excerpt,
-	post_url,
-	blog_id,
-	site_title,
-	site_icon,
-	site_url,
-	date_subscribed,
-	forwardedRef,
-	style,
-}: CommentRowProps ) => {
+const CommentRow = ( props: CommentRowProps ) => {
+	const {
+		id,
+		post_id,
+		post_title,
+		post_excerpt,
+		post_url,
+		blog_id,
+		site_title,
+		site_icon,
+		site_url,
+		date_subscribed,
+		forwardedRef,
+		style,
+	} = props;
 	const translate = useTranslate();
 	const hostname = useMemo( () => new URL( site_url ).hostname, [ site_url ] );
 	const siteIcon = useMemo( () => {
