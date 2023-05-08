@@ -41,6 +41,8 @@ export interface WPComPlan extends Plan {
 	getPortfolioAudience?: () => TranslateResult;
 	getStoreAudience?: () => TranslateResult;
 	getPlanTagline?: () => string;
+	getNewsletterTagLine?: () => string;
+	getLinkInBioTagLine?: () => string;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
@@ -100,6 +102,13 @@ export interface JetpackTag {
 	tag: string;
 	label: TranslateResult;
 }
+
+export interface FAQ {
+	id: string;
+	question: TranslateResult;
+	answer: TranslateResult;
+}
+
 export interface JetpackPlan extends Plan {
 	getAnnualSlug?: () => JetpackPlanSlug;
 	getMonthlySlug?: () => JetpackPlanSlug;
@@ -248,6 +257,8 @@ export type Plan = BillingTerm & {
 	 * a feature for 20GB of storage space would be inferior to it.
 	 */
 	getInferiorFeatures?: () => Feature[];
+	getNewsletterSignupFeatures?: () => Feature[];
+	getLinkInBioSignupFeatures?: () => Feature[];
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };

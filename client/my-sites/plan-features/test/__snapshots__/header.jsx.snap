@@ -741,7 +741,7 @@ exports[`PlanFeaturesHeader.render() For free users Rendering annual plan should
         alt=""
         class="product-icon is-jetpack-premium"
         role="presentation"
-        src="jetpack-premium.svg"
+        src="jetpack-bundles.svg"
       />
     </div>
     <div
@@ -830,7 +830,7 @@ exports[`PlanFeaturesHeader.render() For free users Rendering annual plan should
         alt=""
         class="product-icon is-jetpack-premium"
         role="presentation"
-        src="jetpack-premium.svg"
+        src="jetpack-bundles.svg"
       />
     </div>
     <div
@@ -919,7 +919,7 @@ exports[`PlanFeaturesHeader.render() For free users Rendering annual plan should
         alt=""
         class="product-icon is-jetpack-premium"
         role="presentation"
-        src="jetpack-premium.svg"
+        src="jetpack-bundles.svg"
       />
     </div>
     <div
@@ -969,7 +969,7 @@ exports[`PlanFeaturesHeader.render() For free users Rendering monthly plan shoul
         alt=""
         class="product-icon is-jetpack-premium"
         role="presentation"
-        src="jetpack-premium.svg"
+        src="jetpack-bundles.svg"
       />
     </div>
     <div

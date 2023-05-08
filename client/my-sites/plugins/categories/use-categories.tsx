@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { __, _x } from '@wordpress/i18n';
 import { useSelector } from 'react-redux';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -335,7 +335,7 @@ export const getCategories: () => Record< string, Category > = () => ( {
 		],
 	},
 	business: {
-		menu: __( 'Business' ),
+		menu: _x( 'Business', 'category name' ),
 		title: __( 'Setting up your local business' ),
 		slug: 'business',
 		description: __( 'These plugins are here to keep your business on track' ),

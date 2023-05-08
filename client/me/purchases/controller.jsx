@@ -1,6 +1,6 @@
 import config from '@automattic/calypso-config';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
-import { localize, useTranslate } from 'i18n-calypso';
+import i18n, { getLocaleSlug, localize, useTranslate } from 'i18n-calypso';
 import page from 'page';
 import { Fragment, useCallback } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -153,10 +153,17 @@ export function vatDetails( context, next ) {
 			'now',
 			translate
 		);
+		const genericTaxName =
+			/* translators: This is a generic name for taxes to use when we do not know the user's country. */
+			translate( 'tax (VAT/GST/CT)' );
+		const fallbackTaxName =
+			getLocaleSlug()?.startsWith( 'en' ) || i18n.hasTranslation( 'tax (VAT/GST/CT)' )
+				? genericTaxName
+				: translate( 'VAT', { textOnly: true } );
 		/* translators: %s is the name of taxes in the country (eg: "VAT" or "GST"). */
 		const title = translate( 'Add %s details', {
 			textOnly: true,
-			args: [ vendorInfo?.taxName ?? translate( 'VAT', { textOnly: true } ) ],
+			args: [ vendorInfo?.taxName ?? fallbackTaxName ],
 		} );
 
 		return (

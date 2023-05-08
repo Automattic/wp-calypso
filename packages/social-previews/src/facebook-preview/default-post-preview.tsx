@@ -9,7 +9,7 @@ type Props = FacebookPreviewProps & {
 	compactDescription?: boolean;
 };
 
-const DefaultFacebookPostPreview: React.FC< Props > = ( {
+const FacebookDefaultPostPreview: React.FC< Props > = ( {
 	url,
 	customImage,
 	user,
@@ -41,4 +41,4 @@ const DefaultFacebookPostPreview: React.FC< Props > = ( {
 	);
 };
 
-export default DefaultFacebookPostPreview;
+export default FacebookDefaultPostPreview;

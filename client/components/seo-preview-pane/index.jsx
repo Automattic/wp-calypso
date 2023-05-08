@@ -1,8 +1,8 @@
 import { FEATURE_SEO_PREVIEW_TOOLS } from '@automattic/calypso-products';
 import {
-	FacebookPreview,
+	FacebookFullPreview,
 	TwitterPreview,
-	SearchPreview,
+	GoogleSearchPreview,
 	TYPE_WEBSITE,
 	TYPE_ARTICLE,
 } from '@automattic/social-previews';
@@ -110,23 +110,25 @@ const ReaderPost = ( site, post, frontPageMetaDescription ) => {
 };
 
 const GoogleSite = ( site, frontPageMetaDescription ) => (
-	<SearchPreview
+	<GoogleSearchPreview
 		title={ site.name }
 		url={ site.URL }
 		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
+		siteTitle={ site.title }
 	/>
 );
 
 const GooglePost = ( site, post, frontPageMetaDescription ) => (
-	<SearchPreview
+	<GoogleSearchPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }
+		siteTitle={ site.title }
 	/>
 );
 
 const FacebookSite = ( site, frontPageMetaDescription ) => (
-	<FacebookPreview
+	<FacebookFullPreview
 		title={ site.name }
 		url={ site.URL }
 		description={ frontPageMetaDescription || getSeoExcerptForSite( site ) }
@@ -136,7 +138,7 @@ const FacebookSite = ( site, frontPageMetaDescription ) => (
 );
 
 const FacebookPost = ( site, post, frontPageMetaDescription ) => (
-	<FacebookPreview
+	<FacebookFullPreview
 		title={ get( post, 'seoTitle', '' ) }
 		url={ get( post, 'URL', '' ) }
 		description={ frontPageMetaDescription || getSeoExcerptForPost( post ) }

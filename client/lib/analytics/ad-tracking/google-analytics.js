@@ -65,7 +65,11 @@ export function fireGoogleAnalyticsPageView(
 		page_title: pageTitle,
 	};
 
-	window.gtag( 'config', getGaGtag( useJetpackGoogleAnalytics ), params );
+	window.gtag(
+		'config',
+		getGaGtag( useJetpackGoogleAnalytics, useAkismetGoogleAnalytics ),
+		params
+	);
 }
 
 /**
