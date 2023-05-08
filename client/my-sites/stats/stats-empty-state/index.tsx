@@ -8,8 +8,8 @@ export default function StatsEmptyState( {
 	headingText = null,
 	infoText = null,
 }: {
-	headingText?: ReactChild;
-	infoText?: ReactChild;
+	headingText?: null | ReactChild;
+	infoText?: null | ReactChild;
 } ) {
 	const translate = useTranslate();
 	const defaultHeadingText = translate( 'No data in this period' );
