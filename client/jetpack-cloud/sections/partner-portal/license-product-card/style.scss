@@ -29,7 +29,6 @@
 	padding: 1.5rem;
 	border: 1px solid var(--studio-gray-10);
 	border-radius: 4px;
-	cursor: pointer;
 	user-select: none;
 
 	@include break-xlarge {
@@ -141,6 +140,7 @@
 	color: var(--studio-gray-100);
 	text-decoration: underline;
 	text-align: left;
+	cursor: pointer;
 }
 
 @mixin license-product-card-block__select-button {
@@ -159,6 +159,7 @@
 	border: 2px solid var(--studio-black);
 	border-radius: 12px; /* stylelint-disable-line scales/radii */
 	text-align: center;
+	cursor: pointer;
 
 	@include license-product-card-block__select-button;
 
