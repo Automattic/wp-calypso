@@ -20,7 +20,7 @@ import { useSiteIdParam } from '../../../../hooks/use-site-id-param';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { SITE_STORE, ONBOARD_STORE } from '../../../../stores';
 import { recordSelectedDesign } from '../../analytics/record-design';
-import { SITE_TAGLINE, PATTERN_TYPES, NAVIGATOR_PATHS } from './constants';
+import { SITE_TAGLINE, PATTERN_TYPES, NAVIGATOR_PATHS, CATEGORY_ALL_SLUG } from './constants';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import useGlobalStylesUpgradeModal from './hooks/use-global-styles-upgrade-modal';
 import usePatternCategories from './hooks/use-pattern-categories';
@@ -315,8 +315,8 @@ const PatternAssembler = ( {
 		selectedCategory?: string | null
 	) => {
 		if ( selectedPattern ) {
-			// Inject the selected pattern category (except for 'all') or the first category
-			// because it's used in tracks and as pattern name in the list
+			// Inject the selected pattern category (except for the category All)
+			// or the first category because it's used in tracks and as pattern name in the list
 			const [ firstCategory ] = Object.keys( selectedPattern.categories );
 			selectedPattern.category = categories.find(
 				( { name } ) => name === ( selectedCategory || firstCategory )
@@ -330,7 +330,7 @@ const PatternAssembler = ( {
 			} );
 
 			if ( 'section' === type ) {
-				if ( 'all' === selectedCategory ) {
+				if ( CATEGORY_ALL_SLUG === selectedCategory ) {
 					// The category All is used for tracks events only
 					selectedPattern.category = categories.find( ( { name } ) => name === firstCategory );
 				}

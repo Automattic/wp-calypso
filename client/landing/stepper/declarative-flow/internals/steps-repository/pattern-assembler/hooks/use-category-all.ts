@@ -1,6 +1,7 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { shuffle } from '@automattic/js-utils';
 import { useMemo } from 'react';
+import { CATEGORY_ALL_SLUG } from '../constants';
 import type { Pattern } from '../types';
 
 const useCategoryAll = ( dotcomPatterns: Pattern[] ) => {
@@ -16,7 +17,7 @@ const useCategoryAll = ( dotcomPatterns: Pattern[] ) => {
 				categories: {
 					...pattern.categories,
 					all: {
-						slug: 'all',
+						slug: CATEGORY_ALL_SLUG,
 					},
 				},
 			} ) )
