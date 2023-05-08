@@ -72,6 +72,7 @@ import type { OnChangeItemVariant } from './item-variation-picker';
 import type { CheckoutPageErrorCallback } from '@automattic/composite-checkout';
 import type { RemoveProductFromCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { ReactNode } from 'react';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -151,6 +152,7 @@ export default function WPCheckout( {
 	isInitialCartLoading,
 	customizedPreviousPath,
 	useVariantPickerRadioButtons,
+	loadingContent,
 }: {
 	addItemToCart: ( item: MinimalRequestCartProduct ) => void;
 	changePlanLength: OnChangeItemVariant;
@@ -169,6 +171,7 @@ export default function WPCheckout( {
 	customizedPreviousPath?: string;
 	// This is just for unit tests.
 	useVariantPickerRadioButtons?: boolean;
+	loadingContent: ReactNode;
 } ) {
 	const cartKey = useCartKey();
 	const {
@@ -314,6 +317,7 @@ export default function WPCheckout( {
 
 	return (
 		<CheckoutStepGroup
+			loadingContent={ loadingContent }
 			stepAreaHeader={
 				<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 					<CheckoutErrorBoundary

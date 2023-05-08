@@ -1,6 +1,7 @@
 import { OnboardSelect, updateLaunchpadSettings } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
-import { START_WRITING_FLOW, addPlanToCart, addProductsToCart } from '@automattic/onboarding';
+import { START_WRITING_FLOW, replaceProductsInCart } from '@automattic/onboarding';
+import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useSelect } from '@wordpress/data';
 import { useSelector } from 'react-redux';
 import { recordSubmitStep } from 'calypso/landing/stepper/declarative-flow/internals/analytics/record-submit-step';
@@ -103,7 +104,16 @@ const startWriting: Flow = {
 							checklist_statuses: { domain_upsell_deferred: true },
 						} );
 					}
-					return navigate( 'launchpad' );
+
+					if ( providedDependencies?.freeDomain ) {
+						await replaceProductsInCart(
+							siteSlug as string,
+							[ getPlanCartItem() ].filter( Boolean ) as MinimalRequestCartProduct[]
+						);
+						return navigate( 'launchpad' );
+					}
+
+					return navigate( 'plans' );
 				case 'plans':
 					if ( siteSlug ) {
 						await updateLaunchpadSettings( siteSlug, {
@@ -111,16 +121,12 @@ const startWriting: Flow = {
 						} );
 					}
 					if ( providedDependencies?.goToCheckout ) {
-						const planCartItem = getPlanCartItem();
-						const domainCartItem = getDomainCartItem();
+						const items = [ getPlanCartItem(), getDomainCartItem() ].filter(
+							Boolean
+						) as MinimalRequestCartProduct[];
 
-						if ( planCartItem ) {
-							await addPlanToCart( siteSlug as string, flowName as string, true, '', planCartItem );
-						}
-
-						if ( domainCartItem ) {
-							await addProductsToCart( siteSlug as string, flowName as string, [ domainCartItem ] );
-						}
+						// Always replace items in the cart so we can remove old plan/domain items.
+						await replaceProductsInCart( siteSlug as string, items );
 					}
 					return navigate( 'launchpad' );
 				case 'setup-blog':

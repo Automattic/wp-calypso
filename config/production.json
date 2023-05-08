@@ -48,6 +48,7 @@
 		"google-my-business": true,
 		"happychat": true,
 		"help": true,
+		"hosting-onboarding-i2": false,
 		"i18n/empathy-mode": false,
 		"i18n/translation-scanner": true,
 		"importer/unified": true,
@@ -93,6 +94,7 @@
 		"me/account/color-scheme-picker": true,
 		"me/vat-details": true,
 		"my-sites/add-ons": true,
+		"newsletter/stats": false,
 		"onboarding/import": true,
 		"onboarding/import-from-blogger": true,
 		"onboarding/import-from-medium": true,
@@ -173,8 +175,7 @@
 		"user-management-revamp": true,
 		"woop": false,
 		"wordpress-action-search": false,
-		"wpcom-user-bootstrap": true,
-		"newsletter/stats": false
+		"wpcom-user-bootstrap": true
 	},
 	"siftscience_key": "a4f69f6759",
 	"oauth_client_id": "39911",
