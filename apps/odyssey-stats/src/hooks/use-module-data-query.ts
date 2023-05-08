@@ -1,12 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 
-type Module = 'anti-spam' | 'protect' | 'vaultpress' | 'monitor' | 'stats' | 'verification-tools';
+type Module = 'akismet' | 'protect' | 'vaultpress' | 'monitor' | 'stats' | 'verification-tools';
+type ModuleData = number | string | boolean;
 interface ErrorResponse {
 	code: string;
+	message: string | undefined;
 }
 
-function queryModuleData( module: Module ): Promise< number | string > {
+function queryModuleData( module: Module ): Promise< ModuleData > {
 	// More information about the endpoint: https://github.com/Automattic/jetpack/blob/32acf7023bb76332947f4929863d212fdf3b890a/projects/plugins/jetpack/_inc/lib/core-api/class.jetpack-core-api-module-endpoints.php#L1393
 	return wpcom.req
 		.get( {
@@ -36,11 +38,15 @@ function queryModuleData( module: Module ): Promise< number | string > {
 }
 
 export default function useModuleDataQuery( module: Module ) {
-	return useQuery( [ 'stats-widget', 'module-data', module ], () => queryModuleData( module ), {
-		staleTime: 5 * 60 * 1000,
-		// If the module is not active, we don't want to retry the query.
-		retry: false,
-		retryOnMount: false,
-		refetchOnWindowFocus: false,
-	} );
+	return useQuery< ModuleData, Error >(
+		[ 'stats-widget', 'module-data', module ],
+		() => queryModuleData( module ),
+		{
+			staleTime: 5 * 60 * 1000,
+			// If the module is not active, we don't want to retry the query.
+			retry: false,
+			retryOnMount: false,
+			refetchOnWindowFocus: false,
+		}
+	);
 }
