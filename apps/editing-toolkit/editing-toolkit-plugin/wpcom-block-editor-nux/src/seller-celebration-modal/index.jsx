@@ -3,7 +3,7 @@ import { Button } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useState, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import useHasSeenSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-has-seen-seller-celebration-modal';
+import { useHasSeenSellerCelebrationModal } from '../../../dotcom-fse/lib/seller-celebration-modal/has-seen-seller-celebration-modal-context';
 import useShouldShowSellerCelebrationModal from '../../../dotcom-fse/lib/seller-celebration-modal/use-should-show-seller-celebration-modal';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
 import NuxModal from '../nux-modal';

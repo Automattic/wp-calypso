@@ -1,7 +1,7 @@
 import { useSelect } from '@wordpress/data';
 import { useState, useEffect } from '@wordpress/element';
 import useSiteIntent from '../site-intent/use-site-intent';
-import useHasSeenSellerCelebrationModal from './use-has-seen-seller-celebration-modal';
+import { useHasSeenSellerCelebrationModal } from './has-seen-seller-celebration-modal-context';
 import useHasSelectedPaymentBlockOnce from './use-has-selected-payment-block-once';
 
 const useShouldShowSellerCelebrationModal = () => {
