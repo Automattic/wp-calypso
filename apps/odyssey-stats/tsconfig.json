@@ -1,28 +1,10 @@
 {
 	"extends": "@automattic/calypso-typescript-config/mixed-package.json",
 	"compilerOptions": {
-		"rootDir": "../../",
-		"paths": {
-			"calypso/*": [ "../../client/*" ]
-		}
+		"rootDir": "../..",
+		"noEmit": true
 	},
-	"include": [
-		"./src/**/*",
-		"./package.json",
-		"../../client/**/*",
-		"../../client/lib/domains/tlds/wpcom-multi-level-tlds.json",
-		"../../client/__mocks__/lib/json-schema-draft-04.json",
-		"../../client/package.json",
-		"../../client/state/data-layer/wpcom/sites/jitm/schema.json"
-	],
-	"exclude": [
-		"./**/node_modules/**/*",
-		"./**/test/**/*",
-		"./**/.stories.tsx",
-		"../../client/**/node_modules/**/*",
-		"../../client/**/test/**/*",
-		"../../client/**/.stories.tsx",
-		"../../client/server/devdocs/search-index.js"
-	],
-	"references": [ { "path": "../../packages" } ]
+	"include": [ "./src/**/*", "./package.json", "../../config/production.json" ],
+	"exclude": [ "./**/node_modules/**/*", "./**/test/**/*", "./**/.stories.tsx" ],
+	"references": [ { "path": "../../packages" }, { "path": "../../client/tsconfig-reference.json" } ]
 }
