@@ -52,7 +52,6 @@ export function makeLayoutMiddleware( LayoutComponent: typeof ProviderWrappedLay
 	return ( context: Context, next: () => void ) => {
 		const { store, queryClient, pathname, query, primary, secondary } = context;
 
-		// On server, only render LoggedOutLayout when logged-out.
 		context.layout = (
 			<LayoutComponent
 				store={ store }
