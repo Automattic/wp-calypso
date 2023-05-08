@@ -14,7 +14,7 @@ interface ProviderWrappedLayoutProps {
 	store: Store;
 	queryClient: QueryClient;
 	currentRoute: string;
-	currentQuery: string;
+	currentQuery: object;
 	primary: React.ReactNode;
 	secondary: React.ReactNode;
 	redirectUri: string;
