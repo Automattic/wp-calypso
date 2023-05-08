@@ -270,7 +270,7 @@ export function handlePage( action, data ) {
 			if ( ! post ) {
 				return null;
 			}
-			const r = {
+			return {
 				...keyForPost( post ),
 				date: post[ dateProperty ],
 				...( post.comments && { comments: map( post.comments, 'ID' ).reverse() } ), // include comments for conversations
@@ -282,7 +282,6 @@ export function handlePage( action, data ) {
 				feed_ID: post.feed_ID,
 				xPostMetadata: XPostHelper.getXPostMetadata( post ),
 			};
-			return r;
 		} );
 
 		// Filter out nulls
