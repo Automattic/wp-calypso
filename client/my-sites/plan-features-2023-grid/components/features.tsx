@@ -10,8 +10,6 @@ import type { TransformedFeatureObject } from '../types';
 
 const SubdomainSuggestion = styled.div`
 	.is-domain-name {
-		position: absolute;
-		top: -15px;
 		color: var( --studio-gray-50 );
 		text-decoration: line-through;
 		max-width: 80%;
@@ -75,7 +73,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 						<PlanFeaturesItem>
 							<span className={ spanClasses } key={ key }>
 								<span className={ itemTitleClasses }>
-									{ isFreePlanAndCustomDomainFeature ? (
+									{ isFreePlanAndCustomDomainFeature && domainName ? (
 										<Plans2023Tooltip
 											text={ translate( '%s is not included', {
 												args: [ domainName ],
