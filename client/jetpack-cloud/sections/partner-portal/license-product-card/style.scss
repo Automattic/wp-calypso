@@ -85,6 +85,22 @@
 	flex: 1 1 0;
 }
 
+
+.license-product-card__main {
+	display: flex;
+	justify-content: space-between;
+
+	@include break-xlarge {
+		gap: 0.5rem;
+	}
+}
+
+.license-product-card__heading {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
 .license-product-card__title {
 	font-size: 1.5rem;
 	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
@@ -110,6 +126,23 @@
 	}
 }
 
+.license-product-card__description {
+	font-size: 1rem;
+	color: var(--studio-gray-60);
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	line-height: 1.5rem;
+	margin: 8px 0;
+}
+
+.license-product-card__more-info-link {
+	font-size: 0.875rem;
+	/* stylelint-disable-next-line declaration-property-unit-allowed-list */
+	line-height: 1.5rem;
+	color: var(--studio-gray-100);
+	text-decoration: underline;
+	text-align: left;
+}
+
 @mixin license-product-card-block__select-button {
 	order: initial;
 	margin-right: 0;
@@ -121,8 +154,8 @@
 }
 
 .license-product-card__select-button {
-	width: 20px;
-	height: 20px;
+	min-width: 20px;
+	max-height: 20px;
 	border: 2px solid var(--studio-black);
 	border-radius: 12px; /* stylelint-disable-line scales/radii */
 	text-align: center;

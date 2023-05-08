@@ -1,9 +1,10 @@
-import { Gridicon } from '@automattic/components';
+import { Button, Gridicon } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect } from 'react';
 import { APIProductFamilyProduct } from '../../../../state/partner-portal/types';
+import { useProductDescription } from '../hooks';
 import { getProductTitle } from '../utils';
 
 import './style.scss';
@@ -60,6 +61,8 @@ export default function LicenseProductCard( props: Props ) {
 		}
 	}, [] );
 
+	const { description: productDescription } = useProductDescription( product.slug );
+
 	return (
 		<div
 			onClick={ onSelect }
@@ -76,14 +79,28 @@ export default function LicenseProductCard( props: Props ) {
 		>
 			<div className="license-product-card__inner">
 				<div className="license-product-card__details">
-					<h3 className="license-product-card__title">{ productTitle }</h3>
-					<div
-						className={ classNames( 'license-product-card__select-button', {
-							'license-product-card_multi-select': isMultiSelect,
-						} ) }
-					>
-						{ isSelected && <Gridicon icon="checkmark" /> }
+					<div className="license-product-card__main">
+						<div className="license-product-card__heading">
+							<h3 className="license-product-card__title">{ productTitle }</h3>
+
+							<div className="license-product-card__description">{ productDescription }</div>
+
+							<Button className="license-product-card__more-info-link" plain>
+								{ translate( 'More about {{productName/}}', {
+									components: { productName: <>{ productTitle }</> },
+								} ) }
+							</Button>
+						</div>
+
+						<div
+							className={ classNames( 'license-product-card__select-button', {
+								'license-product-card_multi-select': isMultiSelect,
+							} ) }
+						>
+							{ isSelected && <Gridicon icon="checkmark" /> }
+						</div>
 					</div>
+
 					<div className="license-product-card__pricing">
 						<div className="license-product-card__price">
 							{ formatCurrency( product.amount, product.currency ) }
