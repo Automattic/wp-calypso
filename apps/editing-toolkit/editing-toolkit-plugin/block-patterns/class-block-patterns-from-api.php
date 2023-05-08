@@ -68,7 +68,7 @@ class Block_Patterns_From_API {
 
 		// The category 'All' is created dynamically so all patterns are always added automatically.
 		$category_all = array(
-			'slug'        => 'all',
+			'slug'        => 'featured',
 			'label'       => __( 'All', 'full-site-editing' ),
 			'description' => __( 'Explore all patterns.', 'full-site-editing' ),
 		);
