@@ -13,7 +13,7 @@ interface ModuleCardProps {
 	icon: JSX.Element;
 	title: string;
 	value: number;
-	error: string | undefined;
+	error: string;
 	activateProduct: () => Promise< void >;
 	isLoading: boolean;
 	isError: boolean;
@@ -92,7 +92,7 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 									Manage Akismet key
 								</a>
 							) }
-							{ ! [ 'not_active', 'not_installed', 'invalid_key' ].includes( error as string ) && (
+							{ ! [ 'not_active', 'not_installed', 'invalid_key' ].includes( error ) && (
 								<p>{ translate( 'An error occurred.' ) }</p>
 							) }
 						</div>
@@ -130,7 +130,7 @@ const AkismetModule: FunctionComponent< AkismetModuleProps > = ( { siteId, manag
 			title={ translate( 'Total blocked spam comments' ) }
 			value={ akismetData as number }
 			isError={ isAkismetError }
-			error={ akismetError?.message }
+			error={ akismetError?.message as string }
 			isLoading={ isAkismetLoading }
 			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
 			activateProduct={ activateProduct( 'anti-spam' ) }
@@ -170,7 +170,7 @@ const ProtectModule: FunctionComponent< ProtectModuleProps > = ( { siteId } ) =>
 			title={ translate( 'Total blocked login attempts' ) }
 			value={ protectData as number }
 			isError={ isProtectError }
-			error={ protectError?.message }
+			error={ protectError?.message as string }
 			isLoading={ isProtectLoading }
 			canManageModule={ canCurrentUser( siteId, 'manage_options' ) }
 			activateProduct={ activateModule( 'protect' ) }
