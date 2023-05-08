@@ -86,8 +86,9 @@ class Hosting extends Component {
 			isAdvancedHostingDisabled,
 			isBasicHostingDisabled,
 			isECommerceTrial,
-			isWpcomStagingSite,
+			isSiteAtomic,
 			isTransferring,
+			isWpcomStagingSite,
 			locale,
 			requestSiteById,
 			siteId,
@@ -142,16 +143,16 @@ class Hosting extends Component {
 				);
 			}
 
-			const failureNotice = FAILURE === transferState && (
-				<Notice
-					status="is-error"
-					showDismiss={ false }
-					text={ translate( 'There was an error activating hosting features.' ) }
-					icon="bug"
-				/>
-			);
-
 			if ( isBasicHostingDisabled && ! isTransferring ) {
+				const failureNotice = FAILURE === transferState && (
+					<Notice
+						status="is-error"
+						showDismiss={ false }
+						text={ translate( 'There was an error activating hosting features.' ) }
+						icon="bug"
+					/>
+				);
+
 				// Don't imply additional access if site doesn't have the SFTP feature.
 				const noticeText =
 					isBasicHostingDisabled &&
@@ -175,6 +176,8 @@ class Hosting extends Component {
 					</>
 				);
 			}
+
+			return null;
 		};
 
 		const getContent = () => {
@@ -182,12 +185,10 @@ class Hosting extends Component {
 				isEnabled( 'github-integration-i1' ) &&
 				isAutomatticTeamMember( teams ) &&
 				! isAdvancedHostingDisabled;
-			const shouldUseExampleWrapperForAllFeatures = isBasicHostingDisabled || isTransferring;
-			const WrapperComponent = shouldUseExampleWrapperForAllFeatures ? FeatureExample : Fragment;
+			const shouldUseWrapperForAllFeatures = isBasicHostingDisabled || isTransferring;
+			const WrapperComponent = shouldUseWrapperForAllFeatures ? FeatureExample : Fragment;
 			const AdvancedFeatureWrapper =
-				isAdvancedHostingDisabled && ! shouldUseExampleWrapperForAllFeatures
-					? FeatureExample
-					: Fragment;
+				isAdvancedHostingDisabled && ! shouldUseWrapperForAllFeatures ? FeatureExample : Fragment;
 
 			return (
 				<>
@@ -240,10 +241,16 @@ class Hosting extends Component {
 			);
 		};
 
+		/* We want to show the upsell banner for the following cases:
+		 *  1. The site does not have the Atomic feature.
+		 *  2. The site is Atomic, is not transferring, and doesn't have advanced hosting features.
+		 * Otherwise, we show the activation notice, which may be empty.
+		 */
 		const banner =
-			hasAtomicFeature && ( isTransferInProgress() || ! isAdvancedHostingDisabled )
-				? getAtomicActivationNotice()
-				: getUpgradeBanner();
+			! hasAtomicFeature ||
+			( isSiteAtomic && ! isTransferInProgress() && isAdvancedHostingDisabled )
+				? getUpgradeBanner()
+				: getAtomicActivationNotice();
 
 		return (
 			<Main wideLayout className="hosting">
@@ -275,15 +282,17 @@ export default connect(
 		const hasAtomicFeature = siteHasFeature( state, siteId, WPCOM_FEATURES_ATOMIC );
 		const hasSftpFeature = siteHasFeature( state, siteId, FEATURE_SFTP );
 		const hasStagingSitesFeature = siteHasFeature( state, siteId, FEATURE_SITE_STAGING_SITES );
+		const isSiteAtomic = isSiteAutomatedTransfer( state, siteId );
 
 		return {
 			teams: getReaderTeams( state ),
 			isECommerceTrial: isSiteOnECommerceTrial( state, siteId ),
 			transferState: getAutomatedTransferStatus( state, siteId ),
 			isTransferring: isAutomatedTransferActive( state, siteId ),
-			isBasicHostingDisabled: ! hasAtomicFeature || ! isSiteAutomatedTransfer( state, siteId ),
-			isAdvancedHostingDisabled: ! hasSftpFeature || ! isSiteAutomatedTransfer( state, siteId ),
+			isAdvancedHostingDisabled: ! hasSftpFeature || ! isSiteAtomic,
+			isBasicHostingDisabled: ! hasAtomicFeature || ! isSiteAtomic,
 			isLoadingSftpData: getAtomicHostingIsLoadingSftpData( state, siteId ),
+			isSiteAtomic,
 			hasAtomicFeature,
 			siteSlug: getSelectedSiteSlug( state ),
 			siteId,
