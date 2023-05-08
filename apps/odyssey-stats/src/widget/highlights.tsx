@@ -9,7 +9,7 @@ import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
 import { HighLightItem } from '../typings';
 
-import './hightlights.scss';
+import './highlights.scss';
 
 interface ItemWrapperProps {
 	siteId: number;
