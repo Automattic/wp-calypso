@@ -33,8 +33,9 @@ async function AppBoot() {
 		sites,
 	} );
 
-	let initialState = config( 'intial_state' );
-	// Fix missing user.localeSlug in `intial_state`.
+	// Be compatible with the old `intial_state` typo.
+	let initialState = config( 'initial_state' ) || config( 'intial_state' );
+	// Fix missing user.localeSlug in `initial_state`.
 	initialState = {
 		...initialState,
 		currentUser: {
