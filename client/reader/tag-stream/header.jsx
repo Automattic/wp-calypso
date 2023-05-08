@@ -17,11 +17,20 @@ class TagStreamHeader extends Component {
 	};
 
 	render() {
-		const { title, isPlaceholder, showFollow, following, onFollowToggle, translate, showBack } =
-			this.props;
+		const {
+			title,
+			isPlaceholder,
+			hasLongTitle,
+			showFollow,
+			following,
+			onFollowToggle,
+			translate,
+			showBack,
+		} = this.props;
 		const classes = classnames( {
 			'tag-stream__header': true,
 			'is-placeholder': isPlaceholder,
+			'has-long-title': hasLongTitle,
 			'has-back-button': showBack,
 		} );
 

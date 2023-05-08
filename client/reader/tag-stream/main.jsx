@@ -17,6 +17,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
 import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import getReaderTagBySlug from 'calypso/state/reader/tags/selectors/get-reader-tag-by-slug';
 import EmptyContent from './empty';
 import TagStreamHeader from './header';
 import './style.scss';
@@ -45,10 +46,9 @@ class TagStream extends Component {
 		} );
 		asyncRequire( 'twemoji', function ( twemoji ) {
 			if ( self._isMounted ) {
-				const title = self.props.decodedTagSlug;
 				self.setState( {
 					twemoji,
-					isEmojiTitle: title && twemoji.test( title ),
+					isEmojiTitle: self.props.title && twemoji.test( self.props.title ),
 				} );
 			}
 		} );
@@ -99,14 +99,13 @@ class TagStream extends Component {
 
 	render() {
 		const emptyContent = <EmptyContent decodedTagSlug={ this.props.decodedTagSlug } />;
-		const title = this.props.decodedTagSlug;
 		const tag = find( this.props.tags, { slug: this.props.encodedTagSlug } );
 
 		let imageSearchString = this.props.encodedTagSlug;
 
 		// If the tag contains emoji, convert to text equivalent
 		if ( this.state.emojiText && this.state.isEmojiTitle ) {
-			imageSearchString = this.state.emojiText.convert( title, {
+			imageSearchString = this.state.emojiText.convert( this.props.title, {
 				delimiter: '',
 			} );
 		}
@@ -118,7 +117,7 @@ class TagStream extends Component {
 					<QueryReaderTag tag={ this.props.decodedTagSlug } />
 					{ this.props.showBack && <HeaderBack /> }
 					<TagStreamHeader
-						title={ title }
+						title={ this.props.title }
 						imageSearchString={ imageSearchString }
 						showFollow={ false }
 						showBack={ this.props.showBack }
@@ -131,7 +130,7 @@ class TagStream extends Component {
 		return (
 			<Stream
 				{ ...this.props }
-				listName={ title }
+				listName={ this.props.title }
 				emptyContent={ emptyContent }
 				showFollowInHeader={ true }
 				forcePlaceholders={ ! tag } // if tag has not loaded yet, then make everything a placeholder
@@ -140,18 +139,23 @@ class TagStream extends Component {
 				<QueryReaderTag tag={ this.props.decodedTagSlug } />
 				<DocumentHead
 					title={ this.props.translate( '%s ‹ Reader', {
-						args: title,
+						args: this.props.title,
 						comment: '%s is the section name. For example: "My Likes"',
 					} ) }
 				/>
 				{ this.props.showBack && <HeaderBack /> }
 				<TagStreamHeader
-					title={ title }
+					title={
+						this.props.isPromptTag && this.props.description
+							? this.props.description
+							: this.props.title
+					}
 					imageSearchString={ imageSearchString }
 					showFollow={ !! ( tag && tag.id ) }
 					following={ this.isSubscribed() }
 					onFollowToggle={ this.toggleFollowing }
 					showBack={ this.props.showBack }
+					hasLongTitle={ this.props.isPromptTag }
 				/>
 			</Stream>
 		);
@@ -159,11 +163,17 @@ class TagStream extends Component {
 }
 
 export default connect(
-	( state ) => ( {
-		followedTags: getReaderFollowedTags( state ),
-		tags: getReaderTags( state ),
-		isLoggedIn: isUserLoggedIn( state ),
-	} ),
+	( state, { decodedTagSlug } ) => {
+		const tag = getReaderTagBySlug( state, decodedTagSlug );
+		return {
+			description: tag?.description,
+			followedTags: getReaderFollowedTags( state ),
+			tags: getReaderTags( state ),
+			title: tag?.displayName || decodedTagSlug,
+			isLoggedIn: isUserLoggedIn( state ),
+			isPromptTag: new RegExp( /^dailyprompt-\d+$/ ).test( decodedTagSlug ),
+		};
+	},
 	{
 		followTag: requestFollowTag,
 		recordReaderTracksEvent,
