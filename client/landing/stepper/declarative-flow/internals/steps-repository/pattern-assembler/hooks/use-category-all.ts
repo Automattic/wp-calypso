@@ -16,7 +16,7 @@ const useCategoryAll = ( dotcomPatterns: Pattern[] ) => {
 				...pattern,
 				categories: {
 					...pattern.categories,
-					all: {
+					[ CATEGORY_ALL_SLUG ]: {
 						slug: CATEGORY_ALL_SLUG,
 					},
 				},
