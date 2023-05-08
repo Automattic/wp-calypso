@@ -29,7 +29,6 @@
 		"@automattic/calypso-polyfills": "workspace:^",
 		"@automattic/calypso-url": "workspace:^",
 		"@tanstack/react-query": "^4.29.1",
-		"@tanstack/react-query-devtools": "^4.29.5",
 		"calypso": "workspace:^",
 		"classnames": "^2.3.1",
 		"debug": "^4.3.4",

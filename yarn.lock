@@ -98,7 +98,6 @@ __metadata:
     "@automattic/webpack-inline-constant-exports-plugin": "workspace:^"
     "@automattic/wp-babel-makepot": "workspace:^"
     "@tanstack/react-query": ^4.29.1
-    "@tanstack/react-query-devtools": ^4.29.5
     "@wordpress/dependency-extraction-webpack-plugin": ^4.5.0
     autoprefixer: ^10.2.5
     calypso: "workspace:^"
@@ -6524,21 +6523,6 @@ __metadata:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: 74878444bc3705fa2d7055e35a6b54b2dc36694d85e9cf32e713e99d791ba4e2aba6ffb307130fa38a939ebd2aa80e1f11cb61c4e46be30d197a59c0af7ff120
-  languageName: node
-  linkType: hard
-
-"@tanstack/react-query-devtools@npm:^4.29.5":
-  version: 4.29.5
-  resolution: "@tanstack/react-query-devtools@npm:4.29.5"
-  dependencies:
-    "@tanstack/match-sorter-utils": ^8.7.0
-    superjson: ^1.10.0
-    use-sync-external-store: ^1.2.0
-  peerDependencies:
-    "@tanstack/react-query": 4.29.5
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: abf8840404b88fab719f78ccf24cea5553824d40c88a5db402c908360ade553eefd7da22a5acb17108321e2d3163eb7ef9d541d2e9e1d40b4e16e4fe856f28fd
   languageName: node
   linkType: hard
 
