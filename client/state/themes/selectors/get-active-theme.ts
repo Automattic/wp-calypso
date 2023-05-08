@@ -12,10 +12,13 @@ import type { AppState } from 'calypso/types';
  * the checkout-thank-you component always redirects to the theme showcase for the current site.
  * One possible fix would be to get rid of that redirect (related: https://github.com/Automattic/wp-calypso/issues/8262).
  */
-export function getActiveTheme( state: AppState, siteId: number ): string | undefined {
+export function getActiveTheme( state: AppState, siteId: number | undefined ): string | null {
+	if ( ! siteId ) {
+		return null;
+	}
 	const activeTheme = state.themes.activeThemes[ siteId ] ?? null;
 	// If the theme ID is suffixed with -wpcom, remove that string. This is because
 	// we want to treat WP.com themes identically, whether or not they're installed
 	// on a given Jetpack site (where the -wpcom suffix would be appended).
-	return activeTheme ? activeTheme.replace( '-wpcom', '' ) : undefined;
+	return activeTheme ? activeTheme.replace( '-wpcom', '' ) : null;
 }
