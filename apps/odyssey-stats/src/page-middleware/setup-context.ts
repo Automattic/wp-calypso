@@ -22,6 +22,8 @@ export const setupContextMiddleware = ( reduxStore: Store, reactQueryClient: Que
 			try {
 				// `hash` is actually used as an object from lots of places.
 				// Compiler complains Type '{ [k: string]: string; }' is not assignable to type 'string'.
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
 				context.hash = Object.fromEntries(
 					new globalThis.URLSearchParams( context.hashstring ).entries()
 				);
@@ -29,11 +31,15 @@ export const setupContextMiddleware = ( reduxStore: Store, reactQueryClient: Que
 				debug( 'failed to query-string parse `location.hash`', e );
 				// `hash` is actually used as an object from lots of places.
 				// Compiler complains Type '{ [k: string]: string; }' is not assignable to type 'string'.
+				// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+				// @ts-ignore
 				context.hash = {};
 			}
 		} else {
 			// `hash` is actually used as an object from lots of places.
 			// Compiler complains Type '{ [k: string]: string; }' is not assignable to type 'string'.
+			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// @ts-ignore
 			context.hash = {};
 		}
 

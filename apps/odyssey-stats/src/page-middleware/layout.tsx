@@ -30,7 +30,9 @@ export const ProviderWrappedLayout: FunctionComponent< ProviderWrappedLayoutProp
 } ) => {
 	return (
 		<CalypsoI18nProvider>
-			{ /* Editor might show errors here, but it's fine as `RouteProvider` is in JavaScript. */ }
+			{ /* TS incorrectly infers RouteProvider types; ignore errors here. */ }
+			{ /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */ }
+			{ /* @ts-ignore */ }
 			<RouteProvider currentRoute={ currentRoute } currentQuery={ currentQuery }>
 				<QueryClientProvider client={ queryClient }>
 					<ReduxProvider store={ store }>
