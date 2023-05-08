@@ -24,7 +24,7 @@ function queryModuleData( module: Module ): Promise< ModuleData > {
 			}
 			throw error;
 		} )
-		.then( ( response: string | number | boolean ) => {
+		.then( ( response: ModuleData ) => {
 			// Proetect return false if the module is enabled but number of blocked attempts is 0.
 			if ( response === 'false' || response === false ) {
 				return 0;
