@@ -53,7 +53,6 @@ const stepNameToModuleName = {
 	'store-features': 'store-features',
 	'starting-point': 'starting-point',
 	test: 'test-step',
-	themes: 'theme-selection',
 	'themes-site-selected': 'theme-selection',
 	user: 'user',
 	'user-hosting': 'user',
