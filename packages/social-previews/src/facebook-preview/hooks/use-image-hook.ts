@@ -30,7 +30,7 @@ const useImage: UseImage = ( { mode: initialMode } ) => {
 		mode,
 		isLoadingImage,
 		{
-			alt: __( 'Facebook Preview Thumbnail', 'facebook-preview' ),
+			alt: __( 'Facebook Preview Thumbnail', 'social-previews' ),
 			onLoad,
 			onError,
 		},

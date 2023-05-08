@@ -19,11 +19,11 @@ const FacebookFullPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 				<SectionHeading level={ props.headingsLevel }>
 					{
 						// translators: refers to a social post on Facebook
-						__( 'Your post', 'facebook-preview' )
+						__( 'Your post', 'social-previews' )
 					}
 				</SectionHeading>
 				<p className="social-preview__section-desc">
-					{ __( 'This is what your social post will look like on Facebook:', 'facebook-preview' ) }
+					{ __( 'This is what your social post will look like on Facebook:', 'social-previews' ) }
 				</p>
 				{ isPostPreview ? (
 					<FacebookPostPreview { ...props } />
@@ -35,17 +35,17 @@ const FacebookFullPreview: React.FC< FacebookPreviewProps > = ( props ) => {
 				<SectionHeading level={ props.headingsLevel }>
 					{
 						// translators: refers to a link to a Facebook post
-						__( 'Link preview', 'facebook-preview' )
+						__( 'Link preview', 'social-previews' )
 					}
 				</SectionHeading>
 				<p className="social-preview__section-desc">
 					{ __(
 						'This is what it will look like when someone shares the link to your WordPress post on Facebook.',
-						'facebook-preview'
+						'social-previews'
 					) }
 					&nbsp;
 					<ExternalLink href="https://jetpack.com/support/jetpack-social-image-generator">
-						{ __( 'Learn more about links', 'facebook-preview' ) }
+						{ __( 'Learn more about links', 'social-previews' ) }
 					</ExternalLink>
 				</p>
 				{ isPostPreview ? (

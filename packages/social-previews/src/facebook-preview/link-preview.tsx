@@ -61,7 +61,7 @@ const FacebookLinkPreview: React.FC< Props > = ( {
 								{ isArticle &&
 									! description &&
 									// translators: Default description for a Facebook post
-									__( 'Visit the post for more.', 'facebook-preview' ) }
+									__( 'Visit the post for more.', 'social-previews' ) }
 							</div>
 							<div className="facebook-preview__info">
 								<FacebookPostIcon name="info" />
