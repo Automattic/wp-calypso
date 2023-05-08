@@ -17,7 +17,6 @@ import StatsPageHeader from '../stats-page-header';
 import Reach from '../stats-reach';
 import SubscribersChartSection, { PeriodType } from '../stats-subscribers-chart-section';
 import SubscribersOverview from '../stats-subscribers-overview';
-import SubscribersSection from '../subscribers-section';
 import SubscribersHighlightSection from './subscribers-highlight-section';
 
 interface StatsSubscribersPageProps {
@@ -66,7 +65,7 @@ const StatsSubscribersPage = ( { period }: StatsSubscribersPageProps ) => {
 						vendor={ getSuggestionsVendor() }
 					/>
 				) }
-				<SubscribersSection siteId={ siteId } slug={ siteSlug } period={ period } />
+				<SubscribersChartSection siteId={ siteId } slug={ siteSlug } period={ period } />
 				<SubscribersOverview siteId={ siteId } />
 				<div className={ statsModuleListClass }>
 					<Followers path="followers" />
