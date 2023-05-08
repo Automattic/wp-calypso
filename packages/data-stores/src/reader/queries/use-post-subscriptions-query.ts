@@ -81,7 +81,7 @@ const usePostSubscriptionsQuery = ( {
 		// Flatten all the pages into a single array containing all subscriptions
 		const flattenedData = data?.pages?.map( ( page ) => page.comment_subscriptions ).flat();
 
-		// There is an issue that some post subscriptions have a post_id: 0, post_title: null, post_excerpt: "", post_url: false
+		// TODO: Temporary fix for https://github.com/Automattic/wp-calypso/issues/76678, remove once fixed
 		const filteredData = flattenedData?.filter(
 			( comment_subscription ) => typeof comment_subscription.post_url === 'string'
 		);
