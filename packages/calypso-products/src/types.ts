@@ -42,6 +42,7 @@ export interface WPComPlan extends Plan {
 	getStoreAudience?: () => TranslateResult;
 	getPlanTagline?: () => string;
 	getNewsletterTagLine?: () => string;
+	getLinkInBioTagLine?: () => string;
 	getSubTitle?: () => TranslateResult;
 	getPlanCompareFeatures?: (
 		experiment?: string,
@@ -257,6 +258,7 @@ export type Plan = BillingTerm & {
 	 */
 	getInferiorFeatures?: () => Feature[];
 	getNewsletterSignupFeatures?: () => Feature[];
+	getLinkInBioSignupFeatures?: () => Feature[];
 };
 
 export type WithSnakeCaseSlug = { product_slug: string };
