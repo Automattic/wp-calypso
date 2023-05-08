@@ -63,8 +63,6 @@ describe( DataHelper.createSuiteTitle( 'Site Editor Smoke Test' ), function () {
 		},
 	] );
 
-	console.log( accountName );
-
 	beforeAll( async () => {
 		page = await browser.newPage();
 
