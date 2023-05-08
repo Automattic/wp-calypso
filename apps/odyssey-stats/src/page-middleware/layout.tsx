@@ -1,5 +1,8 @@
-import { QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Context } from 'page';
+import { FunctionComponent } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
+import { Store } from 'redux';
 import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
 import { RouteProvider } from 'calypso/components/route';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
@@ -7,7 +10,18 @@ import Layout from '../components/layout';
 
 export { render, hydrate } from 'calypso/controller/web-util';
 
-export const ProviderWrappedLayout = ( {
+interface ProviderWrappedLayoutProps {
+	store: Store;
+	queryClient: QueryClient;
+	currentSection: string;
+	currentRoute: string;
+	currentQuery: string;
+	primary: React.ReactNode;
+	secondary: React.ReactNode;
+	redirectUri: string;
+}
+
+export const ProviderWrappedLayout: FunctionComponent< ProviderWrappedLayoutProps > = ( {
 	store,
 	queryClient,
 	currentSection,
@@ -15,7 +29,6 @@ export const ProviderWrappedLayout = ( {
 	currentQuery,
 	primary,
 	secondary,
-	redirectUri,
 } ) => {
 	return (
 		<CalypsoI18nProvider>
@@ -29,9 +42,8 @@ export const ProviderWrappedLayout = ( {
 						<Layout
 							primary={ primary }
 							secondary={ secondary }
-							redirectUri={ redirectUri }
 							sectionName="stats"
-							groupName="sites"
+							sectionGroup="sites"
 						/>
 					</ReduxProvider>
 					<CalypsoReactQueryDevtools />
@@ -41,24 +53,15 @@ export const ProviderWrappedLayout = ( {
 	);
 };
 
-export function makeLayoutMiddleware( LayoutComponent ) {
-	return ( context, next ) => {
-		const {
-			i18n,
-			store,
-			queryClient,
-			section,
-			pathname,
-			query,
-			primary,
-			secondary,
-			showGdprBanner,
-		} = context;
+export function makeLayoutMiddleware(
+	LayoutComponent: FunctionComponent< ProviderWrappedLayoutProps >
+) {
+	return ( context: Context, next: () => void ) => {
+		const { store, queryClient, section, pathname, query, primary, secondary } = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
 		context.layout = (
 			<LayoutComponent
-				i18n={ i18n }
 				store={ store }
 				queryClient={ queryClient }
 				currentSection={ section }
@@ -67,7 +70,6 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 				primary={ primary }
 				secondary={ secondary }
 				redirectUri={ context.originalUrl }
-				showGdprBanner={ showGdprBanner }
 			/>
 		);
 		next();
