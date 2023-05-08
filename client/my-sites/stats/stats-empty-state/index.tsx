@@ -1,9 +1,16 @@
 import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { ReactChild } from 'react';
 
 import './style.scss';
 
-export default function StatsEmptyState( { headingText = null, infoText = null } ) {
+export default function StatsEmptyState( {
+	headingText = null,
+	infoText = null,
+}: {
+	headingText?: null | ReactChild;
+	infoText?: null | ReactChild;
+} ) {
 	const translate = useTranslate();
 	const defaultHeadingText = translate( 'No data in this period' );
 	const defaultInfoText = translate(
