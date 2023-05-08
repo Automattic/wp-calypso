@@ -11,6 +11,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { getQueryArg } from '@wordpress/url';
 import { HasSeenSellerCelebrationModalProvider } from '../../dotcom-fse/lib/seller-celebration-modal/has-seen-seller-celebration-modal-context';
+import { HasSeenVideoCelebrationModalProvider } from '../../dotcom-fse/lib/video-celebration-modal/has-seen-video-celebration-modal-context';
 import DraftPostModal from './draft-post-modal';
 import PostPublishedModal from './post-published-modal';
 import PurchaseNotice from './purchase-notice';
@@ -99,11 +100,13 @@ function WelcomeTour() {
 registerPlugin( 'wpcom-block-editor-nux', {
 	render: () => (
 		<HasSeenSellerCelebrationModalProvider>
-			<WelcomeTour />
-			<PostPublishedModal />
-			<SellerCelebrationModal />
-			<PurchaseNotice />
-			<VideoPressCelebrationModal />
+			<HasSeenVideoCelebrationModalProvider>
+				<WelcomeTour />
+				<PostPublishedModal />
+				<SellerCelebrationModal />
+				<PurchaseNotice />
+				<VideoPressCelebrationModal />
+			</HasSeenVideoCelebrationModalProvider>
 		</HasSeenSellerCelebrationModalProvider>
 	),
 } );

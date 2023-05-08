@@ -1,7 +1,7 @@
 import { useState, useEffect } from '@wordpress/element';
 import request from 'wpcom-proxy-request';
 import useSiteIntent from '../site-intent/use-site-intent';
-import useHasSeenVideoCelbrationModal from './use-has-seen-video-celebration-modal';
+import { useHasSeenVideoCelebrationModal } from './has-seen-video-celebration-modal-context';
 
 interface Site {
 	options?: {
@@ -14,7 +14,7 @@ const useShouldShowVideoCelebrationModal = ( isEditorSaving: boolean ) => {
 	const { siteIntent: intent } = useSiteIntent();
 
 	const [ shouldShowVideoCelebrationModal, setShouldShowVideoCelebrationModal ] = useState( false );
-	const { hasSeenVideoCelebrationModal } = useHasSeenVideoCelbrationModal();
+	const { hasSeenVideoCelebrationModal } = useHasSeenVideoCelebrationModal();
 
 	useEffect( () => {
 		const maybeRenderVideoCelebrationModal = async () => {

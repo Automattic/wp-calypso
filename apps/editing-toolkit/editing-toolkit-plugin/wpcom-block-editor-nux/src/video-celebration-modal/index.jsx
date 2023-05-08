@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import videoSuccessImage from 'calypso/assets/images/illustrations/video-success.svg';
 import useSiteIntent from '../../../dotcom-fse/lib/site-intent/use-site-intent';
-import useHasSeenVideoCelbrationModal from '../../../dotcom-fse/lib/video-celebration-modal/use-has-seen-video-celebration-modal';
+import { useHasSeenVideoCelebrationModal } from '../../../dotcom-fse/lib/video-celebration-modal/has-seen-video-celebration-modal-context';
 import useShouldShowVideoCelebrationModal from '../../../dotcom-fse/lib/video-celebration-modal/use-should-show-video-celebration-modal';
 import NuxModal from '../nux-modal';
 import './style.scss';
@@ -15,7 +15,7 @@ const VideoCelebrationModalInner = () => {
 	const [ hasDisplayedModal, setHasDisplayedModal ] = useState( false );
 	const isSiteEditor = useSelect( ( select ) => !! select( 'core/edit-site' ) );
 	const previousIsEditorSaving = useRef( false );
-	const { updateHasSeenVideoCelebrationModal } = useHasSeenVideoCelbrationModal();
+	const { updateHasSeenVideoCelebrationModal } = useHasSeenVideoCelebrationModal();
 
 	const { isEditorSaving } = useSelect( ( select ) => {
 		if ( isSiteEditor ) {
