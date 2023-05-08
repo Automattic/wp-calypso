@@ -1,4 +1,3 @@
-//@ts-nocheck
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { createContext, useMemo, useContext } from 'react';
 
