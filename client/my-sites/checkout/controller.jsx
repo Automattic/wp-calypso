@@ -118,6 +118,7 @@ export function checkout( context, next ) {
 	const jetpackSiteSlug = context.params.siteSlug;
 
 	const isGiftPurchase = context.pathname.includes( '/gift/' );
+	const isRenewal = context.pathname.includes( '/renew/' );
 
 	// Do not use Jetpack checkout for Jetpack Anti Spam
 	if ( 'jetpack_anti_spam' === context.params.productSlug ) {
@@ -133,6 +134,11 @@ export function checkout( context, next ) {
 			return true;
 		}
 		if ( isGiftPurchase ) {
+			return true;
+		}
+		// We allow renewals without a site through because we want to show these
+		// users an error message on the checkout page.
+		if ( isRenewal ) {
 			return true;
 		}
 		return false;

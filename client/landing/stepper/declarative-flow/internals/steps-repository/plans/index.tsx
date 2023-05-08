@@ -50,7 +50,13 @@ const plans: Step = function Plans( { navigation, flow } ) {
 			isLargeSkipLayout={ false }
 			backLabelText={ getBackLabelText() }
 			hideBack={ shouldHideBackButton() }
-			stepContent={ <PlansWrapper flowName={ flow } onSubmit={ handleSubmit } /> }
+			stepContent={
+				<PlansWrapper
+					flowName={ flow }
+					onSubmit={ handleSubmit }
+					is2023PricingGridVisible={ is2023PricingGridVisible }
+				/>
+			}
 			recordTracksEvent={ recordTracksEvent }
 		/>
 	);

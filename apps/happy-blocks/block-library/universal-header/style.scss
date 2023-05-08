@@ -345,9 +345,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 }
 
 @media ( min-width: 768px ) {
-	.x-nav-link--logo {
-		padding: 0 24px 0;
-	}
 
 	.x-nav-link--menu {
 		padding: 0 9px 0 9px;
@@ -365,7 +362,7 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 	}
 
 	.x-nav-link--logo {
-		padding: 0 12px 0 10px;
+		padding: 0 12px 0 0;
 	}
 
 	.x-nav-link--primary {
@@ -387,11 +384,6 @@ $system-font-family: -apple-system, BlinkMacSystemFont, "Noto Sans", "Segoe UI",
 @media ( min-width: 1056px ) {
 	.x-nav-link {
 		padding-right: 12px;
-		padding-left: 12px;
-	}
-
-	.x-nav-link--logo {
-		padding: 0 18px 0 10px;
 	}
 
 	.x-nav-link--primary {

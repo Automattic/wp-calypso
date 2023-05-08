@@ -16,6 +16,11 @@ jest.mock( '@automattic/viewport-react', () => ( {
 	useBreakpoint: () => true,
 } ) );
 
+jest.mock(
+	'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-backup-staging',
+	() => 'span'
+);
+
 describe( '<SiteContent>', () => {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()

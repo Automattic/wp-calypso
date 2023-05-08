@@ -99,7 +99,10 @@ const wooexpress: Flow = {
 		const flowProgress = useSiteSetupFlowProgress( currentStep, intent );
 		setStepProgress( flowProgress );
 
-		const { getSiteIdBySlug } = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
+		const { getSiteIdBySlug, getSiteOption } = useSelect(
+			( select ) => select( SITE_STORE ) as SiteSelect,
+			[]
+		);
 
 		const exitFlow = ( to: string ) => {
 			window.location.assign( to );
@@ -109,6 +112,7 @@ const wooexpress: Flow = {
 			recordSubmitStep( providedDependencies, intent, flowName, currentStep );
 			const siteSlug = ( providedDependencies?.siteSlug as string ) || siteSlugParam || '';
 			const siteId = getSiteIdBySlug( siteSlug );
+			const adminUrl = siteId && getSiteOption( siteId, 'admin_url' );
 
 			switch ( currentStep ) {
 				case 'siteCreationStep': {
@@ -129,7 +133,7 @@ const wooexpress: Flow = {
 					}
 
 					if ( providedDependencies?.pluginsInstalled ) {
-						return exitFlow( `/home/${ siteSlug }` );
+						return exitFlow( `${ adminUrl }admin.php?page=wc-admin` );
 					}
 
 					return navigate( 'assignTrialPlan', { siteSlug } );

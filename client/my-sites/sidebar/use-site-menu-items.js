@@ -57,8 +57,7 @@ const useSiteMenuItems = () => {
 
 	const hasSiteWithPlugins = useSelector( canAnySiteHavePlugins );
 
-	// TODO: remove the atomic once Jetpack 12.1 is deployed.
-	const hasUnifiedImporter = isEnabled( 'importer/unified' ) && isAtomic;
+	const hasUnifiedImporter = isEnabled( 'importer/unified' );
 
 	/**
 	 * When no site domain is provided, lets show only menu items that support all sites screens.

@@ -13,6 +13,7 @@ import { hasSelectedLicensesOfType } from 'calypso/state/jetpack-agency-dashboar
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
 import ToggleActivateMonitoring from '../downtime-monitoring/toggle-activate-monitoring';
 import SitesOverviewContext from './context';
+import SiteBackupStaging from './site-backup-staging';
 import SiteSelectCheckbox from './site-select-checkbox';
 import SiteSetFavorite from './site-set-favorite';
 import {
@@ -171,9 +172,12 @@ export default function SiteStatusContent( {
 						href={ `/activity-log/${ siteUrl }` }
 					>
 						{ siteUrl }
+						<SiteBackupStaging siteId={ siteId } />
 					</Button>
 				) : (
-					<span className="sites-overview__row-text">{ siteUrl }</span>
+					<span className="sites-overview__row-text">
+						{ siteUrl } <SiteBackupStaging siteId={ siteId } />
+					</span>
 				) }
 				<span className="sites-overview__overlay"></span>
 				{ errorContent }

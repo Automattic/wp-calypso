@@ -156,7 +156,13 @@ export type StatusTooltip = {
 	[ key in AllowedStatusTypes ]?: ReactChild;
 };
 
-export type AllowedActionTypes = 'issue_license' | 'view_activity' | 'view_site' | 'visit_wp_admin';
+export type AllowedActionTypes =
+	| 'issue_license'
+	| 'view_activity'
+	| 'view_site'
+	| 'visit_wp_admin'
+	| 'clone_site'
+	| 'site_settings';
 
 export type ActionEventNames = {
 	[ key in AllowedActionTypes ]: { small_screen: string; large_screen: string };

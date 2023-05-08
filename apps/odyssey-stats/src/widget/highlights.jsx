@@ -1,5 +1,4 @@
 import { formattedNumber } from '@automattic/components';
-import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
@@ -45,7 +44,6 @@ function ItemWrapper( { odysseyStatsBaseUrl, siteId, isItemLink, item } ) {
 			} ) }
 		>
 			{ renderedItem }
-			<Icon className="stats-icon" icon={ external } size={ 18 } />
 		</a>
 	) : (
 		renderedItem

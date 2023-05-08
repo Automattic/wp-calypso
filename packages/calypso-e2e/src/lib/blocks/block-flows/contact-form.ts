@@ -37,7 +37,8 @@ export class ContactFormFlow implements BlockFlow {
 	 * @param {EditorContext} context The current context for the editor at the point of test execution
 	 */
 	async configure( context: EditorContext ): Promise< void > {
-		const nameLabelSelector = context.editorLocator.locator( selectors.nameLabel );
+		const editorParent = await context.editorPage.getEditorParent();
+		const nameLabelSelector = editorParent.locator( selectors.nameLabel );
 		await nameLabelSelector.fill( this.configurationData.nameLabel );
 	}
 

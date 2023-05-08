@@ -404,9 +404,9 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 		return (
 			isSelectedFileValid &&
 			! selectedFile && (
-				<p aria-label={ ariaLabelMsg } className="add-subscriber__form--disclaimer">
+				<div aria-label={ ariaLabelMsg } className="add-subscriber__form--disclaimer">
 					{ labelText }
-				</p>
+				</div>
 			)
 		);
 	}
@@ -435,16 +435,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 					) }
 				</label>
 			)
-		);
-	}
-
-	function renderFollowerNoticeLabel() {
-		return (
-			<p className="add-subscriber__form--disclaimer">
-				{ translate(
-					"If you enter an email address that has a WordPress.com account, they'll become a follower."
-				) }
-			</p>
 		);
 	}
 
@@ -504,7 +494,6 @@ export const AddSubscriberForm: FunctionComponent< Props > = ( props ) => {
 
 					{ ! includesHandledError() && renderImportCsvSelectedFileLabel() }
 					{ showCsvUpload && ! includesHandledError() && renderImportCsvLabel() }
-					{ ! includesHandledError() && renderFollowerNoticeLabel() }
 
 					{ renderEmptyFormValidationMsg() }
 

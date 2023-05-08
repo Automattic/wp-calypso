@@ -197,7 +197,9 @@ export default function NotificationSettings( {
 									<div className="notification-settings__content-sub-heading">
 										{ translate( 'Receive email notifications with one or more recipients.' ) }
 									</div>
-									{ enableEmailNotification && <ConfigureEmailNotification /> }
+									{ enableEmailNotification && (
+										<ConfigureEmailNotification defaultEmailAddresses={ addedEmailAddresses } />
+									) }
 								</>
 							) : (
 								<div className="notification-settings__content-sub-heading">
