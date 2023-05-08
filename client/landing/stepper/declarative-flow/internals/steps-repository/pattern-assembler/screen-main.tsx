@@ -4,14 +4,17 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalUseNavigator as useNavigator,
 } from '@wordpress/components';
+import { useSelect } from '@wordpress/data';
 import { focus } from '@wordpress/dom';
 import { header, footer, layout, color, typography } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect, useRef } from 'react';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { PATTERN_ASSEMBLER_EVENTS } from './events';
 import { NavigationButtonAsItem } from './navigator-buttons';
 import NavigatorHeader from './navigator-header';
 import { NavigatorItemGroup } from './navigator-item-group';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { MouseEvent } from 'react';
 
 interface Props {
@@ -34,6 +37,14 @@ const ScreenMain = ( {
 	const wrapperRef = useRef< HTMLDivElement | null >( null );
 	const { location } = useNavigator();
 	const isInitialLocation = location.isInitial && ! location.isBack;
+	const selectedDesign = useSelect(
+		( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
+		[]
+	);
+
+	const headerDescription = selectedDesign?.is_virtual
+		? translate( 'Customize your homepage with our library of styles and patterns.' )
+		: translate( 'Use our library of styles and patterns to design your own homepage.' );
 
 	const getDescription = () => {
 		if ( ! shouldUnlockGlobalStyles ) {
@@ -90,9 +101,7 @@ const ScreenMain = ( {
 		<>
 			<NavigatorHeader
 				title={ translate( 'Let’s get creative' ) }
-				description={ translate(
-					'Use our library of styles and patterns to design your own homepage.'
-				) }
+				description={ headerDescription }
 				hideBack
 			/>
 			<div
