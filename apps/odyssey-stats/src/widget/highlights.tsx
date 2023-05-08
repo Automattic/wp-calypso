@@ -3,27 +3,61 @@ import { Icon, external } from '@wordpress/icons';
 import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
-import { useState } from 'react';
+import { useState, FunctionComponent } from 'react';
 import SegmentedControl from 'calypso/components/segmented-control';
 import useReferrersQuery from '../hooks/use-referrers-query';
 import useTopPostsQuery from '../hooks/use-top-posts-query';
+import { HighLightItem } from '../typings';
 
 import './hightlights.scss';
+
+interface ItemWrapperProps {
+	siteId: number;
+	odysseyStatsBaseUrl: string;
+	isItemLink: boolean;
+	item: HighLightItem;
+	isItemLinkExternal: boolean;
+}
+
+interface TopColumnProps {
+	items: Array< HighLightItem >;
+	viewAllUrl: string;
+	viewAllText: string;
+	title: string;
+	isLoading: boolean;
+	odysseyStatsBaseUrl: string;
+	siteId: number;
+	isItemLinkExternal?: boolean;
+	isItemLink?: boolean;
+	className?: null | string;
+}
+
+interface HighlightsProps {
+	siteId: number;
+	gmtOffset: number;
+	odysseyStatsBaseUrl: string;
+}
 
 const HIGHLIGHT_ITEMS_LIMIT = 5;
 const HIGHLIGHT_TAB_TOP_POSTS_PAGES = 'topPostsAndPages';
 const HIGHLIGHT_TAB_TOP_REFERRERS = 'topReferrers';
 
-const postAndPageLink = ( baseUrl, siteId, postId ) => {
+const postAndPageLink = ( baseUrl: string, siteId: number, postId: number ) => {
 	return `${ baseUrl }#!/stats/post/${ postId }/${ siteId }`;
 };
 
-const externalLink = ( item ) => {
+const externalLink = ( item: HighLightItem ) => {
 	// Url is for referrers and href is for top posts and pages.
 	return item.url || item.href;
 };
 
-function ItemWrapper( { odysseyStatsBaseUrl, siteId, item, isItemLink, isItemLinkExternal } ) {
+const ItemWrapper: FunctionComponent< ItemWrapperProps > = ( {
+	odysseyStatsBaseUrl,
+	siteId,
+	isItemLink,
+	item,
+	isItemLinkExternal,
+} ) => {
 	const translate = useTranslate();
 
 	const renderedItem = (
@@ -60,9 +94,9 @@ function ItemWrapper( { odysseyStatsBaseUrl, siteId, item, isItemLink, isItemLin
 	) : (
 		renderedItem
 	);
-}
+};
 
-function TopColumn( {
+const TopColumn: FunctionComponent< TopColumnProps > = ( {
 	items,
 	viewAllUrl,
 	viewAllText,
@@ -73,7 +107,7 @@ function TopColumn( {
 	isItemLink = false,
 	isItemLinkExternal = false,
 	className = null,
-} ) {
+} ) => {
 	const translate = useTranslate();
 
 	return (
@@ -104,9 +138,9 @@ function TopColumn( {
 			</div>
 		</div>
 	);
-}
+};
 
-export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl } ) {
+export default function Highlights( { siteId, gmtOffset, odysseyStatsBaseUrl }: HighlightsProps ) {
 	const translate = useTranslate();
 
 	const headingTitle = translate( '7 Day Highlights' );
