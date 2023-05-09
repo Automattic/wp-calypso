@@ -1,4 +1,3 @@
-import config from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import { includes } from 'lodash';
@@ -452,7 +451,7 @@ class SharingServiceExamples extends Component {
 			return <GooglePlusDeprication />;
 		}
 
-		if ( 'mastodon' === this.props.service.ID && config.isEnabled( 'mastodon' ) ) {
+		if ( 'mastodon' === this.props.service.ID ) {
 			return (
 				<Mastodon
 					service={ this.props.service }

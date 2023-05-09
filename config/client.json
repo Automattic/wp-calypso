@@ -18,7 +18,6 @@
 	"lasagna_url",
 	"login_url",
 	"logout_url",
-	"mastodon",
 	"mc_analytics_enabled",
 	"oauth_client_id",
 	"oauth_response_type",

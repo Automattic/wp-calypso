@@ -508,9 +508,6 @@ export class SharingService extends Component {
 	};
 
 	isMastodonService = () => {
-		if ( ! config.isEnabled( 'mastodon' ) ) {
-			return false;
-		}
 		return get( this, 'props.service.ID' ) === 'mastodon';
 	};
 
