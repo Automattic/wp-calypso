@@ -1,7 +1,6 @@
 import { Dialog, FormInputValidation } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import { ToggleControl } from '@wordpress/components';
-import classnames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
@@ -414,19 +413,8 @@ const RecurringPaymentsPlanAddEditModal = ( {
 				</SectionNavTabs>
 			</SectionNav>
 			<div className="memberships__dialog-sections">
-				<div
-					className={ classnames( 'memberships__dialog-section', {
-						'is-visible': currentDialogTab === TAB_GENERAL,
-					} ) }
-				>
-					{ renderGeneralTab() }
-				</div>
-				<div
-					className={ classnames( 'memberships__dialog-section', {
-						'is-visible': currentDialogTab === TAB_EMAIL,
-					} ) }
-				>
-					{ renderEmailTab() }
+				<div className="memberships__dialog-section is-visible">
+					{ currentDialogTab === TAB_EMAIL ? renderEmailTab() : renderGeneralTab() }
 				</div>
 			</div>
 		</Dialog>
